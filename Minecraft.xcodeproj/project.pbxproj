@@ -143,7 +143,6 @@
 				784194BA258204CD0070DE78 /* MinecraftApp.swift */,
 				7878B52A25844B6B007C0D3D /* Views */,
 				7884358E2585E5E3002F1F84 /* Minecraft */,
-				787D8FEE258451A1007E6441 /* Graphics */,
 				787D8FEF258451A8007E6441 /* Networking */,
 				784194BE258204D00070DE78 /* Assets.xcassets */,
 				784194C3258204D00070DE78 /* Info.plist */,
@@ -191,13 +190,6 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		787D8FEE258451A1007E6441 /* Graphics */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Graphics;
-			sourceTree = "<group>";
-		};
 		787D8FEF258451A8007E6441 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
@@ -226,7 +218,6 @@
 		7884358E2585E5E3002F1F84 /* Minecraft */ = {
 			isa = PBXGroup;
 			children = (
-				789650962588BF6B0079C5CF /* State */,
 				7884358F2585E606002F1F84 /* Server.swift */,
 				78225CE2258EC0CE007B7F98 /* EventManager.swift */,
 				784D97902587604700FC89F8 /* Config.swift */,
@@ -237,13 +228,6 @@
 				7884359A25861981002F1F84 /* ServerList.swift */,
 			);
 			path = Minecraft;
-			sourceTree = "<group>";
-		};
-		789650962588BF6B0079C5CF /* State */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = State;
 			sourceTree = "<group>";
 		};
 		78C2D5932585CA6800883DF5 /* Handlers */ = {

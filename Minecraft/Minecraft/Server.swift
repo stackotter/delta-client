@@ -29,7 +29,7 @@ class Server: Hashable, ObservableObject {
     eventManager.registerEventHandler(handleStatusResponse, eventNames: ["statusResponse"])
     eventManager.registerEventHandler(handleLoginSuccess, eventNames: ["loginSuccess"])
     
-    serverConnection.registerEventHandlers(eventManager)
+    serverConnection!.registerEventHandlers(eventManager)
   }
   
   func handleStatusResponse(_ event: EventManager.Event) {
