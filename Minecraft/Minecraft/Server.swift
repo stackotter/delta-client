@@ -6,86 +6,97 @@
 //
 
 import Foundation
+import os
 
 class Server: Hashable, ObservableObject {
   var eventManager: EventManager
+  var serverEventManager: EventManager
   var name: String
   var host: String
   var port: Int
   
+  var logger: Logger
+  
   @Published var pingInfo: PingInfo?
   var serverConnection: ServerConnection?
   
-  init(name: String, host: String, port: Int) {
+  init(name: String, host: String, port: Int, eventManager: EventManager) {
     self.name = name
     self.host = host
     self.port = port
-    self.eventManager = EventManager()
+    self.eventManager = eventManager
+    self.serverEventManager = EventManager()
+    self.logger = Logger(for: type(of: self), desc: "\(host):\(port)")
+    
     registerEventHandlers()
     ping()
   }
   
   func registerEventHandlers() {
-    eventManager.registerEventHandler(handleStatusResponse, eventNames: ["statusResponse"])
-    eventManager.registerEventHandler(handleLoginSuccess, eventNames: ["loginSuccess"])
-    
-    serverConnection!.registerEventHandlers(eventManager)
+    serverEventManager.registerEventHandler(handlePingInfoReceived, eventNames: ["pingInfoReceived"])
+    serverEventManager.registerEventHandler(handleLoginSuccess, eventNames: ["loginSuccess"])
+    serverEventManager.registerEventHandler(handleConnectionClosed, eventNames: ["connectionClosed"])
+    serverEventManager.registerEventHandler(handleError, eventNames: ["error"])
   }
   
-  func handleStatusResponse(_ event: EventManager.Event) {
+  func handleError(_ event: EventManager.Event) {
     switch event {
-      case let .statusResponse(pingInfo):
-        self.pingInfo = pingInfo
+      case var .error(message):
+        message = "[\(host):\(port)] \(message)"
+        eventManager.triggerError(message)
+        logger.debug("escalated error to app wide event manager")
+      default:
+        break
+    }
+  }
+  
+  func handlePingInfoReceived(_ event: EventManager.Event) {
+    logger.debug("received ping info")
+    switch event {
+      case let .pingInfoReceived(pingInfo):
+        DispatchQueue.main.sync {
+          self.pingInfo = pingInfo
+        }
+        serverConnection?.close()
       default:
         break
     }
   }
   
   func handleLoginSuccess(_ event: EventManager.Event) {
-    switch event {
-      case .loginSuccess:
-        print("login success")
-      default:
-        break
-    }
+    logger.debug("login success")
+  }
+  
+  func handleConnectionClosed(_ event: EventManager.Event) {
+    logger.debug("connection closed")
+    self.serverConnection = nil
+  }
+  
+  func createConnection() {
+    logger.debug("created connection")
+    serverConnection = ServerConnection(host: host, port: port, eventManager: serverEventManager)
   }
   
   func ping() {
+    pingInfo = nil
     createConnection()
-    serverConnection!.ping { (pingResult) in
-      // @Published value needs to be updated in the main thread
-      DispatchQueue.main.async {
-        self.pingInfo = pingResult
-      }
-    }
+    serverConnection!.ping()
   }
   
   // just a prototype for later
   func login() {
     createConnection()
-    serverConnection!.start() {
+    serverEventManager.registerOneTimeEventHandler({
+      (event) in
       self.serverConnection!.handshake(nextState: .login) {
         let loginStart = LoginStart(username: "stampy654")
         self.serverConnection!.sendPacket(loginStart, callback: .contentProcessed({
           (error) in
-          print("done")
+          self.logger.debug("sent login start packet")
         }))
       }
-    }
-  }
-  
-  func createConnection() {
-    serverConnection = ServerConnection(host: host, port: port)
-    serverConnection!.closeCallback = {
-      self.serverConnection = nil
-      print("\(self.host):\(self.port) closed")
-    }
-  }
-  
-  func closeConnection() {
-    if (self.serverConnection != nil) {
-      serverConnection!.close()
-    }
+    }, eventName: "connectionReady")
+    serverConnection!.start()
   }
   
   // Things so that SwiftUI ForEach loop works

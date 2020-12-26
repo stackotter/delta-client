@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct StatusHandler {
-  var pingCallback: ((PingInfo) -> Void)?
+struct StatusHandler: PacketHandler {
+  var eventManager: EventManager
   
   func handlePacket(reader: PacketReader) {
     var mutableReader = reader
@@ -22,18 +22,17 @@ struct StatusHandler {
   }
   
   func handle(_ packet: StatusResponse) {
-    if (pingCallback != nil) {
-      let json = packet.json
-      
-      let versionInfo = json.getJSON(forKey: "version")
-      let versionName = versionInfo.getString(forKey: "name")
-      let protocolVersion = versionInfo.getInt(forKey: "protocol")
-      
-      let players = json.getJSON(forKey: "players")
-      let maxPlayers = players.getInt(forKey: "max")
-      let numPlayers = players.getInt(forKey: "online")
-      
-      pingCallback!(PingInfo(versionName: versionName, protocolVersion: protocolVersion, maxPlayers: maxPlayers, numPlayers: numPlayers, description: "Ping Complete", modInfo: ""))
-    }
+    let json = packet.json
+    
+    let versionInfo = json.getJSON(forKey: "version")
+    let versionName = versionInfo.getString(forKey: "name")
+    let protocolVersion = versionInfo.getInt(forKey: "protocol")
+    
+    let players = json.getJSON(forKey: "players")
+    let maxPlayers = players.getInt(forKey: "max")
+    let numPlayers = players.getInt(forKey: "online")
+    
+    let pingInfo = PingInfo(versionName: versionName, protocolVersion: protocolVersion, maxPlayers: maxPlayers, numPlayers: numPlayers, description: "Ping Complete", modInfo: "")
+    eventManager.triggerEvent(event: .pingInfoReceived(pingInfo))
   }
 }

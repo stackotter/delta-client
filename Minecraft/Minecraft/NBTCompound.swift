@@ -49,7 +49,7 @@ struct NBTCompound {
     }
   }
   
-  // TODO: think of better name for this function
+  // TODO:180 think of better name for this function
   mutating func unpack(buf: inout Buffer) {
     while true {
       let typeId = buf.readByte()
@@ -112,11 +112,11 @@ struct NBTCompound {
       case .compound:
         value = NBTCompound(name: name, buf: &buf).nbtData
       case .intArray:
-        // TODO: implement
-        print("")
+        // TODO: implement NBT int array
+        break
       case .longArray:
-        // TODO: implement
-        print("")
+        // TODO: implement NBT long array
+        break
     }
     return value!
   }

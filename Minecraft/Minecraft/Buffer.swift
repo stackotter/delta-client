@@ -10,10 +10,18 @@ import Foundation
 struct Buffer {
   // all functions read big endian and unsigned unless otherwise specified
   var buf: [UInt8]
+  var length: Int
   var index = 0
+  
+  var remaining: Int {
+    get {
+      return length - index
+    }
+  }
   
   init(_ bytes: [UInt8]) {
     self.buf = bytes
+    self.length = self.buf.count
   }
   
   mutating func readByte() -> UInt8 {
@@ -95,3 +103,4 @@ struct Buffer {
     return double
   }
 }
+

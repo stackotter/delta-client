@@ -10,7 +10,7 @@ import Foundation
 // INFO: the way the handlers dict is created is a bit dodge but swift might not have a better way at the moment.
 //   the associated values make it difficult to compare cases cause enums can't have both associated values and raw values
 
-// TODO: should probably use async for trigger event? gotta be careful not to create too many threads again tho
+// NOTE: might not be threadsafe
 class EventManager {
   typealias EventHandler = (Event) -> Void
   
@@ -18,8 +18,13 @@ class EventManager {
   var oneTimeEventHandlers: [String: [EventHandler]] = [:]
   
   enum Event {
-    case statusResponse(PingInfo)
+    case pingInfoReceived(PingInfo)
     case loginSuccess
+    
+    case connectionReady
+    case connectionClosed
+    
+    case error(_ message: String)
     
     // this computed property is used to create the keys for the handlers dict
     var name:String {
@@ -34,28 +39,45 @@ class EventManager {
     }
   }
   
+  // use for app-wide events such as errors
   func registerEventHandler(_ handler: @escaping EventHandler, eventNames: [String]) {
     for eventName in eventNames {
-      if !eventHandlers.keys.contains(eventName) {
+      if eventHandlers[eventName] == nil {
         eventHandlers[eventName] = []
       }
       eventHandlers[eventName]?.append(handler)
     }
   }
   
-  func registerOneTimeHandler(_ handler: @escaping EventHandler, eventName: String) {
-    if !oneTimeEventHandlers.keys.contains(eventName) {
+  // use to register temporary handlers for app-wide events
+  func registerOneTimeEventHandler(_ handler: @escaping EventHandler, eventName: String) {
+    if oneTimeEventHandlers[eventName] == nil {
       oneTimeEventHandlers[eventName] = []
     }
-    oneTimeEventHandlers[eventName]?.append(handler)
+    oneTimeEventHandlers[eventName]!.append(handler)
   }
   
+  // triggers an app wide error (so that the error can be shown by the swiftui code)
+  func triggerError(_ message: String) {
+    let error = Event.error(message)
+    triggerEvent(event: error)
+  }
+  
+  // triggers an event for handlers not attached to a specific server
   func triggerEvent(event: Event) {
     let handlers = eventHandlers[event.name]
     if handlers != nil {
       for handler in handlers! {
         handler(event)
       }
+    }
+    
+    let oneTimeHandlers = oneTimeEventHandlers[event.name]
+    if oneTimeHandlers != nil {
+      for handler in oneTimeHandlers! {
+        handler(event)
+      }
+      oneTimeEventHandlers[event.name] = nil
     }
   }
 }

@@ -19,6 +19,7 @@ struct GameView: View {
 
 struct GameView_Previews: PreviewProvider {
   static var previews: some View {
-    GameView(server: Server(name: "HyPixel", host: "play.hypixel.net", port: 25565))
+    let eventManager = EventManager()
+    GameView(server: Server(name: "HyPixel", host: "play.hypixel.net", port: 25565, eventManager: eventManager))
   }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 
+// TODO: use Buffer for PacketReader
 struct PacketReader {
   var buf: [UInt8]
   var length: Int
@@ -31,7 +32,6 @@ struct PacketReader {
     return byte
   }
   
-  // TODO: this function might be a little sus
   mutating func readBytes(n: Int) -> [UInt8] {
     let bytes = Array(buf[index..<(index+n)])
     index += n

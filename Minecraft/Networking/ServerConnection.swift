@@ -7,19 +7,17 @@
 
 import Foundation
 import Network
+import os
 
 class ServerConnection {
   var host: String
   var port: Int
   var connection: NWConnection
   var queue: DispatchQueue
-  var statusHandler: StatusHandler
+  var packetHandlers: [ConnectionState: PacketHandler]
   
-  var readyCallback: () -> Void = {}
-  var pingCallback: (PingInfo) -> Void = {
-    (pingInfo) in
-  }
-  var closeCallback: () -> Void = {}
+  var eventManager: EventManager
+  var logger: Logger
   
   var state: ConnectionState = .idle
   
@@ -40,48 +38,73 @@ class ServerConnection {
     var packet: [UInt8]
   }
   
-  init(host: String, port: Int) {
+  init(host: String, port: Int, eventManager: EventManager) {
     self.host = host
     self.port = port
-    self.connection = NWConnection(host: NWEndpoint.Host(self.host), port: NWEndpoint.Port(rawValue: UInt16(self.port))!, using: .tcp)
+    self.eventManager = eventManager
+    
+    self.packetHandlers = type(of: self).createPacketHandlers(withEventManager: eventManager)
+    self.logger = Logger(for: type(of: self), desc: "\(host):\(port)")
     
     self.queue = DispatchQueue(label: "networkUpdates")
+    self.connection = NWConnection(host: NWEndpoint.Host(self.host), port: NWEndpoint.Port(rawValue: UInt16(self.port))!, using: .tcp)
     
-    self.statusHandler = StatusHandler()
-    
-    self.connection.stateUpdateHandler = stateUpdateHandler
+    self.connection.stateUpdateHandler = self.stateUpdateHandler
   }
   
-  func registerEventHandlers(_ eventManager: EventManager) {
+  static func createPacketHandlers(withEventManager eventManager: EventManager) -> [ConnectionState: PacketHandler] {
+    var packetHandlers: [ConnectionState: PacketHandler] = [:]
     
+    packetHandlers[.status] = StatusHandler(eventManager: eventManager)
+    return packetHandlers
   }
   
-  func start(callback: @escaping () -> Void = {}) {
+  private func stateUpdateHandler(newState: NWConnection.State) {
+    switch(newState) {
+      case .ready:
+        state = .ready
+        eventManager.triggerEvent(event: .connectionReady)
+        
+        receive()
+      case .waiting(let error):
+        handleNWError(error)
+      case .failed(let error):
+        state = .disconnected
+        logger.error("failed to start connection to server")
+        handleNWError(error)
+      default:
+        break
+    }
+  }
+  
+  func start() {
     state = .connecting
-    readyCallback = callback
     connection.start(queue: queue)
   }
   
   func close() {
     connection.cancel()
     state = .disconnected
-    closeCallback()
+    eventManager.triggerEvent(event: .connectionClosed)
   }
   
-  func ping(callback: ((PingInfo) -> Void)? = nil) {
-    statusHandler.pingCallback = callback
-    // TODO: change to switch statement
-    if (state == .idle) {
-      start(callback: {
-        self.ping(callback: callback)
-      })
-    } else if (state == .connecting || state == .ready) {
-      handshake(nextState: .status, callback: {
-        self.ping(callback: callback)
-      })
-    } else if (state == .status) {
-      let statusRequest = StatusRequest()
-      sendPacket(statusRequest)
+  func ping() {
+    switch state {
+      case .idle:
+        eventManager.registerOneTimeEventHandler({ (event) in
+          self.ping()
+        }, eventName: "connectionReady")
+        start()
+      case .connecting, .ready:
+        handshake(nextState: .status, callback: {
+          self.ping()
+        })
+      case .status:
+        let statusRequest = StatusRequest()
+        sendPacket(statusRequest)
+      default:
+        logger.debug("ping in unhandled state")
+        break
     }
   }
   
@@ -89,8 +112,10 @@ class ServerConnection {
     state = .handshaking
     let handshake = Handshake(protocolVersion: 754, serverAddr: host, serverPort: port, nextState: nextState)
 
-    // TODO: error handling
     self.sendPacket(handshake, callback: .contentProcessed({ (error) in
+      if error != nil {
+        self.logger.error("failed to send packet: \(error!.debugDescription)")
+      }
       self.state = (nextState == .login) ? .login : .status
       callback()
     }))
@@ -125,12 +150,12 @@ class ServerConnection {
       }
       
       let bytes = [UInt8](data!)
-      var reader = PacketReader(bytes: bytes)
+      var buf = Buffer(bytes)
       
       while true {
         if (length == -1) {
-          while reader.remaining != 0 {
-            let byte = reader.readByte()
+          while buf.remaining != 0 {
+            let byte = buf.readByte()
             lengthBytes.append(byte)
             if (byte & 0x80 == 0x00) {
               break
@@ -149,16 +174,16 @@ class ServerConnection {
         }
         
         if (length == 0) {
-          self.log("received empty packet")
+          self.logger.info("received empty packet")
           length = -1
           lengthBytes = []
-        } else if (length != -1 && reader.remaining != 0) {
-          while reader.remaining != 0 {
-            let byte = reader.readByte()
+        } else if (length != -1 && buf.remaining != 0) {
+          while buf.remaining != 0 {
+            let byte = buf.readByte()
             packet.append(byte)
             
             if (packet.count == length) {
-              // TODO: might cause thousands of threads again
+              // TODO: might cause thousands of threads again, use a thread pool instead
               let packetCopy = packet
               self.queue.async {
                 self.handlePacket(bytes: packetCopy)
@@ -171,7 +196,7 @@ class ServerConnection {
           }
         }
         
-        if (reader.remaining == 0) {
+        if (buf.remaining == 0) {
           break
         }
       }
@@ -180,60 +205,37 @@ class ServerConnection {
         let receiveState = ReceiveState(lengthBytes: lengthBytes, length: length, packet: packet)
         self.receive(receiveState: receiveState)
       } else {
-        print("this should probably just fail here")
+        self.logger.debug("stopped receiving")
       }
     })
   }
   
-  // TODO: delete when proper logger implemented
-  func log(_ message: String) {
-    print("[INFO] \(self.host):\(String(self.port)) : \(message)")
-  }
-  
   // bytes doesn't include the length of the packet
   func handlePacket(bytes: [UInt8]) {
-    print("packet received with id: \(bytes[0])")
-    var reader = PacketReader(bytes: bytes)
+    logger.debug("packet received with id: \(bytes[0])")
+    let reader = PacketReader(bytes: bytes)
     
     // TODO: delete when disconnect packets are handled
     if bytes[0] == 0x19 {
-      log("disconnect: \(bytes)")
+      logger.error("received disconnect packet")
+      eventManager.triggerError("received disconnect packet")
     }
     
-    switch state {
-      case .idle, .connecting, .disconnected:
-        print("received packet in invalid state")
-      case .status:
-        statusHandler.handlePacket(reader: reader)
-      case .login:
-        print(reader.readPacketId())
-      default:
-        return
-    }
-  }
-  
-  private func stateUpdateHandler(newState: NWConnection.State) {
-    switch(newState) {
-      case .ready:
-        state = .ready
-        receive()
-        readyCallback()
-      case .waiting(let error):
-        handleNWError(error)
-      case .failed(let error):
-        state = .disconnected
-        print("error: \(error)")
-        handleNWError(error)
-      default:
-        break
+    let packetHandler = packetHandlers[state]
+    if packetHandler != nil {
+      packetHandler!.handlePacket(reader: reader)
+    } else {
+      logger.notice("received packet in invalid or non-implented state")
     }
   }
   
   private func handleNWError(_ error: NWError) {
     if (error == NWError.posix(.ECONNREFUSED) || error == NWError.posix(.ECANCELED)) {
       close()
+    } else if error == NWError.dns(-65554) { // -65554 is the error code for NoSuchRecord
+      logger.error("no such record: this server is not yet supported as it uses SRV records")
     } else {
-      print("NWError: \(error)")
+      logger.notice("\(String(describing: error))")
     }
   }
 }

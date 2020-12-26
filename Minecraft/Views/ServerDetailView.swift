@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct ServerDetailView: View {
-  @Binding var isPlaying: Bool
-  @Binding var selectedServer: Server?
-  
+  @ObservedObject var viewState: ViewState
   @ObservedObject var server: Server
   
   var body: some View {
@@ -34,8 +32,7 @@ struct ServerDetailView: View {
       }
       
       Button(action: {
-//        isPlaying = true
-        selectedServer = server
+        viewState.playServer(server: server)
         server.login()
       }) {
         Text("Play")

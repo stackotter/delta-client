@@ -7,6 +7,7 @@
 
 import Foundation
 
+// TODO: use Buffer for PacketWriter
 struct PacketWriter {
   var packetId: Int
   var buf: [UInt8] = []
@@ -101,7 +102,6 @@ struct PacketWriter {
     writeString(chat)
   }
   
-  // TODO: maybe make an identifier struct
   mutating func writeIdentifier(_ identifier: String) {
     writeString(identifier)
   }
