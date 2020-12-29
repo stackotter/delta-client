@@ -16,6 +16,29 @@ struct NBTCompound {
   var numBytes = -1
   var isRoot: Bool
   
+  struct NBTTag {
+    var id: Int
+    var name: String?
+    var type: NBTTagType
+    var value: Any?
+  }
+  
+  // TODO_LATER: figure out how to not use Any
+  struct NBTList {
+    var type: NBTTagType
+    var list: [Any] = []
+    
+    var count: Int {
+      get {
+        return list.count
+      }
+    }
+    
+    mutating func append(_ elem: Any) {
+      list.append(elem)
+    }
+  }
+  
   enum NBTTagType: UInt8 {
     case end = 0
     case byte = 1
@@ -32,13 +55,13 @@ struct NBTCompound {
     case longArray = 12
   }
   
-  typealias NBTTag = (type: NBTTagType, value: Any)
+  // [ Initialisers ]
   
   init(fromBytes bytes: [UInt8], isRoot: Bool = true) {
     self.init(fromBuffer: Buffer(bytes), isRoot: isRoot)
   }
   
-  init(fromBuffer buffer: Buffer, isRoot: Bool = true) {
+  init(fromBuffer buffer: Buffer, withName name: String = "", isRoot: Bool = true) {
     self.buffer = buffer
     self.isRoot = isRoot
     if self.isRoot {
@@ -52,11 +75,13 @@ struct NBTCompound {
       } else {
         fatalError("invalid type id for root tag")
       }
+    } else {
+      self.name = name
     }
     self.unpack()
   }
   
-  init(fromUrl url: URL) {
+  init(fromURL url: URL) {
     let data: Data
     do {
       data = try Data(contentsOf: url)
@@ -67,10 +92,15 @@ struct NBTCompound {
     self.init(fromBytes: bytes)
   }
   
-  // [ Getter Function ]
+  // [ Value Getter ]
   
   func get<T>(_ key: String) -> T {
     return nbtTags[key]!.value as! T
+  }
+  
+  func getList<T>(_ key: String) -> T {
+    let nbtList = nbtTags[key]!.value as! NBTList
+    return nbtList.list as! T
   }
   
   // [ Read functions ]
@@ -78,9 +108,9 @@ struct NBTCompound {
   mutating func unpack() {
     let initialBufferIndex = buffer.index
     
+    var n = 0
     while true {
       let typeId = buffer.readByte()
-      print(typeId)
       if let type = NBTTagType.init(rawValue: typeId) {
         if type == .end {
           break
@@ -88,7 +118,7 @@ struct NBTCompound {
         let nameLength = Int(buffer.readShort(endian: .big))
         let name = buffer.readString(length: nameLength)
         
-        nbtTags[name] = readTag(ofType: type, name: name)
+        nbtTags[name] = readTag(ofType: type, withId: n, andName: name)
       } else { // type not valid
         fatalError("invalid nbt type id: \(typeId)")
       }
@@ -97,12 +127,14 @@ struct NBTCompound {
       if isRoot {
         break
       }
+      n += 1
     }
+    
     let numBytesRead = buffer.index - initialBufferIndex
     numBytes = numBytesRead
   }
   
-  mutating func readTag(ofType type: NBTTagType, name: String = "") -> NBTTag {
+  mutating func readTag(ofType type: NBTTagType, withId id: Int = 0, andName name: String = "") -> NBTTag {
     var value: Any?
     switch type {
       case .end:
@@ -133,7 +165,8 @@ struct NBTCompound {
             // TODO: error handling
             fatalError("list of length less than 0 in nbt")
           }
-          var list: [Any] = []
+          
+          var list = NBTList(type: listType)
           if length != 0 {
             for _ in 1...length {
               list.append(readTag(ofType: listType).value)
@@ -145,7 +178,7 @@ struct NBTCompound {
           fatalError("invalid list type")
         }
       case .compound:
-        let compound = NBTCompound(fromBuffer: buffer, isRoot: false)
+        let compound = NBTCompound(fromBuffer: buffer, withName: name, isRoot: false)
         buffer.skip(nBytes: compound.numBytes)
         value = compound
       case .intArray:
@@ -155,12 +188,77 @@ struct NBTCompound {
         // TODO: implement NBT long array
         break
     }
-    return (type: type, value: value!)
+    return NBTTag(id: id, name: name, type: type, value: value!)
   }
   
   // [ Write functions ]
   
   mutating func pack() -> [UInt8] {
-    return []
+    buffer = Buffer()
+    let tags = nbtTags.values
+    
+    if isRoot {
+      buffer.writeByte(NBTTagType.compound.rawValue)
+      writeName(self.name)
+    }
+    for tag in tags {
+      buffer.writeByte(tag.type.rawValue)
+      writeName(tag.name!)
+      writeTag(tag)
+    }
+    writeTag(NBTTag(id: 0, type: .end, value: nil))
+    
+    return buffer.byteBuf
+  }
+  
+  mutating func writeName(_ name: String) {
+    buffer.writeShort(UInt16(name.utf8.count), endian: .big)
+    buffer.writeString(name)
+  }
+  
+  mutating func writeTag(_ tag: NBTTag) {
+    switch tag.type {
+      case .end:
+        buffer.writeByte(0)
+      case .byte:
+        buffer.writeSignedByte(tag.value as! Int8)
+      case .short:
+        buffer.writeSignedShort(tag.value as! Int16, endian: .big)
+      case .int:
+        buffer.writeSignedInt(tag.value as! Int32, endian: .big)
+      case .long:
+        buffer.writeSignedLong(tag.value as! Int64, endian: .big)
+      case .float:
+        buffer.writeFloat(tag.value as! Float, endian: .big)
+      case .double:
+        buffer.writeDouble(tag.value as! Double, endian: .big)
+      case .byteArray:
+        buffer.writeBytes(tag.value as! [UInt8])
+      case .string:
+        let string = tag.value as! String
+        buffer.writeShort(UInt16(string.utf8.count), endian: .big)
+        buffer.writeString(string)
+      case .list:
+        let list = tag.value as! NBTList
+        let listType = list.type
+        let listLength = list.count
+        
+        buffer.writeByte(listType.rawValue)
+        buffer.writeSignedInt(Int32(listLength), endian: .big)
+        
+        for elem in list.list {
+          let value = NBTTag(id: 0, type: listType, value: elem)
+          writeTag(value)
+        }
+      case .compound:
+        var compound = tag.value as! NBTCompound
+        buffer.writeBytes(compound.pack())
+      case .intArray:
+        // TODO: implement NBT int array
+        break
+      case .longArray:
+        // TODO: implement NBT long array
+        break
+    }
   }
 }

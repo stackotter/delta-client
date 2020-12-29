@@ -31,8 +31,8 @@ class Config {
   
   func loadServerList(minecraftFolder: URL, eventManager: EventManager, logger: Logger) {
     let serversDatURL = minecraftFolder.appendingPathComponent("servers.dat")
-    let serversNBT = NBTCompound(fromUrl: serversDatURL)
-    let serverNBTList: [NBTCompound] = serversNBT.get("servers")
+    let serversNBT = NBTCompound(fromURL: serversDatURL)
+    let serverNBTList: [NBTCompound] = serversNBT.getList("servers")
     var servers: [Server] = []
     for serverNBT in serverNBTList {
       let ip: String = serverNBT.get("ip")
