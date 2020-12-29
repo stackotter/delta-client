@@ -41,7 +41,7 @@ struct NBTCompound {
       if type != .compound {
         fatalError("NBT root tag is not compound (root tag is always compound tag in java edition")
       }
-      let nameLen = Int(buf.readShort())
+      let nameLen = Int(buf.readShort(endian: .big))
       let name = buf.readString(length: nameLen)
       return NBTCompound(name: name, buf: &buf)
     } else {
@@ -49,7 +49,6 @@ struct NBTCompound {
     }
   }
   
-  // TODO:180 think of better name for this function
   mutating func unpack(buf: inout Buffer) {
     while true {
       let typeId = buf.readByte()
@@ -57,7 +56,7 @@ struct NBTCompound {
         if type == .end {
           break
         }
-        let nameLength = Int(buf.readShort())
+        let nameLength = Int(buf.readShort(endian: .big))
         let name = buf.readString(length: nameLength)
         
         nbtData[name] = readTag(ofType: type, buf: &buf, name: name)
@@ -75,25 +74,25 @@ struct NBTCompound {
       case .byte:
         value = buf.readByte()
       case .short:
-        value = buf.readSignedShort()
+        value = buf.readSignedShort(endian: .big)
       case .int:
-        value = buf.readSignedInt()
+        value = buf.readSignedInt(endian: .big)
       case .long:
-        value = buf.readLong()
+        value = buf.readLong(endian: .big)
       case .float:
-        value = buf.readFloat()
+        value = buf.readFloat(endian: .big)
       case .double:
-        value = buf.readDouble()
+        value = buf.readDouble(endian: .big)
       case .byteArray:
-        let length = Int(buf.readSignedInt())
+        let length = Int(buf.readSignedInt(endian: .big))
         value = buf.readSignedBytes(n: length)
       case .string:
-        let length = Int(buf.readShort())
+        let length = Int(buf.readShort(endian: .big))
         value = buf.readString(length: length)
       case .list:
         let typeId = buf.readByte()
         if let listType = NBTTagType.init(rawValue: typeId) {
-          let length = buf.readSignedInt()
+          let length = buf.readSignedInt(endian: .big)
           if length < 0 {
             // TODO: error handling
             fatalError("list of length less than 0 in nbt")

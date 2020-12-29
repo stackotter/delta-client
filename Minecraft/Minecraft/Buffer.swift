@@ -8,10 +8,15 @@
 import Foundation
 
 struct Buffer {
-  // all functions read big endian and unsigned unless otherwise specified
+  // all functions read unsigned unless otherwise specified
   var buf: [UInt8]
   var length: Int
   var index = 0
+  
+  enum Endian {
+    case little
+    case big
+  }
   
   var remaining: Int {
     get {
@@ -51,55 +56,65 @@ struct Buffer {
     return string
   }
   
-  mutating func readBitPattern(n: Int) -> UInt64{
+  mutating func readBitPattern(n: Int, endian: Endian) -> UInt64{
     let bytes: [UInt8] = readBytes(n: n)
     var bitPattern: UInt64 = 0
-    for byte in bytes {
-      bitPattern <<= 8
-      bitPattern |= UInt64(byte)
+    
+    switch endian {
+      case .big:
+        for byte in bytes {
+          bitPattern <<= 8
+          bitPattern |= UInt64(byte)
+        }
+      case .little:
+        for byte in bytes {
+          bitPattern >>= 8
+          bitPattern |= UInt64(byte) << ((n - 1)*8)
+        }
     }
+    
     return bitPattern
   }
   
-  mutating func readShort() -> UInt16 {
-    let short = UInt16(readBitPattern(n: 2))
+  mutating func readShort(endian: Endian) -> UInt16 {
+    let short = UInt16(readBitPattern(n: 2, endian: endian))
     return short
   }
   
-  mutating func readSignedShort() -> Int16 {
-    let signedShort = Int16(bitPattern: readShort())
+  mutating func readSignedShort(endian: Endian) -> Int16 {
+    let signedShort = Int16(bitPattern: readShort(endian: endian))
     return signedShort
   }
   
-  mutating func readInt() -> UInt32 {
-    let int = UInt32(readBitPattern(n: 4))
+  mutating func readInt(endian: Endian) -> UInt32 {
+    let int = UInt32(readBitPattern(n: 4, endian: endian))
     return int
   }
   
-  mutating func readSignedInt() -> Int32 {
-    let signedInt = Int32(bitPattern: readInt())
+  mutating func readSignedInt(endian: Endian) -> Int32 {
+    let signedInt = Int32(bitPattern: readInt(endian: endian))
     return signedInt
   }
   
-  mutating func readLong() -> UInt64 {
-    let long = readBitPattern(n: 8)
+  mutating func readLong(endian: Endian) -> UInt64 {
+    let long = readBitPattern(n: 8, endian: endian)
     return long
   }
   
-  mutating func readSignedLong() -> Int64 {
-    let signedLong = Int64(bitPattern: readLong())
+  mutating func readSignedLong(endian: Endian) -> Int64 {
+    let signedLong = Int64(bitPattern: readLong(endian: endian))
     return signedLong
   }
   
   
   // TODO: check if these two actually work
-  mutating func readFloat() -> Float {
-    let float = Float(bitPattern: readInt())
+  mutating func readFloat(endian: Endian) -> Float {
+    let float = Float(bitPattern: readInt(endian: endian))
     return float
   }
   
-  mutating func readDouble() -> Double {
-    let double = Double(bitPattern: readLong())
+  mutating func readDouble(endian: Endian) -> Double {
+    let double = Double(bitPattern: readLong(endian: endian))
     return double
   }
 }

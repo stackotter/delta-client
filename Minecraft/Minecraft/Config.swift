@@ -6,29 +6,30 @@
 //
 
 import Foundation
-import AppKit
-import Network
 import os
 
-// TODO: Get this working under the sandbox
-struct Config {
-  var serverList: ServerList
+// NOTE: could possibly be struct instead of class
+// TODO_LATER: Get this working under the sandbox
+// TODO_LATER: Handle minecraft folder not existing
+class Config {
+  private var logger: Logger
   
-  static func from(minecraftFolder: URL, eventManager: EventManager) -> Config {
-    let logger = Logger(for: type(of: self))
-    let serverList = loadServerList(minecraftFolder: minecraftFolder, eventManager: eventManager)
-//    serverList.servers.append(contentsOf: [
-//      Server(name: "MinePlex", host: "us.mineplex.com", port: 25565),
-//      // TODO: get SRV records working
-//      Server(name: "PVPWars", host: "play.pvpwars.net", port: 25565)
-//    ])
-    logger.debug("loaded server list")
-    loadUserProfile(minecraftFolder: minecraftFolder)
-    logger.debug("loaded user profile")
-    return Config(serverList: serverList)
+  var minecraftFolder: URL
+  var eventManager: EventManager
+  
+  var serverList: ServerList?
+  var launcherProfile: LauncherProfile?
+  
+  init(minecraftFolder: URL, eventManager: EventManager) {
+    self.logger = Logger(for: type(of: self))
+    self.minecraftFolder = minecraftFolder
+    self.eventManager = eventManager
+    
+    loadServerList(minecraftFolder: minecraftFolder, eventManager: eventManager, logger: logger)
+    loadLauncherProfile(minecraftFolder: minecraftFolder)
   }
   
-  static func loadServerList(minecraftFolder: URL, eventManager: EventManager) -> ServerList {
+  func loadServerList(minecraftFolder: URL, eventManager: EventManager, logger: Logger) {
     let serversDatURL = minecraftFolder.appendingPathComponent("servers.dat")
     let serversNBT = NBT.fromURL(serversDatURL)
     let serverNBTList = serversNBT.root.nbtData["servers"] as! [[String: String]]
@@ -46,24 +47,27 @@ struct Config {
             server = Server(name: name, host: host, port: 25565, eventManager: eventManager)
           }
         } else {
-          // TODO: use logger for these print statements
-          print("server ip has no host?")
+          logger.debug("server ip has no host?")
           continue
         }
       } else {
-        print("invalid server ip: \(ip)")
+        logger.debug("invalid server ip: \(ip)")
         continue
       }
       servers.append(server!)
     }
-    return ServerList(withServers: servers)
+    self.serverList = ServerList(withServers: servers)
   }
   
-  static func loadUserProfile(minecraftFolder: URL) {
+  func loadLauncherProfile(minecraftFolder: URL) {
     let launcherProfilesURL = minecraftFolder.appendingPathComponent("launcher_profiles.json")
     let json = JSON.fromURL(launcherProfilesURL)
     let selectedUser = json.getJSON(forKey: "selectedUser")
-    let accountUUID = selectedUser.getString(forKey: "account")
-    let profileUUID = selectedUser.getString(forKey: "profile")
+    
+    let accountUUID = UUID.fromString(selectedUser.getString(forKey: "account"))
+    let profileUUID = UUID.fromString(selectedUser.getString(forKey: "profile"))
+    
+    let profile = LauncherProfile(accountUUID: accountUUID!, profileUUID: profileUUID!)
+    self.launcherProfile = profile
   }
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		780D9BA92596CF5900144D45 /* LauncherProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780D9BA82596CF5900144D45 /* LauncherProfile.swift */; };
 		78225CE3258EC0CE007B7F98 /* EventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78225CE2258EC0CE007B7F98 /* EventManager.swift */; };
 		7830D8C925940BE500D35180 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7830D8C825940BE500D35180 /* Logger.swift */; };
 		7830D8CE2596B91B00D35180 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7830D8CD2596B91B00D35180 /* ViewState.swift */; };
@@ -16,6 +17,7 @@
 		784194C2258204D00070DE78 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 784194C1258204D00070DE78 /* Preview Assets.xcassets */; };
 		784194CE258204D10070DE78 /* MinecraftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194CD258204D10070DE78 /* MinecraftTests.swift */; };
 		784194D9258204D10070DE78 /* MinecraftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194D8258204D10070DE78 /* MinecraftUITests.swift */; };
+		784CAE24259AB654003E5F87 /* UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CAE23259AB654003E5F87 /* UUID.swift */; };
 		784D97912587604700FC89F8 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D97902587604700FC89F8 /* Config.swift */; };
 		78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78654EB62585E0CF00770FFF /* PingInfo.swift */; };
 		7878855F2588136700226064 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7878855E2588136700226064 /* Buffer.swift */; };
@@ -58,6 +60,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		780D9BA82596CF5900144D45 /* LauncherProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauncherProfile.swift; sourceTree = "<group>"; };
 		78225CE2258EC0CE007B7F98 /* EventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventManager.swift; sourceTree = "<group>"; };
 		7830D8C825940BE500D35180 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		7830D8CD2596B91B00D35180 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
@@ -74,6 +77,7 @@
 		784194D4258204D10070DE78 /* MinecraftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinecraftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D8258204D10070DE78 /* MinecraftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftUITests.swift; sourceTree = "<group>"; };
 		784194DA258204D10070DE78 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		784CAE23259AB654003E5F87 /* UUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUID.swift; sourceTree = "<group>"; };
 		784D97902587604700FC89F8 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		78654EB62585E0CF00770FFF /* PingInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingInfo.swift; sourceTree = "<group>"; };
 		7878855E2588136700226064 /* Buffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
@@ -228,11 +232,13 @@
 				7884358F2585E606002F1F84 /* Server.swift */,
 				78225CE2258EC0CE007B7F98 /* EventManager.swift */,
 				784D97902587604700FC89F8 /* Config.swift */,
+				784CAE23259AB654003E5F87 /* UUID.swift */,
 				7896508C258863B90079C5CF /* NBT.swift */,
-				789BE9E22589DAC7001C08ED /* JSON.swift */,
 				78965087258861FE0079C5CF /* NBTCompound.swift */,
+				789BE9E22589DAC7001C08ED /* JSON.swift */,
 				7878855E2588136700226064 /* Buffer.swift */,
 				7884359A25861981002F1F84 /* ServerList.swift */,
+				780D9BA82596CF5900144D45 /* LauncherProfile.swift */,
 				7830D8C825940BE500D35180 /* Logger.swift */,
 			);
 			path = Minecraft;
@@ -403,6 +409,7 @@
 				787D8FF1258451A8007E6441 /* ServerConnection.swift in Sources */,
 				78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */,
 				7830D8CE2596B91B00D35180 /* ViewState.swift in Sources */,
+				784CAE24259AB654003E5F87 /* UUID.swift in Sources */,
 				788435A025861B55002F1F84 /* ServerListEntryView.swift in Sources */,
 				7878B52F25844B6B007C0D3D /* GameView.swift in Sources */,
 				7878B53125844B6B007C0D3D /* ServerListView.swift in Sources */,
@@ -417,6 +424,7 @@
 				7878855F2588136700226064 /* Buffer.swift in Sources */,
 				789BE9E32589DAC7001C08ED /* JSON.swift in Sources */,
 				787D8FF625848480007E6441 /* Packet.swift in Sources */,
+				780D9BA92596CF5900144D45 /* LauncherProfile.swift in Sources */,
 				78C2D58F258597D400883DF5 /* PacketReader.swift in Sources */,
 				78225CE3258EC0CE007B7F98 /* EventManager.swift in Sources */,
 				78C2D5952585CA7400883DF5 /* StatusHandler.swift in Sources */,

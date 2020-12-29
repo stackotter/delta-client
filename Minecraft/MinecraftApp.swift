@@ -15,10 +15,9 @@ struct MinecraftApp: App {
   @ObservedObject var viewState: ViewState
   
   init() {
-    // TODO: error handle minecraft folder not existing
     eventManager = EventManager()
-    config = Config.from(minecraftFolder: minecraftFolder, eventManager: eventManager)
-    viewState = ViewState(serverList: config.serverList)
+    config = Config(minecraftFolder: minecraftFolder, eventManager: eventManager)
+    viewState = ViewState(serverList: config.serverList!)
     
     eventManager.registerEventHandler(handleError, eventNames: ["error"])
   }

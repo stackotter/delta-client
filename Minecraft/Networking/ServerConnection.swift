@@ -215,7 +215,7 @@ class ServerConnection {
     logger.debug("packet received with id: \(bytes[0])")
     let reader = PacketReader(bytes: bytes)
     
-    // TODO: delete when disconnect packets are handled
+    // NOTE: delete when disconnect packets are handled
     if bytes[0] == 0x19 {
       logger.error("received disconnect packet")
       eventManager.triggerError("received disconnect packet")
