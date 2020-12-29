@@ -86,5 +86,28 @@ struct PacketWriter {
     buf.writeVarLong(varLong)
   }
   
-  // IMPLEMENT: Entity Metadata, Slot Data, NBT, Position, Angle, UUID, 
+  // IMPLEMENT: Entity Metadata, Position, Angle
+  
+  mutating func writeSlot(_ slot: Slot) {
+    writeBool(slot.present)
+    if slot.present {
+      writeVarInt(Int32(slot.itemId!))
+      writeByte(Int8(slot.itemCount!))
+      writeNBT(slot.nbt!)
+    }
+  }
+  
+  mutating func writeNBT(_ nbtCompound: NBTCompound) {
+    var compound = nbtCompound
+    buf.writeBytes(compound.pack())
+  }
+  
+  mutating func writeUUID(_ uuid: UUID) {
+    let bytes = uuid.toBytes()
+    buf.writeBytes(bytes)
+  }
+  
+  mutating func writeByteArray(_ byteArray: [UInt8]) {
+    buf.writeBytes(byteArray)
+  }
 }
