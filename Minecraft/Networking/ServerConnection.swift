@@ -165,6 +165,7 @@ class ServerConnection {
           
           if (lengthBytes.count != 0) {
             if (lengthBytes.last! & 0x80 == 0x00) {
+              // using standalone implementation of varint decoding to hopefully reduce networking overheads slightly?
               length = 0
               for i in 0..<lengthBytes.count {
                 let byte = lengthBytes[i]

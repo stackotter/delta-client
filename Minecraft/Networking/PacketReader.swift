@@ -7,7 +7,6 @@
 
 import Foundation
 
-// Wrapper for Buffer that keeps naming consistent with wiki.vg's data type naming
 struct PacketReader {
   var packetId: Int = -1
   var buf: Buffer

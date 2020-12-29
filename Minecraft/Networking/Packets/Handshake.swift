@@ -25,7 +25,7 @@ struct Handshake: Packet {
     var writer = PacketWriter(packetId: id)
     writer.writeVarInt(Int32(protocolVersion))
     writer.writeString(serverAddr)
-    writer.writeShort(UInt16(serverPort))
+    writer.writeUnsignedShort(UInt16(serverPort))
     writer.writeVarInt(Int32(nextState.rawValue))
     return writer.pack()
   }
