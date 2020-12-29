@@ -29,33 +29,6 @@ struct Buffer {
     self.length = self.buf.count
   }
   
-  mutating func readByte() -> UInt8 {
-    let byte = buf[index]
-    index += 1
-    return byte
-  }
-  
-  mutating func readBytes(n: Int) -> [UInt8] {
-    let bytes = Array(buf[index..<index+n])
-    index += n
-    return bytes
-  }
-  
-  mutating func readSignedBytes(n: Int) -> [Int8] {
-    let bytes = readBytes(n: n)
-    var signedBytes: [Int8] = []
-    for i in 0..<bytes.count {
-      signedBytes[i] = Int8(bitPattern: bytes[0])
-    }
-    return signedBytes
-  }
-  
-  mutating func readString(length: Int) -> String {
-    let bytes = readBytes(n: length)
-    let string = String(bytes: bytes, encoding: .utf8)!
-    return string
-  }
-  
   mutating func readBitPattern(n: Int, endian: Endian) -> UInt64{
     let bytes: [UInt8] = readBytes(n: n)
     var bitPattern: UInt64 = 0
@@ -74,6 +47,32 @@ struct Buffer {
     }
     
     return bitPattern
+  }
+  
+  mutating func readByte() -> UInt8 {
+    let byte = buf[index]
+    index += 1
+    return byte
+  }
+  
+  mutating func readSignedByte() -> Int8 {
+    let byte = Int8(bitPattern: readByte())
+    return byte
+  }
+  
+  mutating func readBytes(n: Int) -> [UInt8] {
+    let bytes = Array(buf[index..<index+n])
+    index += n
+    return bytes
+  }
+  
+  mutating func readSignedBytes(n: Int) -> [Int8] {
+    let bytes = readBytes(n: n)
+    var signedBytes: [Int8] = []
+    for i in 0..<bytes.count {
+      signedBytes[i] = Int8(bitPattern: bytes[0])
+    }
+    return signedBytes
   }
   
   mutating func readShort(endian: Endian) -> UInt16 {
@@ -106,7 +105,6 @@ struct Buffer {
     return signedLong
   }
   
-  
   // TODO: check if these two actually work
   mutating func readFloat(endian: Endian) -> Float {
     let float = Float(bitPattern: readInt(endian: endian))
@@ -116,6 +114,38 @@ struct Buffer {
   mutating func readDouble(endian: Endian) -> Double {
     let double = Double(bitPattern: readLong(endian: endian))
     return double
+  }
+  
+  mutating func readVarNum(maxBytes: Int) -> Int64 {
+    var int: Int64 = 0
+    var i = 0
+    var byte: UInt8
+    if maxBytes > 10 || maxBytes < 1 {
+      fatalError("var num invalid valid for maxBytes")
+    }
+    repeat {
+      if i == maxBytes {
+        fatalError("var num too long")
+      }
+      byte = readByte()
+      int += Int64(byte & 0x7f) << (i * 7)
+      i += 1
+    } while (byte & 0x80) == 0x80
+    return int
+  }
+  
+  mutating func readVarInt() -> Int32 {
+    return Int32(readVarNum(maxBytes: 5))
+  }
+  
+  mutating func readVarLong() -> Int64 {
+    return readVarNum(maxBytes: 10)
+  }
+  
+  mutating func readString(length: Int) -> String {
+    let bytes = readBytes(n: length)
+    let string = String(bytes: bytes, encoding: .utf8)!
+    return string
   }
 }
 

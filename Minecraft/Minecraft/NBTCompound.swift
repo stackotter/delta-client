@@ -36,6 +36,10 @@ struct NBTCompound {
   
   static func fromBytes(_ bytes: [UInt8]) -> NBTCompound {
     var buf = Buffer(bytes)
+    return fromBuffer(&buf)
+  }
+  
+  static func fromBuffer(_ buf: inout Buffer) -> NBTCompound {
     let typeId = buf.readByte()
     if let type = NBTTagType.init(rawValue: typeId) {
       if type != .compound {

@@ -14,15 +14,16 @@ protocol Packet {
   
   func toBytes() -> [UInt8]
   
-  static func from(_ reader: PacketReader) -> PacketType?
+  static func from(_ packetReader: PacketReader) -> PacketType?
 }
 
 extension Packet {
   func toBytes() -> [UInt8] {
+    print("toBytes called on packet without implementation")
     return []
   }
   
-  static func from(_ reader: PacketReader) -> PacketType? {
+  static func from(_ packetReader: PacketReader) -> PacketType? {
     return nil
   }
 }

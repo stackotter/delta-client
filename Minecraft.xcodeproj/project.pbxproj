@@ -18,6 +18,7 @@
 		784194CE258204D10070DE78 /* MinecraftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194CD258204D10070DE78 /* MinecraftTests.swift */; };
 		784194D9258204D10070DE78 /* MinecraftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194D8258204D10070DE78 /* MinecraftUITests.swift */; };
 		784CAE24259AB654003E5F87 /* UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CAE23259AB654003E5F87 /* UUID.swift */; };
+		784CAE29259ACA74003E5F87 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CAE28259ACA74003E5F87 /* Slot.swift */; };
 		784D97912587604700FC89F8 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D97902587604700FC89F8 /* Config.swift */; };
 		78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78654EB62585E0CF00770FFF /* PingInfo.swift */; };
 		7878855F2588136700226064 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7878855E2588136700226064 /* Buffer.swift */; };
@@ -78,6 +79,7 @@
 		784194D8258204D10070DE78 /* MinecraftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftUITests.swift; sourceTree = "<group>"; };
 		784194DA258204D10070DE78 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		784CAE23259AB654003E5F87 /* UUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUID.swift; sourceTree = "<group>"; };
+		784CAE28259ACA74003E5F87 /* Slot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
 		784D97902587604700FC89F8 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		78654EB62585E0CF00770FFF /* PingInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingInfo.swift; sourceTree = "<group>"; };
 		7878855E2588136700226064 /* Buffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 				7884359A25861981002F1F84 /* ServerList.swift */,
 				780D9BA82596CF5900144D45 /* LauncherProfile.swift */,
 				7830D8C825940BE500D35180 /* Logger.swift */,
+				784CAE28259ACA74003E5F87 /* Slot.swift */,
 			);
 			path = Minecraft;
 			sourceTree = "<group>";
@@ -417,6 +420,7 @@
 				7830D8C925940BE500D35180 /* Logger.swift in Sources */,
 				7830D8D32596C13A00D35180 /* ErrorView.swift in Sources */,
 				78965088258861FE0079C5CF /* NBTCompound.swift in Sources */,
+				784CAE29259ACA74003E5F87 /* Slot.swift in Sources */,
 				78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */,
 				7878B53025844B6B007C0D3D /* ServerDetailView.swift in Sources */,
 				789650922588834C0079C5CF /* LoginStart.swift in Sources */,

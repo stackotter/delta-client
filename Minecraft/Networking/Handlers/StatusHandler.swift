@@ -10,12 +10,10 @@ import Foundation
 struct StatusHandler: PacketHandler {
   var eventManager: EventManager
   
-  func handlePacket(reader: PacketReader) {
-    var mutableReader = reader
-    let packetId = mutableReader.readPacketId()
-    switch (packetId) {
+  func handlePacket(packetReader: PacketReader) {
+    switch (packetReader.packetId) {
       case 0x00:
-        handle(StatusResponse.from(mutableReader)!)
+        handle(StatusResponse.from(packetReader)!)
       default:
         return
     }

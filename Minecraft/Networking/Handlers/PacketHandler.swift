@@ -10,5 +10,5 @@ import Foundation
 protocol PacketHandler {
   var eventManager: EventManager { get }
   
-  func handlePacket(reader: PacketReader)
+  func handlePacket(packetReader: PacketReader)
 }

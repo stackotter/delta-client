@@ -82,6 +82,7 @@ class ServerConnection {
     connection.start(queue: queue)
   }
   
+  // TODO: stop doing so many duplicate cancels
   func close() {
     connection.cancel()
     state = .disconnected
@@ -212,18 +213,19 @@ class ServerConnection {
   
   // bytes doesn't include the length of the packet
   func handlePacket(bytes: [UInt8]) {
-    logger.debug("packet received with id: \(bytes[0])")
-    let reader = PacketReader(bytes: bytes)
+    let packetReader = PacketReader(bytes: bytes)
+    
+    logger.debug("packet received with id: \(packetReader.packetId)")
     
     // NOTE: delete when disconnect packets are handled
-    if bytes[0] == 0x19 {
+    if packetReader.packetId == 0x19 {
       logger.error("received disconnect packet")
       eventManager.triggerError("received disconnect packet")
     }
     
     let packetHandler = packetHandlers[state]
     if packetHandler != nil {
-      packetHandler!.handlePacket(reader: reader)
+      packetHandler!.handlePacket(packetReader: packetReader)
     } else {
       logger.notice("received packet in invalid or non-implented state")
     }
