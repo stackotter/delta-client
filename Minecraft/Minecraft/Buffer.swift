@@ -39,6 +39,10 @@ struct Buffer {
   
   // [ Read Functions ]
   
+  mutating func skip(nBytes n: Int) {
+    index += n
+  }
+  
   mutating func readBitPattern(n: Int, endian: Endian) -> UInt64{
     let bytes: [UInt8] = readBytes(n: n)
     var bitPattern: UInt64 = 0

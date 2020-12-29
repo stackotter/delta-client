@@ -11,9 +11,10 @@ struct PacketReader {
   var packetId: Int = -1
   var buf: Buffer
   
+  // TODO: is this used anywhere?
   var remaining: Int {
     get {
-      return buf.length - buf.index
+      return buf.remaining
     }
   }
   
@@ -105,7 +106,7 @@ struct PacketReader {
       case true:
         let itemId = Int(readVarInt())
         let itemCount = Int(readByte())
-        let nbt = NBTCompound.fromBuffer(&buf)
+        let nbt = readNBTTag()
         slot = Slot(present: present, itemId: itemId, itemCount: itemCount, nbt: nbt)
       case false:
         slot = Slot(present: present, itemId: nil, itemCount: nil, nbt: nil)
@@ -115,7 +116,9 @@ struct PacketReader {
   
   // in java edition nbt always contains a root compound
   mutating func readNBTTag() -> NBTCompound {
-    return NBTCompound.fromBuffer(&buf)
+    let compound = NBTCompound(fromBuffer: buf)
+    buf.skip(nBytes: compound.numBytes)
+    return compound
   }
   
   // TODO_LATER: implement readPosition when have test data

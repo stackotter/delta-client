@@ -8,9 +8,13 @@
 import Foundation
 
 // all tags are assumed to be big endian and signed unless otherwise specified
+// TODO_LATER: clean up this spaghetti
 struct NBTCompound {
   var buffer: Buffer
-  var nbtData: [String: Any] = [:]
+  var nbtTags: [String: NBTTag] = [:]
+  var name: String = ""
+  var numBytes = -1
+  var isRoot: Bool
   
   enum NBTTagType: UInt8 {
     case end = 0
@@ -28,75 +32,103 @@ struct NBTCompound {
     case longArray = 12
   }
   
-  private init(name: String, buf: inout Buffer) {
-    // typeId and tagName of compound already read
-    self.buffer = buf
-    self.unpack(buf: &buf)
+  typealias NBTTag = (type: NBTTagType, value: Any)
+  
+  init(fromBytes bytes: [UInt8], isRoot: Bool = true) {
+    self.init(fromBuffer: Buffer(bytes), isRoot: isRoot)
   }
   
-  static func fromBytes(_ bytes: [UInt8]) -> NBTCompound {
-    var buf = Buffer(bytes)
-    return fromBuffer(&buf)
-  }
-  
-  static func fromBuffer(_ buf: inout Buffer) -> NBTCompound {
-    let typeId = buf.readByte()
-    if let type = NBTTagType.init(rawValue: typeId) {
-      if type != .compound {
-        fatalError("NBT root tag is not compound (root tag is always compound tag in java edition")
+  init(fromBuffer buffer: Buffer, isRoot: Bool = true) {
+    self.buffer = buffer
+    self.isRoot = isRoot
+    if self.isRoot {
+      let typeId = self.buffer.readByte()
+      if let type = NBTTagType.init(rawValue: typeId) {
+        if type != .compound {
+          fatalError("NBT root tag is not compound (root tag is always compound tag in java edition")
+        }
+        let nameLen = Int(self.buffer.readShort(endian: .big))
+        self.name = self.buffer.readString(length: nameLen)
+      } else {
+        fatalError("invalid type id for root tag")
       }
-      let nameLen = Int(buf.readShort(endian: .big))
-      let name = buf.readString(length: nameLen)
-      return NBTCompound(name: name, buf: &buf)
-    } else {
-      fatalError("invalid type id for root tag")
     }
+    self.unpack()
   }
   
-  mutating func unpack(buf: inout Buffer) {
+  init(fromUrl url: URL) {
+    let data: Data
+    do {
+      data = try Data(contentsOf: url)
+    } catch {
+      fatalError("couldn't open url to read nbt data")
+    }
+    let bytes = [UInt8](data)
+    self.init(fromBytes: bytes)
+  }
+  
+  // [ Getter Function ]
+  
+  func get<T>(_ key: String) -> T {
+    return nbtTags[key]!.value as! T
+  }
+  
+  // [ Read functions ]
+  
+  mutating func unpack() {
+    let initialBufferIndex = buffer.index
+    
     while true {
-      let typeId = buf.readByte()
+      let typeId = buffer.readByte()
+      print(typeId)
       if let type = NBTTagType.init(rawValue: typeId) {
         if type == .end {
           break
         }
-        let nameLength = Int(buf.readShort(endian: .big))
-        let name = buf.readString(length: nameLength)
+        let nameLength = Int(buffer.readShort(endian: .big))
+        let name = buffer.readString(length: nameLength)
         
-        nbtData[name] = readTag(ofType: type, buf: &buf, name: name)
+        nbtTags[name] = readTag(ofType: type, name: name)
       } else { // type not valid
         fatalError("invalid nbt type id: \(typeId)")
       }
+      
+      // the root tag should only contain one command
+      if isRoot {
+        break
+      }
     }
+    let numBytesRead = buffer.index - initialBufferIndex
+    numBytes = numBytesRead
   }
   
-  func readTag(ofType type: NBTTagType, buf: inout Buffer, name: String = "") -> Any {
+  mutating func readTag(ofType type: NBTTagType, name: String = "") -> NBTTag {
     var value: Any?
     switch type {
       case .end:
         break
       case .byte:
-        value = buf.readByte()
+        value = buffer.readByte()
       case .short:
-        value = buf.readSignedShort(endian: .big)
+        value = buffer.readSignedShort(endian: .big)
       case .int:
-        value = buf.readSignedInt(endian: .big)
+        value = buffer.readSignedInt(endian: .big)
       case .long:
-        value = buf.readLong(endian: .big)
+        value = buffer.readLong(endian: .big)
       case .float:
-        value = buf.readFloat(endian: .big)
+        value = buffer.readFloat(endian: .big)
       case .double:
-        value = buf.readDouble(endian: .big)
+        value = buffer.readDouble(endian: .big)
       case .byteArray:
-        let length = Int(buf.readSignedInt(endian: .big))
-        value = buf.readSignedBytes(n: length)
+        let length = Int(buffer.readSignedInt(endian: .big))
+        value = buffer.readSignedBytes(n: length)
       case .string:
-        let length = Int(buf.readShort(endian: .big))
-        value = buf.readString(length: length)
+        let length = Int(buffer.readShort(endian: .big))
+        value = buffer.readString(length: length)
       case .list:
-        let typeId = buf.readByte()
+        let typeId = buffer.readByte()
         if let listType = NBTTagType.init(rawValue: typeId) {
-          let length = buf.readSignedInt(endian: .big)
+          let length = buffer.readSignedInt(endian: .big)
           if length < 0 {
             // TODO: error handling
             fatalError("list of length less than 0 in nbt")
@@ -104,7 +136,7 @@ struct NBTCompound {
           var list: [Any] = []
           if length != 0 {
             for _ in 1...length {
-              list.append(readTag(ofType: listType, buf: &buf))
+              list.append(readTag(ofType: listType).value)
             }
           }
           value = list
@@ -113,7 +145,9 @@ struct NBTCompound {
           fatalError("invalid list type")
         }
       case .compound:
-        value = NBTCompound(name: name, buf: &buf).nbtData
+        let compound = NBTCompound(fromBuffer: buffer, isRoot: false)
+        buffer.skip(nBytes: compound.numBytes)
+        value = compound
       case .intArray:
         // TODO: implement NBT int array
         break
@@ -121,6 +155,12 @@ struct NBTCompound {
         // TODO: implement NBT long array
         break
     }
-    return value!
+    return (type: type, value: value!)
+  }
+  
+  // [ Write functions ]
+  
+  mutating func pack() -> [UInt8] {
+    return []
   }
 }

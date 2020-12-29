@@ -33,7 +33,6 @@
 		7884359B25861981002F1F84 /* ServerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884359A25861981002F1F84 /* ServerList.swift */; };
 		788435A025861B55002F1F84 /* ServerListEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884359F25861B55002F1F84 /* ServerListEntryView.swift */; };
 		78965088258861FE0079C5CF /* NBTCompound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78965087258861FE0079C5CF /* NBTCompound.swift */; };
-		7896508D258863B90079C5CF /* NBT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7896508C258863B90079C5CF /* NBT.swift */; };
 		789650922588834C0079C5CF /* LoginStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789650912588834C0079C5CF /* LoginStart.swift */; };
 		789BE9E32589DAC7001C08ED /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789BE9E22589DAC7001C08ED /* JSON.swift */; };
 		78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5842585949800883DF5 /* StatusRequest.swift */; };
@@ -94,7 +93,6 @@
 		7884359A25861981002F1F84 /* ServerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerList.swift; sourceTree = "<group>"; };
 		7884359F25861B55002F1F84 /* ServerListEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListEntryView.swift; sourceTree = "<group>"; };
 		78965087258861FE0079C5CF /* NBTCompound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTCompound.swift; sourceTree = "<group>"; };
-		7896508C258863B90079C5CF /* NBT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBT.swift; sourceTree = "<group>"; };
 		789650912588834C0079C5CF /* LoginStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStart.swift; sourceTree = "<group>"; };
 		789BE9E22589DAC7001C08ED /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		78C2D5842585949800883DF5 /* StatusRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRequest.swift; sourceTree = "<group>"; };
@@ -235,7 +233,6 @@
 				78225CE2258EC0CE007B7F98 /* EventManager.swift */,
 				784D97902587604700FC89F8 /* Config.swift */,
 				784CAE23259AB654003E5F87 /* UUID.swift */,
-				7896508C258863B90079C5CF /* NBT.swift */,
 				78965087258861FE0079C5CF /* NBTCompound.swift */,
 				789BE9E22589DAC7001C08ED /* JSON.swift */,
 				7878855E2588136700226064 /* Buffer.swift */,
@@ -433,7 +430,6 @@
 				78225CE3258EC0CE007B7F98 /* EventManager.swift in Sources */,
 				78C2D5952585CA7400883DF5 /* StatusHandler.swift in Sources */,
 				787D8FFF258485A7007E6441 /* Handshake.swift in Sources */,
-				7896508D258863B90079C5CF /* NBT.swift in Sources */,
 				78F0F3F92592D8CA003DF812 /* PacketHandler.swift in Sources */,
 				7884359B25861981002F1F84 /* ServerList.swift in Sources */,
 				788435902585E606002F1F84 /* Server.swift in Sources */,
