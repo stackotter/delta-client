@@ -8,7 +8,7 @@
 import Foundation
 
 // all tags are assumed to be big endian and signed unless otherwise specified
-// TODO_LATER: clean up this spaghetti
+// TODO_LATER: clean up this code
 struct NBTCompound {
   var buffer: Buffer
   var nbtTags: [String: NBTTag] = [:]
@@ -21,6 +21,16 @@ struct NBTCompound {
     var name: String?
     var type: NBTTagType
     var value: Any?
+  }
+  
+  enum NBTError: Error {
+    case emptyList
+    case invalidListType
+    case invalidTagType
+    case rootTagNotCompound
+    case failedToGetList
+    case failedToGetTag
+    case failedToOpenURL
   }
   
   // TODO_LATER: figure out how to not use Any
@@ -57,55 +67,63 @@ struct NBTCompound {
   
   // [ Initialisers ]
   
-  init(fromBytes bytes: [UInt8], isRoot: Bool = true) {
-    self.init(fromBuffer: Buffer(bytes), isRoot: isRoot)
+  init(fromBytes bytes: [UInt8], isRoot: Bool = true) throws {
+    try self.init(fromBuffer: Buffer(bytes), isRoot: isRoot)
   }
   
-  init(fromBuffer buffer: Buffer, withName name: String = "", isRoot: Bool = true) {
+  init(fromBuffer buffer: Buffer, withName name: String = "", isRoot: Bool = true) throws {
     self.buffer = buffer
     self.isRoot = isRoot
     if self.isRoot {
       let typeId = self.buffer.readByte()
       if let type = NBTTagType.init(rawValue: typeId) {
         if type != .compound {
-          fatalError("NBT root tag is not compound (root tag is always compound tag in java edition")
+          throw NBTError.rootTagNotCompound
         }
         let nameLen = Int(self.buffer.readShort(endian: .big))
         self.name = self.buffer.readString(length: nameLen)
       } else {
-        fatalError("invalid type id for root tag")
+        throw NBTError.invalidTagType
       }
     } else {
       self.name = name
     }
-    self.unpack()
+    try self.unpack()
   }
   
-  init(fromURL url: URL) {
+  init(fromURL url: URL) throws {
     let data: Data
     do {
       data = try Data(contentsOf: url)
     } catch {
-      fatalError("couldn't open url to read nbt data")
+      throw NBTError.failedToOpenURL
     }
     let bytes = [UInt8](data)
-    self.init(fromBytes: bytes)
+    try self.init(fromBytes: bytes)
   }
   
   // [ Value Getter ]
   
-  func get<T>(_ key: String) -> T {
-    return nbtTags[key]!.value as! T
+  func get<T>(_ key: String) throws -> T {
+    guard let tag = nbtTags[key]!.value as? T else {
+      throw NBTError.failedToGetTag
+    }
+    return tag
   }
   
-  func getList<T>(_ key: String) -> T {
-    let nbtList = nbtTags[key]!.value as! NBTList
-    return nbtList.list as! T
+  func getList<T>(_ key: String) throws -> T {
+    guard let nbtList = nbtTags[key]!.value as? NBTList else {
+      throw NBTError.failedToGetList
+    }
+    guard let list = nbtList.list as? T else {
+      throw NBTError.failedToGetList
+    }
+    return list
   }
   
   // [ Read functions ]
   
-  mutating func unpack() {
+  mutating func unpack() throws {
     let initialBufferIndex = buffer.index
     
     var n = 0
@@ -118,9 +136,9 @@ struct NBTCompound {
         let nameLength = Int(buffer.readShort(endian: .big))
         let name = buffer.readString(length: nameLength)
         
-        nbtTags[name] = readTag(ofType: type, withId: n, andName: name)
+        nbtTags[name] = try readTag(ofType: type, withId: n, andName: name)
       } else { // type not valid
-        fatalError("invalid nbt type id: \(typeId)")
+        throw NBTError.invalidTagType
       }
       
       // the root tag should only contain one command
@@ -134,7 +152,7 @@ struct NBTCompound {
     numBytes = numBytesRead
   }
   
-  mutating func readTag(ofType type: NBTTagType, withId id: Int = 0, andName name: String = "") -> NBTTag {
+  mutating func readTag(ofType type: NBTTagType, withId id: Int = 0, andName name: String = "") throws -> NBTTag {
     var value: Any?
     switch type {
       case .end:
@@ -162,23 +180,22 @@ struct NBTCompound {
         if let listType = NBTTagType.init(rawValue: typeId) {
           let length = buffer.readSignedInt(endian: .big)
           if length < 0 {
-            // TODO: error handling
-            fatalError("list of length less than 0 in nbt")
+            throw NBTError.emptyList
           }
           
           var list = NBTList(type: listType)
           if length != 0 {
             for _ in 1...length {
-              list.append(readTag(ofType: listType).value)
+              let elem = try readTag(ofType: listType)
+              list.append(elem.value!)
             }
           }
           value = list
         } else {
-          // TODO: error handling
-          fatalError("invalid list type")
+          throw NBTError.invalidListType
         }
       case .compound:
-        let compound = NBTCompound(fromBuffer: buffer, withName: name, isRoot: false)
+        let compound = try NBTCompound(fromBuffer: buffer, withName: name, isRoot: false)
         buffer.skip(nBytes: compound.numBytes)
         value = compound
       case .intArray:

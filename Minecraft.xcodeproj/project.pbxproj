@@ -17,6 +17,9 @@
 		784194C2258204D00070DE78 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 784194C1258204D00070DE78 /* Preview Assets.xcassets */; };
 		784194CE258204D10070DE78 /* MinecraftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194CD258204D10070DE78 /* MinecraftTests.swift */; };
 		784194D9258204D10070DE78 /* MinecraftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194D8258204D10070DE78 /* MinecraftUITests.swift */; };
+		784B392925A14EC000556E3E /* LoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B392825A14EC000556E3E /* LoginHandler.swift */; };
+		784B392E25A14F7500556E3E /* LoginDisconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B392D25A14F7500556E3E /* LoginDisconnect.swift */; };
+		784B393325A14F8400556E3E /* LoginSuccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B393225A14F8400556E3E /* LoginSuccess.swift */; };
 		784CAE24259AB654003E5F87 /* UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CAE23259AB654003E5F87 /* UUID.swift */; };
 		784CAE29259ACA74003E5F87 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CAE28259ACA74003E5F87 /* Slot.swift */; };
 		784D97912587604700FC89F8 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D97902587604700FC89F8 /* Config.swift */; };
@@ -77,6 +80,9 @@
 		784194D4258204D10070DE78 /* MinecraftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinecraftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D8258204D10070DE78 /* MinecraftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftUITests.swift; sourceTree = "<group>"; };
 		784194DA258204D10070DE78 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		784B392825A14EC000556E3E /* LoginHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHandler.swift; sourceTree = "<group>"; };
+		784B392D25A14F7500556E3E /* LoginDisconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDisconnect.swift; sourceTree = "<group>"; };
+		784B393225A14F8400556E3E /* LoginSuccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginSuccess.swift; sourceTree = "<group>"; };
 		784CAE23259AB654003E5F87 /* UUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUID.swift; sourceTree = "<group>"; };
 		784CAE28259ACA74003E5F87 /* Slot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
 		784D97902587604700FC89F8 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
@@ -219,6 +225,8 @@
 			isa = PBXGroup;
 			children = (
 				787D8FFE258485A7007E6441 /* Handshake.swift */,
+				784B392D25A14F7500556E3E /* LoginDisconnect.swift */,
+				784B393225A14F8400556E3E /* LoginSuccess.swift */,
 				78C2D5842585949800883DF5 /* StatusRequest.swift */,
 				78C2D5892585955500883DF5 /* StatusResponse.swift */,
 				789650912588834C0079C5CF /* LoginStart.swift */,
@@ -248,6 +256,7 @@
 			isa = PBXGroup;
 			children = (
 				78C2D5942585CA7400883DF5 /* StatusHandler.swift */,
+				784B392825A14EC000556E3E /* LoginHandler.swift */,
 				78F0F3F82592D8CA003DF812 /* PacketHandler.swift */,
 			);
 			path = Handlers;
@@ -421,6 +430,7 @@
 				78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */,
 				7878B53025844B6B007C0D3D /* ServerDetailView.swift in Sources */,
 				789650922588834C0079C5CF /* LoginStart.swift in Sources */,
+				784B392E25A14F7500556E3E /* LoginDisconnect.swift in Sources */,
 				784D97912587604700FC89F8 /* Config.swift in Sources */,
 				7878855F2588136700226064 /* Buffer.swift in Sources */,
 				789BE9E32589DAC7001C08ED /* JSON.swift in Sources */,
@@ -428,11 +438,13 @@
 				780D9BA92596CF5900144D45 /* LauncherProfile.swift in Sources */,
 				78C2D58F258597D400883DF5 /* PacketReader.swift in Sources */,
 				78225CE3258EC0CE007B7F98 /* EventManager.swift in Sources */,
+				784B392925A14EC000556E3E /* LoginHandler.swift in Sources */,
 				78C2D5952585CA7400883DF5 /* StatusHandler.swift in Sources */,
 				787D8FFF258485A7007E6441 /* Handshake.swift in Sources */,
 				78F0F3F92592D8CA003DF812 /* PacketHandler.swift in Sources */,
 				7884359B25861981002F1F84 /* ServerList.swift in Sources */,
 				788435902585E606002F1F84 /* Server.swift in Sources */,
+				784B393325A14F8400556E3E /* LoginSuccess.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

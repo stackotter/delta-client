@@ -10,6 +10,10 @@ import Foundation
 class ServerList: ObservableObject {
   @Published var servers: [Server]
   
+  convenience init() {
+    self.init(withServers: [])
+  }
+  
   init(withServers servers: [Server]) {
     self.servers = servers
   }

@@ -13,9 +13,9 @@ struct StatusResponse: Packet {
   
   var json: JSON
   
-  static func from(_ packetReader: PacketReader) -> StatusResponse? {
+  static func from(_ packetReader: PacketReader) throws -> StatusResponse? {
     var mutableReader = packetReader
-    let json = mutableReader.readJSON()
+    let json = try mutableReader.readJSON()
     let packet = StatusResponse(json: json)
     return packet
   }

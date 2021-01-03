@@ -11,6 +11,15 @@ struct PacketReader {
   var packetId: Int = -1
   var buf: Buffer
   
+  enum PacketReadError: Error {
+    case invalidNBT
+    case failedToReadSlotNBT
+    case invalidJSON
+    case invalidBooleanByte
+    case chatStringTooLong
+    case identifierTooLong
+  }
+  
   // TODO: is this used anywhere?
   var remaining: Int {
     get {
@@ -23,11 +32,10 @@ struct PacketReader {
     self.packetId = Int(buf.readVarInt())
   }
   
-  mutating func readBool() -> Bool {
+  mutating func readBool() throws -> Bool {
     let byte = buf.readByte()
     if byte != 0 && byte != 1 {
-      // TODO: start doing proper error handling
-      fatalError("bool byte was not 1 or 0")
+      throw PacketReadError.invalidBooleanByte
     }
     let bool = byte == 1
     return bool
@@ -72,19 +80,19 @@ struct PacketReader {
   }
   
   // TODO_LATER: make a Chat datatype to use instead of String
-  mutating func readChat() -> String {
+  mutating func readChat() throws -> String {
     let string = readString()
     if string.count > 32767 {
-      fatalError("chat string too large")
+      throw PacketReadError.chatStringTooLong
     }
     return string
   }
   
   // TODO_LATER: make an Identifier datatype to use instead of String
-  mutating func readIdentifier() -> String {
+  mutating func readIdentifier() throws -> String {
     let string = readString()
     if string.count > 32767 {
-      fatalError("identifier string too large")
+      throw PacketReadError.identifierTooLong
     }
     return string
   }
@@ -99,15 +107,19 @@ struct PacketReader {
   
   // TODO_LATER: implement readEntityMetadata
   
-  mutating func readSlot() -> Slot {
-    let present = readBool()
+  mutating func readSlot() throws -> Slot {
+    let present = try readBool()
     let slot: Slot
     switch present {
       case true:
         let itemId = Int(readVarInt())
         let itemCount = Int(readByte())
-        let nbt = readNBTTag()
-        slot = Slot(present: present, itemId: itemId, itemCount: itemCount, nbt: nbt)
+        do {
+          let nbt = try readNBTTag()
+          slot = Slot(present: present, itemId: itemId, itemCount: itemCount, nbt: nbt)
+        } catch {
+          throw PacketReadError.failedToReadSlotNBT
+        }
       case false:
         slot = Slot(present: present, itemId: nil, itemCount: nil, nbt: nil)
     }
@@ -115,10 +127,14 @@ struct PacketReader {
   }
   
   // in java edition nbt always contains a root compound
-  mutating func readNBTTag() -> NBTCompound {
-    let compound = NBTCompound(fromBuffer: buf)
-    buf.skip(nBytes: compound.numBytes)
-    return compound
+  mutating func readNBTTag() throws -> NBTCompound {
+    do {
+      let compound = try NBTCompound(fromBuffer: buf)
+      buf.skip(nBytes: compound.numBytes)
+      return compound
+    } catch {
+      throw PacketReadError.invalidNBT
+    }
   }
   
   // TODO_LATER: implement readPosition when have test data
@@ -142,9 +158,11 @@ struct PacketReader {
     return buf.readBytes(n: length)
   }
   
-  mutating func readJSON() -> JSON {
+  mutating func readJSON() throws -> JSON {
     let jsonString = readString()
-    let json = JSON.fromString(jsonString)
+    guard let json = try? JSON.fromString(jsonString) else {
+      throw PacketReadError.invalidJSON
+    }
     return json
   }
 }

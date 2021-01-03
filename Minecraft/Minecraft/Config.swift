@@ -20,54 +20,67 @@ class Config {
   var serverList: ServerList?
   var launcherProfile: LauncherProfile?
   
-  init(minecraftFolder: URL, eventManager: EventManager) {
+  enum ConfigError: Error {
+    case invalidServerListNBT
+    case invalidLauncherProfilesJSON
+  }
+  
+  init(minecraftFolder: URL, eventManager: EventManager) throws {
     self.logger = Logger(for: type(of: self))
     self.minecraftFolder = minecraftFolder
     self.eventManager = eventManager
     
-    loadServerList(minecraftFolder: minecraftFolder, eventManager: eventManager, logger: logger)
-    loadLauncherProfile(minecraftFolder: minecraftFolder)
+    try loadServerList(minecraftFolder: minecraftFolder, eventManager: eventManager, logger: logger)
+    try loadLauncherProfile(minecraftFolder: minecraftFolder)
   }
   
-  func loadServerList(minecraftFolder: URL, eventManager: EventManager, logger: Logger) {
+  func loadServerList(minecraftFolder: URL, eventManager: EventManager, logger: Logger) throws {
     let serversDatURL = minecraftFolder.appendingPathComponent("servers.dat")
-    let serversNBT = NBTCompound(fromURL: serversDatURL)
-    let serverNBTList: [NBTCompound] = serversNBT.getList("servers")
-    var servers: [Server] = []
-    for serverNBT in serverNBTList {
-      let ip: String = serverNBT.get("ip")
-      let name: String = serverNBT.get("name")
-      
-      let server: Server?
-      if let url = URL.init(string: "minecraft://\(ip)") {
-        if let host = url.host {
-          if let port = url.port {
-            server = Server(name: name, host: host, port: port, eventManager: eventManager)
+    do {
+      let serversNBT = try NBTCompound(fromURL: serversDatURL)
+      let serverNBTList: [NBTCompound] = try serversNBT.getList("servers")
+      var servers: [Server] = []
+      for serverNBT in serverNBTList {
+        let ip: String = try serverNBT.get("ip")
+        let name: String = try serverNBT.get("name")
+        
+        let server: Server?
+        if let url = URL.init(string: "minecraft://\(ip)") {
+          if let host = url.host {
+            if let port = url.port {
+              server = Server(name: name, host: host, port: port, eventManager: eventManager)
+            } else {
+              server = Server(name: name, host: host, port: 25565, eventManager: eventManager)
+            }
           } else {
-            server = Server(name: name, host: host, port: 25565, eventManager: eventManager)
+            logger.debug("server ip has no host?")
+            continue
           }
         } else {
-          logger.debug("server ip has no host?")
+          logger.debug("invalid server ip: \(ip)")
           continue
         }
-      } else {
-        logger.debug("invalid server ip: \(ip)")
-        continue
+        servers.append(server!)
       }
-      servers.append(server!)
+      self.serverList = ServerList(withServers: servers)
+    } catch {
+      throw ConfigError.invalidServerListNBT
     }
-    self.serverList = ServerList(withServers: servers)
   }
   
-  func loadLauncherProfile(minecraftFolder: URL) {
+  func loadLauncherProfile(minecraftFolder: URL) throws {
     let launcherProfilesURL = minecraftFolder.appendingPathComponent("launcher_profiles.json")
-    let json = JSON.fromURL(launcherProfilesURL)
-    let selectedUser = json.getJSON(forKey: "selectedUser")
-    
-    let accountUUID = UUID.fromString(selectedUser.getString(forKey: "account"))
-    let profileUUID = UUID.fromString(selectedUser.getString(forKey: "profile"))
-    
-    let profile = LauncherProfile(accountUUID: accountUUID!, profileUUID: profileUUID!)
-    self.launcherProfile = profile
+    do {
+      let json = try JSON.fromURL(launcherProfilesURL)
+      let selectedUser = try json.getJSON(forKey: "selectedUser")
+      
+      let accountUUID = try UUID.fromString(selectedUser.getString(forKey: "account"))!
+      let profileUUID = try UUID.fromString(selectedUser.getString(forKey: "profile"))!
+      
+      let profile = LauncherProfile(accountUUID: accountUUID, profileUUID: profileUUID)
+      self.launcherProfile = profile
+    } catch {
+      throw ConfigError.invalidLauncherProfilesJSON
+    }
   }
 }

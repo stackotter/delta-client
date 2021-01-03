@@ -56,6 +56,7 @@ class ServerConnection {
     var packetHandlers: [ConnectionState: PacketHandler] = [:]
     
     packetHandlers[.status] = StatusHandler(eventManager: eventManager)
+//    packetHandlers[.login] = LoginHandler(eventManager: eventManager)
     return packetHandlers
   }
   

@@ -10,14 +10,20 @@ import SwiftUI
 @main
 struct MinecraftApp: App {
   let minecraftFolder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("minecraft")
-  var config: Config
+  var config: Config?
   var eventManager: EventManager
   @ObservedObject var viewState: ViewState
   
   init() {
     eventManager = EventManager()
-    config = Config(minecraftFolder: minecraftFolder, eventManager: eventManager)
-    viewState = ViewState(serverList: config.serverList!)
+    guard let config = try? Config(minecraftFolder: minecraftFolder, eventManager: eventManager) else {
+      viewState = ViewState(serverList: ServerList())
+      viewState.displayError(message: "failed to load config")
+      return
+    }
+    
+    self.config = config
+    viewState = ViewState(serverList: self.config!.serverList!)
     
     eventManager.registerEventHandler(handleError, eventNames: ["error"])
   }
