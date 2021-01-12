@@ -6,3 +6,17 @@
 //
 
 import Foundation
+
+struct LoginDisconnect: Packet {
+  typealias PacketType = LoginDisconnect
+  var id: Int = 0x00
+  
+  var reason: String
+  
+  static func from(_ packetReader: PacketReader) throws -> LoginDisconnect? {
+    var mutableReader = packetReader
+    let reason = try mutableReader.readChat()
+    let packet = LoginDisconnect(reason: reason)
+    return packet
+  }
+}

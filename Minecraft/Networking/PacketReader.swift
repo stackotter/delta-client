@@ -16,6 +16,7 @@ struct PacketReader {
     case failedToReadSlotNBT
     case invalidJSON
     case invalidBooleanByte
+    case invalidIdentifier
     case chatStringTooLong
     case identifierTooLong
   }
@@ -88,13 +89,17 @@ struct PacketReader {
     return string
   }
   
-  // TODO_LATER: make an Identifier datatype to use instead of String
-  mutating func readIdentifier() throws -> String {
+  mutating func readIdentifier() throws -> Identifier {
     let string = readString()
     if string.count > 32767 {
       throw PacketReadError.identifierTooLong
     }
-    return string
+    do {
+      let identifier = try Identifier(string)
+      return identifier
+    } catch {
+      throw PacketReadError.invalidIdentifier
+    }
   }
   
   mutating func readVarInt() -> Int32 {
@@ -146,10 +151,10 @@ struct PacketReader {
   }
   
   mutating func readUUID() -> UUID {
-    let bytes = buf.readBytes(n: 2)
+    let bytes = buf.readBytes(n: 16)
     var string = ""
     for byte in bytes {
-      string += String(format: "%016X", byte)
+      string += String(format: "%02X", byte)
     }
     return UUID.fromString(string)!
   }

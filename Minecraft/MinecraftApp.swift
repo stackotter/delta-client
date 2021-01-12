@@ -9,45 +9,27 @@ import SwiftUI
 
 @main
 struct MinecraftApp: App {
-  let minecraftFolder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("minecraft")
-  var config: Config?
   var eventManager: EventManager
-  @ObservedObject var viewState: ViewState
+  var game: Game?
+  
+  var message: String = "loading.. (shouldn't take too long)"
   
   init() {
     eventManager = EventManager()
-    guard let config = try? Config(minecraftFolder: minecraftFolder, eventManager: eventManager) else {
-      viewState = ViewState(serverList: ServerList())
-      viewState.displayError(message: "failed to load config")
-      return
-    }
-    
-    self.config = config
-    viewState = ViewState(serverList: self.config!.serverList!)
-    
-    eventManager.registerEventHandler(handleError, eventNames: ["error"])
-  }
-  
-  func handleError(_ event: EventManager.Event) {
-    switch event {
-      case let .error(message):
-        viewState.displayError(message: message)
-      default:
-        break
+    do {
+      game = try Game(eventManager: eventManager)
+    } catch {
+      message = "failed to initialise game: \(error.localizedDescription)"
     }
   }
   
   var body: some Scene {
     WindowGroup {
       Group {
-        if (viewState.isPlaying) {
-          GameView(server: viewState.selectedServer!)
-        }
-        else if(viewState.isErrored) {
-          ErrorView(viewState: viewState)
-        }
-        else {
-          ServerListView(viewState: viewState)
+        if game != nil {
+          AppView(game: game!, eventManager: eventManager)
+        } else {
+          Text(message)
         }
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity)

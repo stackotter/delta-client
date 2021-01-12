@@ -18,14 +18,24 @@ class EventManager {
   var oneTimeEventHandlers: [String: [EventHandler]] = [:]
   
   enum Event {
-    case pingInfoReceived(PingInfo)
-    case loginSuccess
+    case error(_ message: String)
     
     case connectionReady
     case connectionClosed
     
-    case error(_ message: String)
+    case pingInfoReceived(PingInfo)
     
+    case loginSuccess(packet: LoginSuccess)
+    case loginDisconnect(reason: String)
+    
+    case joinGame(packet: JoinGamePacket)
+    case setDifficulty(difficulty: Difficulty)
+    case playerAbilities(packet: PlayerAbilitiesPacket)
+    case hotbarSlotChange(slot: Int)
+    case declareRecipes(recipeRegistry: RecipeRegistry)
+    
+    // HACK: this is quite a bodge and means a typo in an event name when registering a handler could go unnoticed and cause tons of annoying problems
+    // TODO: write something to check if handler with name exists before registering for now
     // this computed property is used to create the keys for the handlers dict
     var name:String {
       let mirror = Mirror(reflecting: self)
@@ -60,11 +70,11 @@ class EventManager {
   // triggers an app wide error (so that the error can be shown by the swiftui code)
   func triggerError(_ message: String) {
     let error = Event.error(message)
-    triggerEvent(event: error)
+    triggerEvent(error)
   }
   
   // triggers an event for handlers not attached to a specific server
-  func triggerEvent(event: Event) {
+  func triggerEvent(_ event: Event) {
     let handlers = eventHandlers[event.name]
     if handlers != nil {
       for handler in handlers! {

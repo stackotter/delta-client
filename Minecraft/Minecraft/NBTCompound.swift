@@ -9,18 +9,33 @@ import Foundation
 
 // all tags are assumed to be big endian and signed unless otherwise specified
 // TODO_LATER: clean up this code
-struct NBTCompound {
+struct NBTCompound: CustomStringConvertible {
   var buffer: Buffer
   var nbtTags: [String: NBTTag] = [:]
   var name: String = ""
   var numBytes = -1
   var isRoot: Bool
   
-  struct NBTTag {
+  var description: String {
+    return "\(nbtTags)"
+  }
+  
+  struct NBTTag: CustomStringConvertible {
     var id: Int
     var name: String?
     var type: NBTTagType
     var value: Any?
+    
+    var description: String {
+      if value != nil {
+        if value is NBTCompound {
+          return "\(value!)"
+        }
+        return "\"\(value!)\""
+      } else {
+        return "nil"
+      }
+    }
   }
   
   enum NBTError: Error {
@@ -34,9 +49,13 @@ struct NBTCompound {
   }
   
   // TODO_LATER: figure out how to not use Any
-  struct NBTList {
+  struct NBTList: CustomStringConvertible {
     var type: NBTTagType
     var list: [Any] = []
+    
+    var description: String {
+      return "\(list)"
+    }
     
     var count: Int {
       get {
@@ -67,28 +86,33 @@ struct NBTCompound {
   
   // [ Initialisers ]
   
+  init(name: String = "", isRoot: Bool = false) {
+    self.buffer = Buffer()
+    self.isRoot = isRoot
+    self.name = name
+  }
+  
   init(fromBytes bytes: [UInt8], isRoot: Bool = true) throws {
     try self.init(fromBuffer: Buffer(bytes), isRoot: isRoot)
   }
   
   init(fromBuffer buffer: Buffer, withName name: String = "", isRoot: Bool = true) throws {
+    let initialBufferIndex = buffer.index
+    
     self.buffer = buffer
     self.isRoot = isRoot
-    if self.isRoot {
-      let typeId = self.buffer.readByte()
-      if let type = NBTTagType.init(rawValue: typeId) {
-        if type != .compound {
-          throw NBTError.rootTagNotCompound
-        }
-        let nameLen = Int(self.buffer.readShort(endian: .big))
-        self.name = self.buffer.readString(length: nameLen)
-      } else {
-        throw NBTError.invalidTagType
-      }
-    } else {
-      self.name = name
-    }
+    self.name = name
+    
     try self.unpack()
+    
+    if self.isRoot && !self.nbtTags.isEmpty {
+      let root: NBTCompound = try get("")
+      self.nbtTags = root.nbtTags
+      self.name = root.name
+    }
+    
+    let numBytesRead = self.buffer.index - initialBufferIndex
+    numBytes = numBytesRead
   }
   
   init(fromURL url: URL) throws {
@@ -105,7 +129,7 @@ struct NBTCompound {
   // [ Value Getter ]
   
   func get<T>(_ key: String) throws -> T {
-    guard let tag = nbtTags[key]!.value as? T else {
+    guard let tag = nbtTags[key]?.value as? T else {
       throw NBTError.failedToGetTag
     }
     return tag
@@ -124,8 +148,6 @@ struct NBTCompound {
   // [ Read functions ]
   
   mutating func unpack() throws {
-    let initialBufferIndex = buffer.index
-    
     var n = 0
     while true {
       let typeId = buffer.readByte()
@@ -147,9 +169,6 @@ struct NBTCompound {
       }
       n += 1
     }
-    
-    let numBytesRead = buffer.index - initialBufferIndex
-    numBytes = numBytesRead
   }
   
   mutating func readTag(ofType type: NBTTagType, withId id: Int = 0, andName name: String = "") throws -> NBTTag {

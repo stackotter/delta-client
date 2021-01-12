@@ -20,10 +20,52 @@
 		784B392925A14EC000556E3E /* LoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B392825A14EC000556E3E /* LoginHandler.swift */; };
 		784B392E25A14F7500556E3E /* LoginDisconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B392D25A14F7500556E3E /* LoginDisconnect.swift */; };
 		784B393325A14F8400556E3E /* LoginSuccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B393225A14F8400556E3E /* LoginSuccess.swift */; };
+		784B393825A167E000556E3E /* PlayHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B393725A167E000556E3E /* PlayHandler.swift */; };
+		784B393D25A17AB600556E3E /* Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B393C25A17AB600556E3E /* Identifier.swift */; };
+		784B394325A185B200556E3E /* JoinGamePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B394225A185B200556E3E /* JoinGamePacket.swift */; };
+		784B394B25A19CCC00556E3E /* Gamemode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B394A25A19CCC00556E3E /* Gamemode.swift */; };
+		784B395025A19D8300556E3E /* SetDifficultyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B394F25A19D8300556E3E /* SetDifficultyPacket.swift */; };
+		784B395525A19E3900556E3E /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B395425A19E3900556E3E /* Difficulty.swift */; };
+		784B395A25A1B84000556E3E /* PlayerAbilitiesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B395925A1B84000556E3E /* PlayerAbilitiesPacket.swift */; };
+		784B395F25A1BCA400556E3E /* HeldItemChangePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B395E25A1BCA400556E3E /* HeldItemChangePacket.swift */; };
+		784B396425A1C19800556E3E /* DeclareRecipesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B396325A1C19800556E3E /* DeclareRecipesPacket.swift */; };
 		784CAE24259AB654003E5F87 /* UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CAE23259AB654003E5F87 /* UUID.swift */; };
 		784CAE29259ACA74003E5F87 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CAE28259ACA74003E5F87 /* Slot.swift */; };
+		784CCA8C25AD2E40004B3182 /* CraftingShapeless.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCA8B25AD2E40004B3182 /* CraftingShapeless.swift */; };
+		784CCA9125AD2E86004B3182 /* CraftingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCA9025AD2E86004B3182 /* CraftingRecipe.swift */; };
+		784CCA9625AD2F3D004B3182 /* CraftingShaped.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCA9525AD2F3D004B3182 /* CraftingShaped.swift */; };
+		784CCA9B25AD2F99004B3182 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCA9A25AD2F99004B3182 /* Ingredient.swift */; };
+		784CCAA025AD300B004B3182 /* ItemStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCA9F25AD300A004B3182 /* ItemStack.swift */; };
+		784CCAA825AD30BB004B3182 /* HeatRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAA725AD30BB004B3182 /* HeatRecipe.swift */; };
+		784CCAB025AD312B004B3182 /* SmeltingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAAF25AD312B004B3182 /* SmeltingRecipe.swift */; };
+		784CCAB525AD3165004B3182 /* BlastingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAB425AD3165004B3182 /* BlastingRecipe.swift */; };
+		784CCABA25AD317A004B3182 /* SmokingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAB925AD317A004B3182 /* SmokingRecipe.swift */; };
+		784CCABF25AD31BA004B3182 /* CampfireCookingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCABE25AD31BA004B3182 /* CampfireCookingRecipe.swift */; };
+		784CCAC425AD3239004B3182 /* StonecuttingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAC325AD3239004B3182 /* StonecuttingRecipe.swift */; };
+		784CCACC25AD328A004B3182 /* SmithingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCACB25AD328A004B3182 /* SmithingRecipe.swift */; };
+		784CCAD525AD3417004B3182 /* ArmorDyeRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAD425AD3417004B3182 /* ArmorDyeRecipe.swift */; };
+		784CCAE025AD343F004B3182 /* BookCloningRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCADF25AD343F004B3182 /* BookCloningRecipe.swift */; };
+		784CCAE525AD345B004B3182 /* MapCloningRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAE425AD345B004B3182 /* MapCloningRecipe.swift */; };
+		784CCAEA25AD3471004B3182 /* MapExtendingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAE925AD3471004B3182 /* MapExtendingRecipe.swift */; };
+		784CCAEF25AD3487004B3182 /* FireworkRocketRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAEE25AD3487004B3182 /* FireworkRocketRecipe.swift */; };
+		784CCAF425AD349E004B3182 /* FireworkStarRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAF325AD349E004B3182 /* FireworkStarRecipe.swift */; };
+		784CCAF925AD34CC004B3182 /* FireworkStarFadeRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAF825AD34CC004B3182 /* FireworkStarFadeRecipe.swift */; };
+		784CCAFE25AD34E1004B3182 /* RepairItemRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAFD25AD34E1004B3182 /* RepairItemRecipe.swift */; };
+		784CCB0325AD34FF004B3182 /* TippedArrowRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB0225AD34FF004B3182 /* TippedArrowRecipe.swift */; };
+		784CCB0825AD3515004B3182 /* BannerDuplicateRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB0725AD3515004B3182 /* BannerDuplicateRecipe.swift */; };
+		784CCB0D25AD352E004B3182 /* BannerAddPatternRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB0C25AD352E004B3182 /* BannerAddPatternRecipe.swift */; };
+		784CCB1225AD3545004B3182 /* ShieldDecorationRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1125AD3545004B3182 /* ShieldDecorationRecipe.swift */; };
+		784CCB1725AD355B004B3182 /* ShulkerBoxColouringRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1625AD355B004B3182 /* ShulkerBoxColouringRecipe.swift */; };
+		784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1C25AD35EB004B3182 /* RecipeRegistry.swift */; };
 		784D97912587604700FC89F8 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D97902587604700FC89F8 /* Config.swift */; };
 		78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78654EB62585E0CF00770FFF /* PingInfo.swift */; };
+		78764DDD25AD374D00AE8716 /* SpecialRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DDC25AD374D00AE8716 /* SpecialRecipe.swift */; };
+		78764DEB25AD7F2700AE8716 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DEA25AD7F2700AE8716 /* Item.swift */; };
+		78764DF025AD9BFF00AE8716 /* SuspiciousStewRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DEF25AD9BFF00AE8716 /* SuspiciousStewRecipe.swift */; };
+		78764DF525AD9FCA00AE8716 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DF425AD9FCA00AE8716 /* Game.swift */; };
+		78764E0525ADCA7900AE8716 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764E0425ADCA7900AE8716 /* AppView.swift */; };
+		78764E1025AE4B9200AE8716 /* TagsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764E0F25AE4B9200AE8716 /* TagsPacket.swift */; };
+		78764E1525AE5E6900AE8716 /* ChunkDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764E1425AE5E6900AE8716 /* ChunkDataPacket.swift */; };
 		7878855F2588136700226064 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7878855E2588136700226064 /* Buffer.swift */; };
 		7878B52F25844B6B007C0D3D /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7878B52B25844B6B007C0D3D /* GameView.swift */; };
 		7878B53025844B6B007C0D3D /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7878B52C25844B6B007C0D3D /* ServerDetailView.swift */; };
@@ -83,10 +125,52 @@
 		784B392825A14EC000556E3E /* LoginHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHandler.swift; sourceTree = "<group>"; };
 		784B392D25A14F7500556E3E /* LoginDisconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDisconnect.swift; sourceTree = "<group>"; };
 		784B393225A14F8400556E3E /* LoginSuccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginSuccess.swift; sourceTree = "<group>"; };
+		784B393725A167E000556E3E /* PlayHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayHandler.swift; sourceTree = "<group>"; };
+		784B393C25A17AB600556E3E /* Identifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Identifier.swift; sourceTree = "<group>"; };
+		784B394225A185B200556E3E /* JoinGamePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinGamePacket.swift; sourceTree = "<group>"; };
+		784B394A25A19CCC00556E3E /* Gamemode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gamemode.swift; sourceTree = "<group>"; };
+		784B394F25A19D8300556E3E /* SetDifficultyPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetDifficultyPacket.swift; sourceTree = "<group>"; };
+		784B395425A19E3900556E3E /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
+		784B395925A1B84000556E3E /* PlayerAbilitiesPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerAbilitiesPacket.swift; sourceTree = "<group>"; };
+		784B395E25A1BCA400556E3E /* HeldItemChangePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeldItemChangePacket.swift; sourceTree = "<group>"; };
+		784B396325A1C19800556E3E /* DeclareRecipesPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeclareRecipesPacket.swift; sourceTree = "<group>"; };
 		784CAE23259AB654003E5F87 /* UUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUID.swift; sourceTree = "<group>"; };
 		784CAE28259ACA74003E5F87 /* Slot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
+		784CCA8B25AD2E40004B3182 /* CraftingShapeless.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftingShapeless.swift; sourceTree = "<group>"; };
+		784CCA9025AD2E86004B3182 /* CraftingRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftingRecipe.swift; sourceTree = "<group>"; };
+		784CCA9525AD2F3D004B3182 /* CraftingShaped.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftingShaped.swift; sourceTree = "<group>"; };
+		784CCA9A25AD2F99004B3182 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
+		784CCA9F25AD300A004B3182 /* ItemStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemStack.swift; sourceTree = "<group>"; };
+		784CCAA725AD30BB004B3182 /* HeatRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatRecipe.swift; sourceTree = "<group>"; };
+		784CCAAF25AD312B004B3182 /* SmeltingRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmeltingRecipe.swift; sourceTree = "<group>"; };
+		784CCAB425AD3165004B3182 /* BlastingRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlastingRecipe.swift; sourceTree = "<group>"; };
+		784CCAB925AD317A004B3182 /* SmokingRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokingRecipe.swift; sourceTree = "<group>"; };
+		784CCABE25AD31BA004B3182 /* CampfireCookingRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampfireCookingRecipe.swift; sourceTree = "<group>"; };
+		784CCAC325AD3239004B3182 /* StonecuttingRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StonecuttingRecipe.swift; sourceTree = "<group>"; };
+		784CCACB25AD328A004B3182 /* SmithingRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmithingRecipe.swift; sourceTree = "<group>"; };
+		784CCAD425AD3417004B3182 /* ArmorDyeRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArmorDyeRecipe.swift; sourceTree = "<group>"; };
+		784CCADF25AD343F004B3182 /* BookCloningRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookCloningRecipe.swift; sourceTree = "<group>"; };
+		784CCAE425AD345B004B3182 /* MapCloningRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCloningRecipe.swift; sourceTree = "<group>"; };
+		784CCAE925AD3471004B3182 /* MapExtendingRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapExtendingRecipe.swift; sourceTree = "<group>"; };
+		784CCAEE25AD3487004B3182 /* FireworkRocketRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireworkRocketRecipe.swift; sourceTree = "<group>"; };
+		784CCAF325AD349E004B3182 /* FireworkStarRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireworkStarRecipe.swift; sourceTree = "<group>"; };
+		784CCAF825AD34CC004B3182 /* FireworkStarFadeRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireworkStarFadeRecipe.swift; sourceTree = "<group>"; };
+		784CCAFD25AD34E1004B3182 /* RepairItemRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepairItemRecipe.swift; sourceTree = "<group>"; };
+		784CCB0225AD34FF004B3182 /* TippedArrowRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TippedArrowRecipe.swift; sourceTree = "<group>"; };
+		784CCB0725AD3515004B3182 /* BannerDuplicateRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerDuplicateRecipe.swift; sourceTree = "<group>"; };
+		784CCB0C25AD352E004B3182 /* BannerAddPatternRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAddPatternRecipe.swift; sourceTree = "<group>"; };
+		784CCB1125AD3545004B3182 /* ShieldDecorationRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldDecorationRecipe.swift; sourceTree = "<group>"; };
+		784CCB1625AD355B004B3182 /* ShulkerBoxColouringRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShulkerBoxColouringRecipe.swift; sourceTree = "<group>"; };
+		784CCB1C25AD35EB004B3182 /* RecipeRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRegistry.swift; sourceTree = "<group>"; };
 		784D97902587604700FC89F8 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		78654EB62585E0CF00770FFF /* PingInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingInfo.swift; sourceTree = "<group>"; };
+		78764DDC25AD374D00AE8716 /* SpecialRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialRecipe.swift; sourceTree = "<group>"; };
+		78764DEA25AD7F2700AE8716 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		78764DEF25AD9BFF00AE8716 /* SuspiciousStewRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspiciousStewRecipe.swift; sourceTree = "<group>"; };
+		78764DF425AD9FCA00AE8716 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		78764E0425ADCA7900AE8716 /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
+		78764E0F25AE4B9200AE8716 /* TagsPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsPacket.swift; sourceTree = "<group>"; };
+		78764E1425AE5E6900AE8716 /* ChunkDataPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkDataPacket.swift; sourceTree = "<group>"; };
 		7878855E2588136700226064 /* Buffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
 		7878B52B25844B6B007C0D3D /* GameView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
 		7878B52C25844B6B007C0D3D /* ServerDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
@@ -194,14 +278,80 @@
 			path = MinecraftUITests;
 			sourceTree = "<group>";
 		};
+		784B394125A185A600556E3E /* Play */ = {
+			isa = PBXGroup;
+			children = (
+				784B394225A185B200556E3E /* JoinGamePacket.swift */,
+				784B395E25A1BCA400556E3E /* HeldItemChangePacket.swift */,
+				784B396325A1C19800556E3E /* DeclareRecipesPacket.swift */,
+				784B395925A1B84000556E3E /* PlayerAbilitiesPacket.swift */,
+				784B394F25A19D8300556E3E /* SetDifficultyPacket.swift */,
+				78764E0F25AE4B9200AE8716 /* TagsPacket.swift */,
+				78764E1425AE5E6900AE8716 /* ChunkDataPacket.swift */,
+			);
+			path = Play;
+			sourceTree = "<group>";
+		};
+		784CCA7D25AD2DB8004B3182 /* Recipes */ = {
+			isa = PBXGroup;
+			children = (
+				784CCAD325AD3403004B3182 /* SpecialCrafting */,
+				784CCA9F25AD300A004B3182 /* ItemStack.swift */,
+				78764DEA25AD7F2700AE8716 /* Item.swift */,
+				784CCA9A25AD2F99004B3182 /* Ingredient.swift */,
+				784CCA9025AD2E86004B3182 /* CraftingRecipe.swift */,
+				784CCA8B25AD2E40004B3182 /* CraftingShapeless.swift */,
+				784CCA9525AD2F3D004B3182 /* CraftingShaped.swift */,
+				784CCAA725AD30BB004B3182 /* HeatRecipe.swift */,
+				784CCAAF25AD312B004B3182 /* SmeltingRecipe.swift */,
+				784CCAB425AD3165004B3182 /* BlastingRecipe.swift */,
+				784CCAB925AD317A004B3182 /* SmokingRecipe.swift */,
+				784CCABE25AD31BA004B3182 /* CampfireCookingRecipe.swift */,
+				784CCAC325AD3239004B3182 /* StonecuttingRecipe.swift */,
+				784CCACB25AD328A004B3182 /* SmithingRecipe.swift */,
+			);
+			path = Recipes;
+			sourceTree = "<group>";
+		};
+		784CCAD325AD3403004B3182 /* SpecialCrafting */ = {
+			isa = PBXGroup;
+			children = (
+				78764DDC25AD374D00AE8716 /* SpecialRecipe.swift */,
+				784CCAD425AD3417004B3182 /* ArmorDyeRecipe.swift */,
+				784CCADF25AD343F004B3182 /* BookCloningRecipe.swift */,
+				784CCAE425AD345B004B3182 /* MapCloningRecipe.swift */,
+				784CCAE925AD3471004B3182 /* MapExtendingRecipe.swift */,
+				784CCAEE25AD3487004B3182 /* FireworkRocketRecipe.swift */,
+				784CCAF325AD349E004B3182 /* FireworkStarRecipe.swift */,
+				784CCAF825AD34CC004B3182 /* FireworkStarFadeRecipe.swift */,
+				784CCAFD25AD34E1004B3182 /* RepairItemRecipe.swift */,
+				784CCB0225AD34FF004B3182 /* TippedArrowRecipe.swift */,
+				784CCB0725AD3515004B3182 /* BannerDuplicateRecipe.swift */,
+				784CCB0C25AD352E004B3182 /* BannerAddPatternRecipe.swift */,
+				784CCB1125AD3545004B3182 /* ShieldDecorationRecipe.swift */,
+				784CCB1625AD355B004B3182 /* ShulkerBoxColouringRecipe.swift */,
+				78764DEF25AD9BFF00AE8716 /* SuspiciousStewRecipe.swift */,
+			);
+			path = SpecialCrafting;
+			sourceTree = "<group>";
+		};
+		784CCB1B25AD35C3004B3182 /* Registries */ = {
+			isa = PBXGroup;
+			children = (
+				784CCB1C25AD35EB004B3182 /* RecipeRegistry.swift */,
+			);
+			path = Registries;
+			sourceTree = "<group>";
+		};
 		7878B52A25844B6B007C0D3D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				78764E0425ADCA7900AE8716 /* AppView.swift */,
 				7878B52D25844B6B007C0D3D /* ServerListView.swift */,
-				7884359F25861B55002F1F84 /* ServerListEntryView.swift */,
-				7878B52C25844B6B007C0D3D /* ServerDetailView.swift */,
 				7878B52B25844B6B007C0D3D /* GameView.swift */,
 				7830D8D22596C13A00D35180 /* ErrorView.swift */,
+				7884359F25861B55002F1F84 /* ServerListEntryView.swift */,
+				7878B52C25844B6B007C0D3D /* ServerDetailView.swift */,
 				7830D8CD2596B91B00D35180 /* ViewState.swift */,
 			);
 			path = Views;
@@ -224,6 +374,7 @@
 		787D8FFD2584857A007E6441 /* Packets */ = {
 			isa = PBXGroup;
 			children = (
+				784B394125A185A600556E3E /* Play */,
 				787D8FFE258485A7007E6441 /* Handshake.swift */,
 				784B392D25A14F7500556E3E /* LoginDisconnect.swift */,
 				784B393225A14F8400556E3E /* LoginSuccess.swift */,
@@ -237,6 +388,9 @@
 		7884358E2585E5E3002F1F84 /* Minecraft */ = {
 			isa = PBXGroup;
 			children = (
+				784CCB1B25AD35C3004B3182 /* Registries */,
+				784CCA7D25AD2DB8004B3182 /* Recipes */,
+				78764DF425AD9FCA00AE8716 /* Game.swift */,
 				7884358F2585E606002F1F84 /* Server.swift */,
 				78225CE2258EC0CE007B7F98 /* EventManager.swift */,
 				784D97902587604700FC89F8 /* Config.swift */,
@@ -244,6 +398,9 @@
 				78965087258861FE0079C5CF /* NBTCompound.swift */,
 				789BE9E22589DAC7001C08ED /* JSON.swift */,
 				7878855E2588136700226064 /* Buffer.swift */,
+				784B393C25A17AB600556E3E /* Identifier.swift */,
+				784B394A25A19CCC00556E3E /* Gamemode.swift */,
+				784B395425A19E3900556E3E /* Difficulty.swift */,
 				7884359A25861981002F1F84 /* ServerList.swift */,
 				780D9BA82596CF5900144D45 /* LauncherProfile.swift */,
 				7830D8C825940BE500D35180 /* Logger.swift */,
@@ -256,6 +413,7 @@
 			isa = PBXGroup;
 			children = (
 				78C2D5942585CA7400883DF5 /* StatusHandler.swift */,
+				784B393725A167E000556E3E /* PlayHandler.swift */,
 				784B392825A14EC000556E3E /* LoginHandler.swift */,
 				78F0F3F82592D8CA003DF812 /* PacketHandler.swift */,
 			);
@@ -413,36 +571,78 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				784CCAA025AD300B004B3182 /* ItemStack.swift in Sources */,
+				784CCB0825AD3515004B3182 /* BannerDuplicateRecipe.swift in Sources */,
 				787D900725848726007E6441 /* PacketWriter.swift in Sources */,
+				784CCAF925AD34CC004B3182 /* FireworkStarFadeRecipe.swift in Sources */,
 				784194BB258204CD0070DE78 /* MinecraftApp.swift in Sources */,
 				787D8FF1258451A8007E6441 /* ServerConnection.swift in Sources */,
 				78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */,
+				784CCA9B25AD2F99004B3182 /* Ingredient.swift in Sources */,
 				7830D8CE2596B91B00D35180 /* ViewState.swift in Sources */,
 				784CAE24259AB654003E5F87 /* UUID.swift in Sources */,
 				788435A025861B55002F1F84 /* ServerListEntryView.swift in Sources */,
+				784B393825A167E000556E3E /* PlayHandler.swift in Sources */,
+				784CCB0D25AD352E004B3182 /* BannerAddPatternRecipe.swift in Sources */,
 				7878B52F25844B6B007C0D3D /* GameView.swift in Sources */,
+				784CCA9125AD2E86004B3182 /* CraftingRecipe.swift in Sources */,
+				784CCAC425AD3239004B3182 /* StonecuttingRecipe.swift in Sources */,
+				78764E1025AE4B9200AE8716 /* TagsPacket.swift in Sources */,
 				7878B53125844B6B007C0D3D /* ServerListView.swift in Sources */,
+				784CCB0325AD34FF004B3182 /* TippedArrowRecipe.swift in Sources */,
 				78C2D58A2585955500883DF5 /* StatusResponse.swift in Sources */,
+				78764DF025AD9BFF00AE8716 /* SuspiciousStewRecipe.swift in Sources */,
+				78764E0525ADCA7900AE8716 /* AppView.swift in Sources */,
+				78764DDD25AD374D00AE8716 /* SpecialRecipe.swift in Sources */,
 				7830D8C925940BE500D35180 /* Logger.swift in Sources */,
+				784B395025A19D8300556E3E /* SetDifficultyPacket.swift in Sources */,
 				7830D8D32596C13A00D35180 /* ErrorView.swift in Sources */,
+				784CCA8C25AD2E40004B3182 /* CraftingShapeless.swift in Sources */,
+				784CCB1225AD3545004B3182 /* ShieldDecorationRecipe.swift in Sources */,
+				784CCAE025AD343F004B3182 /* BookCloningRecipe.swift in Sources */,
 				78965088258861FE0079C5CF /* NBTCompound.swift in Sources */,
+				784B395A25A1B84000556E3E /* PlayerAbilitiesPacket.swift in Sources */,
+				784CCA9625AD2F3D004B3182 /* CraftingShaped.swift in Sources */,
+				784B393D25A17AB600556E3E /* Identifier.swift in Sources */,
+				784B395525A19E3900556E3E /* Difficulty.swift in Sources */,
 				784CAE29259ACA74003E5F87 /* Slot.swift in Sources */,
+				784B394B25A19CCC00556E3E /* Gamemode.swift in Sources */,
 				78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */,
 				7878B53025844B6B007C0D3D /* ServerDetailView.swift in Sources */,
 				789650922588834C0079C5CF /* LoginStart.swift in Sources */,
+				784CCABF25AD31BA004B3182 /* CampfireCookingRecipe.swift in Sources */,
 				784B392E25A14F7500556E3E /* LoginDisconnect.swift in Sources */,
 				784D97912587604700FC89F8 /* Config.swift in Sources */,
 				7878855F2588136700226064 /* Buffer.swift in Sources */,
+				784CCACC25AD328A004B3182 /* SmithingRecipe.swift in Sources */,
+				784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */,
+				784CCAB025AD312B004B3182 /* SmeltingRecipe.swift in Sources */,
+				784B396425A1C19800556E3E /* DeclareRecipesPacket.swift in Sources */,
 				789BE9E32589DAC7001C08ED /* JSON.swift in Sources */,
+				784CCAEF25AD3487004B3182 /* FireworkRocketRecipe.swift in Sources */,
 				787D8FF625848480007E6441 /* Packet.swift in Sources */,
 				780D9BA92596CF5900144D45 /* LauncherProfile.swift in Sources */,
+				78764E1525AE5E6900AE8716 /* ChunkDataPacket.swift in Sources */,
 				78C2D58F258597D400883DF5 /* PacketReader.swift in Sources */,
+				784CCAE525AD345B004B3182 /* MapCloningRecipe.swift in Sources */,
+				78764DF525AD9FCA00AE8716 /* Game.swift in Sources */,
+				784CCAA825AD30BB004B3182 /* HeatRecipe.swift in Sources */,
 				78225CE3258EC0CE007B7F98 /* EventManager.swift in Sources */,
+				78764DEB25AD7F2700AE8716 /* Item.swift in Sources */,
+				784CCABA25AD317A004B3182 /* SmokingRecipe.swift in Sources */,
 				784B392925A14EC000556E3E /* LoginHandler.swift in Sources */,
+				784CCAB525AD3165004B3182 /* BlastingRecipe.swift in Sources */,
+				784CCAFE25AD34E1004B3182 /* RepairItemRecipe.swift in Sources */,
+				784B394325A185B200556E3E /* JoinGamePacket.swift in Sources */,
+				784B395F25A1BCA400556E3E /* HeldItemChangePacket.swift in Sources */,
 				78C2D5952585CA7400883DF5 /* StatusHandler.swift in Sources */,
+				784CCAD525AD3417004B3182 /* ArmorDyeRecipe.swift in Sources */,
 				787D8FFF258485A7007E6441 /* Handshake.swift in Sources */,
 				78F0F3F92592D8CA003DF812 /* PacketHandler.swift in Sources */,
 				7884359B25861981002F1F84 /* ServerList.swift in Sources */,
+				784CCB1725AD355B004B3182 /* ShulkerBoxColouringRecipe.swift in Sources */,
+				784CCAEA25AD3471004B3182 /* MapExtendingRecipe.swift in Sources */,
+				784CCAF425AD349E004B3182 /* FireworkStarRecipe.swift in Sources */,
 				788435902585E606002F1F84 /* Server.swift in Sources */,
 				784B393325A14F8400556E3E /* LoginSuccess.swift in Sources */,
 			);

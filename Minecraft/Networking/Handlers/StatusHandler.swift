@@ -36,7 +36,7 @@ struct StatusHandler: PacketHandler {
       let numPlayers = try players.getInt(forKey: "online")
       
       let pingInfo = PingInfo(versionName: versionName, protocolVersion: protocolVersion, maxPlayers: maxPlayers, numPlayers: numPlayers, description: "Ping Complete", modInfo: "")
-      eventManager.triggerEvent(event: .pingInfoReceived(pingInfo))
+      eventManager.triggerEvent(.pingInfoReceived(pingInfo))
     } catch {
       eventManager.triggerError("failed to handle status response json")
     }

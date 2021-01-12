@@ -50,21 +50,39 @@ class ServerConnection {
     self.connection = NWConnection(host: NWEndpoint.Host(self.host), port: NWEndpoint.Port(rawValue: UInt16(self.port))!, using: .tcp)
     
     self.connection.stateUpdateHandler = self.stateUpdateHandler
+    
+    registerEventHandlers()
   }
   
   static func createPacketHandlers(withEventManager eventManager: EventManager) -> [ConnectionState: PacketHandler] {
     var packetHandlers: [ConnectionState: PacketHandler] = [:]
     
     packetHandlers[.status] = StatusHandler(eventManager: eventManager)
-//    packetHandlers[.login] = LoginHandler(eventManager: eventManager)
+    packetHandlers[.login] = LoginHandler(eventManager: eventManager)
+    packetHandlers[.play] = PlayHandler(eventManager: eventManager)
     return packetHandlers
+  }
+  
+  func registerEventHandlers() {
+    eventManager.registerEventHandler(handleEvent, eventNames: ["loginDisconnect", "loginSuccess"])
+  }
+  
+  func handleEvent(_ event: EventManager.Event) {
+    switch event {
+      case let .loginDisconnect(reason: reason):
+        eventManager.triggerError("login failed: \(reason)")
+      case .loginSuccess(packet: _):
+        state = .play
+      default:
+        break
+    }
   }
   
   private func stateUpdateHandler(newState: NWConnection.State) {
     switch(newState) {
       case .ready:
         state = .ready
-        eventManager.triggerEvent(event: .connectionReady)
+        eventManager.triggerEvent(.connectionReady)
         
         receive()
       case .waiting(let error):
@@ -83,11 +101,11 @@ class ServerConnection {
     connection.start(queue: queue)
   }
   
-  // TODO: stop doing so many duplicate cancels
+  // TODO_LATER: stop doing so many duplicate cancels
   func close() {
     connection.cancel()
     state = .disconnected
-    eventManager.triggerEvent(event: .connectionClosed)
+    eventManager.triggerEvent(.connectionClosed)
   }
   
   func ping() {
@@ -216,8 +234,6 @@ class ServerConnection {
   // bytes doesn't include the length of the packet
   func handlePacket(bytes: [UInt8]) {
     let packetReader = PacketReader(bytes: bytes)
-    
-    logger.debug("packet received with id: \(packetReader.packetId)")
     
     // NOTE: delete when disconnect packets are handled
     if packetReader.packetId == 0x19 {
