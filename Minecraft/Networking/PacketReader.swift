@@ -21,7 +21,6 @@ struct PacketReader {
     case identifierTooLong
   }
   
-  // TODO: is this used anywhere?
   var remaining: Int {
     get {
       return buf.remaining
@@ -33,11 +32,8 @@ struct PacketReader {
     self.packetId = Int(buf.readVarInt())
   }
   
-  mutating func readBool() throws -> Bool {
+  mutating func readBool() -> Bool {
     let byte = buf.readByte()
-    if byte != 0 && byte != 1 {
-      throw PacketReadError.invalidBooleanByte
-    }
     let bool = byte == 1
     return bool
   }
@@ -113,7 +109,7 @@ struct PacketReader {
   // TODO_LATER: implement readEntityMetadata
   
   mutating func readSlot() throws -> Slot {
-    let present = try readBool()
+    let present = readBool()
     let slot: Slot
     switch present {
       case true:

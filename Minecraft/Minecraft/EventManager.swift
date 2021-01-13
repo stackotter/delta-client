@@ -35,7 +35,7 @@ class EventManager {
     case declareRecipes(recipeRegistry: RecipeRegistry)
     
     // HACK: this is quite a bodge and means a typo in an event name when registering a handler could go unnoticed and cause tons of annoying problems
-    // TODO: write something to check if handler with name exists before registering for now
+    // TODO: write something to check if event with name exists before registering for now
     // this computed property is used to create the keys for the handlers dict
     var name:String {
       let mirror = Mirror(reflecting: self)

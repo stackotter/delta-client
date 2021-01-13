@@ -218,11 +218,21 @@ struct NBTCompound: CustomStringConvertible {
         buffer.skip(nBytes: compound.numBytes)
         value = compound
       case .intArray:
-        // TODO: implement NBT int array
-        break
+        let count = buffer.readSignedInt(endian: .big)
+        var array: [Int32] = []
+        for _ in 0..<count {
+          let int = buffer.readSignedInt(endian: .big)
+          array.append(int)
+        }
+        value = array
       case .longArray:
-        // TODO: implement NBT long array
-        break
+        let count = buffer.readSignedInt(endian: .big)
+        var array: [Int64] = []
+        for _ in 0..<count {
+          let long = buffer.readSignedLong(endian: .big)
+          array.append(long)
+        }
+        value = array
     }
     return NBTTag(id: id, name: name, type: type, value: value!)
   }

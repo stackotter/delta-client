@@ -13,8 +13,10 @@ class ServerConnection {
   var host: String
   var port: Int
   var connection: NWConnection
-  var queue: DispatchQueue
-  var packetHandlers: [ConnectionState: PacketHandler]
+  var networkQueue: DispatchQueue
+  
+  
+  var packetHandlingPool: PacketHandlingPool
   
   var eventManager: EventManager
   var logger: Logger
@@ -32,6 +34,7 @@ class ServerConnection {
     case disconnected
   }
   
+  // used in the packet receiving loop because of chunking
   struct ReceiveState {
     var lengthBytes: [UInt8]
     var length: Int
@@ -43,24 +46,16 @@ class ServerConnection {
     self.port = port
     self.eventManager = eventManager
     
-    self.packetHandlers = type(of: self).createPacketHandlers(withEventManager: eventManager)
     self.logger = Logger(for: type(of: self), desc: "\(host):\(port)")
     
-    self.queue = DispatchQueue(label: "networkUpdates")
+    self.networkQueue = DispatchQueue(label: "networkUpdates")
     self.connection = NWConnection(host: NWEndpoint.Host(self.host), port: NWEndpoint.Port(rawValue: UInt16(self.port))!, using: .tcp)
+    
+    self.packetHandlingPool = PacketHandlingPool(eventManager: eventManager)
     
     self.connection.stateUpdateHandler = self.stateUpdateHandler
     
     registerEventHandlers()
-  }
-  
-  static func createPacketHandlers(withEventManager eventManager: EventManager) -> [ConnectionState: PacketHandler] {
-    var packetHandlers: [ConnectionState: PacketHandler] = [:]
-    
-    packetHandlers[.status] = StatusHandler(eventManager: eventManager)
-    packetHandlers[.login] = LoginHandler(eventManager: eventManager)
-    packetHandlers[.play] = PlayHandler(eventManager: eventManager)
-    return packetHandlers
   }
   
   func registerEventHandlers() {
@@ -98,7 +93,7 @@ class ServerConnection {
   
   func start() {
     state = .connecting
-    connection.start(queue: queue)
+    connection.start(queue: networkQueue)
   }
   
   // TODO_LATER: stop doing so many duplicate cancels
@@ -204,11 +199,7 @@ class ServerConnection {
             packet.append(byte)
             
             if (packet.count == length) {
-              // TODO: might cause thousands of threads again, use a thread pool instead
-              let packetCopy = packet
-              self.queue.async {
-                self.handlePacket(bytes: packetCopy)
-              }
+              self.packetHandlingPool.handleBytes(packet, state: self.state)
               packet = []
               length = -1
               lengthBytes = []
@@ -229,24 +220,6 @@ class ServerConnection {
         self.logger.debug("stopped receiving")
       }
     })
-  }
-  
-  // bytes doesn't include the length of the packet
-  func handlePacket(bytes: [UInt8]) {
-    let packetReader = PacketReader(bytes: bytes)
-    
-    // NOTE: delete when disconnect packets are handled
-    if packetReader.packetId == 0x19 {
-      logger.error("received disconnect packet")
-      eventManager.triggerError("received disconnect packet")
-    }
-    
-    let packetHandler = packetHandlers[state]
-    if packetHandler != nil {
-      packetHandler!.handlePacket(packetReader: packetReader)
-    } else {
-      logger.notice("received packet in invalid or non-implented state")
-    }
   }
   
   private func handleNWError(_ error: NWError) {

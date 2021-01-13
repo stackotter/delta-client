@@ -17,7 +17,7 @@ struct SetDifficultyPacket: Packet {
   static func from(_ packetReader: PacketReader) throws -> SetDifficultyPacket? {
     var mutableReader = packetReader
     let difficulty = Difficulty(rawValue: mutableReader.readUnsignedByte())!
-    let isLocked = try mutableReader.readBool()
+    let isLocked = mutableReader.readBool()
     return SetDifficultyPacket(difficulty: difficulty, isLocked: isLocked)
   }
 }

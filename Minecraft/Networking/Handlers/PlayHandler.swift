@@ -26,7 +26,7 @@ struct PlayHandler: PacketHandler {
         case 0x17:
           logger.debug("plugin message ignored")
         case 0x20:
-          _ = ChunkDataPacket.from(packetReader)
+          _ = try ChunkDataPacket.from(packetReader)
         case 0x24:
           eventManager.triggerEvent(.joinGame(packet: try JoinGamePacket.from(packetReader)!))
         case 0x30:

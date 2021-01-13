@@ -31,7 +31,7 @@ struct JoinGamePacket: Packet {
   static func from(_ packetReader: PacketReader) throws -> JoinGamePacket? {
     var mutableReader = packetReader
     let playerEntityId = mutableReader.readInt()
-    let isHardcore = try mutableReader.readBool()
+    let isHardcore = mutableReader.readBool()
     let gamemode = Gamemode(rawValue: Int8(mutableReader.readUnsignedByte()))!
     let previousGamemode = Gamemode(rawValue: mutableReader.readByte())!
     let worldCount = mutableReader.readVarInt()
@@ -45,10 +45,10 @@ struct JoinGamePacket: Packet {
     let hashedSeed = mutableReader.readLong()
     let maxPlayers = mutableReader.readVarInt()
     let viewDistance = mutableReader.readVarInt()
-    let reducedDebugInfo = try mutableReader.readBool()
-    let enableRespawnScreen = try mutableReader.readBool()
-    let isDebug = try mutableReader.readBool()
-    let isFlat = try mutableReader.readBool()
+    let reducedDebugInfo = mutableReader.readBool()
+    let enableRespawnScreen = mutableReader.readBool()
+    let isDebug = mutableReader.readBool()
+    let isFlat = mutableReader.readBool()
     let packet = JoinGamePacket(playerEntityId: playerEntityId, isHardcore: isHardcore, gamemode: gamemode,
                           previousGamemode: previousGamemode, worldCount: worldCount, worldNames: worldNames,
                           dimensionCodec: dimensionCodec, dimension: dimension, worldName: worldName, hashedSeed: hashedSeed,

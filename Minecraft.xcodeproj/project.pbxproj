@@ -85,6 +85,12 @@
 		78C2D58F258597D400883DF5 /* PacketReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D58E258597D400883DF5 /* PacketReader.swift */; };
 		78C2D5952585CA7400883DF5 /* StatusHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5942585CA7400883DF5 /* StatusHandler.swift */; };
 		78F0F3F92592D8CA003DF812 /* PacketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F0F3F82592D8CA003DF812 /* PacketHandler.swift */; };
+		78F29B1E25AE769B00D85CCB /* CompactedLongArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */; };
+		78F29B2425AE818700D85CCB /* Chunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B2325AE818700D85CCB /* Chunk.swift */; };
+		78F29B2C25AE81E000D85CCB /* ChunkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B2B25AE81E000D85CCB /* ChunkSection.swift */; };
+		78F29B3225AE846000D85CCB /* BlockEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B3125AE846000D85CCB /* BlockEntity.swift */; };
+		78F29B3A25AE84CE00D85CCB /* BlockPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B3925AE84CE00D85CCB /* BlockPosition.swift */; };
+		78F29B3F25AE8FAA00D85CCB /* PacketHandlingPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B3E25AE8FAA00D85CCB /* PacketHandlingPool.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -190,6 +196,12 @@
 		78C2D58E258597D400883DF5 /* PacketReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketReader.swift; sourceTree = "<group>"; };
 		78C2D5942585CA7400883DF5 /* StatusHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusHandler.swift; sourceTree = "<group>"; };
 		78F0F3F82592D8CA003DF812 /* PacketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketHandler.swift; sourceTree = "<group>"; };
+		78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactedLongArray.swift; sourceTree = "<group>"; };
+		78F29B2325AE818700D85CCB /* Chunk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chunk.swift; sourceTree = "<group>"; };
+		78F29B2B25AE81E000D85CCB /* ChunkSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkSection.swift; sourceTree = "<group>"; };
+		78F29B3125AE846000D85CCB /* BlockEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockEntity.swift; sourceTree = "<group>"; };
+		78F29B3925AE84CE00D85CCB /* BlockPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockPosition.swift; sourceTree = "<group>"; };
+		78F29B3E25AE8FAA00D85CCB /* PacketHandlingPool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketHandlingPool.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -361,10 +373,12 @@
 			isa = PBXGroup;
 			children = (
 				787D8FF0258451A8007E6441 /* ServerConnection.swift */,
+				78F29B3E25AE8FAA00D85CCB /* PacketHandlingPool.swift */,
 				78654EB62585E0CF00770FFF /* PingInfo.swift */,
 				787D8FF525848480007E6441 /* Packet.swift */,
 				78C2D58E258597D400883DF5 /* PacketReader.swift */,
 				787D900625848726007E6441 /* PacketWriter.swift */,
+				78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */,
 				78C2D5932585CA6800883DF5 /* Handlers */,
 				787D8FFD2584857A007E6441 /* Packets */,
 			);
@@ -388,6 +402,8 @@
 		7884358E2585E5E3002F1F84 /* Minecraft */ = {
 			isa = PBXGroup;
 			children = (
+				78F29B3025AE845700D85CCB /* Entity */,
+				78F29B2225AE817C00D85CCB /* World */,
 				784CCB1B25AD35C3004B3182 /* Registries */,
 				784CCA7D25AD2DB8004B3182 /* Recipes */,
 				78764DF425AD9FCA00AE8716 /* Game.swift */,
@@ -405,6 +421,7 @@
 				780D9BA82596CF5900144D45 /* LauncherProfile.swift */,
 				7830D8C825940BE500D35180 /* Logger.swift */,
 				784CAE28259ACA74003E5F87 /* Slot.swift */,
+				78F29B3925AE84CE00D85CCB /* BlockPosition.swift */,
 			);
 			path = Minecraft;
 			sourceTree = "<group>";
@@ -418,6 +435,23 @@
 				78F0F3F82592D8CA003DF812 /* PacketHandler.swift */,
 			);
 			path = Handlers;
+			sourceTree = "<group>";
+		};
+		78F29B2225AE817C00D85CCB /* World */ = {
+			isa = PBXGroup;
+			children = (
+				78F29B2325AE818700D85CCB /* Chunk.swift */,
+				78F29B2B25AE81E000D85CCB /* ChunkSection.swift */,
+			);
+			path = World;
+			sourceTree = "<group>";
+		};
+		78F29B3025AE845700D85CCB /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				78F29B3125AE846000D85CCB /* BlockEntity.swift */,
+			);
+			path = Entity;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -605,10 +639,12 @@
 				784CCA9625AD2F3D004B3182 /* CraftingShaped.swift in Sources */,
 				784B393D25A17AB600556E3E /* Identifier.swift in Sources */,
 				784B395525A19E3900556E3E /* Difficulty.swift in Sources */,
+				78F29B1E25AE769B00D85CCB /* CompactedLongArray.swift in Sources */,
 				784CAE29259ACA74003E5F87 /* Slot.swift in Sources */,
 				784B394B25A19CCC00556E3E /* Gamemode.swift in Sources */,
 				78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */,
 				7878B53025844B6B007C0D3D /* ServerDetailView.swift in Sources */,
+				78F29B3A25AE84CE00D85CCB /* BlockPosition.swift in Sources */,
 				789650922588834C0079C5CF /* LoginStart.swift in Sources */,
 				784CCABF25AD31BA004B3182 /* CampfireCookingRecipe.swift in Sources */,
 				784B392E25A14F7500556E3E /* LoginDisconnect.swift in Sources */,
@@ -617,11 +653,14 @@
 				784CCACC25AD328A004B3182 /* SmithingRecipe.swift in Sources */,
 				784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */,
 				784CCAB025AD312B004B3182 /* SmeltingRecipe.swift in Sources */,
+				78F29B2425AE818700D85CCB /* Chunk.swift in Sources */,
 				784B396425A1C19800556E3E /* DeclareRecipesPacket.swift in Sources */,
 				789BE9E32589DAC7001C08ED /* JSON.swift in Sources */,
 				784CCAEF25AD3487004B3182 /* FireworkRocketRecipe.swift in Sources */,
+				78F29B2C25AE81E000D85CCB /* ChunkSection.swift in Sources */,
 				787D8FF625848480007E6441 /* Packet.swift in Sources */,
 				780D9BA92596CF5900144D45 /* LauncherProfile.swift in Sources */,
+				78F29B3225AE846000D85CCB /* BlockEntity.swift in Sources */,
 				78764E1525AE5E6900AE8716 /* ChunkDataPacket.swift in Sources */,
 				78C2D58F258597D400883DF5 /* PacketReader.swift in Sources */,
 				784CCAE525AD345B004B3182 /* MapCloningRecipe.swift in Sources */,
@@ -639,6 +678,7 @@
 				784CCAD525AD3417004B3182 /* ArmorDyeRecipe.swift in Sources */,
 				787D8FFF258485A7007E6441 /* Handshake.swift in Sources */,
 				78F0F3F92592D8CA003DF812 /* PacketHandler.swift in Sources */,
+				78F29B3F25AE8FAA00D85CCB /* PacketHandlingPool.swift in Sources */,
 				7884359B25861981002F1F84 /* ServerList.swift in Sources */,
 				784CCB1725AD355B004B3182 /* ShulkerBoxColouringRecipe.swift in Sources */,
 				784CCAEA25AD3471004B3182 /* MapExtendingRecipe.swift in Sources */,
