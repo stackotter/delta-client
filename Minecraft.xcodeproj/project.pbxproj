@@ -301,14 +301,8 @@
 		784B394125A185A600556E3E /* Play */ = {
 			isa = PBXGroup;
 			children = (
-				784B394225A185B200556E3E /* JoinGamePacket.swift */,
-				784B395E25A1BCA400556E3E /* HeldItemChangePacket.swift */,
-				784B396325A1C19800556E3E /* DeclareRecipesPacket.swift */,
-				784B395925A1B84000556E3E /* PlayerAbilitiesPacket.swift */,
-				784B394F25A19D8300556E3E /* SetDifficultyPacket.swift */,
-				78764E0F25AE4B9200AE8716 /* TagsPacket.swift */,
-				78764E1425AE5E6900AE8716 /* ChunkDataPacket.swift */,
-				78FA059A25B515810074CF37 /* UpdateViewPositionPacket.swift */,
+				78BFD2FA25B5AC2400366631 /* Clientbound */,
+				78BFD2F925B5AC2400366631 /* Serverbound */,
 			);
 			path = Play;
 			sourceTree = "<group>";
@@ -396,13 +390,10 @@
 		787D8FFD2584857A007E6441 /* Packets */ = {
 			isa = PBXGroup;
 			children = (
+				78BFD30125B5ACBC00366631 /* Handshaking */,
+				78BFD2FE25B5AC6000366631 /* Status */,
+				78BFD2FB25B5AC6000366631 /* Login */,
 				784B394125A185A600556E3E /* Play */,
-				787D8FFE258485A7007E6441 /* Handshake.swift */,
-				784B392D25A14F7500556E3E /* LoginDisconnect.swift */,
-				784B393225A14F8400556E3E /* LoginSuccess.swift */,
-				78C2D5842585949800883DF5 /* StatusRequest.swift */,
-				78C2D5892585955500883DF5 /* StatusResponse.swift */,
-				789650912588834C0079C5CF /* LoginStart.swift */,
 			);
 			path = Packets;
 			sourceTree = "<group>";
@@ -433,6 +424,95 @@
 				78F29B3925AE84CE00D85CCB /* BlockPosition.swift */,
 			);
 			path = Minecraft;
+			sourceTree = "<group>";
+		};
+		78BFD2F925B5AC2400366631 /* Serverbound */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Serverbound;
+			sourceTree = "<group>";
+		};
+		78BFD2FA25B5AC2400366631 /* Clientbound */ = {
+			isa = PBXGroup;
+			children = (
+				784B394225A185B200556E3E /* JoinGamePacket.swift */,
+				784B395E25A1BCA400556E3E /* HeldItemChangePacket.swift */,
+				784B396325A1C19800556E3E /* DeclareRecipesPacket.swift */,
+				784B395925A1B84000556E3E /* PlayerAbilitiesPacket.swift */,
+				784B394F25A19D8300556E3E /* SetDifficultyPacket.swift */,
+				78764E0F25AE4B9200AE8716 /* TagsPacket.swift */,
+				78764E1425AE5E6900AE8716 /* ChunkDataPacket.swift */,
+				78FA059A25B515810074CF37 /* UpdateViewPositionPacket.swift */,
+			);
+			path = Clientbound;
+			sourceTree = "<group>";
+		};
+		78BFD2FB25B5AC6000366631 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				78BFD2FD25B5AC6000366631 /* Clientbound */,
+				78BFD2FC25B5AC6000366631 /* Serverbound */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		78BFD2FC25B5AC6000366631 /* Serverbound */ = {
+			isa = PBXGroup;
+			children = (
+				789650912588834C0079C5CF /* LoginStart.swift */,
+			);
+			path = Serverbound;
+			sourceTree = "<group>";
+		};
+		78BFD2FD25B5AC6000366631 /* Clientbound */ = {
+			isa = PBXGroup;
+			children = (
+				784B392D25A14F7500556E3E /* LoginDisconnect.swift */,
+				784B393225A14F8400556E3E /* LoginSuccess.swift */,
+			);
+			path = Clientbound;
+			sourceTree = "<group>";
+		};
+		78BFD2FE25B5AC6000366631 /* Status */ = {
+			isa = PBXGroup;
+			children = (
+				78BFD30025B5AC6000366631 /* Clientbound */,
+				78BFD2FF25B5AC6000366631 /* Serverbound */,
+			);
+			path = Status;
+			sourceTree = "<group>";
+		};
+		78BFD2FF25B5AC6000366631 /* Serverbound */ = {
+			isa = PBXGroup;
+			children = (
+				78C2D5842585949800883DF5 /* StatusRequest.swift */,
+			);
+			path = Serverbound;
+			sourceTree = "<group>";
+		};
+		78BFD30025B5AC6000366631 /* Clientbound */ = {
+			isa = PBXGroup;
+			children = (
+				78C2D5892585955500883DF5 /* StatusResponse.swift */,
+			);
+			path = Clientbound;
+			sourceTree = "<group>";
+		};
+		78BFD30125B5ACBC00366631 /* Handshaking */ = {
+			isa = PBXGroup;
+			children = (
+				78BFD30225B5ACD000366631 /* Serverbound */,
+			);
+			path = Handshaking;
+			sourceTree = "<group>";
+		};
+		78BFD30225B5ACD000366631 /* Serverbound */ = {
+			isa = PBXGroup;
+			children = (
+				787D8FFE258485A7007E6441 /* Handshake.swift */,
+			);
+			path = Serverbound;
 			sourceTree = "<group>";
 		};
 		78F29B2225AE817C00D85CCB /* World */ = {
