@@ -8,19 +8,20 @@
 import Foundation
 import os
 
-enum GameState {
+enum ClientState {
   case idle
-  case initialisation
-  case connection
+  case initialising
+  case connecting
   case play
 }
 
-class Game {
-  var state: GameState = .idle
+// pretty much the backend class for the whole game
+class Client {
+  var state: ClientState = .idle
   
   // IDEA: maybe use a Registry object that stores all registries for neater code
   var recipeRegistry: RecipeRegistry = RecipeRegistry()
-  var server: Server? = nil
+  var currentServer: Server? = nil
   var config: Config
   
   var eventManager: EventManager
@@ -37,16 +38,13 @@ class Game {
       logger.debug("failed to load config: \(error.localizedDescription)")
       throw error
     }
-    
-    registerEventHandler()
   }
   
   func play(serverToPlay: Server) {
-    server = serverToPlay
-    server!.serverEventManager.registerEventHandler(handleEvent, eventNames: ["declareRecipes"])
-  }
-  
-  func registerEventHandler() {
+    currentServer = serverToPlay
+    eventManager.link(with: self.currentServer!.serverEventManager)
+    
+    // TODO_LATER: move this to the registry object talked about in that IDEA comment somewhere up there
     eventManager.registerEventHandler(handleEvent, eventNames: ["declareRecipes"])
   }
   
@@ -54,6 +52,7 @@ class Game {
     switch event {
       case let .declareRecipes(recipeRegistry: recipeRegistry):
         self.recipeRegistry = recipeRegistry
+        logger.debug("hi")
       default:
         break
     }

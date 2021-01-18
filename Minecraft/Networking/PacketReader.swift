@@ -32,6 +32,14 @@ struct PacketReader {
     self.packetId = Int(buf.readVarInt())
   }
   
+  init (buffer: Buffer) {
+    self.buf = buffer
+    let index = buf.index
+    buf.index = 0
+    self.packetId = Int(buf.readVarInt())
+    buf.index = index
+  }
+  
   mutating func readBool() -> Bool {
     let byte = buf.readByte()
     let bool = byte == 1

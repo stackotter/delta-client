@@ -15,8 +15,7 @@ class ServerConnection {
   var connection: NWConnection
   var networkQueue: DispatchQueue
   
-  
-  var packetHandlingPool: PacketHandlingPool
+  var packetHandlingPool: PacketHandlerThreadPool
   
   var eventManager: EventManager
   var logger: Logger
@@ -49,11 +48,9 @@ class ServerConnection {
     self.logger = Logger(for: type(of: self), desc: "\(host):\(port)")
     
     self.networkQueue = DispatchQueue(label: "networkUpdates")
-    self.connection = NWConnection(host: NWEndpoint.Host(self.host), port: NWEndpoint.Port(rawValue: UInt16(self.port))!, using: .tcp)
+    self.connection = ServerConnection.createNWConnection(fromHost: self.host, andPort: self.port)
     
-    self.packetHandlingPool = PacketHandlingPool(eventManager: eventManager)
-    
-    self.connection.stateUpdateHandler = self.stateUpdateHandler
+    self.packetHandlingPool = PacketHandlerThreadPool(eventManager: eventManager)
     
     registerEventHandlers()
   }
@@ -78,7 +75,6 @@ class ServerConnection {
       case .ready:
         state = .ready
         eventManager.triggerEvent(.connectionReady)
-        
         receive()
       case .waiting(let error):
         handleNWError(error)
@@ -91,14 +87,29 @@ class ServerConnection {
     }
   }
   
+  static func createNWConnection(fromHost host: String, andPort port: Int) -> NWConnection{
+    return NWConnection(host: NWEndpoint.Host(host), port: NWEndpoint.Port(rawValue: UInt16(port))!, using: .tcp)
+  }
+  
+  func restart() {
+    if state != .disconnected {
+      connection.forceCancel()
+    }
+    state = .idle
+    connection = ServerConnection.createNWConnection(fromHost: host, andPort: port)
+    start()
+  }
+  
   func start() {
     state = .connecting
+    connection.stateUpdateHandler = stateUpdateHandler
     connection.start(queue: networkQueue)
   }
   
-  // TODO_LATER: stop doing so many duplicate cancels
   func close() {
-    connection.cancel()
+    if connection.state != .cancelled {
+      self.connection.forceCancel()
+    }
     state = .disconnected
     eventManager.triggerEvent(.connectionClosed)
   }
@@ -110,29 +121,39 @@ class ServerConnection {
           self.ping()
         }, eventName: "connectionReady")
         start()
-      case .connecting, .ready:
+      case .ready:
         handshake(nextState: .status, callback: {
           self.ping()
         })
       case .status:
         let statusRequest = StatusRequest()
         sendPacket(statusRequest)
+      case .disconnected:
+        eventManager.registerOneTimeEventHandler({ (event) in
+          self.ping()
+        }, eventName: "connectionReady")
+        restart()
       default:
-        logger.debug("ping in unhandled state")
+        eventManager.registerOneTimeEventHandler({ (event) in
+          self.ping()
+        }, eventName: "connectionReady")
+        restart()
         break
     }
   }
   
   func handshake(nextState: Handshake.NextState, callback: @escaping () -> Void = {}) {
     state = .handshaking
+    // move protocol version to config or constants file of some sort
     let handshake = Handshake(protocolVersion: 754, serverAddr: host, serverPort: port, nextState: nextState)
 
     self.sendPacket(handshake, callback: .contentProcessed({ (error) in
       if error != nil {
         self.logger.error("failed to send packet: \(error!.debugDescription)")
+      } else {
+        self.state = (nextState == .login) ? .login : .status
+        callback()
       }
-      self.state = (nextState == .login) ? .login : .status
-      callback()
     }))
   }
   
@@ -223,8 +244,10 @@ class ServerConnection {
   }
   
   private func handleNWError(_ error: NWError) {
-    if (error == NWError.posix(.ECONNREFUSED) || error == NWError.posix(.ECANCELED)) {
-      close()
+    if error == NWError.posix(.ECONNREFUSED) {
+      logger.error("connection refused")
+    } else if error == NWError.posix(.ECANCELED) {
+      // do nothing
     } else if error == NWError.dns(-65554) { // -65554 is the error code for NoSuchRecord
       logger.error("no such record: this server is not yet supported as it uses SRV records")
     } else {

@@ -8,7 +8,10 @@
 import Foundation
 import os
 
-class PacketHandlingPool {
+// handles multiple threads that handle packets simultaneously
+// this doubled how fast my laptop loaded in chunks compared to the one thread i was using before (25 seconds vs 40 or more seconds)
+// and that's with a spigot server, bungeecord, spotify and xcode running too
+class PacketHandlerThreadPool {
   // TODO_LATER: move this to some sort of config file or constants file
   // 2 threads seems to be the sweet spot for my laptop, around 40% faster than one thread and not much slower than 3 threads
   // 3 threads starts using a lot more cpu for such little gain (almost 400% cpu at peak vs around 290% at peak)

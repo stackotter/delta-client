@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Identifier: Equatable {
+struct Identifier: Equatable, Hashable {
   var namespace: String
   var name: String
   
@@ -58,5 +58,10 @@ struct Identifier: Equatable {
   
   static func == (lhs: Identifier, rhs: Identifier) -> Bool {
     return lhs.namespace == rhs.namespace && lhs.name == rhs.name
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(namespace)
+    hasher.combine(name)
   }
 }

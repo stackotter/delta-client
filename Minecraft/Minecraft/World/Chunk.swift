@@ -8,15 +8,13 @@
 import Foundation
 
 struct Chunk {
-  var chunkX: Int32
-  var chunkZ: Int32
+  var position: ChunkPosition
   
   var sections: [ChunkSection]
   var blockEntities: [BlockEntity]
   
-  init(chunkX: Int32, chunkZ: Int32, sections: [ChunkSection], blockEntities: [BlockEntity], bitMask: Int32) {
-    self.chunkX = chunkX
-    self.chunkZ = chunkZ
+  init(position: ChunkPosition, sections: [ChunkSection], blockEntities: [BlockEntity], bitMask: Int32) {
+    self.position = position
     
     self.sections = []
     var index = 0

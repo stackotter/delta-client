@@ -10,14 +10,14 @@ import SwiftUI
 @main
 struct MinecraftApp: App {
   var eventManager: EventManager
-  var game: Game?
+  var game: Client?
   
   var message: String = "loading.. (shouldn't take too long)"
   
   init() {
     eventManager = EventManager()
     do {
-      game = try Game(eventManager: eventManager)
+      game = try Client(eventManager: eventManager)
     } catch {
       message = "failed to initialise game: \(error.localizedDescription)"
     }

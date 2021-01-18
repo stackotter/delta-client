@@ -15,14 +15,14 @@ class ViewState: ObservableObject {
   
   @Published var serverList: ServerList
   
-  var game: Game
+  var game: Client
   
-  init(game: Game) {
+  init(game: Client) {
     self.serverList = ServerList()
     self.game = game
   }
   
-  init(game: Game, serverList: ServerList) {
+  init(game: Client, serverList: ServerList) {
     self.serverList = serverList
     self.game = game
   }

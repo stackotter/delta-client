@@ -8,17 +8,37 @@
 import Foundation
 import os
 
+// TODO: check protocol version and display warning before connecting if necessary
 class Server: Hashable, ObservableObject {
+  var logger: Logger
   var eventManager: EventManager
+  
+  // for events specific to this server (to keep events seperate when multiple servers are
+  // being communicated with, like in the server list)
   var serverEventManager: EventManager
+  
+  var serverConnection: ServerConnection
   var name: String
   var host: String
   var port: Int
   
-  var logger: Logger
-  
+  // make this not an optional perhaps?
   @Published var pingInfo: PingInfo?
-  var serverConnection: ServerConnection?
+  
+  var currentWorldName: Identifier?
+  var worlds: [Identifier: World] = [:]
+  
+  var config: ServerConfig? = nil
+  var state: ServerState = .idle
+  
+  enum ServerState {
+    case idle
+    case connecting
+    case status
+    case login
+    case play
+    case disconnected
+  }
   
   init(name: String, host: String, port: Int, eventManager: EventManager) {
     self.name = name
@@ -27,76 +47,59 @@ class Server: Hashable, ObservableObject {
     self.eventManager = eventManager
     self.serverEventManager = EventManager()
     self.logger = Logger(for: type(of: self), desc: "\(host):\(port)")
+    self.serverConnection = ServerConnection(host: host, port: port, eventManager: serverEventManager)
     
-    registerEventHandlers()
+    serverEventManager.registerEventHandler(handleEvents, eventNames: ["pingInfoReceived", "loginSuccess", "joinGame", "connectionClosed"])
     ping()
   }
   
-  func registerEventHandlers() {
-    serverEventManager.registerEventHandler(handlePingInfoReceived, eventNames: ["pingInfoReceived"])
-    serverEventManager.registerEventHandler(handleLoginSuccess, eventNames: ["loginSuccess"])
-    serverEventManager.registerEventHandler(handleConnectionClosed, eventNames: ["connectionClosed"])
-    serverEventManager.registerEventHandler(handleError, eventNames: ["error"])
-  }
-  
-  func handleError(_ event: EventManager.Event) {
-    switch event {
-      case var .error(message):
-        message = "[\(host):\(port)] \(message)"
-        eventManager.triggerError(message)
-        logger.debug("escalated error to app wide event manager")
-      default:
-        break
-    }
-  }
-  
-  func handlePingInfoReceived(_ event: EventManager.Event) {
-    logger.debug("received ping info")
+  func handleEvents(_ event: EventManager.Event) {
     switch event {
       case let .pingInfoReceived(pingInfo):
-        DispatchQueue.main.sync {
+        DispatchQueue.main.async {
           self.pingInfo = pingInfo
         }
-        serverConnection?.close()
+        serverConnection.close()
+      case .loginSuccess(packet: _):
+        logger.debug("login success")
+      case let .joinGame(packet: packet):
+        state = .play
+        config = ServerConfig(worldCount: packet.worldCount, worldNames: packet.worldNames,
+                              dimensionCodec: packet.dimensionCodec, maxPlayers: packet.maxPlayers,
+                              viewDistance: packet.viewDistance, useReducedDebugInfo: packet.reducedDebugInfo,
+                              enableRespawnScreen: packet.enableRespawnScreen)
+        let worldConfig = WorldConfig(worldName: packet.worldName, dimension: packet.dimension,
+                                      hashedSeed: packet.hashedSeed, isDebug: packet.isDebug, isFlat: packet.isFlat)
+        let world = World(eventManager: serverEventManager, config: worldConfig)
+        worlds[packet.worldName] = world
+        currentWorldName = packet.worldName
+      case .connectionClosed:
+        state = .disconnected
       default:
         break
     }
-  }
-  
-  func handleLoginSuccess(_ event: EventManager.Event) {
-    logger.debug("login success")
-  }
-  
-  func handleConnectionClosed(_ event: EventManager.Event) {
-    logger.debug("connection closed")
-    self.serverConnection = nil
-  }
-  
-  func createConnection() {
-    logger.debug("created connection")
-    serverConnection = ServerConnection(host: host, port: port, eventManager: serverEventManager)
   }
   
   func ping() {
     pingInfo = nil
-    createConnection()
-    serverConnection!.ping()
+    state = .status
+    serverConnection.ping()
   }
   
   // just a prototype for later
   func login() {
-    createConnection()
+    serverConnection.restart()
     serverEventManager.registerOneTimeEventHandler({
       (event) in
-      self.serverConnection!.handshake(nextState: .login) {
+      self.serverConnection.handshake(nextState: .login) {
         let loginStart = LoginStart(username: "stampy654")
-        self.serverConnection!.sendPacket(loginStart, callback: .contentProcessed({
+        self.serverConnection.sendPacket(loginStart, callback: .contentProcessed({
           (error) in
           self.logger.debug("sent login start packet")
         }))
       }
     }, eventName: "connectionReady")
-    serverConnection!.start()
+    serverConnection.start()
   }
   
   // Things so that SwiftUI ForEach loop works

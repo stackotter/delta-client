@@ -11,12 +11,21 @@ import Foundation
 //   the associated values make it difficult to compare cases cause enums can't have both associated values and raw values
 
 // NOTE: might not be threadsafe
-class EventManager {
+
+// TODO: make this only for basic events
+// packet handling will be better without this probably
+// handlers can be registered for events and anyone who needs data from an event can just easily register a handler
+class EventManager: Equatable {
   typealias EventHandler = (Event) -> Void
+  
+  let uuid = UUID()
   
   var eventHandlers: [String: [EventHandler]] = [:]
   var oneTimeEventHandlers: [String: [EventHandler]] = [:]
   
+  var forwardTargets: [EventManager] = []
+  
+  // TODO: maybe make a few separate enums
   enum Event {
     case error(_ message: String)
     
@@ -34,6 +43,10 @@ class EventManager {
     case hotbarSlotChange(slot: Int)
     case declareRecipes(recipeRegistry: RecipeRegistry)
     
+    case chunkData(chunkData: ChunkData)
+    
+    case updateViewPosition(currentChunk: ChunkPosition)
+    
     // HACK: this is quite a bodge and means a typo in an event name when registering a handler could go unnoticed and cause tons of annoying problems
     // TODO: write something to check if event with name exists before registering for now
     // this computed property is used to create the keys for the handlers dict
@@ -49,17 +62,17 @@ class EventManager {
     }
   }
   
-  // use for app-wide events such as errors
+  // registers an event handler to be called every time a specific an event in eventNames is triggered
   func registerEventHandler(_ handler: @escaping EventHandler, eventNames: [String]) {
     for eventName in eventNames {
       if eventHandlers[eventName] == nil {
         eventHandlers[eventName] = []
       }
-      eventHandlers[eventName]?.append(handler)
+      eventHandlers[eventName]!.append(handler)
     }
   }
   
-  // use to register temporary handlers for app-wide events
+  // used to register temporary handlers
   func registerOneTimeEventHandler(_ handler: @escaping EventHandler, eventName: String) {
     if oneTimeEventHandlers[eventName] == nil {
       oneTimeEventHandlers[eventName] = []
@@ -67,14 +80,19 @@ class EventManager {
     oneTimeEventHandlers[eventName]!.append(handler)
   }
   
-  // triggers an app wide error (so that the error can be shown by the swiftui code)
-  func triggerError(_ message: String) {
+  // convenience function for triggering errors easily
+  func triggerError(_ message: String, from: EventManager? = nil) {
     let error = Event.error(message)
     triggerEvent(error)
   }
   
-  // triggers an event for handlers not attached to a specific server
-  func triggerEvent(_ event: Event) {
+  func triggerEvent(_ event: Event, from: EventManager? = nil) {
+    for forwardTarget in forwardTargets {
+      if forwardTarget != from {
+        forwardTarget.triggerEvent(event, from: self)
+      }
+    }
+    
     let handlers = eventHandlers[event.name]
     if handlers != nil {
       for handler in handlers! {
@@ -89,5 +107,18 @@ class EventManager {
       }
       oneTimeEventHandlers[event.name] = nil
     }
+  }
+  
+  func forward(to target: EventManager) {
+    forwardTargets.append(target)
+  }
+  
+  func link(with target: EventManager) {
+    self.forward(to: target)
+    target.forward(to: self)
+  }
+  
+  static func == (lhs: EventManager, rhs: EventManager) -> Bool {
+    return lhs.uuid == rhs.uuid
   }
 }

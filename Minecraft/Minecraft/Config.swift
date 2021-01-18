@@ -30,11 +30,11 @@ class Config {
     self.minecraftFolder = minecraftFolder
     self.eventManager = eventManager
     
-    try loadServerList(minecraftFolder: minecraftFolder, eventManager: eventManager, logger: logger)
+    try loadServerList(minecraftFolder: minecraftFolder)
     try loadLauncherProfile(minecraftFolder: minecraftFolder)
   }
   
-  func loadServerList(minecraftFolder: URL, eventManager: EventManager, logger: Logger) throws {
+  func loadServerList(minecraftFolder: URL) throws {
     let serversDatURL = minecraftFolder.appendingPathComponent("servers.dat")
     do {
       let serversNBT = try NBTCompound(fromURL: serversDatURL)

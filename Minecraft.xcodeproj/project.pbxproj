@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		780D9BA92596CF5900144D45 /* LauncherProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780D9BA82596CF5900144D45 /* LauncherProfile.swift */; };
+		781E63BB25B14CBE00ADFAB8 /* ChunkData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781E63BA25B14CBE00ADFAB8 /* ChunkData.swift */; };
+		781E63C025B165F900ADFAB8 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781E63BF25B165F900ADFAB8 /* Player.swift */; };
+		781E63CB25B166D000ADFAB8 /* EntityPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781E63CA25B166D000ADFAB8 /* EntityPosition.swift */; };
 		78225CE3258EC0CE007B7F98 /* EventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78225CE2258EC0CE007B7F98 /* EventManager.swift */; };
 		7830D8C925940BE500D35180 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7830D8C825940BE500D35180 /* Logger.swift */; };
 		7830D8CE2596B91B00D35180 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7830D8CD2596B91B00D35180 /* ViewState.swift */; };
@@ -62,7 +65,7 @@
 		78764DDD25AD374D00AE8716 /* SpecialRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DDC25AD374D00AE8716 /* SpecialRecipe.swift */; };
 		78764DEB25AD7F2700AE8716 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DEA25AD7F2700AE8716 /* Item.swift */; };
 		78764DF025AD9BFF00AE8716 /* SuspiciousStewRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DEF25AD9BFF00AE8716 /* SuspiciousStewRecipe.swift */; };
-		78764DF525AD9FCA00AE8716 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DF425AD9FCA00AE8716 /* Game.swift */; };
+		78764DF525AD9FCA00AE8716 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DF425AD9FCA00AE8716 /* Client.swift */; };
 		78764E0525ADCA7900AE8716 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764E0425ADCA7900AE8716 /* AppView.swift */; };
 		78764E1025AE4B9200AE8716 /* TagsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764E0F25AE4B9200AE8716 /* TagsPacket.swift */; };
 		78764E1525AE5E6900AE8716 /* ChunkDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764E1425AE5E6900AE8716 /* ChunkDataPacket.swift */; };
@@ -80,6 +83,8 @@
 		78965088258861FE0079C5CF /* NBTCompound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78965087258861FE0079C5CF /* NBTCompound.swift */; };
 		789650922588834C0079C5CF /* LoginStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789650912588834C0079C5CF /* LoginStart.swift */; };
 		789BE9E32589DAC7001C08ED /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789BE9E22589DAC7001C08ED /* JSON.swift */; };
+		78BFD2E725B521A800366631 /* WorldConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BFD2E625B521A800366631 /* WorldConfig.swift */; };
+		78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BFD2EB25B522A700366631 /* ServerConfig.swift */; };
 		78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5842585949800883DF5 /* StatusRequest.swift */; };
 		78C2D58A2585955500883DF5 /* StatusResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5892585955500883DF5 /* StatusResponse.swift */; };
 		78C2D58F258597D400883DF5 /* PacketReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D58E258597D400883DF5 /* PacketReader.swift */; };
@@ -90,7 +95,10 @@
 		78F29B2C25AE81E000D85CCB /* ChunkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B2B25AE81E000D85CCB /* ChunkSection.swift */; };
 		78F29B3225AE846000D85CCB /* BlockEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B3125AE846000D85CCB /* BlockEntity.swift */; };
 		78F29B3A25AE84CE00D85CCB /* BlockPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B3925AE84CE00D85CCB /* BlockPosition.swift */; };
-		78F29B3F25AE8FAA00D85CCB /* PacketHandlingPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B3E25AE8FAA00D85CCB /* PacketHandlingPool.swift */; };
+		78F29B3F25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B3E25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift */; };
+		78F29B4725AF136A00D85CCB /* World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B4625AF136A00D85CCB /* World.swift */; };
+		78F29B4C25AF14EE00D85CCB /* ChunkPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B4B25AF14EE00D85CCB /* ChunkPosition.swift */; };
+		78FA059B25B515810074CF37 /* UpdateViewPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FA059A25B515810074CF37 /* UpdateViewPositionPacket.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +120,9 @@
 
 /* Begin PBXFileReference section */
 		780D9BA82596CF5900144D45 /* LauncherProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauncherProfile.swift; sourceTree = "<group>"; };
+		781E63BA25B14CBE00ADFAB8 /* ChunkData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkData.swift; sourceTree = "<group>"; };
+		781E63BF25B165F900ADFAB8 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		781E63CA25B166D000ADFAB8 /* EntityPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityPosition.swift; sourceTree = "<group>"; };
 		78225CE2258EC0CE007B7F98 /* EventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventManager.swift; sourceTree = "<group>"; };
 		7830D8C825940BE500D35180 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		7830D8CD2596B91B00D35180 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
@@ -173,7 +184,7 @@
 		78764DDC25AD374D00AE8716 /* SpecialRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialRecipe.swift; sourceTree = "<group>"; };
 		78764DEA25AD7F2700AE8716 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		78764DEF25AD9BFF00AE8716 /* SuspiciousStewRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspiciousStewRecipe.swift; sourceTree = "<group>"; };
-		78764DF425AD9FCA00AE8716 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		78764DF425AD9FCA00AE8716 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		78764E0425ADCA7900AE8716 /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		78764E0F25AE4B9200AE8716 /* TagsPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsPacket.swift; sourceTree = "<group>"; };
 		78764E1425AE5E6900AE8716 /* ChunkDataPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkDataPacket.swift; sourceTree = "<group>"; };
@@ -191,6 +202,8 @@
 		78965087258861FE0079C5CF /* NBTCompound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTCompound.swift; sourceTree = "<group>"; };
 		789650912588834C0079C5CF /* LoginStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStart.swift; sourceTree = "<group>"; };
 		789BE9E22589DAC7001C08ED /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
+		78BFD2E625B521A800366631 /* WorldConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldConfig.swift; sourceTree = "<group>"; };
+		78BFD2EB25B522A700366631 /* ServerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfig.swift; sourceTree = "<group>"; };
 		78C2D5842585949800883DF5 /* StatusRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRequest.swift; sourceTree = "<group>"; };
 		78C2D5892585955500883DF5 /* StatusResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusResponse.swift; sourceTree = "<group>"; };
 		78C2D58E258597D400883DF5 /* PacketReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketReader.swift; sourceTree = "<group>"; };
@@ -201,7 +214,10 @@
 		78F29B2B25AE81E000D85CCB /* ChunkSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkSection.swift; sourceTree = "<group>"; };
 		78F29B3125AE846000D85CCB /* BlockEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockEntity.swift; sourceTree = "<group>"; };
 		78F29B3925AE84CE00D85CCB /* BlockPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockPosition.swift; sourceTree = "<group>"; };
-		78F29B3E25AE8FAA00D85CCB /* PacketHandlingPool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketHandlingPool.swift; sourceTree = "<group>"; };
+		78F29B3E25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketHandlerThreadPool.swift; sourceTree = "<group>"; };
+		78F29B4625AF136A00D85CCB /* World.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = World.swift; sourceTree = "<group>"; };
+		78F29B4B25AF14EE00D85CCB /* ChunkPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkPosition.swift; sourceTree = "<group>"; };
+		78FA059A25B515810074CF37 /* UpdateViewPositionPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateViewPositionPacket.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -300,6 +316,7 @@
 				784B394F25A19D8300556E3E /* SetDifficultyPacket.swift */,
 				78764E0F25AE4B9200AE8716 /* TagsPacket.swift */,
 				78764E1425AE5E6900AE8716 /* ChunkDataPacket.swift */,
+				78FA059A25B515810074CF37 /* UpdateViewPositionPacket.swift */,
 			);
 			path = Play;
 			sourceTree = "<group>";
@@ -373,7 +390,7 @@
 			isa = PBXGroup;
 			children = (
 				787D8FF0258451A8007E6441 /* ServerConnection.swift */,
-				78F29B3E25AE8FAA00D85CCB /* PacketHandlingPool.swift */,
+				78F29B3E25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift */,
 				78654EB62585E0CF00770FFF /* PingInfo.swift */,
 				787D8FF525848480007E6441 /* Packet.swift */,
 				78C2D58E258597D400883DF5 /* PacketReader.swift */,
@@ -406,8 +423,9 @@
 				78F29B2225AE817C00D85CCB /* World */,
 				784CCB1B25AD35C3004B3182 /* Registries */,
 				784CCA7D25AD2DB8004B3182 /* Recipes */,
-				78764DF425AD9FCA00AE8716 /* Game.swift */,
+				78764DF425AD9FCA00AE8716 /* Client.swift */,
 				7884358F2585E606002F1F84 /* Server.swift */,
+				78BFD2EB25B522A700366631 /* ServerConfig.swift */,
 				78225CE2258EC0CE007B7F98 /* EventManager.swift */,
 				784D97902587604700FC89F8 /* Config.swift */,
 				784CAE23259AB654003E5F87 /* UUID.swift */,
@@ -441,7 +459,11 @@
 			isa = PBXGroup;
 			children = (
 				78F29B2325AE818700D85CCB /* Chunk.swift */,
+				781E63BA25B14CBE00ADFAB8 /* ChunkData.swift */,
+				78F29B4B25AF14EE00D85CCB /* ChunkPosition.swift */,
 				78F29B2B25AE81E000D85CCB /* ChunkSection.swift */,
+				78F29B4625AF136A00D85CCB /* World.swift */,
+				78BFD2E625B521A800366631 /* WorldConfig.swift */,
 			);
 			path = World;
 			sourceTree = "<group>";
@@ -449,7 +471,9 @@
 		78F29B3025AE845700D85CCB /* Entity */ = {
 			isa = PBXGroup;
 			children = (
+				781E63BF25B165F900ADFAB8 /* Player.swift */,
 				78F29B3125AE846000D85CCB /* BlockEntity.swift */,
+				781E63CA25B166D000ADFAB8 /* EntityPosition.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -605,15 +629,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78F29B4725AF136A00D85CCB /* World.swift in Sources */,
 				784CCAA025AD300B004B3182 /* ItemStack.swift in Sources */,
 				784CCB0825AD3515004B3182 /* BannerDuplicateRecipe.swift in Sources */,
 				787D900725848726007E6441 /* PacketWriter.swift in Sources */,
+				781E63C025B165F900ADFAB8 /* Player.swift in Sources */,
 				784CCAF925AD34CC004B3182 /* FireworkStarFadeRecipe.swift in Sources */,
 				784194BB258204CD0070DE78 /* MinecraftApp.swift in Sources */,
 				787D8FF1258451A8007E6441 /* ServerConnection.swift in Sources */,
 				78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */,
 				784CCA9B25AD2F99004B3182 /* Ingredient.swift in Sources */,
 				7830D8CE2596B91B00D35180 /* ViewState.swift in Sources */,
+				78BFD2E725B521A800366631 /* WorldConfig.swift in Sources */,
 				784CAE24259AB654003E5F87 /* UUID.swift in Sources */,
 				788435A025861B55002F1F84 /* ServerListEntryView.swift in Sources */,
 				784B393825A167E000556E3E /* PlayHandler.swift in Sources */,
@@ -649,7 +676,9 @@
 				784CCABF25AD31BA004B3182 /* CampfireCookingRecipe.swift in Sources */,
 				784B392E25A14F7500556E3E /* LoginDisconnect.swift in Sources */,
 				784D97912587604700FC89F8 /* Config.swift in Sources */,
+				781E63BB25B14CBE00ADFAB8 /* ChunkData.swift in Sources */,
 				7878855F2588136700226064 /* Buffer.swift in Sources */,
+				78F29B4C25AF14EE00D85CCB /* ChunkPosition.swift in Sources */,
 				784CCACC25AD328A004B3182 /* SmithingRecipe.swift in Sources */,
 				784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */,
 				784CCAB025AD312B004B3182 /* SmeltingRecipe.swift in Sources */,
@@ -664,7 +693,9 @@
 				78764E1525AE5E6900AE8716 /* ChunkDataPacket.swift in Sources */,
 				78C2D58F258597D400883DF5 /* PacketReader.swift in Sources */,
 				784CCAE525AD345B004B3182 /* MapCloningRecipe.swift in Sources */,
-				78764DF525AD9FCA00AE8716 /* Game.swift in Sources */,
+				78764DF525AD9FCA00AE8716 /* Client.swift in Sources */,
+				78FA059B25B515810074CF37 /* UpdateViewPositionPacket.swift in Sources */,
+				78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */,
 				784CCAA825AD30BB004B3182 /* HeatRecipe.swift in Sources */,
 				78225CE3258EC0CE007B7F98 /* EventManager.swift in Sources */,
 				78764DEB25AD7F2700AE8716 /* Item.swift in Sources */,
@@ -678,12 +709,13 @@
 				784CCAD525AD3417004B3182 /* ArmorDyeRecipe.swift in Sources */,
 				787D8FFF258485A7007E6441 /* Handshake.swift in Sources */,
 				78F0F3F92592D8CA003DF812 /* PacketHandler.swift in Sources */,
-				78F29B3F25AE8FAA00D85CCB /* PacketHandlingPool.swift in Sources */,
+				78F29B3F25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift in Sources */,
 				7884359B25861981002F1F84 /* ServerList.swift in Sources */,
 				784CCB1725AD355B004B3182 /* ShulkerBoxColouringRecipe.swift in Sources */,
 				784CCAEA25AD3471004B3182 /* MapExtendingRecipe.swift in Sources */,
 				784CCAF425AD349E004B3182 /* FireworkStarRecipe.swift in Sources */,
 				788435902585E606002F1F84 /* Server.swift in Sources */,
+				781E63CB25B166D000ADFAB8 /* EntityPosition.swift in Sources */,
 				784B393325A14F8400556E3E /* LoginSuccess.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

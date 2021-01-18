@@ -9,10 +9,10 @@ import SwiftUI
 
 struct AppView: View {
   @ObservedObject var viewState: ViewState
-  var game: Game
+  var game: Client
   var eventManager: EventManager
   
-  init(game: Game, eventManager: EventManager) {
+  init(game: Client, eventManager: EventManager) {
     self.game = game
     self.eventManager = eventManager
     

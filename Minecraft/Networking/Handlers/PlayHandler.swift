@@ -22,19 +22,26 @@ struct PlayHandler: PacketHandler {
     do {
       switch (packetReader.packetId) {
         case 0x0d:
-          handle(try SetDifficultyPacket.from(packetReader)!)
+          let packet = try SetDifficultyPacket.from(packetReader)!
+          eventManager.triggerEvent(.setDifficulty(difficulty: packet.difficulty))
         case 0x17:
           logger.debug("plugin message ignored")
         case 0x20:
-          _ = try ChunkDataPacket.from(packetReader)
+          let packet = ChunkDataPacket.from(packetReader)!
+          eventManager.triggerEvent(.chunkData(chunkData: packet.chunkData))
         case 0x24:
           eventManager.triggerEvent(.joinGame(packet: try JoinGamePacket.from(packetReader)!))
         case 0x30:
           eventManager.triggerEvent(.playerAbilities(packet: PlayerAbilitiesPacket.from(packetReader)!))
         case 0x3f:
-          handle(HeldItemChangePacket.from(packetReader)!)
+          let packet = HeldItemChangePacket.from(packetReader)!
+          eventManager.triggerEvent(.hotbarSlotChange(slot: Int(packet.slot)))
+        case 0x40:
+          let packet = UpdateViewPositionPacket.from(packetReader)!
+          eventManager.triggerEvent(.updateViewPosition(currentChunk: packet.chunkPosition))
         case 0x5a:
-          handle(try DeclareRecipesPacket.from(packetReader)!)
+          let packet = try DeclareRecipesPacket.from(packetReader)!
+          eventManager.triggerEvent(.declareRecipes(recipeRegistry: packet.recipeRegistry))
         case 0x5b:
           _ = try TagsPacket.from(packetReader)
         default:
@@ -44,18 +51,5 @@ struct PlayHandler: PacketHandler {
       logger.debug("\(error.localizedDescription)")
       eventManager.triggerError("failed to handle play packet with packet id: \(packetReader.packetId)")
     }
-  }
-  
-  func handle(_ packet: SetDifficultyPacket) {
-    logger.debug("difficulty: \(String(reflecting: packet.difficulty))")
-    eventManager.triggerEvent(.setDifficulty(difficulty: packet.difficulty))
-  }
-  
-  func handle(_ packet: HeldItemChangePacket) {
-    eventManager.triggerEvent(.hotbarSlotChange(slot: Int(packet.slot)))
-  }
-  
-  func handle(_ packet: DeclareRecipesPacket) {
-    eventManager.triggerEvent(.declareRecipes(recipeRegistry: packet.recipeRegistry))
   }
 }
