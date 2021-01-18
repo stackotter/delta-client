@@ -20,56 +20,41 @@ class EventManager: Equatable {
   
   let uuid = UUID()
   
-  var eventHandlers: [String: [EventHandler]] = [:]
+  // event handlers for specific events
+  var eventHandlers: [EventHandler] = []
+  var specificEventHandlers: [String: [EventHandler]] = [:]
   var oneTimeEventHandlers: [String: [EventHandler]] = [:]
   
   var forwardTargets: [EventManager] = []
   
-  // TODO: maybe make a few separate enums
   enum Event {
     case error(_ message: String)
     
     case connectionReady
     case connectionClosed
     
-    case pingInfoReceived(PingInfo)
-    
-    case loginSuccess(packet: LoginSuccess)
-    case loginDisconnect(reason: String)
-    
-    case joinGame(packet: JoinGamePacket)
-    case setDifficulty(difficulty: Difficulty)
-    case playerAbilities(packet: PlayerAbilitiesPacket)
-    case hotbarSlotChange(slot: Int)
-    case declareRecipes(recipeRegistry: RecipeRegistry)
-    
-    case chunkData(chunkData: ChunkData)
-    
-    case updateViewPosition(currentChunk: ChunkPosition)
-    
-    // HACK: this is quite a bodge and means a typo in an event name when registering a handler could go unnoticed and cause tons of annoying problems
-    // TODO: write something to check if event with name exists before registering for now
     // this computed property is used to create the keys for the handlers dict
     var name:String {
       let mirror = Mirror(reflecting: self)
       if let name = mirror.children.first?.label {
         return name
       } else {
-        // if events are being funky this could possibly be a cause?
-        // i don't think this line should ever be reached
         return String(describing:self)
       }
     }
   }
   
-  // registers an event handler to be called every time a specific an event in eventNames is triggered
-  func registerEventHandler(_ handler: @escaping EventHandler, eventNames: [String]) {
-    for eventName in eventNames {
-      if eventHandlers[eventName] == nil {
-        eventHandlers[eventName] = []
-      }
-      eventHandlers[eventName]!.append(handler)
+  // registers an event handler to be called for every event
+  func registerEventHandler(_ handler: @escaping EventHandler) {
+    eventHandlers.append(handler)
+  }
+  
+  // registers an event handler to be called every time a specific event is triggered
+  func registerEventHandler(_ handler: @escaping EventHandler, eventName: String) {
+    if specificEventHandlers[eventName] == nil {
+      specificEventHandlers[eventName] = []
     }
+    specificEventHandlers[eventName]!.append(handler)
   }
   
   // used to register temporary handlers
@@ -86,6 +71,7 @@ class EventManager: Equatable {
     triggerEvent(error)
   }
   
+  // passes an event to all relevant handlers
   func triggerEvent(_ event: Event, from: EventManager? = nil) {
     for forwardTarget in forwardTargets {
       if forwardTarget != from {
@@ -93,9 +79,13 @@ class EventManager: Equatable {
       }
     }
     
-    let handlers = eventHandlers[event.name]
-    if handlers != nil {
-      for handler in handlers! {
+    for handler in eventHandlers {
+      handler(event)
+    }
+    
+    let specificHandlers = specificEventHandlers[event.name]
+    if specificHandlers != nil {
+      for handler in specificHandlers! {
         handler(event)
       }
     }
@@ -109,10 +99,13 @@ class EventManager: Equatable {
     }
   }
   
+  // adds an eventmanager that this eventmanager will forward all its events to (after first handling them itself)
   func forward(to target: EventManager) {
     forwardTargets.append(target)
   }
   
+  // sets two way forwarding between two eventmanagers
+  // events triggered in either will be handled by both.
   func link(with target: EventManager) {
     self.forward(to: target)
     target.forward(to: self)

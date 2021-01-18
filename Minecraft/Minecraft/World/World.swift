@@ -25,27 +25,18 @@ class World {
     self.eventManager = eventManager
     self.logger = Logger(for: type(of: self))
     self.config = config
-    
-    self.eventManager.registerEventHandler(handleEvent, eventNames: ["chunkData", "updateViewPosition"])
   }
   
-  // maybe this event handling should be on the server and just the logic should be here?
-  func handleEvent(_ event: EventManager.Event) {
-    logger.debug("\(event.name): \(self.packedChunks.count)")
-    switch event {
-      case let .chunkData(chunkData: chunkData):
-        if packedChunks[chunkData.position] != nil {
-          logger.debug("duplicate chunk received")
-        }
-        packedChunks[chunkData.position] = chunkData
-      case let .updateViewPosition(currentChunk: currentChunk):
-        unpackChunks(aroundChunk: currentChunk)
-      default:
-        break
+  func addChunk(data chunkData: ChunkData) {
+    if packedChunks[chunkData.position] != nil {
+      logger.debug("duplicate chunk received")
     }
+    packedChunks[chunkData.position] = chunkData
   }
   
-  func unpackChunks(aroundChunk centreChunkPos: ChunkPosition) {
+  // unpacks chunks within a square around the specified chunk
+  // radius is currently used to construct a square around the player, could go for a circle in future
+  func unpackChunks(aroundChunk centreChunkPos: ChunkPosition, withRadius radius: Int32) {
     // will contain chunks ordered by distance from player
     let orderedChunks = packedChunks.values.sorted(by: {
       squareDistBetweenChunks(centreChunkPos, $0.position) < squareDistBetweenChunks(centreChunkPos, $1.position)

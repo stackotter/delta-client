@@ -20,10 +20,8 @@
 		784194C2258204D00070DE78 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 784194C1258204D00070DE78 /* Preview Assets.xcassets */; };
 		784194CE258204D10070DE78 /* MinecraftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194CD258204D10070DE78 /* MinecraftTests.swift */; };
 		784194D9258204D10070DE78 /* MinecraftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194D8258204D10070DE78 /* MinecraftUITests.swift */; };
-		784B392925A14EC000556E3E /* LoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B392825A14EC000556E3E /* LoginHandler.swift */; };
 		784B392E25A14F7500556E3E /* LoginDisconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B392D25A14F7500556E3E /* LoginDisconnect.swift */; };
 		784B393325A14F8400556E3E /* LoginSuccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B393225A14F8400556E3E /* LoginSuccess.swift */; };
-		784B393825A167E000556E3E /* PlayHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B393725A167E000556E3E /* PlayHandler.swift */; };
 		784B393D25A17AB600556E3E /* Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B393C25A17AB600556E3E /* Identifier.swift */; };
 		784B394325A185B200556E3E /* JoinGamePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B394225A185B200556E3E /* JoinGamePacket.swift */; };
 		784B394B25A19CCC00556E3E /* Gamemode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B394A25A19CCC00556E3E /* Gamemode.swift */; };
@@ -88,8 +86,6 @@
 		78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5842585949800883DF5 /* StatusRequest.swift */; };
 		78C2D58A2585955500883DF5 /* StatusResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5892585955500883DF5 /* StatusResponse.swift */; };
 		78C2D58F258597D400883DF5 /* PacketReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D58E258597D400883DF5 /* PacketReader.swift */; };
-		78C2D5952585CA7400883DF5 /* StatusHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5942585CA7400883DF5 /* StatusHandler.swift */; };
-		78F0F3F92592D8CA003DF812 /* PacketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F0F3F82592D8CA003DF812 /* PacketHandler.swift */; };
 		78F29B1E25AE769B00D85CCB /* CompactedLongArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */; };
 		78F29B2425AE818700D85CCB /* Chunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B2325AE818700D85CCB /* Chunk.swift */; };
 		78F29B2C25AE81E000D85CCB /* ChunkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B2B25AE81E000D85CCB /* ChunkSection.swift */; };
@@ -139,10 +135,8 @@
 		784194D4258204D10070DE78 /* MinecraftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinecraftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D8258204D10070DE78 /* MinecraftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftUITests.swift; sourceTree = "<group>"; };
 		784194DA258204D10070DE78 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		784B392825A14EC000556E3E /* LoginHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHandler.swift; sourceTree = "<group>"; };
 		784B392D25A14F7500556E3E /* LoginDisconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDisconnect.swift; sourceTree = "<group>"; };
 		784B393225A14F8400556E3E /* LoginSuccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginSuccess.swift; sourceTree = "<group>"; };
-		784B393725A167E000556E3E /* PlayHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayHandler.swift; sourceTree = "<group>"; };
 		784B393C25A17AB600556E3E /* Identifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Identifier.swift; sourceTree = "<group>"; };
 		784B394225A185B200556E3E /* JoinGamePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinGamePacket.swift; sourceTree = "<group>"; };
 		784B394A25A19CCC00556E3E /* Gamemode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gamemode.swift; sourceTree = "<group>"; };
@@ -207,8 +201,6 @@
 		78C2D5842585949800883DF5 /* StatusRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRequest.swift; sourceTree = "<group>"; };
 		78C2D5892585955500883DF5 /* StatusResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusResponse.swift; sourceTree = "<group>"; };
 		78C2D58E258597D400883DF5 /* PacketReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketReader.swift; sourceTree = "<group>"; };
-		78C2D5942585CA7400883DF5 /* StatusHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusHandler.swift; sourceTree = "<group>"; };
-		78F0F3F82592D8CA003DF812 /* PacketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketHandler.swift; sourceTree = "<group>"; };
 		78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactedLongArray.swift; sourceTree = "<group>"; };
 		78F29B2325AE818700D85CCB /* Chunk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chunk.swift; sourceTree = "<group>"; };
 		78F29B2B25AE81E000D85CCB /* ChunkSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkSection.swift; sourceTree = "<group>"; };
@@ -396,7 +388,6 @@
 				78C2D58E258597D400883DF5 /* PacketReader.swift */,
 				787D900625848726007E6441 /* PacketWriter.swift */,
 				78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */,
-				78C2D5932585CA6800883DF5 /* Handlers */,
 				787D8FFD2584857A007E6441 /* Packets */,
 			);
 			path = Networking;
@@ -442,17 +433,6 @@
 				78F29B3925AE84CE00D85CCB /* BlockPosition.swift */,
 			);
 			path = Minecraft;
-			sourceTree = "<group>";
-		};
-		78C2D5932585CA6800883DF5 /* Handlers */ = {
-			isa = PBXGroup;
-			children = (
-				78C2D5942585CA7400883DF5 /* StatusHandler.swift */,
-				784B393725A167E000556E3E /* PlayHandler.swift */,
-				784B392825A14EC000556E3E /* LoginHandler.swift */,
-				78F0F3F82592D8CA003DF812 /* PacketHandler.swift */,
-			);
-			path = Handlers;
 			sourceTree = "<group>";
 		};
 		78F29B2225AE817C00D85CCB /* World */ = {
@@ -643,7 +623,6 @@
 				78BFD2E725B521A800366631 /* WorldConfig.swift in Sources */,
 				784CAE24259AB654003E5F87 /* UUID.swift in Sources */,
 				788435A025861B55002F1F84 /* ServerListEntryView.swift in Sources */,
-				784B393825A167E000556E3E /* PlayHandler.swift in Sources */,
 				784CCB0D25AD352E004B3182 /* BannerAddPatternRecipe.swift in Sources */,
 				7878B52F25844B6B007C0D3D /* GameView.swift in Sources */,
 				784CCA9125AD2E86004B3182 /* CraftingRecipe.swift in Sources */,
@@ -700,15 +679,12 @@
 				78225CE3258EC0CE007B7F98 /* EventManager.swift in Sources */,
 				78764DEB25AD7F2700AE8716 /* Item.swift in Sources */,
 				784CCABA25AD317A004B3182 /* SmokingRecipe.swift in Sources */,
-				784B392925A14EC000556E3E /* LoginHandler.swift in Sources */,
 				784CCAB525AD3165004B3182 /* BlastingRecipe.swift in Sources */,
 				784CCAFE25AD34E1004B3182 /* RepairItemRecipe.swift in Sources */,
 				784B394325A185B200556E3E /* JoinGamePacket.swift in Sources */,
 				784B395F25A1BCA400556E3E /* HeldItemChangePacket.swift in Sources */,
-				78C2D5952585CA7400883DF5 /* StatusHandler.swift in Sources */,
 				784CCAD525AD3417004B3182 /* ArmorDyeRecipe.swift in Sources */,
 				787D8FFF258485A7007E6441 /* Handshake.swift in Sources */,
-				78F0F3F92592D8CA003DF812 /* PacketHandler.swift in Sources */,
 				78F29B3F25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift in Sources */,
 				7884359B25861981002F1F84 /* ServerList.swift in Sources */,
 				784CCB1725AD355B004B3182 /* ShulkerBoxColouringRecipe.swift in Sources */,

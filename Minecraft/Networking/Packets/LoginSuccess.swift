@@ -9,7 +9,7 @@ import Foundation
 
 struct LoginSuccess: Packet {
   typealias PacketType = LoginSuccess
-  var id: Int = 0x02
+  static let id: Int = 0x02
   
   var uuid: UUID
   var username: String

@@ -9,7 +9,7 @@ import Foundation
 
 struct HeldItemChangePacket: Packet {
   typealias PacketType = HeldItemChangePacket
-  var id: Int = 0x3f
+  static let id: Int = 0x3f
   
   var slot: Int8
   

@@ -9,7 +9,7 @@ import Foundation
 
 struct LoginDisconnect: Packet {
   typealias PacketType = LoginDisconnect
-  var id: Int = 0x00
+  static let id: Int = 0x00
   
   var reason: String
   

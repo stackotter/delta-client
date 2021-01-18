@@ -9,7 +9,7 @@ import Foundation
 
 struct StatusResponse: Packet {
   typealias PacketType = StatusResponse
-  var id: Int = 0x00
+  static let id: Int = 0x00
   
   var json: JSON
   

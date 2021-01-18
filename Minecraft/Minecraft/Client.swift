@@ -32,12 +32,7 @@ class Client {
     self.eventManager = eventManager
     self.logger = Logger(for: type(of: self))
     
-    do {
-      self.config = try Config(minecraftFolder: minecraftFolder, eventManager: eventManager)
-    } catch {
-      logger.debug("failed to load config: \(error.localizedDescription)")
-      throw error
-    }
+    self.config = Config(minecraftFolder: minecraftFolder, eventManager: eventManager)
   }
   
   func play(serverToPlay: Server) {
@@ -45,16 +40,7 @@ class Client {
     eventManager.link(with: self.currentServer!.serverEventManager)
     
     // TODO_LATER: move this to the registry object talked about in that IDEA comment somewhere up there
-    eventManager.registerEventHandler(handleEvent, eventNames: ["declareRecipes"])
-  }
-  
-  func handleEvent(event: EventManager.Event) {
-    switch event {
-      case let .declareRecipes(recipeRegistry: recipeRegistry):
-        self.recipeRegistry = recipeRegistry
-        logger.debug("hi")
-      default:
-        break
-    }
+    // TODO: handle declare recipes somewhere here again, might just hand a reference to client to server
+//    eventManager.registerEventHandler(handleEvent, eventName: "declareRecipes")
   }
 }

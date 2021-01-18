@@ -10,7 +10,7 @@ import Foundation
 // TODO_LATER: fill this out more as needed
 struct TagsPacket: Packet {
   typealias PacketType = TagsPacket
-  var id: Int = 0x5b
+  static let id: Int = 0x5b
   
   static func from(_ packetReader: PacketReader) throws -> TagsPacket? {
     var mutableReader = packetReader

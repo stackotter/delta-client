@@ -9,7 +9,7 @@ import Foundation
 
 struct SetDifficultyPacket: Packet {
   typealias PacketType = SetDifficultyPacket
-  var id: Int = 0x0d
+  static let id: Int = 0x0d
   
   var difficulty: Difficulty
   var isLocked: Bool

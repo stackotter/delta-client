@@ -9,7 +9,7 @@ import Foundation
 
 struct Handshake: Packet {
   typealias PacketType = Handshake
-  var id = 0x00
+  static let id: Int = 0x00
   
   var protocolVersion: Int
   var serverAddr: String
@@ -22,7 +22,7 @@ struct Handshake: Packet {
   }
   
   func toBytes() -> [UInt8] {
-    var writer = PacketWriter(packetId: id)
+    var writer = PacketWriter(packetId: Handshake.id)
     writer.writeVarInt(Int32(protocolVersion))
     writer.writeString(serverAddr)
     writer.writeUnsignedShort(UInt16(serverPort))

@@ -9,7 +9,7 @@ import Foundation
 
 struct ChunkDataPacket: Packet {
   typealias PacketType = ChunkDataPacket
-  var id: Int = 0x20
+  static let id: Int = 0x20
   
   var chunkData: ChunkData
   

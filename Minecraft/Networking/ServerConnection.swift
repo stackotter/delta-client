@@ -51,23 +51,10 @@ class ServerConnection {
     self.connection = ServerConnection.createNWConnection(fromHost: self.host, andPort: self.port)
     
     self.packetHandlingPool = PacketHandlerThreadPool(eventManager: eventManager)
-    
-    registerEventHandlers()
   }
   
-  func registerEventHandlers() {
-    eventManager.registerEventHandler(handleEvent, eventNames: ["loginDisconnect", "loginSuccess"])
-  }
-  
-  func handleEvent(_ event: EventManager.Event) {
-    switch event {
-      case let .loginDisconnect(reason: reason):
-        eventManager.triggerError("login failed: \(reason)")
-      case .loginSuccess(packet: _):
-        state = .play
-      default:
-        break
-    }
+  func registerPacketHandlers(handlers: [ServerConnection.ConnectionState: (PacketReader) -> Void]) {
+    packetHandlingPool.packetHandlers = handlers
   }
   
   private func stateUpdateHandler(newState: NWConnection.State) {

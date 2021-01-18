@@ -9,7 +9,7 @@ import Foundation
 
 struct UpdateViewPositionPacket: Packet {
   typealias PacketType = UpdateViewPositionPacket
-  var id: Int = 0x40
+  static let id: Int = 0x40
   
   var chunkPosition: ChunkPosition
   

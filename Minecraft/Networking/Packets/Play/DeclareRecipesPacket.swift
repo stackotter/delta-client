@@ -10,7 +10,7 @@ import os
 
 struct DeclareRecipesPacket: Packet {
   typealias PacketType = DeclareRecipesPacket
-  var id: Int = 0x5a
+  static let id: Int = 0x5a
   
   var recipeRegistry: RecipeRegistry
   

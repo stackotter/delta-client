@@ -9,10 +9,10 @@ import Foundation
 
 struct StatusRequest: Packet {
   typealias PacketType = StatusRequest
-  var id: Int = 0x00
+  static let id: Int = 0x00
   
   func toBytes() -> [UInt8] {
-    var writer = PacketWriter(packetId: id)
+    var writer = PacketWriter(packetId: StatusRequest.id)
     return writer.pack()
   }
 }

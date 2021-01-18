@@ -9,7 +9,7 @@ import Foundation
 
 struct JoinGamePacket: Packet {
   typealias PacketType = JoinGamePacket
-  var id: Int = 0x24
+  static let id: Int = 0x24
   
   var playerEntityId: Int32
   var isHardcore: Bool

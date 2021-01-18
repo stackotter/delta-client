@@ -27,7 +27,7 @@ struct MinecraftApp: App {
     WindowGroup {
       Group {
         if game != nil {
-          AppView(game: game!, eventManager: eventManager)
+          AppView(client: game!, eventManager: eventManager)
         } else {
           Text(message)
         }

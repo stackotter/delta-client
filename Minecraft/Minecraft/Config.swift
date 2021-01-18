@@ -11,30 +11,25 @@ import os
 // NOTE: could possibly be struct instead of class
 // TODO_LATER: Get this working under the sandbox
 // TODO_LATER: Handle minecraft folder not existing
+// TODO: clean up the config class
 class Config {
   private var logger: Logger
   
   var minecraftFolder: URL
   var eventManager: EventManager
   
-  var serverList: ServerList?
-  var launcherProfile: LauncherProfile?
-  
   enum ConfigError: Error {
     case invalidServerListNBT
     case invalidLauncherProfilesJSON
   }
   
-  init(minecraftFolder: URL, eventManager: EventManager) throws {
+  init(minecraftFolder: URL, eventManager: EventManager) {
     self.logger = Logger(for: type(of: self))
     self.minecraftFolder = minecraftFolder
     self.eventManager = eventManager
-    
-    try loadServerList(minecraftFolder: minecraftFolder)
-    try loadLauncherProfile(minecraftFolder: minecraftFolder)
   }
   
-  func loadServerList(minecraftFolder: URL) throws {
+  func getServerList(forClient client: Client) throws -> ServerList {
     let serversDatURL = minecraftFolder.appendingPathComponent("servers.dat")
     do {
       let serversNBT = try NBTCompound(fromURL: serversDatURL)
@@ -48,9 +43,9 @@ class Config {
         if let url = URL.init(string: "minecraft://\(ip)") {
           if let host = url.host {
             if let port = url.port {
-              server = Server(name: name, host: host, port: port, eventManager: eventManager)
+              server = Server(name: name, host: host, port: port, eventManager: eventManager, client: client)
             } else {
-              server = Server(name: name, host: host, port: 25565, eventManager: eventManager)
+              server = Server(name: name, host: host, port: 25565, eventManager: eventManager, client: client)
             }
           } else {
             logger.debug("server ip has no host?")
@@ -62,13 +57,13 @@ class Config {
         }
         servers.append(server!)
       }
-      self.serverList = ServerList(withServers: servers)
+      return ServerList(withServers: servers)
     } catch {
       throw ConfigError.invalidServerListNBT
     }
   }
   
-  func loadLauncherProfile(minecraftFolder: URL) throws {
+  func getLauncherProfile(minecraftFolder: URL) throws -> LauncherProfile {
     let launcherProfilesURL = minecraftFolder.appendingPathComponent("launcher_profiles.json")
     do {
       let json = try JSON.fromURL(launcherProfilesURL)
@@ -78,7 +73,7 @@ class Config {
       let profileUUID = try UUID.fromString(selectedUser.getString(forKey: "profile"))!
       
       let profile = LauncherProfile(accountUUID: accountUUID, profileUUID: profileUUID)
-      self.launcherProfile = profile
+      return profile
     } catch {
       throw ConfigError.invalidLauncherProfilesJSON
     }

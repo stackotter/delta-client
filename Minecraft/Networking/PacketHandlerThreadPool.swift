@@ -30,7 +30,7 @@ class PacketHandlerThreadPool {
   var threadManagementThread: DispatchQueue
   
   // holds the packet handler for each state (packet handling is spread amongst them for readibility)
-  var packetHandlers: [ServerConnection.ConnectionState: PacketHandler] = [:]
+  var packetHandlers: [ServerConnection.ConnectionState: (PacketReader) -> Void] = [:]
   
   var logger: Logger
   var eventManager: EventManager
@@ -49,11 +49,6 @@ class PacketHandlerThreadPool {
     
     // all threads start idle
     self.availableThreads = Set(self.threads)
-    
-    // create packet handlers
-    self.packetHandlers[.status] = StatusHandler(eventManager: eventManager)
-    self.packetHandlers[.login] = LoginHandler(eventManager: eventManager)
-    self.packetHandlers[.play] = PlayHandler(eventManager: eventManager)
   }
   
   // pops incoming packets onto the packetQueue and sets any idle threads going if necessary
@@ -100,9 +95,8 @@ class PacketHandlerThreadPool {
       eventManager.triggerError("received disconnect packet")
     }
     
-    let handler = packetHandlers[state]
-    if handler != nil {
-      handler!.handlePacket(packetReader: reader)
+    if let handler = packetHandlers[state] {
+      handler(reader)
     } else {
       logger.debug("received packet in invalid or non-implemented state")
     }

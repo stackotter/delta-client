@@ -9,16 +9,23 @@ import SwiftUI
 
 struct AppView: View {
   @ObservedObject var viewState: ViewState
-  var game: Client
+  var client: Client
   var eventManager: EventManager
   
-  init(game: Client, eventManager: EventManager) {
-    self.game = game
+  init(client: Client, eventManager: EventManager) {
+    self.client = client
     self.eventManager = eventManager
     
-    self.viewState = ViewState(game: self.game, serverList: self.game.config.serverList!)
+    do {
+      let serverList = try self.client.config.getServerList(forClient: self.client)
+      self.viewState = ViewState(game: self.client, serverList: serverList)
+    } catch {
+      self.viewState = ViewState(game: self.client)
+      self.viewState.displayError(message: "failed to load server list")
+    }
     
-    self.eventManager.registerEventHandler(handleError, eventNames: ["error"])
+    
+    self.eventManager.registerEventHandler(handleError, eventName: "error")
   }
   
   var body: some View {

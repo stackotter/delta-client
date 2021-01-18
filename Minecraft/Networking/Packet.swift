@@ -10,7 +10,7 @@ import Foundation
 protocol Packet {
   associatedtype PacketType: Packet
   
-  var id: Int { get }
+  static var id: Int { get }
   
   func toBytes() -> [UInt8]
   

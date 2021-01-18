@@ -9,12 +9,12 @@ import Foundation
 
 struct LoginStart: Packet {
   typealias PacketType = LoginStart
-  var id: Int = 0x00
+  static let id: Int = 0x00
   
   var username: String
   
   func toBytes() -> [UInt8] {
-    var writer = PacketWriter(packetId: id)
+    var writer = PacketWriter(packetId: LoginStart.id)
     writer.writeString(username)
     return writer.pack()
   }
