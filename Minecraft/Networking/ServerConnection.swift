@@ -108,18 +108,22 @@ class ServerConnection {
           self.ping()
         }, eventName: "connectionReady")
         start()
+        
       case .ready:
         handshake(nextState: .status, callback: {
           self.ping()
         })
+        
       case .status:
         let statusRequest = StatusRequest()
         sendPacket(statusRequest)
+        
       case .disconnected:
         eventManager.registerOneTimeEventHandler({ (event) in
           self.ping()
         }, eventName: "connectionReady")
         restart()
+        
       default:
         eventManager.registerOneTimeEventHandler({ (event) in
           self.ping()

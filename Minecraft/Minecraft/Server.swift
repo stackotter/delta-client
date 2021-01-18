@@ -127,6 +127,8 @@ class Server: Hashable, ObservableObject {
             DispatchQueue.main.async {
               self.pingInfo = pingInfo
             }
+            
+            serverConnection.close()
           } catch {
             eventManager.triggerError("failed to handle status response json")
           }
@@ -150,9 +152,10 @@ class Server: Hashable, ObservableObject {
           
         case 0x01:
           logger.debug("encryption request ignored")
-          
+        
+        // TODO: do something with the uuid maybe?
         case LoginSuccess.id:
-          let packet = try LoginSuccess.from(packetReader)!
+          let _ = try LoginSuccess.from(packetReader)!
           serverConnection.state = .play
           
         case 0x03:
@@ -169,14 +172,13 @@ class Server: Hashable, ObservableObject {
     }
   }
   
-  // TODO: do stuff with this data now
   // handles packet while in the play state
   func handlePlayPacket(packetReader: PacketReader) {
     logger.debug("play packet received with id: 0x\(String(packetReader.packetId, radix: 16))")
     do {
       switch (packetReader.packetId) {
         case SetDifficultyPacket.id:
-          let packet = try SetDifficultyPacket.from(packetReader)!
+          let _ = try SetDifficultyPacket.from(packetReader)!
           
         case 0x17:
           logger.debug("plugin message ignored")
@@ -198,17 +200,17 @@ class Server: Hashable, ObservableObject {
           currentWorldName = packet.worldName
           
         case PlayerAbilitiesPacket.id:
-          let packet = PlayerAbilitiesPacket.from(packetReader)!
+          let _ = PlayerAbilitiesPacket.from(packetReader)!
           
         case HeldItemChangePacket.id:
-          let packet = HeldItemChangePacket.from(packetReader)!
+          let _ = HeldItemChangePacket.from(packetReader)!
           
         case UpdateViewPositionPacket.id:
           let packet = UpdateViewPositionPacket.from(packetReader)!
           currentWorld!.unpackChunks(aroundChunk: packet.chunkPosition, withRadius: config!.viewDistance)
           
         case DeclareRecipesPacket.id:
-          let packet = try DeclareRecipesPacket.from(packetReader)!
+          let _ = try DeclareRecipesPacket.from(packetReader)!
           
         case 0x5b:
           _ = try TagsPacket.from(packetReader)
