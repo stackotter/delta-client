@@ -196,18 +196,18 @@ class Server: Hashable, ObservableObject {
           currentWorld!.addChunk(data: packet.chunkData)
           
           // TODO: fix the chunk unpacking criteria
-          if downloadingTerrain {
-            let viewDiameter = config!.viewDistance * 2 + 1
-            var numChunks = viewDiameter * viewDiameter
-            // this could cause some issues but im assuming that's how this would work?
-            if numChunks < 81 {
-              numChunks = 81
-            }
-            if currentWorld!.packedChunks.count == numChunks {
-              logger.log("view distance: \(self.config!.viewDistance)")
-              currentWorld!.unpackChunks(aroundChunk: player.chunkPosition, withViewDistance: config!.viewDistance)
-            }
-          }
+//          if downloadingTerrain {
+//            let viewDiameter = config!.viewDistance * 2 + 1
+//            var numChunks = viewDiameter * viewDiameter
+//            // this could cause some issues but im assuming that's how this would work?
+//            if numChunks < 81 {
+//              numChunks = 81
+//            }
+//            if currentWorld!.packedChunks.count == numChunks {
+//              logger.log("view distance: \(self.config!.viewDistance)")
+//              currentWorld!.unpackChunks(aroundChunk: player.chunkPosition, withViewDistance: config!.viewDistance)
+//            }
+//          }
           
         case JoinGamePacket.id:
           let packet = try JoinGamePacket.from(packetReader)!
