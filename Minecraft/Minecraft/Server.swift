@@ -35,9 +35,14 @@ class Server: Hashable, ObservableObject {
     return nil
   }
   
+  var player: Player
+  
   var config: ServerConfig? = nil
   var state: ServerState = .idle
   
+  // NOTE: maybe this could be consolidated to a struct if there are other play state kinda variables
+  var downloadingTerrain = false
+    
   // holds the packet handler for each state (packet handling is spread amongst them for readibility)
   var packetHandlers: [ServerConnection.ConnectionState: (PacketReader) -> Void] = [:]
   
@@ -60,6 +65,9 @@ class Server: Hashable, ObservableObject {
     self.logger = Logger(for: type(of: self), desc: "\(host):\(port)")
     
     self.serverConnection = ServerConnection(host: host, port: port, eventManager: serverEventManager)
+    
+    // TODO: fix this once config is cleaned up
+    self.player = Player(username: "stampy654")
     
     // create packet handlers
     self.packetHandlers[.status] = handleStatusPacket
@@ -185,7 +193,21 @@ class Server: Hashable, ObservableObject {
           
         case ChunkDataPacket.id:
           let packet = ChunkDataPacket.from(packetReader)!
-          worlds[currentWorldName!]!.addChunk(data: packet.chunkData)
+          currentWorld!.addChunk(data: packet.chunkData)
+          
+          // TODO: fix the chunk unpacking criteria
+          if downloadingTerrain {
+            let viewDiameter = config!.viewDistance * 2 + 1
+            var numChunks = viewDiameter * viewDiameter
+            // this could cause some issues but im assuming that's how this would work?
+            if numChunks < 81 {
+              numChunks = 81
+            }
+            if currentWorld!.packedChunks.count == numChunks {
+              logger.log("view distance: \(self.config!.viewDistance)")
+              currentWorld!.unpackChunks(aroundChunk: player.chunkPosition, withViewDistance: config!.viewDistance)
+            }
+          }
           
         case JoinGamePacket.id:
           let packet = try JoinGamePacket.from(packetReader)!
@@ -198,6 +220,7 @@ class Server: Hashable, ObservableObject {
           let world = World(eventManager: serverEventManager, config: worldConfig)
           worlds[packet.worldName] = world
           currentWorldName = packet.worldName
+          downloadingTerrain = true
           
         case PlayerAbilitiesPacket.id:
           let _ = PlayerAbilitiesPacket.from(packetReader)!
@@ -207,12 +230,13 @@ class Server: Hashable, ObservableObject {
           
         case UpdateViewPositionPacket.id:
           let packet = UpdateViewPositionPacket.from(packetReader)!
-          currentWorld!.unpackChunks(aroundChunk: packet.chunkPosition, withRadius: config!.viewDistance)
+          player.chunkPosition = packet.chunkPosition
+          currentWorld!.unpackChunks(aroundChunk: packet.chunkPosition, withViewDistance: config!.viewDistance)
           
         case DeclareRecipesPacket.id:
           let _ = try DeclareRecipesPacket.from(packetReader)!
           
-        case 0x5b:
+        case TagsPacket.id:
           _ = try TagsPacket.from(packetReader)
           
         default:

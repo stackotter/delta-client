@@ -36,14 +36,22 @@ class World {
   
   // unpacks chunks within a square around the specified chunk
   // radius is currently used to construct a square around the player, could go for a circle in future
-  func unpackChunks(aroundChunk centreChunkPos: ChunkPosition, withRadius radius: Int32) {
+  func unpackChunks(aroundChunk centreChunkPos: ChunkPosition, withViewDistance viewDistance: Int32) {
     // will contain chunks ordered by distance from player
     let orderedChunks = packedChunks.values.sorted(by: {
       squareDistBetweenChunks(centreChunkPos, $0.position) < squareDistBetweenChunks(centreChunkPos, $1.position)
     })
     
     for chunk in orderedChunks {
-      print("chunkhi: \(chunk.position)")
+      do {
+        let distX = chunk.position.chunkX - centreChunkPos.chunkX
+        let distZ = chunk.position.chunkZ - centreChunkPos.chunkZ
+        if distX < viewDistance && distZ < viewDistance {
+          chunks[chunk.position] = try chunk.unpack()
+        }
+      } catch {
+        eventManager.triggerError("failed to load chunks")
+      }
     }
   }
   

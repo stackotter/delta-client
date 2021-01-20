@@ -16,7 +16,6 @@ struct LoginDisconnect: Packet {
   static func from(_ packetReader: PacketReader) throws -> LoginDisconnect? {
     var mutableReader = packetReader
     let reason = try mutableReader.readChat()
-    let packet = LoginDisconnect(reason: reason)
-    return packet
+    return LoginDisconnect(reason: reason)
   }
 }

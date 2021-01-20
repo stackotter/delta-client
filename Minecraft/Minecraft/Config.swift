@@ -63,7 +63,7 @@ class Config {
     }
   }
   
-  func getLauncherProfile(minecraftFolder: URL) throws -> LauncherProfile {
+  func getLauncherProfile() throws -> LauncherProfile {
     let launcherProfilesURL = minecraftFolder.appendingPathComponent("launcher_profiles.json")
     do {
       let json = try JSON.fromURL(launcherProfilesURL)

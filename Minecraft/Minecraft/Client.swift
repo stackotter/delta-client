@@ -19,7 +19,7 @@ enum ClientState {
 class Client {
   var state: ClientState = .idle
   
-  // IDEA: maybe use a Registry object that stores all registries for neater code
+  // TODO: maybe use a Registry object that stores all registries for neater code
   var recipeRegistry: RecipeRegistry = RecipeRegistry()
   var currentServer: Server? = nil
   var config: Config
@@ -38,9 +38,5 @@ class Client {
   func play(serverToPlay: Server) {
     currentServer = serverToPlay
     eventManager.link(with: self.currentServer!.serverEventManager)
-    
-    // TODO_LATER: move this to the registry object talked about in that IDEA comment somewhere up there
-    // TODO: handle declare recipes somewhere here again, might just hand a reference to client to server
-//    eventManager.registerEventHandler(handleEvent, eventName: "declareRecipes")
   }
 }

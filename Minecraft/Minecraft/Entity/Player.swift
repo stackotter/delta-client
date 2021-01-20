@@ -11,6 +11,7 @@ struct Player {
   var username: String
   
   var position: EntityPosition
+  var chunkPosition: ChunkPosition
   var experience: Float
   var health: Int
   
@@ -19,6 +20,7 @@ struct Player {
     
     // default values (used until real values are received from the server)
     self.position = EntityPosition(x: 0, y: 0, z: 0)
+    self.chunkPosition = ChunkPosition(chunkX: 0, chunkZ: 0)
     self.experience = -1
     self.health = -1
   }
