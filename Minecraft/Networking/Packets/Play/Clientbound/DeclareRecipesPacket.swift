@@ -14,7 +14,7 @@ struct DeclareRecipesPacket: Packet {
   
   var recipeRegistry: RecipeRegistry
   
-  static func from(_ packetReader: inout PacketReader) throws -> DeclareRecipesPacket? {
+  static func from(_ packetReader: inout PacketReader) throws -> DeclareRecipesPacket {
     #if DEBUG
     // helps to detect changes in the protocol (already helped once)
     let logger = Logger.init(for: type(of: self))

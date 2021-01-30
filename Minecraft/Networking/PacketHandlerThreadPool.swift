@@ -30,7 +30,7 @@ class PacketHandlerThreadPool {
   var threadManagementThread: DispatchQueue
   
   // holds the packet handler for each state (packet handling is spread amongst them for readibility)
-  var packetHandlers: [ServerConnection.ConnectionState: (PacketReader) -> Void] = [:]
+  var packetHandlers: [ServerConnection.ConnectionState: PacketHandler] = [:]
   
   var logger: Logger
   var eventManager: EventManager
@@ -96,7 +96,7 @@ class PacketHandlerThreadPool {
     }
     
     if let handler = packetHandlers[state] {
-      handler(reader)
+      handler.handlePacket(packet.reader)
     } else {
       logger.debug("received packet in invalid or non-implemented state")
     }

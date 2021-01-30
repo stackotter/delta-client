@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum PacketError: LocalizedError {
+  case packetNotClientbound
+}
+
 protocol Packet {
   associatedtype PacketType: Packet
   
@@ -14,7 +18,7 @@ protocol Packet {
   
   func toBytes() -> [UInt8]
   
-  static func from(_ packetReader: inout PacketReader) -> PacketType?
+  static func from(_ packetReader: inout PacketReader) throws -> PacketType
 }
 
 extension Packet {
@@ -23,7 +27,7 @@ extension Packet {
     return []
   }
   
-  static func from(_ packetReader: inout PacketReader) -> PacketType? {
-    return nil
+  static func from(_ packetReader: inout PacketReader) throws -> PacketType {
+    throw PacketError.packetNotClientbound
   }
 }

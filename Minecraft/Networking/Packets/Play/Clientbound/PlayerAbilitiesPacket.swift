@@ -11,21 +11,12 @@ struct PlayerAbilitiesPacket: Packet {
   typealias PacketType = PlayerAbilitiesPacket
   static let id: Int = 0x30
   
-  var flags: Flags
+  var flags: PlayerFlags
   var flyingSpeed: Float
   var fovModifier: Float
   
-  struct Flags: OptionSet {
-    let rawValue: UInt8
-    
-    static let invulnerable = Flags(rawValue: 0x01)
-    static let flying = Flags(rawValue: 0x02)
-    static let allowFlying = Flags(rawValue: 0x04)
-    static let creativeMode = Flags(rawValue: 0x08)
-  }
-  
-  static func from(_ packetReader: inout PacketReader) -> PlayerAbilitiesPacket? {
-    let flags = Flags(rawValue: packetReader.readUnsignedByte())
+  static func from(_ packetReader: inout PacketReader) -> PlayerAbilitiesPacket {
+    let flags = PlayerFlags(rawValue: packetReader.readUnsignedByte())
     let flyingSpeed = packetReader.readFloat()
     let fovModifier = packetReader.readFloat()
     

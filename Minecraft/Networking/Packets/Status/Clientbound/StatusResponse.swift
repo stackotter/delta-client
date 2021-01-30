@@ -13,7 +13,7 @@ struct StatusResponse: Packet {
   
   var json: JSON
   
-  static func from(_ packetReader: inout PacketReader) throws -> StatusResponse? {
+  static func from(_ packetReader: inout PacketReader) throws -> StatusResponse {
     let json = try packetReader.readJSON()
     let packet = StatusResponse(json: json)
     return packet

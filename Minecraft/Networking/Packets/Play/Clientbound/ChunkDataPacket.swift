@@ -13,7 +13,7 @@ struct ChunkDataPacket: Packet {
   
   var chunkData: ChunkData
   
-  static func from(_ packetReader: inout PacketReader) -> ChunkDataPacket? {
+  static func from(_ packetReader: inout PacketReader) -> ChunkDataPacket {
     let chunkX = packetReader.readInt()
     let chunkZ = packetReader.readInt()
     let position = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)

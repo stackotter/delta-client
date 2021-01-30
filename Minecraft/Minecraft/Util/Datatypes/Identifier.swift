@@ -7,9 +7,13 @@
 
 import Foundation
 
-struct Identifier: Equatable, Hashable {
+struct Identifier: Equatable, Hashable, CustomStringConvertible {
   var namespace: String
   var name: String
+  
+  var description: String {
+    return toString()
+  }
   
   enum IdentifierError: Error {
     case invalidIdentifier

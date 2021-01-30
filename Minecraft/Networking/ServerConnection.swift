@@ -53,7 +53,7 @@ class ServerConnection {
     self.packetHandlingPool = PacketHandlerThreadPool(eventManager: eventManager)
   }
   
-  func registerPacketHandlers(handlers: [ServerConnection.ConnectionState: (PacketReader) -> Void]) {
+  func registerPacketHandlers(handlers: [ServerConnection.ConnectionState: PacketHandler]) {
     packetHandlingPool.packetHandlers = handlers
   }
   
