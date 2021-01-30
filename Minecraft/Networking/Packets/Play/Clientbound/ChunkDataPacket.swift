@@ -13,12 +13,11 @@ struct ChunkDataPacket: Packet {
   
   var chunkData: ChunkData
   
-  static func from(_ packetReader: PacketReader) -> ChunkDataPacket? {
-    var mutableReader = packetReader
-    let chunkX = mutableReader.readInt()
-    let chunkZ = mutableReader.readInt()
+  static func from(_ packetReader: inout PacketReader) -> ChunkDataPacket? {
+    let chunkX = packetReader.readInt()
+    let chunkZ = packetReader.readInt()
     let position = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
-    let chunkData = ChunkData(position: position, data: mutableReader.buf)
+    let chunkData = ChunkData(position: position, data: packetReader.buf)
     return ChunkDataPacket(chunkData: chunkData)
   }
 }

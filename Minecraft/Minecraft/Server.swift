@@ -98,10 +98,11 @@ class Server: Hashable {
   // TODO: handle rest of login packets
   // handles packets while in the login state
   func handleLoginPacket(packetReader: PacketReader) {
+    var reader = packetReader // mutable copy of packetReader
     do {
-      switch packetReader.packetId {
+      switch reader.packetId {
         case LoginDisconnect.id:
-          let packet = try LoginDisconnect.from(packetReader)!
+          let packet = try LoginDisconnect.from(&reader)!
           eventManager.triggerError(packet.reason)
           
         case 0x01:
@@ -109,7 +110,7 @@ class Server: Hashable {
         
         // TODO: do something with the uuid maybe?
         case LoginSuccess.id:
-          let _ = try LoginSuccess.from(packetReader)!
+          let _ = try LoginSuccess.from(&reader)!
           serverConnection.state = .play
           
         case 0x03:
@@ -122,23 +123,24 @@ class Server: Hashable {
           return
       }
     } catch {
-      eventManager.triggerError("failed to handle login packet with packet id: \(packetReader.packetId)")
+      eventManager.triggerError("failed to handle login packet with packet id: \(reader.packetId)")
     }
   }
   
   // handles packet while in the play state
   func handlePlayPacket(packetReader: PacketReader) {
+    var reader = packetReader // mutable copy of packetReader
     logger.debug("play packet received with id: 0x\(String(packetReader.packetId, radix: 16))")
     do {
-      switch packetReader.packetId {
+      switch reader.packetId {
         case SetDifficultyPacket.id:
-          let _ = try SetDifficultyPacket.from(packetReader)!
+          let _ = try SetDifficultyPacket.from(&reader)!
           
         case 0x17:
           logger.debug("plugin message ignored")
           
         case ChunkDataPacket.id:
-          let packet = ChunkDataPacket.from(packetReader)!
+          let packet = ChunkDataPacket.from(&reader)!
           currentWorld!.addChunk(data: packet.chunkData)
           
           // TODO: fix the chunk unpacking criteria
@@ -156,7 +158,7 @@ class Server: Hashable {
 //          }
           
         case JoinGamePacket.id:
-          let packet = try JoinGamePacket.from(packetReader)!
+          let packet = try JoinGamePacket.from(&reader)!
           config = ServerConfig(worldCount: packet.worldCount, worldNames: packet.worldNames,
                                 dimensionCodec: packet.dimensionCodec, maxPlayers: packet.maxPlayers,
                                 viewDistance: packet.viewDistance, useReducedDebugInfo: packet.reducedDebugInfo,
@@ -169,28 +171,28 @@ class Server: Hashable {
           downloadingTerrain = true
           
         case PlayerAbilitiesPacket.id:
-          let _ = PlayerAbilitiesPacket.from(packetReader)!
+          let _ = PlayerAbilitiesPacket.from(&reader)!
           
         case HeldItemChangePacket.id:
-          let _ = HeldItemChangePacket.from(packetReader)!
+          let _ = HeldItemChangePacket.from(&reader)!
           
         case UpdateViewPositionPacket.id:
-          let packet = UpdateViewPositionPacket.from(packetReader)!
+          let packet = UpdateViewPositionPacket.from(&reader)!
           player.chunkPosition = packet.chunkPosition
           currentWorld!.unpackChunks(aroundChunk: packet.chunkPosition, withViewDistance: config!.viewDistance)
           
         case DeclareRecipesPacket.id:
-          let _ = try DeclareRecipesPacket.from(packetReader)!
+          let _ = try DeclareRecipesPacket.from(&reader)!
           
         case TagsPacket.id:
-          _ = try TagsPacket.from(packetReader)
+          _ = try TagsPacket.from(&reader)
           
         default:
           return
       }
     } catch {
       logger.debug("\(error.localizedDescription)")
-      eventManager.triggerError("failed to handle play packet with packet id: \(packetReader.packetId)")
+      eventManager.triggerError("failed to handle play packet with packet id: \(reader.packetId)")
     }
   }
   

@@ -13,11 +13,9 @@ struct UpdateViewPositionPacket: Packet {
   
   var chunkPosition: ChunkPosition
   
-  // TODO: use inout to avoid the whole mutable reader business
-  static func from(_ packetReader: PacketReader) -> UpdateViewPositionPacket? {
-    var mutableReader = packetReader
-    let chunkX = mutableReader.readVarInt()
-    let chunkZ = mutableReader.readVarInt()
+  static func from(_ packetReader: inout PacketReader) -> UpdateViewPositionPacket? {
+    let chunkX = packetReader.readVarInt()
+    let chunkZ = packetReader.readVarInt()
     return UpdateViewPositionPacket(chunkPosition: ChunkPosition(chunkX: chunkX, chunkZ: chunkZ))
   }
 }

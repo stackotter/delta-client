@@ -13,9 +13,8 @@ struct HeldItemChangePacket: Packet {
   
   var slot: Int8
   
-  static func from(_ packetReader: PacketReader) -> HeldItemChangePacket? {
-    var mutableReader = packetReader
-    let slot = mutableReader.readByte()
+  static func from(_ packetReader: inout PacketReader) -> HeldItemChangePacket? {
+    let slot = packetReader.readByte()
     return HeldItemChangePacket(slot: slot)
   }
 }

@@ -40,10 +40,11 @@ class ServerPinger: Hashable, ObservableObject {
   }
   
   func handleStatusPacket(packetReader: PacketReader) {
-    switch packetReader.packetId {
+    var reader = packetReader
+    switch reader.packetId {
       case StatusResponse.id:
         do {
-          let packet = try StatusResponse.from(packetReader)!
+          let packet = try StatusResponse.from(&reader)!
           let json = packet.json
         
           let versionInfo = try json.getJSON(forKey: "version")

@@ -24,12 +24,10 @@ struct PlayerAbilitiesPacket: Packet {
     static let creativeMode = Flags(rawValue: 0x08)
   }
   
-  static func from(_ packetReader: PacketReader) -> PlayerAbilitiesPacket? {
-    var mutableReader = packetReader
-    
-    let flags = Flags(rawValue: mutableReader.readUnsignedByte())
-    let flyingSpeed = mutableReader.readFloat()
-    let fovModifier = mutableReader.readFloat()
+  static func from(_ packetReader: inout PacketReader) -> PlayerAbilitiesPacket? {
+    let flags = Flags(rawValue: packetReader.readUnsignedByte())
+    let flyingSpeed = packetReader.readFloat()
+    let fovModifier = packetReader.readFloat()
     
     return PlayerAbilitiesPacket(flags: flags, flyingSpeed: flyingSpeed, fovModifier: fovModifier)
   }

@@ -28,27 +28,26 @@ struct JoinGamePacket: Packet {
   var isDebug: Bool
   var isFlat: Bool
   
-  static func from(_ packetReader: PacketReader) throws -> JoinGamePacket? {
-    var mutableReader = packetReader
-    let playerEntityId = mutableReader.readInt()
-    let isHardcore = mutableReader.readBool()
-    let gamemode = Gamemode(rawValue: Int8(mutableReader.readUnsignedByte()))!
-    let previousGamemode = Gamemode(rawValue: mutableReader.readByte())!
-    let worldCount = mutableReader.readVarInt()
+  static func from(_ packetReader: inout PacketReader) throws -> JoinGamePacket? {
+    let playerEntityId = packetReader.readInt()
+    let isHardcore = packetReader.readBool()
+    let gamemode = Gamemode(rawValue: Int8(packetReader.readUnsignedByte()))!
+    let previousGamemode = Gamemode(rawValue: packetReader.readByte())!
+    let worldCount = packetReader.readVarInt()
     var worldNames: [Identifier] = []
     for _ in 0..<worldCount {
-      worldNames.append(try mutableReader.readIdentifier())
+      worldNames.append(try packetReader.readIdentifier())
     }
-    let dimensionCodec = try mutableReader.readNBTTag()
-    let dimension = try mutableReader.readNBTTag()
-    let worldName = try mutableReader.readIdentifier()
-    let hashedSeed = mutableReader.readLong()
-    let maxPlayers = mutableReader.readVarInt()
-    let viewDistance = mutableReader.readVarInt()
-    let reducedDebugInfo = mutableReader.readBool()
-    let enableRespawnScreen = mutableReader.readBool()
-    let isDebug = mutableReader.readBool()
-    let isFlat = mutableReader.readBool()
+    let dimensionCodec = try packetReader.readNBTTag()
+    let dimension = try packetReader.readNBTTag()
+    let worldName = try packetReader.readIdentifier()
+    let hashedSeed = packetReader.readLong()
+    let maxPlayers = packetReader.readVarInt()
+    let viewDistance = packetReader.readVarInt()
+    let reducedDebugInfo = packetReader.readBool()
+    let enableRespawnScreen = packetReader.readBool()
+    let isDebug = packetReader.readBool()
+    let isFlat = packetReader.readBool()
     let packet = JoinGamePacket(playerEntityId: playerEntityId, isHardcore: isHardcore, gamemode: gamemode,
                           previousGamemode: previousGamemode, worldCount: worldCount, worldNames: worldNames,
                           dimensionCodec: dimensionCodec, dimension: dimension, worldName: worldName, hashedSeed: hashedSeed,

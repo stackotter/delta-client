@@ -14,7 +14,7 @@ protocol Packet {
   
   func toBytes() -> [UInt8]
   
-  static func from(_ packetReader: PacketReader) -> PacketType?
+  static func from(_ packetReader: inout PacketReader) -> PacketType?
 }
 
 extension Packet {
@@ -23,7 +23,7 @@ extension Packet {
     return []
   }
   
-  static func from(_ packetReader: PacketReader) -> PacketType? {
+  static func from(_ packetReader: inout PacketReader) -> PacketType? {
     return nil
   }
 }

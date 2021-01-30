@@ -14,72 +14,70 @@ struct DeclareRecipesPacket: Packet {
   
   var recipeRegistry: RecipeRegistry
   
-  static func from(_ packetReader: PacketReader) throws -> DeclareRecipesPacket? {
+  static func from(_ packetReader: inout PacketReader) throws -> DeclareRecipesPacket? {
     #if DEBUG
     // helps to detect changes in the protocol (already helped once)
     let logger = Logger.init(for: type(of: self))
     #endif
     
-    var mutableReader = packetReader
-    
     var recipeRegistry = RecipeRegistry()
-    let numRecipes = mutableReader.readVarInt()
+    let numRecipes = packetReader.readVarInt()
     for _ in 0..<numRecipes {
-      let type = try mutableReader.readIdentifier()
-      let recipeId = mutableReader.readString()
+      let type = try packetReader.readIdentifier()
+      let recipeId = packetReader.readString()
       
       if type.namespace == "minecraft" {
         switch type.name {
           case "crafting_shapeless":
-            let group = mutableReader.readString()
+            let group = packetReader.readString()
             var ingredients: [Ingredient] = []
-            let ingredientCount = mutableReader.readVarInt()
+            let ingredientCount = packetReader.readVarInt()
             for _ in 0..<ingredientCount {
-              let count = mutableReader.readVarInt()
+              let count = packetReader.readVarInt()
               var itemStacks: [ItemStack] = []
               for _ in 0..<count {
-                let slot = try mutableReader.readSlot()
+                let slot = try packetReader.readSlot()
                 itemStacks.append(ItemStack(fromSlot: slot))
               }
               let ingredient = Ingredient(ingredients: itemStacks)
               ingredients.append(ingredient)
             }
-            let result = try mutableReader.readSlot()
+            let result = try packetReader.readSlot()
             let recipe = CraftingShapeless(group: group, ingredients: ingredients, result: ItemStack(fromSlot: result))
             recipeRegistry.craftingRecipes[recipeId] = recipe
           case "crafting_shaped":
-            let width = Int(mutableReader.readVarInt())
-            let height = Int(mutableReader.readVarInt())
-            let group = mutableReader.readString()
+            let width = Int(packetReader.readVarInt())
+            let height = Int(packetReader.readVarInt())
+            let group = packetReader.readString()
             var ingredients: [Ingredient] = []
             let ingredientCount = width * height
             for _ in 0..<ingredientCount {
-              let count = mutableReader.readVarInt()
+              let count = packetReader.readVarInt()
               var itemStacks: [ItemStack] = []
               for _ in 0..<count {
-                let slot = try mutableReader.readSlot()
+                let slot = try packetReader.readSlot()
                 itemStacks.append(ItemStack(fromSlot: slot))
               }
               let ingredient = Ingredient(ingredients: itemStacks)
               ingredients.append(ingredient)
             }
-            let result = try mutableReader.readSlot()
+            let result = try packetReader.readSlot()
             let resultItemStack = ItemStack(fromSlot: result)
             let recipe = CraftingShaped(group: group, width: width, height: height, ingredients: ingredients, result: resultItemStack)
             recipeRegistry.craftingRecipes[recipeId] = recipe
           case "smelting", "blasting", "smoking", "campfire_cooking":
-            let group = mutableReader.readString()
+            let group = packetReader.readString()
             var itemStacks: [ItemStack] = []
-            let count = mutableReader.readVarInt()
+            let count = packetReader.readVarInt()
             for _ in 0..<count {
-              let slot = try mutableReader.readSlot()
+              let slot = try packetReader.readSlot()
               itemStacks.append(ItemStack(fromSlot: slot))
             }
             let ingredient = Ingredient(ingredients: itemStacks)
-            let result = try mutableReader.readSlot()
+            let result = try packetReader.readSlot()
             let resultItemStack = ItemStack(fromSlot: result)
-            let experience = mutableReader.readFloat()
-            let cookingTime = Int(mutableReader.readVarInt())
+            let experience = packetReader.readFloat()
+            let cookingTime = Int(packetReader.readVarInt())
             
             var recipe: HeatRecipe? = nil
             switch type.name {
@@ -101,36 +99,36 @@ struct DeclareRecipesPacket: Packet {
               recipeRegistry.heatRecipes[recipeId] = recipe
             }
           case "stonecutting":
-            let group = mutableReader.readString()
+            let group = packetReader.readString()
             var itemStacks: [ItemStack] = []
-            let count = mutableReader.readVarInt()
+            let count = packetReader.readVarInt()
             for _ in 0..<count {
-              let slot = try mutableReader.readSlot()
+              let slot = try packetReader.readSlot()
               itemStacks.append(ItemStack(fromSlot: slot))
             }
             let ingredient = Ingredient(ingredients: itemStacks)
-            let result = try mutableReader.readSlot()
+            let result = try packetReader.readSlot()
             let resultItemStack = ItemStack(fromSlot: result)
             let recipe = StonecuttingRecipe(group: group, ingredient: ingredient, result: resultItemStack)
             recipeRegistry.stonecuttingRecipes[recipeId] = recipe
           case "smithing":
             var baseItemStacks: [ItemStack] = []
-            let baseCount = mutableReader.readVarInt()
+            let baseCount = packetReader.readVarInt()
             for _ in 0..<baseCount {
-              let slot = try mutableReader.readSlot()
+              let slot = try packetReader.readSlot()
               baseItemStacks.append(ItemStack(fromSlot: slot))
             }
             let baseIngredient = Ingredient(ingredients: baseItemStacks)
             
             var additionItemStacks: [ItemStack] = []
-            let additionCount = mutableReader.readVarInt()
+            let additionCount = packetReader.readVarInt()
             for _ in 0..<additionCount {
-              let slot = try mutableReader.readSlot()
+              let slot = try packetReader.readSlot()
               additionItemStacks.append(ItemStack(fromSlot: slot))
             }
             let additionIngredient = Ingredient(ingredients: additionItemStacks)
             
-            let result = try mutableReader.readSlot()
+            let result = try packetReader.readSlot()
             let resultItemStack = ItemStack(fromSlot: result)
             
             let recipe = SmithingRecipe(base: baseIngredient, addition: additionIngredient, result: resultItemStack)
