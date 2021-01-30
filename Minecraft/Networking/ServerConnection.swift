@@ -104,7 +104,7 @@ class ServerConnection {
   func handshake(nextState: Handshake.NextState, callback: @escaping () -> Void = {}) {
     state = .handshaking
     // move protocol version to config or constants file of some sort
-    let handshake = Handshake(protocolVersion: 754, serverAddr: host, serverPort: port, nextState: nextState)
+    let handshake = Handshake(protocolVersion: PROTOCOL_VERSION, serverAddr: host, serverPort: port, nextState: nextState)
 
     self.sendPacket(handshake, callback: .contentProcessed({ (error) in
       if error != nil {

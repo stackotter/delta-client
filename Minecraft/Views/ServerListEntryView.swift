@@ -15,7 +15,7 @@ struct ServerListEntryView: View {
       Text(server.info.name)
       Spacer()
       Circle()
-        .foregroundColor((server.pingInfo == nil) ? .red : .green)
+        .foregroundColor((server.pingInfo == nil) ? .red : ((server.pingInfo?.protocolVersion == PROTOCOL_VERSION) ? .green : .yellow))
         .fixedSize()
     }
   }

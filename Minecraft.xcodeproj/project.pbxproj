@@ -80,6 +80,7 @@
 		788435902585E606002F1F84 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884358F2585E606002F1F84 /* Server.swift */; };
 		7884359B25861981002F1F84 /* ServerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884359A25861981002F1F84 /* ServerList.swift */; };
 		788435A025861B55002F1F84 /* ServerListEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884359F25861B55002F1F84 /* ServerListEntryView.swift */; };
+		7889A9E925C4EED80007B2D7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7889A9E825C4EED80007B2D7 /* Constants.swift */; };
 		78965088258861FE0079C5CF /* NBTCompound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78965087258861FE0079C5CF /* NBTCompound.swift */; };
 		789650922588834C0079C5CF /* LoginStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789650912588834C0079C5CF /* LoginStart.swift */; };
 		789BE9E32589DAC7001C08ED /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789BE9E22589DAC7001C08ED /* JSON.swift */; };
@@ -197,6 +198,7 @@
 		7884358F2585E606002F1F84 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		7884359A25861981002F1F84 /* ServerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerList.swift; sourceTree = "<group>"; };
 		7884359F25861B55002F1F84 /* ServerListEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListEntryView.swift; sourceTree = "<group>"; };
+		7889A9E825C4EED80007B2D7 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		78965087258861FE0079C5CF /* NBTCompound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTCompound.swift; sourceTree = "<group>"; };
 		789650912588834C0079C5CF /* LoginStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStart.swift; sourceTree = "<group>"; };
 		789BE9E22589DAC7001C08ED /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
@@ -410,6 +412,7 @@
 				784CCB1B25AD35C3004B3182 /* Registries */,
 				784CCA7D25AD2DB8004B3182 /* Recipes */,
 				78764DF425AD9FCA00AE8716 /* Client.swift */,
+				7889A9E825C4EED80007B2D7 /* Constants.swift */,
 				7884358F2585E606002F1F84 /* Server.swift */,
 				784F4B7C25B7FC0A00FE21AA /* ServerInfo.swift */,
 				784F4B7725B7F6AC00FE21AA /* ServerPinger.swift */,
@@ -700,6 +703,7 @@
 				784CCB0825AD3515004B3182 /* BannerDuplicateRecipe.swift in Sources */,
 				787D900725848726007E6441 /* PacketWriter.swift in Sources */,
 				781E63C025B165F900ADFAB8 /* Player.swift in Sources */,
+				7889A9E925C4EED80007B2D7 /* Constants.swift in Sources */,
 				784CCAF925AD34CC004B3182 /* FireworkStarFadeRecipe.swift in Sources */,
 				784194BB258204CD0070DE78 /* MinecraftApp.swift in Sources */,
 				787D8FF1258451A8007E6441 /* ServerConnection.swift in Sources */,

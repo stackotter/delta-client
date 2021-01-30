@@ -8,7 +8,6 @@
 import Foundation
 import os
 
-// TODO: check protocol version and display warning before connecting if necessary
 class Server: Hashable {
   var logger: Logger
   var client: Client

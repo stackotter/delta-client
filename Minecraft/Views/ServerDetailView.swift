@@ -12,6 +12,8 @@ struct ServerDetailView: View {
   @ObservedObject var server: ServerPinger
   
   var body: some View {
+    Spacer()
+    
     VStack(alignment: .leading, spacing: 16) {
       VStack(alignment: .leading) {
         Text(server.info.name)
@@ -37,5 +39,14 @@ struct ServerDetailView: View {
         Text("Play")
       }
     }
+    
+    if (server.pingInfo?.protocolVersion != PROTOCOL_VERSION) {
+      Spacer()
+      VStack(alignment: .center)  {
+        Text("warning: this server uses a different protocol to this client version")
+      }
+    }
+    
+    Spacer()
   }
 }
