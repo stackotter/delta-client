@@ -9,18 +9,19 @@ import SwiftUI
 
 struct AppView: View {
   @ObservedObject var viewState: ViewState
-  var client: Client
   var eventManager: EventManager
+  var config: Config
   
-  init(client: Client, eventManager: EventManager) {
-    self.client = client
+  init(eventManager: EventManager) {
     self.eventManager = eventManager
+    self.config = Config(eventManager: self.eventManager)
     
     do {
-      let serverList = try self.client.config.getServerList(forClient: self.client)
-      self.viewState = ViewState(game: self.client, serverList: serverList)
+      let serverList = try self.config.getServerList()
+      serverList.refresh()
+      self.viewState = ViewState(serverList: serverList)
     } catch {
-      self.viewState = ViewState(game: self.client)
+      self.viewState = ViewState()
       self.viewState.displayError(message: "failed to load server list")
     }
     
@@ -30,7 +31,7 @@ struct AppView: View {
   
   var body: some View {
     if (viewState.isPlaying) {
-      GameView(server: viewState.selectedServer!)
+      GameView(serverInfo: viewState.selectedServerInfo!, config: config, eventManager: eventManager)
     }
     else if(viewState.isErrored) {
       ErrorView(viewState: viewState)

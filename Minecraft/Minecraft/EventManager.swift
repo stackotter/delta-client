@@ -12,7 +12,6 @@ import Foundation
 
 // NOTE: might not be threadsafe
 
-// TODO: make this only for basic events
 // packet handling will be better without this probably
 // handlers can be registered for events and anyone who needs data from an event can just easily register a handler
 class EventManager: Equatable {

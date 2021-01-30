@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct ServerListEntryView: View {
-  @ObservedObject var server: Server
+  @ObservedObject var server: ServerPinger
   
   var body: some View {
     HStack {
-      Text(server.name)
+      Text(server.info.name)
       Spacer()
       Circle()
         .foregroundColor((server.pingInfo == nil) ? .red : .green)

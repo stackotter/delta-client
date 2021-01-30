@@ -21,22 +21,22 @@ class Client {
   
   // TODO: maybe use a Registry object that stores all registries for neater code
   var recipeRegistry: RecipeRegistry = RecipeRegistry()
-  var currentServer: Server? = nil
+  var server: Server? = nil
   var config: Config
   
   var eventManager: EventManager
   var logger: Logger
   
-  init(eventManager: EventManager) throws {
-    let minecraftFolder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("minecraft")
+  init(eventManager: EventManager, serverInfo: ServerInfo, config: Config) {
     self.eventManager = eventManager
+    self.config = config
     self.logger = Logger(for: type(of: self))
     
-    self.config = Config(minecraftFolder: minecraftFolder, eventManager: eventManager)
+    self.server = Server(withInfo: serverInfo, eventManager: eventManager, client: self)
   }
   
-  func play(serverToPlay: Server) {
-    currentServer = serverToPlay
-    eventManager.link(with: self.currentServer!.serverEventManager)
+  // TEMP
+  func play() {
+    server!.login()
   }
 }

@@ -9,7 +9,7 @@ import Foundation
 import os
 
 // TODO: check protocol version and display warning before connecting if necessary
-class Server: Hashable, ObservableObject {
+class Server: Hashable {
   var logger: Logger
   var client: Client
   var eventManager: EventManager
@@ -19,12 +19,7 @@ class Server: Hashable, ObservableObject {
   var serverEventManager: EventManager
   
   var serverConnection: ServerConnection
-  var name: String
-  var host: String
-  var port: Int
-  
-  // make this not an optional perhaps?
-  @Published var pingInfo: PingInfo?
+  var info: ServerInfo
   
   var currentWorldName: Identifier?
   var worlds: [Identifier: World] = [:]
@@ -55,30 +50,24 @@ class Server: Hashable, ObservableObject {
     case disconnected
   }
   
-  init(name: String, host: String, port: Int, eventManager: EventManager, client: Client) {
+  init(withInfo serverInfo: ServerInfo, eventManager: EventManager, client: Client) {
     self.client = client
-    self.name = name
-    self.host = host
-    self.port = port
+    self.info = serverInfo
     self.eventManager = eventManager
     self.serverEventManager = EventManager()
-    self.logger = Logger(for: type(of: self), desc: "\(host):\(port)")
+    self.logger = Logger(for: type(of: self), desc: "\(info.host):\(info.port)")
     
-    self.serverConnection = ServerConnection(host: host, port: port, eventManager: serverEventManager)
+    self.serverConnection = ServerConnection(host: info.host, port: info.port, eventManager: serverEventManager)
     
     // TODO: fix this once config is cleaned up
     self.player = Player(username: "stampy654")
     
     // create packet handlers
-    self.packetHandlers[.status] = handleStatusPacket
     self.packetHandlers[.login] = handleLoginPacket
     self.packetHandlers[.play] = handlePlayPacket
     
     self.serverConnection.registerPacketHandlers(handlers: packetHandlers)
     self.serverEventManager.registerEventHandler(handleEvents)
-    
-    // TODO_LATER probably shouldn't happen in init
-    self.ping()
   }
   
   func handleEvents(_ event: EventManager.Event) {
@@ -88,12 +77,6 @@ class Server: Hashable, ObservableObject {
       default:
         break
     }
-  }
-  
-  func ping() {
-    pingInfo = nil
-    state = .status
-    serverConnection.ping()
   }
   
   // just a prototype for later
@@ -112,48 +95,11 @@ class Server: Hashable, ObservableObject {
     serverConnection.start()
   }
   
-  // TODO: handle the rest of the status packets
-  // handles packets received while in the status state
-  func handleStatusPacket(packetReader: PacketReader) {
-    do {
-      switch (packetReader.packetId) {
-        case StatusResponse.id:
-          let packet = try StatusResponse.from(packetReader)!
-          let json = packet.json
-          
-          do {
-            let versionInfo = try json.getJSON(forKey: "version")
-            let versionName = try versionInfo.getString(forKey: "name")
-            let protocolVersion = try versionInfo.getInt(forKey: "protocol")
-            
-            let players = try json.getJSON(forKey: "players")
-            let maxPlayers = try players.getInt(forKey: "max")
-            let numPlayers = try players.getInt(forKey: "online")
-            
-            let pingInfo = PingInfo(versionName: versionName, protocolVersion: protocolVersion, maxPlayers: maxPlayers, numPlayers: numPlayers, description: "Ping Complete", modInfo: "")
-            
-            DispatchQueue.main.async {
-              self.pingInfo = pingInfo
-            }
-            
-            serverConnection.close()
-          } catch {
-            eventManager.triggerError("failed to handle status response json")
-          }
-        
-        default:
-          return
-      }
-    } catch {
-      logger.debug("\(error.localizedDescription)")
-    }
-  }
-  
   // TODO: handle rest of login packets
   // handles packets while in the login state
   func handleLoginPacket(packetReader: PacketReader) {
     do {
-      switch (packetReader.packetId) {
+      switch packetReader.packetId {
         case LoginDisconnect.id:
           let packet = try LoginDisconnect.from(packetReader)!
           eventManager.triggerError(packet.reason)
@@ -184,7 +130,7 @@ class Server: Hashable, ObservableObject {
   func handlePlayPacket(packetReader: PacketReader) {
     logger.debug("play packet received with id: 0x\(String(packetReader.packetId, radix: 16))")
     do {
-      switch (packetReader.packetId) {
+      switch packetReader.packetId {
         case SetDifficultyPacket.id:
           let _ = try SetDifficultyPacket.from(packetReader)!
           
@@ -250,12 +196,12 @@ class Server: Hashable, ObservableObject {
   
   // Things so that SwiftUI ForEach loop works
   static func == (lhs: Server, rhs: Server) -> Bool {
-    return (lhs.name == rhs.name && lhs.host == rhs.host && lhs.port == rhs.port)
+    return (lhs.info.name == rhs.info.name && lhs.info.host == rhs.info.host && lhs.info.port == rhs.info.port)
   }
   
   func hash(into hasher: inout Hasher) {
-    hasher.combine(name)
-    hasher.combine(host)
-    hasher.combine(port)
+    hasher.combine(info.name)
+    hasher.combine(info.host)
+    hasher.combine(info.port)
   }
 }

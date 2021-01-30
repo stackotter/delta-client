@@ -8,14 +8,11 @@
 import Foundation
 
 class ServerList: ObservableObject {
-  @Published var servers: [Server]
+  @Published var servers: [ServerPinger] = []
   
-  convenience init() {
-    self.init(withServers: [])
-  }
-  
-  init(withServers servers: [Server]) {
-    self.servers = servers
+  func addServer(_ serverInfo: ServerInfo) {
+    let server = ServerPinger(serverInfo)
+    servers.append(server)
   }
   
   func refresh() {

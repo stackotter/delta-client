@@ -9,15 +9,15 @@ import SwiftUI
 
 struct ServerDetailView: View {
   @ObservedObject var viewState: ViewState
-  @ObservedObject var server: Server
+  @ObservedObject var server: ServerPinger
   
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       VStack(alignment: .leading) {
-        Text(server.name)
+        Text(server.info.name)
           .font(.title)
           .bold()
-        Text("\(server.host):\(String(server.port))")
+        Text("\(server.info.host):\(String(server.info.port))")
           .font(.title2)
       }
       
@@ -32,8 +32,7 @@ struct ServerDetailView: View {
       }
       
       Button(action: {
-        viewState.playServer(server: server)
-        server.login()
+        viewState.playServer(withInfo: server.info)
       }) {
         Text("Play")
       }

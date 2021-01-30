@@ -8,10 +8,7 @@
 import Foundation
 import os
 
-// NOTE: could possibly be struct instead of class
-// TODO_LATER: Get this working under the sandbox
-// TODO_LATER: Handle minecraft folder not existing
-// TODO: clean up the config class
+// TODO: handle minecraft folder not existing
 class Config {
   private var logger: Logger
   
@@ -23,41 +20,32 @@ class Config {
     case invalidLauncherProfilesJSON
   }
   
-  init(minecraftFolder: URL, eventManager: EventManager) {
+  init(eventManager: EventManager) {
     self.logger = Logger(for: type(of: self))
-    self.minecraftFolder = minecraftFolder
     self.eventManager = eventManager
+    
+    self.minecraftFolder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("minecraft")
   }
   
-  func getServerList(forClient client: Client) throws -> ServerList {
+  func getServerList() throws -> ServerList {
     let serversDatURL = minecraftFolder.appendingPathComponent("servers.dat")
     do {
       let serversNBT = try NBTCompound(fromURL: serversDatURL)
       let serverNBTList: [NBTCompound] = try serversNBT.getList("servers")
-      var servers: [Server] = []
+      let serverList = ServerList()
       for serverNBT in serverNBTList {
         let ip: String = try serverNBT.get("ip")
         let name: String = try serverNBT.get("name")
         
-        let server: Server?
-        if let url = URL.init(string: "minecraft://\(ip)") {
-          if let host = url.host {
-            if let port = url.port {
-              server = Server(name: name, host: host, port: port, eventManager: eventManager, client: client)
-            } else {
-              server = Server(name: name, host: host, port: 25565, eventManager: eventManager, client: client)
-            }
-          } else {
-            logger.debug("server ip has no host?")
-            continue
-          }
+        let serverInfo = ServerInfo(name: name, ip: ip)
+        
+        if serverInfo != nil {
+          serverList.addServer(serverInfo!)
         } else {
-          logger.debug("invalid server ip: \(ip)")
-          continue
+          logger.debug("invalid server ip")
         }
-        servers.append(server!)
       }
-      return ServerList(withServers: servers)
+      return serverList
     } catch {
       throw ConfigError.invalidServerListNBT
     }

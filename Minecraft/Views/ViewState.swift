@@ -9,43 +9,35 @@ import Foundation
 
 class ViewState: ObservableObject {
   @Published var isPlaying = false
-  @Published var selectedServer: Server?
+  @Published var selectedServerInfo: ServerInfo?
   @Published var isErrored = false
   @Published var errorMessage: String?
   
   @Published var serverList: ServerList
   
-  var game: Client
-  
-  init(game: Client) {
+  init() {
     self.serverList = ServerList()
-    self.game = game
   }
   
-  init(game: Client, serverList: ServerList) {
+  init(serverList: ServerList) {
     self.serverList = serverList
-    self.game = game
   }
   
   func updateServerList(newServerList: ServerList) {
     serverList = newServerList
   }
   
-  func playServer(server: Server) {
+  func playServer(withInfo info: ServerInfo) {
     isPlaying = true
-    selectedServer = server
+    selectedServerInfo = info
     isErrored = false
     errorMessage = nil
-    
-    DispatchQueue.main.async {
-      self.game.play(serverToPlay: server)
-    }
   }
   
   func displayError(message: String) {
     isErrored = true
     isPlaying = false
     errorMessage = message
-    selectedServer = nil
+    selectedServerInfo = nil
   }
 }

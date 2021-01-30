@@ -59,6 +59,8 @@
 		784CCB1725AD355B004B3182 /* ShulkerBoxColouringRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1625AD355B004B3182 /* ShulkerBoxColouringRecipe.swift */; };
 		784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1C25AD35EB004B3182 /* RecipeRegistry.swift */; };
 		784D97912587604700FC89F8 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D97902587604700FC89F8 /* Config.swift */; };
+		784F4B7825B7F6AC00FE21AA /* ServerPinger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784F4B7725B7F6AC00FE21AA /* ServerPinger.swift */; };
+		784F4B7D25B7FC0A00FE21AA /* ServerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784F4B7C25B7FC0A00FE21AA /* ServerInfo.swift */; };
 		78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78654EB62585E0CF00770FFF /* PingInfo.swift */; };
 		78764DDD25AD374D00AE8716 /* SpecialRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DDC25AD374D00AE8716 /* SpecialRecipe.swift */; };
 		78764DEB25AD7F2700AE8716 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DEA25AD7F2700AE8716 /* Item.swift */; };
@@ -174,6 +176,8 @@
 		784CCB1625AD355B004B3182 /* ShulkerBoxColouringRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShulkerBoxColouringRecipe.swift; sourceTree = "<group>"; };
 		784CCB1C25AD35EB004B3182 /* RecipeRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRegistry.swift; sourceTree = "<group>"; };
 		784D97902587604700FC89F8 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		784F4B7725B7F6AC00FE21AA /* ServerPinger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerPinger.swift; sourceTree = "<group>"; };
+		784F4B7C25B7FC0A00FE21AA /* ServerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfo.swift; sourceTree = "<group>"; };
 		78654EB62585E0CF00770FFF /* PingInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingInfo.swift; sourceTree = "<group>"; };
 		78764DDC25AD374D00AE8716 /* SpecialRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialRecipe.swift; sourceTree = "<group>"; };
 		78764DEA25AD7F2700AE8716 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
@@ -407,7 +411,10 @@
 				784CCA7D25AD2DB8004B3182 /* Recipes */,
 				78764DF425AD9FCA00AE8716 /* Client.swift */,
 				7884358F2585E606002F1F84 /* Server.swift */,
+				784F4B7C25B7FC0A00FE21AA /* ServerInfo.swift */,
+				784F4B7725B7F6AC00FE21AA /* ServerPinger.swift */,
 				78BFD2EB25B522A700366631 /* ServerConfig.swift */,
+				7884359A25861981002F1F84 /* ServerList.swift */,
 				78225CE2258EC0CE007B7F98 /* EventManager.swift */,
 				784D97902587604700FC89F8 /* Config.swift */,
 				784CAE23259AB654003E5F87 /* UUID.swift */,
@@ -417,7 +424,6 @@
 				784B393C25A17AB600556E3E /* Identifier.swift */,
 				784B394A25A19CCC00556E3E /* Gamemode.swift */,
 				784B395425A19E3900556E3E /* Difficulty.swift */,
-				7884359A25861981002F1F84 /* ServerList.swift */,
 				780D9BA82596CF5900144D45 /* LauncherProfile.swift */,
 				7830D8C825940BE500D35180 /* Logger.swift */,
 				784CAE28259ACA74003E5F87 /* Slot.swift */,
@@ -709,6 +715,7 @@
 				784CCAC425AD3239004B3182 /* StonecuttingRecipe.swift in Sources */,
 				78764E1025AE4B9200AE8716 /* TagsPacket.swift in Sources */,
 				7878B53125844B6B007C0D3D /* ServerListView.swift in Sources */,
+				784F4B7825B7F6AC00FE21AA /* ServerPinger.swift in Sources */,
 				784CCB0325AD34FF004B3182 /* TippedArrowRecipe.swift in Sources */,
 				78C2D58A2585955500883DF5 /* StatusResponse.swift in Sources */,
 				78764DF025AD9BFF00AE8716 /* SuspiciousStewRecipe.swift in Sources */,
@@ -769,6 +776,7 @@
 				7884359B25861981002F1F84 /* ServerList.swift in Sources */,
 				784CCB1725AD355B004B3182 /* ShulkerBoxColouringRecipe.swift in Sources */,
 				784CCAEA25AD3471004B3182 /* MapExtendingRecipe.swift in Sources */,
+				784F4B7D25B7FC0A00FE21AA /* ServerInfo.swift in Sources */,
 				784CCAF425AD349E004B3182 /* FireworkStarRecipe.swift in Sources */,
 				788435902585E606002F1F84 /* Server.swift in Sources */,
 				781E63CB25B166D000ADFAB8 /* EntityPosition.swift in Sources */,

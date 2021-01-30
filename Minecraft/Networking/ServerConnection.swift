@@ -101,38 +101,6 @@ class ServerConnection {
     eventManager.triggerEvent(.connectionClosed)
   }
   
-  func ping() {
-    switch state {
-      case .idle:
-        eventManager.registerOneTimeEventHandler({ (event) in
-          self.ping()
-        }, eventName: "connectionReady")
-        start()
-        
-      case .ready:
-        handshake(nextState: .status, callback: {
-          self.ping()
-        })
-        
-      case .status:
-        let statusRequest = StatusRequest()
-        sendPacket(statusRequest)
-        
-      case .disconnected:
-        eventManager.registerOneTimeEventHandler({ (event) in
-          self.ping()
-        }, eventName: "connectionReady")
-        restart()
-        
-      default:
-        eventManager.registerOneTimeEventHandler({ (event) in
-          self.ping()
-        }, eventName: "connectionReady")
-        restart()
-        break
-    }
-  }
-  
   func handshake(nextState: Handshake.NextState, callback: @escaping () -> Void = {}) {
     state = .handshaking
     // move protocol version to config or constants file of some sort
