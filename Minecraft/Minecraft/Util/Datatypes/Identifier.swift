@@ -15,7 +15,7 @@ struct Identifier: Equatable, Hashable, CustomStringConvertible {
     return toString()
   }
   
-  enum IdentifierError: Error {
+  enum IdentifierError: LocalizedError {
     case invalidIdentifier
     case emptyString
   }

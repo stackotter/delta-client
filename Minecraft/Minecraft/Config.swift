@@ -15,7 +15,7 @@ class Config {
   var minecraftFolder: URL
   var eventManager: EventManager
   
-  enum ConfigError: Error {
+  enum ConfigError: LocalizedError {
     case invalidServerListNBT
     case invalidLauncherProfilesJSON
   }

@@ -11,7 +11,7 @@ struct PacketReader {
   var packetId: Int = -1
   var buf: Buffer
   
-  enum PacketReadError: Error {
+  enum PacketReadError: LocalizedError {
     case invalidNBT
     case failedToReadSlotNBT
     case invalidJSON

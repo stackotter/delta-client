@@ -38,7 +38,7 @@ struct NBTCompound: CustomStringConvertible {
     }
   }
   
-  enum NBTError: Error {
+  enum NBTError: LocalizedError {
     case emptyList
     case invalidListType
     case invalidTagType

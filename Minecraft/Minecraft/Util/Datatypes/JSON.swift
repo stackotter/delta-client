@@ -10,7 +10,7 @@ import Foundation
 struct JSON {
   let dict: [String: Any]
   
-  enum JSONError: Error {
+  enum JSONError: LocalizedError {
     case failedToOpenURL
     case failedToDeserialize
     case failedToGetJSON
