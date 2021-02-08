@@ -19,28 +19,18 @@ struct SpawnEntityPacket: Packet {
   var data: Int32
   var velocity: EntityVelocity?
   
+  // TODO: figure out all the entity madness
   init(fromReader packetReader: inout PacketReader) {
     entityId = packetReader.readVarInt()
     objectUUID = packetReader.readUUID()
     type = packetReader.readVarInt()
-    
-    let x = packetReader.readDouble()
-    let y = packetReader.readDouble()
-    let z = packetReader.readDouble()
-    position = EntityPosition(x: x, y: y, z: z)
-    
-    let pitch = packetReader.readAngle()
-    let yaw = packetReader.readAngle()
-    rotation = EntityRotation(pitch: pitch, yaw: yaw)
-    
+    position = packetReader.readEntityPosition()
+    rotation = packetReader.readEntityRotation(pitchFirst: true) // TODO_LATER: seems a lil sus that this is the only packet that has pitch and yaw in the other order
     data = packetReader.readInt()
     
-    let velocityX = packetReader.readShort()
-    let velocityY = packetReader.readShort()
-    let velocityZ = packetReader.readShort()
     velocity = nil
     if data > 0 {
-      velocity = EntityVelocity(x: velocityX, y: velocityY, z: velocityZ)
+      velocity = packetReader.readEntityVelocity()
     }
   }
 }

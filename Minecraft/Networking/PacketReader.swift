@@ -174,4 +174,24 @@ struct PacketReader {
     }
     return json
   }
+  
+  mutating func readEntityPosition() -> EntityPosition {
+    let x = readDouble()
+    let y = readDouble()
+    let z = readDouble()
+    return EntityPosition(x: x, y: y, z: z)
+  }
+  
+  mutating func readEntityRotation(pitchFirst: Bool? = false) -> EntityRotation {
+    let yaw = readAngle()
+    let pitch = readAngle()
+    return EntityRotation(pitch: pitch, yaw: yaw)
+  }
+  
+  mutating func readEntityVelocity() -> EntityVelocity {
+    let x = readShort()
+    let y = readShort()
+    let z = readShort()
+    return EntityVelocity(x: x, y: y, z: z)
+  }
 }
