@@ -20,18 +20,23 @@ struct ChunkData {
   func unpack() throws -> Chunk {
     var reader = PacketReader(buffer: data)
     let fullChunk = reader.readBool()
-    let _ = reader.readBool()
+    let ignoreOldData = reader.readBool()
+    _ = ignoreOldData
     let primaryBitMask = reader.readVarInt()
-    _ = try reader.readNBTTag() // height map, dunno what it's used for yet
+    let heightMaps = try reader.readNBTTag() // height map, dunno what it's used for yet
+    
+    // Decoding biomes
+    var biomes: [Int32] = []
     if fullChunk {
       // TODO: parse biome data
       for _ in 0..<1024 {
         let biome = reader.readInt()
-        _ = biome
+        biomes.append(biome)
       }
     }
-    _ = Int(reader.readVarInt()) // this reads the data size, it's not necessary to use it to read the data though
     
+    // Decoding data section
+    _ = reader.readVarInt() // this reads the data size, it's not necessary to use it to read the data though
     var chunkSections: [ChunkSection] = []
     var numSections = 0
     for i in 0..<16 {
@@ -75,6 +80,8 @@ struct ChunkData {
       let section = ChunkSection(blockIds: ids)
       chunkSections.append(section)
     }
+    
+    // Decoding block entities
     let numBlockEntities = reader.readVarInt()
     var blockEntities: [BlockEntity] = []
     for _ in 0..<numBlockEntities {
@@ -93,7 +100,7 @@ struct ChunkData {
       }
     }
     
-    let chunk = Chunk(position: position, sections: chunkSections, blockEntities: blockEntities, bitMask: primaryBitMask)
+    let chunk = Chunk(position: position, heightMaps: heightMaps, sections: chunkSections, blockEntities: blockEntities, bitMask: primaryBitMask)
     return chunk
   }
 }

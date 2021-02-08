@@ -11,13 +11,15 @@ struct ChunkDataPacket: Packet {
   typealias PacketType = ChunkDataPacket
   static let id: Int = 0x21
   
-  var chunkData: ChunkData
+  var chunk: Chunk
   
-  static func from(_ packetReader: inout PacketReader) -> ChunkDataPacket {
+  static func from(_ packetReader: inout PacketReader) throws -> ChunkDataPacket {
     let chunkX = packetReader.readInt()
     let chunkZ = packetReader.readInt()
     let position = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
     let chunkData = ChunkData(position: position, data: packetReader.buf)
-    return ChunkDataPacket(chunkData: chunkData)
+    let chunk = try chunkData.unpack()
+    
+    return ChunkDataPacket(chunk: chunk)
   }
 }

@@ -14,7 +14,7 @@ struct ServerConfig {
   
   var dimensionCodec: NBTCompound // create actual dimension codec struct
   
-  var maxPlayers: Int32
+  var maxPlayers: UInt8
   var viewDistance: Int32
   var useReducedDebugInfo: Bool
   var enableRespawnScreen: Bool

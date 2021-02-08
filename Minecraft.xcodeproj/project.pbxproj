@@ -61,6 +61,9 @@
 		784D97912587604700FC89F8 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D97902587604700FC89F8 /* Config.swift */; };
 		784F4B7825B7F6AC00FE21AA /* ServerPinger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784F4B7725B7F6AC00FE21AA /* ServerPinger.swift */; };
 		784F4B7D25B7FC0A00FE21AA /* ServerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784F4B7C25B7FC0A00FE21AA /* ServerInfo.swift */; };
+		785786D125D150E4003021D9 /* SpawnEntityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785786D025D150E4003021D9 /* SpawnEntityPacket.swift */; };
+		785786D625D15292003021D9 /* EntityVelocity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785786D525D15292003021D9 /* EntityVelocity.swift */; };
+		785786DB25D1552F003021D9 /* EntityRotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785786DA25D1552F003021D9 /* EntityRotation.swift */; };
 		78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78654EB62585E0CF00770FFF /* PingInfo.swift */; };
 		78764DDD25AD374D00AE8716 /* SpecialRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DDC25AD374D00AE8716 /* SpecialRecipe.swift */; };
 		78764DEB25AD7F2700AE8716 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DEA25AD7F2700AE8716 /* Item.swift */; };
@@ -185,6 +188,9 @@
 		784D97902587604700FC89F8 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		784F4B7725B7F6AC00FE21AA /* ServerPinger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerPinger.swift; sourceTree = "<group>"; };
 		784F4B7C25B7FC0A00FE21AA /* ServerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfo.swift; sourceTree = "<group>"; };
+		785786D025D150E4003021D9 /* SpawnEntityPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpawnEntityPacket.swift; sourceTree = "<group>"; };
+		785786D525D15292003021D9 /* EntityVelocity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityVelocity.swift; sourceTree = "<group>"; };
+		785786DA25D1552F003021D9 /* EntityRotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityRotation.swift; sourceTree = "<group>"; };
 		78654EB62585E0CF00770FFF /* PingInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingInfo.swift; sourceTree = "<group>"; };
 		78764DDC25AD374D00AE8716 /* SpecialRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialRecipe.swift; sourceTree = "<group>"; };
 		78764DEA25AD7F2700AE8716 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
@@ -452,6 +458,7 @@
 			isa = PBXGroup;
 			children = (
 				784B394F25A19D8300556E3E /* SetDifficultyPacket.swift */,
+				785786D025D150E4003021D9 /* SpawnEntityPacket.swift */,
 				78DB24D925C51DEF00F7D70B /* PluginMessagePacket.swift */,
 				78764E1425AE5E6900AE8716 /* ChunkDataPacket.swift */,
 				784B394225A185B200556E3E /* JoinGamePacket.swift */,
@@ -601,6 +608,8 @@
 			children = (
 				78F29B3125AE846000D85CCB /* BlockEntity.swift */,
 				781E63CA25B166D000ADFAB8 /* EntityPosition.swift */,
+				785786D525D15292003021D9 /* EntityVelocity.swift */,
+				785786DA25D1552F003021D9 /* EntityRotation.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -816,8 +825,10 @@
 				78F29B2425AE818700D85CCB /* Chunk.swift in Sources */,
 				784B396425A1C19800556E3E /* DeclareRecipesPacket.swift in Sources */,
 				789BE9E32589DAC7001C08ED /* JSON.swift in Sources */,
+				785786DB25D1552F003021D9 /* EntityRotation.swift in Sources */,
 				784CCAEF25AD3487004B3182 /* FireworkRocketRecipe.swift in Sources */,
 				78F29B2C25AE81E000D85CCB /* ChunkSection.swift in Sources */,
+				785786D625D15292003021D9 /* EntityVelocity.swift in Sources */,
 				787D8FF625848480007E6441 /* Packet.swift in Sources */,
 				780D9BA92596CF5900144D45 /* LauncherProfile.swift in Sources */,
 				78F29B3225AE846000D85CCB /* BlockEntity.swift in Sources */,
@@ -846,6 +857,7 @@
 				784F4B7D25B7FC0A00FE21AA /* ServerInfo.swift in Sources */,
 				784CCAF425AD349E004B3182 /* FireworkStarRecipe.swift in Sources */,
 				78DB24E825C5277900F7D70B /* PacketHandler.swift in Sources */,
+				785786D125D150E4003021D9 /* SpawnEntityPacket.swift in Sources */,
 				788435902585E606002F1F84 /* Server.swift in Sources */,
 				781E63CB25B166D000ADFAB8 /* EntityPosition.swift in Sources */,
 				784B393325A14F8400556E3E /* LoginSuccess.swift in Sources */,

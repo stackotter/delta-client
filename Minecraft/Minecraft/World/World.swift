@@ -10,10 +10,6 @@ import os
 
 // NOTE: might need to be made threadsafe?
 class World {
-  // holds chunk data that is yet to be unpacked
-  var packedChunks: [ChunkPosition: ChunkData] = [:]
-  
-  // holds unpacked chunks
   var chunks: [ChunkPosition: Chunk] = [:]
   
   var logger: Logger
@@ -27,39 +23,7 @@ class World {
     self.config = config
   }
   
-  func addChunk(data chunkData: ChunkData) {
-    if packedChunks[chunkData.position] != nil {
-      logger.debug("duplicate chunk received")
-    }
-    packedChunks[chunkData.position] = chunkData
-  }
-  
-  // unpacks chunks within a square around the specified chunk
-  // radius is currently used to construct a square around the player, could go for a circle in future
-  func unpackChunks(aroundChunk centreChunkPos: ChunkPosition, withViewDistance viewDistance: Int32) {
-    // will contain chunks ordered by distance from player
-    let orderedChunks = packedChunks.values.sorted(by: {
-      squareDistBetweenChunks(centreChunkPos, $0.position) < squareDistBetweenChunks(centreChunkPos, $1.position)
-    })
-    
-    for chunk in orderedChunks {
-      do {
-        let distX = chunk.position.chunkX - centreChunkPos.chunkX
-        let distZ = chunk.position.chunkZ - centreChunkPos.chunkZ
-        if distX < viewDistance && distZ < viewDistance {
-          chunks[chunk.position] = try chunk.unpack()
-        }
-      } catch {
-        eventManager.triggerError("failed to load chunks")
-      }
-    }
-  }
-  
-  // can usually be used in place of distance to reduce number of sqrt operations
-  func squareDistBetweenChunks(_ firstChunkPos: ChunkPosition, _ secondChunkPos: ChunkPosition) -> Int32 {
-    let distX = firstChunkPos.chunkX - secondChunkPos.chunkX
-    let distZ = firstChunkPos.chunkZ - secondChunkPos.chunkZ
-    let distanceSquared = distX*distX + distZ*distZ
-    return distanceSquared
+  func addChunk(data chunk: Chunk) {
+    chunks[chunk.position] = chunk
   }
 }

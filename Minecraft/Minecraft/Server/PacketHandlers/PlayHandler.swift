@@ -30,22 +30,8 @@ struct PlayHandler: PacketHandler {
           let _ = SetDifficultyPacket.from(&reader)
           
         case ChunkDataPacket.id:
-          let packet = ChunkDataPacket.from(&reader)
-          server.currentWorld!.addChunk(data: packet.chunkData)
-          
-        // TODO: fix the chunk unpacking criteria
-        //          if downloadingTerrain {
-        //            let viewDiameter = config!.viewDistance * 2 + 1
-        //            var numChunks = viewDiameter * viewDiameter
-        //            // this could cause some issues but im assuming that's how this would work?
-        //            if numChunks < 81 {
-        //              numChunks = 81
-        //            }
-        //            if currentWorld!.packedChunks.count == numChunks {
-        //              logger.log("view distance: \(self.config!.viewDistance)")
-        //              currentWorld!.unpackChunks(aroundChunk: player.chunkPosition, withViewDistance: config!.viewDistance)
-        //            }
-        //          }
+          let packet = try ChunkDataPacket.from(&reader)
+          server.currentWorld!.addChunk(data: packet.chunk)
         
         case JoinGamePacket.id:
           let packet = try JoinGamePacket.from(&reader)
@@ -73,7 +59,7 @@ struct PlayHandler: PacketHandler {
         case UpdateViewPositionPacket.id:
           let packet = UpdateViewPositionPacket.from(&reader)
           server.player.chunkPosition = packet.chunkPosition
-          server.currentWorld!.unpackChunks(aroundChunk: packet.chunkPosition, withViewDistance: server.config!.viewDistance)
+          // TODO_LATER: trigger world to recalculate which chunks should be rendered (if a circle is decided on for chunk rendering)
           
         case DeclareRecipesPacket.id:
           let packet = try DeclareRecipesPacket.from(&reader)

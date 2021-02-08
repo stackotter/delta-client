@@ -9,8 +9,7 @@ import Foundation
 
 struct WorldConfig {
   var worldName: Identifier
-  // TODO: make an actual dimension object cause nbt is annoying and slower for repeated access than a struct
-  var dimension: NBTCompound
+  var dimension: Identifier
   var hashedSeed: Int64
   var isDebug: Bool
   var isFlat: Bool

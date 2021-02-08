@@ -9,12 +9,13 @@ import Foundation
 
 struct Chunk {
   var position: ChunkPosition
-  
+  var heightMaps: NBTCompound
   var sections: [ChunkSection]
   var blockEntities: [BlockEntity]
   
-  init(position: ChunkPosition, sections: [ChunkSection], blockEntities: [BlockEntity], bitMask: Int32) {
+  init(position: ChunkPosition, heightMaps: NBTCompound, sections: [ChunkSection], blockEntities: [BlockEntity], bitMask: Int32) {
     self.position = position
+    self.heightMaps = heightMaps
     
     self.sections = []
     var index = 0
