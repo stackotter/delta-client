@@ -18,7 +18,7 @@ protocol Packet {
   
   func toBytes() -> [UInt8]
   
-  static func from(_ packetReader: inout PacketReader) throws -> PacketType
+  init(fromReader packetReader: inout PacketReader) throws
 }
 
 extension Packet {
@@ -27,7 +27,7 @@ extension Packet {
     return []
   }
   
-  static func from(_ packetReader: inout PacketReader) throws -> PacketType {
+  init(fromReader packetReader: inout PacketReader) throws {
     throw PacketError.packetNotClientbound
   }
 }

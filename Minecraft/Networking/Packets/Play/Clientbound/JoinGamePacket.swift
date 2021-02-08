@@ -28,33 +28,27 @@ struct JoinGamePacket: Packet {
   var isDebug: Bool
   var isFlat: Bool
   
-  static func from(_ packetReader: inout PacketReader) throws -> JoinGamePacket {
-    let playerEntityId = packetReader.readInt()
+  init(fromReader packetReader: inout PacketReader) throws {
+    playerEntityId = packetReader.readInt()
     let gamemodeInt = Int8(packetReader.readUnsignedByte())
-    let isHardcore = gamemodeInt & 0x8 == 0x8
-    let gamemode = Gamemode(rawValue: gamemodeInt)!
-    let previousGamemode = Gamemode(rawValue: packetReader.readByte())!
-    let worldCount = packetReader.readVarInt()
-    var worldNames: [Identifier] = []
+    isHardcore = gamemodeInt & 0x8 == 0x8
+    gamemode = Gamemode(rawValue: gamemodeInt)!
+    previousGamemode = Gamemode(rawValue: packetReader.readByte())!
+    worldCount = packetReader.readVarInt()
+    worldNames = []
     for _ in 0..<worldCount {
       worldNames.append(try packetReader.readIdentifier())
     }
-    let dimensionCodec = try packetReader.readNBTTag()
-    let dimension = try packetReader.readIdentifier()
-    let worldName = try packetReader.readIdentifier()
-    let hashedSeed = packetReader.readLong()
-    let maxPlayers = packetReader.readUnsignedByte()
-    let viewDistance = packetReader.readVarInt()
-    let reducedDebugInfo = packetReader.readBool()
-    let enableRespawnScreen = packetReader.readBool()
-    let isDebug = packetReader.readBool()
-    let isFlat = packetReader.readBool()
-    let packet = JoinGamePacket(playerEntityId: playerEntityId, isHardcore: isHardcore, gamemode: gamemode,
-                          previousGamemode: previousGamemode, worldCount: worldCount, worldNames: worldNames,
-                          dimensionCodec: dimensionCodec, dimension: dimension, worldName: worldName, hashedSeed: hashedSeed,
-                          maxPlayers: maxPlayers, viewDistance: viewDistance, reducedDebugInfo: reducedDebugInfo,
-                          enableRespawnScreen: enableRespawnScreen, isDebug: isDebug, isFlat: isFlat)
-    return packet
+    dimensionCodec = try packetReader.readNBTTag()
+    dimension = try packetReader.readIdentifier()
+    worldName = try packetReader.readIdentifier()
+    hashedSeed = packetReader.readLong()
+    maxPlayers = packetReader.readUnsignedByte()
+    viewDistance = packetReader.readVarInt()
+    reducedDebugInfo = packetReader.readBool()
+    enableRespawnScreen = packetReader.readBool()
+    isDebug = packetReader.readBool()
+    isFlat = packetReader.readBool()
   }
 }
 

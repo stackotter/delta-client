@@ -14,13 +14,13 @@ struct DeclareRecipesPacket: Packet {
   
   var recipeRegistry: RecipeRegistry
   
-  static func from(_ packetReader: inout PacketReader) throws -> DeclareRecipesPacket {
+  init(fromReader packetReader: inout PacketReader) throws {
     #if DEBUG
     // helps to detect changes in the protocol (already helped once)
     let logger = Logger.init(for: type(of: self))
     #endif
     
-    var recipeRegistry = RecipeRegistry()
+    recipeRegistry = RecipeRegistry()
     let numRecipes = packetReader.readVarInt()
     for _ in 0..<numRecipes {
       let type = try packetReader.readIdentifier()
@@ -179,7 +179,5 @@ struct DeclareRecipesPacket: Packet {
         }
       }
     }
-    
-    return DeclareRecipesPacket(recipeRegistry: recipeRegistry)
   }
 }

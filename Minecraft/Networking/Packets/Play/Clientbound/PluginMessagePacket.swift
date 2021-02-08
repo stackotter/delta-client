@@ -19,10 +19,9 @@ struct PluginMessagePacket: Packet {
     var data: Buffer
   }
   
-  static func from(_ packetReader: inout PacketReader) throws -> PluginMessagePacket {
+  init(fromReader packetReader: inout PacketReader) throws {
     let channel = try packetReader.readIdentifier()
     let data = packetReader.buf
-    let pluginMessage = PluginMessage(channel: channel, data: data)
-    return PluginMessagePacket(pluginMessage: pluginMessage)
+    pluginMessage = PluginMessage(channel: channel, data: data)
   }
 }

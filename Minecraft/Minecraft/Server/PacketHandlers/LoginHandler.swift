@@ -27,7 +27,7 @@ struct LoginHandler: PacketHandler {
     do {
       switch reader.packetId {
         case LoginDisconnect.id:
-          let packet = try LoginDisconnect.from(&reader)
+          let packet = try LoginDisconnect(fromReader: &reader)
           eventManager.triggerError(packet.reason)
           
         case 0x01:
@@ -35,7 +35,7 @@ struct LoginHandler: PacketHandler {
           
         // TODO: do something with the uuid maybe?
         case LoginSuccess.id:
-          let _ = LoginSuccess.from(&reader)
+          let _ = LoginSuccess(fromReader: &reader)
           server.serverConnection.state = .play
           
         case 0x03:

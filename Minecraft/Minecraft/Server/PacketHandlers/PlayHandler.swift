@@ -27,14 +27,14 @@ struct PlayHandler: PacketHandler {
     do {
       switch reader.packetId {
         case SetDifficultyPacket.id:
-          let _ = SetDifficultyPacket.from(&reader)
+          let _ = SetDifficultyPacket(fromReader: &reader)
           
         case ChunkDataPacket.id:
-          let packet = try ChunkDataPacket.from(&reader)
+          let packet = try ChunkDataPacket(fromReader: &reader)
           server.currentWorld!.addChunk(data: packet.chunk)
         
         case JoinGamePacket.id:
-          let packet = try JoinGamePacket.from(&reader)
+          let packet = try JoinGamePacket(fromReader: &reader)
           server.config = ServerConfig(worldCount: packet.worldCount, worldNames: packet.worldNames,
                                 dimensionCodec: packet.dimensionCodec, maxPlayers: packet.maxPlayers,
                                 viewDistance: packet.viewDistance, useReducedDebugInfo: packet.reducedDebugInfo,
@@ -47,31 +47,31 @@ struct PlayHandler: PacketHandler {
           server.downloadingTerrain = true
           
         case PlayerAbilitiesPacket.id:
-          let packet = PlayerAbilitiesPacket.from(&reader)
+          let packet = PlayerAbilitiesPacket(fromReader: &reader)
           server.player.flyingSpeed = packet.flyingSpeed
           server.player.fovModifier = packet.fovModifier
           server.player.updateFlags(to: packet.flags)
           
         case HeldItemChangePacket.id:
-          let packet = HeldItemChangePacket.from(&reader)
+          let packet = HeldItemChangePacket(fromReader: &reader)
           server.player.hotbarSlot = packet.slot
           
         case UpdateViewPositionPacket.id:
-          let packet = UpdateViewPositionPacket.from(&reader)
+          let packet = UpdateViewPositionPacket(fromReader: &reader)
           server.player.chunkPosition = packet.chunkPosition
           // TODO_LATER: trigger world to recalculate which chunks should be rendered (if a circle is decided on for chunk rendering)
           
         case DeclareRecipesPacket.id:
-          let packet = try DeclareRecipesPacket.from(&reader)
+          let packet = try DeclareRecipesPacket(fromReader: &reader)
           client.recipeRegistry = packet.recipeRegistry
           
         case PluginMessagePacket.id:
-          let packet = try PluginMessagePacket.from(&reader)
+          let packet = try PluginMessagePacket(fromReader: &reader)
           logger.debug("plugin message received with channel: \(packet.pluginMessage.channel)")
           
         // TODO_LATER: figure out what this is needed for
         case TagsPacket.id:
-          _ = TagsPacket.from(&reader)
+          _ = TagsPacket(fromReader: &reader)
           
         default:
           return

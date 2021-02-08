@@ -13,8 +13,7 @@ struct LoginDisconnect: Packet {
   
   var reason: String
   
-  static func from(_ packetReader: inout PacketReader) throws -> LoginDisconnect {
-    let reason = try packetReader.readChat()
-    return LoginDisconnect(reason: reason)
+  init(fromReader packetReader: inout PacketReader) throws {
+    reason = try packetReader.readChat()
   }
 }

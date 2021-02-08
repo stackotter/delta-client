@@ -12,7 +12,7 @@ struct TagsPacket: Packet {
   typealias PacketType = TagsPacket
   static let id: Int = 0x5b
   
-  static func from(_ packetReader: inout PacketReader) -> TagsPacket {
+  init(fromReader packetReader: inout PacketReader) {
     for _ in 1...4 {
       let length = packetReader.readVarInt()
       for _ in 1...length {
@@ -25,6 +25,5 @@ struct TagsPacket: Packet {
         }
       }
     }
-    return TagsPacket()
   }
 }

@@ -19,29 +19,28 @@ struct SpawnEntityPacket: Packet {
   var data: Int32
   var velocity: EntityVelocity?
   
-  static func from(_ packetReader: inout PacketReader) throws -> SpawnEntityPacket {
-    let entityId = packetReader.readVarInt()
-    let objectUUID = packetReader.readUUID()
-    let type = packetReader.readVarInt()
+  init(fromReader packetReader: inout PacketReader) {
+    entityId = packetReader.readVarInt()
+    objectUUID = packetReader.readUUID()
+    type = packetReader.readVarInt()
     
     let x = packetReader.readDouble()
     let y = packetReader.readDouble()
     let z = packetReader.readDouble()
-    let position = EntityPosition(x: x, y: y, z: z)
+    position = EntityPosition(x: x, y: y, z: z)
     
     let pitch = packetReader.readAngle()
     let yaw = packetReader.readAngle()
-    let rotation: EntityRotation = EntityRotation(pitch: pitch, yaw: yaw)
+    rotation = EntityRotation(pitch: pitch, yaw: yaw)
     
-    let data = packetReader.readInt()
+    data = packetReader.readInt()
     
     let velocityX = packetReader.readShort()
     let velocityY = packetReader.readShort()
     let velocityZ = packetReader.readShort()
-    var velocity: EntityVelocity? = nil
+    velocity = nil
     if data > 0 {
       velocity = EntityVelocity(x: velocityX, y: velocityY, z: velocityZ)
     }
-    return SpawnEntityPacket(entityId: entityId, objectUUID: objectUUID, type: type, position: position, rotation: rotation, data: data, velocity: velocity)
   }
 }

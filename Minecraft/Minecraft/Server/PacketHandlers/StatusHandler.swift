@@ -22,7 +22,7 @@ struct StatusHandler: PacketHandler {
     switch reader.packetId {
       case StatusResponse.id:
         do {
-          let packet = try StatusResponse.from(&reader)
+          let packet = try StatusResponse(fromReader: &reader)
           let json = packet.json
           
           let versionInfo = try json.getJSON(forKey: "version")

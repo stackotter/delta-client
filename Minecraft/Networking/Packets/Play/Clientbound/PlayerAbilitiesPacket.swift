@@ -15,11 +15,9 @@ struct PlayerAbilitiesPacket: Packet {
   var flyingSpeed: Float
   var fovModifier: Float
   
-  static func from(_ packetReader: inout PacketReader) -> PlayerAbilitiesPacket {
-    let flags = PlayerFlags(rawValue: packetReader.readUnsignedByte())
-    let flyingSpeed = packetReader.readFloat()
-    let fovModifier = packetReader.readFloat()
-    
-    return PlayerAbilitiesPacket(flags: flags, flyingSpeed: flyingSpeed, fovModifier: fovModifier)
+  init(fromReader packetReader: inout PacketReader) {
+    flags = PlayerFlags(rawValue: packetReader.readUnsignedByte())
+    flyingSpeed = packetReader.readFloat()
+    fovModifier = packetReader.readFloat()
   }
 }

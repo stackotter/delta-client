@@ -14,11 +14,9 @@ struct LoginSuccess: Packet {
   var uuid: UUID
   var username: String
   
-  static func from(_ packetReader: inout PacketReader) -> LoginSuccess {
-    let uuid = packetReader.readUUID()
-    let username = packetReader.readString()
-    let packet = LoginSuccess(uuid: uuid, username: username)
-    return packet
+  init(fromReader packetReader: inout PacketReader) {
+    uuid = packetReader.readUUID()
+    username = packetReader.readString()
   }
 }
 
