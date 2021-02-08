@@ -451,15 +451,15 @@
 		78BFD2FA25B5AC2400366631 /* Clientbound */ = {
 			isa = PBXGroup;
 			children = (
-				784B394225A185B200556E3E /* JoinGamePacket.swift */,
-				78DB24D925C51DEF00F7D70B /* PluginMessagePacket.swift */,
-				784B395E25A1BCA400556E3E /* HeldItemChangePacket.swift */,
-				784B396325A1C19800556E3E /* DeclareRecipesPacket.swift */,
-				784B395925A1B84000556E3E /* PlayerAbilitiesPacket.swift */,
 				784B394F25A19D8300556E3E /* SetDifficultyPacket.swift */,
-				78764E0F25AE4B9200AE8716 /* TagsPacket.swift */,
+				78DB24D925C51DEF00F7D70B /* PluginMessagePacket.swift */,
 				78764E1425AE5E6900AE8716 /* ChunkDataPacket.swift */,
+				784B394225A185B200556E3E /* JoinGamePacket.swift */,
+				784B395925A1B84000556E3E /* PlayerAbilitiesPacket.swift */,
+				784B395E25A1BCA400556E3E /* HeldItemChangePacket.swift */,
 				78FA059A25B515810074CF37 /* UpdateViewPositionPacket.swift */,
+				784B396325A1C19800556E3E /* DeclareRecipesPacket.swift */,
+				78764E0F25AE4B9200AE8716 /* TagsPacket.swift */,
 			);
 			path = Clientbound;
 			sourceTree = "<group>";

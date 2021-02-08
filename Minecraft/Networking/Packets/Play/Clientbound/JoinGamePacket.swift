@@ -9,7 +9,7 @@ import Foundation
 
 struct JoinGamePacket: Packet {
   typealias PacketType = JoinGamePacket
-  static let id: Int = 0x24
+  static let id: Int = 0x25
   
   var playerEntityId: Int32
   var isHardcore: Bool
@@ -18,10 +18,10 @@ struct JoinGamePacket: Packet {
   var worldCount: Int32
   var worldNames: [Identifier]
   var dimensionCodec: NBTCompound
-  var dimension: NBTCompound
+  var dimension: Identifier
   var worldName: Identifier
   var hashedSeed: Int64
-  var maxPlayers: Int32
+  var maxPlayers: UInt8
   var viewDistance: Int32
   var reducedDebugInfo: Bool
   var enableRespawnScreen: Bool
@@ -30,8 +30,9 @@ struct JoinGamePacket: Packet {
   
   static func from(_ packetReader: inout PacketReader) throws -> JoinGamePacket {
     let playerEntityId = packetReader.readInt()
-    let isHardcore = packetReader.readBool()
-    let gamemode = Gamemode(rawValue: Int8(packetReader.readUnsignedByte()))!
+    let gamemodeInt = Int8(packetReader.readUnsignedByte())
+    let isHardcore = gamemodeInt & 0x8 == 0x8
+    let gamemode = Gamemode(rawValue: gamemodeInt)!
     let previousGamemode = Gamemode(rawValue: packetReader.readByte())!
     let worldCount = packetReader.readVarInt()
     var worldNames: [Identifier] = []
@@ -39,10 +40,10 @@ struct JoinGamePacket: Packet {
       worldNames.append(try packetReader.readIdentifier())
     }
     let dimensionCodec = try packetReader.readNBTTag()
-    let dimension = try packetReader.readNBTTag()
+    let dimension = try packetReader.readIdentifier()
     let worldName = try packetReader.readIdentifier()
     let hashedSeed = packetReader.readLong()
-    let maxPlayers = packetReader.readVarInt()
+    let maxPlayers = packetReader.readUnsignedByte()
     let viewDistance = packetReader.readVarInt()
     let reducedDebugInfo = packetReader.readBool()
     let enableRespawnScreen = packetReader.readBool()

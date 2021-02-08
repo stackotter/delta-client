@@ -9,7 +9,7 @@ import Foundation
 
 struct PlayerAbilitiesPacket: Packet {
   typealias PacketType = PlayerAbilitiesPacket
-  static let id: Int = 0x30
+  static let id: Int = 0x31
   
   var flags: PlayerFlags
   var flyingSpeed: Float

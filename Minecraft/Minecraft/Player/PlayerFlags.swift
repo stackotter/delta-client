@@ -13,5 +13,5 @@ struct PlayerFlags: OptionSet {
   static let invulnerable = PlayerFlags(rawValue: 0x01)
   static let flying = PlayerFlags(rawValue: 0x02)
   static let allowFlying = PlayerFlags(rawValue: 0x04)
-  static let creativeMode = PlayerFlags(rawValue: 0x08)
+  static let creativeMode = PlayerFlags(rawValue: 0x08) // instant break
 }

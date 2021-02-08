@@ -8,4 +8,4 @@
 import Foundation
 
 // temporary place for config stuff
-let PROTOCOL_VERSION = 754
+let PROTOCOL_VERSION = 736

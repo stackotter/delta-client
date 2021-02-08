@@ -9,7 +9,7 @@ import Foundation
 
 struct PluginMessagePacket: Packet {
   typealias PacketType = PluginMessagePacket
-  static var id: Int = 0x17
+  static var id: Int = 0x18
   
   var pluginMessage: PluginMessage
   

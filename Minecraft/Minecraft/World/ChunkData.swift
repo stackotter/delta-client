@@ -20,13 +20,13 @@ struct ChunkData {
   func unpack() throws -> Chunk {
     var reader = PacketReader(buffer: data)
     let fullChunk = reader.readBool()
+    let _ = reader.readBool()
     let primaryBitMask = reader.readVarInt()
     _ = try reader.readNBTTag() // height map, dunno what it's used for yet
     if fullChunk {
       // TODO: parse biome data
-      let biomesLength = reader.readVarInt()
-      for _ in 0..<biomesLength {
-        let biome = reader.readVarInt()
+      for _ in 0..<1024 {
+        let biome = reader.readInt()
         _ = biome
       }
     }
