@@ -18,7 +18,6 @@ class ServerConnection {
   var packetHandlingPool: PacketHandlerThreadPool
   
   var eventManager: EventManager
-  var logger: Logger
   
   var state: ConnectionState = .idle
   
@@ -45,8 +44,6 @@ class ServerConnection {
     self.port = port
     self.eventManager = eventManager
     
-    self.logger = Logger(for: type(of: self), desc: "\(host):\(port)")
-    
     self.networkQueue = DispatchQueue(label: "networkUpdates")
     self.connection = ServerConnection.createNWConnection(fromHost: self.host, andPort: self.port)
     
@@ -67,7 +64,7 @@ class ServerConnection {
         handleNWError(error)
       case .failed(let error):
         state = .disconnected
-        logger.error("failed to start connection to server")
+        Logger.error("failed to start connection to server")
         handleNWError(error)
       default:
         break
@@ -108,7 +105,7 @@ class ServerConnection {
 
     self.sendPacket(handshake, callback: .contentProcessed({ (error) in
       if error != nil {
-        self.logger.error("failed to send packet: \(error!.debugDescription)")
+        Logger.error("failed to send packet: \(error!.debugDescription)")
       } else {
         self.state = (nextState == .login) ? .login : .status
         callback()
@@ -170,7 +167,7 @@ class ServerConnection {
         }
         
         if (length == 0) {
-          self.logger.info("received empty packet")
+          Logger.info("received empty packet")
           length = -1
           lengthBytes = []
         } else if (length != -1 && buf.remaining != 0) {
@@ -197,20 +194,20 @@ class ServerConnection {
         let receiveState = ReceiveState(lengthBytes: lengthBytes, length: length, packet: packet)
         self.receive(receiveState: receiveState)
       } else {
-        self.logger.debug("stopped receiving")
+        Logger.debug("stopped receiving")
       }
     })
   }
   
   private func handleNWError(_ error: NWError) {
     if error == NWError.posix(.ECONNREFUSED) {
-      logger.error("connection refused")
+      Logger.error("connection refused (\(self.host):\(self.port))")
     } else if error == NWError.posix(.ECANCELED) {
       // do nothing
     } else if error == NWError.dns(-65554) { // -65554 is the error code for NoSuchRecord
-      logger.error("no such record: this server is not yet supported as it uses SRV records")
+      Logger.error("no such record: this server is not yet supported as it uses SRV records (\(self.host):\(self.port))")
     } else {
-      logger.notice("\(String(describing: error))")
+      Logger.notice("\(String(describing: error))")
     }
   }
 }

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import os
 
 enum ClientState {
   case idle
@@ -25,12 +24,10 @@ class Client {
   var config: Config
   
   var eventManager: EventManager
-  var logger: Logger
   
   init(eventManager: EventManager, serverInfo: ServerInfo, config: Config) {
     self.eventManager = eventManager
     self.config = config
-    self.logger = Logger(for: type(of: self))
     
     self.server = Server(withInfo: serverInfo, eventManager: eventManager, client: self)
   }

@@ -11,11 +11,9 @@ import os
 struct PlayHandler: PacketHandler {
   var client: Client
   var server: Server
-  var logger: Logger
   var eventManager: EventManager
   
   init(server: Server) {
-    self.logger = Logger(for: type(of: self))
     self.server = server
     self.client = self.server.client
     self.eventManager = self.server.eventManager
@@ -23,7 +21,7 @@ struct PlayHandler: PacketHandler {
   
   func handlePacket(_ packetReader: PacketReader) {
     var reader = packetReader // mutable copy of packetReader
-    logger.debug("play packet received with id: 0x\(String(packetReader.packetId, radix: 16))")
+    Logger.debug("play packet received with id: 0x\(String(packetReader.packetId, radix: 16))")
     do {
       switch reader.packetId {
         case ServerDifficultyPacket.id:
@@ -67,7 +65,7 @@ struct PlayHandler: PacketHandler {
           
         case PluginMessagePacket.id:
           let packet = try PluginMessagePacket(fromReader: &reader)
-          logger.debug("plugin message received with channel: \(packet.pluginMessage.channel)")
+          Logger.debug("plugin message received with channel: \(packet.pluginMessage.channel)")
           
         // TODO_LATER: figure out what this is needed for
         case TagsPacket.id:
@@ -77,7 +75,7 @@ struct PlayHandler: PacketHandler {
           return
       }
     } catch {
-      logger.debug("\(error.localizedDescription)")
+      Logger.debug(error.localizedDescription)
       eventManager.triggerError("failed to handle play packet with packet id: \(reader.packetId)")
     }
   }

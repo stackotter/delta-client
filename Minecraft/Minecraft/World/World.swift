@@ -11,15 +11,11 @@ import os
 // NOTE: might need to be made threadsafe?
 class World {
   var chunks: [ChunkPosition: Chunk] = [:]
-  
-  var logger: Logger
   var eventManager: EventManager
-  
   var config: WorldConfig
   
   init(eventManager: EventManager, config: WorldConfig) {
     self.eventManager = eventManager
-    self.logger = Logger(for: type(of: self))
     self.config = config
   }
   

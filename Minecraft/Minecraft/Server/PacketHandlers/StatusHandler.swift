@@ -10,11 +10,9 @@ import os
 
 struct StatusHandler: PacketHandler {
   var serverPinger: ServerPinger
-  var logger: Logger
   
   init(serverPinger: ServerPinger) {
     self.serverPinger = serverPinger
-    self.logger = Logger(for: type(of: self))
   }
   
   func handlePacket(_ packetReader: PacketReader) {
@@ -40,7 +38,7 @@ struct StatusHandler: PacketHandler {
             self.serverPinger.pingInfo = pingInfo
           }
         } catch {
-          logger.debug("failed to handle status response: \(error.localizedDescription)")
+          Logger.debug("failed to handle status response: \(error.localizedDescription)")
         }
         
       default:

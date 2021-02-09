@@ -15,11 +15,6 @@ struct DeclareRecipesPacket: Packet {
   var recipeRegistry: RecipeRegistry
   
   init(fromReader packetReader: inout PacketReader) throws {
-    #if DEBUG
-    // helps to detect changes in the protocol (already helped once)
-    let logger = Logger.init(for: type(of: self))
-    #endif
-    
     recipeRegistry = RecipeRegistry()
     let numRecipes = packetReader.readVarInt()
     for _ in 0..<numRecipes {
@@ -91,7 +86,7 @@ struct DeclareRecipesPacket: Packet {
                 recipe = CampfireCookingRecipe(group: group, ingredient: ingredient, result: resultItemStack, experience: experience, cookingTime: cookingTime)
               default:
                 #if DEBUG
-                logger.debug("unknown heat recipe type: \(type.toString())")
+                Logger.debug("unknown heat recipe type: \(type.toString())")
                 #endif
                 break
             }
@@ -167,7 +162,7 @@ struct DeclareRecipesPacket: Packet {
                 recipe = SuspiciousStewRecipe()
               default:
                 #if DEBUG
-                logger.debug("unknown special recipe type: \(type.toString())")
+                Logger.debug("unknown special recipe type: \(type.toString())")
                 #endif
                 break
             }

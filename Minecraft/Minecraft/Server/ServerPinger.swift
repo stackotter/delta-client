@@ -6,10 +6,8 @@
 //
 
 import Foundation
-import os
 
 class ServerPinger: Hashable, ObservableObject {
-  var logger: Logger
   var eventManager: EventManager
   var connection: ServerConnection
   
@@ -20,7 +18,6 @@ class ServerPinger: Hashable, ObservableObject {
   init(_ serverInfo: ServerInfo) {
     self.eventManager = EventManager()
     self.info = serverInfo
-    self.logger = Logger(for: type(of: self))
     self.connection = ServerConnection(host: serverInfo.host, port: serverInfo.port, eventManager: eventManager)
     
     self.connection.registerPacketHandlers(handlers: [

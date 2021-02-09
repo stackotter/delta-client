@@ -9,7 +9,6 @@ import Foundation
 import os
 
 class Server: Hashable {
-  var logger: Logger
   var client: Client
   var eventManager: EventManager
   
@@ -49,7 +48,6 @@ class Server: Hashable {
     self.client = client
     self.info = serverInfo
     self.eventManager = eventManager
-    self.logger = Logger(for: type(of: self), desc: "\(info.host):\(info.port)")
     
     self.serverConnection = ServerConnection(host: info.host, port: info.port, eventManager: self.eventManager)
     
@@ -82,7 +80,7 @@ class Server: Hashable {
         let loginStart = LoginStart(username: "stampy654")
         self.serverConnection.sendPacket(loginStart, callback: .contentProcessed({
           (error) in
-          self.logger.debug("sent login start packet")
+          Logger.debug("sent login start packet")
         }))
       }
     }, eventName: "connectionReady")

@@ -12,11 +12,9 @@ import os
 struct LoginHandler: PacketHandler {
   var client: Client
   var server: Server
-  var logger: Logger
   var eventManager: EventManager
   
   init(server: Server) {
-    self.logger = Logger(for: type(of: self))
     self.server = server
     self.client = self.server.client
     self.eventManager = self.server.eventManager
@@ -31,7 +29,7 @@ struct LoginHandler: PacketHandler {
           eventManager.triggerError(packet.reason)
           
         case 0x01:
-          logger.debug("encryption request ignored")
+          Logger.debug("encryption request ignored")
           
         // TODO: do something with the uuid maybe?
         case LoginSuccess.id:
@@ -39,10 +37,10 @@ struct LoginHandler: PacketHandler {
           server.serverConnection.state = .play
           
         case 0x03:
-          logger.debug("set compression ignored")
+          Logger.debug("set compression ignored")
           
         case 0x04:
-          logger.debug("login plugin request ignored")
+          Logger.debug("login plugin request ignored")
           
         default:
           return

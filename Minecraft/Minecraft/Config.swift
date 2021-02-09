@@ -10,8 +10,6 @@ import os
 
 // TODO: handle minecraft folder not existing
 class Config {
-  private var logger: Logger
-  
   var minecraftFolder: URL
   var eventManager: EventManager
   
@@ -21,7 +19,6 @@ class Config {
   }
   
   init(eventManager: EventManager) {
-    self.logger = Logger(for: type(of: self))
     self.eventManager = eventManager
     
     self.minecraftFolder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("minecraft")
@@ -42,7 +39,7 @@ class Config {
         if serverInfo != nil {
           serverList.addServer(serverInfo!)
         } else {
-          logger.debug("invalid server ip")
+          Logger.debug("invalid server ip")
         }
       }
       return serverList
