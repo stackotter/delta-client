@@ -85,10 +85,10 @@ struct PacketReader {
   }
   
   // TODO_LATER: make a Chat datatype to use instead of String
-  mutating func readChat() throws -> String {
+  mutating func readChat() -> String {
     let string = readString()
     if string.count > 32767 {
-      throw PacketReadError.chatStringTooLong
+      print(PacketReadError.chatStringTooLong)
     }
     return string
   }
@@ -175,17 +175,25 @@ struct PacketReader {
     return json
   }
   
-  mutating func readEntityPosition() -> EntityPosition {
-    let x = readDouble()
-    let y = readDouble()
-    let z = readDouble()
-    return EntityPosition(x: x, y: y, z: z)
+  mutating func readPosition() -> Position {
+    let val = buf.readLong(endian: .big)
+    let x = Int32(val >> 38)
+    let y = Int32(val & 0xfff)
+    let z = Int32((val << 26) >> 38)
+    return Position(x: x, y: y, z: z)
   }
   
   mutating func readEntityRotation(pitchFirst: Bool? = false) -> EntityRotation {
     let yaw = readAngle()
     let pitch = readAngle()
     return EntityRotation(pitch: pitch, yaw: yaw)
+  }
+  
+  mutating func readEntityPosition() -> EntityPosition {
+    let x = readDouble()
+    let y = readDouble()
+    let z = readDouble()
+    return EntityPosition(x: x, y: y, z: z)
   }
   
   mutating func readEntityVelocity() -> EntityVelocity {

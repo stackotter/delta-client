@@ -14,6 +14,6 @@ struct LoginDisconnect: Packet {
   var reason: String
   
   init(fromReader packetReader: inout PacketReader) throws {
-    reason = try packetReader.readChat()
+    reason = packetReader.readChat()
   }
 }

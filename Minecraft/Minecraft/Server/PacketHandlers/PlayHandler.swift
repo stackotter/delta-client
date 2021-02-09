@@ -26,8 +26,8 @@ struct PlayHandler: PacketHandler {
     logger.debug("play packet received with id: 0x\(String(packetReader.packetId, radix: 16))")
     do {
       switch reader.packetId {
-        case SetDifficultyPacket.id:
-          let _ = SetDifficultyPacket(fromReader: &reader)
+        case ServerDifficultyPacket.id:
+          let _ = ServerDifficultyPacket(fromReader: &reader)
           
         case ChunkDataPacket.id:
           let packet = try ChunkDataPacket(fromReader: &reader)

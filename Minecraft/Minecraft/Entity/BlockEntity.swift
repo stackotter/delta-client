@@ -8,7 +8,7 @@
 import Foundation
 
 struct BlockEntity {
-  let position: BlockPosition
+  let position: Position
   let identifier: Identifier
   let nbt: NBTCompound
 }

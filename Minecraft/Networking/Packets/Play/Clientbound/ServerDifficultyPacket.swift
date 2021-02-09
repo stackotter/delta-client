@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct SetDifficultyPacket: Packet {
-  typealias PacketType = SetDifficultyPacket
+struct ServerDifficultyPacket: Packet {
+  typealias PacketType = ServerDifficultyPacket
   static let id: Int = 0x0d
   
   var difficulty: Difficulty
