@@ -8,8 +8,7 @@
 import Foundation
 
 // TODO_LATER: fill this out more as needed
-struct TagsPacket: Packet {
-  typealias PacketType = TagsPacket
+struct TagsPacket: ClientboundPacket {
   static let id: Int = 0x5b
   
   init(fromReader packetReader: inout PacketReader) {

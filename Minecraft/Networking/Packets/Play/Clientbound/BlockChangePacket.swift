@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct BlockChangePacket: Packet {
-  typealias PacketType = BlockChangePacket
+struct BlockChangePacket: ClientboundPacket {
   static let id: Int = 0x0b
   
   var location: Position

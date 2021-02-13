@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct CloseWindowClientboundPacket: Packet {
-  typealias PacketType = CloseWindowClientboundPacket
+struct CloseWindowClientboundPacket: ClientboundPacket {
   static let id: Int = 0x13
   
   var windowId: UInt8

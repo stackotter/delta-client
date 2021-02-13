@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct BlockEntityDataPacket: Packet {
-  typealias PacketType = BlockEntityDataPacket
+struct BlockEntityDataPacket: ClientboundPacket {
   static let id: Int = 0x09
   
   var location: Position

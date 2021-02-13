@@ -10,13 +10,11 @@ import os
 
 // TODO: handle rest of login packets
 struct LoginHandler: PacketHandler {
-  var client: Client
   var server: Server
   var eventManager: EventManager
   
   init(server: Server) {
     self.server = server
-    self.client = self.server.client
     self.eventManager = self.server.eventManager
   }
   
@@ -34,7 +32,7 @@ struct LoginHandler: PacketHandler {
         // TODO: do something with the uuid maybe?
         case LoginSuccess.id:
           let _ = LoginSuccess(fromReader: &reader)
-          server.serverConnection.state = .play
+          server.connection.state = .play
           
         case 0x03:
           Logger.debug("set compression ignored")

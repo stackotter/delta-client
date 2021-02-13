@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct BossBarPacket: Packet {
-  typealias PacketType = BossBarPacket
+struct BossBarPacket: ClientboundPacket {
   static let id: Int = 0x0c
   
   var uuid: UUID

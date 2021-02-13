@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct StatusResponse: Packet {
-  typealias PacketType = StatusResponse
+struct StatusResponse: ClientboundPacket {
+  
   static let id: Int = 0x00
   
   var json: JSON

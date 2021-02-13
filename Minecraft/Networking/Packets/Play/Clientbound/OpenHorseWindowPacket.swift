@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct OpenHorseWindowPacket: Packet {
-  typealias PacketType = OpenHorseWindowPacket
+struct OpenHorseWindowPacket: ClientboundPacket {
   static let id: Int = 0x1f
   
   var windowId: Int8

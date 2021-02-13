@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct EntityStatusPacket: Packet {
-  typealias PacketType = EntityStatusPacket
+struct EntityStatusPacket: ClientboundPacket {
   static let id: Int = 0x1b
   
   var entityId: Int32

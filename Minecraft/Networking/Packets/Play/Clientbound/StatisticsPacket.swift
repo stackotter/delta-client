@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct StatisticsPacket: Packet {
-  typealias PacketType = StatisticsPacket
+struct StatisticsPacket: ClientboundPacket {
   static let id: Int = 0x06
   
   var statistics: [Statistic]

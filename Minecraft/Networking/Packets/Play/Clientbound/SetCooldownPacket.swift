@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct SetCooldownPacket: Packet {
-  typealias PacketType = SetCooldownPacket
+struct SetCooldownPacket: ClientboundPacket {
   static let id: Int = 0x17
   
   var itemId: Int32

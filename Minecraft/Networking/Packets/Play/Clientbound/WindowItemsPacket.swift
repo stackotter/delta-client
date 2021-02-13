@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct WindowItemsPacket: Packet {
-  typealias PacketType = WindowItemsPacket
+struct WindowItemsPacket: ClientboundPacket {
   static let id: Int = 0x14
   
   var windowId: UInt8

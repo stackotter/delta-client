@@ -7,9 +7,10 @@
 
 import Foundation
 
-struct DeclareCommandsPacket: Packet {
-  typealias PacketType = DeclareCommandsPacket
+struct DeclareCommandsPacket: ClientboundPacket {
   static let id: Int = 0x11
   
-  // IMPLEMENT: declare commands packet
+  init(fromReader packetReader: inout PacketReader) throws {
+    // IMPLEMENT: declare commands packet
+  }
 }

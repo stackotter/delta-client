@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct MultiBlockChangePacket: Packet {
-  typealias PacketType = MultiBlockChangePacket
+struct MultiBlockChangePacket: ClientboundPacket {
   static let id: Int = 0x0f
   
   struct BlockChangeRecord {

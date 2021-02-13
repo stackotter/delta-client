@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct Handshake: Packet {
-  typealias PacketType = Handshake
+struct Handshake: ServerboundPacket {
+  
   static let id: Int = 0x00
   
   var protocolVersion: Int
@@ -22,7 +22,7 @@ struct Handshake: Packet {
   }
   
   func toBytes() -> [UInt8] {
-    var writer = PacketWriter(packetId: Handshake.id)
+    var writer = PacketWriter(packetId: id)
     writer.writeVarInt(Int32(protocolVersion))
     writer.writeString(serverAddr)
     writer.writeUnsignedShort(UInt16(serverPort))

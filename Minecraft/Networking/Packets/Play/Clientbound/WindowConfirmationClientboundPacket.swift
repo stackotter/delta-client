@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct WindowConfirmationClientboundPacket: Packet {
-  typealias PacketType = WindowConfirmationClientboundPacket
+struct WindowConfirmationClientboundPacket: ClientboundPacket {
   static let id: Int = 0x12
   
   var windowId: Int8

@@ -8,8 +8,7 @@
 import Foundation
 import os
 
-struct DeclareRecipesPacket: Packet {
-  typealias PacketType = DeclareRecipesPacket
+struct DeclareRecipesPacket: ClientboundPacket {
   static let id: Int = 0x5a
   
   var recipeRegistry: RecipeRegistry
@@ -174,5 +173,9 @@ struct DeclareRecipesPacket: Packet {
         }
       }
     }
+  }
+  
+  func handle(for server: Server) throws {
+    server.recipeRegistry = recipeRegistry
   }
 }

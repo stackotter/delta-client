@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct EffectPacket: Packet {
-  typealias PacketType = EffectPacket
+struct EffectPacket: ClientboundPacket {
   static let id: Int = 0x22
   
   var effectId: Int32

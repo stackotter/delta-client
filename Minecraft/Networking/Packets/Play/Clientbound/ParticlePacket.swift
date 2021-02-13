@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct ParticlePacket: Packet {
-  typealias PacketType = ParticlePacket
+struct ParticlePacket: ClientboundPacket {
   static let id: Int = 0x23
   
   var particleId: Int32

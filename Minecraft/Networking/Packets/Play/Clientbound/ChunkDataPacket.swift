@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct ChunkDataPacket: Packet {
-  typealias PacketType = ChunkDataPacket
+struct ChunkDataPacket: ClientboundPacket {
   static let id: Int = 0x21
   
   var chunk: Chunk
@@ -19,5 +18,9 @@ struct ChunkDataPacket: Packet {
     let position = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
     let chunkData = ChunkData(position: position, data: packetReader.buf)
     chunk = try chunkData.unpack()
+  }
+  
+  func handle(for server: Server) {
+    server.currentWorld!.addChunk(data: chunk)
   }
 }

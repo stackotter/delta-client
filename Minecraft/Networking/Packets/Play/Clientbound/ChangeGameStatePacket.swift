@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct ChangeGameStatePacket: Packet {
-  typealias PacketType = ChangeGameStatePacket
+struct ChangeGameStatePacket: ClientboundPacket {
   static let id: Int = 0x1e
   
   var reason: UInt8

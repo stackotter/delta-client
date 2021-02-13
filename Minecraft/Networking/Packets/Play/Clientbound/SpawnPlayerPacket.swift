@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct SpawnPlayerPacket: Packet {
-  typealias PacketType = SpawnPlayerPacket
+struct SpawnPlayerPacket: ClientboundPacket {
   static let id: Int = 0x04
   
   var entityId: Int32

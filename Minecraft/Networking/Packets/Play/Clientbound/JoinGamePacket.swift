@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct JoinGamePacket: Packet {
-  typealias PacketType = JoinGamePacket
+struct JoinGamePacket: ClientboundPacket {
   static let id: Int = 0x25
   
   var playerEntityId: Int32
@@ -49,6 +48,20 @@ struct JoinGamePacket: Packet {
     enableRespawnScreen = packetReader.readBool()
     isDebug = packetReader.readBool()
     isFlat = packetReader.readBool()
+  }
+  
+  func handle(for server: Server) throws {
+    server.config = ServerConfig(worldCount: worldCount, worldNames: worldNames,
+                                 dimensionCodec: dimensionCodec, maxPlayers: maxPlayers,
+                                 viewDistance: viewDistance, useReducedDebugInfo: reducedDebugInfo,
+                                 enableRespawnScreen: enableRespawnScreen)
+    let worldConfig = WorldConfig(worldName: worldName, dimension: dimension,
+                                  hashedSeed: hashedSeed, isDebug: isDebug, isFlat: isFlat)
+    // TODO: remove the need for world to have a reference to event manager if possible
+    let world = World(eventManager: server.eventManager, config: worldConfig)
+    server.worlds[worldName] = world
+    server.currentWorldName = worldName
+    server.downloadingTerrain = true
   }
 }
 

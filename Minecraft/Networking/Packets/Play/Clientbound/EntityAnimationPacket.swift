@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct EntityAnimationPacket: Packet {
-  typealias PacketType = EntityAnimationPacket
+struct EntityAnimationPacket: ClientboundPacket {
   static let id: Int = 0x05
   
   var entityId: Int32

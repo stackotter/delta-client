@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct BlockBreakAnimationPacket: Packet {
-  typealias PacketType = BlockBreakAnimationPacket
+struct BlockBreakAnimationPacket: ClientboundPacket {
   static let id: Int = 0x08
   
   var entityId: Int32

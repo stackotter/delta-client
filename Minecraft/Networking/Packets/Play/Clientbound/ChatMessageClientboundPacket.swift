@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct ChatMessageClientboundPacket: Packet {
-  typealias PacketType = ChatMessageClientboundPacket
+struct ChatMessageClientboundPacket: ClientboundPacket {
   static let id: Int = 0x0e
   
   var jsonData: String

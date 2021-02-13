@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct UnloadChunkPacket: Packet {
-  typealias PacketType = UnloadChunkPacket
+struct UnloadChunkPacket: ClientboundPacket {
   static let id: Int = 0x1d
   
   var chunkPosition: ChunkPosition

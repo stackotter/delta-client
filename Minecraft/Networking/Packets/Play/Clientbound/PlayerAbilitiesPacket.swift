@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct PlayerAbilitiesPacket: Packet {
-  typealias PacketType = PlayerAbilitiesPacket
+struct PlayerAbilitiesPacket: ClientboundPacket {
   static let id: Int = 0x31
   
   var flags: PlayerFlags
@@ -19,5 +18,11 @@ struct PlayerAbilitiesPacket: Packet {
     flags = PlayerFlags(rawValue: packetReader.readUnsignedByte())
     flyingSpeed = packetReader.readFloat()
     fovModifier = packetReader.readFloat()
+  }
+  
+  func handle(for server: Server) throws {
+    server.player.flyingSpeed = flyingSpeed
+    server.player.fovModifier = fovModifier
+    server.player.updateFlags(to: flags)
   }
 }

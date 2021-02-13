@@ -7,14 +7,13 @@
 
 import Foundation
 
-struct LoginStart: Packet {
-  typealias PacketType = LoginStart
+struct LoginStart: ServerboundPacket {
   static let id: Int = 0x00
   
   var username: String
   
   func toBytes() -> [UInt8] {
-    var writer = PacketWriter(packetId: LoginStart.id)
+    var writer = PacketWriter(packetId: id)
     writer.writeString(username)
     return writer.pack()
   }

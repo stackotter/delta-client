@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct SetSlotPacket: Packet {
-  typealias PacketType = SetSlotPacket
+struct SetSlotPacket: ClientboundPacket {
   static let id: Int = 0x16
   
   var windowId: Int8

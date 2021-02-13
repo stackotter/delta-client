@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct TabCompleteClientboundPacket: Packet {
-  typealias PacketType = TabCompleteClientboundPacket
+struct TabCompleteClientboundPacket: ClientboundPacket {
   static let id: Int = 0x10
   
   struct TabCompleteMatch {

@@ -6,9 +6,9 @@
 //
 
 import Foundation
+import os
 
-struct PluginMessagePacket: Packet {
-  typealias PacketType = PluginMessagePacket
+struct PluginMessagePacket: ClientboundPacket {
   static var id: Int = 0x18
   
   var pluginMessage: PluginMessage
@@ -23,5 +23,9 @@ struct PluginMessagePacket: Packet {
     let channel = try packetReader.readIdentifier()
     let data = packetReader.buf
     pluginMessage = PluginMessage(channel: channel, data: data)
+  }
+  
+  func handle(for server: Server) throws {
+    Logger.debug("plugin message received with channel: \(pluginMessage.channel)")
   }
 }

@@ -12,7 +12,7 @@ import os
 class ServerConnection {
   var host: String
   var port: Int
-  var connection: NWConnection
+  var socket: NWConnection
   var networkQueue: DispatchQueue
   
   var packetHandlingPool: PacketHandlerThreadPool
@@ -45,7 +45,7 @@ class ServerConnection {
     self.eventManager = eventManager
     
     self.networkQueue = DispatchQueue(label: "networkUpdates")
-    self.connection = ServerConnection.createNWConnection(fromHost: self.host, andPort: self.port)
+    self.socket = ServerConnection.createNWConnection(fromHost: self.host, andPort: self.port)
     
     self.packetHandlingPool = PacketHandlerThreadPool(eventManager: eventManager)
   }
@@ -77,22 +77,22 @@ class ServerConnection {
   
   func restart() {
     if state != .disconnected {
-      connection.forceCancel()
+      socket.forceCancel()
     }
     state = .idle
-    connection = ServerConnection.createNWConnection(fromHost: host, andPort: port)
+    socket = ServerConnection.createNWConnection(fromHost: host, andPort: port)
     start()
   }
   
   func start() {
     state = .connecting
-    connection.stateUpdateHandler = stateUpdateHandler
-    connection.start(queue: networkQueue)
+    socket.stateUpdateHandler = stateUpdateHandler
+    socket.start(queue: networkQueue)
   }
   
   func close() {
-    if connection.state != .cancelled {
-      self.connection.forceCancel()
+    if socket.state != .cancelled {
+      self.socket.forceCancel()
     }
     state = .disconnected
     eventManager.triggerEvent(.connectionClosed)
@@ -113,13 +113,13 @@ class ServerConnection {
     }))
   }
   
-  func sendPacket<T: Packet>(_ packet: T, callback: NWConnection.SendCompletion = .idempotent) {
+  func sendPacket(_ packet: ServerboundPacket, callback: NWConnection.SendCompletion = .idempotent) {
     sendRaw(bytes: packet.toBytes(), callback: callback)
   }
   
   func sendRaw(bytes: [UInt8], callback: NWConnection.SendCompletion = .idempotent) {
     let data = Data(bytes)
-    connection.send(content: data, completion: callback)
+    socket.send(content: data, completion: callback)
   }
   
   private func receive(receiveState: ReceiveState? = nil) {
@@ -131,7 +131,7 @@ class ServerConnection {
       length = receiveState!.length
       packet = receiveState!.packet
     }
-    connection.receive(minimumIncompleteLength: 0, maximumLength: 4096, completion: {
+    socket.receive(minimumIncompleteLength: 0, maximumLength: 4096, completion: {
       (data, context, isComplete, error) in
       if (isComplete) {
         self.close()
@@ -190,7 +190,7 @@ class ServerConnection {
         }
       }
       
-      if (self.connection.state == .ready) {
+      if (self.socket.state == .ready) {
         let receiveState = ReceiveState(lengthBytes: lengthBytes, length: length, packet: packet)
         self.receive(receiveState: receiveState)
       } else {

@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct NamedSoundEffectPacket: Packet {
-  typealias PacketType = NamedSoundEffectPacket
+struct NamedSoundEffectPacket: ClientboundPacket {
   static let id: Int = 0x19
   
   var soundName: Identifier

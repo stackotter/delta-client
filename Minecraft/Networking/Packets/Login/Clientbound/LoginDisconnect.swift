@@ -7,13 +7,16 @@
 
 import Foundation
 
-struct LoginDisconnect: Packet {
-  typealias PacketType = LoginDisconnect
+struct LoginDisconnect: ClientboundPacket {
   static let id: Int = 0x00
   
   var reason: String
   
   init(fromReader packetReader: inout PacketReader) throws {
     reason = packetReader.readChat()
+  }
+  
+  func handle(for client: Client) throws {
+    client.eventManager.triggerError(reason)
   }
 }

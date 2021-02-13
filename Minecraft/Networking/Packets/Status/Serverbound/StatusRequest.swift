@@ -7,12 +7,11 @@
 
 import Foundation
 
-struct StatusRequest: Packet {
-  typealias PacketType = StatusRequest
+struct StatusRequest: ServerboundPacket {
   static let id: Int = 0x00
   
   func toBytes() -> [UInt8] {
-    var writer = PacketWriter(packetId: StatusRequest.id)
+    var writer = PacketWriter(packetId: id)
     return writer.pack()
   }
 }

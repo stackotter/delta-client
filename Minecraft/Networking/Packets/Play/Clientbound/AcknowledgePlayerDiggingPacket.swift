@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct AcknowledgePlayerDiggingPacket: Packet {
-  typealias PacketType = AcknowledgePlayerDiggingPacket
+struct AcknowledgePlayerDiggingPacket: ClientboundPacket {
   static let id: Int = 0x07
   
   var location: Position

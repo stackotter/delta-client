@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct SpawnExperienceOrbPacket: Packet {
-  typealias PacketType = SpawnExperienceOrbPacket
+struct SpawnExperienceOrbPacket: ClientboundPacket {
   static let id: Int = 0x01
   
   var entityId: Int32

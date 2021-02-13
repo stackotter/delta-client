@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct ExplosionPacket: Packet {
-  typealias PacketType = ExplosionPacket
+struct ExplosionPacket: ClientboundPacket {
   static let id: Int = 0x1c
   
   var x: Float

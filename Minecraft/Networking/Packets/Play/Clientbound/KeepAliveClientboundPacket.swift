@@ -6,14 +6,19 @@
 //
 
 import Foundation
+import os
 
-struct KeepAliveClientboundPacket: Packet {
-  typealias PacketType = KeepAliveClientboundPacket
+struct KeepAliveClientboundPacket: ClientboundPacket {
   static let id: Int = 0x20
   
   var keepAliveId: Int64
   
   init(fromReader packetReader: inout PacketReader) throws {
     keepAliveId = packetReader.readLong()
+  }
+  
+  func handle(for server: Server) throws {
+    let keepAlive = KeepAliveServerBoundPacket(keepAliveId: keepAliveId)
+    server.sendPacket(keepAlive)
   }
 }

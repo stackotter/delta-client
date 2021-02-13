@@ -7,13 +7,16 @@
 
 import Foundation
 
-struct HeldItemChangePacket: Packet {
-  typealias PacketType = HeldItemChangePacket
+struct HeldItemChangePacket: ClientboundPacket {
   static let id: Int = 0x3f
   
   var slot: Int8
   
   init(fromReader packetReader: inout PacketReader) {
     slot = packetReader.readByte()
+  }
+  
+  func handle(for server: Server) throws {
+    server.player.hotbarSlot = slot
   }
 }

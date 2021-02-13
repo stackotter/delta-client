@@ -17,10 +17,7 @@ enum ClientState {
 // pretty much the backend class for the whole game
 class Client {
   var state: ClientState = .idle
-  
-  // TODO: maybe use a Registry object that stores all registries for neater code
-  var recipeRegistry: RecipeRegistry = RecipeRegistry()
-  var server: Server? = nil
+  var server: Server
   var config: Config
   
   var eventManager: EventManager
@@ -29,11 +26,11 @@ class Client {
     self.eventManager = eventManager
     self.config = config
     
-    self.server = Server(withInfo: serverInfo, eventManager: eventManager, client: self)
+    self.server = Server(withInfo: serverInfo, eventManager: eventManager)
   }
   
   // TEMP
   func play() {
-    server!.login()
+    server.login()
   }
 }

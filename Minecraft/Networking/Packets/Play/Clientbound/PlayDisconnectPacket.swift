@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct PlayDisconnectPacket: Packet {
-  typealias PacketType = PlayDisconnectPacket
+struct PlayDisconnectPacket: ClientboundPacket {
   static let id: Int = 0x1a
   
   var reason: String

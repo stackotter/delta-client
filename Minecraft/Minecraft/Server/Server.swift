@@ -9,10 +9,9 @@ import Foundation
 import os
 
 class Server: Hashable {
-  var client: Client
   var eventManager: EventManager
   
-  var serverConnection: ServerConnection
+  var connection: ServerConnection
   var info: ServerInfo
   
   var currentWorldName: Identifier?
@@ -23,6 +22,9 @@ class Server: Hashable {
     }
     return nil
   }
+  
+  // TODO: maybe use a Registry object that stores all registries for neater code
+  var recipeRegistry: RecipeRegistry = RecipeRegistry()
   
   var player: Player
   
@@ -44,12 +46,11 @@ class Server: Hashable {
     case disconnected
   }
   
-  init(withInfo serverInfo: ServerInfo, eventManager: EventManager, client: Client) {
-    self.client = client
+  init(withInfo serverInfo: ServerInfo, eventManager: EventManager) {
     self.info = serverInfo
     self.eventManager = eventManager
     
-    self.serverConnection = ServerConnection(host: info.host, port: info.port, eventManager: self.eventManager)
+    self.connection = ServerConnection(host: info.host, port: info.port, eventManager: self.eventManager)
     
     // TODO: fix this once config is cleaned up
     self.player = Player(username: "stampy654")
@@ -58,7 +59,7 @@ class Server: Hashable {
     self.packetHandlers[.login] = LoginHandler(server: self)
     self.packetHandlers[.play] = PlayHandler(server: self)
     
-    self.serverConnection.registerPacketHandlers(handlers: packetHandlers)
+    self.connection.registerPacketHandlers(handlers: packetHandlers)
     self.eventManager.registerEventHandler(handleEvents)
   }
   
@@ -71,20 +72,24 @@ class Server: Hashable {
     }
   }
   
+  func sendPacket(_ packet: ServerboundPacket) {
+    connection.sendPacket(packet)
+  }
+  
   // just a prototype for later
   func login() {
-    serverConnection.restart()
+    connection.restart()
     eventManager.registerOneTimeEventHandler({
       (event) in
-      self.serverConnection.handshake(nextState: .login) {
+      self.connection.handshake(nextState: .login) {
         let loginStart = LoginStart(username: "stampy654")
-        self.serverConnection.sendPacket(loginStart, callback: .contentProcessed({
+        self.connection.sendPacket(loginStart, callback: .contentProcessed({
           (error) in
           Logger.debug("sent login start packet")
         }))
       }
     }, eventName: "connectionReady")
-    serverConnection.start()
+    connection.start()
   }
   
   // Things so that SwiftUI ForEach loop works
