@@ -183,9 +183,15 @@ struct PacketReader {
     return Position(x: x, y: y, z: z)
   }
   
-  mutating func readEntityRotation(pitchFirst: Bool? = false) -> EntityRotation {
+  mutating func readEntityRotation(pitchFirst: Bool = false) -> EntityRotation {
+    var pitch: UInt8 = 0
+    if pitchFirst {
+      pitch = readAngle()
+    }
     let yaw = readAngle()
-    let pitch = readAngle()
+    if !pitchFirst {
+      pitch = readAngle()
+    }
     return EntityRotation(pitch: pitch, yaw: yaw)
   }
   

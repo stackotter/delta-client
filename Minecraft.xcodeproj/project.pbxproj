@@ -134,6 +134,16 @@
 		78E919B925D74DBF00667C75 /* PacketRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919B825D74DBF00667C75 /* PacketRegistry.swift */; };
 		78E919BE25D7541C00667C75 /* ServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919BD25D7541C00667C75 /* ServerboundPacket.swift */; };
 		78E919C325D75C9E00667C75 /* KeepAliveServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919C225D75C9E00667C75 /* KeepAliveServerboundPacket.swift */; };
+		78E919C825D7E79F00667C75 /* UpdateLightPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919C725D7E79F00667C75 /* UpdateLightPacket.swift */; };
+		78E919D525D7EBF500667C75 /* MapDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919D425D7EBF500667C75 /* MapDataPacket.swift */; };
+		78E919DA25D7EE8700667C75 /* TradeListPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919D925D7EE8700667C75 /* TradeListPacket.swift */; };
+		78E919DF25D7FAEA00667C75 /* EntityPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919DE25D7FAEA00667C75 /* EntityPositionPacket.swift */; };
+		78E919E425D7FBE200667C75 /* EntityPositionAndRotationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919E325D7FBE200667C75 /* EntityPositionAndRotationPacket.swift */; };
+		78E919E925D7FCA900667C75 /* EntityRotationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919E825D7FCA900667C75 /* EntityRotationPacket.swift */; };
+		78E919EE25D7FCEA00667C75 /* EntityMovementPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919ED25D7FCEA00667C75 /* EntityMovementPacket.swift */; };
+		78E919F325D7FD2900667C75 /* VehicleMoveClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919F225D7FD2900667C75 /* VehicleMoveClientboundPacket.swift */; };
+		78E919F825D7FD9E00667C75 /* OpenBookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919F725D7FD9E00667C75 /* OpenBookPacket.swift */; };
+		78E919FD25D7FE0700667C75 /* OpenWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919FC25D7FE0700667C75 /* OpenWindowPacket.swift */; };
 		78F29B1E25AE769B00D85CCB /* CompactedLongArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */; };
 		78F29B2425AE818700D85CCB /* Chunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B2325AE818700D85CCB /* Chunk.swift */; };
 		78F29B2C25AE81E000D85CCB /* ChunkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B2B25AE81E000D85CCB /* ChunkSection.swift */; };
@@ -297,6 +307,16 @@
 		78E919B825D74DBF00667C75 /* PacketRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketRegistry.swift; sourceTree = "<group>"; };
 		78E919BD25D7541C00667C75 /* ServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerboundPacket.swift; sourceTree = "<group>"; };
 		78E919C225D75C9E00667C75 /* KeepAliveServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeepAliveServerboundPacket.swift; sourceTree = "<group>"; };
+		78E919C725D7E79F00667C75 /* UpdateLightPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateLightPacket.swift; sourceTree = "<group>"; };
+		78E919D425D7EBF500667C75 /* MapDataPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapDataPacket.swift; sourceTree = "<group>"; };
+		78E919D925D7EE8700667C75 /* TradeListPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeListPacket.swift; sourceTree = "<group>"; };
+		78E919DE25D7FAEA00667C75 /* EntityPositionPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityPositionPacket.swift; sourceTree = "<group>"; };
+		78E919E325D7FBE200667C75 /* EntityPositionAndRotationPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityPositionAndRotationPacket.swift; sourceTree = "<group>"; };
+		78E919E825D7FCA900667C75 /* EntityRotationPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityRotationPacket.swift; sourceTree = "<group>"; };
+		78E919ED25D7FCEA00667C75 /* EntityMovementPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityMovementPacket.swift; sourceTree = "<group>"; };
+		78E919F225D7FD2900667C75 /* VehicleMoveClientboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMoveClientboundPacket.swift; sourceTree = "<group>"; };
+		78E919F725D7FD9E00667C75 /* OpenBookPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenBookPacket.swift; sourceTree = "<group>"; };
+		78E919FC25D7FE0700667C75 /* OpenWindowPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWindowPacket.swift; sourceTree = "<group>"; };
 		78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactedLongArray.swift; sourceTree = "<group>"; };
 		78F29B2325AE818700D85CCB /* Chunk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chunk.swift; sourceTree = "<group>"; };
 		78F29B2B25AE81E000D85CCB /* ChunkSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkSection.swift; sourceTree = "<group>"; };
@@ -479,7 +499,6 @@
 				78E919B825D74DBF00667C75 /* PacketRegistry.swift */,
 				78C2D58E258597D400883DF5 /* PacketReader.swift */,
 				787D900625848726007E6441 /* PacketWriter.swift */,
-				78DB24E725C5277900F7D70B /* PacketHandler.swift */,
 				787D8FFD2584857A007E6441 /* Packets */,
 			);
 			path = Networking;
@@ -568,7 +587,17 @@
 				78764E1425AE5E6900AE8716 /* ChunkDataPacket.swift */,
 				7894523D25D2790700B86423 /* EffectPacket.swift */,
 				7894524225D2796200B86423 /* ParticlePacket.swift */,
+				78E919C725D7E79F00667C75 /* UpdateLightPacket.swift */,
 				784B394225A185B200556E3E /* JoinGamePacket.swift */,
+				78E919D425D7EBF500667C75 /* MapDataPacket.swift */,
+				78E919D925D7EE8700667C75 /* TradeListPacket.swift */,
+				78E919DE25D7FAEA00667C75 /* EntityPositionPacket.swift */,
+				78E919E325D7FBE200667C75 /* EntityPositionAndRotationPacket.swift */,
+				78E919E825D7FCA900667C75 /* EntityRotationPacket.swift */,
+				78E919ED25D7FCEA00667C75 /* EntityMovementPacket.swift */,
+				78E919F225D7FD2900667C75 /* VehicleMoveClientboundPacket.swift */,
+				78E919F725D7FD9E00667C75 /* OpenBookPacket.swift */,
+				78E919FC25D7FE0700667C75 /* OpenWindowPacket.swift */,
 				784B395925A1B84000556E3E /* PlayerAbilitiesPacket.swift */,
 				784B395E25A1BCA400556E3E /* HeldItemChangePacket.swift */,
 				78FA059A25B515810074CF37 /* UpdateViewPositionPacket.swift */,
@@ -691,6 +720,7 @@
 		78DB24E125C5273D00F7D70B /* PacketHandlers */ = {
 			isa = PBXGroup;
 			children = (
+				78DB24E725C5277900F7D70B /* PacketHandler.swift */,
 				78D0C1D825C52C44004CF261 /* StatusHandler.swift */,
 				78DB24E225C5276500F7D70B /* LoginHandler.swift */,
 				78D0C1D325C528C4004CF261 /* PlayHandler.swift */,
@@ -888,6 +918,7 @@
 				787D8FF1258451A8007E6441 /* ServerConnection.swift in Sources */,
 				78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */,
 				784CCA9B25AD2F99004B3182 /* Ingredient.swift in Sources */,
+				78E919DF25D7FAEA00667C75 /* EntityPositionPacket.swift in Sources */,
 				7830D8CE2596B91B00D35180 /* ViewState.swift in Sources */,
 				78BFD2E725B521A800366631 /* WorldConfig.swift in Sources */,
 				784CAE24259AB654003E5F87 /* UUID.swift in Sources */,
@@ -895,6 +926,7 @@
 				78E919B925D74DBF00667C75 /* PacketRegistry.swift in Sources */,
 				7894523E25D2790700B86423 /* EffectPacket.swift in Sources */,
 				784CCB0D25AD352E004B3182 /* BannerAddPatternRecipe.swift in Sources */,
+				78E919F325D7FD2900667C75 /* VehicleMoveClientboundPacket.swift in Sources */,
 				7878B52F25844B6B007C0D3D /* GameView.swift in Sources */,
 				784CCA9125AD2E86004B3182 /* CraftingRecipe.swift in Sources */,
 				78CC6E6D25D2656F00CA3DFF /* BlockEntityDataPacket.swift in Sources */,
@@ -915,6 +947,7 @@
 				7894521125D26FB800B86423 /* SetCooldownPacket.swift in Sources */,
 				784B395025A19D8300556E3E /* ServerDifficultyPacket.swift in Sources */,
 				7894520725D26F1100B86423 /* WindowPropertyPacket.swift in Sources */,
+				78E919C825D7E79F00667C75 /* UpdateLightPacket.swift in Sources */,
 				7830D8D32596C13A00D35180 /* ErrorView.swift in Sources */,
 				784CCA8C25AD2E40004B3182 /* CraftingShapeless.swift in Sources */,
 				78CC6E7725D2669400CA3DFF /* BlockChangePacket.swift in Sources */,
@@ -923,6 +956,7 @@
 				784CCAE025AD343F004B3182 /* BookCloningRecipe.swift in Sources */,
 				78965088258861FE0079C5CF /* NBTCompound.swift in Sources */,
 				784B395A25A1B84000556E3E /* PlayerAbilitiesPacket.swift in Sources */,
+				78E919DA25D7EE8700667C75 /* TradeListPacket.swift in Sources */,
 				784CCA9625AD2F3D004B3182 /* CraftingShaped.swift in Sources */,
 				78CC6E9125D26C6B00CA3DFF /* TabCompleteClientboundPacket.swift in Sources */,
 				78D0C1D425C528C4004CF261 /* PlayHandler.swift in Sources */,
@@ -940,19 +974,23 @@
 				78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */,
 				7878B53025844B6B007C0D3D /* ServerDetailView.swift in Sources */,
 				78F29B3A25AE84CE00D85CCB /* Position.swift in Sources */,
+				78E919E925D7FCA900667C75 /* EntityRotationPacket.swift in Sources */,
 				789650922588834C0079C5CF /* LoginStart.swift in Sources */,
 				78CC6E5625D2639600CA3DFF /* Statistic.swift in Sources */,
 				784CCABF25AD31BA004B3182 /* CampfireCookingRecipe.swift in Sources */,
 				784B392E25A14F7500556E3E /* LoginDisconnect.swift in Sources */,
+				78E919EE25D7FCEA00667C75 /* EntityMovementPacket.swift in Sources */,
 				784D97912587604700FC89F8 /* Config.swift in Sources */,
 				781E63BB25B14CBE00ADFAB8 /* ChunkData.swift in Sources */,
 				7878855F2588136700226064 /* Buffer.swift in Sources */,
 				78F29B4C25AF14EE00D85CCB /* ChunkPosition.swift in Sources */,
+				78E919FD25D7FE0700667C75 /* OpenWindowPacket.swift in Sources */,
 				789451F325D26DBC00B86423 /* DeclareCommandsPacket.swift in Sources */,
 				784CCACC25AD328A004B3182 /* SmithingRecipe.swift in Sources */,
 				784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */,
 				78DB24E325C5276500F7D70B /* LoginHandler.swift in Sources */,
 				78CC6E7C25D266D100CA3DFF /* BossBarPacket.swift in Sources */,
+				78E919E425D7FBE200667C75 /* EntityPositionAndRotationPacket.swift in Sources */,
 				784CCAB025AD312B004B3182 /* SmeltingRecipe.swift in Sources */,
 				78F29B2425AE818700D85CCB /* Chunk.swift in Sources */,
 				784B396425A1C19800556E3E /* DeclareRecipesPacket.swift in Sources */,
@@ -975,11 +1013,13 @@
 				78FA059B25B515810074CF37 /* UpdateViewPositionPacket.swift in Sources */,
 				78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */,
 				784CCAA825AD30BB004B3182 /* HeatRecipe.swift in Sources */,
+				78E919F825D7FD9E00667C75 /* OpenBookPacket.swift in Sources */,
 				78225CE3258EC0CE007B7F98 /* EventManager.swift in Sources */,
 				7894522525D274DE00B86423 /* ExplosionPacket.swift in Sources */,
 				78CC6E8C25D26A9E00CA3DFF /* MultiBlockChangePacket.swift in Sources */,
 				78764DEB25AD7F2700AE8716 /* Item.swift in Sources */,
 				7894524325D2796200B86423 /* ParticlePacket.swift in Sources */,
+				78E919D525D7EBF500667C75 /* MapDataPacket.swift in Sources */,
 				7894522F25D2777C00B86423 /* ChangeGameStatePacket.swift in Sources */,
 				784CCABA25AD317A004B3182 /* SmokingRecipe.swift in Sources */,
 				784CCAB525AD3165004B3182 /* BlastingRecipe.swift in Sources */,

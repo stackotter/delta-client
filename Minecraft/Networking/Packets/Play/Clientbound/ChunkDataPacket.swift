@@ -16,6 +16,7 @@ struct ChunkDataPacket: ClientboundPacket {
     let chunkX = packetReader.readInt()
     let chunkZ = packetReader.readInt()
     let position = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
+    // TODO: merge chunk data into here? unless it can be used to help multithread chunk unpacking
     let chunkData = ChunkData(position: position, data: packetReader.buf)
     chunk = try chunkData.unpack()
   }
