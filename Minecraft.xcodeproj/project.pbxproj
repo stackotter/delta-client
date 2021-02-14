@@ -20,6 +20,8 @@
 		784194C2258204D00070DE78 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 784194C1258204D00070DE78 /* Preview Assets.xcassets */; };
 		784194CE258204D10070DE78 /* MinecraftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194CD258204D10070DE78 /* MinecraftTests.swift */; };
 		784194D9258204D10070DE78 /* MinecraftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194D8258204D10070DE78 /* MinecraftUITests.swift */; };
+		784783E825D89090008B1430 /* OpenSignEditorPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784783E725D89090008B1430 /* OpenSignEditorPacket.swift */; };
+		784783ED25D890EE008B1430 /* CraftRecipeResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784783EC25D890EE008B1430 /* CraftRecipeResponsePacket.swift */; };
 		784B392E25A14F7500556E3E /* LoginDisconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B392D25A14F7500556E3E /* LoginDisconnect.swift */; };
 		784B393325A14F8400556E3E /* LoginSuccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B393225A14F8400556E3E /* LoginSuccess.swift */; };
 		784B393D25A17AB600556E3E /* Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B393C25A17AB600556E3E /* Identifier.swift */; };
@@ -68,6 +70,30 @@
 		785786E825D15FCF003021D9 /* SpawnLivingEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785786E725D15FCF003021D9 /* SpawnLivingEntity.swift */; };
 		785786ED25D1E431003021D9 /* SpawnPaintingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785786EC25D1E431003021D9 /* SpawnPaintingPacket.swift */; };
 		78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78654EB62585E0CF00770FFF /* PingInfo.swift */; };
+		7873053925D91871001259EB /* CombatEventPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873053825D91871001259EB /* CombatEventPacket.swift */; };
+		7873053E25D919A5001259EB /* PlayerInfoPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873053D25D919A5001259EB /* PlayerInfoPacket.swift */; };
+		7873054325D9286C001259EB /* FacePlayerPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873054225D9286C001259EB /* FacePlayerPacket.swift */; };
+		7873054825D92A1B001259EB /* PlayerPositionAndLookClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873054725D92A1B001259EB /* PlayerPositionAndLookClientboundPacket.swift */; };
+		7873054D25D92B88001259EB /* UnlockRecipesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873054C25D92B88001259EB /* UnlockRecipesPacket.swift */; };
+		7873055225D92F75001259EB /* DestroyEntitiesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873055125D92F75001259EB /* DestroyEntitiesPacket.swift */; };
+		7873055725D92FB9001259EB /* RemoveEntityEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873055625D92FB9001259EB /* RemoveEntityEffectPacket.swift */; };
+		7873056425D93004001259EB /* ResourcePackSendPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873056325D93004001259EB /* ResourcePackSendPacket.swift */; };
+		7873056925D930A4001259EB /* RespawnPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873056825D930A4001259EB /* RespawnPacket.swift */; };
+		7873056E25D93160001259EB /* EntityHeadLookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873056D25D93160001259EB /* EntityHeadLookPacket.swift */; };
+		7873057325D9319F001259EB /* SelectAdvancementTabPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873057225D9319F001259EB /* SelectAdvancementTabPacket.swift */; };
+		7873057825D931F5001259EB /* WorldBorderPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873057725D931F5001259EB /* WorldBorderPacket.swift */; };
+		7873057D25D93599001259EB /* CameraPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873057C25D93599001259EB /* CameraPacket.swift */; };
+		7873058225D93611001259EB /* UpdateViewDistancePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873058125D93611001259EB /* UpdateViewDistancePacket.swift */; };
+		7873058725D93689001259EB /* SpawnPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873058625D93689001259EB /* SpawnPositionPacket.swift */; };
+		7873058C25D936DF001259EB /* DisplayScoreboardPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873058B25D936DF001259EB /* DisplayScoreboardPacket.swift */; };
+		7873059125D9374E001259EB /* EntityMetadataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873059025D9374E001259EB /* EntityMetadataPacket.swift */; };
+		7873059625D9378A001259EB /* AttachEntityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873059525D9378A001259EB /* AttachEntityPacket.swift */; };
+		7873059B25D937D3001259EB /* EntityVelocityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873059A25D937D3001259EB /* EntityVelocityPacket.swift */; };
+		787305A025D93816001259EB /* EntityEquipmentPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873059F25D93816001259EB /* EntityEquipmentPacket.swift */; };
+		787305A525D93985001259EB /* SetExperiencePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787305A425D93985001259EB /* SetExperiencePacket.swift */; };
+		787305AA25D939C8001259EB /* UpdateHealthPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787305A925D939C8001259EB /* UpdateHealthPacket.swift */; };
+		787305AF25D93A22001259EB /* ScoreboardObjectivePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787305AE25D93A22001259EB /* ScoreboardObjectivePacket.swift */; };
+		787305B425D93AC3001259EB /* SetPassengersPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787305B325D93AC3001259EB /* SetPassengersPacket.swift */; };
 		78764DDD25AD374D00AE8716 /* SpecialRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DDC25AD374D00AE8716 /* SpecialRecipe.swift */; };
 		78764DEB25AD7F2700AE8716 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DEA25AD7F2700AE8716 /* Item.swift */; };
 		78764DF025AD9BFF00AE8716 /* SuspiciousStewRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78764DEF25AD9BFF00AE8716 /* SuspiciousStewRecipe.swift */; };
@@ -193,6 +219,8 @@
 		784194D4258204D10070DE78 /* MinecraftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinecraftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D8258204D10070DE78 /* MinecraftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftUITests.swift; sourceTree = "<group>"; };
 		784194DA258204D10070DE78 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		784783E725D89090008B1430 /* OpenSignEditorPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSignEditorPacket.swift; sourceTree = "<group>"; };
+		784783EC25D890EE008B1430 /* CraftRecipeResponsePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftRecipeResponsePacket.swift; sourceTree = "<group>"; };
 		784B392D25A14F7500556E3E /* LoginDisconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDisconnect.swift; sourceTree = "<group>"; };
 		784B393225A14F8400556E3E /* LoginSuccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginSuccess.swift; sourceTree = "<group>"; };
 		784B393C25A17AB600556E3E /* Identifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Identifier.swift; sourceTree = "<group>"; };
@@ -241,6 +269,30 @@
 		785786E725D15FCF003021D9 /* SpawnLivingEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpawnLivingEntity.swift; sourceTree = "<group>"; };
 		785786EC25D1E431003021D9 /* SpawnPaintingPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpawnPaintingPacket.swift; sourceTree = "<group>"; };
 		78654EB62585E0CF00770FFF /* PingInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingInfo.swift; sourceTree = "<group>"; };
+		7873053825D91871001259EB /* CombatEventPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombatEventPacket.swift; sourceTree = "<group>"; };
+		7873053D25D919A5001259EB /* PlayerInfoPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerInfoPacket.swift; sourceTree = "<group>"; };
+		7873054225D9286C001259EB /* FacePlayerPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacePlayerPacket.swift; sourceTree = "<group>"; };
+		7873054725D92A1B001259EB /* PlayerPositionAndLookClientboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerPositionAndLookClientboundPacket.swift; sourceTree = "<group>"; };
+		7873054C25D92B88001259EB /* UnlockRecipesPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockRecipesPacket.swift; sourceTree = "<group>"; };
+		7873055125D92F75001259EB /* DestroyEntitiesPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestroyEntitiesPacket.swift; sourceTree = "<group>"; };
+		7873055625D92FB9001259EB /* RemoveEntityEffectPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveEntityEffectPacket.swift; sourceTree = "<group>"; };
+		7873056325D93004001259EB /* ResourcePackSendPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcePackSendPacket.swift; sourceTree = "<group>"; };
+		7873056825D930A4001259EB /* RespawnPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RespawnPacket.swift; sourceTree = "<group>"; };
+		7873056D25D93160001259EB /* EntityHeadLookPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityHeadLookPacket.swift; sourceTree = "<group>"; };
+		7873057225D9319F001259EB /* SelectAdvancementTabPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAdvancementTabPacket.swift; sourceTree = "<group>"; };
+		7873057725D931F5001259EB /* WorldBorderPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldBorderPacket.swift; sourceTree = "<group>"; };
+		7873057C25D93599001259EB /* CameraPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPacket.swift; sourceTree = "<group>"; };
+		7873058125D93611001259EB /* UpdateViewDistancePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateViewDistancePacket.swift; sourceTree = "<group>"; };
+		7873058625D93689001259EB /* SpawnPositionPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpawnPositionPacket.swift; sourceTree = "<group>"; };
+		7873058B25D936DF001259EB /* DisplayScoreboardPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayScoreboardPacket.swift; sourceTree = "<group>"; };
+		7873059025D9374E001259EB /* EntityMetadataPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityMetadataPacket.swift; sourceTree = "<group>"; };
+		7873059525D9378A001259EB /* AttachEntityPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachEntityPacket.swift; sourceTree = "<group>"; };
+		7873059A25D937D3001259EB /* EntityVelocityPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityVelocityPacket.swift; sourceTree = "<group>"; };
+		7873059F25D93816001259EB /* EntityEquipmentPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityEquipmentPacket.swift; sourceTree = "<group>"; };
+		787305A425D93985001259EB /* SetExperiencePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetExperiencePacket.swift; sourceTree = "<group>"; };
+		787305A925D939C8001259EB /* UpdateHealthPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateHealthPacket.swift; sourceTree = "<group>"; };
+		787305AE25D93A22001259EB /* ScoreboardObjectivePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreboardObjectivePacket.swift; sourceTree = "<group>"; };
+		787305B325D93AC3001259EB /* SetPassengersPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPassengersPacket.swift; sourceTree = "<group>"; };
 		78764DDC25AD374D00AE8716 /* SpecialRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialRecipe.swift; sourceTree = "<group>"; };
 		78764DEA25AD7F2700AE8716 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		78764DEF25AD9BFF00AE8716 /* SuspiciousStewRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspiciousStewRecipe.swift; sourceTree = "<group>"; };
@@ -598,9 +650,35 @@
 				78E919F225D7FD2900667C75 /* VehicleMoveClientboundPacket.swift */,
 				78E919F725D7FD9E00667C75 /* OpenBookPacket.swift */,
 				78E919FC25D7FE0700667C75 /* OpenWindowPacket.swift */,
+				784783E725D89090008B1430 /* OpenSignEditorPacket.swift */,
+				784783EC25D890EE008B1430 /* CraftRecipeResponsePacket.swift */,
 				784B395925A1B84000556E3E /* PlayerAbilitiesPacket.swift */,
+				7873053825D91871001259EB /* CombatEventPacket.swift */,
+				7873053D25D919A5001259EB /* PlayerInfoPacket.swift */,
+				7873054225D9286C001259EB /* FacePlayerPacket.swift */,
+				7873054725D92A1B001259EB /* PlayerPositionAndLookClientboundPacket.swift */,
+				7873054C25D92B88001259EB /* UnlockRecipesPacket.swift */,
+				7873055125D92F75001259EB /* DestroyEntitiesPacket.swift */,
+				7873055625D92FB9001259EB /* RemoveEntityEffectPacket.swift */,
+				7873056325D93004001259EB /* ResourcePackSendPacket.swift */,
+				7873056825D930A4001259EB /* RespawnPacket.swift */,
+				7873056D25D93160001259EB /* EntityHeadLookPacket.swift */,
+				7873057225D9319F001259EB /* SelectAdvancementTabPacket.swift */,
+				7873057725D931F5001259EB /* WorldBorderPacket.swift */,
+				7873057C25D93599001259EB /* CameraPacket.swift */,
 				784B395E25A1BCA400556E3E /* HeldItemChangePacket.swift */,
 				78FA059A25B515810074CF37 /* UpdateViewPositionPacket.swift */,
+				7873058125D93611001259EB /* UpdateViewDistancePacket.swift */,
+				7873058625D93689001259EB /* SpawnPositionPacket.swift */,
+				7873058B25D936DF001259EB /* DisplayScoreboardPacket.swift */,
+				7873059025D9374E001259EB /* EntityMetadataPacket.swift */,
+				7873059525D9378A001259EB /* AttachEntityPacket.swift */,
+				7873059A25D937D3001259EB /* EntityVelocityPacket.swift */,
+				7873059F25D93816001259EB /* EntityEquipmentPacket.swift */,
+				787305A425D93985001259EB /* SetExperiencePacket.swift */,
+				787305A925D939C8001259EB /* UpdateHealthPacket.swift */,
+				787305AE25D93A22001259EB /* ScoreboardObjectivePacket.swift */,
+				787305B325D93AC3001259EB /* SetPassengersPacket.swift */,
 				784B396325A1C19800556E3E /* DeclareRecipesPacket.swift */,
 				78764E0F25AE4B9200AE8716 /* TagsPacket.swift */,
 			);
@@ -903,6 +981,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7873056425D93004001259EB /* ResourcePackSendPacket.swift in Sources */,
 				78E919C325D75C9E00667C75 /* KeepAliveServerboundPacket.swift in Sources */,
 				78F29B4725AF136A00D85CCB /* World.swift in Sources */,
 				784CCAA025AD300B004B3182 /* ItemStack.swift in Sources */,
@@ -912,6 +991,8 @@
 				785786E025D15F54003021D9 /* SpawnExperienceOrbPacket.swift in Sources */,
 				7889A9E925C4EED80007B2D7 /* Constants.swift in Sources */,
 				78CC6E6825D2651D00CA3DFF /* BlockBreakAnimationPacket.swift in Sources */,
+				7873058C25D936DF001259EB /* DisplayScoreboardPacket.swift in Sources */,
+				787305B425D93AC3001259EB /* SetPassengersPacket.swift in Sources */,
 				784CCAF925AD34CC004B3182 /* FireworkStarFadeRecipe.swift in Sources */,
 				784194BB258204CD0070DE78 /* MinecraftApp.swift in Sources */,
 				7894522A25D2773500B86423 /* UnloadChunkPacket.swift in Sources */,
@@ -925,9 +1006,12 @@
 				788435A025861B55002F1F84 /* ServerListEntryView.swift in Sources */,
 				78E919B925D74DBF00667C75 /* PacketRegistry.swift in Sources */,
 				7894523E25D2790700B86423 /* EffectPacket.swift in Sources */,
+				7873057325D9319F001259EB /* SelectAdvancementTabPacket.swift in Sources */,
 				784CCB0D25AD352E004B3182 /* BannerAddPatternRecipe.swift in Sources */,
 				78E919F325D7FD2900667C75 /* VehicleMoveClientboundPacket.swift in Sources */,
+				7873059B25D937D3001259EB /* EntityVelocityPacket.swift in Sources */,
 				7878B52F25844B6B007C0D3D /* GameView.swift in Sources */,
+				787305AF25D93A22001259EB /* ScoreboardObjectivePacket.swift in Sources */,
 				784CCA9125AD2E86004B3182 /* CraftingRecipe.swift in Sources */,
 				78CC6E6D25D2656F00CA3DFF /* BlockEntityDataPacket.swift in Sources */,
 				784CCAC425AD3239004B3182 /* StonecuttingRecipe.swift in Sources */,
@@ -935,6 +1019,7 @@
 				7878B53125844B6B007C0D3D /* ServerListView.swift in Sources */,
 				784F4B7825B7F6AC00FE21AA /* ServerPinger.swift in Sources */,
 				789451FD25D26E7200B86423 /* CloseWindowClientboundPacket.swift in Sources */,
+				7873053E25D919A5001259EB /* PlayerInfoPacket.swift in Sources */,
 				784CCB0325AD34FF004B3182 /* TippedArrowRecipe.swift in Sources */,
 				78CC6E5125D2636F00CA3DFF /* StatisticsPacket.swift in Sources */,
 				7894520225D26EA700B86423 /* WindowItemsPacket.swift in Sources */,
@@ -960,6 +1045,7 @@
 				784CCA9625AD2F3D004B3182 /* CraftingShaped.swift in Sources */,
 				78CC6E9125D26C6B00CA3DFF /* TabCompleteClientboundPacket.swift in Sources */,
 				78D0C1D425C528C4004CF261 /* PlayHandler.swift in Sources */,
+				7873056925D930A4001259EB /* RespawnPacket.swift in Sources */,
 				784B393D25A17AB600556E3E /* Identifier.swift in Sources */,
 				7894520C25D26F5500B86423 /* SetSlotPacket.swift in Sources */,
 				785786ED25D1E431003021D9 /* SpawnPaintingPacket.swift in Sources */,
@@ -967,6 +1053,7 @@
 				785786E825D15FCF003021D9 /* SpawnLivingEntity.swift in Sources */,
 				784B395525A19E3900556E3E /* Difficulty.swift in Sources */,
 				78DB24D525C4F5A700F7D70B /* PlayerFlags.swift in Sources */,
+				7873055225D92F75001259EB /* DestroyEntitiesPacket.swift in Sources */,
 				78F29B1E25AE769B00D85CCB /* CompactedLongArray.swift in Sources */,
 				784CAE29259ACA74003E5F87 /* Slot.swift in Sources */,
 				784B394B25A19CCC00556E3E /* Gamemode.swift in Sources */,
@@ -976,10 +1063,13 @@
 				78F29B3A25AE84CE00D85CCB /* Position.swift in Sources */,
 				78E919E925D7FCA900667C75 /* EntityRotationPacket.swift in Sources */,
 				789650922588834C0079C5CF /* LoginStart.swift in Sources */,
+				784783ED25D890EE008B1430 /* CraftRecipeResponsePacket.swift in Sources */,
+				784783E825D89090008B1430 /* OpenSignEditorPacket.swift in Sources */,
 				78CC6E5625D2639600CA3DFF /* Statistic.swift in Sources */,
 				784CCABF25AD31BA004B3182 /* CampfireCookingRecipe.swift in Sources */,
 				784B392E25A14F7500556E3E /* LoginDisconnect.swift in Sources */,
 				78E919EE25D7FCEA00667C75 /* EntityMovementPacket.swift in Sources */,
+				7873057825D931F5001259EB /* WorldBorderPacket.swift in Sources */,
 				784D97912587604700FC89F8 /* Config.swift in Sources */,
 				781E63BB25B14CBE00ADFAB8 /* ChunkData.swift in Sources */,
 				7878855F2588136700226064 /* Buffer.swift in Sources */,
@@ -992,14 +1082,17 @@
 				78CC6E7C25D266D100CA3DFF /* BossBarPacket.swift in Sources */,
 				78E919E425D7FBE200667C75 /* EntityPositionAndRotationPacket.swift in Sources */,
 				784CCAB025AD312B004B3182 /* SmeltingRecipe.swift in Sources */,
+				787305A025D93816001259EB /* EntityEquipmentPacket.swift in Sources */,
 				78F29B2425AE818700D85CCB /* Chunk.swift in Sources */,
 				784B396425A1C19800556E3E /* DeclareRecipesPacket.swift in Sources */,
 				789BE9E32589DAC7001C08ED /* JSON.swift in Sources */,
 				785786DB25D1552F003021D9 /* EntityRotation.swift in Sources */,
+				7873056E25D93160001259EB /* EntityHeadLookPacket.swift in Sources */,
 				789451F825D26E2000B86423 /* WindowConfirmationClientboundPacket.swift in Sources */,
 				784CCAEF25AD3487004B3182 /* FireworkRocketRecipe.swift in Sources */,
 				78F29B2C25AE81E000D85CCB /* ChunkSection.swift in Sources */,
 				785786D625D15292003021D9 /* EntityVelocity.swift in Sources */,
+				7873054325D9286C001259EB /* FacePlayerPacket.swift in Sources */,
 				787D8FF625848480007E6441 /* ClientboundPacket.swift in Sources */,
 				780D9BA92596CF5900144D45 /* LauncherProfile.swift in Sources */,
 				78F29B3225AE846000D85CCB /* BlockEntity.swift in Sources */,
@@ -1012,6 +1105,7 @@
 				78764DF525AD9FCA00AE8716 /* Client.swift in Sources */,
 				78FA059B25B515810074CF37 /* UpdateViewPositionPacket.swift in Sources */,
 				78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */,
+				787305AA25D939C8001259EB /* UpdateHealthPacket.swift in Sources */,
 				784CCAA825AD30BB004B3182 /* HeatRecipe.swift in Sources */,
 				78E919F825D7FD9E00667C75 /* OpenBookPacket.swift in Sources */,
 				78225CE3258EC0CE007B7F98 /* EventManager.swift in Sources */,
@@ -1021,8 +1115,11 @@
 				7894524325D2796200B86423 /* ParticlePacket.swift in Sources */,
 				78E919D525D7EBF500667C75 /* MapDataPacket.swift in Sources */,
 				7894522F25D2777C00B86423 /* ChangeGameStatePacket.swift in Sources */,
+				7873059625D9378A001259EB /* AttachEntityPacket.swift in Sources */,
+				7873058225D93611001259EB /* UpdateViewDistancePacket.swift in Sources */,
 				784CCABA25AD317A004B3182 /* SmokingRecipe.swift in Sources */,
 				784CCAB525AD3165004B3182 /* BlastingRecipe.swift in Sources */,
+				7873054D25D92B88001259EB /* UnlockRecipesPacket.swift in Sources */,
 				784CCAFE25AD34E1004B3182 /* RepairItemRecipe.swift in Sources */,
 				784B394325A185B200556E3E /* JoinGamePacket.swift in Sources */,
 				784B395F25A1BCA400556E3E /* HeldItemChangePacket.swift in Sources */,
@@ -1032,19 +1129,26 @@
 				787D8FFF258485A7007E6441 /* Handshake.swift in Sources */,
 				7894521625D2709B00B86423 /* NamedSoundEffectPacket.swift in Sources */,
 				78F29B3F25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift in Sources */,
+				7873057D25D93599001259EB /* CameraPacket.swift in Sources */,
 				7884359B25861981002F1F84 /* ServerList.swift in Sources */,
 				78CC6E4C25D2630C00CA3DFF /* EntityAnimationPacket.swift in Sources */,
 				784CCB1725AD355B004B3182 /* ShulkerBoxColouringRecipe.swift in Sources */,
 				784CCAEA25AD3471004B3182 /* MapExtendingRecipe.swift in Sources */,
 				784F4B7D25B7FC0A00FE21AA /* ServerInfo.swift in Sources */,
 				784CCAF425AD349E004B3182 /* FireworkStarRecipe.swift in Sources */,
+				787305A525D93985001259EB /* SetExperiencePacket.swift in Sources */,
 				7894523425D277C000B86423 /* OpenHorseWindowPacket.swift in Sources */,
 				78DB24E825C5277900F7D70B /* PacketHandler.swift in Sources */,
 				78CC6E7225D2661B00CA3DFF /* BlockActionPacket.swift in Sources */,
 				785786D125D150E4003021D9 /* SpawnEntityPacket.swift in Sources */,
+				7873058725D93689001259EB /* SpawnPositionPacket.swift in Sources */,
+				7873055725D92FB9001259EB /* RemoveEntityEffectPacket.swift in Sources */,
+				7873053925D91871001259EB /* CombatEventPacket.swift in Sources */,
+				7873054825D92A1B001259EB /* PlayerPositionAndLookClientboundPacket.swift in Sources */,
 				788435902585E606002F1F84 /* Server.swift in Sources */,
 				781E63CB25B166D000ADFAB8 /* EntityPosition.swift in Sources */,
 				784B393325A14F8400556E3E /* LoginSuccess.swift in Sources */,
+				7873059125D9374E001259EB /* EntityMetadataPacket.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
