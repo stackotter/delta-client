@@ -34,3 +34,9 @@ Currently it uses no external libraries so the app is currently less than a mb.
   - [ ] Block entity rendering
   - [ ] Entity rendering
 - [ ] Physics
+
+## Screenshots
+
+### Server List
+
+![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/hypixel.png?raw=true)
