@@ -22,7 +22,7 @@ class PacketHandlerThreadPool {
   var threads: [DispatchQueue] = []
   
   // holds packets waiting to be processed
-  var packetQueue: [(reader: PacketReader, state: ServerConnection.ConnectionState)] = []
+  var packetQueue: [(reader: PacketReader, state: PacketState)] = []
   // holds idle threads
   var availableThreads: Set<DispatchQueue> = []
   
@@ -31,15 +31,15 @@ class PacketHandlerThreadPool {
   // thread used to manage the availableThreads array threadsafe-ly
   var threadManagementThread: DispatchQueue
   
-  // holds the packet handler for each state (packet handling is spread amongst them for readibility)
-  var packetHandlers: [ServerConnection.ConnectionState: PacketHandler] = [:]
-  
   var eventManager: EventManager
   var locale: MinecraftLocale
+  var packetRegistry: PacketRegistry
+  var handler: (PacketReader, PacketState) -> Void
   
-  init(eventManager: EventManager, locale: MinecraftLocale) {
+  init(eventManager: EventManager, locale: MinecraftLocale, packetRegistry: PacketRegistry) {
     self.eventManager = eventManager
     self.locale = locale
+    self.packetRegistry = packetRegistry
     
     self.centralThread = DispatchQueue(label: "masterPacketHandlingThread")
     self.threadManagementThread = DispatchQueue(label: "packetHandlingThreadManagementThread") // nice naming, great job me :)
@@ -51,10 +51,20 @@ class PacketHandlerThreadPool {
     
     // all threads start idle
     self.availableThreads = Set(self.threads)
+    
+    // defaults to an empty handler
+    self.handler = {
+      (_ reader: PacketReader, _ state: PacketState) in
+      return
+    }
+  }
+  
+  func setHandler(_ handler: @escaping (PacketReader, PacketState) -> Void) {
+    self.handler = handler
   }
   
   // pops incoming packets onto the packetQueue and sets any idle threads going if necessary
-  func handleBytes(_ bytes: [UInt8], state: ServerConnection.ConnectionState) {
+  func handleBytes(_ bytes: [UInt8], state: PacketState) {
     centralThread.async {
       let reader = PacketReader(bytes: bytes, locale: self.locale)
       self.packetQueue.append((reader: reader, state: state))
@@ -87,14 +97,8 @@ class PacketHandlerThreadPool {
   }
   
   // this is what is run in the thread pool to actually finally handle the packets
-  private func handlePacket(_ packet: (reader: PacketReader, state: ServerConnection.ConnectionState), thread: DispatchQueue) {
-    let state = packet.state
-    
-    if let handler = packetHandlers[state] {
-      handler.handlePacket(packet.reader)
-    } else {
-      Logger.debug("received packet in invalid or non-implemented state")
-    }
+  private func handlePacket(_ packet: (reader: PacketReader, state: PacketState), thread: DispatchQueue) {
+    handler(packet.reader, packet.state)
     
     // if there is an available packet, process it on this thread. otherwise, add this thread to availableThreads again.
     // this hopefully lets the work remain in the same one or two threads when there are less packets arriving (reduces thread switching)

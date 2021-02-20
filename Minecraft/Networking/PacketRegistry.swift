@@ -18,12 +18,7 @@ class PacketRegistry {
   
 //  var serverboundPackets: [PacketState: [Int: ServerBoundPacket]]
   
-  enum PacketState {
-    case handshaking
-    case status
-    case login
-    case play
-  }
+  
   
   static func createDefault() -> PacketRegistry {
     let registry = PacketRegistry()

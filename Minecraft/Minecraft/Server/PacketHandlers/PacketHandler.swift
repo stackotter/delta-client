@@ -7,6 +7,7 @@
 
 import Foundation
 
+// TODO: remove if not used
 protocol PacketHandler {
   func handlePacket(_ packetReader: PacketReader)
 }

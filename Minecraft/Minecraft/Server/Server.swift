@@ -26,6 +26,7 @@ class Server: Hashable {
   
   // TODO: maybe use a Registry object that stores all registries for neater code
   var recipeRegistry: RecipeRegistry = RecipeRegistry()
+  var packetRegistry: PacketRegistry
   
   var player: Player
   
@@ -34,9 +35,6 @@ class Server: Hashable {
   
   // NOTE: maybe this could be consolidated to a struct if there are other play state kinda variables
   var downloadingTerrain = false
-    
-  // holds the packet handler for each state (packet handling is spread amongst them for readibility)
-  var packetHandlers: [ServerConnection.ConnectionState: PacketHandler] = [:]
   
   enum ServerState {
     case idle
@@ -53,16 +51,22 @@ class Server: Hashable {
     self.clientConfig = clientConfig
     
     self.connection = ServerConnection(host: info.host, port: info.port, eventManager: self.eventManager, locale: self.clientConfig.locale)
+    self.packetRegistry = PacketRegistry.createDefault()
     
-    // TODO: fix this once config is cleaned up
+    // TODO_LATER: fix this once config is cleaned up
     self.player = Player(username: "stampy654")
     
-    // create packet handlers
-    self.packetHandlers[.login] = LoginHandler(server: self)
-    self.packetHandlers[.play] = PlayHandler(server: self)
-    
-    self.connection.registerPacketHandlers(handlers: packetHandlers)
     self.eventManager.registerEventHandler(handleEvents)
+    self.connection.setHandler(handlePacket)
+  }
+  
+  func handlePacket(_ packetReader: PacketReader, _ state: PacketState) {
+    var reader = packetReader
+    do {
+      try packetRegistry.handlePacket(&reader, forServer: self, inState: state)
+    } catch {
+      Logger.debug("failed to handle status packet")
+    }
   }
   
   func handleEvents(_ event: EventManager.Event) {

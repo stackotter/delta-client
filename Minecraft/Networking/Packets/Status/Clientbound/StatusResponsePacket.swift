@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 struct StatusResponsePacket: ClientboundPacket {
   
@@ -17,7 +18,7 @@ struct StatusResponsePacket: ClientboundPacket {
     json = try packetReader.readJSON()
   }
   
-  func handle(for serverPinger: ServerPinger) throws {
+  func handle(for serverPinger: ServerPinger) {
     guard
       let versionInfo = json.getJSON(forKey: "version"),
       let versionName = versionInfo.getString(forKey: "name"),
@@ -26,7 +27,8 @@ struct StatusResponsePacket: ClientboundPacket {
       let maxPlayers = players.getInt(forKey: "max"),
       let numPlayers = players.getInt(forKey: "online")
     else {
-      throw StatusResponseError.invalidJSON
+      Logger.debug("failed to parse status response json")
+      return
     }
     
     let pingInfo = PingInfo(versionName: versionName, protocolVersion: protocolVersion, maxPlayers: maxPlayers, numPlayers: numPlayers, description: "Ping Complete", modInfo: "")

@@ -19,19 +19,10 @@ class ServerConnection {
   
   var eventManager: EventManager
   var locale: MinecraftLocale
+  var packetRegistry: PacketRegistry
   
-  var state: ConnectionState = .idle
-  
-  enum ConnectionState {
-    case idle
-    case connecting
-    case ready
-    case handshaking
-    case status
-    case login
-    case play
-    case disconnected
-  }
+  var connectionState: ConnectionState = .idle
+  var serverState: PacketState = .handshaking
   
   // used in the packet receiving loop because of chunking
   struct ReceiveState {
@@ -46,26 +37,28 @@ class ServerConnection {
     self.eventManager = eventManager
     self.locale = locale
     
+    self.packetRegistry = PacketRegistry.createDefault()
+    
     self.networkQueue = DispatchQueue(label: "networkUpdates")
     self.socket = ServerConnection.createNWConnection(fromHost: self.host, andPort: self.port)
     
-    self.packetHandlingPool = PacketHandlerThreadPool(eventManager: eventManager, locale: self.locale)
+    self.packetHandlingPool = PacketHandlerThreadPool(eventManager: eventManager, locale: self.locale, packetRegistry: self.packetRegistry)
   }
   
-  func registerPacketHandlers(handlers: [ServerConnection.ConnectionState: PacketHandler]) {
-    packetHandlingPool.packetHandlers = handlers
+  func setHandler(_ handler: @escaping (PacketReader, PacketState) -> Void) {
+    packetHandlingPool.setHandler(handler)
   }
   
   private func stateUpdateHandler(newState: NWConnection.State) {
     switch(newState) {
       case .ready:
-        state = .ready
+        connectionState = .ready
         eventManager.triggerEvent(.connectionReady)
         receive()
       case .waiting(let error):
         handleNWError(error)
       case .failed(let error):
-        state = .disconnected
+        connectionState = .disconnected
         handleNWError(error)
       default:
         break
@@ -77,16 +70,16 @@ class ServerConnection {
   }
   
   func restart() {
-    if state != .disconnected {
+    if connectionState != .disconnected {
       socket.forceCancel()
     }
-    state = .idle
+    connectionState = .idle
     socket = ServerConnection.createNWConnection(fromHost: host, andPort: port)
     start()
   }
   
   func start() {
-    state = .connecting
+    connectionState = .connecting
     socket.stateUpdateHandler = stateUpdateHandler
     socket.start(queue: networkQueue)
   }
@@ -95,12 +88,12 @@ class ServerConnection {
     if socket.state != .cancelled {
       self.socket.forceCancel()
     }
-    state = .disconnected
+    connectionState = .disconnected
     eventManager.triggerEvent(.connectionClosed)
   }
   
   func handshake(nextState: HandshakePacket.NextState, callback: @escaping () -> Void = {}) {
-    state = .handshaking
+    serverState = .handshaking
     // move protocol version to config or constants file of some sort
     let handshake = HandshakePacket(protocolVersion: PROTOCOL_VERSION, serverAddr: host, serverPort: port, nextState: nextState)
 
@@ -108,7 +101,7 @@ class ServerConnection {
       if error != nil {
         Logger.error("failed to send packet: \(error!.debugDescription)")
       } else {
-        self.state = (nextState == .login) ? .login : .status
+        self.serverState = (nextState == .login) ? .login : .status
         callback()
       }
     }))
@@ -176,7 +169,7 @@ class ServerConnection {
             packet.append(byte)
             
             if (packet.count == length) {
-              self.packetHandlingPool.handleBytes(packet, state: self.state)
+              self.packetHandlingPool.handleBytes(packet, state: self.serverState)
               packet = []
               length = -1
               lengthBytes = []
@@ -206,7 +199,7 @@ class ServerConnection {
       // do nothing
     } else if error == NWError.dns(-65554) { // -65554 is the error code for NoSuchRecord
       Logger.error("no such record: this server is not yet supported as it uses SRV records (\(self.host):\(self.port))")
-    } else if state != .disconnected {
+    } else if connectionState != .disconnected {
 //      Logger.debug("\(String(describing: error))")
     }
   }

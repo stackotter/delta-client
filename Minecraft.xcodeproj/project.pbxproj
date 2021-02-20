@@ -129,6 +129,8 @@
 		7884359B25861981002F1F84 /* ServerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884359A25861981002F1F84 /* ServerList.swift */; };
 		788435A025861B55002F1F84 /* ServerListEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884359F25861B55002F1F84 /* ServerListEntryView.swift */; };
 		7889A9E925C4EED80007B2D7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7889A9E825C4EED80007B2D7 /* Constants.swift */; };
+		788A578A25E1B2D000813C1B /* PacketState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788A578925E1B2D000813C1B /* PacketState.swift */; };
+		788A578F25E1B2E400813C1B /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788A578E25E1B2E400813C1B /* ConnectionState.swift */; };
 		789451F325D26DBC00B86423 /* DeclareCommandsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789451F225D26DBC00B86423 /* DeclareCommandsPacket.swift */; };
 		789451F825D26E2000B86423 /* WindowConfirmationClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789451F725D26E2000B86423 /* WindowConfirmationClientboundPacket.swift */; };
 		789451FD25D26E7200B86423 /* CloseWindowClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789451FC25D26E7200B86423 /* CloseWindowClientboundPacket.swift */; };
@@ -174,11 +176,8 @@
 		78CC6E8425D2698A00CA3DFF /* ChatMessageClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78CC6E8325D2698A00CA3DFF /* ChatMessageClientboundPacket.swift */; };
 		78CC6E8C25D26A9E00CA3DFF /* MultiBlockChangePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78CC6E8B25D26A9E00CA3DFF /* MultiBlockChangePacket.swift */; };
 		78CC6E9125D26C6B00CA3DFF /* TabCompleteClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78CC6E9025D26C6B00CA3DFF /* TabCompleteClientboundPacket.swift */; };
-		78D0C1D425C528C4004CF261 /* PlayHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D0C1D325C528C4004CF261 /* PlayHandler.swift */; };
-		78D0C1D925C52C44004CF261 /* StatusHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D0C1D825C52C44004CF261 /* StatusHandler.swift */; };
 		78DB24D525C4F5A700F7D70B /* PlayerFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DB24D425C4F5A700F7D70B /* PlayerFlags.swift */; };
 		78DB24DA25C51DEF00F7D70B /* PluginMessagePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DB24D925C51DEF00F7D70B /* PluginMessagePacket.swift */; };
-		78DB24E325C5276500F7D70B /* LoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DB24E225C5276500F7D70B /* LoginHandler.swift */; };
 		78DB24E825C5277900F7D70B /* PacketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DB24E725C5277900F7D70B /* PacketHandler.swift */; };
 		78DF38DC25DC6E7A00A03FB7 /* ChatTranslateComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DF38DB25DC6E7A00A03FB7 /* ChatTranslateComponent.swift */; };
 		78E919B925D74DBF00667C75 /* PacketRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919B825D74DBF00667C75 /* PacketRegistry.swift */; };
@@ -352,6 +351,8 @@
 		7884359A25861981002F1F84 /* ServerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerList.swift; sourceTree = "<group>"; };
 		7884359F25861B55002F1F84 /* ServerListEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListEntryView.swift; sourceTree = "<group>"; };
 		7889A9E825C4EED80007B2D7 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		788A578925E1B2D000813C1B /* PacketState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketState.swift; sourceTree = "<group>"; };
+		788A578E25E1B2E400813C1B /* ConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
 		789451F225D26DBC00B86423 /* DeclareCommandsPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeclareCommandsPacket.swift; sourceTree = "<group>"; };
 		789451F725D26E2000B86423 /* WindowConfirmationClientboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowConfirmationClientboundPacket.swift; sourceTree = "<group>"; };
 		789451FC25D26E7200B86423 /* CloseWindowClientboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseWindowClientboundPacket.swift; sourceTree = "<group>"; };
@@ -397,11 +398,8 @@
 		78CC6E8325D2698A00CA3DFF /* ChatMessageClientboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageClientboundPacket.swift; sourceTree = "<group>"; };
 		78CC6E8B25D26A9E00CA3DFF /* MultiBlockChangePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBlockChangePacket.swift; sourceTree = "<group>"; };
 		78CC6E9025D26C6B00CA3DFF /* TabCompleteClientboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabCompleteClientboundPacket.swift; sourceTree = "<group>"; };
-		78D0C1D325C528C4004CF261 /* PlayHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayHandler.swift; sourceTree = "<group>"; };
-		78D0C1D825C52C44004CF261 /* StatusHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusHandler.swift; sourceTree = "<group>"; };
 		78DB24D425C4F5A700F7D70B /* PlayerFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerFlags.swift; sourceTree = "<group>"; };
 		78DB24D925C51DEF00F7D70B /* PluginMessagePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginMessagePacket.swift; sourceTree = "<group>"; };
-		78DB24E225C5276500F7D70B /* LoginHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHandler.swift; sourceTree = "<group>"; };
 		78DB24E725C5277900F7D70B /* PacketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketHandler.swift; sourceTree = "<group>"; };
 		78DF38DB25DC6E7A00A03FB7 /* ChatTranslateComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTranslateComponent.swift; sourceTree = "<group>"; };
 		78E919B825D74DBF00667C75 /* PacketRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketRegistry.swift; sourceTree = "<group>"; };
@@ -609,10 +607,12 @@
 			isa = PBXGroup;
 			children = (
 				787D8FF0258451A8007E6441 /* ServerConnection.swift */,
+				788A578E25E1B2E400813C1B /* ConnectionState.swift */,
 				78F29B3E25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift */,
 				787D8FF525848480007E6441 /* ClientboundPacket.swift */,
 				78E919BD25D7541C00667C75 /* ServerboundPacket.swift */,
 				78E919B825D74DBF00667C75 /* PacketRegistry.swift */,
+				788A578925E1B2D000813C1B /* PacketState.swift */,
 				78C2D58E258597D400883DF5 /* PacketReader.swift */,
 				787D900625848726007E6441 /* PacketWriter.swift */,
 				787D8FFD2584857A007E6441 /* Packets */,
@@ -887,9 +887,6 @@
 			isa = PBXGroup;
 			children = (
 				78DB24E725C5277900F7D70B /* PacketHandler.swift */,
-				78D0C1D825C52C44004CF261 /* StatusHandler.swift */,
-				78DB24E225C5276500F7D70B /* LoginHandler.swift */,
-				78D0C1D325C528C4004CF261 /* PlayHandler.swift */,
 			);
 			path = PacketHandlers;
 			sourceTree = "<group>";
@@ -1138,7 +1135,7 @@
 				78E919DA25D7EE8700667C75 /* TradeListPacket.swift in Sources */,
 				784CCA9625AD2F3D004B3182 /* CraftingShaped.swift in Sources */,
 				78CC6E9125D26C6B00CA3DFF /* TabCompleteClientboundPacket.swift in Sources */,
-				78D0C1D425C528C4004CF261 /* PlayHandler.swift in Sources */,
+				788A578A25E1B2D000813C1B /* PacketState.swift in Sources */,
 				7873056925D930A4001259EB /* RespawnPacket.swift in Sources */,
 				7824E8FB25E0FC6A009F0197 /* UpdateScorePacket.swift in Sources */,
 				7824E90A25E0FEA5009F0197 /* EntitySoundEffectPacket.swift in Sources */,
@@ -1171,6 +1168,7 @@
 				7873057825D931F5001259EB /* WorldBorderPacket.swift in Sources */,
 				784D97912587604700FC89F8 /* ConfigManager.swift in Sources */,
 				781E63BB25B14CBE00ADFAB8 /* ChunkData.swift in Sources */,
+				788A578F25E1B2E400813C1B /* ConnectionState.swift in Sources */,
 				7878855F2588136700226064 /* Buffer.swift in Sources */,
 				78F29B4C25AF14EE00D85CCB /* ChunkPosition.swift in Sources */,
 				78E919FD25D7FE0700667C75 /* OpenWindowPacket.swift in Sources */,
@@ -1178,7 +1176,6 @@
 				7824E93225E1095D009F0197 /* EntityProperties.swift in Sources */,
 				784CCACC25AD328A004B3182 /* SmithingRecipe.swift in Sources */,
 				784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */,
-				78DB24E325C5276500F7D70B /* LoginHandler.swift in Sources */,
 				78CC6E7C25D266D100CA3DFF /* BossBarPacket.swift in Sources */,
 				78E919E425D7FBE200667C75 /* EntityPositionAndRotationPacket.swift in Sources */,
 				784CCAB025AD312B004B3182 /* SmeltingRecipe.swift in Sources */,
@@ -1230,7 +1227,6 @@
 				784B395F25A1BCA400556E3E /* HeldItemChangePacket.swift in Sources */,
 				784CCAD525AD3417004B3182 /* ArmorDyeRecipe.swift in Sources */,
 				78DB24DA25C51DEF00F7D70B /* PluginMessagePacket.swift in Sources */,
-				78D0C1D925C52C44004CF261 /* StatusHandler.swift in Sources */,
 				787D8FFF258485A7007E6441 /* HandshakePacket.swift in Sources */,
 				78DF38DC25DC6E7A00A03FB7 /* ChatTranslateComponent.swift in Sources */,
 				7894521625D2709B00B86423 /* NamedSoundEffectPacket.swift in Sources */,

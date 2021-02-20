@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import os
 
 class ServerPinger: Hashable, ObservableObject {
   var eventManager: EventManager
   var connection: ServerConnection
+  var packetRegistry: PacketRegistry
   
   var info: ServerInfo
   
@@ -19,10 +21,17 @@ class ServerPinger: Hashable, ObservableObject {
     self.eventManager = EventManager()
     self.info = serverInfo
     self.connection = ServerConnection(host: serverInfo.host, port: serverInfo.port, eventManager: eventManager, locale: MinecraftLocale.empty())
-    
-    self.connection.registerPacketHandlers(handlers: [
-      .status: StatusHandler(serverPinger: self)
-    ])
+    self.packetRegistry = PacketRegistry.createDefault()
+    self.connection.setHandler(handlePacket)
+  }
+  
+  func handlePacket(_ packetReader: PacketReader, _ state: PacketState) {
+    var reader = packetReader
+    do {
+      try packetRegistry.handlePacket(&reader, forServerPinger: self, inState: state)
+    } catch {
+      Logger.debug("failed to handle status packet")
+    }
   }
   
   func ping() {
