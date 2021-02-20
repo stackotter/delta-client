@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LoginStart: ServerboundPacket {
+struct LoginStartPacket: ServerboundPacket {
   static let id: Int = 0x00
   
   var username: String

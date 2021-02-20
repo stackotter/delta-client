@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LoginDisconnect: ClientboundPacket {
+struct LoginDisconnectPacket: ClientboundPacket {
   static let id: Int = 0x00
   
   var reason: ChatComponent
@@ -16,7 +16,7 @@ struct LoginDisconnect: ClientboundPacket {
     reason = packetReader.readChat()
   }
   
-  func handle(for client: Client) throws {
-    client.eventManager.triggerError(reason.toText())
+  func handle(for server: Server) throws {
+    server.eventManager.triggerError(reason.toText())
   }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Handshake: ServerboundPacket {
+struct HandshakePacket: ServerboundPacket {
   
   static let id: Int = 0x00
   

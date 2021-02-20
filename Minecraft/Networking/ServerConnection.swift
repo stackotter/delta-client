@@ -99,10 +99,10 @@ class ServerConnection {
     eventManager.triggerEvent(.connectionClosed)
   }
   
-  func handshake(nextState: Handshake.NextState, callback: @escaping () -> Void = {}) {
+  func handshake(nextState: HandshakePacket.NextState, callback: @escaping () -> Void = {}) {
     state = .handshaking
     // move protocol version to config or constants file of some sort
-    let handshake = Handshake(protocolVersion: PROTOCOL_VERSION, serverAddr: host, serverPort: port, nextState: nextState)
+    let handshake = HandshakePacket(protocolVersion: PROTOCOL_VERSION, serverAddr: host, serverPort: port, nextState: nextState)
 
     self.sendPacket(handshake, callback: .contentProcessed({ (error) in
       if error != nil {

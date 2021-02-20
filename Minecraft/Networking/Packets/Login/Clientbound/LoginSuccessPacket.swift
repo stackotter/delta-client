@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LoginSuccess: ClientboundPacket {
+struct LoginSuccessPacket: ClientboundPacket {
   static let id: Int = 0x02
   
   var uuid: UUID
@@ -16,6 +16,10 @@ struct LoginSuccess: ClientboundPacket {
   init(fromReader packetReader: inout PacketReader) {
     uuid = packetReader.readUUID()
     username = packetReader.readString()
+  }
+  
+  func handle(for server: Server) throws {
+    server.connection.state = .play
   }
 }
 

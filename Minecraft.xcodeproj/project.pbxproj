@@ -38,8 +38,8 @@
 		784194D9258204D10070DE78 /* MinecraftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194D8258204D10070DE78 /* MinecraftUITests.swift */; };
 		784783E825D89090008B1430 /* OpenSignEditorPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784783E725D89090008B1430 /* OpenSignEditorPacket.swift */; };
 		784783ED25D890EE008B1430 /* CraftRecipeResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784783EC25D890EE008B1430 /* CraftRecipeResponsePacket.swift */; };
-		784B392E25A14F7500556E3E /* LoginDisconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B392D25A14F7500556E3E /* LoginDisconnect.swift */; };
-		784B393325A14F8400556E3E /* LoginSuccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B393225A14F8400556E3E /* LoginSuccess.swift */; };
+		784B392E25A14F7500556E3E /* LoginDisconnectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B392D25A14F7500556E3E /* LoginDisconnectPacket.swift */; };
+		784B393325A14F8400556E3E /* LoginSuccessPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B393225A14F8400556E3E /* LoginSuccessPacket.swift */; };
 		784B393D25A17AB600556E3E /* Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B393C25A17AB600556E3E /* Identifier.swift */; };
 		784B394325A185B200556E3E /* JoinGamePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B394225A185B200556E3E /* JoinGamePacket.swift */; };
 		784B394B25A19CCC00556E3E /* Gamemode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B394A25A19CCC00556E3E /* Gamemode.swift */; };
@@ -123,7 +123,7 @@
 		7878B53125844B6B007C0D3D /* ServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7878B52D25844B6B007C0D3D /* ServerListView.swift */; };
 		787D8FF1258451A8007E6441 /* ServerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787D8FF0258451A8007E6441 /* ServerConnection.swift */; };
 		787D8FF625848480007E6441 /* ClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787D8FF525848480007E6441 /* ClientboundPacket.swift */; };
-		787D8FFF258485A7007E6441 /* Handshake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787D8FFE258485A7007E6441 /* Handshake.swift */; };
+		787D8FFF258485A7007E6441 /* HandshakePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787D8FFE258485A7007E6441 /* HandshakePacket.swift */; };
 		787D900725848726007E6441 /* PacketWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787D900625848726007E6441 /* PacketWriter.swift */; };
 		788435902585E606002F1F84 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884358F2585E606002F1F84 /* Server.swift */; };
 		7884359B25861981002F1F84 /* ServerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884359A25861981002F1F84 /* ServerList.swift */; };
@@ -147,7 +147,7 @@
 		7894523E25D2790700B86423 /* EffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7894523D25D2790700B86423 /* EffectPacket.swift */; };
 		7894524325D2796200B86423 /* ParticlePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7894524225D2796200B86423 /* ParticlePacket.swift */; };
 		78965088258861FE0079C5CF /* NBTCompound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78965087258861FE0079C5CF /* NBTCompound.swift */; };
-		789650922588834C0079C5CF /* LoginStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789650912588834C0079C5CF /* LoginStart.swift */; };
+		789650922588834C0079C5CF /* LoginStartPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789650912588834C0079C5CF /* LoginStartPacket.swift */; };
 		789BE9E32589DAC7001C08ED /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789BE9E22589DAC7001C08ED /* JSON.swift */; };
 		78BE297525E078570058CE11 /* ChatComponentUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE297425E078570058CE11 /* ChatComponentUtil.swift */; };
 		78BE297A25E078E60058CE11 /* ChatStringComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE297925E078E60058CE11 /* ChatStringComponent.swift */; };
@@ -158,8 +158,8 @@
 		78BE29A225E0AD1C0058CE11 /* en_us.json in Resources */ = {isa = PBXBuildFile; fileRef = 78BE29A125E0AD1C0058CE11 /* en_us.json */; };
 		78BFD2E725B521A800366631 /* WorldConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BFD2E625B521A800366631 /* WorldConfig.swift */; };
 		78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BFD2EB25B522A700366631 /* ServerConfig.swift */; };
-		78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5842585949800883DF5 /* StatusRequest.swift */; };
-		78C2D58A2585955500883DF5 /* StatusResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5892585955500883DF5 /* StatusResponse.swift */; };
+		78C2D5852585949800883DF5 /* StatusRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5842585949800883DF5 /* StatusRequestPacket.swift */; };
+		78C2D58A2585955500883DF5 /* StatusResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5892585955500883DF5 /* StatusResponsePacket.swift */; };
 		78C2D58F258597D400883DF5 /* PacketReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D58E258597D400883DF5 /* PacketReader.swift */; };
 		78CC6E4725D2624F00CA3DFF /* SpawnPlayerPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78CC6E4625D2624F00CA3DFF /* SpawnPlayerPacket.swift */; };
 		78CC6E4C25D2630C00CA3DFF /* EntityAnimationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78CC6E4B25D2630C00CA3DFF /* EntityAnimationPacket.swift */; };
@@ -261,8 +261,8 @@
 		784194DA258204D10070DE78 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		784783E725D89090008B1430 /* OpenSignEditorPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSignEditorPacket.swift; sourceTree = "<group>"; };
 		784783EC25D890EE008B1430 /* CraftRecipeResponsePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftRecipeResponsePacket.swift; sourceTree = "<group>"; };
-		784B392D25A14F7500556E3E /* LoginDisconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDisconnect.swift; sourceTree = "<group>"; };
-		784B393225A14F8400556E3E /* LoginSuccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginSuccess.swift; sourceTree = "<group>"; };
+		784B392D25A14F7500556E3E /* LoginDisconnectPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDisconnectPacket.swift; sourceTree = "<group>"; };
+		784B393225A14F8400556E3E /* LoginSuccessPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginSuccessPacket.swift; sourceTree = "<group>"; };
 		784B393C25A17AB600556E3E /* Identifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Identifier.swift; sourceTree = "<group>"; };
 		784B394225A185B200556E3E /* JoinGamePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinGamePacket.swift; sourceTree = "<group>"; };
 		784B394A25A19CCC00556E3E /* Gamemode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gamemode.swift; sourceTree = "<group>"; };
@@ -346,7 +346,7 @@
 		7878B52D25844B6B007C0D3D /* ServerListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
 		787D8FF0258451A8007E6441 /* ServerConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerConnection.swift; sourceTree = "<group>"; };
 		787D8FF525848480007E6441 /* ClientboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientboundPacket.swift; sourceTree = "<group>"; };
-		787D8FFE258485A7007E6441 /* Handshake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Handshake.swift; sourceTree = "<group>"; };
+		787D8FFE258485A7007E6441 /* HandshakePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandshakePacket.swift; sourceTree = "<group>"; };
 		787D900625848726007E6441 /* PacketWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketWriter.swift; sourceTree = "<group>"; };
 		7884358F2585E606002F1F84 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		7884359A25861981002F1F84 /* ServerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerList.swift; sourceTree = "<group>"; };
@@ -370,7 +370,7 @@
 		7894523D25D2790700B86423 /* EffectPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectPacket.swift; sourceTree = "<group>"; };
 		7894524225D2796200B86423 /* ParticlePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticlePacket.swift; sourceTree = "<group>"; };
 		78965087258861FE0079C5CF /* NBTCompound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTCompound.swift; sourceTree = "<group>"; };
-		789650912588834C0079C5CF /* LoginStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStart.swift; sourceTree = "<group>"; };
+		789650912588834C0079C5CF /* LoginStartPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStartPacket.swift; sourceTree = "<group>"; };
 		789BE9E22589DAC7001C08ED /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		78BE297425E078570058CE11 /* ChatComponentUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComponentUtil.swift; sourceTree = "<group>"; };
 		78BE297925E078E60058CE11 /* ChatStringComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStringComponent.swift; sourceTree = "<group>"; };
@@ -381,8 +381,8 @@
 		78BE29A125E0AD1C0058CE11 /* en_us.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = en_us.json; sourceTree = "<group>"; };
 		78BFD2E625B521A800366631 /* WorldConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldConfig.swift; sourceTree = "<group>"; };
 		78BFD2EB25B522A700366631 /* ServerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfig.swift; sourceTree = "<group>"; };
-		78C2D5842585949800883DF5 /* StatusRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRequest.swift; sourceTree = "<group>"; };
-		78C2D5892585955500883DF5 /* StatusResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusResponse.swift; sourceTree = "<group>"; };
+		78C2D5842585949800883DF5 /* StatusRequestPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRequestPacket.swift; sourceTree = "<group>"; };
+		78C2D5892585955500883DF5 /* StatusResponsePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusResponsePacket.swift; sourceTree = "<group>"; };
 		78C2D58E258597D400883DF5 /* PacketReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketReader.swift; sourceTree = "<group>"; };
 		78CC6E4625D2624F00CA3DFF /* SpawnPlayerPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpawnPlayerPacket.swift; sourceTree = "<group>"; };
 		78CC6E4B25D2630C00CA3DFF /* EntityAnimationPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityAnimationPacket.swift; sourceTree = "<group>"; };
@@ -785,7 +785,7 @@
 		78BFD2FC25B5AC6000366631 /* Serverbound */ = {
 			isa = PBXGroup;
 			children = (
-				789650912588834C0079C5CF /* LoginStart.swift */,
+				789650912588834C0079C5CF /* LoginStartPacket.swift */,
 			);
 			path = Serverbound;
 			sourceTree = "<group>";
@@ -793,8 +793,8 @@
 		78BFD2FD25B5AC6000366631 /* Clientbound */ = {
 			isa = PBXGroup;
 			children = (
-				784B392D25A14F7500556E3E /* LoginDisconnect.swift */,
-				784B393225A14F8400556E3E /* LoginSuccess.swift */,
+				784B392D25A14F7500556E3E /* LoginDisconnectPacket.swift */,
+				784B393225A14F8400556E3E /* LoginSuccessPacket.swift */,
 			);
 			path = Clientbound;
 			sourceTree = "<group>";
@@ -811,7 +811,7 @@
 		78BFD2FF25B5AC6000366631 /* Serverbound */ = {
 			isa = PBXGroup;
 			children = (
-				78C2D5842585949800883DF5 /* StatusRequest.swift */,
+				78C2D5842585949800883DF5 /* StatusRequestPacket.swift */,
 			);
 			path = Serverbound;
 			sourceTree = "<group>";
@@ -819,7 +819,7 @@
 		78BFD30025B5AC6000366631 /* Clientbound */ = {
 			isa = PBXGroup;
 			children = (
-				78C2D5892585955500883DF5 /* StatusResponse.swift */,
+				78C2D5892585955500883DF5 /* StatusResponsePacket.swift */,
 			);
 			path = Clientbound;
 			sourceTree = "<group>";
@@ -835,7 +835,7 @@
 		78BFD30225B5ACD000366631 /* Serverbound */ = {
 			isa = PBXGroup;
 			children = (
-				787D8FFE258485A7007E6441 /* Handshake.swift */,
+				787D8FFE258485A7007E6441 /* HandshakePacket.swift */,
 			);
 			path = Serverbound;
 			sourceTree = "<group>";
@@ -1116,7 +1116,7 @@
 				7824E92D25E102DC009F0197 /* AdvancementsPacket.swift in Sources */,
 				78CC6E5125D2636F00CA3DFF /* StatisticsPacket.swift in Sources */,
 				7894520225D26EA700B86423 /* WindowItemsPacket.swift in Sources */,
-				78C2D58A2585955500883DF5 /* StatusResponse.swift in Sources */,
+				78C2D58A2585955500883DF5 /* StatusResponsePacket.swift in Sources */,
 				78764DF025AD9BFF00AE8716 /* SuspiciousStewRecipe.swift in Sources */,
 				78764E0525ADCA7900AE8716 /* AppView.swift in Sources */,
 				78764DDD25AD374D00AE8716 /* SpecialRecipe.swift in Sources */,
@@ -1155,18 +1155,18 @@
 				784CAE29259ACA74003E5F87 /* Slot.swift in Sources */,
 				784B394B25A19CCC00556E3E /* Gamemode.swift in Sources */,
 				7894523925D2782E00B86423 /* KeepAliveClientboundPacket.swift in Sources */,
-				78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */,
+				78C2D5852585949800883DF5 /* StatusRequestPacket.swift in Sources */,
 				7878B53025844B6B007C0D3D /* ServerDetailView.swift in Sources */,
 				78F29B3A25AE84CE00D85CCB /* Position.swift in Sources */,
 				7824E92325E100FA009F0197 /* CollectItemPacket.swift in Sources */,
 				78E919E925D7FCA900667C75 /* EntityRotationPacket.swift in Sources */,
 				7824E92825E10195009F0197 /* EntityTeleportPacket.swift in Sources */,
-				789650922588834C0079C5CF /* LoginStart.swift in Sources */,
+				789650922588834C0079C5CF /* LoginStartPacket.swift in Sources */,
 				784783ED25D890EE008B1430 /* CraftRecipeResponsePacket.swift in Sources */,
 				784783E825D89090008B1430 /* OpenSignEditorPacket.swift in Sources */,
 				78CC6E5625D2639600CA3DFF /* Statistic.swift in Sources */,
 				784CCABF25AD31BA004B3182 /* CampfireCookingRecipe.swift in Sources */,
-				784B392E25A14F7500556E3E /* LoginDisconnect.swift in Sources */,
+				784B392E25A14F7500556E3E /* LoginDisconnectPacket.swift in Sources */,
 				78E919EE25D7FCEA00667C75 /* EntityMovementPacket.swift in Sources */,
 				7873057825D931F5001259EB /* WorldBorderPacket.swift in Sources */,
 				784D97912587604700FC89F8 /* ConfigManager.swift in Sources */,
@@ -1231,7 +1231,7 @@
 				784CCAD525AD3417004B3182 /* ArmorDyeRecipe.swift in Sources */,
 				78DB24DA25C51DEF00F7D70B /* PluginMessagePacket.swift in Sources */,
 				78D0C1D925C52C44004CF261 /* StatusHandler.swift in Sources */,
-				787D8FFF258485A7007E6441 /* Handshake.swift in Sources */,
+				787D8FFF258485A7007E6441 /* HandshakePacket.swift in Sources */,
 				78DF38DC25DC6E7A00A03FB7 /* ChatTranslateComponent.swift in Sources */,
 				7894521625D2709B00B86423 /* NamedSoundEffectPacket.swift in Sources */,
 				78F29B3F25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift in Sources */,
@@ -1258,7 +1258,7 @@
 				7873054825D92A1B001259EB /* PlayerPositionAndLookClientboundPacket.swift in Sources */,
 				788435902585E606002F1F84 /* Server.swift in Sources */,
 				781E63CB25B166D000ADFAB8 /* EntityPosition.swift in Sources */,
-				784B393325A14F8400556E3E /* LoginSuccess.swift in Sources */,
+				784B393325A14F8400556E3E /* LoginSuccessPacket.swift in Sources */,
 				78BE299C25E0A3250058CE11 /* MinecraftLocale.swift in Sources */,
 				7873059125D9374E001259EB /* EntityMetadataPacket.swift in Sources */,
 			);

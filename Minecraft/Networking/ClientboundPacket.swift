@@ -13,10 +13,16 @@ protocol ClientboundPacket {
   init(fromReader packetReader: inout PacketReader) throws
   
   func handle(for server: Server) throws
+  
+  func handle(for serverPinger: ServerPinger) throws
 }
 
 extension ClientboundPacket {
   func handle(for server: Server) {
+    return
+  }
+  
+  func handle(for serverPinger: ServerPinger) {
     return
   }
 }

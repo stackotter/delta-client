@@ -27,6 +27,16 @@ class PacketRegistry {
   
   static func createDefault() -> PacketRegistry {
     let registry = PacketRegistry()
+    
+    registry.addClientboundPackets([
+      StatusResponsePacket.self
+    ], toState: .status)
+    
+    registry.addClientboundPackets([
+      LoginDisconnectPacket.self,
+      LoginSuccessPacket.self
+    ], toState: .login)
+    
     registry.addClientboundPackets([
       SpawnEntityPacket.self,
       SpawnExperienceOrbPacket.self,
@@ -136,6 +146,16 @@ class PacketRegistry {
   
   func getClientboundPacketType(withId id: Int, andState state: PacketState) -> ClientboundPacket.Type? {
     return clientboundPackets[state]?[id]
+  }
+  
+  func handlePacket(_ reader: inout PacketReader, forServerPinger serverPinger: ServerPinger, inState state: PacketState) throws {
+    guard let packetType = getClientboundPacketType(withId: reader.packetId, andState: state) else {
+      Logger.debug("non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
+      return
+    }
+    
+    let packet = try packetType.init(fromReader: &reader)
+    try packet.handle(for: serverPinger)
   }
   
   func handlePacket(_ reader: inout PacketReader, forServer server: Server, inState state: PacketState) throws {

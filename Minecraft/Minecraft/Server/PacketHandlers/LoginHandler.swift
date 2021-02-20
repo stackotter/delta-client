@@ -12,38 +12,20 @@ import os
 struct LoginHandler: PacketHandler {
   var server: Server
   var eventManager: EventManager
+  var packetRegistry: PacketRegistry
   
   init(server: Server) {
     self.server = server
     self.eventManager = self.server.eventManager
+    self.packetRegistry = PacketRegistry.createDefault()
   }
   
   func handlePacket(_ packetReader: PacketReader) {
     var reader = packetReader // mutable copy of packetReader
     do {
-      switch reader.packetId {
-        case LoginDisconnect.id:
-          let packet = try LoginDisconnect(fromReader: &reader)
-          eventManager.triggerError(packet.reason.toText())
-          
-        case 0x01:
-          Logger.debug("encryption request ignored")
-          
-        // TODO_LATER: do something with the uuid maybe?
-        case LoginSuccess.id:
-          let _ = LoginSuccess(fromReader: &reader)
-          server.connection.state = .play
-          
-        case 0x03:
-          Logger.debug("set compression ignored")
-          
-        case 0x04:
-          Logger.debug("login plugin request ignored")
-          
-        default:
-          return
-      }
+      try packetRegistry.handlePacket(&reader, forServer: server, inState: .login)
     } catch {
+      Logger.debug(error.localizedDescription)
       eventManager.triggerError("failed to handle login packet with packet id: \(reader.packetId)")
     }
   }

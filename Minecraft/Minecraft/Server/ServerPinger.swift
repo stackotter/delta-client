@@ -30,7 +30,7 @@ class ServerPinger: Hashable, ObservableObject {
     connection.restart()
     eventManager.registerOneTimeEventHandler({ (event) in
       self.connection.handshake(nextState: .status, callback: {
-        let statusRequest = StatusRequest()
+        let statusRequest = StatusRequestPacket()
         self.connection.sendPacket(statusRequest)
       })
     }, eventName: "connectionReady")

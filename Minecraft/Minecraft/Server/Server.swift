@@ -84,7 +84,7 @@ class Server: Hashable {
     eventManager.registerOneTimeEventHandler({
       (event) in
       self.connection.handshake(nextState: .login) {
-        let loginStart = LoginStart(username: "stampy654")
+        let loginStart = LoginStartPacket(username: "stampy654")
         self.connection.sendPacket(loginStart, callback: .contentProcessed({
           (error) in
           Logger.debug("sent login start packet")

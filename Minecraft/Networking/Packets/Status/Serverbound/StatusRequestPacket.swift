@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct StatusRequest: ServerboundPacket {
+struct StatusRequestPacket: ServerboundPacket {
   static let id: Int = 0x00
   
   func toBytes() -> [UInt8] {
