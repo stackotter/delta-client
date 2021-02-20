@@ -20,7 +20,11 @@ struct ChatKeybindComponent: ChatComponent {
   }
   
   func toText() -> String {
-    // IMPLEMENT: get the relevant keybind from file
-    return keybind
+    // TODO_LATER: get the relevant keybind from file
+    var output = keybind
+    for sibling in siblings {
+      output += sibling.toText()
+    }
+    return output
   }
 }

@@ -57,8 +57,7 @@ struct JoinGamePacket: ClientboundPacket {
                                  enableRespawnScreen: enableRespawnScreen)
     let worldConfig = WorldConfig(worldName: worldName, dimension: dimension,
                                   hashedSeed: hashedSeed, isDebug: isDebug, isFlat: isFlat)
-    // TODO: remove the need for world to have a reference to event manager if possible
-    let world = World(eventManager: server.eventManager, config: worldConfig)
+    let world = World(config: worldConfig)
     server.worlds[worldName] = world
     server.currentWorldName = worldName
     server.downloadingTerrain = true

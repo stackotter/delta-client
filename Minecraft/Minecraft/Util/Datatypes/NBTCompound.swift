@@ -300,11 +300,19 @@ struct NBTCompound: CustomStringConvertible {
         var compound = tag.value as! NBTCompound
         buffer.writeBytes(compound.pack())
       case .intArray:
-        // TODO: implement NBT int array
-        break
+        let array = tag.value as! [Int32]
+        let length = Int32(array.count)
+        buffer.writeSignedInt(length, endian: .big)
+        for int in array {
+          buffer.writeSignedInt(int, endian: .big)
+        }
       case .longArray:
-        // TODO: implement NBT long array
-        break
+        let array = tag.value as! [Int64]
+        let length = Int32(array.count)
+        buffer.writeSignedInt(length, endian: .big)
+        for int in array {
+          buffer.writeSignedLong(int, endian: .big)
+        }
     }
   }
 }

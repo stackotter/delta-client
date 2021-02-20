@@ -11,11 +11,9 @@ import os
 // NOTE: might need to be made threadsafe?
 class World {
   var chunks: [ChunkPosition: Chunk] = [:]
-  var eventManager: EventManager
   var config: WorldConfig
   
-  init(eventManager: EventManager, config: WorldConfig) {
-    self.eventManager = eventManager
+  init(config: WorldConfig) {
     self.config = config
   }
   

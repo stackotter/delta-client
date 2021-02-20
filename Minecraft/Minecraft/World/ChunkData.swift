@@ -29,7 +29,7 @@ struct ChunkData {
     // Decoding biomes
     var biomes: [Int32] = []
     if fullChunk {
-      // TODO: parse biome data
+      // TODO_LATER: parse biome data
       for _ in 0..<1024 {
         let biome = reader.readInt()
         biomes.append(biome)

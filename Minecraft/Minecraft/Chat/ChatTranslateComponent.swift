@@ -34,7 +34,10 @@ struct ChatTranslateComponent: ChatComponent {
   }
   
   func toText() -> String {
-    // IMPLEMENT: actually using the template
-    return translation
+    var output = translation
+    for sibling in siblings {
+      output += sibling.toText()
+    }
+    return output
   }
 }

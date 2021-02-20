@@ -26,7 +26,10 @@ struct ChatStringComponent: ChatComponent {
   }
   
   func toText() -> String {
-    // TODO: implement extras
-    return text
+    var output = text
+    for sibling in siblings {
+      output += sibling.toText()
+    }
+    return output
   }
 }

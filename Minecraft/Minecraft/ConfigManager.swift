@@ -8,7 +8,6 @@
 import Foundation
 import os
 
-// TODO: handle minecraft folder not existing
 class ConfigManager {
   var minecraftFolder: URL
   var eventManager: EventManager
@@ -20,10 +19,10 @@ class ConfigManager {
   
   init(eventManager: EventManager) {
     self.eventManager = eventManager
+    // TODO_LATER: handle minecraft folder not existing
     self.minecraftFolder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("minecraft")
   }
   
-  // TODO: getCurrentConfig eventually shouldn't need to throw
   func getCurrentConfig() -> Config {
     let serverList = getServerList()
     let launcherProfile = getLauncherProfile()

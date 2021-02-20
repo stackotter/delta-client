@@ -26,6 +26,10 @@ struct ChatScoreComponent: ChatComponent {
   }
   
   func toText() -> String {
-    return "\(name):\(objective):\(value)"
+    var output = "\(name):\(objective):\(value)"
+    for sibling in siblings {
+      output += sibling.toText()
+    }
+    return output
   }
 }

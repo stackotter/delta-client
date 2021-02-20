@@ -88,14 +88,7 @@ class PacketHandlerThreadPool {
   
   // this is what is run in the thread pool to actually finally handle the packets
   private func handlePacket(_ packet: (reader: PacketReader, state: ServerConnection.ConnectionState), thread: DispatchQueue) {
-    let reader = packet.reader
     let state = packet.state
-    
-    // TODO: handle disconnect packets properly
-    if reader.packetId == 0x19 {
-      Logger.error("received disconnect packet")
-      eventManager.triggerError("received disconnect packet")
-    }
     
     if let handler = packetHandlers[state] {
       handler.handlePacket(packet.reader)

@@ -8,7 +8,7 @@
 import Foundation
 import os
 
-// TODO: handle rest of login packets
+// TODO_LATER: handle rest of login packets
 struct LoginHandler: PacketHandler {
   var server: Server
   var eventManager: EventManager
@@ -29,7 +29,7 @@ struct LoginHandler: PacketHandler {
         case 0x01:
           Logger.debug("encryption request ignored")
           
-        // TODO: do something with the uuid maybe?
+        // TODO_LATER: do something with the uuid maybe?
         case LoginSuccess.id:
           let _ = LoginSuccess(fromReader: &reader)
           server.connection.state = .play
