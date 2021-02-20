@@ -1,5 +1,5 @@
 //
-//  Socket.swift
+//  ServerConnection.swift
 //  Minecraft
 //
 //  Created by Rohan van Klinken on 12/12/20.
