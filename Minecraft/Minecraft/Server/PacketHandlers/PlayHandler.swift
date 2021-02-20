@@ -8,6 +8,7 @@
 import Foundation
 import os
 
+// TODO: clean up networking and move everything to a single PacketHandler that uses the PacketRegistry
 struct PlayHandler: PacketHandler {
   var server: Server
   var eventManager: EventManager
@@ -21,7 +22,7 @@ struct PlayHandler: PacketHandler {
   
   func handlePacket(_ packetReader: PacketReader) {
     var reader = packetReader // mutable copy of packetReader
-//    Logger.debug("play packet received with id: 0x\(String(packetReader.packetId, radix: 16))")
+
     do {
       try packetRegistry.handlePacket(&reader, forServer: server, inState: .play)
     } catch {

@@ -207,7 +207,7 @@ class ServerConnection {
     } else if error == NWError.dns(-65554) { // -65554 is the error code for NoSuchRecord
       Logger.error("no such record: this server is not yet supported as it uses SRV records (\(self.host):\(self.port))")
     } else if state != .disconnected {
-      Logger.notice("\(String(describing: error))")
+//      Logger.debug("\(String(describing: error))")
     }
   }
 }

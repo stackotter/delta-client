@@ -14,6 +14,20 @@
 		781E63C025B165F900ADFAB8 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781E63BF25B165F900ADFAB8 /* Player.swift */; };
 		781E63CB25B166D000ADFAB8 /* EntityPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781E63CA25B166D000ADFAB8 /* EntityPosition.swift */; };
 		78225CE3258EC0CE007B7F98 /* EventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78225CE2258EC0CE007B7F98 /* EventManager.swift */; };
+		7824E8F625E0F8BB009F0197 /* TeamsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E8F525E0F8BB009F0197 /* TeamsPacket.swift */; };
+		7824E8FB25E0FC6A009F0197 /* UpdateScorePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E8FA25E0FC6A009F0197 /* UpdateScorePacket.swift */; };
+		7824E90025E0FCF7009F0197 /* TimeUpdatePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E8FF25E0FCF7009F0197 /* TimeUpdatePacket.swift */; };
+		7824E90525E0FD49009F0197 /* TitlePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E90425E0FD49009F0197 /* TitlePacket.swift */; };
+		7824E90A25E0FEA5009F0197 /* EntitySoundEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E90925E0FEA5009F0197 /* EntitySoundEffectPacket.swift */; };
+		7824E90F25E0FF02009F0197 /* SoundEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E90E25E0FF02009F0197 /* SoundEffectPacket.swift */; };
+		7824E91425E0FF9D009F0197 /* StopSoundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E91325E0FF9D009F0197 /* StopSoundPacket.swift */; };
+		7824E91925E1003D009F0197 /* PlayerListHeaderAndFooterPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E91825E1003D009F0197 /* PlayerListHeaderAndFooterPacket.swift */; };
+		7824E91E25E1006E009F0197 /* NBTQueryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E91D25E1006E009F0197 /* NBTQueryResponse.swift */; };
+		7824E92325E100FA009F0197 /* CollectItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E92225E100FA009F0197 /* CollectItemPacket.swift */; };
+		7824E92825E10195009F0197 /* EntityTeleportPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E92725E10195009F0197 /* EntityTeleportPacket.swift */; };
+		7824E92D25E102DC009F0197 /* AdvancementsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E92C25E102DC009F0197 /* AdvancementsPacket.swift */; };
+		7824E93225E1095D009F0197 /* EntityProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E93125E1095D009F0197 /* EntityProperties.swift */; };
+		7824E93725E10AD9009F0197 /* EntityEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824E93625E10AD9009F0197 /* EntityEffectPacket.swift */; };
 		7830D8C925940BE500D35180 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7830D8C825940BE500D35180 /* Logger.swift */; };
 		7830D8CE2596B91B00D35180 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7830D8CD2596B91B00D35180 /* ViewState.swift */; };
 		7830D8D32596C13A00D35180 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7830D8D22596C13A00D35180 /* ErrorView.swift */; };
@@ -216,6 +230,20 @@
 		781E63BF25B165F900ADFAB8 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		781E63CA25B166D000ADFAB8 /* EntityPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityPosition.swift; sourceTree = "<group>"; };
 		78225CE2258EC0CE007B7F98 /* EventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventManager.swift; sourceTree = "<group>"; };
+		7824E8F525E0F8BB009F0197 /* TeamsPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamsPacket.swift; sourceTree = "<group>"; };
+		7824E8FA25E0FC6A009F0197 /* UpdateScorePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateScorePacket.swift; sourceTree = "<group>"; };
+		7824E8FF25E0FCF7009F0197 /* TimeUpdatePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeUpdatePacket.swift; sourceTree = "<group>"; };
+		7824E90425E0FD49009F0197 /* TitlePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitlePacket.swift; sourceTree = "<group>"; };
+		7824E90925E0FEA5009F0197 /* EntitySoundEffectPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitySoundEffectPacket.swift; sourceTree = "<group>"; };
+		7824E90E25E0FF02009F0197 /* SoundEffectPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffectPacket.swift; sourceTree = "<group>"; };
+		7824E91325E0FF9D009F0197 /* StopSoundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopSoundPacket.swift; sourceTree = "<group>"; };
+		7824E91825E1003D009F0197 /* PlayerListHeaderAndFooterPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerListHeaderAndFooterPacket.swift; sourceTree = "<group>"; };
+		7824E91D25E1006E009F0197 /* NBTQueryResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTQueryResponse.swift; sourceTree = "<group>"; };
+		7824E92225E100FA009F0197 /* CollectItemPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectItemPacket.swift; sourceTree = "<group>"; };
+		7824E92725E10195009F0197 /* EntityTeleportPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTeleportPacket.swift; sourceTree = "<group>"; };
+		7824E92C25E102DC009F0197 /* AdvancementsPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancementsPacket.swift; sourceTree = "<group>"; };
+		7824E93125E1095D009F0197 /* EntityProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityProperties.swift; sourceTree = "<group>"; };
+		7824E93625E10AD9009F0197 /* EntityEffectPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityEffectPacket.swift; sourceTree = "<group>"; };
 		7830D8C825940BE500D35180 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		7830D8CD2596B91B00D35180 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		7830D8D22596C13A00D35180 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
@@ -725,6 +753,20 @@
 				787305A925D939C8001259EB /* UpdateHealthPacket.swift */,
 				787305AE25D93A22001259EB /* ScoreboardObjectivePacket.swift */,
 				787305B325D93AC3001259EB /* SetPassengersPacket.swift */,
+				7824E8F525E0F8BB009F0197 /* TeamsPacket.swift */,
+				7824E8FA25E0FC6A009F0197 /* UpdateScorePacket.swift */,
+				7824E8FF25E0FCF7009F0197 /* TimeUpdatePacket.swift */,
+				7824E90425E0FD49009F0197 /* TitlePacket.swift */,
+				7824E90925E0FEA5009F0197 /* EntitySoundEffectPacket.swift */,
+				7824E90E25E0FF02009F0197 /* SoundEffectPacket.swift */,
+				7824E91325E0FF9D009F0197 /* StopSoundPacket.swift */,
+				7824E91825E1003D009F0197 /* PlayerListHeaderAndFooterPacket.swift */,
+				7824E91D25E1006E009F0197 /* NBTQueryResponse.swift */,
+				7824E92225E100FA009F0197 /* CollectItemPacket.swift */,
+				7824E92725E10195009F0197 /* EntityTeleportPacket.swift */,
+				7824E92C25E102DC009F0197 /* AdvancementsPacket.swift */,
+				7824E93125E1095D009F0197 /* EntityProperties.swift */,
+				7824E93625E10AD9009F0197 /* EntityEffectPacket.swift */,
 				784B396325A1C19800556E3E /* DeclareRecipesPacket.swift */,
 				78764E0F25AE4B9200AE8716 /* TagsPacket.swift */,
 			);
@@ -1068,14 +1110,17 @@
 				7878B53125844B6B007C0D3D /* ServerListView.swift in Sources */,
 				784F4B7825B7F6AC00FE21AA /* ServerPinger.swift in Sources */,
 				789451FD25D26E7200B86423 /* CloseWindowClientboundPacket.swift in Sources */,
+				7824E91E25E1006E009F0197 /* NBTQueryResponse.swift in Sources */,
 				7873053E25D919A5001259EB /* PlayerInfoPacket.swift in Sources */,
 				784CCB0325AD34FF004B3182 /* TippedArrowRecipe.swift in Sources */,
+				7824E92D25E102DC009F0197 /* AdvancementsPacket.swift in Sources */,
 				78CC6E5125D2636F00CA3DFF /* StatisticsPacket.swift in Sources */,
 				7894520225D26EA700B86423 /* WindowItemsPacket.swift in Sources */,
 				78C2D58A2585955500883DF5 /* StatusResponse.swift in Sources */,
 				78764DF025AD9BFF00AE8716 /* SuspiciousStewRecipe.swift in Sources */,
 				78764E0525ADCA7900AE8716 /* AppView.swift in Sources */,
 				78764DDD25AD374D00AE8716 /* SpecialRecipe.swift in Sources */,
+				7824E8F625E0F8BB009F0197 /* TeamsPacket.swift in Sources */,
 				7894521B25D2723800B86423 /* PlayDisconnectPacket.swift in Sources */,
 				7830D8C925940BE500D35180 /* Logger.swift in Sources */,
 				7894521125D26FB800B86423 /* SetCooldownPacket.swift in Sources */,
@@ -1095,6 +1140,8 @@
 				78CC6E9125D26C6B00CA3DFF /* TabCompleteClientboundPacket.swift in Sources */,
 				78D0C1D425C528C4004CF261 /* PlayHandler.swift in Sources */,
 				7873056925D930A4001259EB /* RespawnPacket.swift in Sources */,
+				7824E8FB25E0FC6A009F0197 /* UpdateScorePacket.swift in Sources */,
+				7824E90A25E0FEA5009F0197 /* EntitySoundEffectPacket.swift in Sources */,
 				784B393D25A17AB600556E3E /* Identifier.swift in Sources */,
 				7894520C25D26F5500B86423 /* SetSlotPacket.swift in Sources */,
 				785786ED25D1E431003021D9 /* SpawnPaintingPacket.swift in Sources */,
@@ -1111,7 +1158,9 @@
 				78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */,
 				7878B53025844B6B007C0D3D /* ServerDetailView.swift in Sources */,
 				78F29B3A25AE84CE00D85CCB /* Position.swift in Sources */,
+				7824E92325E100FA009F0197 /* CollectItemPacket.swift in Sources */,
 				78E919E925D7FCA900667C75 /* EntityRotationPacket.swift in Sources */,
+				7824E92825E10195009F0197 /* EntityTeleportPacket.swift in Sources */,
 				789650922588834C0079C5CF /* LoginStart.swift in Sources */,
 				784783ED25D890EE008B1430 /* CraftRecipeResponsePacket.swift in Sources */,
 				784783E825D89090008B1430 /* OpenSignEditorPacket.swift in Sources */,
@@ -1126,6 +1175,7 @@
 				78F29B4C25AF14EE00D85CCB /* ChunkPosition.swift in Sources */,
 				78E919FD25D7FE0700667C75 /* OpenWindowPacket.swift in Sources */,
 				789451F325D26DBC00B86423 /* DeclareCommandsPacket.swift in Sources */,
+				7824E93225E1095D009F0197 /* EntityProperties.swift in Sources */,
 				784CCACC25AD328A004B3182 /* SmithingRecipe.swift in Sources */,
 				784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */,
 				78DB24E325C5276500F7D70B /* LoginHandler.swift in Sources */,
@@ -1157,6 +1207,7 @@
 				78764DF525AD9FCA00AE8716 /* Client.swift in Sources */,
 				78FA059B25B515810074CF37 /* UpdateViewPositionPacket.swift in Sources */,
 				78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */,
+				7824E90025E0FCF7009F0197 /* TimeUpdatePacket.swift in Sources */,
 				787305AA25D939C8001259EB /* UpdateHealthPacket.swift in Sources */,
 				784CCAA825AD30BB004B3182 /* HeatRecipe.swift in Sources */,
 				78E919F825D7FD9E00667C75 /* OpenBookPacket.swift in Sources */,
@@ -1170,10 +1221,12 @@
 				7873059625D9378A001259EB /* AttachEntityPacket.swift in Sources */,
 				7873058225D93611001259EB /* UpdateViewDistancePacket.swift in Sources */,
 				784CCABA25AD317A004B3182 /* SmokingRecipe.swift in Sources */,
+				7824E90525E0FD49009F0197 /* TitlePacket.swift in Sources */,
 				784CCAB525AD3165004B3182 /* BlastingRecipe.swift in Sources */,
 				7873054D25D92B88001259EB /* UnlockRecipesPacket.swift in Sources */,
 				784CCAFE25AD34E1004B3182 /* RepairItemRecipe.swift in Sources */,
 				784B394325A185B200556E3E /* JoinGamePacket.swift in Sources */,
+				7824E91425E0FF9D009F0197 /* StopSoundPacket.swift in Sources */,
 				784B395F25A1BCA400556E3E /* HeldItemChangePacket.swift in Sources */,
 				784CCAD525AD3417004B3182 /* ArmorDyeRecipe.swift in Sources */,
 				78DB24DA25C51DEF00F7D70B /* PluginMessagePacket.swift in Sources */,
@@ -1191,14 +1244,17 @@
 				784CCAEA25AD3471004B3182 /* MapExtendingRecipe.swift in Sources */,
 				784F4B7D25B7FC0A00FE21AA /* ServerInfo.swift in Sources */,
 				784CCAF425AD349E004B3182 /* FireworkStarRecipe.swift in Sources */,
+				7824E91925E1003D009F0197 /* PlayerListHeaderAndFooterPacket.swift in Sources */,
 				787305A525D93985001259EB /* SetExperiencePacket.swift in Sources */,
 				7894523425D277C000B86423 /* OpenHorseWindowPacket.swift in Sources */,
 				78DB24E825C5277900F7D70B /* PacketHandler.swift in Sources */,
+				7824E93725E10AD9009F0197 /* EntityEffectPacket.swift in Sources */,
 				78CC6E7225D2661B00CA3DFF /* BlockActionPacket.swift in Sources */,
 				785786D125D150E4003021D9 /* SpawnEntityPacket.swift in Sources */,
 				7873058725D93689001259EB /* SpawnPositionPacket.swift in Sources */,
 				7873055725D92FB9001259EB /* RemoveEntityEffectPacket.swift in Sources */,
 				7873053925D91871001259EB /* CombatEventPacket.swift in Sources */,
+				7824E90F25E0FF02009F0197 /* SoundEffectPacket.swift in Sources */,
 				7873054825D92A1B001259EB /* PlayerPositionAndLookClientboundPacket.swift in Sources */,
 				788435902585E606002F1F84 /* Server.swift in Sources */,
 				781E63CB25B166D000ADFAB8 /* EntityPosition.swift in Sources */,

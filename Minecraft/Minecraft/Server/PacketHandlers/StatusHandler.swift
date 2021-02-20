@@ -39,7 +39,7 @@ struct StatusHandler: PacketHandler {
           
           let pingInfo = PingInfo(versionName: versionName, protocolVersion: protocolVersion, maxPlayers: maxPlayers, numPlayers: numPlayers, description: "Ping Complete", modInfo: "")
           
-          serverPinger.connection.close()
+          serverPinger.test.close()
           DispatchQueue.main.sync {
             self.serverPinger.pingInfo = pingInfo
           }

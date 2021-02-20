@@ -103,6 +103,20 @@ class PacketRegistry {
       UpdateHealthPacket.self,
       ScoreboardObjectivePacket.self,
       SetPassengersPacket.self,
+      TeamsPacket.self,
+      UpdateScorePacket.self,
+      TimeUpdatePacket.self,
+      TitlePacket.self,
+      EntitySoundEffectPacket.self,
+      SoundEffectPacket.self,
+      StopSoundPacket.self,
+      PlayerListHeaderAndFooterPacket.self,
+      NBTQueryResponse.self,
+      CollectItemPacket.self,
+      EntityTeleportPacket.self,
+      AdvancementsPacket.self,
+      EntityProperties.self,
+      EntityEffectPacket.self,
       DeclareRecipesPacket.self,
       TagsPacket.self
     ], toState: .play)
@@ -126,7 +140,7 @@ class PacketRegistry {
   
   func handlePacket(_ reader: inout PacketReader, forServer server: Server, inState state: PacketState) throws {
     guard let packetType = getClientboundPacketType(withId: reader.packetId, andState: state) else {
-      Logger.debug("packet not handled: 0x\(String(reader.packetId, radix: 16))")
+      Logger.debug("non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
       return
     }
     
