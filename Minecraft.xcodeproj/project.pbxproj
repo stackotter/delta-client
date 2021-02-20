@@ -62,7 +62,7 @@
 		784CCB1225AD3545004B3182 /* ShieldDecorationRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1125AD3545004B3182 /* ShieldDecorationRecipe.swift */; };
 		784CCB1725AD355B004B3182 /* ShulkerBoxColouringRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1625AD355B004B3182 /* ShulkerBoxColouringRecipe.swift */; };
 		784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1C25AD35EB004B3182 /* RecipeRegistry.swift */; };
-		784D97912587604700FC89F8 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D97902587604700FC89F8 /* Config.swift */; };
+		784D97912587604700FC89F8 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D97902587604700FC89F8 /* ConfigManager.swift */; };
 		784F4B7825B7F6AC00FE21AA /* ServerPinger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784F4B7725B7F6AC00FE21AA /* ServerPinger.swift */; };
 		784F4B7D25B7FC0A00FE21AA /* ServerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784F4B7C25B7FC0A00FE21AA /* ServerInfo.swift */; };
 		785786D125D150E4003021D9 /* SpawnEntityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785786D025D150E4003021D9 /* SpawnEntityPacket.swift */; };
@@ -139,6 +139,7 @@
 		78BE297A25E078E60058CE11 /* ChatStringComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE297925E078E60058CE11 /* ChatStringComponent.swift */; };
 		78BE297F25E08B2A0058CE11 /* ChatKeybindComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE297E25E08B2A0058CE11 /* ChatKeybindComponent.swift */; };
 		78BE298F25E08BCB0058CE11 /* ChatScoreComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE298E25E08BCB0058CE11 /* ChatScoreComponent.swift */; };
+		78BE299725E09E7D0058CE11 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE299625E09E7D0058CE11 /* Config.swift */; };
 		78BFD2E725B521A800366631 /* WorldConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BFD2E625B521A800366631 /* WorldConfig.swift */; };
 		78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BFD2EB25B522A700366631 /* ServerConfig.swift */; };
 		78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5842585949800883DF5 /* StatusRequest.swift */; };
@@ -268,7 +269,7 @@
 		784CCB1125AD3545004B3182 /* ShieldDecorationRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldDecorationRecipe.swift; sourceTree = "<group>"; };
 		784CCB1625AD355B004B3182 /* ShulkerBoxColouringRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShulkerBoxColouringRecipe.swift; sourceTree = "<group>"; };
 		784CCB1C25AD35EB004B3182 /* RecipeRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRegistry.swift; sourceTree = "<group>"; };
-		784D97902587604700FC89F8 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		784D97902587604700FC89F8 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
 		784F4B7725B7F6AC00FE21AA /* ServerPinger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerPinger.swift; sourceTree = "<group>"; };
 		784F4B7C25B7FC0A00FE21AA /* ServerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfo.swift; sourceTree = "<group>"; };
 		785786D025D150E4003021D9 /* SpawnEntityPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpawnEntityPacket.swift; sourceTree = "<group>"; };
@@ -345,6 +346,7 @@
 		78BE297925E078E60058CE11 /* ChatStringComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStringComponent.swift; sourceTree = "<group>"; };
 		78BE297E25E08B2A0058CE11 /* ChatKeybindComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatKeybindComponent.swift; sourceTree = "<group>"; };
 		78BE298E25E08BCB0058CE11 /* ChatScoreComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScoreComponent.swift; sourceTree = "<group>"; };
+		78BE299625E09E7D0058CE11 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		78BFD2E625B521A800366631 /* WorldConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldConfig.swift; sourceTree = "<group>"; };
 		78BFD2EB25B522A700366631 /* ServerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfig.swift; sourceTree = "<group>"; };
 		78C2D5842585949800883DF5 /* StatusRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRequest.swift; sourceTree = "<group>"; };
@@ -607,7 +609,8 @@
 				78DB24DF25C5253000F7D70B /* Util */,
 				78764DF425AD9FCA00AE8716 /* Client.swift */,
 				7889A9E825C4EED80007B2D7 /* Constants.swift */,
-				784D97902587604700FC89F8 /* Config.swift */,
+				784D97902587604700FC89F8 /* ConfigManager.swift */,
+				78BE299625E09E7D0058CE11 /* Config.swift */,
 			);
 			path = Minecraft;
 			sourceTree = "<group>";
@@ -1102,7 +1105,7 @@
 				784B392E25A14F7500556E3E /* LoginDisconnect.swift in Sources */,
 				78E919EE25D7FCEA00667C75 /* EntityMovementPacket.swift in Sources */,
 				7873057825D931F5001259EB /* WorldBorderPacket.swift in Sources */,
-				784D97912587604700FC89F8 /* Config.swift in Sources */,
+				784D97912587604700FC89F8 /* ConfigManager.swift in Sources */,
 				781E63BB25B14CBE00ADFAB8 /* ChunkData.swift in Sources */,
 				7878855F2588136700226064 /* Buffer.swift in Sources */,
 				78F29B4C25AF14EE00D85CCB /* ChunkPosition.swift in Sources */,
@@ -1135,6 +1138,7 @@
 				784CCAE525AD345B004B3182 /* MapCloningRecipe.swift in Sources */,
 				78E919BE25D7541C00667C75 /* ServerboundPacket.swift in Sources */,
 				78BE297A25E078E60058CE11 /* ChatStringComponent.swift in Sources */,
+				78BE299725E09E7D0058CE11 /* Config.swift in Sources */,
 				78764DF525AD9FCA00AE8716 /* Client.swift in Sources */,
 				78FA059B25B515810074CF37 /* UpdateViewPositionPacket.swift in Sources */,
 				78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */,

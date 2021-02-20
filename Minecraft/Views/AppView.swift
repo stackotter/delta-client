@@ -14,17 +14,12 @@ struct AppView: View {
   
   init(eventManager: EventManager) {
     self.eventManager = eventManager
-    self.config = Config(eventManager: self.eventManager)
+    let configManager = ConfigManager(eventManager: self.eventManager)
+    self.config = configManager.getCurrentConfig()
     
-    do {
-      let serverList = try self.config.getServerList()
-      serverList.refresh()
-      self.viewState = ViewState(serverList: serverList)
-    } catch {
-      self.viewState = ViewState()
-      self.viewState.displayError(message: "failed to load server list")
-    }
-    
+    let serverList = self.config.serverList
+    serverList.refresh()
+    self.viewState = ViewState(serverList: serverList)
     
     self.eventManager.registerEventHandler(handleError, eventName: "error")
   }
