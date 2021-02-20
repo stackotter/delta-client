@@ -28,7 +28,7 @@ struct BossBarPacket: ClientboundPacket {
     
     switch actionId {
       case 0:
-        let title = packetReader.readChat()
+        let title = try packetReader.readChat()
         let health = packetReader.readFloat()
         let color = packetReader.readVarInt()
         let division = packetReader.readVarInt()
@@ -40,7 +40,7 @@ struct BossBarPacket: ClientboundPacket {
         let health = packetReader.readFloat()
         action = .updateHealth(health: health)
       case 3:
-        let title = packetReader.readChat()
+        let title = try packetReader.readChat()
         action = .updateTitle(title: title)
       case 4:
         let color = packetReader.readVarInt()

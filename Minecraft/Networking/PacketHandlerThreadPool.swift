@@ -16,7 +16,7 @@ class PacketHandlerThreadPool {
   // 2 threads seems to be the sweet spot for my laptop, around 40% faster than one thread and not much slower than 3 threads
   // 3 threads starts using a lot more cpu for such little gain (almost 400% cpu at peak vs around 290% at peak)
   
-  // TODO: ask bixilon how he handles packets that need to be in chronological order
+  // TODO: implement threaded networking the way bixilon does it
   let numThreads = 1
   // using a set because no thread should be contained twice
   var threads: [DispatchQueue] = []

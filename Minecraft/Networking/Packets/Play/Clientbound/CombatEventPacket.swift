@@ -30,7 +30,7 @@ struct CombatEventPacket: ClientboundPacket {
       case 2: // entity dead
         let playerId = packetReader.readVarInt()
         let entityId = packetReader.readInt()
-        let message = packetReader.readChat()
+        let message = try packetReader.readChat()
         event = .entityDead(playerId: playerId, entityId: entityId, message: message)
       default:
         event = nil

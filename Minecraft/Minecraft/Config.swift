@@ -52,10 +52,10 @@ class Config {
     let launcherProfilesURL = minecraftFolder.appendingPathComponent("launcher_profiles.json")
     do {
       let json = try JSON.fromURL(launcherProfilesURL)
-      let selectedUser = try json.getJSON(forKey: "selectedUser")
+      let selectedUser = json.getJSON(forKey: "selectedUser")!
       
-      let accountUUID = try UUID.fromString(selectedUser.getString(forKey: "account"))!
-      let profileUUID = try UUID.fromString(selectedUser.getString(forKey: "profile"))!
+      let accountUUID = UUID.fromString(selectedUser.getString(forKey: "account")!)!
+      let profileUUID = UUID.fromString(selectedUser.getString(forKey: "profile")!)!
       
       let profile = LauncherProfile(accountUUID: accountUUID, profileUUID: profileUUID)
       return profile

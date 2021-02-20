@@ -17,6 +17,6 @@ struct OpenWindowPacket: ClientboundPacket {
   init(fromReader packetReader: inout PacketReader) throws {
     windowId = packetReader.readVarInt()
     windowType = packetReader.readVarInt()
-    windowTitle = packetReader.readChat()
+    windowTitle = try packetReader.readChat()
   }
 }

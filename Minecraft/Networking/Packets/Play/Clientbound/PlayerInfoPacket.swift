@@ -61,7 +61,7 @@ struct PlayerInfoPacket: ClientboundPacket {
           let ping = packetReader.readVarInt()
           var displayName: String? = nil
           if packetReader.readBool() {
-            displayName = packetReader.readChat()
+            displayName = try packetReader.readChat()
           }
           let addPlayerAction = PlayerInfoAction.AddPlayerAction(name: playerName, properties: properties, gamemode: gamemode, ping: ping, displayName: displayName)
           playerAction = .addPlayer(action: addPlayerAction)
@@ -74,7 +74,7 @@ struct PlayerInfoPacket: ClientboundPacket {
         case 3: // update display name
           var displayName: String? = nil
           if packetReader.readBool() {
-            displayName = packetReader.readChat()
+            displayName = try packetReader.readChat()
           }
           playerAction = .updateDisplayName(displayName: displayName)
         case 4: // remove player

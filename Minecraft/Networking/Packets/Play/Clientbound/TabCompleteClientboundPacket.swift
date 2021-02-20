@@ -33,7 +33,7 @@ struct TabCompleteClientboundPacket: ClientboundPacket {
       let hasTooltip = packetReader.readBool()
       var tooltip: String?
       if hasTooltip {
-        tooltip = packetReader.readChat()
+        tooltip = try packetReader.readChat()
       }
       matches.append(TabCompleteMatch(match: match, hasTooltip: hasTooltip, tooltip: tooltip))
     }

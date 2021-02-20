@@ -8,6 +8,10 @@
 import Foundation
 import os
 
+enum StatusResponseError: LocalizedError {
+  case invalidJSON
+}
+
 struct StatusHandler: PacketHandler {
   var serverPinger: ServerPinger
   
@@ -23,13 +27,15 @@ struct StatusHandler: PacketHandler {
           let packet = try StatusResponse(fromReader: &reader)
           let json = packet.json
           
-          let versionInfo = try json.getJSON(forKey: "version")
-          let versionName = try versionInfo.getString(forKey: "name")
-          let protocolVersion = try versionInfo.getInt(forKey: "protocol")
-          
-          let players = try json.getJSON(forKey: "players")
-          let maxPlayers = try players.getInt(forKey: "max")
-          let numPlayers = try players.getInt(forKey: "online")
+          guard let versionInfo = json.getJSON(forKey: "version"),
+            let versionName = versionInfo.getString(forKey: "name"),
+            let protocolVersion = versionInfo.getInt(forKey: "protocol"),
+            let players = json.getJSON(forKey: "players"),
+            let maxPlayers = players.getInt(forKey: "max"),
+            let numPlayers = players.getInt(forKey: "online")
+          else {
+            throw StatusResponseError.invalidJSON
+          }
           
           let pingInfo = PingInfo(versionName: versionName, protocolVersion: protocolVersion, maxPlayers: maxPlayers, numPlayers: numPlayers, description: "Ping Complete", modInfo: "")
           

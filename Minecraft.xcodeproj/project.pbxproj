@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		780D9BA92596CF5900144D45 /* LauncherProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780D9BA82596CF5900144D45 /* LauncherProfile.swift */; };
+		78154AD825DBC2660009968C /* ChatComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78154AD725DBC2660009968C /* ChatComponent.swift */; };
+		78154ADE25DBC4DA0009968C /* ChatStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78154ADD25DBC4DA0009968C /* ChatStyle.swift */; };
 		781E63BB25B14CBE00ADFAB8 /* ChunkData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781E63BA25B14CBE00ADFAB8 /* ChunkData.swift */; };
 		781E63C025B165F900ADFAB8 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781E63BF25B165F900ADFAB8 /* Player.swift */; };
 		781E63CB25B166D000ADFAB8 /* EntityPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781E63CA25B166D000ADFAB8 /* EntityPosition.swift */; };
@@ -133,6 +135,10 @@
 		78965088258861FE0079C5CF /* NBTCompound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78965087258861FE0079C5CF /* NBTCompound.swift */; };
 		789650922588834C0079C5CF /* LoginStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789650912588834C0079C5CF /* LoginStart.swift */; };
 		789BE9E32589DAC7001C08ED /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789BE9E22589DAC7001C08ED /* JSON.swift */; };
+		78BE297525E078570058CE11 /* ChatComponentUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE297425E078570058CE11 /* ChatComponentUtil.swift */; };
+		78BE297A25E078E60058CE11 /* ChatStringComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE297925E078E60058CE11 /* ChatStringComponent.swift */; };
+		78BE297F25E08B2A0058CE11 /* ChatKeybindComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE297E25E08B2A0058CE11 /* ChatKeybindComponent.swift */; };
+		78BE298F25E08BCB0058CE11 /* ChatScoreComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE298E25E08BCB0058CE11 /* ChatScoreComponent.swift */; };
 		78BFD2E725B521A800366631 /* WorldConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BFD2E625B521A800366631 /* WorldConfig.swift */; };
 		78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BFD2EB25B522A700366631 /* ServerConfig.swift */; };
 		78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5842585949800883DF5 /* StatusRequest.swift */; };
@@ -157,6 +163,7 @@
 		78DB24DA25C51DEF00F7D70B /* PluginMessagePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DB24D925C51DEF00F7D70B /* PluginMessagePacket.swift */; };
 		78DB24E325C5276500F7D70B /* LoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DB24E225C5276500F7D70B /* LoginHandler.swift */; };
 		78DB24E825C5277900F7D70B /* PacketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DB24E725C5277900F7D70B /* PacketHandler.swift */; };
+		78DF38DC25DC6E7A00A03FB7 /* ChatTranslateComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DF38DB25DC6E7A00A03FB7 /* ChatTranslateComponent.swift */; };
 		78E919B925D74DBF00667C75 /* PacketRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919B825D74DBF00667C75 /* PacketRegistry.swift */; };
 		78E919BE25D7541C00667C75 /* ServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919BD25D7541C00667C75 /* ServerboundPacket.swift */; };
 		78E919C325D75C9E00667C75 /* KeepAliveServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919C225D75C9E00667C75 /* KeepAliveServerboundPacket.swift */; };
@@ -200,6 +207,8 @@
 
 /* Begin PBXFileReference section */
 		780D9BA82596CF5900144D45 /* LauncherProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauncherProfile.swift; sourceTree = "<group>"; };
+		78154AD725DBC2660009968C /* ChatComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComponent.swift; sourceTree = "<group>"; };
+		78154ADD25DBC4DA0009968C /* ChatStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStyle.swift; sourceTree = "<group>"; };
 		781E63BA25B14CBE00ADFAB8 /* ChunkData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkData.swift; sourceTree = "<group>"; };
 		781E63BF25B165F900ADFAB8 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		781E63CA25B166D000ADFAB8 /* EntityPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityPosition.swift; sourceTree = "<group>"; };
@@ -332,6 +341,10 @@
 		78965087258861FE0079C5CF /* NBTCompound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTCompound.swift; sourceTree = "<group>"; };
 		789650912588834C0079C5CF /* LoginStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStart.swift; sourceTree = "<group>"; };
 		789BE9E22589DAC7001C08ED /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
+		78BE297425E078570058CE11 /* ChatComponentUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComponentUtil.swift; sourceTree = "<group>"; };
+		78BE297925E078E60058CE11 /* ChatStringComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStringComponent.swift; sourceTree = "<group>"; };
+		78BE297E25E08B2A0058CE11 /* ChatKeybindComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatKeybindComponent.swift; sourceTree = "<group>"; };
+		78BE298E25E08BCB0058CE11 /* ChatScoreComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScoreComponent.swift; sourceTree = "<group>"; };
 		78BFD2E625B521A800366631 /* WorldConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldConfig.swift; sourceTree = "<group>"; };
 		78BFD2EB25B522A700366631 /* ServerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfig.swift; sourceTree = "<group>"; };
 		78C2D5842585949800883DF5 /* StatusRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRequest.swift; sourceTree = "<group>"; };
@@ -356,6 +369,7 @@
 		78DB24D925C51DEF00F7D70B /* PluginMessagePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginMessagePacket.swift; sourceTree = "<group>"; };
 		78DB24E225C5276500F7D70B /* LoginHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHandler.swift; sourceTree = "<group>"; };
 		78DB24E725C5277900F7D70B /* PacketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketHandler.swift; sourceTree = "<group>"; };
+		78DF38DB25DC6E7A00A03FB7 /* ChatTranslateComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTranslateComponent.swift; sourceTree = "<group>"; };
 		78E919B825D74DBF00667C75 /* PacketRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketRegistry.swift; sourceTree = "<group>"; };
 		78E919BD25D7541C00667C75 /* ServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerboundPacket.swift; sourceTree = "<group>"; };
 		78E919C225D75C9E00667C75 /* KeepAliveServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeepAliveServerboundPacket.swift; sourceTree = "<group>"; };
@@ -405,6 +419,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		78154ADC25DBC4CC0009968C /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				78154AD725DBC2660009968C /* ChatComponent.swift */,
+				78BE297425E078570058CE11 /* ChatComponentUtil.swift */,
+				78154ADD25DBC4DA0009968C /* ChatStyle.swift */,
+				78BE297925E078E60058CE11 /* ChatStringComponent.swift */,
+				78DF38DB25DC6E7A00A03FB7 /* ChatTranslateComponent.swift */,
+				78BE297E25E08B2A0058CE11 /* ChatKeybindComponent.swift */,
+				78BE298E25E08BCB0058CE11 /* ChatScoreComponent.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
 		784194AE258204CD0070DE78 = {
 			isa = PBXGroup;
 			children = (
@@ -575,6 +603,7 @@
 				78F29B2225AE817C00D85CCB /* World */,
 				784CCB1B25AD35C3004B3182 /* Registries */,
 				78DB24DE25C524F200F7D70B /* Server */,
+				78154ADC25DBC4CC0009968C /* Chat */,
 				78DB24DF25C5253000F7D70B /* Util */,
 				78764DF425AD9FCA00AE8716 /* Client.swift */,
 				7889A9E825C4EED80007B2D7 /* Constants.swift */,
@@ -989,6 +1018,7 @@
 				787D900725848726007E6441 /* PacketWriter.swift in Sources */,
 				781E63C025B165F900ADFAB8 /* Player.swift in Sources */,
 				785786E025D15F54003021D9 /* SpawnExperienceOrbPacket.swift in Sources */,
+				78BE298F25E08BCB0058CE11 /* ChatScoreComponent.swift in Sources */,
 				7889A9E925C4EED80007B2D7 /* Constants.swift in Sources */,
 				78CC6E6825D2651D00CA3DFF /* BlockBreakAnimationPacket.swift in Sources */,
 				7873058C25D936DF001259EB /* DisplayScoreboardPacket.swift in Sources */,
@@ -1001,6 +1031,7 @@
 				784CCA9B25AD2F99004B3182 /* Ingredient.swift in Sources */,
 				78E919DF25D7FAEA00667C75 /* EntityPositionPacket.swift in Sources */,
 				7830D8CE2596B91B00D35180 /* ViewState.swift in Sources */,
+				78BE297F25E08B2A0058CE11 /* ChatKeybindComponent.swift in Sources */,
 				78BFD2E725B521A800366631 /* WorldConfig.swift in Sources */,
 				784CAE24259AB654003E5F87 /* UUID.swift in Sources */,
 				788435A025861B55002F1F84 /* ServerListEntryView.swift in Sources */,
@@ -1049,6 +1080,7 @@
 				784B393D25A17AB600556E3E /* Identifier.swift in Sources */,
 				7894520C25D26F5500B86423 /* SetSlotPacket.swift in Sources */,
 				785786ED25D1E431003021D9 /* SpawnPaintingPacket.swift in Sources */,
+				78154AD825DBC2660009968C /* ChatComponent.swift in Sources */,
 				78CC6E4725D2624F00CA3DFF /* SpawnPlayerPacket.swift in Sources */,
 				785786E825D15FCF003021D9 /* SpawnLivingEntity.swift in Sources */,
 				784B395525A19E3900556E3E /* Difficulty.swift in Sources */,
@@ -1102,6 +1134,7 @@
 				7894522025D2744700B86423 /* EntityStatusPacket.swift in Sources */,
 				784CCAE525AD345B004B3182 /* MapCloningRecipe.swift in Sources */,
 				78E919BE25D7541C00667C75 /* ServerboundPacket.swift in Sources */,
+				78BE297A25E078E60058CE11 /* ChatStringComponent.swift in Sources */,
 				78764DF525AD9FCA00AE8716 /* Client.swift in Sources */,
 				78FA059B25B515810074CF37 /* UpdateViewPositionPacket.swift in Sources */,
 				78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */,
@@ -1127,12 +1160,15 @@
 				78DB24DA25C51DEF00F7D70B /* PluginMessagePacket.swift in Sources */,
 				78D0C1D925C52C44004CF261 /* StatusHandler.swift in Sources */,
 				787D8FFF258485A7007E6441 /* Handshake.swift in Sources */,
+				78DF38DC25DC6E7A00A03FB7 /* ChatTranslateComponent.swift in Sources */,
 				7894521625D2709B00B86423 /* NamedSoundEffectPacket.swift in Sources */,
 				78F29B3F25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift in Sources */,
+				78154ADE25DBC4DA0009968C /* ChatStyle.swift in Sources */,
 				7873057D25D93599001259EB /* CameraPacket.swift in Sources */,
 				7884359B25861981002F1F84 /* ServerList.swift in Sources */,
 				78CC6E4C25D2630C00CA3DFF /* EntityAnimationPacket.swift in Sources */,
 				784CCB1725AD355B004B3182 /* ShulkerBoxColouringRecipe.swift in Sources */,
+				78BE297525E078570058CE11 /* ChatComponentUtil.swift in Sources */,
 				784CCAEA25AD3471004B3182 /* MapExtendingRecipe.swift in Sources */,
 				784F4B7D25B7FC0A00FE21AA /* ServerInfo.swift in Sources */,
 				784CCAF425AD349E004B3182 /* FireworkStarRecipe.swift in Sources */,

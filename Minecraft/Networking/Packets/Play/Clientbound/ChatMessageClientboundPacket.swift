@@ -15,8 +15,9 @@ struct ChatMessageClientboundPacket: ClientboundPacket {
   var sender: UUID
   
   init(fromReader packetReader: inout PacketReader) throws {
-    jsonData = packetReader.readChat()
+    jsonData = try packetReader.readChat()
     position = packetReader.readByte()
     sender = packetReader.readUUID()
+    print(jsonData)
   }
 }

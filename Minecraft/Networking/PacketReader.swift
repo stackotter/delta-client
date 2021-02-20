@@ -85,12 +85,14 @@ struct PacketReader {
   }
   
   // TODO_LATER: make a Chat datatype to use instead of String
-  mutating func readChat() -> String {
+  mutating func readChat() throws -> String {
     let string = readString()
     if string.count > 32767 {
       print(PacketReadError.chatStringTooLong)
     }
-    return string
+    let json = try JSON.fromString(string)
+    let chat = ChatComponentUtil.parseJSON(json)
+    return chat?.toText() ?? "failed to parse chat component"
   }
   
   mutating func readIdentifier() throws -> Identifier {
