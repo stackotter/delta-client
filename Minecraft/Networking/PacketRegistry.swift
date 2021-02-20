@@ -126,7 +126,7 @@ class PacketRegistry {
   
   func handlePacket(_ reader: inout PacketReader, forServer server: Server, inState state: PacketState) throws {
     guard let packetType = getClientboundPacketType(withId: reader.packetId, andState: state) else {
-      Logger.debug("packet not handled")
+      Logger.debug("packet not handled: 0x\(String(reader.packetId, radix: 16))")
       return
     }
     

@@ -13,9 +13,9 @@ struct ChatKeybindComponent: ChatComponent {
   
   var keybind: String
   
-  init(from json: JSON) {
+  init(from json: JSON, locale: MinecraftLocale) {
     style = ChatComponentUtil.readStyles(json)
-    siblings = ChatComponentUtil.readSiblings(json)
+    siblings = ChatComponentUtil.readSiblings(json, locale: locale)
     keybind = json.getString(forKey: "keybind")!
   }
   

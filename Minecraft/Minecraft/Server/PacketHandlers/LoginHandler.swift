@@ -24,7 +24,7 @@ struct LoginHandler: PacketHandler {
       switch reader.packetId {
         case LoginDisconnect.id:
           let packet = try LoginDisconnect(fromReader: &reader)
-          eventManager.triggerError(packet.reason)
+          eventManager.triggerError(packet.reason.toText())
           
         case 0x01:
           Logger.debug("encryption request ignored")

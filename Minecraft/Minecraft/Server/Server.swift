@@ -10,6 +10,7 @@ import os
 
 class Server: Hashable {
   var eventManager: EventManager
+  var clientConfig: Config
   
   var connection: ServerConnection
   var info: ServerInfo
@@ -46,11 +47,12 @@ class Server: Hashable {
     case disconnected
   }
   
-  init(withInfo serverInfo: ServerInfo, eventManager: EventManager) {
+  init(withInfo serverInfo: ServerInfo, eventManager: EventManager, clientConfig: Config) {
     self.info = serverInfo
     self.eventManager = eventManager
+    self.clientConfig = clientConfig
     
-    self.connection = ServerConnection(host: info.host, port: info.port, eventManager: self.eventManager)
+    self.connection = ServerConnection(host: info.host, port: info.port, eventManager: self.eventManager, locale: self.clientConfig.locale)
     
     // TODO: fix this once config is cleaned up
     self.player = Player(username: "stampy654")

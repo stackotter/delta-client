@@ -13,7 +13,7 @@ struct TabCompleteClientboundPacket: ClientboundPacket {
   struct TabCompleteMatch {
     let match: String
     let hasTooltip: Bool
-    let tooltip: String?
+    let tooltip: ChatComponent?
   }
   
   var id: Int32
@@ -31,9 +31,9 @@ struct TabCompleteClientboundPacket: ClientboundPacket {
     for _ in 0..<count {
       let match = packetReader.readString()
       let hasTooltip = packetReader.readBool()
-      var tooltip: String?
+      var tooltip: ChatComponent?
       if hasTooltip {
-        tooltip = try packetReader.readChat()
+        tooltip = packetReader.readChat()
       }
       matches.append(TabCompleteMatch(match: match, hasTooltip: hasTooltip, tooltip: tooltip))
     }

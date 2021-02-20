@@ -10,13 +10,13 @@ import Foundation
 struct LoginDisconnect: ClientboundPacket {
   static let id: Int = 0x00
   
-  var reason: String
+  var reason: ChatComponent
   
   init(fromReader packetReader: inout PacketReader) throws {
-    reason = try packetReader.readChat()
+    reason = packetReader.readChat()
   }
   
   func handle(for client: Client) throws {
-    client.eventManager.triggerError(reason)
+    client.eventManager.triggerError(reason.toText())
   }
 }

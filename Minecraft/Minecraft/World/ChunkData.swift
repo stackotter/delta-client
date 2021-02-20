@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 // stores the raw bytes the chunk was sent as to be decoded later
 // this is because chunks aren't sent in a nice order and take a while to decode
@@ -18,7 +19,7 @@ struct ChunkData {
   var data: Buffer
   
   func unpack() throws -> Chunk {
-    var reader = PacketReader(buffer: data)
+    var reader = PacketReader(buffer: data, locale: MinecraftLocale.empty())
     let fullChunk = reader.readBool()
     let ignoreOldData = reader.readBool()
     _ = ignoreOldData
@@ -96,7 +97,7 @@ struct ChunkData {
         let blockEntity = BlockEntity(position: position, identifier: identifier, nbt: blockEntityNBT)
         blockEntities.append(blockEntity)
       } catch {
-        print(error)
+        Logger.log("error decoding block entities: \(error.localizedDescription)")
       }
     }
     

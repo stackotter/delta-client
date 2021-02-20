@@ -140,6 +140,8 @@
 		78BE297F25E08B2A0058CE11 /* ChatKeybindComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE297E25E08B2A0058CE11 /* ChatKeybindComponent.swift */; };
 		78BE298F25E08BCB0058CE11 /* ChatScoreComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE298E25E08BCB0058CE11 /* ChatScoreComponent.swift */; };
 		78BE299725E09E7D0058CE11 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE299625E09E7D0058CE11 /* Config.swift */; };
+		78BE299C25E0A3250058CE11 /* MinecraftLocale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE299B25E0A3250058CE11 /* MinecraftLocale.swift */; };
+		78BE29A225E0AD1C0058CE11 /* en_us.json in Resources */ = {isa = PBXBuildFile; fileRef = 78BE29A125E0AD1C0058CE11 /* en_us.json */; };
 		78BFD2E725B521A800366631 /* WorldConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BFD2E625B521A800366631 /* WorldConfig.swift */; };
 		78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BFD2EB25B522A700366631 /* ServerConfig.swift */; };
 		78C2D5852585949800883DF5 /* StatusRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5842585949800883DF5 /* StatusRequest.swift */; };
@@ -347,6 +349,8 @@
 		78BE297E25E08B2A0058CE11 /* ChatKeybindComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatKeybindComponent.swift; sourceTree = "<group>"; };
 		78BE298E25E08BCB0058CE11 /* ChatScoreComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScoreComponent.swift; sourceTree = "<group>"; };
 		78BE299625E09E7D0058CE11 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		78BE299B25E0A3250058CE11 /* MinecraftLocale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftLocale.swift; sourceTree = "<group>"; };
+		78BE29A125E0AD1C0058CE11 /* en_us.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = en_us.json; sourceTree = "<group>"; };
 		78BFD2E625B521A800366631 /* WorldConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldConfig.swift; sourceTree = "<group>"; };
 		78BFD2EB25B522A700366631 /* ServerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfig.swift; sourceTree = "<group>"; };
 		78C2D5842585949800883DF5 /* StatusRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRequest.swift; sourceTree = "<group>"; };
@@ -424,13 +428,14 @@
 		78154ADC25DBC4CC0009968C /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				78154AD725DBC2660009968C /* ChatComponent.swift */,
 				78BE297425E078570058CE11 /* ChatComponentUtil.swift */,
-				78154ADD25DBC4DA0009968C /* ChatStyle.swift */,
+				78154AD725DBC2660009968C /* ChatComponent.swift */,
 				78BE297925E078E60058CE11 /* ChatStringComponent.swift */,
 				78DF38DB25DC6E7A00A03FB7 /* ChatTranslateComponent.swift */,
 				78BE297E25E08B2A0058CE11 /* ChatKeybindComponent.swift */,
 				78BE298E25E08BCB0058CE11 /* ChatScoreComponent.swift */,
+				78154ADD25DBC4DA0009968C /* ChatStyle.swift */,
+				78BE299B25E0A3250058CE11 /* MinecraftLocale.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -459,6 +464,7 @@
 			isa = PBXGroup;
 			children = (
 				784194BA258204CD0070DE78 /* MinecraftApp.swift */,
+				78BE29A025E0AD070058CE11 /* Resources */,
 				7878B52A25844B6B007C0D3D /* Views */,
 				7884358E2585E5E3002F1F84 /* Minecraft */,
 				787D8FEF258451A8007E6441 /* Networking */,
@@ -622,6 +628,14 @@
 				78DB24D425C4F5A700F7D70B /* PlayerFlags.swift */,
 			);
 			path = Player;
+			sourceTree = "<group>";
+		};
+		78BE29A025E0AD070058CE11 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				78BE29A125E0AD1C0058CE11 /* en_us.json */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		78BFD2F925B5AC2400366631 /* Serverbound */ = {
@@ -967,6 +981,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				784194C2258204D00070DE78 /* Preview Assets.xcassets in Resources */,
+				78BE29A225E0AD1C0058CE11 /* en_us.json in Resources */,
 				784194BF258204D00070DE78 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1188,6 +1203,7 @@
 				788435902585E606002F1F84 /* Server.swift in Sources */,
 				781E63CB25B166D000ADFAB8 /* EntityPosition.swift in Sources */,
 				784B393325A14F8400556E3E /* LoginSuccess.swift in Sources */,
+				78BE299C25E0A3250058CE11 /* MinecraftLocale.swift in Sources */,
 				7873059125D9374E001259EB /* EntityMetadataPacket.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

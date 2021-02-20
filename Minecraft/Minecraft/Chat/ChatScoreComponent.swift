@@ -15,9 +15,9 @@ struct ChatScoreComponent: ChatComponent {
   var objective: String
   var value: String
   
-  init(from json: JSON) {
+  init(from json: JSON, locale: MinecraftLocale) {
     style = ChatComponentUtil.readStyles(json)
-    siblings = ChatComponentUtil.readSiblings(json)
+    siblings = ChatComponentUtil.readSiblings(json, locale: locale)
     
     let score = json.getJSON(forKey: "score")!
     name = score.getString(forKey: "name")!

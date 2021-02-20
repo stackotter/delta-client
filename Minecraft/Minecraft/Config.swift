@@ -12,4 +12,5 @@ struct Config {
   var minecraftFolder: URL
   var serverList: ServerList
   var launcherProfile: LauncherProfile?
+  var locale: MinecraftLocale
 }

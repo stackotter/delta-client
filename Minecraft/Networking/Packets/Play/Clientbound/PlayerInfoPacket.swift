@@ -17,7 +17,7 @@ struct PlayerInfoPacket: ClientboundPacket {
     case addPlayer(action: AddPlayerAction)
     case updateGamemode(gamemode: Int32)
     case updateLatency(ping: Int32)
-    case updateDisplayName(displayName: String?)
+    case updateDisplayName(displayName: ChatComponent?)
     case removePlayer
     
     struct AddPlayerAction {
@@ -25,7 +25,7 @@ struct PlayerInfoPacket: ClientboundPacket {
       var properties: [PlayerProperty]
       var gamemode: Int32
       var ping: Int32
-      var displayName: String?
+      var displayName: ChatComponent?
     }
   }
   
@@ -59,9 +59,9 @@ struct PlayerInfoPacket: ClientboundPacket {
           }
           let gamemode = packetReader.readVarInt()
           let ping = packetReader.readVarInt()
-          var displayName: String? = nil
+          var displayName: ChatComponent? = nil
           if packetReader.readBool() {
-            displayName = try packetReader.readChat()
+            displayName = packetReader.readChat()
           }
           let addPlayerAction = PlayerInfoAction.AddPlayerAction(name: playerName, properties: properties, gamemode: gamemode, ping: ping, displayName: displayName)
           playerAction = .addPlayer(action: addPlayerAction)
@@ -72,9 +72,9 @@ struct PlayerInfoPacket: ClientboundPacket {
           let ping = packetReader.readVarInt()
           playerAction = .updateLatency(ping: ping)
         case 3: // update display name
-          var displayName: String? = nil
+          var displayName: ChatComponent? = nil
           if packetReader.readBool() {
-            displayName = try packetReader.readChat()
+            displayName = packetReader.readChat()
           }
           playerAction = .updateDisplayName(displayName: displayName)
         case 4: // remove player

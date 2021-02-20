@@ -18,6 +18,7 @@ class ServerConnection {
   var packetHandlingPool: PacketHandlerThreadPool
   
   var eventManager: EventManager
+  var locale: MinecraftLocale
   
   var state: ConnectionState = .idle
   
@@ -39,15 +40,16 @@ class ServerConnection {
     var packet: [UInt8]
   }
   
-  init(host: String, port: Int, eventManager: EventManager) {
+  init(host: String, port: Int, eventManager: EventManager, locale: MinecraftLocale) {
     self.host = host
     self.port = port
     self.eventManager = eventManager
+    self.locale = locale
     
     self.networkQueue = DispatchQueue(label: "networkUpdates")
     self.socket = ServerConnection.createNWConnection(fromHost: self.host, andPort: self.port)
     
-    self.packetHandlingPool = PacketHandlerThreadPool(eventManager: eventManager)
+    self.packetHandlingPool = PacketHandlerThreadPool(eventManager: eventManager, locale: self.locale)
   }
   
   func registerPacketHandlers(handlers: [ServerConnection.ConnectionState: PacketHandler]) {
@@ -64,7 +66,6 @@ class ServerConnection {
         handleNWError(error)
       case .failed(let error):
         state = .disconnected
-        Logger.error("failed to start connection to server")
         handleNWError(error)
       default:
         break
@@ -133,10 +134,9 @@ class ServerConnection {
     }
     socket.receive(minimumIncompleteLength: 0, maximumLength: 4096, completion: {
       (data, context, isComplete, error) in
-      if (isComplete) {
-        self.close()
+      if data == nil {
         return
-      } else if (error != nil) {
+      } else if error != nil {
         self.handleNWError(error!)
         return
       }
@@ -206,7 +206,7 @@ class ServerConnection {
       // do nothing
     } else if error == NWError.dns(-65554) { // -65554 is the error code for NoSuchRecord
       Logger.error("no such record: this server is not yet supported as it uses SRV records (\(self.host):\(self.port))")
-    } else {
+    } else if state != .disconnected {
       Logger.notice("\(String(describing: error))")
     }
   }

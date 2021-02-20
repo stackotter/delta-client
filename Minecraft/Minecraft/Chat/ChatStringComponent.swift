@@ -13,9 +13,9 @@ struct ChatStringComponent: ChatComponent {
   
   var text: String
   
-  init(from json: JSON) {
+  init(from json: JSON, locale: MinecraftLocale) {
     style = ChatComponentUtil.readStyles(json)
-    siblings = ChatComponentUtil.readSiblings(json)
+    siblings = ChatComponentUtil.readSiblings(json, locale: locale)
     text = json.getString(forKey: "text")!
   }
   

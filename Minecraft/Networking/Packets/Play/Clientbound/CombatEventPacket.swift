@@ -15,7 +15,7 @@ struct CombatEventPacket: ClientboundPacket {
   enum CombatEvent {
     case enterCombat
     case endCombat(duration: Int32, entityId: Int32)
-    case entityDead(playerId: Int32, entityId: Int32, message: String)
+    case entityDead(playerId: Int32, entityId: Int32, message: ChatComponent)
   }
   
   init(fromReader packetReader: inout PacketReader) throws {
@@ -30,7 +30,7 @@ struct CombatEventPacket: ClientboundPacket {
       case 2: // entity dead
         let playerId = packetReader.readVarInt()
         let entityId = packetReader.readInt()
-        let message = try packetReader.readChat()
+        let message = packetReader.readChat()
         event = .entityDead(playerId: playerId, entityId: entityId, message: message)
       default:
         event = nil

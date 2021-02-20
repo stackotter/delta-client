@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import os
 
 struct PacketReader {
   var packetId: Int = -1
   var buf: Buffer
+  var locale: MinecraftLocale
   
   enum PacketReadError: LocalizedError {
     case invalidNBT
@@ -27,13 +29,15 @@ struct PacketReader {
     }
   }
   
-  init (bytes: [UInt8]) {
+  init (bytes: [UInt8], locale: MinecraftLocale) {
     self.buf = Buffer(bytes)
     self.packetId = Int(buf.readVarInt())
+    self.locale = locale
   }
   
-  init (buffer: Buffer) {
+  init (buffer: Buffer, locale: MinecraftLocale) {
     self.buf = buffer
+    self.locale = locale
     let index = buf.index
     buf.index = 0
     self.packetId = Int(buf.readVarInt())
@@ -85,14 +89,18 @@ struct PacketReader {
   }
   
   // TODO_LATER: make a Chat datatype to use instead of String
-  mutating func readChat() throws -> String {
+  mutating func readChat() -> ChatComponent {
     let string = readString()
     if string.count > 32767 {
-      print(PacketReadError.chatStringTooLong)
+      Logger.debug("chat string of length \(string.count) is longer than max of 32767")
     }
-    let json = try JSON.fromString(string)
-    let chat = ChatComponentUtil.parseJSON(json)
-    return chat?.toText() ?? "failed to parse chat component"
+    do {
+      let json = try JSON.fromString(string)
+      let chat = ChatComponentUtil.parseJSON(json, locale: locale)
+      return chat ?? ChatStringComponent(fromString: "failed to parse chat component")
+    } catch {
+      return ChatStringComponent(fromString: "invalid json in chat component")
+    }
   }
   
   mutating func readIdentifier() throws -> Identifier {

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 struct BossBarPacket: ClientboundPacket {
   static let id: Int = 0x0c
@@ -14,10 +15,10 @@ struct BossBarPacket: ClientboundPacket {
   var action: BossBarAction
   
   enum BossBarAction {
-    case add(title: String, health: Float, color: Int32, division: Int32, flags: UInt8)
+    case add(title: ChatComponent, health: Float, color: Int32, division: Int32, flags: UInt8)
     case remove
     case updateHealth(health: Float)
-    case updateTitle(title: String)
+    case updateTitle(title: ChatComponent)
     case updateStyle(color: Int32, division: Int32)
     case updateFlags(flags: UInt8)
   }
@@ -28,7 +29,7 @@ struct BossBarPacket: ClientboundPacket {
     
     switch actionId {
       case 0:
-        let title = try packetReader.readChat()
+        let title = packetReader.readChat()
         let health = packetReader.readFloat()
         let color = packetReader.readVarInt()
         let division = packetReader.readVarInt()
@@ -40,7 +41,7 @@ struct BossBarPacket: ClientboundPacket {
         let health = packetReader.readFloat()
         action = .updateHealth(health: health)
       case 3:
-        let title = try packetReader.readChat()
+        let title = packetReader.readChat()
         action = .updateTitle(title: title)
       case 4:
         let color = packetReader.readVarInt()
@@ -50,7 +51,7 @@ struct BossBarPacket: ClientboundPacket {
         let flags = packetReader.readUnsignedByte()
         action = .updateFlags(flags: flags)
       default:
-        print("invalid boss bar action id")
+        Logger.debug("invalid boss bar action id")
         action = .remove
     }
   }

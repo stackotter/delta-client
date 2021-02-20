@@ -27,8 +27,13 @@ class ConfigManager {
   func getCurrentConfig() -> Config {
     let serverList = getServerList()
     let launcherProfile = getLauncherProfile()
-    let config = Config(minecraftFolder: minecraftFolder, serverList: serverList, launcherProfile: launcherProfile)
+    let locale = getLocale()
+    let config = Config(minecraftFolder: minecraftFolder, serverList: serverList, launcherProfile: launcherProfile, locale: locale)
     return config
+  }
+  
+  func getLocale() -> MinecraftLocale {
+    return MinecraftLocale.get("en_us") ?? MinecraftLocale(translations: [:])
   }
   
   func getServerList() -> ServerList {

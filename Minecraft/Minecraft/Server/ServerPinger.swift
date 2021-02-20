@@ -18,7 +18,7 @@ class ServerPinger: Hashable, ObservableObject {
   init(_ serverInfo: ServerInfo) {
     self.eventManager = EventManager()
     self.info = serverInfo
-    self.connection = ServerConnection(host: serverInfo.host, port: serverInfo.port, eventManager: eventManager)
+    self.connection = ServerConnection(host: serverInfo.host, port: serverInfo.port, eventManager: eventManager, locale: MinecraftLocale.empty())
     
     self.connection.registerPacketHandlers(handlers: [
       .status: StatusHandler(serverPinger: self)

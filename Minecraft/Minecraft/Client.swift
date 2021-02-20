@@ -26,7 +26,7 @@ class Client {
     self.eventManager = eventManager
     self.config = config
     
-    self.server = Server(withInfo: serverInfo, eventManager: eventManager)
+    self.server = Server(withInfo: serverInfo, eventManager: eventManager, clientConfig: config)
   }
   
   // TEMP

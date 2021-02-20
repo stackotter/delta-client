@@ -22,7 +22,7 @@ struct MapDataPacket: ClientboundPacket {
     var x: Int8
     var z: Int8
     var direction: Int8
-    var displayName: String?
+    var displayName: ChatComponent?
   }
   
   init(fromReader packetReader: inout PacketReader) throws {
@@ -39,9 +39,9 @@ struct MapDataPacket: ClientboundPacket {
       let z = packetReader.readByte()
       let direction = packetReader.readByte()
       let hasDisplayName = packetReader.readBool()
-      var displayName: String? = nil
+      var displayName: ChatComponent? = nil
       if hasDisplayName {
-        displayName = try packetReader.readChat()
+        displayName = packetReader.readChat()
       }
       let icon = MapIcon(type: type, x: x, z: z, direction: direction, displayName: displayName)
       icons.append(icon)

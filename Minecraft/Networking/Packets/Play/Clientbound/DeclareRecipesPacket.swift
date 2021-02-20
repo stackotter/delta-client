@@ -84,9 +84,7 @@ struct DeclareRecipesPacket: ClientboundPacket {
               case "campfire_cooking":
                 recipe = CampfireCookingRecipe(group: group, ingredient: ingredient, result: resultItemStack, experience: experience, cookingTime: cookingTime)
               default:
-                #if DEBUG
                 Logger.debug("unknown heat recipe type: \(type.toString())")
-                #endif
                 break
             }
             if recipe != nil {
@@ -160,16 +158,14 @@ struct DeclareRecipesPacket: ClientboundPacket {
               case "crafting_special_suspiciousstew":
                 recipe = SuspiciousStewRecipe()
               default:
-                #if DEBUG
                 Logger.debug("unknown special recipe type: \(type.toString())")
-                #endif
                 break
             }
             if recipe != nil {
               recipeRegistry.specialRecipes[recipeId] = recipe!
             }
           default:
-            print("unknown recipe type")
+            Logger.debug("unknown recipe type")
         }
       }
     }

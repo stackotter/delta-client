@@ -11,7 +11,7 @@ protocol ChatComponent {
   var style: ChatStyle { get set }
   var siblings: [ChatComponent] { get set }
   
-  init(from json: JSON)
+  init(from json: JSON, locale: MinecraftLocale)
   
   func toText() -> String
 }

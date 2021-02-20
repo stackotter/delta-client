@@ -12,11 +12,11 @@ struct OpenWindowPacket: ClientboundPacket {
   
   var windowId: Int32
   var windowType: Int32
-  var windowTitle: String
+  var windowTitle: ChatComponent
   
   init(fromReader packetReader: inout PacketReader) throws {
     windowId = packetReader.readVarInt()
     windowType = packetReader.readVarInt()
-    windowTitle = try packetReader.readChat()
+    windowTitle = packetReader.readChat()
   }
 }

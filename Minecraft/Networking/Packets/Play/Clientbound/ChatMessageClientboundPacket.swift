@@ -6,18 +6,22 @@
 //
 
 import Foundation
+import os
 
 struct ChatMessageClientboundPacket: ClientboundPacket {
   static let id: Int = 0x0e
   
-  var jsonData: String
+  var message: ChatComponent
   var position: Int8
   var sender: UUID
   
   init(fromReader packetReader: inout PacketReader) throws {
-    jsonData = try packetReader.readChat()
+    message = packetReader.readChat()
     position = packetReader.readByte()
     sender = packetReader.readUUID()
-    print(jsonData)
+  }
+  
+  func handle(for server: Server) throws {
+    Logger.log("chat message : \(message.toText())")
   }
 }

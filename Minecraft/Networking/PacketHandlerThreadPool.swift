@@ -35,9 +35,11 @@ class PacketHandlerThreadPool {
   var packetHandlers: [ServerConnection.ConnectionState: PacketHandler] = [:]
   
   var eventManager: EventManager
+  var locale: MinecraftLocale
   
-  init(eventManager: EventManager) {
+  init(eventManager: EventManager, locale: MinecraftLocale) {
     self.eventManager = eventManager
+    self.locale = locale
     
     self.centralThread = DispatchQueue(label: "masterPacketHandlingThread")
     self.threadManagementThread = DispatchQueue(label: "packetHandlingThreadManagementThread") // nice naming, great job me :)
@@ -54,7 +56,7 @@ class PacketHandlerThreadPool {
   // pops incoming packets onto the packetQueue and sets any idle threads going if necessary
   func handleBytes(_ bytes: [UInt8], state: ServerConnection.ConnectionState) {
     centralThread.async {
-      let reader = PacketReader(bytes: bytes)
+      let reader = PacketReader(bytes: bytes, locale: self.locale)
       self.packetQueue.append((reader: reader, state: state))
       self.handlePackets()
     }
