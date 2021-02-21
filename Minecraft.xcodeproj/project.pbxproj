@@ -198,7 +198,7 @@
 		78F29B2C25AE81E000D85CCB /* ChunkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B2B25AE81E000D85CCB /* ChunkSection.swift */; };
 		78F29B3225AE846000D85CCB /* BlockEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B3125AE846000D85CCB /* BlockEntity.swift */; };
 		78F29B3A25AE84CE00D85CCB /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B3925AE84CE00D85CCB /* Position.swift */; };
-		78F29B3F25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B3E25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift */; };
+		78F29B3F25AE8FAA00D85CCB /* PacketHandlingThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B3E25AE8FAA00D85CCB /* PacketHandlingThread.swift */; };
 		78F29B4725AF136A00D85CCB /* World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B4625AF136A00D85CCB /* World.swift */; };
 		78F29B4C25AF14EE00D85CCB /* ChunkPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B4B25AF14EE00D85CCB /* ChunkPosition.swift */; };
 		78FA059B25B515810074CF37 /* UpdateViewPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FA059A25B515810074CF37 /* UpdateViewPositionPacket.swift */; };
@@ -420,7 +420,7 @@
 		78F29B2B25AE81E000D85CCB /* ChunkSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkSection.swift; sourceTree = "<group>"; };
 		78F29B3125AE846000D85CCB /* BlockEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockEntity.swift; sourceTree = "<group>"; };
 		78F29B3925AE84CE00D85CCB /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
-		78F29B3E25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketHandlerThreadPool.swift; sourceTree = "<group>"; };
+		78F29B3E25AE8FAA00D85CCB /* PacketHandlingThread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketHandlingThread.swift; sourceTree = "<group>"; };
 		78F29B4625AF136A00D85CCB /* World.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = World.swift; sourceTree = "<group>"; };
 		78F29B4B25AF14EE00D85CCB /* ChunkPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkPosition.swift; sourceTree = "<group>"; };
 		78FA059A25B515810074CF37 /* UpdateViewPositionPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateViewPositionPacket.swift; sourceTree = "<group>"; };
@@ -608,7 +608,7 @@
 			children = (
 				787D8FF0258451A8007E6441 /* ServerConnection.swift */,
 				788A578E25E1B2E400813C1B /* ConnectionState.swift */,
-				78F29B3E25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift */,
+				78F29B3E25AE8FAA00D85CCB /* PacketHandlingThread.swift */,
 				787D8FF525848480007E6441 /* ClientboundPacket.swift */,
 				78E919BD25D7541C00667C75 /* ServerboundPacket.swift */,
 				78E919B825D74DBF00667C75 /* PacketRegistry.swift */,
@@ -1230,7 +1230,7 @@
 				787D8FFF258485A7007E6441 /* HandshakePacket.swift in Sources */,
 				78DF38DC25DC6E7A00A03FB7 /* ChatTranslateComponent.swift in Sources */,
 				7894521625D2709B00B86423 /* NamedSoundEffectPacket.swift in Sources */,
-				78F29B3F25AE8FAA00D85CCB /* PacketHandlerThreadPool.swift in Sources */,
+				78F29B3F25AE8FAA00D85CCB /* PacketHandlingThread.swift in Sources */,
 				78154ADE25DBC4DA0009968C /* ChatStyle.swift in Sources */,
 				7873057D25D93599001259EB /* CameraPacket.swift in Sources */,
 				7884359B25861981002F1F84 /* ServerList.swift in Sources */,

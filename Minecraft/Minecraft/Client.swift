@@ -1,18 +1,11 @@
 //
-//  Game.swift
+//  Client.swift
 //  Minecraft
 //
 //  Created by Rohan van Klinken on 12/1/21.
 //
 
 import Foundation
-
-enum ClientState {
-  case idle
-  case initialising
-  case connecting
-  case play
-}
 
 // pretty much the backend class for the whole game
 class Client {
@@ -21,6 +14,13 @@ class Client {
   var config: Config
   
   var eventManager: EventManager
+  
+  enum ClientState {
+    case idle
+    case initialising
+    case connecting
+    case play
+  }
   
   init(eventManager: EventManager, serverInfo: ServerInfo, config: Config) {
     self.eventManager = eventManager

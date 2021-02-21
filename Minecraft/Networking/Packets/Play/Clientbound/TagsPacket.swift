@@ -1,5 +1,5 @@
 //
-//  Tags.swift
+//  TagsPacket.swift
 //  Minecraft
 //
 //  Created by Rohan van Klinken on 13/1/21.

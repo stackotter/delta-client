@@ -1,5 +1,5 @@
 //
-//  LoginStart.swift
+//  LoginStartPacket.swift
 //  Minecraft
 //
 //  Created by Rohan van Klinken on 15/12/20.

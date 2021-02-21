@@ -1,5 +1,5 @@
 //
-//  Config.swift
+//  ConfigManager.swift
 //  Minecraft
 //
 //  Created by Rohan van Klinken on 14/12/20.

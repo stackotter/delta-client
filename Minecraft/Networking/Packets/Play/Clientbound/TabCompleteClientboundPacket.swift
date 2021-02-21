@@ -1,5 +1,5 @@
 //
-//  TabCompletePacket.swift
+//  TabCompleteClientboundPacket.swift
 //  Minecraft
 //
 //  Created by Rohan van Klinken on 9/2/21.

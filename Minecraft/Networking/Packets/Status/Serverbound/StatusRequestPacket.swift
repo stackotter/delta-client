@@ -1,5 +1,5 @@
 //
-//  StatusRequest.swift
+//  StatusRequestPacket.swift
 //  Minecraft
 //
 //  Created by Rohan van Klinken on 13/12/20.

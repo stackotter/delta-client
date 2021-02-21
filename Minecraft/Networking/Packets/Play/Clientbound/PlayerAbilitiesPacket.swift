@@ -1,5 +1,5 @@
 //
-//  PlayerAbilities.swift
+//  PlayerAbilitiesPacket.swift
 //  Minecraft
 //
 //  Created by Rohan van Klinken on 3/1/21.
