@@ -7,6 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		780993FE25E21D2D00DFDC9F /* TeleportConfirmPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780993FD25E21D2D00DFDC9F /* TeleportConfirmPacket.swift */; };
+		7809940325E21D5300DFDC9F /* QueryBlockNBTPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809940225E21D5300DFDC9F /* QueryBlockNBTPacket.swift */; };
+		7809940825E21FB000DFDC9F /* QueryEntityNBTPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809940725E21FB000DFDC9F /* QueryEntityNBTPacket.swift */; };
+		7809941025E2200500DFDC9F /* SetDifficultyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809940F25E2200500DFDC9F /* SetDifficultyPacket.swift */; };
+		7809941525E2204300DFDC9F /* ChatMessageServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809941425E2204300DFDC9F /* ChatMessageServerboundPacket.swift */; };
+		7809941A25E2207900DFDC9F /* ClientStatusPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809941925E2207900DFDC9F /* ClientStatusPacket.swift */; };
+		7809941F25E220EF00DFDC9F /* ClientSettingsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809941E25E220EF00DFDC9F /* ClientSettingsPacket.swift */; };
+		7809942425E222AB00DFDC9F /* TabCompleteServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809942325E222AB00DFDC9F /* TabCompleteServerboundPacket.swift */; };
+		7809942925E222EF00DFDC9F /* WindowConfirmationServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809942825E222EF00DFDC9F /* WindowConfirmationServerboundPacket.swift */; };
+		7809942E25E2233F00DFDC9F /* ClickWindowButtonPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809942D25E2233F00DFDC9F /* ClickWindowButtonPacket.swift */; };
+		7809943325E2237600DFDC9F /* ClickWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809943225E2237600DFDC9F /* ClickWindowPacket.swift */; };
+		7809943825E2240400DFDC9F /* CloseWindowServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809943725E2240400DFDC9F /* CloseWindowServerboundPacket.swift */; };
+		7809943D25E2242D00DFDC9F /* PluginMessageServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809943C25E2242D00DFDC9F /* PluginMessageServerboundPacket.swift */; };
+		7809944225E224B200DFDC9F /* EditBookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809944125E224B200DFDC9F /* EditBookPacket.swift */; };
+		7809944725E224F400DFDC9F /* DominantHand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809944625E224F400DFDC9F /* DominantHand.swift */; };
+		7809944C25E2255F00DFDC9F /* Hand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809944B25E2255F00DFDC9F /* Hand.swift */; };
 		780D9BA92596CF5900144D45 /* LauncherProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780D9BA82596CF5900144D45 /* LauncherProfile.swift */; };
 		78154AD825DBC2660009968C /* ChatComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78154AD725DBC2660009968C /* ChatComponent.swift */; };
 		78154ADE25DBC4DA0009968C /* ChatStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78154ADD25DBC4DA0009968C /* ChatStyle.swift */; };
@@ -36,6 +52,40 @@
 		784194C2258204D00070DE78 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 784194C1258204D00070DE78 /* Preview Assets.xcassets */; };
 		784194CE258204D10070DE78 /* MinecraftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194CD258204D10070DE78 /* MinecraftTests.swift */; };
 		784194D9258204D10070DE78 /* MinecraftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194D8258204D10070DE78 /* MinecraftUITests.swift */; };
+		7843EB6D25E2262900AD42A7 /* InteractEntityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EB6C25E2262900AD42A7 /* InteractEntityPacket.swift */; };
+		7843EB7225E2283B00AD42A7 /* GenerateStructurePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EB7125E2283B00AD42A7 /* GenerateStructurePacket.swift */; };
+		7843EB7725E2288300AD42A7 /* LockDifficultyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EB7625E2288300AD42A7 /* LockDifficultyPacket.swift */; };
+		7843EB7C25E228A000AD42A7 /* PlayerPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EB7B25E228A000AD42A7 /* PlayerPositionPacket.swift */; };
+		7843EB8125E2290E00AD42A7 /* PlayerPositionAndRotationServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EB8025E2290E00AD42A7 /* PlayerPositionAndRotationServerboundPacket.swift */; };
+		7843EB8625E2298300AD42A7 /* PlayerRotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EB8525E2298300AD42A7 /* PlayerRotation.swift */; };
+		7843EB8B25E229D700AD42A7 /* PlayerRotationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EB8A25E229D700AD42A7 /* PlayerRotationPacket.swift */; };
+		7843EB9325E22A1900AD42A7 /* PlayerMovementPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EB9225E22A1900AD42A7 /* PlayerMovementPacket.swift */; };
+		7843EB9825E22A4400AD42A7 /* VehicleMoveServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EB9725E22A4400AD42A7 /* VehicleMoveServerboundPacket.swift */; };
+		7843EB9D25E22AA300AD42A7 /* SteerBoatPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EB9C25E22AA300AD42A7 /* SteerBoatPacket.swift */; };
+		7843EBA225E22ADD00AD42A7 /* PickItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBA125E22ADD00AD42A7 /* PickItemPacket.swift */; };
+		7843EBA725E22B4000AD42A7 /* CraftRecipeRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBA625E22B4000AD42A7 /* CraftRecipeRequestPacket.swift */; };
+		7843EBAC25E22BA800AD42A7 /* PlayerAbilitiesServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBAB25E22BA800AD42A7 /* PlayerAbilitiesServerboundPacket.swift */; };
+		7843EBB425E22C0500AD42A7 /* PlayerDiggingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBB325E22C0500AD42A7 /* PlayerDiggingPacket.swift */; };
+		7843EBB925E22D2000AD42A7 /* EntityActionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBB825E22D2000AD42A7 /* EntityActionPacket.swift */; };
+		7843EBBE25E22E1E00AD42A7 /* PlayerEntityAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBBD25E22E1E00AD42A7 /* PlayerEntityAction.swift */; };
+		7843EBC325E22E3900AD42A7 /* SteerVehiclePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBC225E22E3900AD42A7 /* SteerVehiclePacket.swift */; };
+		7843EBC825E22E9C00AD42A7 /* RecipeBookDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBC725E22E9C00AD42A7 /* RecipeBookDataPacket.swift */; };
+		7843EBCD25E22FEC00AD42A7 /* NameItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBCC25E22FEC00AD42A7 /* NameItemPacket.swift */; };
+		7843EBD225E2301100AD42A7 /* ResourcePackStatusPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBD125E2301100AD42A7 /* ResourcePackStatusPacket.swift */; };
+		7843EBD725E2306A00AD42A7 /* AdvancementTabPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBD625E2306A00AD42A7 /* AdvancementTabPacket.swift */; };
+		7843EBDC25E2310F00AD42A7 /* SelectTradePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBDB25E2310F00AD42A7 /* SelectTradePacket.swift */; };
+		7843EBE125E2313900AD42A7 /* SetBeaconEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBE025E2313900AD42A7 /* SetBeaconEffectPacket.swift */; };
+		7843EBE625E2317100AD42A7 /* HeldItemChangeServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBE525E2317100AD42A7 /* HeldItemChangeServerboundPacket.swift */; };
+		7843EBEB25E232A600AD42A7 /* UpdateCommandBlockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBEA25E232A600AD42A7 /* UpdateCommandBlockPacket.swift */; };
+		7843EBF025E2339100AD42A7 /* UpdateCommandBlockMinecartPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBEF25E2339100AD42A7 /* UpdateCommandBlockMinecartPacket.swift */; };
+		7843EBF525E233D500AD42A7 /* CreativeInventoryActionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBF425E233D500AD42A7 /* CreativeInventoryActionPacket.swift */; };
+		7843EBFA25E2347700AD42A7 /* UpdateJigsawBlockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBF925E2347700AD42A7 /* UpdateJigsawBlockPacket.swift */; };
+		7843EBFF25E2355200AD42A7 /* UpdateStructureBlockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EBFE25E2355200AD42A7 /* UpdateStructureBlockPacket.swift */; };
+		7843EC0425E236CC00AD42A7 /* UpdateSignPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EC0325E236CC00AD42A7 /* UpdateSignPacket.swift */; };
+		7843EC0925E2371500AD42A7 /* AnimationServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EC0825E2371500AD42A7 /* AnimationServerboundPacket.swift */; };
+		7843EC0E25E2375100AD42A7 /* SpectatePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EC0D25E2375100AD42A7 /* SpectatePacket.swift */; };
+		7843EC1625E2378000AD42A7 /* PlayerBlockPlacementPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EC1525E2378000AD42A7 /* PlayerBlockPlacementPacket.swift */; };
+		7843EC1B25E2380900AD42A7 /* BlockFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EC1A25E2380900AD42A7 /* BlockFace.swift */; };
 		784783E825D89090008B1430 /* OpenSignEditorPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784783E725D89090008B1430 /* OpenSignEditorPacket.swift */; };
 		784783ED25D890EE008B1430 /* CraftRecipeResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784783EC25D890EE008B1430 /* CraftRecipeResponsePacket.swift */; };
 		784B392E25A14F7500556E3E /* LoginDisconnectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B392D25A14F7500556E3E /* LoginDisconnectPacket.swift */; };
@@ -163,6 +213,7 @@
 		78C2D5852585949800883DF5 /* StatusRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5842585949800883DF5 /* StatusRequestPacket.swift */; };
 		78C2D58A2585955500883DF5 /* StatusResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5892585955500883DF5 /* StatusResponsePacket.swift */; };
 		78C2D58F258597D400883DF5 /* PacketReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D58E258597D400883DF5 /* PacketReader.swift */; };
+		78CB942625E2388000FC509B /* UseItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78CB942525E2388000FC509B /* UseItemPacket.swift */; };
 		78CC6E4725D2624F00CA3DFF /* SpawnPlayerPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78CC6E4625D2624F00CA3DFF /* SpawnPlayerPacket.swift */; };
 		78CC6E4C25D2630C00CA3DFF /* EntityAnimationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78CC6E4B25D2630C00CA3DFF /* EntityAnimationPacket.swift */; };
 		78CC6E5125D2636F00CA3DFF /* StatisticsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78CC6E5025D2636F00CA3DFF /* StatisticsPacket.swift */; };
@@ -176,7 +227,7 @@
 		78CC6E8425D2698A00CA3DFF /* ChatMessageClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78CC6E8325D2698A00CA3DFF /* ChatMessageClientboundPacket.swift */; };
 		78CC6E8C25D26A9E00CA3DFF /* MultiBlockChangePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78CC6E8B25D26A9E00CA3DFF /* MultiBlockChangePacket.swift */; };
 		78CC6E9125D26C6B00CA3DFF /* TabCompleteClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78CC6E9025D26C6B00CA3DFF /* TabCompleteClientboundPacket.swift */; };
-		78DB24D525C4F5A700F7D70B /* PlayerFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DB24D425C4F5A700F7D70B /* PlayerFlags.swift */; };
+		78DB24D525C4F5A700F7D70B /* PlayerAbilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DB24D425C4F5A700F7D70B /* PlayerAbilities.swift */; };
 		78DB24DA25C51DEF00F7D70B /* PluginMessagePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DB24D925C51DEF00F7D70B /* PluginMessagePacket.swift */; };
 		78DF38DC25DC6E7A00A03FB7 /* ChatTranslateComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DF38DB25DC6E7A00A03FB7 /* ChatTranslateComponent.swift */; };
 		78E919B925D74DBF00667C75 /* PacketRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919B825D74DBF00667C75 /* PacketRegistry.swift */; };
@@ -221,6 +272,22 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		780993FD25E21D2D00DFDC9F /* TeleportConfirmPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleportConfirmPacket.swift; sourceTree = "<group>"; };
+		7809940225E21D5300DFDC9F /* QueryBlockNBTPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryBlockNBTPacket.swift; sourceTree = "<group>"; };
+		7809940725E21FB000DFDC9F /* QueryEntityNBTPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryEntityNBTPacket.swift; sourceTree = "<group>"; };
+		7809940F25E2200500DFDC9F /* SetDifficultyPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetDifficultyPacket.swift; sourceTree = "<group>"; };
+		7809941425E2204300DFDC9F /* ChatMessageServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageServerboundPacket.swift; sourceTree = "<group>"; };
+		7809941925E2207900DFDC9F /* ClientStatusPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientStatusPacket.swift; sourceTree = "<group>"; };
+		7809941E25E220EF00DFDC9F /* ClientSettingsPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSettingsPacket.swift; sourceTree = "<group>"; };
+		7809942325E222AB00DFDC9F /* TabCompleteServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabCompleteServerboundPacket.swift; sourceTree = "<group>"; };
+		7809942825E222EF00DFDC9F /* WindowConfirmationServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowConfirmationServerboundPacket.swift; sourceTree = "<group>"; };
+		7809942D25E2233F00DFDC9F /* ClickWindowButtonPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickWindowButtonPacket.swift; sourceTree = "<group>"; };
+		7809943225E2237600DFDC9F /* ClickWindowPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickWindowPacket.swift; sourceTree = "<group>"; };
+		7809943725E2240400DFDC9F /* CloseWindowServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseWindowServerboundPacket.swift; sourceTree = "<group>"; };
+		7809943C25E2242D00DFDC9F /* PluginMessageServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginMessageServerboundPacket.swift; sourceTree = "<group>"; };
+		7809944125E224B200DFDC9F /* EditBookPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditBookPacket.swift; sourceTree = "<group>"; };
+		7809944625E224F400DFDC9F /* DominantHand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DominantHand.swift; sourceTree = "<group>"; };
+		7809944B25E2255F00DFDC9F /* Hand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hand.swift; sourceTree = "<group>"; };
 		780D9BA82596CF5900144D45 /* LauncherProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauncherProfile.swift; sourceTree = "<group>"; };
 		78154AD725DBC2660009968C /* ChatComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComponent.swift; sourceTree = "<group>"; };
 		78154ADD25DBC4DA0009968C /* ChatStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStyle.swift; sourceTree = "<group>"; };
@@ -257,6 +324,40 @@
 		784194D4258204D10070DE78 /* MinecraftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinecraftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D8258204D10070DE78 /* MinecraftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftUITests.swift; sourceTree = "<group>"; };
 		784194DA258204D10070DE78 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7843EB6C25E2262900AD42A7 /* InteractEntityPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractEntityPacket.swift; sourceTree = "<group>"; };
+		7843EB7125E2283B00AD42A7 /* GenerateStructurePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateStructurePacket.swift; sourceTree = "<group>"; };
+		7843EB7625E2288300AD42A7 /* LockDifficultyPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockDifficultyPacket.swift; sourceTree = "<group>"; };
+		7843EB7B25E228A000AD42A7 /* PlayerPositionPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerPositionPacket.swift; sourceTree = "<group>"; };
+		7843EB8025E2290E00AD42A7 /* PlayerPositionAndRotationServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerPositionAndRotationServerboundPacket.swift; sourceTree = "<group>"; };
+		7843EB8525E2298300AD42A7 /* PlayerRotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerRotation.swift; sourceTree = "<group>"; };
+		7843EB8A25E229D700AD42A7 /* PlayerRotationPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerRotationPacket.swift; sourceTree = "<group>"; };
+		7843EB9225E22A1900AD42A7 /* PlayerMovementPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerMovementPacket.swift; sourceTree = "<group>"; };
+		7843EB9725E22A4400AD42A7 /* VehicleMoveServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMoveServerboundPacket.swift; sourceTree = "<group>"; };
+		7843EB9C25E22AA300AD42A7 /* SteerBoatPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SteerBoatPacket.swift; sourceTree = "<group>"; };
+		7843EBA125E22ADD00AD42A7 /* PickItemPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickItemPacket.swift; sourceTree = "<group>"; };
+		7843EBA625E22B4000AD42A7 /* CraftRecipeRequestPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftRecipeRequestPacket.swift; sourceTree = "<group>"; };
+		7843EBAB25E22BA800AD42A7 /* PlayerAbilitiesServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerAbilitiesServerboundPacket.swift; sourceTree = "<group>"; };
+		7843EBB325E22C0500AD42A7 /* PlayerDiggingPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDiggingPacket.swift; sourceTree = "<group>"; };
+		7843EBB825E22D2000AD42A7 /* EntityActionPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityActionPacket.swift; sourceTree = "<group>"; };
+		7843EBBD25E22E1E00AD42A7 /* PlayerEntityAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerEntityAction.swift; sourceTree = "<group>"; };
+		7843EBC225E22E3900AD42A7 /* SteerVehiclePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SteerVehiclePacket.swift; sourceTree = "<group>"; };
+		7843EBC725E22E9C00AD42A7 /* RecipeBookDataPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeBookDataPacket.swift; sourceTree = "<group>"; };
+		7843EBCC25E22FEC00AD42A7 /* NameItemPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameItemPacket.swift; sourceTree = "<group>"; };
+		7843EBD125E2301100AD42A7 /* ResourcePackStatusPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcePackStatusPacket.swift; sourceTree = "<group>"; };
+		7843EBD625E2306A00AD42A7 /* AdvancementTabPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancementTabPacket.swift; sourceTree = "<group>"; };
+		7843EBDB25E2310F00AD42A7 /* SelectTradePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectTradePacket.swift; sourceTree = "<group>"; };
+		7843EBE025E2313900AD42A7 /* SetBeaconEffectPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetBeaconEffectPacket.swift; sourceTree = "<group>"; };
+		7843EBE525E2317100AD42A7 /* HeldItemChangeServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeldItemChangeServerboundPacket.swift; sourceTree = "<group>"; };
+		7843EBEA25E232A600AD42A7 /* UpdateCommandBlockPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCommandBlockPacket.swift; sourceTree = "<group>"; };
+		7843EBEF25E2339100AD42A7 /* UpdateCommandBlockMinecartPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCommandBlockMinecartPacket.swift; sourceTree = "<group>"; };
+		7843EBF425E233D500AD42A7 /* CreativeInventoryActionPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreativeInventoryActionPacket.swift; sourceTree = "<group>"; };
+		7843EBF925E2347700AD42A7 /* UpdateJigsawBlockPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateJigsawBlockPacket.swift; sourceTree = "<group>"; };
+		7843EBFE25E2355200AD42A7 /* UpdateStructureBlockPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateStructureBlockPacket.swift; sourceTree = "<group>"; };
+		7843EC0325E236CC00AD42A7 /* UpdateSignPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSignPacket.swift; sourceTree = "<group>"; };
+		7843EC0825E2371500AD42A7 /* AnimationServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationServerboundPacket.swift; sourceTree = "<group>"; };
+		7843EC0D25E2375100AD42A7 /* SpectatePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpectatePacket.swift; sourceTree = "<group>"; };
+		7843EC1525E2378000AD42A7 /* PlayerBlockPlacementPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerBlockPlacementPacket.swift; sourceTree = "<group>"; };
+		7843EC1A25E2380900AD42A7 /* BlockFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockFace.swift; sourceTree = "<group>"; };
 		784783E725D89090008B1430 /* OpenSignEditorPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSignEditorPacket.swift; sourceTree = "<group>"; };
 		784783EC25D890EE008B1430 /* CraftRecipeResponsePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftRecipeResponsePacket.swift; sourceTree = "<group>"; };
 		784B392D25A14F7500556E3E /* LoginDisconnectPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDisconnectPacket.swift; sourceTree = "<group>"; };
@@ -384,6 +485,7 @@
 		78C2D5842585949800883DF5 /* StatusRequestPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRequestPacket.swift; sourceTree = "<group>"; };
 		78C2D5892585955500883DF5 /* StatusResponsePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusResponsePacket.swift; sourceTree = "<group>"; };
 		78C2D58E258597D400883DF5 /* PacketReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketReader.swift; sourceTree = "<group>"; };
+		78CB942525E2388000FC509B /* UseItemPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseItemPacket.swift; sourceTree = "<group>"; };
 		78CC6E4625D2624F00CA3DFF /* SpawnPlayerPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpawnPlayerPacket.swift; sourceTree = "<group>"; };
 		78CC6E4B25D2630C00CA3DFF /* EntityAnimationPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityAnimationPacket.swift; sourceTree = "<group>"; };
 		78CC6E5025D2636F00CA3DFF /* StatisticsPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsPacket.swift; sourceTree = "<group>"; };
@@ -397,7 +499,7 @@
 		78CC6E8325D2698A00CA3DFF /* ChatMessageClientboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageClientboundPacket.swift; sourceTree = "<group>"; };
 		78CC6E8B25D26A9E00CA3DFF /* MultiBlockChangePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBlockChangePacket.swift; sourceTree = "<group>"; };
 		78CC6E9025D26C6B00CA3DFF /* TabCompleteClientboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabCompleteClientboundPacket.swift; sourceTree = "<group>"; };
-		78DB24D425C4F5A700F7D70B /* PlayerFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerFlags.swift; sourceTree = "<group>"; };
+		78DB24D425C4F5A700F7D70B /* PlayerAbilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerAbilities.swift; sourceTree = "<group>"; };
 		78DB24D925C51DEF00F7D70B /* PluginMessagePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginMessagePacket.swift; sourceTree = "<group>"; };
 		78DF38DB25DC6E7A00A03FB7 /* ChatTranslateComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTranslateComponent.swift; sourceTree = "<group>"; };
 		78E919B825D74DBF00667C75 /* PacketRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketRegistry.swift; sourceTree = "<group>"; };
@@ -651,7 +753,11 @@
 			isa = PBXGroup;
 			children = (
 				781E63BF25B165F900ADFAB8 /* Player.swift */,
-				78DB24D425C4F5A700F7D70B /* PlayerFlags.swift */,
+				7843EB8525E2298300AD42A7 /* PlayerRotation.swift */,
+				78DB24D425C4F5A700F7D70B /* PlayerAbilities.swift */,
+				7843EBBD25E22E1E00AD42A7 /* PlayerEntityAction.swift */,
+				7809944B25E2255F00DFDC9F /* Hand.swift */,
+				7809944625E224F400DFDC9F /* DominantHand.swift */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -667,7 +773,53 @@
 		78BFD2F925B5AC2400366631 /* Serverbound */ = {
 			isa = PBXGroup;
 			children = (
+				780993FD25E21D2D00DFDC9F /* TeleportConfirmPacket.swift */,
+				7809940225E21D5300DFDC9F /* QueryBlockNBTPacket.swift */,
+				7809940F25E2200500DFDC9F /* SetDifficultyPacket.swift */,
+				7809941425E2204300DFDC9F /* ChatMessageServerboundPacket.swift */,
+				7809941925E2207900DFDC9F /* ClientStatusPacket.swift */,
+				7809941E25E220EF00DFDC9F /* ClientSettingsPacket.swift */,
+				7809942325E222AB00DFDC9F /* TabCompleteServerboundPacket.swift */,
+				7809942825E222EF00DFDC9F /* WindowConfirmationServerboundPacket.swift */,
+				7809942D25E2233F00DFDC9F /* ClickWindowButtonPacket.swift */,
+				7809943225E2237600DFDC9F /* ClickWindowPacket.swift */,
+				7809943725E2240400DFDC9F /* CloseWindowServerboundPacket.swift */,
+				7809943C25E2242D00DFDC9F /* PluginMessageServerboundPacket.swift */,
+				7809944125E224B200DFDC9F /* EditBookPacket.swift */,
+				7809940725E21FB000DFDC9F /* QueryEntityNBTPacket.swift */,
+				7843EB6C25E2262900AD42A7 /* InteractEntityPacket.swift */,
+				7843EB7125E2283B00AD42A7 /* GenerateStructurePacket.swift */,
 				78E919C225D75C9E00667C75 /* KeepAliveServerboundPacket.swift */,
+				7843EB7625E2288300AD42A7 /* LockDifficultyPacket.swift */,
+				7843EB7B25E228A000AD42A7 /* PlayerPositionPacket.swift */,
+				7843EB8025E2290E00AD42A7 /* PlayerPositionAndRotationServerboundPacket.swift */,
+				7843EB8A25E229D700AD42A7 /* PlayerRotationPacket.swift */,
+				7843EB9225E22A1900AD42A7 /* PlayerMovementPacket.swift */,
+				7843EB9725E22A4400AD42A7 /* VehicleMoveServerboundPacket.swift */,
+				7843EB9C25E22AA300AD42A7 /* SteerBoatPacket.swift */,
+				7843EBA125E22ADD00AD42A7 /* PickItemPacket.swift */,
+				7843EBA625E22B4000AD42A7 /* CraftRecipeRequestPacket.swift */,
+				7843EBAB25E22BA800AD42A7 /* PlayerAbilitiesServerboundPacket.swift */,
+				7843EBB325E22C0500AD42A7 /* PlayerDiggingPacket.swift */,
+				7843EBB825E22D2000AD42A7 /* EntityActionPacket.swift */,
+				7843EBC225E22E3900AD42A7 /* SteerVehiclePacket.swift */,
+				7843EBC725E22E9C00AD42A7 /* RecipeBookDataPacket.swift */,
+				7843EBCC25E22FEC00AD42A7 /* NameItemPacket.swift */,
+				7843EBD125E2301100AD42A7 /* ResourcePackStatusPacket.swift */,
+				7843EBD625E2306A00AD42A7 /* AdvancementTabPacket.swift */,
+				7843EBDB25E2310F00AD42A7 /* SelectTradePacket.swift */,
+				7843EBE025E2313900AD42A7 /* SetBeaconEffectPacket.swift */,
+				7843EBE525E2317100AD42A7 /* HeldItemChangeServerboundPacket.swift */,
+				7843EBEA25E232A600AD42A7 /* UpdateCommandBlockPacket.swift */,
+				7843EBEF25E2339100AD42A7 /* UpdateCommandBlockMinecartPacket.swift */,
+				7843EBF425E233D500AD42A7 /* CreativeInventoryActionPacket.swift */,
+				7843EBF925E2347700AD42A7 /* UpdateJigsawBlockPacket.swift */,
+				7843EBFE25E2355200AD42A7 /* UpdateStructureBlockPacket.swift */,
+				7843EC0325E236CC00AD42A7 /* UpdateSignPacket.swift */,
+				7843EC0825E2371500AD42A7 /* AnimationServerboundPacket.swift */,
+				7843EC0D25E2375100AD42A7 /* SpectatePacket.swift */,
+				7843EC1525E2378000AD42A7 /* PlayerBlockPlacementPacket.swift */,
+				78CB942525E2388000FC509B /* UseItemPacket.swift */,
 			);
 			path = Serverbound;
 			sourceTree = "<group>";
@@ -889,6 +1041,7 @@
 				78F29B2B25AE81E000D85CCB /* ChunkSection.swift */,
 				78F29B4625AF136A00D85CCB /* World.swift */,
 				78BFD2E625B521A800366631 /* WorldConfig.swift */,
+				7843EC1A25E2380900AD42A7 /* BlockFace.swift */,
 			);
 			path = World;
 			sourceTree = "<group>";
@@ -1061,12 +1214,15 @@
 				78F29B4725AF136A00D85CCB /* World.swift in Sources */,
 				784CCAA025AD300B004B3182 /* ItemStack.swift in Sources */,
 				784CCB0825AD3515004B3182 /* BannerDuplicateRecipe.swift in Sources */,
+				7843EB9825E22A4400AD42A7 /* VehicleMoveServerboundPacket.swift in Sources */,
 				787D900725848726007E6441 /* PacketWriter.swift in Sources */,
 				781E63C025B165F900ADFAB8 /* Player.swift in Sources */,
 				785786E025D15F54003021D9 /* SpawnExperienceOrbPacket.swift in Sources */,
 				78BE298F25E08BCB0058CE11 /* ChatScoreComponent.swift in Sources */,
+				7843EB7C25E228A000AD42A7 /* PlayerPositionPacket.swift in Sources */,
 				7889A9E925C4EED80007B2D7 /* Constants.swift in Sources */,
 				78CC6E6825D2651D00CA3DFF /* BlockBreakAnimationPacket.swift in Sources */,
+				7843EBA225E22ADD00AD42A7 /* PickItemPacket.swift in Sources */,
 				7873058C25D936DF001259EB /* DisplayScoreboardPacket.swift in Sources */,
 				787305B425D93AC3001259EB /* SetPassengersPacket.swift in Sources */,
 				784CCAF925AD34CC004B3182 /* FireworkStarFadeRecipe.swift in Sources */,
@@ -1076,7 +1232,11 @@
 				78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */,
 				784CCA9B25AD2F99004B3182 /* Ingredient.swift in Sources */,
 				78E919DF25D7FAEA00667C75 /* EntityPositionPacket.swift in Sources */,
+				7843EBCD25E22FEC00AD42A7 /* NameItemPacket.swift in Sources */,
 				7830D8CE2596B91B00D35180 /* ViewState.swift in Sources */,
+				7843EB8B25E229D700AD42A7 /* PlayerRotationPacket.swift in Sources */,
+				7809943825E2240400DFDC9F /* CloseWindowServerboundPacket.swift in Sources */,
+				7843EBB425E22C0500AD42A7 /* PlayerDiggingPacket.swift in Sources */,
 				78BE297F25E08B2A0058CE11 /* ChatKeybindComponent.swift in Sources */,
 				78BFD2E725B521A800366631 /* WorldConfig.swift in Sources */,
 				784CAE24259AB654003E5F87 /* UUID.swift in Sources */,
@@ -1088,24 +1248,34 @@
 				78E919F325D7FD2900667C75 /* VehicleMoveClientboundPacket.swift in Sources */,
 				7873059B25D937D3001259EB /* EntityVelocityPacket.swift in Sources */,
 				7878B52F25844B6B007C0D3D /* GameView.swift in Sources */,
+				7843EBE125E2313900AD42A7 /* SetBeaconEffectPacket.swift in Sources */,
 				787305AF25D93A22001259EB /* ScoreboardObjectivePacket.swift in Sources */,
+				7809943D25E2242D00DFDC9F /* PluginMessageServerboundPacket.swift in Sources */,
 				784CCA9125AD2E86004B3182 /* CraftingRecipe.swift in Sources */,
 				78CC6E6D25D2656F00CA3DFF /* BlockEntityDataPacket.swift in Sources */,
 				784CCAC425AD3239004B3182 /* StonecuttingRecipe.swift in Sources */,
+				7843EB6D25E2262900AD42A7 /* InteractEntityPacket.swift in Sources */,
 				78764E1025AE4B9200AE8716 /* TagsPacket.swift in Sources */,
 				7878B53125844B6B007C0D3D /* ServerListView.swift in Sources */,
+				7843EBEB25E232A600AD42A7 /* UpdateCommandBlockPacket.swift in Sources */,
 				784F4B7825B7F6AC00FE21AA /* ServerPinger.swift in Sources */,
 				789451FD25D26E7200B86423 /* CloseWindowClientboundPacket.swift in Sources */,
 				7824E91E25E1006E009F0197 /* NBTQueryResponse.swift in Sources */,
 				7873053E25D919A5001259EB /* PlayerInfoPacket.swift in Sources */,
+				7843EB8625E2298300AD42A7 /* PlayerRotation.swift in Sources */,
 				784CCB0325AD34FF004B3182 /* TippedArrowRecipe.swift in Sources */,
+				7843EB8125E2290E00AD42A7 /* PlayerPositionAndRotationServerboundPacket.swift in Sources */,
 				7824E92D25E102DC009F0197 /* AdvancementsPacket.swift in Sources */,
 				78CC6E5125D2636F00CA3DFF /* StatisticsPacket.swift in Sources */,
 				7894520225D26EA700B86423 /* WindowItemsPacket.swift in Sources */,
 				78C2D58A2585955500883DF5 /* StatusResponsePacket.swift in Sources */,
 				78764DF025AD9BFF00AE8716 /* SuspiciousStewRecipe.swift in Sources */,
+				7843EBB925E22D2000AD42A7 /* EntityActionPacket.swift in Sources */,
 				78764E0525ADCA7900AE8716 /* AppView.swift in Sources */,
+				7843EBBE25E22E1E00AD42A7 /* PlayerEntityAction.swift in Sources */,
+				7843EC0925E2371500AD42A7 /* AnimationServerboundPacket.swift in Sources */,
 				78764DDD25AD374D00AE8716 /* SpecialRecipe.swift in Sources */,
+				78CB942625E2388000FC509B /* UseItemPacket.swift in Sources */,
 				7824E8F625E0F8BB009F0197 /* TeamsPacket.swift in Sources */,
 				7894521B25D2723800B86423 /* PlayDisconnectPacket.swift in Sources */,
 				7830D8C925940BE500D35180 /* Logger.swift in Sources */,
@@ -1113,17 +1283,23 @@
 				784B395025A19D8300556E3E /* ServerDifficultyPacket.swift in Sources */,
 				7894520725D26F1100B86423 /* WindowPropertyPacket.swift in Sources */,
 				78E919C825D7E79F00667C75 /* UpdateLightPacket.swift in Sources */,
+				7843EBFA25E2347700AD42A7 /* UpdateJigsawBlockPacket.swift in Sources */,
 				7830D8D32596C13A00D35180 /* ErrorView.swift in Sources */,
 				784CCA8C25AD2E40004B3182 /* CraftingShapeless.swift in Sources */,
 				78CC6E7725D2669400CA3DFF /* BlockChangePacket.swift in Sources */,
 				784CCB1225AD3545004B3182 /* ShieldDecorationRecipe.swift in Sources */,
 				78CC6E8425D2698A00CA3DFF /* ChatMessageClientboundPacket.swift in Sources */,
 				784CCAE025AD343F004B3182 /* BookCloningRecipe.swift in Sources */,
+				7809941A25E2207900DFDC9F /* ClientStatusPacket.swift in Sources */,
+				7843EBA725E22B4000AD42A7 /* CraftRecipeRequestPacket.swift in Sources */,
+				7809943325E2237600DFDC9F /* ClickWindowPacket.swift in Sources */,
 				78965088258861FE0079C5CF /* NBTCompound.swift in Sources */,
 				784B395A25A1B84000556E3E /* PlayerAbilitiesPacket.swift in Sources */,
 				78E919DA25D7EE8700667C75 /* TradeListPacket.swift in Sources */,
 				784CCA9625AD2F3D004B3182 /* CraftingShaped.swift in Sources */,
+				7843EBFF25E2355200AD42A7 /* UpdateStructureBlockPacket.swift in Sources */,
 				78CC6E9125D26C6B00CA3DFF /* TabCompleteClientboundPacket.swift in Sources */,
+				7809940825E21FB000DFDC9F /* QueryEntityNBTPacket.swift in Sources */,
 				788A578A25E1B2D000813C1B /* PacketState.swift in Sources */,
 				7873056925D930A4001259EB /* RespawnPacket.swift in Sources */,
 				7824E8FB25E0FC6A009F0197 /* UpdateScorePacket.swift in Sources */,
@@ -1135,7 +1311,7 @@
 				78CC6E4725D2624F00CA3DFF /* SpawnPlayerPacket.swift in Sources */,
 				785786E825D15FCF003021D9 /* SpawnLivingEntity.swift in Sources */,
 				784B395525A19E3900556E3E /* Difficulty.swift in Sources */,
-				78DB24D525C4F5A700F7D70B /* PlayerFlags.swift in Sources */,
+				78DB24D525C4F5A700F7D70B /* PlayerAbilities.swift in Sources */,
 				7873055225D92F75001259EB /* DestroyEntitiesPacket.swift in Sources */,
 				78F29B1E25AE769B00D85CCB /* CompactedLongArray.swift in Sources */,
 				784CAE29259ACA74003E5F87 /* Slot.swift in Sources */,
@@ -1149,6 +1325,7 @@
 				7824E92825E10195009F0197 /* EntityTeleportPacket.swift in Sources */,
 				789650922588834C0079C5CF /* LoginStartPacket.swift in Sources */,
 				784783ED25D890EE008B1430 /* CraftRecipeResponsePacket.swift in Sources */,
+				7843EBF025E2339100AD42A7 /* UpdateCommandBlockMinecartPacket.swift in Sources */,
 				784783E825D89090008B1430 /* OpenSignEditorPacket.swift in Sources */,
 				78CC6E5625D2639600CA3DFF /* Statistic.swift in Sources */,
 				784CCABF25AD31BA004B3182 /* CampfireCookingRecipe.swift in Sources */,
@@ -1160,19 +1337,26 @@
 				788A578F25E1B2E400813C1B /* ConnectionState.swift in Sources */,
 				7878855F2588136700226064 /* Buffer.swift in Sources */,
 				78F29B4C25AF14EE00D85CCB /* ChunkPosition.swift in Sources */,
+				7843EC1B25E2380900AD42A7 /* BlockFace.swift in Sources */,
 				78E919FD25D7FE0700667C75 /* OpenWindowPacket.swift in Sources */,
+				7843EBC825E22E9C00AD42A7 /* RecipeBookDataPacket.swift in Sources */,
 				789451F325D26DBC00B86423 /* DeclareCommandsPacket.swift in Sources */,
 				7824E93225E1095D009F0197 /* EntityProperties.swift in Sources */,
+				7843EBDC25E2310F00AD42A7 /* SelectTradePacket.swift in Sources */,
 				784CCACC25AD328A004B3182 /* SmithingRecipe.swift in Sources */,
 				784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */,
+				7843EC1625E2378000AD42A7 /* PlayerBlockPlacementPacket.swift in Sources */,
 				78CC6E7C25D266D100CA3DFF /* BossBarPacket.swift in Sources */,
+				7843EBE625E2317100AD42A7 /* HeldItemChangeServerboundPacket.swift in Sources */,
 				78E919E425D7FBE200667C75 /* EntityPositionAndRotationPacket.swift in Sources */,
 				784CCAB025AD312B004B3182 /* SmeltingRecipe.swift in Sources */,
 				787305A025D93816001259EB /* EntityEquipmentPacket.swift in Sources */,
 				78F29B2425AE818700D85CCB /* Chunk.swift in Sources */,
 				784B396425A1C19800556E3E /* DeclareRecipesPacket.swift in Sources */,
+				7809941F25E220EF00DFDC9F /* ClientSettingsPacket.swift in Sources */,
 				789BE9E32589DAC7001C08ED /* JSON.swift in Sources */,
 				785786DB25D1552F003021D9 /* EntityRotation.swift in Sources */,
+				7809942425E222AB00DFDC9F /* TabCompleteServerboundPacket.swift in Sources */,
 				7873056E25D93160001259EB /* EntityHeadLookPacket.swift in Sources */,
 				789451F825D26E2000B86423 /* WindowConfirmationClientboundPacket.swift in Sources */,
 				784CCAEF25AD3487004B3182 /* FireworkRocketRecipe.swift in Sources */,
@@ -1183,15 +1367,20 @@
 				780D9BA92596CF5900144D45 /* LauncherProfile.swift in Sources */,
 				78F29B3225AE846000D85CCB /* BlockEntity.swift in Sources */,
 				78CC6E6325D2647F00CA3DFF /* AcknowledgePlayerDiggingPacket.swift in Sources */,
+				7843EB9325E22A1900AD42A7 /* PlayerMovementPacket.swift in Sources */,
+				7843EBD725E2306A00AD42A7 /* AdvancementTabPacket.swift in Sources */,
 				78764E1525AE5E6900AE8716 /* ChunkDataPacket.swift in Sources */,
 				78C2D58F258597D400883DF5 /* PacketReader.swift in Sources */,
 				7894522025D2744700B86423 /* EntityStatusPacket.swift in Sources */,
 				784CCAE525AD345B004B3182 /* MapCloningRecipe.swift in Sources */,
 				78E919BE25D7541C00667C75 /* ServerboundPacket.swift in Sources */,
 				78BE297A25E078E60058CE11 /* ChatStringComponent.swift in Sources */,
+				7809944725E224F400DFDC9F /* DominantHand.swift in Sources */,
 				78BE299725E09E7D0058CE11 /* Config.swift in Sources */,
 				78764DF525AD9FCA00AE8716 /* Client.swift in Sources */,
 				78FA059B25B515810074CF37 /* UpdateViewPositionPacket.swift in Sources */,
+				7843EBD225E2301100AD42A7 /* ResourcePackStatusPacket.swift in Sources */,
+				7843EBF525E233D500AD42A7 /* CreativeInventoryActionPacket.swift in Sources */,
 				78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */,
 				7824E90025E0FCF7009F0197 /* TimeUpdatePacket.swift in Sources */,
 				787305AA25D939C8001259EB /* UpdateHealthPacket.swift in Sources */,
@@ -1206,15 +1395,23 @@
 				7894522F25D2777C00B86423 /* ChangeGameStatePacket.swift in Sources */,
 				7873059625D9378A001259EB /* AttachEntityPacket.swift in Sources */,
 				7873058225D93611001259EB /* UpdateViewDistancePacket.swift in Sources */,
+				7843EC0E25E2375100AD42A7 /* SpectatePacket.swift in Sources */,
 				784CCABA25AD317A004B3182 /* SmokingRecipe.swift in Sources */,
 				7824E90525E0FD49009F0197 /* TitlePacket.swift in Sources */,
 				784CCAB525AD3165004B3182 /* BlastingRecipe.swift in Sources */,
 				7873054D25D92B88001259EB /* UnlockRecipesPacket.swift in Sources */,
 				784CCAFE25AD34E1004B3182 /* RepairItemRecipe.swift in Sources */,
 				784B394325A185B200556E3E /* JoinGamePacket.swift in Sources */,
+				7809940325E21D5300DFDC9F /* QueryBlockNBTPacket.swift in Sources */,
 				7824E91425E0FF9D009F0197 /* StopSoundPacket.swift in Sources */,
+				7809941525E2204300DFDC9F /* ChatMessageServerboundPacket.swift in Sources */,
+				7843EB7225E2283B00AD42A7 /* GenerateStructurePacket.swift in Sources */,
+				7843EBC325E22E3900AD42A7 /* SteerVehiclePacket.swift in Sources */,
+				7843EB7725E2288300AD42A7 /* LockDifficultyPacket.swift in Sources */,
+				7809941025E2200500DFDC9F /* SetDifficultyPacket.swift in Sources */,
 				784B395F25A1BCA400556E3E /* HeldItemChangePacket.swift in Sources */,
 				784CCAD525AD3417004B3182 /* ArmorDyeRecipe.swift in Sources */,
+				7843EBAC25E22BA800AD42A7 /* PlayerAbilitiesServerboundPacket.swift in Sources */,
 				78DB24DA25C51DEF00F7D70B /* PluginMessagePacket.swift in Sources */,
 				787D8FFF258485A7007E6441 /* HandshakePacket.swift in Sources */,
 				78DF38DC25DC6E7A00A03FB7 /* ChatTranslateComponent.swift in Sources */,
@@ -1223,13 +1420,18 @@
 				78154ADE25DBC4DA0009968C /* ChatStyle.swift in Sources */,
 				7873057D25D93599001259EB /* CameraPacket.swift in Sources */,
 				7884359B25861981002F1F84 /* ServerList.swift in Sources */,
+				7809942925E222EF00DFDC9F /* WindowConfirmationServerboundPacket.swift in Sources */,
 				78CC6E4C25D2630C00CA3DFF /* EntityAnimationPacket.swift in Sources */,
 				784CCB1725AD355B004B3182 /* ShulkerBoxColouringRecipe.swift in Sources */,
+				7809944C25E2255F00DFDC9F /* Hand.swift in Sources */,
 				78BE297525E078570058CE11 /* ChatComponentUtil.swift in Sources */,
 				784CCAEA25AD3471004B3182 /* MapExtendingRecipe.swift in Sources */,
 				784F4B7D25B7FC0A00FE21AA /* ServerInfo.swift in Sources */,
+				7809944225E224B200DFDC9F /* EditBookPacket.swift in Sources */,
+				7809942E25E2233F00DFDC9F /* ClickWindowButtonPacket.swift in Sources */,
 				784CCAF425AD349E004B3182 /* FireworkStarRecipe.swift in Sources */,
 				7824E91925E1003D009F0197 /* PlayerListHeaderAndFooterPacket.swift in Sources */,
+				7843EC0425E236CC00AD42A7 /* UpdateSignPacket.swift in Sources */,
 				787305A525D93985001259EB /* SetExperiencePacket.swift in Sources */,
 				7894523425D277C000B86423 /* OpenHorseWindowPacket.swift in Sources */,
 				7824E93725E10AD9009F0197 /* EntityEffectPacket.swift in Sources */,
@@ -1243,8 +1445,10 @@
 				788435902585E606002F1F84 /* Server.swift in Sources */,
 				781E63CB25B166D000ADFAB8 /* EntityPosition.swift in Sources */,
 				784B393325A14F8400556E3E /* LoginSuccessPacket.swift in Sources */,
+				780993FE25E21D2D00DFDC9F /* TeleportConfirmPacket.swift in Sources */,
 				78BE299C25E0A3250058CE11 /* MinecraftLocale.swift in Sources */,
 				7873059125D9374E001259EB /* EntityMetadataPacket.swift in Sources */,
+				7843EB9D25E22AA300AD42A7 /* SteerBoatPacket.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

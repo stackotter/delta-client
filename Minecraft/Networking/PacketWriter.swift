@@ -68,12 +68,13 @@ struct PacketWriter {
     buf.writeString(string)
   }
   
+  // TODO: serverbound chat components
   mutating func writeChat(_ chat: String) {
     writeString(chat)
   }
   
-  mutating func writeIdentifier(_ identifier: String) {
-    writeString(identifier)
+  mutating func writeIdentifier(_ identifier: Identifier) {
+    writeString(identifier.toString())
   }
   
   mutating func writeVarInt(_ varInt: Int32) {
@@ -107,5 +108,18 @@ struct PacketWriter {
   
   mutating func writeByteArray(_ byteArray: [UInt8]) {
     buf.writeBytes(byteArray)
+  }
+  
+  mutating func writePosition(_ position: Position) {
+    var val: UInt64 = (UInt64(position.x) & 0x3FFFFFF) << 38
+    val |= (UInt64(position.z) & 0x3FFFFFF) << 12
+    val |= UInt64(position.y) & 0xFFF
+    buf.writeLong(val, endian: .big)
+  }
+  
+  mutating func writeEntityPosition(_ entityPosition: EntityPosition) {
+    writeDouble(entityPosition.x)
+    writeDouble(entityPosition.y)
+    writeDouble(entityPosition.z)
   }
 }

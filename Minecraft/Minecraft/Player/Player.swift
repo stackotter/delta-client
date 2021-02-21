@@ -17,7 +17,7 @@ struct Player {
   var hotbarSlot: Int8 = -1
   var flyingSpeed: Float = 0
   var fovModifier: Float = 0
-  var flags: PlayerFlags = PlayerFlags()
+  var flags: PlayerAbilities = PlayerAbilities()
   var isInvulnerable = false
   var isFlying = false
   var allowFlying = false
@@ -27,7 +27,7 @@ struct Player {
     self.username = username
   }
   
-  mutating func updateFlags(to flags: PlayerFlags) {
+  mutating func updateFlags(to flags: PlayerAbilities) {
     isInvulnerable = flags.contains(.invulnerable)
     isFlying = flags.contains(.flying)
     allowFlying = flags.contains(.allowFlying)

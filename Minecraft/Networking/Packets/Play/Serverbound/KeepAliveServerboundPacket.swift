@@ -8,7 +8,7 @@
 import Foundation
 
 struct KeepAliveServerBoundPacket: ServerboundPacket {
-  static var id: Int = 0x10
+  static let id: Int = 0x10
   
   var keepAliveId: Int64
   

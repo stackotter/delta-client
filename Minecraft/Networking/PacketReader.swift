@@ -156,8 +156,6 @@ struct PacketReader {
     }
   }
   
-  // TODO_LATER: implement readPosition when have test data
-  
   // TODO_LATER: figure out the best return type for readAngle
   mutating func readAngle() -> UInt8 {
     let angle = readUnsignedByte()

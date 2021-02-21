@@ -9,7 +9,6 @@ import Foundation
 import os
 
 struct StatusResponsePacket: ClientboundPacket {
-  
   static let id: Int = 0x00
   
   var json: JSON

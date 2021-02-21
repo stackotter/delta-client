@@ -8,7 +8,6 @@
 import Foundation
 
 struct HandshakePacket: ServerboundPacket {
-  
   static let id: Int = 0x00
   
   var protocolVersion: Int

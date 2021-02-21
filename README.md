@@ -21,19 +21,31 @@ Currently it uses no external libraries so the app is currently less than a mb.
 - [ ] Be able to send all serverbound packets
   - [ ] status
   - [ ] login
-  - [ ] play
+  - [x] play
 - [ ] Handle all packets
   - [ ] status
   - [ ] login
   - [ ] play
 - [ ] Complete networking (so that i don't need to touch it again)
 - [ ] Create basic text interface
+  - [ ] chat
+  - [ ] movement
+  - [ ] tablist
+  - [ ] view entities
+  - [ ] minimap just for fun?
+  - [ ] maybe some block actions too?
 - [ ] Entities (entity mappings and stuff)
 - [ ] Basic rendering using Metal (Apple's GPU library)
   - [ ] Block rendering
+  - [ ] Block Animations
   - [ ] Block entity rendering
   - [ ] Entity rendering
+  - [ ] Chat Rendering
+  - [ ] GUI Rendering (inventory and hot bar and the likes)
 - [ ] Physics
+- [ ] Inventory
+  - [ ] Crafting
+  - [ ] Other crafting (like smelting and stuff)
 
 ## Screenshots
 

@@ -10,12 +10,12 @@ import Foundation
 struct PlayerAbilitiesPacket: ClientboundPacket {
   static let id: Int = 0x31
   
-  var flags: PlayerFlags
+  var flags: PlayerAbilities
   var flyingSpeed: Float
   var fovModifier: Float
   
   init(from packetReader: inout PacketReader) {
-    flags = PlayerFlags(rawValue: packetReader.readUnsignedByte())
+    flags = PlayerAbilities(rawValue: packetReader.readUnsignedByte())
     flyingSpeed = packetReader.readFloat()
     fovModifier = packetReader.readFloat()
   }
