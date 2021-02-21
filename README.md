@@ -57,7 +57,7 @@ These are not commands in the traditional minecraft sense (e.g. ```/kill``` and 
 
 As I implement more of the backend code -- and before I work on rendering -- I will be making more commands to reflect the current capabilities of the client. In future I will most likely also make a command for running commands on the server (this is starting to get confusing).
 
-### Current Commands
+#### Current Commands
 
 - ```say [message]```
   - sends a message in chat
@@ -66,10 +66,10 @@ As I implement more of the backend code -- and before I work on rendering -- I w
 
 ## Screenshots
 
-### Server List
+#### Server List
 
 ![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/hypixel.png?raw=true)
 
-### Playing Server Screen
+#### Playing Server Screen
 
 ![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/play-screen.png?raw=true)
