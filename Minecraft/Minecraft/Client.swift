@@ -52,7 +52,8 @@ class Client {
           Logger.log("used item in main hand")
         case "swing":
           if options.count > 0 {
-            if options.first == "offhand" {
+            if options.firster
+                == "offhand" {
               let packet = AnimationServerboundPacket(hand: .offHand)
               server.sendPacket(packet)
               Logger.log("swung off hand")
