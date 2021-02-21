@@ -149,7 +149,7 @@ class PacketRegistry {
       return
     }
     
-    let packet = try packetType.init(fromReader: &reader)
+    let packet = try packetType.init(from: &reader)
     try packet.handle(for: serverPinger)
   }
   
@@ -159,7 +159,7 @@ class PacketRegistry {
       return
     }
     
-    let packet = try packetType.init(fromReader: &reader)
+    let packet = try packetType.init(from: &reader)
     try packet.handle(for: server)
   }
 }

@@ -15,7 +15,7 @@ struct ChatMessageClientboundPacket: ClientboundPacket {
   var position: Int8
   var sender: UUID
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     message = packetReader.readChat()
     position = packetReader.readByte()
     sender = packetReader.readUUID()

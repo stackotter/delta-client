@@ -42,7 +42,7 @@ struct TeamsPacket: ClientboundPacket {
     }
   }
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     teamName = packetReader.readString()
     let mode = packetReader.readByte()
     switch mode {

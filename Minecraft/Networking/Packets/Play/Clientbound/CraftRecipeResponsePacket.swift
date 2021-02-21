@@ -13,7 +13,7 @@ struct CraftRecipeResponsePacket: ClientboundPacket {
   var windowId: Int8
   var recipe: Identifier
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     windowId = packetReader.readByte()
     recipe = try packetReader.readIdentifier()
   }

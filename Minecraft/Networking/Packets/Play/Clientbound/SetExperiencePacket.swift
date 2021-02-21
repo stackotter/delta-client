@@ -14,7 +14,7 @@ struct SetExperiencePacket: ClientboundPacket {
   var level: Int32
   var totalExperience: Int32
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     experienceBar = packetReader.readFloat()
     level = packetReader.readVarInt()
     totalExperience = packetReader.readVarInt()

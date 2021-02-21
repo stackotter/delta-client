@@ -13,7 +13,7 @@ struct NBTQueryResponse: ClientboundPacket {
   var transactionId: Int32
   var nbt: NBTCompound
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     transactionId = packetReader.readVarInt()
     // TODO: make nbt just pass too maybe?
     nbt = try packetReader.readNBTTag()

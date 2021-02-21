@@ -19,7 +19,7 @@ struct EntityEquipmentPacket: ClientboundPacket {
     var item: Slot
   }
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     equipments = []
     var isLastEquipment = false

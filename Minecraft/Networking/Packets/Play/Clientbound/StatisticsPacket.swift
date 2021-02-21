@@ -12,7 +12,7 @@ struct StatisticsPacket: ClientboundPacket {
   
   var statistics: [Statistic]
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     statistics = []
     
     let count = packetReader.readVarInt()

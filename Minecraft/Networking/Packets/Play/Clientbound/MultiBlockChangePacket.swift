@@ -22,7 +22,7 @@ struct MultiBlockChangePacket: ClientboundPacket {
   var chunkPosition: ChunkPosition
   var records: [BlockChangeRecord]
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     let chunkX = packetReader.readInt()
     let chunkZ = packetReader.readInt()
     chunkPosition = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)

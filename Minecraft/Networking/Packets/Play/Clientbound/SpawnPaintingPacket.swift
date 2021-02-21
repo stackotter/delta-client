@@ -16,7 +16,7 @@ struct SpawnPaintingPacket: ClientboundPacket {
   var location: Position
   var direction: UInt8 // TODO_LATER
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     entityUUID = packetReader.readUUID()
     motive = packetReader.readVarInt()

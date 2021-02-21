@@ -13,7 +13,7 @@ struct DeclareRecipesPacket: ClientboundPacket {
   
   var recipeRegistry: RecipeRegistry
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     recipeRegistry = RecipeRegistry()
     let numRecipes = packetReader.readVarInt()
     for _ in 0..<numRecipes {

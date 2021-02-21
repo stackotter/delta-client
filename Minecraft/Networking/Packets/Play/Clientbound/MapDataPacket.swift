@@ -25,7 +25,7 @@ struct MapDataPacket: ClientboundPacket {
     var displayName: ChatComponent?
   }
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     mapId = packetReader.readVarInt()
     scale = packetReader.readByte()
     trackingPosition = packetReader.readBool()

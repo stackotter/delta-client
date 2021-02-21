@@ -13,7 +13,7 @@ struct ResourcePackSendPacket: ClientboundPacket {
   var url: String
   var hash: String
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     url = packetReader.readString()
     hash = packetReader.readString()
   }

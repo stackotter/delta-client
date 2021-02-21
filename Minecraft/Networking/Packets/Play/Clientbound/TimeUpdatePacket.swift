@@ -13,7 +13,7 @@ struct TimeUpdatePacket: ClientboundPacket {
   var worldAge: Int64
   var timeOfDay: Int64
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     worldAge = packetReader.readLong()
     timeOfDay = packetReader.readLong()
   }

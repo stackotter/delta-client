@@ -19,7 +19,7 @@ struct RespawnPacket: ClientboundPacket {
   var isFlat: Bool
   var copyMetadata: Bool
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     dimension = try packetReader.readIdentifier()
     worldName = try packetReader.readIdentifier()
     hashedSeed = packetReader.readLong()

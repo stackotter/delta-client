@@ -15,7 +15,7 @@ struct EntityTeleportPacket: ClientboundPacket {
   var rotation: EntityRotation
   var onGround: Bool
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     position = packetReader.readEntityPosition()
     rotation = packetReader.readEntityRotation()

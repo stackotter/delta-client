@@ -16,7 +16,7 @@ struct EntityEffectPacket: ClientboundPacket {
   var duration: Int32
   var flags: Int8
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     effectId = packetReader.readByte()
     amplifier = packetReader.readByte()

@@ -19,7 +19,7 @@ struct PluginMessagePacket: ClientboundPacket {
     var data: Buffer
   }
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     let channel = try packetReader.readIdentifier()
     let data = packetReader.buf
     pluginMessage = PluginMessage(channel: channel, data: data)

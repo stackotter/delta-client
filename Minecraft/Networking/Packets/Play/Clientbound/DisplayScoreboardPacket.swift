@@ -13,7 +13,7 @@ struct DisplayScoreboardPacket: ClientboundPacket {
   var position: Int8
   var scoreName: String
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     position = packetReader.readByte()
     scoreName = packetReader.readString()
   }

@@ -8,12 +8,10 @@
 import Foundation
 
 struct PacketWriter {
-  var packetId: Int
   var buf: Buffer = Buffer([])
   
-  init(packetId: Int) {
-    self.packetId = packetId
-    writeVarInt(Int32(packetId))
+  init() {
+    
   }
   
   mutating func pack() -> [UInt8] {

@@ -14,7 +14,7 @@ struct PlayerAbilitiesPacket: ClientboundPacket {
   var flyingSpeed: Float
   var fovModifier: Float
   
-  init(fromReader packetReader: inout PacketReader) {
+  init(from packetReader: inout PacketReader) {
     flags = PlayerFlags(rawValue: packetReader.readUnsignedByte())
     flyingSpeed = packetReader.readFloat()
     fovModifier = packetReader.readFloat()

@@ -14,7 +14,7 @@ struct StatusResponsePacket: ClientboundPacket {
   
   var json: JSON
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     json = try packetReader.readJSON()
   }
   

@@ -27,7 +27,7 @@ struct JoinGamePacket: ClientboundPacket {
   var isDebug: Bool
   var isFlat: Bool
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     playerEntityId = packetReader.readInt()
     let gamemodeInt = Int8(packetReader.readUnsignedByte())
     isHardcore = gamemodeInt & 0x8 == 0x8

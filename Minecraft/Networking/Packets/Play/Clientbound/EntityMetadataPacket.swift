@@ -12,7 +12,7 @@ struct EntityMetadataPacket: ClientboundPacket {
   
   var entityId: Int32
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     // IMPLEMENT: the rest of this packet
   }

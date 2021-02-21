@@ -12,7 +12,7 @@ struct OpenBookPacket: ClientboundPacket {
   
   var hand: Int32
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     hand = packetReader.readVarInt()
   }
 }

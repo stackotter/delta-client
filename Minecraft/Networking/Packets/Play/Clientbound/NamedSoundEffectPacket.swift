@@ -18,7 +18,7 @@ struct NamedSoundEffectPacket: ClientboundPacket {
   var volume: Float
   var pitch: Float
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     soundName = try packetReader.readIdentifier()
     soundCategory = packetReader.readVarInt()
     effectPositionX = packetReader.readInt()

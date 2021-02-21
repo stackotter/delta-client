@@ -11,7 +11,7 @@ import Foundation
 struct TagsPacket: ClientboundPacket {
   static let id: Int = 0x5b
   
-  init(fromReader packetReader: inout PacketReader) {
+  init(from packetReader: inout PacketReader) {
     for _ in 1...4 {
       let length = packetReader.readVarInt()
       for _ in 1...length {

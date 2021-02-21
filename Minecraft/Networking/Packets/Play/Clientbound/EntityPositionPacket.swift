@@ -16,7 +16,7 @@ struct EntityPositionPacket: ClientboundPacket {
   var deltaZ: Int16
   var onGround: Bool
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     deltaX = packetReader.readShort()
     deltaY = packetReader.readShort()

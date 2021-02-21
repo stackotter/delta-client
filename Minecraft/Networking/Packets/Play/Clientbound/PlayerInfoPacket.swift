@@ -35,7 +35,7 @@ struct PlayerInfoPacket: ClientboundPacket {
     var signature: String?
   }
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     let actionId = packetReader.readVarInt()
     let numPlayers = packetReader.readVarInt()
     playerActions = []

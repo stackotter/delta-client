@@ -13,7 +13,7 @@ struct ChangeGameStatePacket: ClientboundPacket {
   var reason: UInt8
   var value: Float
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     reason = packetReader.readUnsignedByte()
     value = packetReader.readFloat()
   }

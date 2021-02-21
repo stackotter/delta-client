@@ -26,7 +26,7 @@ struct EntityProperties: ClientboundPacket {
     var operation: Int8
   }
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     let numProperties = packetReader.readInt()
     properties = []

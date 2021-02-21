@@ -14,7 +14,7 @@ struct UpdateHealthPacket: ClientboundPacket {
   var food: Int32
   var foodSaturation: Float
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     health = packetReader.readFloat()
     food = packetReader.readVarInt() 
     foodSaturation = packetReader.readFloat()

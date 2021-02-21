@@ -36,7 +36,7 @@ struct WorldBorderPacket: ClientboundPacket {
     case invalidActionId
   }
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     let actionId = packetReader.readVarInt()
     switch actionId {
       case 0: // set size

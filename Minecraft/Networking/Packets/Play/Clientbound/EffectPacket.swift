@@ -15,7 +15,7 @@ struct EffectPacket: ClientboundPacket {
   var data: Int32
   var disableRelativeVolume: Bool
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     effectId = packetReader.readInt()
     location = packetReader.readPosition()
     data = packetReader.readInt()

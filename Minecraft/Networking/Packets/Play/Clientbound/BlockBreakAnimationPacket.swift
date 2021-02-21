@@ -14,7 +14,7 @@ struct BlockBreakAnimationPacket: ClientboundPacket {
   var location: Position
   var destroyStage: Int8
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     location = packetReader.readPosition()
     destroyStage = packetReader.readByte()

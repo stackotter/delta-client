@@ -18,7 +18,7 @@ struct CombatEventPacket: ClientboundPacket {
     case entityDead(playerId: Int32, entityId: Int32, message: ChatComponent)
   }
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     let eventId = packetReader.readVarInt()
     switch eventId {
       case 0: // enter combat

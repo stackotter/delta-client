@@ -19,7 +19,7 @@ struct ExplosionPacket: ClientboundPacket {
   var playerMotionY: Float
   var playerMotionZ: Float
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     x = packetReader.readFloat()
     y = packetReader.readFloat()
     z = packetReader.readFloat()

@@ -108,7 +108,11 @@ class ServerConnection {
   }
   
   func sendPacket(_ packet: ServerboundPacket, callback: NWConnection.SendCompletion = .idempotent) {
-    sendRaw(bytes: packet.toBytes(), callback: callback)
+    var writer = PacketWriter()
+    writer.writeVarInt(Int32(packet.id))
+    packet.writePayload(to: &writer)
+    
+    sendRaw(bytes: writer.pack(), callback: callback)
   }
   
   func sendRaw(bytes: [UInt8], callback: NWConnection.SendCompletion = .idempotent) {

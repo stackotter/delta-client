@@ -12,9 +12,7 @@ struct KeepAliveServerBoundPacket: ServerboundPacket {
   
   var keepAliveId: Int64
   
-  func toBytes() -> [UInt8] {
-    var writer = PacketWriter(packetId: id)
+  func writePayload(to writer: inout PacketWriter) {
     writer.writeLong(keepAliveId)
-    return writer.pack()
   }
 }

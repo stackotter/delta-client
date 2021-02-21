@@ -19,7 +19,7 @@ struct SpawnEntityPacket: ClientboundPacket {
   var velocity: EntityVelocity?
   
   // TODO_LATER: figure out all the entity madness
-  init(fromReader packetReader: inout PacketReader) {
+  init(from packetReader: inout PacketReader) {
     entityId = packetReader.readVarInt()
     objectUUID = packetReader.readUUID()
     type = packetReader.readVarInt()

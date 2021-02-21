@@ -15,7 +15,7 @@ struct AcknowledgePlayerDiggingPacket: ClientboundPacket {
   var status: Int32
   var successful: Bool
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     location = packetReader.readPosition()
     block = packetReader.readVarInt()
     status = packetReader.readVarInt()

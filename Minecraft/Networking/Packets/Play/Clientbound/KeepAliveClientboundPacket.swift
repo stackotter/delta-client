@@ -13,7 +13,7 @@ struct KeepAliveClientboundPacket: ClientboundPacket {
   
   var keepAliveId: Int64
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     keepAliveId = packetReader.readLong()
   }
   

@@ -18,7 +18,7 @@ struct SpawnLivingEntity: ClientboundPacket {
   var headPitch: UInt8
   var velocity: EntityVelocity
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     entityUUID = packetReader.readUUID()
     type = packetReader.readVarInt()

@@ -12,7 +12,7 @@ struct SpawnPositionPacket: ClientboundPacket {
   
   var location: Position
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     location = packetReader.readPosition()
   }
 }

@@ -12,7 +12,7 @@ struct SelectAdvancementTabPacket: ClientboundPacket {
   
   var identifier: Identifier?
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     if packetReader.readBool() {
       identifier = try packetReader.readIdentifier()
     }

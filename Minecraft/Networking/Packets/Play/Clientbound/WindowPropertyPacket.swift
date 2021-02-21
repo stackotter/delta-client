@@ -14,7 +14,7 @@ struct WindowPropertyPacket: ClientboundPacket {
   var property: Int16
   var value: Int16
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     windowId = packetReader.readUnsignedByte()
     property = packetReader.readShort()
     value = packetReader.readShort()

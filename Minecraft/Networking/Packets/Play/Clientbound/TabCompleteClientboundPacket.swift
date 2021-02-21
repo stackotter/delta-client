@@ -21,7 +21,7 @@ struct TabCompleteClientboundPacket: ClientboundPacket {
   var length: Int32
   var matches: [TabCompleteMatch]
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     id = packetReader.readVarInt()
     start = packetReader.readVarInt()
     length = packetReader.readVarInt()

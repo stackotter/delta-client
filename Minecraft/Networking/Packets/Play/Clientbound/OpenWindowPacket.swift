@@ -14,7 +14,7 @@ struct OpenWindowPacket: ClientboundPacket {
   var windowType: Int32
   var windowTitle: ChatComponent
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     windowId = packetReader.readVarInt()
     windowType = packetReader.readVarInt()
     windowTitle = packetReader.readChat()

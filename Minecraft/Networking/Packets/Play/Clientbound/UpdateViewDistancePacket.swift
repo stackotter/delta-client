@@ -12,7 +12,7 @@ struct UpdateViewDistancePacket: ClientboundPacket {
   
   var viewDistance: Int32
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     viewDistance = packetReader.readVarInt()
   }
 }

@@ -12,7 +12,7 @@ struct ChunkDataPacket: ClientboundPacket {
   
   var chunk: Chunk
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     let chunkX = packetReader.readInt()
     let chunkZ = packetReader.readInt()
     let position = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)

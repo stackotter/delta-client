@@ -14,7 +14,7 @@ struct WindowConfirmationClientboundPacket: ClientboundPacket {
   var actionNumber: Int16
   var accepted: Bool
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     windowId = packetReader.readByte()
     actionNumber = packetReader.readShort()
     accepted = packetReader.readBool()

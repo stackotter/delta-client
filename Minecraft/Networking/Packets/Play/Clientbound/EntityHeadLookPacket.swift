@@ -13,7 +13,7 @@ struct EntityHeadLookPacket: ClientboundPacket {
   var entityId: Int32
   var headYaw: UInt8
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     headYaw = packetReader.readAngle()
   }

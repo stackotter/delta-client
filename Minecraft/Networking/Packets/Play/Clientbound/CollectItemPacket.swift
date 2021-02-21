@@ -14,7 +14,7 @@ struct CollectItemPacket: ClientboundPacket {
   var collectorEntityId: Int32
   var pickupItemCount: Int32
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     collectedEntityId = packetReader.readVarInt()
     collectorEntityId = packetReader.readVarInt()
     pickupItemCount = packetReader.readVarInt()

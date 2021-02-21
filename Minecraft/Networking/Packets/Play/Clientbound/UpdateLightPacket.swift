@@ -19,7 +19,7 @@ struct UpdateLightPacket: ClientboundPacket {
   var skyLightArrays: [[UInt8]]
   var blockLightArrays: [[UInt8]]
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     let chunkX = packetReader.readVarInt()
     let chunkZ = packetReader.readVarInt()
     chunkPosition = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)

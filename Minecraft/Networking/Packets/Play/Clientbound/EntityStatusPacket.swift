@@ -13,7 +13,7 @@ struct EntityStatusPacket: ClientboundPacket {
   var entityId: Int32
   var status: Int8
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readInt()
     status = packetReader.readByte()
   }

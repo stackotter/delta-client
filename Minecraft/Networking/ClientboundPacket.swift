@@ -10,7 +10,7 @@ import Foundation
 protocol ClientboundPacket {
   static var id: Int { get }
   
-  init(fromReader packetReader: inout PacketReader) throws
+  init(from packetReader: inout PacketReader) throws
   
   func handle(for server: Server) throws
   

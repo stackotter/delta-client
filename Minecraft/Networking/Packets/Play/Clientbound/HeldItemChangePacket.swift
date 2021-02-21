@@ -12,7 +12,7 @@ struct HeldItemChangePacket: ClientboundPacket {
   
   var slot: Int8
   
-  init(fromReader packetReader: inout PacketReader) {
+  init(from packetReader: inout PacketReader) {
     slot = packetReader.readByte()
   }
   

@@ -19,7 +19,7 @@ struct ParticlePacket: ClientboundPacket {
   var particleData: Float
   var particleCount: Int32
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     particleId = packetReader.readInt()
     isLongDistance = packetReader.readBool()
     position = packetReader.readEntityPosition()

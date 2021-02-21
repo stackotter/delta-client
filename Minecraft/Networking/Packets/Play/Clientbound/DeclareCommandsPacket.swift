@@ -10,7 +10,7 @@ import Foundation
 struct DeclareCommandsPacket: ClientboundPacket {
   static let id: Int = 0x11
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     // IMPLEMENT: declare commands packet
   }
 }

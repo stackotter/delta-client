@@ -15,7 +15,7 @@ struct UpdateScorePacket: ClientboundPacket {
   var objectiveName: String
   var value: Int32?
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     // TODO: implement strings with max length in packetreader
     entityName = packetReader.readString()
     action = packetReader.readByte()

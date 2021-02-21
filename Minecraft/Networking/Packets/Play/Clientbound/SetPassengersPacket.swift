@@ -13,7 +13,7 @@ struct SetPassengersPacket: ClientboundPacket {
   var entityId: Int32
   var passengers: [Int32]
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     
     passengers = []

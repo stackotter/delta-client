@@ -12,7 +12,7 @@ struct CameraPacket: ClientboundPacket {
   
   var cameraEntityId: Int32
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     cameraEntityId = packetReader.readVarInt()
   }
 }

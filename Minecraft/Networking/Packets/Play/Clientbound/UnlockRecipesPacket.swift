@@ -18,7 +18,7 @@ struct UnlockRecipesPacket: ClientboundPacket {
   var recipeIds: [Identifier]
   var initRecipeIds: [Identifier]?
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     action = packetReader.readVarInt()
     craftingRecipeBookOpen = packetReader.readBool()
     craftingRecipeBookFilterActive = packetReader.readBool()

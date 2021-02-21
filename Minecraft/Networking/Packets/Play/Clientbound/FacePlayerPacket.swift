@@ -16,7 +16,7 @@ struct FacePlayerPacket: ClientboundPacket {
   var entityId: Int32?
   var entityFeetOrEyes: Int32?
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     feetOrEyes = packetReader.readVarInt()
     targetPosition = packetReader.readEntityPosition()
     isEntity = packetReader.readBool()

@@ -30,7 +30,7 @@ struct TradeListPacket: ClientboundPacket {
     var demand: Int32
   }
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     windowId = packetReader.readVarInt()
     
     trades = []

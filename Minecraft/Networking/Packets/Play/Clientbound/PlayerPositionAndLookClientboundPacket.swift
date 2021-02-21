@@ -25,7 +25,7 @@ struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
     static let xRot = PositionAndLookFlags(rawValue: 0x10)
   }
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     position = packetReader.readEntityPosition()
     look = packetReader.readEntityRotation()
     flags = PositionAndLookFlags(rawValue: packetReader.readUnsignedByte())

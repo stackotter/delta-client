@@ -13,7 +13,7 @@ struct PlayerListHeaderAndFooterPacket: ClientboundPacket {
   var header: ChatComponent
   var footer: ChatComponent
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     header = packetReader.readChat()
     footer = packetReader.readChat()
   }

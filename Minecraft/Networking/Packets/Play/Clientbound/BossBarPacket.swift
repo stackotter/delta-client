@@ -23,7 +23,7 @@ struct BossBarPacket: ClientboundPacket {
     case updateFlags(flags: UInt8)
   }
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     uuid = packetReader.readUUID()
     let actionId = packetReader.readVarInt()
     

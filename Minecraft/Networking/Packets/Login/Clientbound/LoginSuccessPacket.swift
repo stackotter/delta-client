@@ -13,7 +13,7 @@ struct LoginSuccessPacket: ClientboundPacket {
   var uuid: UUID
   var username: String
   
-  init(fromReader packetReader: inout PacketReader) {
+  init(from packetReader: inout PacketReader) {
     uuid = packetReader.readUUID()
     username = packetReader.readString()
   }

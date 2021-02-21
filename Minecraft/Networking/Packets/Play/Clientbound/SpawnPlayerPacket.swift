@@ -15,7 +15,7 @@ struct SpawnPlayerPacket: ClientboundPacket {
   var position: EntityPosition
   var rotation: EntityRotation
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     playerUUID = packetReader.readUUID()
     position = packetReader.readEntityPosition()

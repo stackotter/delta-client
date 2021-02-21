@@ -14,7 +14,7 @@ struct OpenHorseWindowPacket: ClientboundPacket {
   var numberOfSlots: Int32
   var entityId: Int32
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     windowId = packetReader.readByte()
     numberOfSlots = packetReader.readVarInt()
     entityId = packetReader.readInt()

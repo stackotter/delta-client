@@ -606,13 +606,13 @@
 			children = (
 				787D8FF0258451A8007E6441 /* ServerConnection.swift */,
 				788A578E25E1B2E400813C1B /* ConnectionState.swift */,
-				78F29B3E25AE8FAA00D85CCB /* PacketHandlingThread.swift */,
-				787D8FF525848480007E6441 /* ClientboundPacket.swift */,
-				78E919BD25D7541C00667C75 /* ServerboundPacket.swift */,
-				78E919B825D74DBF00667C75 /* PacketRegistry.swift */,
 				788A578925E1B2D000813C1B /* PacketState.swift */,
+				78F29B3E25AE8FAA00D85CCB /* PacketHandlingThread.swift */,
+				78E919B825D74DBF00667C75 /* PacketRegistry.swift */,
 				78C2D58E258597D400883DF5 /* PacketReader.swift */,
+				787D8FF525848480007E6441 /* ClientboundPacket.swift */,
 				787D900625848726007E6441 /* PacketWriter.swift */,
+				78E919BD25D7541C00667C75 /* ServerboundPacket.swift */,
 				787D8FFD2584857A007E6441 /* Packets */,
 			);
 			path = Networking;

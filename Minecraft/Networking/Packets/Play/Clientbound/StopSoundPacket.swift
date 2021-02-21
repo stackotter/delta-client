@@ -14,7 +14,7 @@ struct StopSoundPacket: ClientboundPacket {
   var source: Int32?
   var sound: Identifier?
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     flags = packetReader.readByte()
     if flags & 0x1 == 0x1 {
       source = packetReader.readVarInt()

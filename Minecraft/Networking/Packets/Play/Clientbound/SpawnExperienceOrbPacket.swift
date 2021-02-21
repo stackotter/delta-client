@@ -14,7 +14,7 @@ struct SpawnExperienceOrbPacket: ClientboundPacket {
   var position: EntityPosition
   var count: Int16
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     position = packetReader.readEntityPosition()
     count = packetReader.readShort()

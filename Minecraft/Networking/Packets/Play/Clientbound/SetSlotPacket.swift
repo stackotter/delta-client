@@ -14,7 +14,7 @@ struct SetSlotPacket: ClientboundPacket {
   var slot: Int16
   var slotData: Slot
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     windowId = packetReader.readByte()
     slot = packetReader.readShort()
     slotData = try packetReader.readSlot()

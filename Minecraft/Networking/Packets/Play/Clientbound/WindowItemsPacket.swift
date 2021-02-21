@@ -13,7 +13,7 @@ struct WindowItemsPacket: ClientboundPacket {
   var windowId: UInt8
   var slotData: [Slot]
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     windowId = packetReader.readUnsignedByte()
     
     slotData = []

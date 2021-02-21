@@ -44,7 +44,7 @@ struct AdvancementsPacket: ClientboundPacket {
     var dateOfAchieving: Int64?
   }
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     shouldReset = packetReader.readBool()
     
     let mappingSize = packetReader.readVarInt()

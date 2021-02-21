@@ -12,9 +12,7 @@ struct LoginStartPacket: ServerboundPacket {
   
   var username: String
   
-  func toBytes() -> [UInt8] {
-    var writer = PacketWriter(packetId: id)
+  func writePayload(to writer: inout PacketWriter) {
     writer.writeString(username)
-    return writer.pack()
   }
 }

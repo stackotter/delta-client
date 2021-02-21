@@ -15,7 +15,7 @@ struct ScoreboardObjectivePacket: ClientboundPacket {
   var objectiveValue: ChatComponent?
   var type: Int32?
 
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     objectiveName = packetReader.readString()
     mode = packetReader.readUnsignedByte()
     if mode == 0 || mode == 2 {

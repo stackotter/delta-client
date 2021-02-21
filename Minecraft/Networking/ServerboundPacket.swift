@@ -10,11 +10,12 @@ import Foundation
 protocol ServerboundPacket {
   static var id: Int { get }
   
-  func toBytes() -> [UInt8]
+  // writes payload to packetwriter (everything after packet id)
+  func writePayload(to writer: inout PacketWriter)
 }
 
 extension ServerboundPacket {
   var id: Int {
-    return type(of: self).id
+    type(of: self).id
   }
 }

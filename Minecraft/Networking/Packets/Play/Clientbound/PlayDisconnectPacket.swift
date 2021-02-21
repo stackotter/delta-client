@@ -13,7 +13,7 @@ struct PlayDisconnectPacket: ClientboundPacket {
   
   var reason: ChatComponent
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     reason = packetReader.readChat()
   }
   

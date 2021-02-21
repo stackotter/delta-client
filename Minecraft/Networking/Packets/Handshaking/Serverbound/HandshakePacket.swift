@@ -21,12 +21,10 @@ struct HandshakePacket: ServerboundPacket {
     case login = 2
   }
   
-  func toBytes() -> [UInt8] {
-    var writer = PacketWriter(packetId: id)
+  func writePayload(to writer: inout PacketWriter) {
     writer.writeVarInt(Int32(protocolVersion))
     writer.writeString(serverAddr)
     writer.writeUnsignedShort(UInt16(serverPort))
     writer.writeVarInt(Int32(nextState.rawValue))
-    return writer.pack()
   }
 }

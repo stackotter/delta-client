@@ -15,7 +15,7 @@ struct BlockActionPacket: ClientboundPacket {
   var actionParam: UInt8
   var blockType: Int32 // this is the block id not the block state
   
-  init(fromReader packetReader: inout PacketReader) throws {
+  init(from packetReader: inout PacketReader) throws {
     location = packetReader.readPosition()
     actionId = packetReader.readUnsignedByte()
     actionParam = packetReader.readUnsignedByte()
