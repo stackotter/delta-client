@@ -15,7 +15,7 @@ class ServerConnection {
   var socket: NWConnection
   var networkQueue: DispatchQueue
   
-  var packetHandlingPool: PacketHandlingThread
+  var packetHandlingThread: PacketHandlingThread
   
   var eventManager: EventManager
   var locale: MinecraftLocale
@@ -42,11 +42,11 @@ class ServerConnection {
     self.networkQueue = DispatchQueue(label: "networkUpdates")
     self.socket = ServerConnection.createNWConnection(fromHost: self.host, andPort: self.port)
     
-    self.packetHandlingPool = PacketHandlingThread(eventManager: eventManager, locale: self.locale, packetRegistry: self.packetRegistry)
+    self.packetHandlingThread = PacketHandlingThread(eventManager: eventManager, locale: self.locale, packetRegistry: self.packetRegistry)
   }
   
   func setHandler(_ handler: @escaping (PacketReader, PacketState) -> Void) {
-    packetHandlingPool.setHandler(handler)
+    packetHandlingThread.setHandler(handler)
   }
   
   private func stateUpdateHandler(newState: NWConnection.State) {
@@ -169,8 +169,7 @@ class ServerConnection {
             packet.append(byte)
             
             if (packet.count == length) {
-              self.packetHandlingPool.handleBytes(packet, state: self.serverState)
-              self.packetHandlingPool.handler(PacketReader(bytes: packet, locale: self.locale), self.serverState)
+              self.packetHandlingThread.handleBytes(packet, state: self.serverState)
               packet = []
               length = -1
               lengthBytes = []
