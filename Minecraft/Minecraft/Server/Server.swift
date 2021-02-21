@@ -54,7 +54,7 @@ class Server: Hashable {
     self.packetRegistry = PacketRegistry.createDefault()
     
     // TODO_LATER: fix this once config is cleaned up
-    self.player = Player(username: "stampy654")
+    self.player = Player(username: "stampy876")
     
     self.eventManager.registerEventHandler(handleEvents)
     self.connection.setHandler(handlePacket)
@@ -88,7 +88,7 @@ class Server: Hashable {
     eventManager.registerOneTimeEventHandler({
       (event) in
       self.connection.handshake(nextState: .login) {
-        let loginStart = LoginStartPacket(username: "stampy654")
+        let loginStart = LoginStartPacket(username: self.player.username)
         self.connection.sendPacket(loginStart, callback: .contentProcessed({
           (error) in
           Logger.debug("sent login start packet")

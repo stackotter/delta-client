@@ -26,6 +26,8 @@ Currently it uses no external libraries so the app is currently less than a mb.
   - [ ] status
   - [ ] login
   - [ ] play
+    - [ ] entities
+    - [ ] everything else
 - [ ] Complete networking (so that i don't need to touch it again)
 - [ ] Create basic text interface
   - [ ] chat

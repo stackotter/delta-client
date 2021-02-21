@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 // pretty much the backend class for the whole game
 class Client {
@@ -32,5 +33,38 @@ class Client {
   // TEMP
   func play() {
     server.login()
+  }
+  
+  func runCommand(_ command: String) {
+    let logger = Logger(subsystem: "Minecraft", category: "commands")
+    logger.log("running command `\(command)`")
+    let parts = command.split(separator: " ")
+    if let command = parts.first {
+      let options = parts.dropFirst()
+      switch command {
+        case "say":
+          let message = options.joined(separator: " ")
+          let packet = ChatMessageServerboundPacket(message: message)
+          server.sendPacket(packet)
+        case "useitem":
+          let packet = UseItemPacket(hand: .mainHand)
+          server.sendPacket(packet)
+          Logger.log("used item in main hand")
+        case "swing":
+          if options.count > 0 {
+            if options.first == "offhand" {
+              let packet = AnimationServerboundPacket(hand: .offHand)
+              server.sendPacket(packet)
+              Logger.log("swung off hand")
+              return
+            }
+          }
+          let packet = AnimationServerboundPacket(hand: .mainHand)
+          server.sendPacket(packet)
+          Logger.log("swung main hand")
+        default:
+          Logger.log("invalid command")
+      }
+    }
   }
 }
