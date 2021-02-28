@@ -17,11 +17,13 @@ class Server: Hashable {
   
   var currentWorldName: Identifier?
   var worlds: [Identifier: World] = [:]
-  var currentWorld: World? {
+  var currentWorld: World {
     if let worldName = currentWorldName {
-      return worlds[worldName]
+      if let world = worlds[worldName] {
+        return world
+      }
     }
-    return nil
+    return World(config: WorldConfig.createDefault())
   }
   
   // TODO: maybe use a Registry object that stores all registries for neater code
@@ -30,11 +32,10 @@ class Server: Hashable {
   
   var player: Player
   
-  var config: ServerConfig? = nil
+  var config: ServerConfig = ServerConfig.createDefault()
   var state: ServerState = .idle
   
-  // NOTE: maybe this could be consolidated to a struct if there are other play state kinda variables
-  var downloadingTerrain = false
+  var downloadingTerrain = true
   
   var difficulty: Difficulty = .normal
   var isDifficultyLocked: Bool = true
@@ -42,8 +43,6 @@ class Server: Hashable {
   var timeOfDay: Int64 = -1
   
   var tabList: TabList = TabList()
-  
-  var testChunk: Data = Data()
   
   enum ServerState {
     case idle

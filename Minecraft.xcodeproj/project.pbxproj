@@ -126,7 +126,6 @@
 		784CCB1225AD3545004B3182 /* ShieldDecorationRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1125AD3545004B3182 /* ShieldDecorationRecipe.swift */; };
 		784CCB1725AD355B004B3182 /* ShulkerBoxColouringRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1625AD355B004B3182 /* ShulkerBoxColouringRecipe.swift */; };
 		784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1C25AD35EB004B3182 /* RecipeRegistry.swift */; };
-		784CEE5A25EA139D00F0D6AB /* ChunkUnpacker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CEE5925EA139D00F0D6AB /* ChunkUnpacker.swift */; };
 		784D2CE125E9B7A000157FE8 /* TabList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D2CE025E9B7A000157FE8 /* TabList.swift */; };
 		784D2CE625E9B8A200157FE8 /* PlayerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D2CE525E9B8A200157FE8 /* PlayerInfo.swift */; };
 		784D2CEB25E9B8FA00157FE8 /* PlayerProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D2CEA25E9B8FA00157FE8 /* PlayerProperty.swift */; };
@@ -402,7 +401,6 @@
 		784CCB1125AD3545004B3182 /* ShieldDecorationRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldDecorationRecipe.swift; sourceTree = "<group>"; };
 		784CCB1625AD355B004B3182 /* ShulkerBoxColouringRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShulkerBoxColouringRecipe.swift; sourceTree = "<group>"; };
 		784CCB1C25AD35EB004B3182 /* RecipeRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRegistry.swift; sourceTree = "<group>"; };
-		784CEE5925EA139D00F0D6AB /* ChunkUnpacker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkUnpacker.swift; sourceTree = "<group>"; };
 		784D2CE025E9B7A000157FE8 /* TabList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabList.swift; sourceTree = "<group>"; };
 		784D2CE525E9B8A200157FE8 /* PlayerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerInfo.swift; sourceTree = "<group>"; };
 		784D2CEA25E9B8FA00157FE8 /* PlayerProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProperty.swift; sourceTree = "<group>"; };
@@ -756,7 +754,6 @@
 				784D2CE525E9B8A200157FE8 /* PlayerInfo.swift */,
 				784D2CEA25E9B8FA00157FE8 /* PlayerProperty.swift */,
 				78BE299625E09E7D0058CE11 /* Config.swift */,
-				784CEE5925EA139D00F0D6AB /* ChunkUnpacker.swift */,
 			);
 			path = Minecraft;
 			sourceTree = "<group>";
@@ -1425,7 +1422,6 @@
 				7809941025E2200500DFDC9F /* SetDifficultyPacket.swift in Sources */,
 				784B395F25A1BCA400556E3E /* HeldItemChangePacket.swift in Sources */,
 				784CCAD525AD3417004B3182 /* ArmorDyeRecipe.swift in Sources */,
-				784CEE5A25EA139D00F0D6AB /* ChunkUnpacker.swift in Sources */,
 				7843EBAC25E22BA800AD42A7 /* PlayerAbilitiesServerboundPacket.swift in Sources */,
 				78DB24DA25C51DEF00F7D70B /* PluginMessagePacket.swift in Sources */,
 				787D8FFF258485A7007E6441 /* HandshakePacket.swift in Sources */,

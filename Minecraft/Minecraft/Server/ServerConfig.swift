@@ -18,4 +18,18 @@ struct ServerConfig {
   var viewDistance: Int32
   var useReducedDebugInfo: Bool
   var enableRespawnScreen: Bool
+  
+  // generates a default config for before the join game packet is received
+  // maybe there's a better way to deal with this
+  static func createDefault() -> ServerConfig {
+    return ServerConfig(
+      worldCount: 0,
+      worldNames: [],
+      dimensionCodec: NBTCompound(),
+      maxPlayers: 0,
+      viewDistance: 0,
+      useReducedDebugInfo: false,
+      enableRespawnScreen: false
+    )
+  }
 }

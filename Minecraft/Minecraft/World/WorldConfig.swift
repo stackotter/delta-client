@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 struct WorldConfig {
   var worldName: Identifier
@@ -13,4 +14,15 @@ struct WorldConfig {
   var hashedSeed: Int64
   var isDebug: Bool
   var isFlat: Bool
+  
+  static func createDefault() -> WorldConfig {
+    Logger.debug("created default world config. this is a sign that a world was accessed before it existed")
+    return WorldConfig(
+      worldName: Identifier(name: ""),
+      dimension: Identifier(name: ""),
+      hashedSeed: 0,
+      isDebug: false,
+      isFlat: false
+    )
+  }
 }

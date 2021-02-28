@@ -19,7 +19,7 @@ struct TimeUpdatePacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    server.currentWorld?.age = worldAge
+    server.currentWorld.age = worldAge
     server.timeOfDay = timeOfDay
   }
 }

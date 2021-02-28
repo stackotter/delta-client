@@ -17,4 +17,8 @@ struct UnloadChunkPacket: ClientboundPacket {
     let chunkZ = packetReader.readInt()
     chunkPosition = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
   }
+  
+  func handle(for server: Server) {
+    server.currentWorld.removeChunk(at: chunkPosition)
+  }
 }

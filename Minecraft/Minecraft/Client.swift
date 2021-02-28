@@ -40,7 +40,9 @@ class Client {
     logger.log("running command `\(command)`")
     let parts = command.split(separator: " ")
     if let command = parts.first {
-      let options = parts.dropFirst()
+      let options = parts.dropFirst().map {
+        return String($0)
+      }
       switch command {
         case "say":
           let message = options.joined(separator: " ")
@@ -68,9 +70,22 @@ class Client {
             Logger.log("[\(playerInfo.value.displayName?.toText() ?? playerInfo.value.name)] ping=\(playerInfo.value.ping)ms")
           }
           Logger.log("-- END TABLIST --")
-        case "unpackchunk":
-          var chunkUnpacker = ChunkUnpacker()
-          chunkUnpacker.unpack([UInt8](server.testChunk))
+        case "getblock":
+          if options.count == 3 {
+            guard
+              let x = Int32(options[0]),
+              let y = Int32(options[1]),
+              let z = Int32(options[2])
+            else {
+              Logger.log("x y z must be integers")
+              return
+            }
+            let position = Position(x: x, y: y, z: z)
+            let block = server.currentWorld.getBlock(at: position)
+            Logger.log("block has state \(block)")
+          } else {
+            Logger.log("usage: getblock x y z")
+          }
         default:
           Logger.log("invalid command")
       }

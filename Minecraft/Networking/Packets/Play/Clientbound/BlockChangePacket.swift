@@ -17,4 +17,8 @@ struct BlockChangePacket: ClientboundPacket {
     location = packetReader.readPosition()
     blockId = packetReader.readVarInt()
   }
+  
+  func handle(for server: Server) throws {
+    server.currentWorld.setBlock(at: location, to: UInt16(blockId))
+  }
 }

@@ -16,92 +16,93 @@ struct ChunkData {
   
   // this packet reader contains a packet as described by https://wiki.vg/Protocol#Chunk_Data
   // chunkX and chunkZ have already been read
-  var data: Buffer
+  var buf: Buffer
   
-  func unpack() throws {
-//    var reader = PacketReader(buffer: data, locale: MinecraftLocale.empty())
-//    let fullChunk = reader.readBool()
-//    let ignoreOldData = reader.readBool()
-//    _ = ignoreOldData
-//    let primaryBitMask = reader.readVarInt()
-//    let heightMaps = try reader.readNBTTag() // height map, dunno what it's used for yet
-//
-//    // Decoding biomes
-//    var biomes: [Int32] = []
-//    if fullChunk {
-//      // TODO_LATER: parse biome data
-//      for _ in 0..<1024 {
-//        let biome = reader.readInt()
-//        biomes.append(biome)
-//      }
-//    }
-//
-//    // Decoding data section
-//    _ = reader.readVarInt() // this reads the data size, it's not necessary to use it to read the data though
-//    var chunkSections: [ChunkSection] = []
-//    var numSections = 0
-//    for i in 0..<16 {
-//      numSections += Int(primaryBitMask >> i) & 0x01
-//    }
-//    for _ in 0..<numSections {
-//      // read chunk section:
-//      let blockCount = reader.readShort() // used for lighting purposes apparently
-//      _ = blockCount
-//      var bitsPerBlock = Int(reader.readByte())
-//
-//      if bitsPerBlock < 4 {
-//        bitsPerBlock = 4
-//      }
-//
-//      // reading palette:
-//      var palette: [Int32]? = nil
-//      if bitsPerBlock <= 8 {
-//        palette = []
-//        let paletteLength = reader.readVarInt()
-//        for _ in 0..<paletteLength {
-//          palette!.append(reader.readVarInt())
-//        }
-//      }
-//
-//      // reading data array:
-//      let dataArrayLength = reader.readVarInt()
-//      var dataArray: [Int64] = []
-//      for _ in 0..<dataArrayLength {
-//        dataArray.append(reader.readLong())
-//      }
-//      let ids = CompactedLongArray(dataArray, bitsPerEntry: bitsPerBlock, numEntries: 4096).decompact()
-//      var blockIds: [Int32] = []
-//      if palette != nil {
-//        for id in ids {
-//          blockIds.append(palette![Int(id)])
-//        }
-//      } else {
-//        blockIds = ids
-//      }
-//      let section = ChunkSection(blockIds: ids)
-//      chunkSections.append(section)
-//    }
-//
-//    // Decoding block entities
-//    let numBlockEntities = reader.readVarInt()
-//    var blockEntities: [BlockEntity] = []
-//    for _ in 0..<numBlockEntities {
-//      let blockEntityNBT = try reader.readNBTTag()
-//      do {
-//        let x: Int32 = try blockEntityNBT.get("x")
-//        let y: Int32 = try blockEntityNBT.get("y")
-//        let z: Int32 = try blockEntityNBT.get("z")
-//        let position = Position(x: x, y: y, z: z)
-//        let identifierString: String = try! blockEntityNBT.get("id")
-//        let identifier = try! Identifier(identifierString)
-//        let blockEntity = BlockEntity(position: position, identifier: identifier, nbt: blockEntityNBT)
-//        blockEntities.append(blockEntity)
-//      } catch {
-//        Logger.log("error decoding block entities: \(error.localizedDescription)")
-//      }
-//    }
-//
-//    let chunk = Chunk(position: position, heightMaps: heightMaps, sections: chunkSections, blockEntities: blockEntities, bitMask: primaryBitMask)
-//    return chunk
+  func unpack() throws -> Chunk {
+    do {
+      let start = CFAbsoluteTimeGetCurrent()
+      var packetReader = PacketReader(buffer: buf, locale: MinecraftLocale.empty())
+      
+      // this first bit isn't too slow (cause it all only happens once
+      let fullChunk = packetReader.readBool()
+      let ignoreOldData = packetReader.readBool()
+      let primaryBitMask = packetReader.readVarInt()
+      let heightMaps = try packetReader.readNBTTag()
+      
+      var biomes: [UInt8] = []
+      if fullChunk {
+        // HACK: this could cause issues down the line because it assumes no biome id is greater than 256
+        // every fourth byte of this is a biome id (biome ids are stored as big endian ints but are actually never bigger than an int)
+        // will have to write wrapper over it to access only all the fourth bytes
+        biomes = packetReader.readByteArray(length: 1024*4)
+      }
+      
+      let _ = packetReader.readVarInt() // data length (not used)
+      
+      let sections = readChunkSections(&packetReader, primaryBitMask: primaryBitMask)
+      
+      // read block entities
+      let numBlockEntities = packetReader.readVarInt()
+      var blockEntities: [BlockEntity] = []
+      for _ in 0..<numBlockEntities {
+        let blockEntityNBT = try packetReader.readNBTTag()
+        do {
+          let x: Int32 = try blockEntityNBT.get("x")
+          let y: Int32 = try blockEntityNBT.get("y")
+          let z: Int32 = try blockEntityNBT.get("z")
+          let position = Position(x: x, y: y, z: z)
+          let identifierString: String = try! blockEntityNBT.get("id")
+          let identifier = try! Identifier(identifierString)
+          let blockEntity = BlockEntity(position: position, identifier: identifier, nbt: blockEntityNBT)
+          blockEntities.append(blockEntity)
+        } catch {
+          Logger.log("error decoding block entities: \(error.localizedDescription)")
+        }
+      }
+      let elapsed = CFAbsoluteTimeGetCurrent() - start
+      Logger.log(String(format: "completed chunk in %.2fms", elapsed*1000))
+      
+      let chunk = Chunk(position: position, heightMaps: heightMaps, ignoreOldData: ignoreOldData, biomes: biomes, sections: sections, blockEntities: blockEntities)
+      return chunk
+    } catch {
+      Logger.log("failed to unpack chunk: \(error.localizedDescription)")
+      throw error
+    }
+  }
+  
+  func readChunkSections(_ packetReader: inout PacketReader, primaryBitMask: Int32) -> [ChunkSection] {
+    var sections: [ChunkSection] = []
+    for i in 0..<16 { // TODO_LATER: 16 hardcoded here could break future versions
+      if primaryBitMask >> i & 0x1 == 0x1 {
+        let blockCount = packetReader.readShort()
+        let bitsPerBlock = packetReader.readUnsignedByte()
+        
+        var palette: [UInt16] = []
+        if bitsPerBlock <= 8 { // use indirect packet (otherwise indirect packet)
+          let paletteLength = packetReader.readVarInt()
+          for _ in 0..<paletteLength {
+            palette.append(UInt16(packetReader.readVarInt()))
+          }
+        }
+        
+        let dataArrayLength = packetReader.readVarInt()
+        var dataArray: [UInt64] = []
+        for _ in 0..<dataArrayLength {
+          dataArray.append(packetReader.buf.readLong(endian: .big))
+        }
+        
+        let blocks: [UInt16] = CompactedLongArray(dataArray, bitsPerEntry: UInt64(bitsPerBlock), numEntries: 4096).decompact().map {
+          // i've decided that for now memory space is more important than the performance (storing as uint16 instead of uint16)
+          // i wanna try figuring out a more efficient way to convert to uint16 from uint64 (something using pointers probably)
+          return UInt16($0)
+        }
+        let section = ChunkSection(blockIds: blocks, palette: palette, blockCount: blockCount)
+        sections.append(section)
+      } else {
+        let section = ChunkSection() // empty section
+        sections.append(section)
+      }
+    }
+    return sections
   }
 }

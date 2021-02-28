@@ -31,8 +31,7 @@ struct RespawnPacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    server.currentWorldName = worldName
-    if let world = server.currentWorld {
+    if let world = server.worlds[worldName] {
       world.config = WorldConfig(
         worldName: worldName, dimension: dimension,
         hashedSeed: hashedSeed, isDebug: isDebug, isFlat: isFlat
@@ -46,6 +45,7 @@ struct RespawnPacket: ClientboundPacket {
       server.worlds[worldName] = world
       server.currentWorldName = worldName
     }
+    server.currentWorldName = worldName
     server.player.gamemode = gamemode
   }
 }
