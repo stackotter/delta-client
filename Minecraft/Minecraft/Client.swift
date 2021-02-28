@@ -52,8 +52,7 @@ class Client {
           Logger.log("used item in main hand")
         case "swing":
           if options.count > 0 {
-            if options.firster
-                == "offhand" {
+            if options.first == "offhand" {
               let packet = AnimationServerboundPacket(hand: .offHand)
               server.sendPacket(packet)
               Logger.log("swung off hand")
@@ -63,6 +62,15 @@ class Client {
           let packet = AnimationServerboundPacket(hand: .mainHand)
           server.sendPacket(packet)
           Logger.log("swung main hand")
+        case "tablist":
+          Logger.log("-- BEGIN TABLIST --")
+          for playerInfo in server.tabList.players {
+            Logger.log("[\(playerInfo.value.displayName?.toText() ?? playerInfo.value.name)] ping=\(playerInfo.value.ping)ms")
+          }
+          Logger.log("-- END TABLIST --")
+        case "unpackchunk":
+          var chunkUnpacker = ChunkUnpacker()
+          chunkUnpacker.unpack([UInt8](server.testChunk))
         default:
           Logger.log("invalid command")
       }

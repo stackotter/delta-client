@@ -19,4 +19,10 @@ struct SetExperiencePacket: ClientboundPacket {
     level = packetReader.readVarInt()
     totalExperience = packetReader.readVarInt()
   }
+  
+  func handle(for server: Server) throws {
+    server.player.experienceBar = experienceBar
+    server.player.experienceLevel = level
+    server.player.totalExperience = totalExperience
+  }
 }

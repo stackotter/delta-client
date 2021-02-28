@@ -1,5 +1,5 @@
 //
-//  PlayerFlags.swift
+//  PlayerAbilities.swift
 //  Minecraft
 //
 //  Created by Rohan van Klinken on 30/1/21.

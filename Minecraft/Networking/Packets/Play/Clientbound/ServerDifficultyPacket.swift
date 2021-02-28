@@ -17,5 +17,10 @@ struct ServerDifficultyPacket: ClientboundPacket {
     difficulty = Difficulty(rawValue: packetReader.readUnsignedByte())!
     isLocked = packetReader.readBool()
   }
+  
+  func handle(for server: Server) throws {
+    server.difficulty = difficulty
+    server.isDifficultyLocked = isLocked
+  }
 }
 

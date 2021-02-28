@@ -17,4 +17,9 @@ struct TimeUpdatePacket: ClientboundPacket {
     worldAge = packetReader.readLong()
     timeOfDay = packetReader.readLong()
   }
+  
+  func handle(for server: Server) throws {
+    server.currentWorld?.age = worldAge
+    server.timeOfDay = timeOfDay
+  }
 }

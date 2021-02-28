@@ -19,4 +19,16 @@ struct UpdateHealthPacket: ClientboundPacket {
     food = packetReader.readVarInt() 
     foodSaturation = packetReader.readFloat()
   }
+  
+  func handle(for server: Server) throws {
+    server.player.health = health
+    server.player.food = food
+    server.player.saturation = foodSaturation
+    
+    if health == -1 {
+      // handle death
+      let clientStatus = ClientStatusPacket(action: .performRespawn)
+      server.sendPacket(clientStatus)
+    }
+  }
 }

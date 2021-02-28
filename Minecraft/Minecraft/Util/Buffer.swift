@@ -43,24 +43,18 @@ struct Buffer {
     index += n
   }
   
-  mutating func readBitPattern(n: Int, endian: Endian) -> UInt64{
-    let bytes: [UInt8] = readBytes(n: n)
-    var bitPattern: UInt64 = 0
-    
-    switch endian {
-      case .big:
-        for byte in bytes {
-          bitPattern <<= 8
-          bitPattern |= UInt64(byte)
-        }
-      case .little:
-        for byte in bytes {
-          bitPattern >>= 8
-          bitPattern |= UInt64(byte) << ((n - 1)*8)
-        }
+  mutating func readBitPattern(n: Int, endian: Endian) -> UInt64 {
+    var bytes = readBytes(n: n)
+    if bytes.count < 8 {
+      let padLength = 8 - bytes.count
+      bytes = [UInt8](repeating: 0, count: padLength) + bytes
     }
+    let bitPattern = UnsafeRawPointer(bytes).load(as: UInt64.self)
     
-    return bitPattern
+    if endian == .big {
+      return bitPattern.bigEndian
+    }
+    return bitPattern.littleEndian
   }
   
   mutating func readByte() -> UInt8 {

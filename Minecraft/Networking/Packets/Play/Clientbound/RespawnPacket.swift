@@ -27,6 +27,25 @@ struct RespawnPacket: ClientboundPacket {
     previousGamemode = Gamemode(rawValue: packetReader.readByte())!
     isDebug = packetReader.readBool()
     isFlat = packetReader.readBool()
-    copyMetadata = packetReader.readBool()
+    copyMetadata = packetReader.readBool() // TODO_LATER: not used yet
+  }
+  
+  func handle(for server: Server) throws {
+    server.currentWorldName = worldName
+    if let world = server.currentWorld {
+      world.config = WorldConfig(
+        worldName: worldName, dimension: dimension,
+        hashedSeed: hashedSeed, isDebug: isDebug, isFlat: isFlat
+      )
+    } else {
+      let worldConfig = WorldConfig(
+        worldName: worldName, dimension: dimension,
+        hashedSeed: hashedSeed, isDebug: isDebug, isFlat: isFlat
+      )
+      let world = World(config: worldConfig)
+      server.worlds[worldName] = world
+      server.currentWorldName = worldName
+    }
+    server.player.gamemode = gamemode
   }
 }

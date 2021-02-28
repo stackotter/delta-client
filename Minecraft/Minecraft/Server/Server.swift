@@ -36,6 +36,15 @@ class Server: Hashable {
   // NOTE: maybe this could be consolidated to a struct if there are other play state kinda variables
   var downloadingTerrain = false
   
+  var difficulty: Difficulty = .normal
+  var isDifficultyLocked: Bool = true
+  
+  var timeOfDay: Int64 = -1
+  
+  var tabList: TabList = TabList()
+  
+  var testChunk: Data = Data()
+  
   enum ServerState {
     case idle
     case connecting

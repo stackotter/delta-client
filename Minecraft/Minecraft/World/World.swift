@@ -12,6 +12,7 @@ import os
 class World {
   var chunks: [ChunkPosition: Chunk] = [:]
   var config: WorldConfig
+  var age: Int64 = -1
   
   init(config: WorldConfig) {
     self.config = config

@@ -14,25 +14,11 @@ struct PlayerInfoPacket: ClientboundPacket {
   var playerActions: [(uuid: UUID, action: PlayerInfoAction)]
   
   enum PlayerInfoAction {
-    case addPlayer(action: AddPlayerAction)
-    case updateGamemode(gamemode: Int32)
+    case addPlayer(playerInfo: PlayerInfo)
+    case updateGamemode(gamemode: Gamemode)
     case updateLatency(ping: Int32)
     case updateDisplayName(displayName: ChatComponent?)
     case removePlayer
-    
-    struct AddPlayerAction {
-      var name: String
-      var properties: [PlayerProperty]
-      var gamemode: Int32
-      var ping: Int32
-      var displayName: ChatComponent?
-    }
-  }
-  
-  struct PlayerProperty {
-    var name: String
-    var value: String
-    var signature: String?
   }
   
   init(from packetReader: inout PacketReader) throws {
@@ -57,16 +43,16 @@ struct PlayerInfoPacket: ClientboundPacket {
             let property = PlayerProperty(name: propertyName, value: value, signature: signature)
             properties.append(property)
           }
-          let gamemode = packetReader.readVarInt()
+          let gamemode = Gamemode(rawValue: Int8(packetReader.readVarInt())) ?? .none
           let ping = packetReader.readVarInt()
           var displayName: ChatComponent? = nil
           if packetReader.readBool() {
             displayName = packetReader.readChat()
           }
-          let addPlayerAction = PlayerInfoAction.AddPlayerAction(name: playerName, properties: properties, gamemode: gamemode, ping: ping, displayName: displayName)
-          playerAction = .addPlayer(action: addPlayerAction)
+          let playerInfo = PlayerInfo(uuid: uuid, name: playerName, properties: properties, gamemode: gamemode, ping: ping, displayName: displayName)
+          playerAction = .addPlayer(playerInfo: playerInfo)
         case 1: // update gamemode
-          let gamemode = packetReader.readVarInt()
+          let gamemode = Gamemode(rawValue: Int8(packetReader.readVarInt())) ?? .none
           playerAction = .updateGamemode(gamemode: gamemode)
         case 2: // update latency
           let ping = packetReader.readVarInt()
@@ -84,6 +70,26 @@ struct PlayerInfoPacket: ClientboundPacket {
           continue
       }
       playerActions.append((uuid: uuid, action: playerAction))
+    }
+  }
+  
+  func handle(for server: Server) throws {
+    for playerAction in playerActions {
+      let uuid = playerAction.uuid
+      let action = playerAction.action
+      
+      switch action {
+        case let .addPlayer(playerInfo: playerInfo):
+          server.tabList.addPlayer(playerInfo)
+        case let .updateGamemode(gamemode: gamemode):
+          server.tabList.updateGamemode(gamemode, uuid: uuid)
+        case let .updateLatency(ping: ping):
+          server.tabList.updateLatency(ping, uuid: uuid)
+        case let .updateDisplayName(displayName: displayName):
+          server.tabList.updateDisplayName(displayName, uuid: uuid)
+        case .removePlayer:
+          server.tabList.removePlayer(uuid: uuid)
+      }
     }
   }
 }

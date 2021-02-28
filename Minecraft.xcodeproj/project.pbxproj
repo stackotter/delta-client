@@ -126,6 +126,10 @@
 		784CCB1225AD3545004B3182 /* ShieldDecorationRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1125AD3545004B3182 /* ShieldDecorationRecipe.swift */; };
 		784CCB1725AD355B004B3182 /* ShulkerBoxColouringRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1625AD355B004B3182 /* ShulkerBoxColouringRecipe.swift */; };
 		784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCB1C25AD35EB004B3182 /* RecipeRegistry.swift */; };
+		784CEE5A25EA139D00F0D6AB /* ChunkUnpacker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CEE5925EA139D00F0D6AB /* ChunkUnpacker.swift */; };
+		784D2CE125E9B7A000157FE8 /* TabList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D2CE025E9B7A000157FE8 /* TabList.swift */; };
+		784D2CE625E9B8A200157FE8 /* PlayerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D2CE525E9B8A200157FE8 /* PlayerInfo.swift */; };
+		784D2CEB25E9B8FA00157FE8 /* PlayerProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D2CEA25E9B8FA00157FE8 /* PlayerProperty.swift */; };
 		784D97912587604700FC89F8 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D97902587604700FC89F8 /* ConfigManager.swift */; };
 		784F4B7825B7F6AC00FE21AA /* ServerPinger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784F4B7725B7F6AC00FE21AA /* ServerPinger.swift */; };
 		784F4B7D25B7FC0A00FE21AA /* ServerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784F4B7C25B7FC0A00FE21AA /* ServerInfo.swift */; };
@@ -398,6 +402,10 @@
 		784CCB1125AD3545004B3182 /* ShieldDecorationRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldDecorationRecipe.swift; sourceTree = "<group>"; };
 		784CCB1625AD355B004B3182 /* ShulkerBoxColouringRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShulkerBoxColouringRecipe.swift; sourceTree = "<group>"; };
 		784CCB1C25AD35EB004B3182 /* RecipeRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRegistry.swift; sourceTree = "<group>"; };
+		784CEE5925EA139D00F0D6AB /* ChunkUnpacker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkUnpacker.swift; sourceTree = "<group>"; };
+		784D2CE025E9B7A000157FE8 /* TabList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabList.swift; sourceTree = "<group>"; };
+		784D2CE525E9B8A200157FE8 /* PlayerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerInfo.swift; sourceTree = "<group>"; };
+		784D2CEA25E9B8FA00157FE8 /* PlayerProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProperty.swift; sourceTree = "<group>"; };
 		784D97902587604700FC89F8 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
 		784F4B7725B7F6AC00FE21AA /* ServerPinger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerPinger.swift; sourceTree = "<group>"; };
 		784F4B7C25B7FC0A00FE21AA /* ServerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfo.swift; sourceTree = "<group>"; };
@@ -744,7 +752,11 @@
 				78764DF425AD9FCA00AE8716 /* Client.swift */,
 				7889A9E825C4EED80007B2D7 /* Constants.swift */,
 				784D97902587604700FC89F8 /* ConfigManager.swift */,
+				784D2CE025E9B7A000157FE8 /* TabList.swift */,
+				784D2CE525E9B8A200157FE8 /* PlayerInfo.swift */,
+				784D2CEA25E9B8FA00157FE8 /* PlayerProperty.swift */,
 				78BE299625E09E7D0058CE11 /* Config.swift */,
+				784CEE5925EA139D00F0D6AB /* ChunkUnpacker.swift */,
 			);
 			path = Minecraft;
 			sourceTree = "<group>";
@@ -1289,6 +1301,7 @@
 				78CC6E7725D2669400CA3DFF /* BlockChangePacket.swift in Sources */,
 				784CCB1225AD3545004B3182 /* ShieldDecorationRecipe.swift in Sources */,
 				78CC6E8425D2698A00CA3DFF /* ChatMessageClientboundPacket.swift in Sources */,
+				784D2CEB25E9B8FA00157FE8 /* PlayerProperty.swift in Sources */,
 				784CCAE025AD343F004B3182 /* BookCloningRecipe.swift in Sources */,
 				7809941A25E2207900DFDC9F /* ClientStatusPacket.swift in Sources */,
 				7843EBA725E22B4000AD42A7 /* CraftRecipeRequestPacket.swift in Sources */,
@@ -1322,6 +1335,7 @@
 				78F29B3A25AE84CE00D85CCB /* Position.swift in Sources */,
 				7824E92325E100FA009F0197 /* CollectItemPacket.swift in Sources */,
 				78E919E925D7FCA900667C75 /* EntityRotationPacket.swift in Sources */,
+				784D2CE125E9B7A000157FE8 /* TabList.swift in Sources */,
 				7824E92825E10195009F0197 /* EntityTeleportPacket.swift in Sources */,
 				789650922588834C0079C5CF /* LoginStartPacket.swift in Sources */,
 				784783ED25D890EE008B1430 /* CraftRecipeResponsePacket.swift in Sources */,
@@ -1411,6 +1425,7 @@
 				7809941025E2200500DFDC9F /* SetDifficultyPacket.swift in Sources */,
 				784B395F25A1BCA400556E3E /* HeldItemChangePacket.swift in Sources */,
 				784CCAD525AD3417004B3182 /* ArmorDyeRecipe.swift in Sources */,
+				784CEE5A25EA139D00F0D6AB /* ChunkUnpacker.swift in Sources */,
 				7843EBAC25E22BA800AD42A7 /* PlayerAbilitiesServerboundPacket.swift in Sources */,
 				78DB24DA25C51DEF00F7D70B /* PluginMessagePacket.swift in Sources */,
 				787D8FFF258485A7007E6441 /* HandshakePacket.swift in Sources */,
@@ -1440,6 +1455,7 @@
 				7873058725D93689001259EB /* SpawnPositionPacket.swift in Sources */,
 				7873055725D92FB9001259EB /* RemoveEntityEffectPacket.swift in Sources */,
 				7873053925D91871001259EB /* CombatEventPacket.swift in Sources */,
+				784D2CE625E9B8A200157FE8 /* PlayerInfo.swift in Sources */,
 				7824E90F25E0FF02009F0197 /* SoundEffectPacket.swift in Sources */,
 				7873054825D92A1B001259EB /* PlayerPositionAndLookClientboundPacket.swift in Sources */,
 				788435902585E606002F1F84 /* Server.swift in Sources */,
@@ -1605,6 +1621,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Minecraft/Minecraft.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Minecraft/Preview Content\"";
@@ -1618,7 +1635,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.rohanarievk.Minecraft;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stackotter.minecraft-swift-edition";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1630,6 +1647,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Minecraft/Minecraft.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Minecraft/Preview Content\"";
@@ -1643,7 +1661,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.rohanarievk.Minecraft;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stackotter.minecraft-swift-edition";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};

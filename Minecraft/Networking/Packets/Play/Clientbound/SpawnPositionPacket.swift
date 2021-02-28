@@ -15,4 +15,10 @@ struct SpawnPositionPacket: ClientboundPacket {
   init(from packetReader: inout PacketReader) throws {
     location = packetReader.readPosition()
   }
+  
+  func handle(for server: Server) throws {
+    server.player.position.x = Double(location.x)
+    server.player.position.y = Double(location.y)
+    server.player.position.z = Double(location.z)
+  }
 }
