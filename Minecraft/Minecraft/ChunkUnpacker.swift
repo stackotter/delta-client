@@ -97,14 +97,16 @@ struct ChunkUnpacker {
       }
       
       let dataArrayLength = packetReader.readVarInt()
-      var dataArray: [Int64] = []
+      var dataArray: [UInt64] = []
       for _ in 0..<dataArrayLength {
-        dataArray.append(packetReader.readLong())
+        dataArray.append(packetReader.buf.readLong(endian: .big))
       }
       logTimestamp(with: "read long array")
       
       Logger.log("uncompacting long array")
-      let blocks = CompactedLongArray(dataArray, bitsPerEntry: Int(bitsPerBlock), numEntries: 4096).decompact()
+      let blocks: [UInt16] = CompactedLongArray(dataArray, bitsPerEntry: UInt64(bitsPerBlock), numEntries: 4096).decompact().map {
+        return UInt16($0)
+      }
       logTimestamp(with: "uncompacted long array")
       
       Logger.log("")

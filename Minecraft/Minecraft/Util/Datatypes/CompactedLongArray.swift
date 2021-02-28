@@ -9,27 +9,31 @@ import Foundation
 
 // NOTE: this format of compacted long array is new in 1.16.1, entries no longer get split across two longs
 struct CompactedLongArray {
-  var bitsPerEntry: Int
-  var longArray: [Int64] = []
+  var bitsPerEntry: UInt64
+  var longArray: [UInt64] = []
   var numEntries: Int
   
-  init(_ longArray: [Int64], bitsPerEntry: Int, numEntries: Int) {
+  init(_ longArray: [UInt64], bitsPerEntry: UInt64, numEntries: Int) {
     self.longArray = longArray
     self.bitsPerEntry = bitsPerEntry
     self.numEntries = numEntries
   }
   
-  func decompact() -> [Int32] {
-    // could limiting to Int32 be a problem anywhere? surely compacted long arrays wouldn't have entries longer than 32 bits
-    var output: [Int32] = []
+  func decompact() -> [UInt64] {
+    var output: [UInt64] = []
     let nPerLong = Int((64/Float(bitsPerEntry)).rounded(.down))
-    let mask: Int64 = (1 << bitsPerEntry) - 1
+    let mask: UInt64 = (1 << bitsPerEntry) - 1
+    
+    let offsets: [UInt64] = (0..<nPerLong).map { // a look up table to cut out repeated calculations in loop (cuts 1ms off what used to take 7ms)
+      return bitsPerEntry * UInt64($0)
+    }
     for long in longArray {
       for i in 0..<nPerLong {
-        let int = Int32(Int64(long >> (bitsPerEntry * i)) & mask)
+        let int = long >> offsets[i] & mask
         output.append(int)
       }
     }
+    
     output = Array(output[0..<numEntries])
     return output
   }
