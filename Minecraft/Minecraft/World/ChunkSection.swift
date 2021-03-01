@@ -20,6 +20,9 @@ struct ChunkSection {
     self.blocks = blockIds
     if palette.count != 0 {
       self.blocks = self.blocks.map {
+        if $0 >= palette.count {
+          print("\($0) out of bounds for list of \(palette.count)")
+        }
         return palette[Int($0)]
       }
     }

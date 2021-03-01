@@ -91,11 +91,9 @@ struct ChunkData {
           dataArray.append(packetReader.buf.readLong(endian: .big))
         }
         
-        let blocks: [UInt16] = CompactedLongArray(dataArray, bitsPerEntry: UInt64(bitsPerBlock), numEntries: 4096).decompact().map {
-          // i've decided that for now memory space is more important than the performance (storing as uint16 instead of uint16)
-          // i wanna try figuring out a more efficient way to convert to uint16 from uint64 (something using pointers probably)
-          return UInt16($0)
-        }
+        var blocks: [UInt16] = [UInt16](repeating: 0, count: 4096)
+        unpack_chunk(&dataArray, Int32(dataArray.count), Int32(bitsPerBlock), &blocks)
+        
         let section = ChunkSection(blockIds: blocks, palette: palette, blockCount: blockCount)
         sections.append(section)
       } else {

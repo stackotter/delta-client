@@ -27,12 +27,18 @@ Currently it uses no external libraries so the app is currently less than a mb.
   - [ ] login
   - [ ] play
     - [ ] entities
+    - [ ] chunks
+      - [x] ChunkDataPacket
+      - [x] UnloadChunkPacket
+      - [x] BlockChangePacket
+      - [ ] MultiBlockChangePacket
+    - [ ] player movement
+    - [ ] inventory
     - [ ] everything else
-- [ ] Complete networking (so that i don't need to touch it again)
 - [ ] Create basic text interface
   - [x] chat
   - [ ] movement
-  - [ ] tablist
+  - [x] tablist
   - [ ] view entities
   - [ ] minimap just for fun?
   - [ ] maybe some block actions too?
@@ -63,6 +69,8 @@ As I implement more of the backend code -- and before I work on rendering -- I w
   - sends a message in chat
 - ```swing [mainhand|offhand]```
   - causes the player's arm to swing. can be used to say hi to other players :) (and also just to test if it's working)
+- ```getblock [x] [y] [z]```
+  - gets the block state id of the block at position
 
 ## Screenshots
 

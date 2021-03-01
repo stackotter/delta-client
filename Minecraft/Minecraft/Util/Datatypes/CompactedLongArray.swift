@@ -20,20 +20,23 @@ struct CompactedLongArray {
   }
   
   func decompact() -> [UInt64] {
-    var output: [UInt64] = []
     let nPerLong = Int((64/Float(bitsPerEntry)).rounded(.down))
+    var output: [UInt64] = [UInt64](repeating: 0, count: numEntries + nPerLong)
     let mask: UInt64 = (1 << bitsPerEntry) - 1
-    
+
     let offsets: [UInt64] = (0..<nPerLong).map { // a look up table to cut out repeated calculations in loop (cuts 1ms off what used to take 7ms)
       return bitsPerEntry * UInt64($0)
     }
+    var entryNum = 0
+    
     for long in longArray {
       for i in 0..<nPerLong {
         let int = long >> offsets[i] & mask
-        output.append(int)
+        output[entryNum] = int
+        entryNum += 1
       }
     }
-    
+
     output = Array(output[0..<numEntries])
     return output
   }

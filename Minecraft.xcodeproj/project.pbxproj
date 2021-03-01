@@ -184,6 +184,7 @@
 		7889A9E925C4EED80007B2D7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7889A9E825C4EED80007B2D7 /* Constants.swift */; };
 		788A578A25E1B2D000813C1B /* PacketState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788A578925E1B2D000813C1B /* PacketState.swift */; };
 		788A578F25E1B2E400813C1B /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788A578E25E1B2E400813C1B /* ConnectionState.swift */; };
+		789088AF25EC80FB00CA6DF0 /* chunkunpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 789088AE25EC80FB00CA6DF0 /* chunkunpack.c */; };
 		789451F325D26DBC00B86423 /* DeclareCommandsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789451F225D26DBC00B86423 /* DeclareCommandsPacket.swift */; };
 		789451F825D26E2000B86423 /* WindowConfirmationClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789451F725D26E2000B86423 /* WindowConfirmationClientboundPacket.swift */; };
 		789451FD25D26E7200B86423 /* CloseWindowClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789451FC25D26E7200B86423 /* CloseWindowClientboundPacket.swift */; };
@@ -459,6 +460,9 @@
 		7889A9E825C4EED80007B2D7 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		788A578925E1B2D000813C1B /* PacketState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketState.swift; sourceTree = "<group>"; };
 		788A578E25E1B2E400813C1B /* ConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
+		789088AD25EC80FB00CA6DF0 /* Minecraft-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Minecraft-Bridging-Header.h"; sourceTree = "<group>"; };
+		789088AE25EC80FB00CA6DF0 /* chunkunpack.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = chunkunpack.c; sourceTree = "<group>"; };
+		789088B325EC831200CA6DF0 /* chunkunpack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = chunkunpack.h; sourceTree = "<group>"; };
 		789451F225D26DBC00B86423 /* DeclareCommandsPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeclareCommandsPacket.swift; sourceTree = "<group>"; };
 		789451F725D26E2000B86423 /* WindowConfirmationClientboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowConfirmationClientboundPacket.swift; sourceTree = "<group>"; };
 		789451FC25D26E7200B86423 /* CloseWindowClientboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseWindowClientboundPacket.swift; sourceTree = "<group>"; };
@@ -771,6 +775,16 @@
 			path = Player;
 			sourceTree = "<group>";
 		};
+		789088AB25EC809800CA6DF0 /* C */ = {
+			isa = PBXGroup;
+			children = (
+				789088AD25EC80FB00CA6DF0 /* Minecraft-Bridging-Header.h */,
+				789088B325EC831200CA6DF0 /* chunkunpack.h */,
+				789088AE25EC80FB00CA6DF0 /* chunkunpack.c */,
+			);
+			path = C;
+			sourceTree = "<group>";
+		};
 		78BE29A025E0AD070058CE11 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -1015,6 +1029,7 @@
 		78DB24DF25C5253000F7D70B /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				789088AB25EC809800CA6DF0 /* C */,
 				78DB24E025C526E000F7D70B /* Datatypes */,
 				78225CE2258EC0CE007B7F98 /* EventManager.swift */,
 				7878855E2588136700226064 /* Buffer.swift */,
@@ -1134,6 +1149,7 @@
 				TargetAttributes = {
 					784194B6258204CD0070DE78 = {
 						CreatedOnToolsVersion = 12.2;
+						LastSwiftMigration = 1240;
 					};
 					784194C8258204D10070DE78 = {
 						CreatedOnToolsVersion = 12.2;
@@ -1275,6 +1291,7 @@
 				784CCB0325AD34FF004B3182 /* TippedArrowRecipe.swift in Sources */,
 				7843EB8125E2290E00AD42A7 /* PlayerPositionAndRotationServerboundPacket.swift in Sources */,
 				7824E92D25E102DC009F0197 /* AdvancementsPacket.swift in Sources */,
+				789088AF25EC80FB00CA6DF0 /* chunkunpack.c in Sources */,
 				78CC6E5125D2636F00CA3DFF /* StatisticsPacket.swift in Sources */,
 				7894520225D26EA700B86423 /* WindowItemsPacket.swift in Sources */,
 				78C2D58A2585955500883DF5 /* StatusResponsePacket.swift in Sources */,
@@ -1616,6 +1633,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Minecraft/Minecraft.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -1633,6 +1651,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.stackotter.minecraft-swift-edition";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Minecraft/Minecraft/Util/C/Minecraft-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -1642,6 +1662,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Minecraft/Minecraft.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -1659,6 +1680,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.stackotter.minecraft-swift-edition";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Minecraft/Minecraft/Util/C/Minecraft-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
