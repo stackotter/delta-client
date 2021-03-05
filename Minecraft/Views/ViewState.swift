@@ -9,6 +9,7 @@ import Foundation
 
 class ViewState: ObservableObject {
   @Published var isPlaying = false
+  @Published var playingCommands = false
   @Published var selectedServerInfo: ServerInfo?
   @Published var isErrored = false
   @Published var errorMessage: String?
@@ -27,8 +28,9 @@ class ViewState: ObservableObject {
     serverList = newServerList
   }
   
-  func playServer(withInfo info: ServerInfo) {
+  func playServer(withInfo info: ServerInfo, withCommands: Bool) {
     isPlaying = true
+    playingCommands = withCommands
     selectedServerInfo = info
     isErrored = false
     errorMessage = nil

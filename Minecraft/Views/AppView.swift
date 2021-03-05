@@ -25,10 +25,14 @@ struct AppView: View {
   }
   
   var body: some View {
-    if (viewState.isPlaying) {
-      GameView(serverInfo: viewState.selectedServerInfo!, config: config, eventManager: eventManager)
+    if viewState.isPlaying {
+      if viewState.playingCommands {
+        GameCommandView(serverInfo: viewState.selectedServerInfo!, config: config, eventManager: eventManager)
+      } else {
+        GameRenderView(serverInfo: viewState.selectedServerInfo!, config: config, eventManager: eventManager)
+      }
     }
-    else if(viewState.isErrored) {
+    else if viewState.isErrored {
       ErrorView(viewState: viewState)
     }
     else {

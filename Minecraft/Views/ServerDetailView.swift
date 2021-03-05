@@ -33,15 +33,22 @@ struct ServerDetailView: View {
         }
       }
       
-      Button(action: {
-        viewState.playServer(withInfo: server.info)
-      }) {
-        Text("Play")
+      HStack {
+        Button(action: {
+          viewState.playServer(withInfo: server.info, withCommands: true)
+        }) {
+          Text("Play Commands")
+        }
+        
+        Button(action: {
+          viewState.playServer(withInfo: server.info, withCommands: false)
+        }) {
+          Text("Play Render")
+        }
       }
     }
     
     if (server.pingInfo?.protocolVersion != PROTOCOL_VERSION) {
-      Spacer()
       VStack(alignment: .center)  {
         Text("warning: this server uses a different protocol to this client version")
       }

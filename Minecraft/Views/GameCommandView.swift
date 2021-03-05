@@ -1,5 +1,5 @@
 //
-//  GameView.swift
+//  GameCommandView.swift
 //  Minecraft
 //
 //  Created by Rohan van Klinken on 11/12/20.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct GameView: View {
+struct GameCommandView: View {
   var config: Config
   var client: Client
   
