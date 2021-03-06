@@ -19,6 +19,7 @@ struct MinecraftLocale {
     }
   }
   
+  // TODO: just use string.format instead of this regex stuff because otherwise %1$s doesn't work and stuff
   func getTranslation(for key: String, with content: [String]) -> String {
     let template = getTranslation(for: key)
     let regex = try! NSRegularExpression(pattern: "(^%s)|([^%](%s))") // i know this regex won't fail to load because it's statice, that's why i use try!

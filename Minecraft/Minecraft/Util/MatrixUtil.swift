@@ -18,18 +18,18 @@ struct MatrixUtil {
   }
   
   static func scalingMatrix(_ factor: Float) -> matrix_float4x4 {
-    return scalingMatrix(x: factor, y: factor, z: factor)
+    return scalingMatrix(factor, factor, factor)
   }
   
-  static func scalingMatrix(x: Float, y: Float, z: Float) -> matrix_float4x4 {
+  static func scalingMatrix(_ x: Float, _ y: Float, _ z: Float) -> matrix_float4x4 {
     return matrix_float4x4(diagonal: [x, y, z, 1])
   }
   
   static func projectionMatrix(near: Float, far: Float, aspect: Float, fieldOfViewY: Float) -> matrix_float4x4 {
     let scaleY = 1 / tan(fieldOfViewY * 0.5)
     let scaleX = scaleY / aspect
-    let scaleZ = -(far + near) / (far - near)
-    let scaleW = -2 * far * near / (far - near)
+    let scaleZ = -far / (far - near)
+    let scaleW = -far * near / (far - near)
     return matrix_float4x4(columns: (
       simd_float4([scaleX, 0, 0, 0]),
       simd_float4([0, scaleY, 0, 0]),

@@ -10,5 +10,6 @@ import simd
 
 struct Vertex {
   var position: vector_float3
-  var color: vector_float4
+  var modelToWorldTranslationIndex: uint32
+  var textureCoordinate: vector_float2
 }
