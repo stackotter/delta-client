@@ -141,6 +141,13 @@
 		785E531C25F2E8D5003C3CF4 /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E531B25F2E8D5003C3CF4 /* MetalView.swift */; };
 		785E532725F2EF7B003C3CF4 /* GameRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E532625F2EF7B003C3CF4 /* GameRenderView.swift */; };
 		785E532C25F2F29C003C3CF4 /* RenderCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E532B25F2F29C003C3CF4 /* RenderCoordinator.swift */; };
+		785E533A25F2F770003C3CF4 /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 785E533925F2F770003C3CF4 /* shaders.metal */; };
+		785E534A25F30B26003C3CF4 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E534925F30B26003C3CF4 /* Renderer.swift */; };
+		785E535225F315E6003C3CF4 /* MatrixUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E535125F315E6003C3CF4 /* MatrixUtil.swift */; };
+		785E535A25F3296E003C3CF4 /* Vertex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E535925F3296E003C3CF4 /* Vertex.swift */; };
+		785E536725F33B35003C3CF4 /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E536625F33B35003C3CF4 /* Mesh.swift */; };
+		785E536F25F33D25003C3CF4 /* CubeMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E536E25F33D25003C3CF4 /* CubeMesh.swift */; };
+		785E537425F33DF9003C3CF4 /* CubeFaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E537325F33DF9003C3CF4 /* CubeFaces.swift */; };
 		78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78654EB62585E0CF00770FFF /* PingInfo.swift */; };
 		7873053925D91871001259EB /* CombatEventPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873053825D91871001259EB /* CombatEventPacket.swift */; };
 		7873053E25D919A5001259EB /* PlayerInfoPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873053D25D919A5001259EB /* PlayerInfoPacket.swift */; };
@@ -420,6 +427,13 @@
 		785E531B25F2E8D5003C3CF4 /* MetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
 		785E532625F2EF7B003C3CF4 /* GameRenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameRenderView.swift; sourceTree = "<group>"; };
 		785E532B25F2F29C003C3CF4 /* RenderCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderCoordinator.swift; sourceTree = "<group>"; };
+		785E533925F2F770003C3CF4 /* shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = shaders.metal; sourceTree = "<group>"; };
+		785E534925F30B26003C3CF4 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		785E535125F315E6003C3CF4 /* MatrixUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixUtil.swift; sourceTree = "<group>"; };
+		785E535925F3296E003C3CF4 /* Vertex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vertex.swift; sourceTree = "<group>"; };
+		785E536625F33B35003C3CF4 /* Mesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mesh.swift; sourceTree = "<group>"; };
+		785E536E25F33D25003C3CF4 /* CubeMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubeMesh.swift; sourceTree = "<group>"; };
+		785E537325F33DF9003C3CF4 /* CubeFaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubeFaces.swift; sourceTree = "<group>"; };
 		78654EB62585E0CF00770FFF /* PingInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingInfo.swift; sourceTree = "<group>"; };
 		7873053825D91871001259EB /* CombatEventPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombatEventPacket.swift; sourceTree = "<group>"; };
 		7873053D25D919A5001259EB /* PlayerInfoPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerInfoPacket.swift; sourceTree = "<group>"; };
@@ -708,10 +722,21 @@
 		785E531A25F2E8C2003C3CF4 /* Rendering */ = {
 			isa = PBXGroup;
 			children = (
+				785E533825F2F702003C3CF4 /* Shaders */,
+				78BD2FE425F3589300DEC0F6 /* Mesh */,
 				785E531B25F2E8D5003C3CF4 /* MetalView.swift */,
 				785E532B25F2F29C003C3CF4 /* RenderCoordinator.swift */,
+				785E534925F30B26003C3CF4 /* Renderer.swift */,
 			);
 			path = Rendering;
+			sourceTree = "<group>";
+		};
+		785E533825F2F702003C3CF4 /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				785E533925F2F770003C3CF4 /* shaders.metal */,
+			);
+			path = Shaders;
 			sourceTree = "<group>";
 		};
 		7878B52A25844B6B007C0D3D /* Views */ = {
@@ -800,6 +825,17 @@
 				789088AE25EC80FB00CA6DF0 /* chunkunpack.c */,
 			);
 			path = C;
+			sourceTree = "<group>";
+		};
+		78BD2FE425F3589300DEC0F6 /* Mesh */ = {
+			isa = PBXGroup;
+			children = (
+				785E537325F33DF9003C3CF4 /* CubeFaces.swift */,
+				785E536625F33B35003C3CF4 /* Mesh.swift */,
+				785E536E25F33D25003C3CF4 /* CubeMesh.swift */,
+				785E535925F3296E003C3CF4 /* Vertex.swift */,
+			);
+			path = Mesh;
 			sourceTree = "<group>";
 		};
 		78BE29A025E0AD070058CE11 /* Resources */ = {
@@ -1051,6 +1087,7 @@
 				78225CE2258EC0CE007B7F98 /* EventManager.swift */,
 				7878855E2588136700226064 /* Buffer.swift */,
 				7830D8C825940BE500D35180 /* Logger.swift */,
+				785E535125F315E6003C3CF4 /* MatrixUtil.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -1061,6 +1098,7 @@
 				784CAE23259AB654003E5F87 /* UUID.swift */,
 				78965087258861FE0079C5CF /* NBTCompound.swift */,
 				789BE9E22589DAC7001C08ED /* JSON.swift */,
+				7843EC1A25E2380900AD42A7 /* BlockFace.swift */,
 				784B393C25A17AB600556E3E /* Identifier.swift */,
 				784B394A25A19CCC00556E3E /* Gamemode.swift */,
 				784B395425A19E3900556E3E /* Difficulty.swift */,
@@ -1082,7 +1120,6 @@
 				78F29B2B25AE81E000D85CCB /* ChunkSection.swift */,
 				78F29B4625AF136A00D85CCB /* World.swift */,
 				78BFD2E625B521A800366631 /* WorldConfig.swift */,
-				7843EC1A25E2380900AD42A7 /* BlockFace.swift */,
 			);
 			path = World;
 			sourceTree = "<group>";
@@ -1271,6 +1308,8 @@
 				784194BB258204CD0070DE78 /* MinecraftApp.swift in Sources */,
 				7894522A25D2773500B86423 /* UnloadChunkPacket.swift in Sources */,
 				787D8FF1258451A8007E6441 /* ServerConnection.swift in Sources */,
+				785E533A25F2F770003C3CF4 /* shaders.metal in Sources */,
+				785E537425F33DF9003C3CF4 /* CubeFaces.swift in Sources */,
 				78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */,
 				784CCA9B25AD2F99004B3182 /* Ingredient.swift in Sources */,
 				78E919DF25D7FAEA00667C75 /* EntityPositionPacket.swift in Sources */,
@@ -1297,6 +1336,7 @@
 				78CC6E6D25D2656F00CA3DFF /* BlockEntityDataPacket.swift in Sources */,
 				784CCAC425AD3239004B3182 /* StonecuttingRecipe.swift in Sources */,
 				7843EB6D25E2262900AD42A7 /* InteractEntityPacket.swift in Sources */,
+				785E534A25F30B26003C3CF4 /* Renderer.swift in Sources */,
 				78764E1025AE4B9200AE8716 /* TagsPacket.swift in Sources */,
 				7878B53125844B6B007C0D3D /* ServerListView.swift in Sources */,
 				7843EBEB25E232A600AD42A7 /* UpdateCommandBlockPacket.swift in Sources */,
@@ -1417,10 +1457,12 @@
 				7843EBD725E2306A00AD42A7 /* AdvancementTabPacket.swift in Sources */,
 				78764E1525AE5E6900AE8716 /* ChunkDataPacket.swift in Sources */,
 				78C2D58F258597D400883DF5 /* PacketReader.swift in Sources */,
+				785E536725F33B35003C3CF4 /* Mesh.swift in Sources */,
 				7894522025D2744700B86423 /* EntityStatusPacket.swift in Sources */,
 				784CCAE525AD345B004B3182 /* MapCloningRecipe.swift in Sources */,
 				78E919BE25D7541C00667C75 /* ServerboundPacket.swift in Sources */,
 				78BE297A25E078E60058CE11 /* ChatStringComponent.swift in Sources */,
+				785E535A25F3296E003C3CF4 /* Vertex.swift in Sources */,
 				7809944725E224F400DFDC9F /* DominantHand.swift in Sources */,
 				78BE299725E09E7D0058CE11 /* Config.swift in Sources */,
 				78764DF525AD9FCA00AE8716 /* Client.swift in Sources */,
@@ -1429,12 +1471,14 @@
 				7843EBF525E233D500AD42A7 /* CreativeInventoryActionPacket.swift in Sources */,
 				78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */,
 				7824E90025E0FCF7009F0197 /* TimeUpdatePacket.swift in Sources */,
+				785E536F25F33D25003C3CF4 /* CubeMesh.swift in Sources */,
 				787305AA25D939C8001259EB /* UpdateHealthPacket.swift in Sources */,
 				784CCAA825AD30BB004B3182 /* HeatRecipe.swift in Sources */,
 				78E919F825D7FD9E00667C75 /* OpenBookPacket.swift in Sources */,
 				78225CE3258EC0CE007B7F98 /* EventManager.swift in Sources */,
 				7894522525D274DE00B86423 /* ExplosionPacket.swift in Sources */,
 				78CC6E8C25D26A9E00CA3DFF /* MultiBlockChangePacket.swift in Sources */,
+				785E535225F315E6003C3CF4 /* MatrixUtil.swift in Sources */,
 				78764DEB25AD7F2700AE8716 /* Item.swift in Sources */,
 				7894524325D2796200B86423 /* ParticlePacket.swift in Sources */,
 				78E919D525D7EBF500667C75 /* MapDataPacket.swift in Sources */,

@@ -20,13 +20,14 @@ struct MetalView: NSViewRepresentable {
     let mtkView = MTKView()
     mtkView.delegate = context.coordinator
     mtkView.preferredFramesPerSecond = 60
-    mtkView.enableSetNeedsDisplay = true
     if let metalDevice = MTLCreateSystemDefaultDevice() {
       mtkView.device = metalDevice
     }
     mtkView.framebufferOnly = false
     mtkView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
     mtkView.drawableSize = mtkView.frame.size
+    mtkView.depthStencilPixelFormat = .depth32Float
+    mtkView.clearDepth = 1.0
     return mtkView
   }
   

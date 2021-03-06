@@ -10,16 +10,11 @@ import MetalKit
 import os
 
 class RenderCoordinator: NSObject, MTKViewDelegate {
-  var metalDevice: MTLDevice!
-  var metalCommandQueue: MTLCommandQueue
-  var logger: Logger
+  var renderer: Renderer
   
   override init() {
-    if let metalDevice = MTLCreateSystemDefaultDevice() {
-      self.metalDevice = metalDevice
-    }
-    self.metalCommandQueue = metalDevice.makeCommandQueue()!
-    logger = Logger(for: type(of: self))
+    Logger.debug("getting default metal device")
+    renderer = Renderer(device: MTLCreateSystemDefaultDevice()!)
     super.init()
   }
   
@@ -29,22 +24,10 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
   
   func draw(in view: MTKView) {
     guard let drawable = view.currentDrawable else {
-      logger.warning("failed to get current drawable")
+      Logger.warning("failed to get current drawable")
       return
     }
     
-    if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
-      if let renderPassDescriptor = view.currentRenderPassDescriptor {
-        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 1, 0, 1)
-        renderPassDescriptor.colorAttachments[0].loadAction = .clear
-        renderPassDescriptor.colorAttachments[0].storeAction = .store
-        
-        if let commandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
-          commandEncoder.endEncoding()
-          commandBuffer.present(drawable)
-          commandBuffer.commit()
-        }
-      }
-    }
+    renderer.draw(view: view, drawable: drawable)
   }
 }

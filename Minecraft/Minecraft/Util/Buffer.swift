@@ -49,7 +49,10 @@ struct Buffer {
       let padLength = 8 - bytes.count
       bytes = [UInt8](repeating: 0, count: padLength) + bytes
     }
-    let bitPattern = UnsafeRawPointer(bytes).load(as: UInt64.self)
+    var bitPattern: UInt64 = 0
+    bytes.withUnsafeBytes {
+      bitPattern = $0.load(as: UInt64.self)
+    }
     
     if endian == .big {
       return bitPattern.bigEndian
