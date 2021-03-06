@@ -12,7 +12,7 @@ struct PlayerBlockPlacementPacket: ServerboundPacket {
   
   var hand: Hand
   var location: Position
-  var face: BlockFace
+  var face: Direction
   var cursorPositionX: Float
   var cursorPositionY: Float
   var cursorPositionZ: Float

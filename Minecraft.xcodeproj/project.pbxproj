@@ -85,7 +85,7 @@
 		7843EC0925E2371500AD42A7 /* AnimationServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EC0825E2371500AD42A7 /* AnimationServerboundPacket.swift */; };
 		7843EC0E25E2375100AD42A7 /* SpectatePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EC0D25E2375100AD42A7 /* SpectatePacket.swift */; };
 		7843EC1625E2378000AD42A7 /* PlayerBlockPlacementPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EC1525E2378000AD42A7 /* PlayerBlockPlacementPacket.swift */; };
-		7843EC1B25E2380900AD42A7 /* BlockFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EC1A25E2380900AD42A7 /* BlockFace.swift */; };
+		7843EC1B25E2380900AD42A7 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843EC1A25E2380900AD42A7 /* Direction.swift */; };
 		784783E825D89090008B1430 /* OpenSignEditorPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784783E725D89090008B1430 /* OpenSignEditorPacket.swift */; };
 		784783ED25D890EE008B1430 /* CraftRecipeResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784783EC25D890EE008B1430 /* CraftRecipeResponsePacket.swift */; };
 		784B392E25A14F7500556E3E /* LoginDisconnectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B392D25A14F7500556E3E /* LoginDisconnectPacket.swift */; };
@@ -146,7 +146,6 @@
 		785E535225F315E6003C3CF4 /* MatrixUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E535125F315E6003C3CF4 /* MatrixUtil.swift */; };
 		785E535A25F3296E003C3CF4 /* Vertex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E535925F3296E003C3CF4 /* Vertex.swift */; };
 		785E536725F33B35003C3CF4 /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E536625F33B35003C3CF4 /* Mesh.swift */; };
-		785E536F25F33D25003C3CF4 /* CubeMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E536E25F33D25003C3CF4 /* CubeMesh.swift */; };
 		785E537425F33DF9003C3CF4 /* CubeFaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785E537325F33DF9003C3CF4 /* CubeFaces.swift */; };
 		78654EB72585E0CF00770FFF /* PingInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78654EB62585E0CF00770FFF /* PingInfo.swift */; };
 		7873053925D91871001259EB /* CombatEventPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7873053825D91871001259EB /* CombatEventPacket.swift */; };
@@ -374,7 +373,7 @@
 		7843EC0825E2371500AD42A7 /* AnimationServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationServerboundPacket.swift; sourceTree = "<group>"; };
 		7843EC0D25E2375100AD42A7 /* SpectatePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpectatePacket.swift; sourceTree = "<group>"; };
 		7843EC1525E2378000AD42A7 /* PlayerBlockPlacementPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerBlockPlacementPacket.swift; sourceTree = "<group>"; };
-		7843EC1A25E2380900AD42A7 /* BlockFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockFace.swift; sourceTree = "<group>"; };
+		7843EC1A25E2380900AD42A7 /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
 		784783E725D89090008B1430 /* OpenSignEditorPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSignEditorPacket.swift; sourceTree = "<group>"; };
 		784783EC25D890EE008B1430 /* CraftRecipeResponsePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftRecipeResponsePacket.swift; sourceTree = "<group>"; };
 		784B392D25A14F7500556E3E /* LoginDisconnectPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDisconnectPacket.swift; sourceTree = "<group>"; };
@@ -435,7 +434,6 @@
 		785E535125F315E6003C3CF4 /* MatrixUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixUtil.swift; sourceTree = "<group>"; };
 		785E535925F3296E003C3CF4 /* Vertex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vertex.swift; sourceTree = "<group>"; };
 		785E536625F33B35003C3CF4 /* Mesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mesh.swift; sourceTree = "<group>"; };
-		785E536E25F33D25003C3CF4 /* CubeMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubeMesh.swift; sourceTree = "<group>"; };
 		785E537325F33DF9003C3CF4 /* CubeFaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubeFaces.swift; sourceTree = "<group>"; };
 		78654EB62585E0CF00770FFF /* PingInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingInfo.swift; sourceTree = "<group>"; };
 		7873053825D91871001259EB /* CombatEventPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombatEventPacket.swift; sourceTree = "<group>"; };
@@ -831,7 +829,6 @@
 			children = (
 				785E537325F33DF9003C3CF4 /* CubeFaces.swift */,
 				785E536625F33B35003C3CF4 /* Mesh.swift */,
-				785E536E25F33D25003C3CF4 /* CubeMesh.swift */,
 				785E535925F3296E003C3CF4 /* Vertex.swift */,
 			);
 			path = Mesh;
@@ -1099,7 +1096,7 @@
 				784CAE23259AB654003E5F87 /* UUID.swift */,
 				78965087258861FE0079C5CF /* NBTCompound.swift */,
 				789BE9E22589DAC7001C08ED /* JSON.swift */,
-				7843EC1A25E2380900AD42A7 /* BlockFace.swift */,
+				7843EC1A25E2380900AD42A7 /* Direction.swift */,
 				784B393C25A17AB600556E3E /* Identifier.swift */,
 				784B394A25A19CCC00556E3E /* Gamemode.swift */,
 				784B395425A19E3900556E3E /* Difficulty.swift */,
@@ -1426,7 +1423,7 @@
 				788A578F25E1B2E400813C1B /* ConnectionState.swift in Sources */,
 				7878855F2588136700226064 /* Buffer.swift in Sources */,
 				78F29B4C25AF14EE00D85CCB /* ChunkPosition.swift in Sources */,
-				7843EC1B25E2380900AD42A7 /* BlockFace.swift in Sources */,
+				7843EC1B25E2380900AD42A7 /* Direction.swift in Sources */,
 				78E919FD25D7FE0700667C75 /* OpenWindowPacket.swift in Sources */,
 				7843EBC825E22E9C00AD42A7 /* RecipeBookDataPacket.swift in Sources */,
 				789451F325D26DBC00B86423 /* DeclareCommandsPacket.swift in Sources */,
@@ -1475,7 +1472,6 @@
 				7843EBF525E233D500AD42A7 /* CreativeInventoryActionPacket.swift in Sources */,
 				78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */,
 				7824E90025E0FCF7009F0197 /* TimeUpdatePacket.swift in Sources */,
-				785E536F25F33D25003C3CF4 /* CubeMesh.swift in Sources */,
 				787305AA25D939C8001259EB /* UpdateHealthPacket.swift in Sources */,
 				784CCAA825AD30BB004B3182 /* HeatRecipe.swift in Sources */,
 				78E919F825D7FD9E00667C75 /* OpenBookPacket.swift in Sources */,

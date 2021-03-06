@@ -9,7 +9,6 @@ import Foundation
 import simd
 
 struct Vertex {
-  var position: vector_float3
-  var modelToWorldTranslationIndex: uint32
-  var textureCoordinate: vector_float2
+  var position: simd_float3 // using tuples instead of simd types because the stride is less
+  var textureCoordinate: simd_float2
 }

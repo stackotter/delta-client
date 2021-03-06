@@ -11,9 +11,9 @@ import simd
 struct MatrixUtil {
   static func translationMatrix(_ translation: simd_float3) -> matrix_float4x4 {
     var matrix = matrix_float4x4(1)
-    matrix.columns.0 = [1, 0, 0, translation.x]
-    matrix.columns.1 = [0, 1, 0, translation.y]
-    matrix.columns.2 = [0, 0, 1, translation.z]
+    matrix.columns.0[3] = translation.x
+    matrix.columns.1[3] = translation.y
+    matrix.columns.2[3] = translation.z
     return matrix
   }
   

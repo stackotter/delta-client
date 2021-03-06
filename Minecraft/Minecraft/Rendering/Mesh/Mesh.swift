@@ -13,7 +13,6 @@ import simd
 class Mesh {
   var vertices: [Vertex] = []
   var indices: [UInt32] = []
-  var translations: [simd_float3] = []
   
   func createVertexBuffer(for device: MTLDevice) -> MTLBuffer {
     let bufferSize = MemoryLayout<Vertex>.stride * vertices.count
@@ -26,13 +25,6 @@ class Mesh {
     let bufferSize = MemoryLayout<UInt32>.stride * indices.count
     let buffer = device.makeBuffer(bytes: indices, length: bufferSize, options: [])!
     buffer.label = "indexBuffer"
-    return buffer
-  }
-  
-  func createTranslationsBuffer(for device: MTLDevice) -> MTLBuffer {
-    let translationsSize = MemoryLayout<simd_float3>.stride * translations.count
-    let buffer = device.makeBuffer(bytes: translations, length: translationsSize, options: [])!
-    buffer.label = "translationsBuffer"
     return buffer
   }
 }

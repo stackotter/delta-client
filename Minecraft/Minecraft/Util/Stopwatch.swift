@@ -14,7 +14,6 @@ struct Stopwatch {
   var lastLap: CFAbsoluteTime = 0
   
   private init(start: CFAbsoluteTime, label: String) {
-    Logger.debug("\(label): started stopwatch")
     self.start = start
     self.label = label
     self.lastLap = start
@@ -43,7 +42,7 @@ struct Stopwatch {
     
     let sinceLap = timeSinceLap()
     let elapsed = getElapsedMs()
-    message += String(format: ": %.2fms elapsed, %.2fms since last lap", elapsed, sinceLap)
+    message += String(format: ": %.4fms elapsed, %.4fms since last lap", elapsed, sinceLap)
     Logger.debug(message)
     
     lastLap = CFAbsoluteTimeGetCurrent()

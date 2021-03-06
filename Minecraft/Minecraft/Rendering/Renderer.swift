@@ -61,40 +61,36 @@ class Renderer {
   func createWorldToClipSpaceMatrix(aspect: Float) -> MTLBuffer {
     let cameraPosition = simd_float3([0, 0, -3])
     
-    var worldToCamera = MatrixUtil.rotationMatrix(x: Float(3.14/8.0))
-//    worldToCamera = worldToCamera * MatrixUtil.rotationMatrix(y: 0)
-    worldToCamera = worldToCamera * MatrixUtil.translationMatrix(cameraPosition)
-    
+    let worldToCamera = MatrixUtil.translationMatrix(cameraPosition)
     let cameraToClip = MatrixUtil.projectionMatrix(near: 1, far: 100, aspect: aspect, fieldOfViewY: 1.1)
-    
     var modelToClipSpace = worldToCamera * cameraToClip
+    
     let matrixBuffer = metalDevice.makeBuffer(bytes: &modelToClipSpace, length: MemoryLayout<matrix_float4x4>.stride, options: [])!
     return matrixBuffer
   }
   
   func draw(view: MTKView, drawable: CAMetalDrawable) {
+    Logger.debug("render, starting frame")
     var stopWatch = Stopwatch.now(label: "render")
     
     let aspect = Float(view.drawableSize.width/view.drawableSize.height)
     
-    var cubes: [CubeMesh] = []
+    let mesh = Mesh()
+    
+    // prepare 500 cubes
+    let chunkRenderer = ChunkRenderer()
     for x in -5...5 {
-      cubes.append(CubeMesh(faces: .init(rawValue: 0xff), position: [Float(x), 0, -5]))
+      for y in -5...5 {
+        for z in -10...(-5) {
+          chunkRenderer.renderBlock(into: mesh, position: simd_float3(Float(x), Float(y), Float(z)), faces: Set<Direction>([.north, .south, .east, .west, .up, .down]))
+        }
+      }
     }
     
     stopWatch.lap(detail: "created mesh objects")
     
-    let mesh = Mesh()
-    
-    for cube in cubes {
-      cube.prepare(into: mesh)
-    }
-    
-    stopWatch.lap(detail: "prepared meshes")
-    
     let vertexBuffer = mesh.createVertexBuffer(for: metalDevice)
     let indexBuffer = mesh.createIndexBuffer(for: metalDevice)
-    let translationsBuffer = mesh.createTranslationsBuffer(for: metalDevice)
     let matrixBuffer = createWorldToClipSpaceMatrix(aspect: aspect)
     
     stopWatch.lap(detail: "created buffers")
@@ -120,7 +116,6 @@ class Renderer {
           
           renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
           renderEncoder.setVertexBuffer(matrixBuffer, offset: 0, index: 1)
-          renderEncoder.setVertexBuffer(translationsBuffer, offset: 0, index: 2)
           renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: mesh.indices.count, indexType: .uint32, indexBuffer: indexBuffer, indexBufferOffset: 0)
           renderEncoder.endEncoding()
           

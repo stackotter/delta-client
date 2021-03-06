@@ -12,7 +12,7 @@ struct PlayerDiggingPacket: ServerboundPacket {
   
   var status: DiggingStatus
   var location: Position
-  var face: BlockFace
+  var face: Direction
   
   enum DiggingStatus: Int32 {
     case startedDigging = 0
