@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
   static let id: Int = 0x35
@@ -37,6 +38,8 @@ struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
   func handle(for server: Server) throws {
     let teleportConfirm = TeleportConfirmPacket(teleportId: teleportId)
     server.sendPacket(teleportConfirm)
+    
+    Logger.debug("position and look flags: \(flags), position: \(position), look: \(yaw), \(pitch)")
     
     if flags.contains(.x) {
       server.player.position.x += position.x

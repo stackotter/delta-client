@@ -41,7 +41,7 @@ struct RespawnPacket: ClientboundPacket {
         worldName: worldName, dimension: dimension,
         hashedSeed: hashedSeed, isDebug: isDebug, isFlat: isFlat
       )
-      let world = World(config: worldConfig)
+      let world = World(config: worldConfig, eventManager: server.eventManager)
       server.worlds[worldName] = world
       server.currentWorldName = worldName
     }

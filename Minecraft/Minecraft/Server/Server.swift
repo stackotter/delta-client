@@ -23,7 +23,7 @@ class Server: Hashable {
         return world
       }
     }
-    return World(config: WorldConfig.createDefault())
+    return World(config: WorldConfig.createDefault(), eventManager: eventManager)
   }
   
   // TODO: maybe use a Registry object that stores all registries for neater code
@@ -34,8 +34,6 @@ class Server: Hashable {
   
   var config: ServerConfig = ServerConfig.createDefault()
   var state: ServerState = .idle
-  
-  var downloadingTerrain = true
   
   var difficulty: Difficulty = .normal
   var isDifficultyLocked: Bool = true

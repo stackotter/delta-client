@@ -5,20 +5,48 @@
 //  Created by Rohan van Klinken on 6/3/21.
 //
 
+import Combine
 import SwiftUI
+
+class GameState: ObservableObject {
+  @Published var downloadingTerrain = true
+  var sink: AnyCancellable?
+  var client: Client
+  
+  init(client: Client) {
+    self.client = client
+    self.client.eventManager.registerEventHandler({ event in
+      print("event received")
+      DispatchQueue.main.sync {
+        self.downloadingTerrain = false
+      }
+    }, eventName: "downloadedTerrain")
+  }
+}
 
 struct GameRenderView: View {
   var config: Config
-  var client: Client
+  let client: Client
+  
+  @ObservedObject var state: GameState
   
   init(serverInfo: ServerInfo, config: Config, eventManager: EventManager) {
     self.config = config
     self.client = Client(eventManager: eventManager, serverInfo: serverInfo, config: config)
+    self.state = GameState(client: self.client)
     
     self.client.play()
   }
   
+  func updateTerrainStatus(status: Bool) {
+    state.downloadingTerrain = status
+  }
+  
   var body: some View {
-    MetalView()
+    if state.downloadingTerrain {
+      Text("downloading terrain")
+    } else {
+      MetalView(client: client)
+    }
   }
 }

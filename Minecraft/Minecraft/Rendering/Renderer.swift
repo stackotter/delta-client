@@ -19,10 +19,11 @@ class Renderer {
   
   var texture: MTLTexture
   
-  var angle: Float = 0
+  var client: Client
   
-  init(device: MTLDevice) {
+  init(device: MTLDevice, client: Client) {
     self.metalDevice = device
+    self.client = client
     
     Logger.debug("creating command queue")
     self.metalCommandQueue = metalDevice.makeCommandQueue()!
@@ -59,10 +60,14 @@ class Renderer {
   }
   
   func createWorldToClipSpaceMatrix(aspect: Float) -> MTLBuffer {
-    let cameraPosition = simd_float3([0, 0, -3])
+    let chunkPosition = client.server.player.chunkPosition
+    var playerRelativePosition = client.server.player.position
+    playerRelativePosition.x -= Double(chunkPosition.chunkX*16)
+    playerRelativePosition.z -= Double(chunkPosition.chunkZ*16)
+    let cameraPosition = simd_float3([Float(-playerRelativePosition.x), Float(-(playerRelativePosition.y+1.625)), Float(-playerRelativePosition.z)])
     
-    let worldToCamera = MatrixUtil.translationMatrix(cameraPosition)
-    let cameraToClip = MatrixUtil.projectionMatrix(near: 1, far: 100, aspect: aspect, fieldOfViewY: 1.1)
+    let worldToCamera = MatrixUtil.translationMatrix(cameraPosition) * MatrixUtil.rotationMatrix(y: 3.14)
+    let cameraToClip = MatrixUtil.projectionMatrix(near: 1, far: 1000, aspect: aspect, fieldOfViewY: 3.14/2)
     var modelToClipSpace = worldToCamera * cameraToClip
     
     let matrixBuffer = metalDevice.makeBuffer(bytes: &modelToClipSpace, length: MemoryLayout<matrix_float4x4>.stride, options: [])!
@@ -73,25 +78,28 @@ class Renderer {
     Logger.debug("render, starting frame")
     var stopWatch = Stopwatch.now(label: "render")
     
-    let aspect = Float(view.drawableSize.width/view.drawableSize.height)
-    
+    // render player's current chunk
     let mesh = Mesh()
-    
-    // prepare 500 cubes
-    let chunkRenderer = ChunkRenderer()
-    for x in -5...5 {
-      for y in -5...5 {
-        for z in -10...(-5) {
-          chunkRenderer.renderBlock(into: mesh, position: simd_float3(Float(x), Float(y), Float(z)), faces: Set<Direction>([.north, .south, .east, .west, .up, .down]))
-        }
-      }
+    Logger.debug("player position: \(client.server.player.chunkPosition)")
+    let chunk = client.server.currentWorld.chunks[client.server.player.chunkPosition]
+    if chunk != nil {
+      let chunkRenderer = ChunkRenderer(chunk: chunk!)
+      chunkRenderer.render(into: mesh)
+    } else {
+      mesh.vertices.append(contentsOf: [
+        Vertex(position: [0, 1, -5], textureCoordinate: [0, 0]),
+        Vertex(position: [0, 0, -5], textureCoordinate: [0, 1]),
+        Vertex(position: [1, 0, -5], textureCoordinate: [1, 1])
+      ])
+      mesh.indices.append(contentsOf: [0, 1, 2])
     }
     
     stopWatch.lap(detail: "created mesh objects")
     
+    let aspect = Float(view.drawableSize.width/view.drawableSize.height)
+    let matrixBuffer = createWorldToClipSpaceMatrix(aspect: aspect)
     let vertexBuffer = mesh.createVertexBuffer(for: metalDevice)
     let indexBuffer = mesh.createIndexBuffer(for: metalDevice)
-    let matrixBuffer = createWorldToClipSpaceMatrix(aspect: aspect)
     
     stopWatch.lap(detail: "created buffers")
     

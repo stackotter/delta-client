@@ -32,6 +32,8 @@ class EventManager: Equatable {
     case connectionReady
     case connectionClosed
     
+    case downloadedTerrain
+    
     // this computed property is used to create the keys for the handlers dict
     var name:String {
       let mirror = Mirror(reflecting: self)

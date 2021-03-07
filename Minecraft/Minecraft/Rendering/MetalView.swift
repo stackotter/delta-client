@@ -10,10 +10,14 @@ import MetalKit
 import SwiftUI
 
 struct MetalView: NSViewRepresentable {
-  typealias Coordinator = RenderCoordinator
+  var client: Client
   
-  func makeCoordinator() -> Coordinator {
-    return Coordinator()
+  init(client: Client) {
+    self.client = client
+  }
+  
+  func makeCoordinator() -> RenderCoordinator {
+    return RenderCoordinator(client: client)
   }
   
   func makeNSView(context: Context) -> some NSView {

@@ -37,6 +37,34 @@ class ChunkRenderer {
     simd_float3([1,  1,  1]),
   ]
   
+  var chunk: Chunk
+  
+  init(chunk: Chunk) {
+    self.chunk = chunk
+  }
+  
+  func render(into mesh: Mesh) {
+    var sectionNumber = 0
+    for section in chunk.sections {
+      let sectionY = sectionNumber * 16
+      if section.blockCount != 0 {
+        print("section do")
+        for x in 0..<16 {
+          for y in 0..<16 {
+            for z in 0..<16 {
+              let state = section.getBlockId(atX: Int32(x), y: Int32(y), andZ: Int32(z))
+              if state != 0 {
+                renderBlock(into: mesh, position: simd_float3(Float(x), Float(sectionY+y), Float(z)), faces: Set<Direction>([.up, .south, .east, .west, .down, .north]))
+              }
+            }
+          }
+        }
+      }
+      sectionNumber += 1
+    }
+    print("section done")
+  }
+  
   func renderBlock(into mesh: Mesh, position: simd_float3, faces: Set<Direction>) {
     for direction in faces {
       renderFace(into: mesh, direction: direction, blockPosition: position)

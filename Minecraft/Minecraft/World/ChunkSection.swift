@@ -36,6 +36,12 @@ struct ChunkSection {
   }
   
   mutating func setBlockId(atX x: Int32, y: Int32, andZ z: Int32, to state: UInt16) {
+    if getBlockId(atX: x, y: y, andZ: z) == 0 {
+      blockCount += 1
+    }
+    if state == 0 {
+      blockCount -= 1
+    }
     let index = 256*y + 16*z + x
     self.blocks[Int(index)] = state
   }

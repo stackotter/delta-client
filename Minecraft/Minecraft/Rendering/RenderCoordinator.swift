@@ -13,11 +13,12 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
   var renderer: Renderer
   var frameTimes: [Double] = []
   var frameCounter = 0
+  var client: Client
   
-  override init() {
+  init(client: Client) {
     Logger.debug("getting default metal device")
-    renderer = Renderer(device: MTLCreateSystemDefaultDevice()!)
-    super.init()
+    renderer = Renderer(device: MTLCreateSystemDefaultDevice()!, client: client)
+    self.client = client
   }
   
   func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
@@ -36,7 +37,7 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
     let frameTime = (stopwatch.lastLap - stopwatch.start) * 1000
     frameTimes.append(frameTime)
     
-    if frameCounter == 20 {
+    if frameCounter == 5 {
       let avgFrameTime = frameTimes.reduce(0.0, +)/Double(frameTimes.count)
       Logger.log(String(format: "average frame time: %.2fms", avgFrameTime))
       
