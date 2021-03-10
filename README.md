@@ -32,7 +32,7 @@ Currently it uses no external libraries so the app is currently less than a mb.
       - [x] UnloadChunkPacket
       - [x] BlockChangePacket
       - [ ] MultiBlockChangePacket
-    - [ ] player movement
+    - [x] player movement
     - [ ] inventory
     - [ ] everything else
 - [ ] Create basic text interface
@@ -45,6 +45,10 @@ Currently it uses no external libraries so the app is currently less than a mb.
 - [ ] Entities (entity mappings and stuff)
 - [ ] Basic rendering using Metal (Apple's GPU library)
   - [ ] Block rendering
+    - [x] Basic textureless blocks (with just a default texture)
+    - [ ] Basic block culling (don't render blocks that are completely surrounded by other blocks)
+    - [ ] Block textures
+    - [ ] Multiple chunks
   - [ ] Block Animations
   - [ ] Block entity rendering
   - [ ] Entity rendering
