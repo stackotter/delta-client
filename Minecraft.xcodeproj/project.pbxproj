@@ -47,6 +47,7 @@
 		7830D8C925940BE500D35180 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7830D8C825940BE500D35180 /* Logger.swift */; };
 		7830D8CE2596B91B00D35180 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7830D8CD2596B91B00D35180 /* ViewState.swift */; };
 		7830D8D32596C13A00D35180 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7830D8D22596C13A00D35180 /* ErrorView.swift */; };
+		783FC18225F5747B009EC3CA /* ChunkMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 783FC18125F5747B009EC3CA /* ChunkMesh.swift */; };
 		784194BB258204CD0070DE78 /* MinecraftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784194BA258204CD0070DE78 /* MinecraftApp.swift */; };
 		784194BF258204D00070DE78 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 784194BE258204D00070DE78 /* Assets.xcassets */; };
 		784194C2258204D00070DE78 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 784194C1258204D00070DE78 /* Preview Assets.xcassets */; };
@@ -328,6 +329,7 @@
 		7830D8C825940BE500D35180 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		7830D8CD2596B91B00D35180 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		7830D8D22596C13A00D35180 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
+		783FC18125F5747B009EC3CA /* ChunkMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkMesh.swift; sourceTree = "<group>"; };
 		784194B7258204CD0070DE78 /* Minecraft.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Minecraft.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194BA258204CD0070DE78 /* MinecraftApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftApp.swift; sourceTree = "<group>"; };
 		784194BE258204D00070DE78 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -730,6 +732,7 @@
 				785E531B25F2E8D5003C3CF4 /* MetalView.swift */,
 				785E532B25F2F29C003C3CF4 /* RenderCoordinator.swift */,
 				785E534925F30B26003C3CF4 /* Renderer.swift */,
+				783FC18125F5747B009EC3CA /* ChunkMesh.swift */,
 				78EF27BB25F3A30F007F788A /* ChunkRenderer.swift */,
 				785E533925F2F770003C3CF4 /* shaders.metal */,
 			);
@@ -1527,6 +1530,7 @@
 				7894523425D277C000B86423 /* OpenHorseWindowPacket.swift in Sources */,
 				785E532C25F2F29C003C3CF4 /* RenderCoordinator.swift in Sources */,
 				7824E93725E10AD9009F0197 /* EntityEffectPacket.swift in Sources */,
+				783FC18225F5747B009EC3CA /* ChunkMesh.swift in Sources */,
 				78CC6E7225D2661B00CA3DFF /* BlockActionPacket.swift in Sources */,
 				785786D125D150E4003021D9 /* SpawnEntityPacket.swift in Sources */,
 				7873058725D93689001259EB /* SpawnPositionPacket.swift in Sources */,

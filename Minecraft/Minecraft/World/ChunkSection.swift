@@ -29,6 +29,10 @@ struct ChunkSection {
     self.blockCount = blockCount
   }
   
+  static func blockIndexFrom(_ x: Int, _ y: Int, _ z: Int) -> Int {
+    return (y*16 + z)*16 + x
+  }
+  
   func getBlockId(atX x: Int32, y: Int32, andZ z: Int32) -> UInt16 {
     let index = 256*y + 16*z + x
     let blockId = blocks[Int(index)]

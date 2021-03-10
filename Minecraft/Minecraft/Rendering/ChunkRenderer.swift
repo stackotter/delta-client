@@ -48,21 +48,24 @@ class ChunkRenderer {
     for section in chunk.sections {
       let sectionY = sectionNumber * 16
       if section.blockCount != 0 {
-        print("section do")
+        var sectionStopwatch = Stopwatch.now(label: "section")
         for x in 0..<16 {
           for y in 0..<16 {
             for z in 0..<16 {
+              sectionStopwatch.lap(detail: "start block")
               let state = section.getBlockId(atX: Int32(x), y: Int32(y), andZ: Int32(z))
               if state != 0 {
+                sectionStopwatch.lap(detail: "got state")
                 renderBlock(into: mesh, position: simd_float3(Float(x), Float(sectionY+y), Float(z)), faces: Set<Direction>([.up, .south, .east, .west, .down, .north]))
+                sectionStopwatch.lap(detail: "rendered block")
               }
             }
           }
         }
+        sectionStopwatch.lap(detail: "completed section")
       }
       sectionNumber += 1
     }
-    print("section done")
   }
   
   func renderBlock(into mesh: Mesh, position: simd_float3, faces: Set<Direction>) {

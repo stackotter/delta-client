@@ -76,15 +76,22 @@ class Renderer {
   
   func draw(view: MTKView, drawable: CAMetalDrawable) {
     Logger.debug("render, starting frame")
-    var stopWatch = Stopwatch.now(label: "render")
+    var stopwatch = Stopwatch.now(label: "render")
     
     // render player's current chunk
     let mesh = Mesh()
-    Logger.debug("player position: \(client.server.player.chunkPosition)")
-    let chunk = client.server.currentWorld.chunks[client.server.player.chunkPosition]
-    if chunk != nil {
-      let chunkRenderer = ChunkRenderer(chunk: chunk!)
-      chunkRenderer.render(into: mesh)
+    if let chunk = client.server.currentWorld.chunks[client.server.player.chunkPosition] {
+//      let chunkRenderer = ChunkRenderer(chunk: chunk!)
+//      chunkRenderer.render(into: mesh)
+      
+      if chunk.mesh.vertices.count == 0 {
+        stopwatch.lap(detail: "generating chunk mesh")
+        chunk.generateMesh()
+        stopwatch.lap(detail: "finished generating chunk mesh")
+        Logger.debug("number of blocks in mesh: \(chunk.mesh.totalBlocks)")
+      }
+      mesh.vertices = chunk.mesh.vertices
+      mesh.indices = chunk.mesh.indices
     } else {
       mesh.vertices.append(contentsOf: [
         Vertex(position: [0, 1, -5], textureCoordinate: [0, 0]),
@@ -94,14 +101,23 @@ class Renderer {
       mesh.indices.append(contentsOf: [0, 1, 2])
     }
     
-    stopWatch.lap(detail: "created mesh objects")
+//    var chunkMesh = ChunkMesh()
+//    chunkMesh.setBlock(5, 3, 10, to: 1)
+//    chunkMesh.setBlock(6, 4, 10, to: 1)
+//    chunkMesh.setBlock(8, 3, 10, to: 1)
+//    chunkMesh.setBlock(0, 3, 10, to: 2)
+//    chunkMesh.setBlock(0, 3, 10, to: 0)
+//    mesh.vertices = chunkMesh.vertices
+//    mesh.indices = chunkMesh.indices
+    
+    stopwatch.lap(detail: "created mesh objects")
     
     let aspect = Float(view.drawableSize.width/view.drawableSize.height)
     let matrixBuffer = createWorldToClipSpaceMatrix(aspect: aspect)
     let vertexBuffer = mesh.createVertexBuffer(for: metalDevice)
     let indexBuffer = mesh.createIndexBuffer(for: metalDevice)
     
-    stopWatch.lap(detail: "created buffers")
+    stopwatch.lap(detail: "created buffers")
     
     if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
       if let renderPassDescriptor = view.currentRenderPassDescriptor {
@@ -130,7 +146,7 @@ class Renderer {
           commandBuffer.present(drawable)
           commandBuffer.commit()
           
-          stopWatch.lap(detail: "rendered")
+          stopwatch.lap(detail: "rendered")
         }
       }
     }

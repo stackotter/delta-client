@@ -6,13 +6,16 @@
 //
 
 import Foundation
+import os
 
-struct Chunk {
+class Chunk {
   var position: ChunkPosition
   var heightMaps: NBTCompound
   var ignoreOldData: Bool
-  var sections: [ChunkSection]
   var blockEntities: [BlockEntity]
+  var sections: [ChunkSection]
+  
+  var mesh: ChunkMesh
   
   // private because it shouldn't be used directly cause of its weird storage format
   private var biomes: [UInt8]
@@ -24,6 +27,30 @@ struct Chunk {
     self.biomes = biomes
     self.sections = sections
     self.blockEntities = blockEntities
+    
+    self.mesh = ChunkMesh()
+  }
+  
+  // TODO: clean up mesh generation code
+  func generateMesh() {
+    var totalBlocks = 0
+    for (sectionIndex, section) in sections.enumerated() {
+      if section.blockCount != 0 {
+        let sectionY = sectionIndex*16
+        for x in 0..<16 {
+          for y in 0..<16 {
+            for z in 0..<16 {
+              let indexInSection = ChunkSection.blockIndexFrom(x, y, z)
+              if section.blocks[indexInSection] != 0 {
+                mesh.addBlock(x, sectionY+y, z, faces: Set<Direction>([.up, .down, .north, .south, .east, .west]))
+                totalBlocks += 1
+              }
+            }
+          }
+        }
+      }
+    }
+    Logger.debug("total blocks: \(totalBlocks)")
   }
   
   // TODO_LATER: calculate the index in the function
@@ -33,16 +60,45 @@ struct Chunk {
     return biomes[index*4+3]
   }
   
-  // position must be relative to chunk
-  func getBlock(at position: Position) -> UInt16 {
-    let sectionNum = position.y >> 4 // divides by 16 and rounds down
-    let sectionY = position.y - sectionNum*16
-    return sections[Int(sectionNum)].getBlockId(atX: position.x, y: sectionY, andZ: position.z)
+  func getRelativeY(y: Int, sectionNum: Int) -> Int {
+    return y - sectionNum*16
   }
   
-  mutating func setBlock(at position: Position, to state: UInt16) {
-    let sectionNum = position.y >> 4
-    let sectionY = position.y - sectionNum*16
-    sections[Int(sectionNum)].setBlockId(atX: position.x, y: sectionY, andZ: position.z, to: state)
+  // position must be relative to chunk
+  func getBlock(at position: Position) -> UInt16 {
+    return getBlock(atX: Int(position.x), y: Int(position.y), andZ: Int(position.z))
+  }
+  
+  // TODO: clean up use of integer types
+  func getBlock(atX x: Int, y: Int, andZ z: Int) -> UInt16 {
+    let sectionNum = y / 16 // divides by 16 and rounds down
+    let sectionY = getRelativeY(y: y, sectionNum: sectionNum)
+    return sections[sectionNum].getBlockId(atX: Int32(x), y: Int32(sectionY), andZ: Int32(z))
+  }
+  
+  // TODO: get rid of these double functions, decide on one (after choosing int type to use)
+  func setBlock(at position: Position, to newState: UInt16) {
+    setBlock(atX: Int(position.x), y: Int(position.y), andZ: Int(position.z), to: newState)
+  }
+  
+  func setBlock(atX x: Int, y: Int, andZ z: Int, to newState: UInt16) {
+    let sectionNum = y / 16
+    let sectionY = getRelativeY(y: y, sectionNum: sectionNum)
+    let currentState = getBlock(atX: x, y: y, andZ: z)
+    let blockIndex = ChunkSection.blockIndexFrom(x, y, z)
+    if currentState == newState {
+      Logger.debug("doing nothing, state not changing")
+      return
+    }
+    if currentState != 0 {
+      Logger.debug("current block is not air, removing")
+      mesh.removeBlock(atIndex: blockIndex) // TODO: implement replace block
+    }
+    if newState != 0 {
+      Logger.debug("new block is not air, adding")
+      mesh.addBlock(x, y, z, index: blockIndex, faces: Set<Direction>([.up, .down, .east, .west, .north, .south]))
+    }
+    Logger.debug("setting block in chunk section")
+    sections[sectionNum].setBlockId(atX: Int32(x), y: Int32(sectionY), andZ: Int32(z), to: newState)
   }
 }
