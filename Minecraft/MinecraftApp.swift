@@ -14,6 +14,7 @@ struct MinecraftApp: App {
   
   init() {
     eventManager = EventManager()
+    dataManager = DataManager()
   }
   
   var body: some Scene {
