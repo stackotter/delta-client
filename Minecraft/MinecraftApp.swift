@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct MinecraftApp: App {
   var eventManager: EventManager
+  var dataManager: DataManager
   
   init() {
     eventManager = EventManager()

@@ -216,6 +216,7 @@
 		789650922588834C0079C5CF /* LoginStartPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789650912588834C0079C5CF /* LoginStartPacket.swift */; };
 		789BE9E32589DAC7001C08ED /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789BE9E22589DAC7001C08ED /* JSON.swift */; };
 		78AF008125F365C100A86737 /* chiseled_stone_bricks.png in Resources */ = {isa = PBXBuildFile; fileRef = 78AF008025F365C100A86737 /* chiseled_stone_bricks.png */; };
+		78B6A1DF25FC301200CFE493 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6A1DE25FC301200CFE493 /* DataManager.swift */; };
 		78BE297525E078570058CE11 /* ChatComponentUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE297425E078570058CE11 /* ChatComponentUtil.swift */; };
 		78BE297A25E078E60058CE11 /* ChatStringComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE297925E078E60058CE11 /* ChatStringComponent.swift */; };
 		78BE297F25E08B2A0058CE11 /* ChatKeybindComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE297E25E08B2A0058CE11 /* ChatKeybindComponent.swift */; };
@@ -507,6 +508,7 @@
 		789650912588834C0079C5CF /* LoginStartPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStartPacket.swift; sourceTree = "<group>"; };
 		789BE9E22589DAC7001C08ED /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		78AF008025F365C100A86737 /* chiseled_stone_bricks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chiseled_stone_bricks.png; sourceTree = "<group>"; };
+		78B6A1DE25FC301200CFE493 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		78BE297425E078570058CE11 /* ChatComponentUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComponentUtil.swift; sourceTree = "<group>"; };
 		78BE297925E078E60058CE11 /* ChatStringComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStringComponent.swift; sourceTree = "<group>"; };
 		78BE297E25E08B2A0058CE11 /* ChatKeybindComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatKeybindComponent.swift; sourceTree = "<group>"; };
@@ -785,6 +787,7 @@
 		7884358E2585E5E3002F1F84 /* Minecraft */ = {
 			isa = PBXGroup;
 			children = (
+				78B6A1DD25FC2EA700CFE493 /* Data */,
 				785E531A25F2E8C2003C3CF4 /* Rendering */,
 				7889A9ED25C4F4630007B2D7 /* Player */,
 				78F29B3025AE845700D85CCB /* Entity */,
@@ -825,6 +828,14 @@
 				789088AE25EC80FB00CA6DF0 /* chunkunpack.c */,
 			);
 			path = C;
+			sourceTree = "<group>";
+		};
+		78B6A1DD25FC2EA700CFE493 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				78B6A1DE25FC301200CFE493 /* DataManager.swift */,
+			);
+			path = Data;
 			sourceTree = "<group>";
 		};
 		78BD2FE425F3589300DEC0F6 /* Mesh */ = {
@@ -1540,6 +1551,7 @@
 				7824E90F25E0FF02009F0197 /* SoundEffectPacket.swift in Sources */,
 				7873054825D92A1B001259EB /* PlayerPositionAndLookClientboundPacket.swift in Sources */,
 				788435902585E606002F1F84 /* Server.swift in Sources */,
+				78B6A1DF25FC301200CFE493 /* DataManager.swift in Sources */,
 				781E63CB25B166D000ADFAB8 /* EntityPosition.swift in Sources */,
 				784B393325A14F8400556E3E /* LoginSuccessPacket.swift in Sources */,
 				780993FE25E21D2D00DFDC9F /* TeleportConfirmPacket.swift in Sources */,

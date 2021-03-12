@@ -19,7 +19,6 @@ struct ChunkMesh {
   
   var totalBlocks = 0
   
-  // TODO: make chunkmesh constants static
   // cube geometry constants
   let cubeTextureCoordinates: [simd_float2] = [
     simd_float2(0, 0),
@@ -29,12 +28,12 @@ struct ChunkMesh {
   ]
   
   let faceVertexIndices: [Direction: [Int]] = [
-    .up: [2, 1, 5, 6],
-    .down: [0, 3, 7, 4],
+    .up: [0, 3, 7, 4],
+    .down: [2, 1, 5, 6],
     .east: [3, 2, 6, 7],
     .west: [1, 0, 4, 5],
-    .north: [7, 6, 5, 4],
-    .south: [0, 1, 2, 3]
+    .north: [0, 1, 2, 3],
+    .south: [7, 6, 5, 4]
   ]
   
   let cubeVertexPositions: [simd_float3] = [
@@ -52,29 +51,28 @@ struct ChunkMesh {
     
   }
   
-  // Basic functions
+  init(chunk: Chunk) {
+    for x in 0..<16 {
+      for z in 0..<16 {
+        for y in 0..<255 {
+          let state = chunk.getBlock(atX: x, y: y, andZ: z)
+          
+          if state != 0 {
+            let faces = chunk.getEmptyNeighbours(forX: x, y: y, andZ: z)
+            if !faces.isEmpty {
+              addBlock(x, y, z, faces: faces)
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Helper Functions
   
   func blockIndexFrom(_ x: Int, _ y: Int, _ z: Int) -> Int {
     return (y*16 + z)*16 + x
   }
-  
-//  func getBlock(_ x: Int, _ y: Int, _ z: Int) -> UInt16 {
-//    let index = ChunkSection.blockIndexFrom(x, y, z)
-//    return blocks[index]
-//  }
-//
-//  mutating func setBlock(_ x: Int, _ y: Int, _ z: Int, to newState: UInt16) {
-//    let index = ChunkSection.blockIndexFrom(x, y, z)
-//    let currentState = blocks[index]
-//    if currentState == newState {
-//      return
-//    }
-//    removeBlock(atIndex: index) // TODO: implement replace block
-//    if newState != 0 {
-//      addBlock(x, y, z, index: index, faces: Set<Direction>([.up, .down, .east, .west, .north, .south]))
-//    }
-//    blocks[index] = newState
-//  }
   
   // Render Functions
   
@@ -87,7 +85,8 @@ struct ChunkMesh {
     totalBlocks += 1
     let startQuadIndex = vertices.count/4
     for faceDirection in faces {
-      addQuad(x, y, z, direction: faceDirection)
+      let modelMatrix = MatrixUtil.translationMatrix(simd_float3(Float(x), Float(y), Float(z)))
+      addQuad(x, y, z, direction: faceDirection, modelMatrix: modelMatrix)
     }
     var quadIndices: [Int] = []
     for i in 0..<faces.count {
@@ -98,10 +97,7 @@ struct ChunkMesh {
     blockIndexToQuads[blockIndex] = quadIndices
   }
   
-  mutating func addQuad(_ x: Int, _ y: Int, _ z: Int, direction: Direction) {
-    // TODO: compute this in addBlock
-    let modelMatrix = MatrixUtil.translationMatrix(simd_float3(Float(x), Float(y), Float(z)))
-    
+  mutating func addQuad(_ x: Int, _ y: Int, _ z: Int, direction: Direction, modelMatrix: matrix_float4x4) {
     let offset = UInt32(vertices.count) // the index of the first vertex of the quad
     windQuad(offset: offset)
     

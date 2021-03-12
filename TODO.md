@@ -13,10 +13,13 @@ just a bunch of random todos
 - [ ] Chunk rendering
   - [x] Textureless blocks
   - [x] Make it 60fps
-  - [ ] Optimise initial mesh preparation
-  - [ ] Implement block culling (saves on cpu and memory usage)
+  - [x] Optimise initial mesh preparation
+  - [x] Implement block culling (saves on cpu and memory usage) (basic block culling)
   - [ ] Implement basic block textures
+  - [ ] Fix block culling to be able to do blocks on the edge of chunks
+  - [ ] Optimise block culling more
 - [ ] Mojang data
+  - [ ] plan directory structure
   - [ ] download the mojang data on first app launch to avoid copyright stuff
     - [ ] can probably just extract from the server.jar pretty easily
   - [ ] load block models and block state info stuff from texture pack

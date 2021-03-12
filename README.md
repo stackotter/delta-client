@@ -35,6 +35,11 @@ Currently it uses no external libraries so the app is currently less than a mb.
     - [x] player movement
     - [ ] inventory
     - [ ] everything else
+- [ ] First launch
+  - [ ] download server jar
+  - [ ] extract server jar
+  - [ ] extract assets from server jar
+  - [ ] create default config
 - [ ] Create basic text interface
   - [x] chat
   - [ ] movement
