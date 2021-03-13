@@ -2,28 +2,25 @@
 //  ViewState.swift
 //  Minecraft
 //
-//  Created by Rohan van Klinken on 26/12/20.
+//  Created by Rohan van Klinken on 13/3/21.
 //
 
 import Foundation
 
-class ViewState: ObservableObject {
-  @Published var state: ViewStateEnum
+class ViewState<T>: ObservableObject {
+  @Published var state: T
   
-  enum ViewStateEnum {
-    case playing(withRendering: Bool, serverInfo: ServerInfo)
-    case serverList(serverList: ServerList)
+  init(initialState: T) {
+    state = initialState
   }
   
-  init(initialState: ViewStateEnum) {
-    self.state = initialState
-  }
-  
-  func updateServerList(newServerList: ServerList) {
-    state = .serverList(serverList: newServerList)
-  }
-  
-  func playServer(withInfo info: ServerInfo, withRendering: Bool) {
-    state = .playing(withRendering: withRendering, serverInfo: info)
+  func update(to newState: T) {
+    if Thread.isMainThread {
+      self.state = newState
+    } else {
+      DispatchQueue.main.sync {
+        self.state = newState
+      }
+    }
   }
 }

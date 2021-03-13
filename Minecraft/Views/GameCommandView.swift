@@ -8,14 +8,12 @@
 import SwiftUI
 
 struct GameCommandView: View {
-  var config: Config
-  var client: Client
-  
   @State var command: String = ""
   
-  init(serverInfo: ServerInfo, config: Config, managers: Managers) {
-    self.config = config
-    self.client = Client(managers: managers, serverInfo: serverInfo, config: config)
+  var client: Client
+  
+  init(serverInfo: ServerInfo, managers: Managers) {
+    self.client = Client(managers: managers, serverInfo: serverInfo)
     
     self.client.play()
   }

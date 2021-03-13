@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ServerListView: View {
-  @ObservedObject var viewState: ViewState
+  @ObservedObject var viewState: ViewState<AppViewStateEnum>
   @ObservedObject var serverList: ServerList
   
   var body: some View {

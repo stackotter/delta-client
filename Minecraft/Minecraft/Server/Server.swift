@@ -10,7 +10,6 @@ import os
 
 class Server: Hashable {
   var managers: Managers
-  var clientConfig: Config
   
   var connection: ServerConnection
   var info: ServerInfo
@@ -51,10 +50,9 @@ class Server: Hashable {
     case disconnected
   }
   
-  init(withInfo serverInfo: ServerInfo, managers: Managers, clientConfig: Config) {
+  init(withInfo serverInfo: ServerInfo, managers: Managers) {
     self.info = serverInfo
     self.managers = managers
-    self.clientConfig = clientConfig
     
     self.connection = ServerConnection(host: info.host, port: info.port, managers: self.managers)
     self.packetRegistry = PacketRegistry.createDefault()

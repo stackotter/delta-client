@@ -9,30 +9,18 @@ import Foundation
 import os
 
 class ConfigManager {
+  var storageManager: StorageManager
   var minecraftFolder: URL
-  var eventManager: EventManager
   
   enum ConfigError: LocalizedError {
     case invalidServerListNBT
     case invalidLauncherProfilesJSON
   }
   
-  init(eventManager: EventManager) {
-    self.eventManager = eventManager
+  init(storageManager: StorageManager) {
     // TODO_LATER: handle minecraft folder not existing
+    self.storageManager = storageManager
     self.minecraftFolder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("minecraft")
-  }
-  
-  func getCurrentConfig() -> Config {
-    let serverList = getServerList()
-    let launcherProfile = getLauncherProfile()
-    let locale = getLocale()
-    let config = Config(minecraftFolder: minecraftFolder, serverList: serverList, launcherProfile: launcherProfile, locale: locale)
-    return config
-  }
-  
-  func getLocale() -> MinecraftLocale {
-    return MinecraftLocale() // TODO: actually get locale
   }
   
   func getServerList() -> ServerList {

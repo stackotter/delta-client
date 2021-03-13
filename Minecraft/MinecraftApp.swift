@@ -10,8 +10,14 @@ import os
 
 @main
 struct MinecraftApp: App {
-  @ObservedObject var state = AppState(initialState: .loading(message: "loading game.."))
+  @ObservedObject var state = ViewState<AppStateEnum>(initialState: .loading(message: "loading game.."))
   let eventManager = EventManager()
+  
+  enum AppStateEnum {
+    case loading(message: String)
+    case error(message: String)
+    case loaded(managers: Managers)
+  }
   
   init() {
     // register event handler
@@ -33,12 +39,12 @@ struct MinecraftApp: App {
     switch event {
       case .loadingScreenMessage(let message):
         Logger.debug(message)
-        state.displayLoadingScreenMessage(message)
+        state.update(to: .loading(message: message))
       case .loadingComplete(let managers):
-        state.finishLoading(withManagers: managers)
+        state.update(to: .loaded(managers: managers))
       case .error(let message):
         Logger.error(message)
-        state.displayError(message)
+        state.update(to: .error(message: message))
       default:
         break
     }

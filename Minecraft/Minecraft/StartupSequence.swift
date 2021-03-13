@@ -20,12 +20,15 @@ class StartupSequence {
   }
   
   func run() throws {
-    eventManager.triggerEvent(.loadingScreenMessage("starting storage and asset managers"))
-    let storageManager = StorageManager()
-    let assetManager = AssetManager(storageManager: storageManager)
-    if !assetManager.checkAssetsExist() {
-      eventManager.triggerEvent(.loadingScreenMessage("downloading assets.. (this is a one time thing)"))
-      let success = assetManager.downloadAssets()
+    // initialise managers
+    eventManager.triggerEvent(.loadingScreenMessage("initialising managers"))
+    let managers = Managers(eventManager: eventManager)
+    
+    // start asset manager and download assets if neccessary
+    eventManager.triggerEvent(.loadingScreenMessage("starting asset manager"))
+    if !managers.assetManager.checkAssetsExist() {
+      eventManager.triggerEvent(.loadingScreenMessage("downloading and extracting assets (this only happens once, it shouldn't take too long, only 18mb)"))
+      let success = managers.assetManager.downloadAssets()
       if !success {
         Logger.error("failed to download assets")
         throw AssetError.failedToDownload
@@ -34,21 +37,21 @@ class StartupSequence {
     } else {
       Logger.debug("assets exist")
     }
+    
+    // load locale
     eventManager.triggerEvent(.loadingScreenMessage("loading locale 'en_us'.."))
-    let localeManager = LocaleManager()
-    guard let localeURL = assetManager.getLocaleURL(withName: "en_us") else {
+    guard let localeURL = managers.assetManager.getLocaleURL(withName: "en_us") else {
       throw StartupError.missingLocale
     }
     do {
-      try localeManager.addLocale(fromFile: localeURL, withName: "en_us")
-      try localeManager.setLocale(to: "en_us")
+      try managers.localeManager.addLocale(fromFile: localeURL, withName: "en_us")
+      try managers.localeManager.setLocale(to: "en_us")
     } catch {
       Logger.error("failed to load locale")
       throw error
     }
     Logger.debug("successfully loaded locale")
     
-    let managers = Managers(eventManager: eventManager, storageManager: storageManager, assetManager: assetManager, localeManager: localeManager)
     eventManager.triggerEvent(.loadingComplete(managers))
   }
 }

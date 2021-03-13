@@ -19,7 +19,7 @@ class AssetManager {
   
   init(storageManager: StorageManager) {
     self.storageManager = storageManager
-    self.assetsFolder = self.storageManager.getMojangAssetsFolder()
+    self.assetsFolder = self.storageManager.getAssetsFolder()
   }
   
   func checkAssetsExist() -> Bool {

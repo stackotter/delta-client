@@ -7,21 +7,19 @@
 
 import SwiftUI
 
+enum AppViewStateEnum {
+  case playing(withRendering: Bool, serverInfo: ServerInfo)
+  case serverList(serverList: ServerList)
+}
+
 struct AppView: View {
-  @ObservedObject var state: ViewState
-  var eventManager: EventManager
+  @ObservedObject var state: ViewState<AppViewStateEnum>
   var managers: Managers
-  
-  var config: Config
   
   init(managers: Managers) {
     self.managers = managers
-    self.eventManager = self.managers.eventManager
     
-    let configManager = ConfigManager(eventManager: self.eventManager)
-    self.config = configManager.getCurrentConfig()
-    
-    let serverList = self.config.serverList
+    let serverList = self.managers.configManager.getServerList()
     serverList.refresh()
     self.state = ViewState(initialState: .serverList(serverList: serverList))
   }
@@ -30,9 +28,9 @@ struct AppView: View {
     switch state.state {
       case .playing(let withRendering, let serverInfo):
         if withRendering {
-          GameRenderView(serverInfo: serverInfo, config: config, managers: managers)
+          GameRenderView(serverInfo: serverInfo, managers: managers)
         } else {
-          GameCommandView(serverInfo: serverInfo, config: config, managers: managers)
+          GameCommandView(serverInfo: serverInfo, managers: managers)
         }
       case .serverList(let serverList):
         ServerListView(viewState: state, serverList: serverList)

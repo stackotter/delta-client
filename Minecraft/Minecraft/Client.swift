@@ -12,7 +12,6 @@ import os
 class Client {
   var state: ClientState = .idle
   var server: Server
-  var config: Config
   
   var managers: Managers
   
@@ -23,11 +22,10 @@ class Client {
     case play
   }
   
-  init(managers: Managers, serverInfo: ServerInfo, config: Config) {
+  init(managers: Managers, serverInfo: ServerInfo) {
     self.managers = managers
-    self.config = config
     
-    self.server = Server(withInfo: serverInfo, managers: managers, clientConfig: config)
+    self.server = Server(withInfo: serverInfo, managers: managers)
   }
   
   // TEMP

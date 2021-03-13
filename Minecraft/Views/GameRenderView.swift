@@ -5,48 +5,42 @@
 //  Created by Rohan van Klinken on 6/3/21.
 //
 
-import Combine
 import SwiftUI
+import os
 
-class GameState: ObservableObject {
-  @Published var downloadingTerrain = true
-  var sink: AnyCancellable?
-  var client: Client
-  
-  init(client: Client) {
-    self.client = client
-    self.client.managers.eventManager.registerEventHandler({ event in
-      print("event received")
-      DispatchQueue.main.sync {
-        self.downloadingTerrain = false
-      }
-    }, eventName: "downloadedTerrain")
-  }
+enum GameViewStateEnum {
+  case downloadingTerrain
+  case playing
 }
 
 struct GameRenderView: View {
-  var config: Config
+  @ObservedObject var state = ViewState<GameViewStateEnum>(initialState: .downloadingTerrain)
+  
   let client: Client
   
-  @ObservedObject var state: GameState
-  
-  init(serverInfo: ServerInfo, config: Config, managers: Managers) {
-    self.config = config
-    self.client = Client(managers: managers, serverInfo: serverInfo, config: config)
-    self.state = GameState(client: self.client)
+  init(serverInfo: ServerInfo, managers: Managers) {
+    self.client = Client(managers: managers, serverInfo: serverInfo)
     
+    managers.eventManager.registerEventHandler(handleEvent, eventName: "downloadedTerrain")
     self.client.play()
   }
   
-  func updateTerrainStatus(status: Bool) {
-    state.downloadingTerrain = status
+  func handleEvent(_ event: EventManager.Event) {
+    switch event {
+      case .downloadedTerrain:
+        Logger.log("finished downloading terrain")
+        state.update(to: .playing)
+      default:
+        break
+    }
   }
   
   var body: some View {
-    if state.downloadingTerrain {
-      Text("downloading terrain")
-    } else {
-      MetalView(client: client)
+    switch state.state {
+      case .downloadingTerrain:
+        Text("downloading terrain")
+      case .playing:
+        MetalView(client: client)
     }
   }
 }

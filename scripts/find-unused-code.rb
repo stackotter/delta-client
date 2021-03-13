@@ -42,7 +42,7 @@ class Item
   end
 
   def full_file_path
-    Dir.pwd + '/' + @file
+    Dir.pwd + '/../' + @file
   end  
 
   def serialize
@@ -58,7 +58,7 @@ end
 class Unused
   def find
     items = []
-    all_files = Dir.glob("**/*.swift").reject do |path|
+    all_files = Dir.glob("../**/*.swift").reject do |path|
       File.directory?(path)
     end
 
@@ -83,8 +83,8 @@ class Unused
 
     puts "Starting searching globally it can take a while".green
 
-    xibs = Dir.glob("**/*.xib")
-    storyboards = Dir.glob("**/*.storyboard")
+    xibs = Dir.glob("../**/*.xib")
+    storyboards = Dir.glob("../**/*.storyboard")
 
     find_usages_in_files(all_files, xibs + storyboards, items)
 

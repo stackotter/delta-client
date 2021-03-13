@@ -10,19 +10,18 @@ import Foundation
 struct Managers {
   var eventManager: EventManager
   var storageManager: StorageManager
+  var configManager: ConfigManager
   var assetManager: AssetManager
   var localeManager: LocaleManager
   
-  init(eventManager: EventManager, storageManager: StorageManager, assetManager: AssetManager, localeManager: LocaleManager) {
-    self.eventManager = eventManager
-    self.storageManager = storageManager
-    self.assetManager = assetManager
-    self.localeManager = localeManager
+  init() {
+    self.init(eventManager: EventManager())
   }
   
-  init() {
-    self.eventManager = EventManager()
+  init(eventManager: EventManager) {
+    self.eventManager = eventManager
     self.storageManager = StorageManager()
+    self.configManager = ConfigManager(storageManager: self.storageManager)
     self.assetManager = AssetManager(storageManager: self.storageManager)
     self.localeManager = LocaleManager()
   }

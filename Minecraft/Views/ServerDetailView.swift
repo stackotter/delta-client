@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ServerDetailView: View {
-  @ObservedObject var viewState: ViewState
+  @ObservedObject var viewState: ViewState<AppViewStateEnum>
   @ObservedObject var server: ServerPinger
   
   var body: some View {
@@ -35,13 +35,13 @@ struct ServerDetailView: View {
       
       HStack {
         Button(action: {
-          viewState.playServer(withInfo: server.info, withRendering: false)
+          viewState.update(to: .playing(withRendering: false, serverInfo: server.info))
         }) {
           Text("Play Commands")
         }
         
         Button(action: {
-          viewState.playServer(withInfo: server.info, withRendering: true)
+          viewState.update(to: .playing(withRendering: true, serverInfo: server.info))
         }) {
           Text("Play Render")
         }
