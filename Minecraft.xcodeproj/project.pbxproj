@@ -213,7 +213,6 @@
 		78965088258861FE0079C5CF /* NBTCompound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78965087258861FE0079C5CF /* NBTCompound.swift */; };
 		789650922588834C0079C5CF /* LoginStartPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789650912588834C0079C5CF /* LoginStartPacket.swift */; };
 		789BE9E32589DAC7001C08ED /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789BE9E22589DAC7001C08ED /* JSON.swift */; };
-		78AF008125F365C100A86737 /* chiseled_stone_bricks.png in Resources */ = {isa = PBXBuildFile; fileRef = 78AF008025F365C100A86737 /* chiseled_stone_bricks.png */; };
 		78B6A1DF25FC301200CFE493 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6A1DE25FC301200CFE493 /* StorageManager.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
 		78B6A1F625FC5FCC00CFE493 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6A1F525FC5FCC00CFE493 /* AssetManager.swift */; };
@@ -226,7 +225,6 @@
 		78BE297F25E08B2A0058CE11 /* ChatKeybindComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE297E25E08B2A0058CE11 /* ChatKeybindComponent.swift */; };
 		78BE298F25E08BCB0058CE11 /* ChatScoreComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE298E25E08BCB0058CE11 /* ChatScoreComponent.swift */; };
 		78BE299C25E0A3250058CE11 /* MinecraftLocale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BE299B25E0A3250058CE11 /* MinecraftLocale.swift */; };
-		78BE29A225E0AD1C0058CE11 /* en_us.json in Resources */ = {isa = PBXBuildFile; fileRef = 78BE29A125E0AD1C0058CE11 /* en_us.json */; };
 		78BFD2E725B521A800366631 /* WorldConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BFD2E625B521A800366631 /* WorldConfig.swift */; };
 		78BFD2EC25B522A700366631 /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BFD2EB25B522A700366631 /* ServerConfig.swift */; };
 		78C2D5852585949800883DF5 /* StatusRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C2D5842585949800883DF5 /* StatusRequestPacket.swift */; };
@@ -508,7 +506,6 @@
 		78965087258861FE0079C5CF /* NBTCompound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBTCompound.swift; sourceTree = "<group>"; };
 		789650912588834C0079C5CF /* LoginStartPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStartPacket.swift; sourceTree = "<group>"; };
 		789BE9E22589DAC7001C08ED /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
-		78AF008025F365C100A86737 /* chiseled_stone_bricks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chiseled_stone_bricks.png; sourceTree = "<group>"; };
 		78B6A1DE25FC301200CFE493 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		78B6A1F525FC5FCC00CFE493 /* AssetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
 		78B6A20025FC673D00CFE493 /* LocaleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleManager.swift; sourceTree = "<group>"; };
@@ -520,7 +517,6 @@
 		78BE297E25E08B2A0058CE11 /* ChatKeybindComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatKeybindComponent.swift; sourceTree = "<group>"; };
 		78BE298E25E08BCB0058CE11 /* ChatScoreComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScoreComponent.swift; sourceTree = "<group>"; };
 		78BE299B25E0A3250058CE11 /* MinecraftLocale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftLocale.swift; sourceTree = "<group>"; };
-		78BE29A125E0AD1C0058CE11 /* en_us.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = en_us.json; sourceTree = "<group>"; };
 		78BFD2E625B521A800366631 /* WorldConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldConfig.swift; sourceTree = "<group>"; };
 		78BFD2EB25B522A700366631 /* ServerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfig.swift; sourceTree = "<group>"; };
 		78C2D5842585949800883DF5 /* StatusRequestPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRequestPacket.swift; sourceTree = "<group>"; };
@@ -633,7 +629,6 @@
 			isa = PBXGroup;
 			children = (
 				784194BA258204CD0070DE78 /* MinecraftApp.swift */,
-				78BE29A025E0AD070058CE11 /* Resources */,
 				7878B52A25844B6B007C0D3D /* Views */,
 				7884358E2585E5E3002F1F84 /* Minecraft */,
 				787D8FEF258451A8007E6441 /* Networking */,
@@ -854,15 +849,6 @@
 				785E535925F3296E003C3CF4 /* Vertex.swift */,
 			);
 			path = Mesh;
-			sourceTree = "<group>";
-		};
-		78BE29A025E0AD070058CE11 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				78AF008025F365C100A86737 /* chiseled_stone_bricks.png */,
-				78BE29A125E0AD1C0058CE11 /* en_us.json */,
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		78BFD2F925B5AC2400366631 /* Serverbound */ = {
@@ -1267,8 +1253,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				784194C2258204D00070DE78 /* Preview Assets.xcassets in Resources */,
-				78BE29A225E0AD1C0058CE11 /* en_us.json in Resources */,
-				78AF008125F365C100A86737 /* chiseled_stone_bricks.png in Resources */,
 				784194BF258204D00070DE78 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -4,8 +4,6 @@
 
 Minecraft Swift Edition is an open source rewrite of Minecraft Java Edition written in Swift. It is only a rewrite of the part that allows playing on servers.
 
-Currently it uses no external libraries so the app is currently less than a mb.
-
 ## Roadmap
 
 - [x] Server list ping (reads server list from servers.dat)

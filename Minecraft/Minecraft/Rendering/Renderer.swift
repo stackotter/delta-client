@@ -20,10 +20,12 @@ class Renderer {
   var texture: MTLTexture
   
   var client: Client
+  var managers: Managers
   
   init(device: MTLDevice, client: Client) {
     self.metalDevice = device
     self.client = client
+    self.managers = client.managers
     
     Logger.debug("creating command queue")
     self.metalCommandQueue = metalDevice.makeCommandQueue()!
@@ -50,7 +52,7 @@ class Renderer {
     pipelineState = try! self.metalDevice.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
     
     Logger.debug("loading textures")
-    let textureURL = Bundle.main.urlForImageResource("chiseled_stone_bricks")!
+    let textureURL = managers.storageManager.getAssetsFolder().appendingPathComponent("minecraft/textures/block/chiseled_stone_bricks.png") // TODO: create texture manager
     let textureLoader = MTKTextureLoader(device: self.metalDevice)
     texture = try! textureLoader.newTexture(URL: textureURL)
     
