@@ -14,8 +14,8 @@ struct ErrorView: View {
     VStack(spacing: 16) {
       Text("Error")
         .font(.largeTitle)
-      Text(viewState.errorMessage!)
-        .font(.title)
+//      Text(viewState.errorMessage!)
+//        .font(.title)
     }
   }
 }

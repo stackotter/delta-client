@@ -9,7 +9,7 @@ import Foundation
 import os
 
 class Server: Hashable {
-  var eventManager: EventManager
+  var managers: Managers
   var clientConfig: Config
   
   var connection: ServerConnection
@@ -23,7 +23,7 @@ class Server: Hashable {
         return world
       }
     }
-    return World(config: WorldConfig.createDefault(), eventManager: eventManager)
+    return World(config: WorldConfig.createDefault(), managers: managers)
   }
   
   // TODO: maybe use a Registry object that stores all registries for neater code
@@ -51,18 +51,18 @@ class Server: Hashable {
     case disconnected
   }
   
-  init(withInfo serverInfo: ServerInfo, eventManager: EventManager, clientConfig: Config) {
+  init(withInfo serverInfo: ServerInfo, managers: Managers, clientConfig: Config) {
     self.info = serverInfo
-    self.eventManager = eventManager
+    self.managers = managers
     self.clientConfig = clientConfig
     
-    self.connection = ServerConnection(host: info.host, port: info.port, eventManager: self.eventManager, locale: self.clientConfig.locale)
+    self.connection = ServerConnection(host: info.host, port: info.port, managers: self.managers)
     self.packetRegistry = PacketRegistry.createDefault()
     
     // TODO_LATER: fix this once config is cleaned up
     self.player = Player(username: "stampy876")
     
-    self.eventManager.registerEventHandler(handleEvents)
+    self.managers.eventManager.registerEventHandler(handleEvents)
     self.connection.setHandler(handlePacket)
   }
   
@@ -91,7 +91,7 @@ class Server: Hashable {
   // just a prototype for later
   func login() {
     connection.restart()
-    eventManager.registerOneTimeEventHandler({
+    managers.eventManager.registerOneTimeEventHandler({
       (event) in
       self.connection.handshake(nextState: .login) {
         let loginStart = LoginStartPacket(username: self.player.username)

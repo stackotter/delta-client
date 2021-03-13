@@ -32,7 +32,7 @@ class ConfigManager {
   }
   
   func getLocale() -> MinecraftLocale {
-    return MinecraftLocale.get("en_us") ?? MinecraftLocale(translations: [:])
+    return MinecraftLocale() // TODO: actually get locale
   }
   
   func getServerList() -> ServerList {

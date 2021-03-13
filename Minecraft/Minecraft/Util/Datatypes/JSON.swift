@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 struct JSON {
   let dict: [String: Any]
@@ -45,6 +46,18 @@ struct JSON {
     }
     let json = JSON(dict: dict)
     return json
+  }
+  
+  // returns true on success
+  func writeTo(_ url: URL) -> Bool {
+    do {
+      let data = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
+      try data.write(to: url)
+      return true
+    } catch {
+      Logger.error("failed to write json to file `\(url.absoluteString)`")
+      return false
+    }
   }
   
   func containsKey(_ key: String) -> Bool {

@@ -13,9 +13,9 @@ struct GameCommandView: View {
   
   @State var command: String = ""
   
-  init(serverInfo: ServerInfo, config: Config, eventManager: EventManager) {
+  init(serverInfo: ServerInfo, config: Config, managers: Managers) {
     self.config = config
-    self.client = Client(eventManager: eventManager, serverInfo: serverInfo, config: config)
+    self.client = Client(managers: managers, serverInfo: serverInfo, config: config)
     
     self.client.play()
   }

@@ -21,7 +21,7 @@ struct ChunkData {
   func unpack() throws -> Chunk {
     do {
       let start = CFAbsoluteTimeGetCurrent()
-      var packetReader = PacketReader(buffer: buf, locale: MinecraftLocale.empty())
+      var packetReader = PacketReader(buffer: buf)
       
       // this first bit isn't too slow (cause it all only happens once
       let fullChunk = packetReader.readBool()

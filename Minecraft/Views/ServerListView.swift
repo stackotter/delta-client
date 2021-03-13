@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ServerListView: View {
   @ObservedObject var viewState: ViewState
+  @ObservedObject var serverList: ServerList
   
   var body: some View {
     NavigationView {
@@ -16,7 +17,7 @@ struct ServerListView: View {
         Text("Servers")
           .font(.title)
         
-        let servers = viewState.serverList.servers
+        let servers = serverList.servers
         ForEach(servers, id:\.self) { server in
           NavigationLink(destination: ServerDetailView(viewState: viewState, server: server)) {
             ServerListEntryView(server: server)
@@ -25,7 +26,7 @@ struct ServerListView: View {
         
         Spacer()
         Button(action: {
-          viewState.serverList.refresh()
+          serverList.refresh()
         }) {
           Text("Refresh")
         }

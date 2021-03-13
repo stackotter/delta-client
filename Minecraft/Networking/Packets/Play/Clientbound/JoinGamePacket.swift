@@ -57,7 +57,7 @@ struct JoinGamePacket: ClientboundPacket {
                                  enableRespawnScreen: enableRespawnScreen)
     let worldConfig = WorldConfig(worldName: worldName, dimension: dimension,
                                   hashedSeed: hashedSeed, isDebug: isDebug, isFlat: isFlat)
-    let world = World(config: worldConfig, eventManager: server.eventManager)
+    let world = World(config: worldConfig, managers: server.managers)
     server.worlds[worldName] = world
     server.currentWorldName = worldName
   }

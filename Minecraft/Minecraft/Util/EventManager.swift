@@ -34,6 +34,9 @@ class EventManager: Equatable {
     
     case downloadedTerrain
     
+    case loadingScreenMessage(_ message: String)
+    case loadingComplete(_ managers: Managers)
+    
     // this computed property is used to create the keys for the handlers dict
     var name:String {
       let mirror = Mirror(reflecting: self)

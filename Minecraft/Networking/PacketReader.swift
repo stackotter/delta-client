@@ -29,13 +29,21 @@ struct PacketReader {
     }
   }
   
-  init (bytes: [UInt8], locale: MinecraftLocale) {
+  init(bytes: [UInt8]) {
+    self.init(bytes: bytes, locale: MinecraftLocale())
+  }
+  
+  init(bytes: [UInt8], locale: MinecraftLocale) {
     self.buf = Buffer(bytes)
     self.packetId = Int(buf.readVarInt())
     self.locale = locale
   }
   
-  init (buffer: Buffer, locale: MinecraftLocale) {
+  init(buffer: Buffer) {
+    self.init(buffer: buffer, locale: MinecraftLocale())
+  }
+  
+  init(buffer: Buffer, locale: MinecraftLocale) {
     self.buf = buffer
     self.locale = locale
     let index = buf.index

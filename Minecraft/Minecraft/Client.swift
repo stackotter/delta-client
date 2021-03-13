@@ -14,7 +14,7 @@ class Client {
   var server: Server
   var config: Config
   
-  var eventManager: EventManager
+  var managers: Managers
   
   enum ClientState {
     case idle
@@ -23,11 +23,11 @@ class Client {
     case play
   }
   
-  init(eventManager: EventManager, serverInfo: ServerInfo, config: Config) {
-    self.eventManager = eventManager
+  init(managers: Managers, serverInfo: ServerInfo, config: Config) {
+    self.managers = managers
     self.config = config
     
-    self.server = Server(withInfo: serverInfo, eventManager: eventManager, clientConfig: config)
+    self.server = Server(withInfo: serverInfo, managers: managers, clientConfig: config)
   }
   
   // TEMP

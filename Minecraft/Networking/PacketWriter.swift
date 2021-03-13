@@ -68,11 +68,6 @@ struct PacketWriter {
     buf.writeString(string)
   }
   
-  // TODO: serverbound chat components
-  mutating func writeChat(_ chat: String) {
-    writeString(chat)
-  }
-  
   mutating func writeIdentifier(_ identifier: Identifier) {
     writeString(identifier.toString())
   }

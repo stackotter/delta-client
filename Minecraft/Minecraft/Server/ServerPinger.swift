@@ -9,7 +9,7 @@ import Foundation
 import os
 
 class ServerPinger: Hashable, ObservableObject {
-  var eventManager: EventManager
+  var managers: Managers
   var connection: ServerConnection
   var packetRegistry: PacketRegistry
   
@@ -18,9 +18,9 @@ class ServerPinger: Hashable, ObservableObject {
   @Published var pingInfo: PingInfo? = nil
   
   init(_ serverInfo: ServerInfo) {
-    self.eventManager = EventManager()
+    self.managers = Managers()
     self.info = serverInfo
-    self.connection = ServerConnection(host: serverInfo.host, port: serverInfo.port, eventManager: eventManager, locale: MinecraftLocale.empty())
+    self.connection = ServerConnection(host: serverInfo.host, port: serverInfo.port, managers: self.managers)
     self.packetRegistry = PacketRegistry.createDefault()
     self.connection.setHandler(handlePacket)
   }
@@ -37,7 +37,7 @@ class ServerPinger: Hashable, ObservableObject {
   func ping() {
     pingInfo = nil
     connection.restart()
-    eventManager.registerOneTimeEventHandler({ (event) in
+    managers.eventManager.registerOneTimeEventHandler({ (event) in
       self.connection.handshake(nextState: .status, callback: {
         let statusRequest = StatusRequestPacket()
         self.connection.sendPacket(statusRequest)

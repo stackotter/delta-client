@@ -8,38 +8,22 @@
 import Foundation
 
 class ViewState: ObservableObject {
-  @Published var isPlaying = false
-  @Published var playingCommands = false
-  @Published var selectedServerInfo: ServerInfo?
-  @Published var isErrored = false
-  @Published var errorMessage: String?
+  @Published var state: ViewStateEnum
   
-  @Published var serverList: ServerList
-  
-  init() {
-    self.serverList = ServerList()
+  enum ViewStateEnum {
+    case playing(withRendering: Bool, serverInfo: ServerInfo)
+    case serverList(serverList: ServerList)
   }
   
-  init(serverList: ServerList) {
-    self.serverList = serverList
+  init(initialState: ViewStateEnum) {
+    self.state = initialState
   }
   
   func updateServerList(newServerList: ServerList) {
-    serverList = newServerList
+    state = .serverList(serverList: newServerList)
   }
   
-  func playServer(withInfo info: ServerInfo, withCommands: Bool) {
-    isPlaying = true
-    playingCommands = withCommands
-    selectedServerInfo = info
-    isErrored = false
-    errorMessage = nil
-  }
-  
-  func displayError(message: String) {
-    isErrored = true
-    isPlaying = false
-    errorMessage = message
-    selectedServerInfo = nil
+  func playServer(withInfo info: ServerInfo, withRendering: Bool) {
+    state = .playing(withRendering: withRendering, serverInfo: info)
   }
 }

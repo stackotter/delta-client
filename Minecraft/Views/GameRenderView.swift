@@ -15,7 +15,7 @@ class GameState: ObservableObject {
   
   init(client: Client) {
     self.client = client
-    self.client.eventManager.registerEventHandler({ event in
+    self.client.managers.eventManager.registerEventHandler({ event in
       print("event received")
       DispatchQueue.main.sync {
         self.downloadingTerrain = false
@@ -30,9 +30,9 @@ struct GameRenderView: View {
   
   @ObservedObject var state: GameState
   
-  init(serverInfo: ServerInfo, config: Config, eventManager: EventManager) {
+  init(serverInfo: ServerInfo, config: Config, managers: Managers) {
     self.config = config
-    self.client = Client(eventManager: eventManager, serverInfo: serverInfo, config: config)
+    self.client = Client(managers: managers, serverInfo: serverInfo, config: config)
     self.state = GameState(client: self.client)
     
     self.client.play()

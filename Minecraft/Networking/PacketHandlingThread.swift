@@ -15,16 +15,16 @@ class PacketHandlingThread {
   // holds packets waiting to be processed
   var packetQueue: [(reader: PacketReader, state: PacketState)] = []
   
-  var eventManager: EventManager
+  var managers: Managers
   var locale: MinecraftLocale
   var packetRegistry: PacketRegistry
   var handler: (PacketReader, PacketState) -> Void
   
   var isWaiting: Bool = true
   
-  init(eventManager: EventManager, locale: MinecraftLocale, packetRegistry: PacketRegistry) {
-    self.eventManager = eventManager
-    self.locale = locale
+  init(managers: Managers, packetRegistry: PacketRegistry) {
+    self.managers = managers
+    self.locale = managers.localeManager.currentLocale
     self.packetRegistry = packetRegistry
     
     self.managementThread = DispatchQueue(label: "packetHandlingManagement")

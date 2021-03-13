@@ -6,21 +6,55 @@
 //
 
 import SwiftUI
+import os
 
 @main
 struct MinecraftApp: App {
-  var eventManager: EventManager
-  var dataManager: DataManager
+  @ObservedObject var state = AppState(initialState: .loading(message: "loading game.."))
+  let eventManager = EventManager()
   
   init() {
-    eventManager = EventManager()
-    dataManager = DataManager()
+    // register event handler
+    self.eventManager.registerEventHandler(handleEvent)
+    
+    // run app startup sequence
+    let thread = DispatchQueue(label: "startup")
+    let startupSequence = StartupSequence(eventManager: self.eventManager)
+    thread.async {
+      do {
+        try startupSequence.run()
+      } catch {
+        startupSequence.eventManager.triggerError("failed to complete startup")
+      }
+    }
+  }
+  
+  func handleEvent(_ event: EventManager.Event) {
+    switch event {
+      case .loadingScreenMessage(let message):
+        Logger.debug(message)
+        state.displayLoadingScreenMessage(message)
+      case .loadingComplete(let managers):
+        state.finishLoading(withManagers: managers)
+      case .error(let message):
+        Logger.error(message)
+        state.displayError(message)
+      default:
+        break
+    }
   }
   
   var body: some Scene {
     WindowGroup {
       Group {
-        AppView(eventManager: eventManager)
+        switch state.state {
+          case .error(let message):
+            Text(message)
+          case .loading(let message):
+            Text(message)
+          case .loaded(let managers):
+            AppView(managers: managers)
+        }
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

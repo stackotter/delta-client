@@ -17,8 +17,7 @@ class ServerConnection {
   
   var packetHandlingThread: PacketHandlingThread
   
-  var eventManager: EventManager
-  var locale: MinecraftLocale
+  var managers: Managers
   var packetRegistry: PacketRegistry
   
   var connectionState: ConnectionState = .idle
@@ -31,18 +30,18 @@ class ServerConnection {
     var packet: [UInt8]
   }
   
-  init(host: String, port: Int, eventManager: EventManager, locale: MinecraftLocale) {
+  init(host: String, port: Int, managers: Managers) {
+    self.managers = managers
+    
     self.host = host
     self.port = port
-    self.eventManager = eventManager
-    self.locale = locale
     
     self.packetRegistry = PacketRegistry.createDefault()
     
     self.networkQueue = DispatchQueue(label: "networkUpdates")
     self.socket = ServerConnection.createNWConnection(fromHost: self.host, andPort: self.port)
     
-    self.packetHandlingThread = PacketHandlingThread(eventManager: eventManager, locale: self.locale, packetRegistry: self.packetRegistry)
+    self.packetHandlingThread = PacketHandlingThread(managers: managers, packetRegistry: self.packetRegistry)
   }
   
   func setHandler(_ handler: @escaping (PacketReader, PacketState) -> Void) {
@@ -53,7 +52,7 @@ class ServerConnection {
     switch(newState) {
       case .ready:
         connectionState = .ready
-        eventManager.triggerEvent(.connectionReady)
+        managers.eventManager.triggerEvent(.connectionReady)
         receive()
       case .waiting(let error):
         handleNWError(error)
@@ -89,7 +88,7 @@ class ServerConnection {
       self.socket.forceCancel()
     }
     connectionState = .disconnected
-    eventManager.triggerEvent(.connectionClosed)
+    managers.eventManager.triggerEvent(.connectionClosed)
   }
   
   func handshake(nextState: HandshakePacket.NextState, callback: @escaping () -> Void = {}) {

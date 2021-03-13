@@ -35,13 +35,13 @@ struct ServerDetailView: View {
       
       HStack {
         Button(action: {
-          viewState.playServer(withInfo: server.info, withCommands: true)
+          viewState.playServer(withInfo: server.info, withRendering: false)
         }) {
           Text("Play Commands")
         }
         
         Button(action: {
-          viewState.playServer(withInfo: server.info, withCommands: false)
+          viewState.playServer(withInfo: server.info, withRendering: true)
         }) {
           Text("Play Render")
         }

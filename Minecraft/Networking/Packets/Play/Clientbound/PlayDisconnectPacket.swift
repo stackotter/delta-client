@@ -19,6 +19,6 @@ struct PlayDisconnectPacket: ClientboundPacket {
   
   func handle(for server: Server) throws {
     Logger.log("disconnect reason: \(reason.toText())")
-    server.eventManager.triggerError(reason.toText())
+    server.managers.eventManager.triggerError(reason.toText())
   }
 }

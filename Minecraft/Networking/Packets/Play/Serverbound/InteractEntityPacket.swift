@@ -19,7 +19,6 @@ struct InteractEntityPacket: ServerboundPacket {
     case interactAt(targetX: Float, targetY: Float, targetZ: Float, hand: Hand, isSneaking: Bool)
   }
   
-  // TODO: maybe check if valid input first?
   func writePayload(to writer: inout PacketWriter) {
     writer.writeVarInt(entityId)
     switch interaction {

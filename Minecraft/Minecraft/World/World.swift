@@ -18,11 +18,11 @@ class World {
   var downloadingTerrain: Bool = true
   
   var chunkThread: DispatchQueue = DispatchQueue(label: "worldChunks")
-  var eventManager: EventManager
+  var managers: Managers
   
-  init(config: WorldConfig, eventManager: EventManager) {
+  init(config: WorldConfig, managers: Managers) {
     self.config = config
-    self.eventManager = eventManager
+    self.managers = managers
   }
   
   func setBlock(at position: Position, to state: UInt16) {
@@ -58,7 +58,7 @@ class World {
           self.packedChunks.removeValue(forKey: chunk.position)
           if self.packedChunks.count == 0 {
             self.downloadingTerrain = false
-            self.eventManager.triggerEvent(.downloadedTerrain)
+            self.managers.eventManager.triggerEvent(.downloadedTerrain)
           }
         } catch {
           Logger.log("failed to unpack chunk at (\(chunkData.position.chunkX), \(chunkData.position.chunkZ))")

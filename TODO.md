@@ -19,8 +19,12 @@ just a bunch of random todos
   - [ ] Fix block culling to be able to do blocks on the edge of chunks
   - [ ] Optimise block culling more
 - [ ] Mojang data
-  - [ ] plan directory structure
+  - [x] create startup sequence
+  - [x] plan directory structure
   - [ ] download the mojang data on first app launch to avoid copyright stuff
-    - [ ] can probably just extract from the server.jar pretty easily
+    - [x] can probably just extract from the client.jar pretty easily
   - [ ] load block models and block state info stuff from texture pack
   - [ ] fix config loader
+  - [x] fix locale usage throughout project
+  - [ ] delete mojang files from resources folder to avoid copyright stuff
+- [ ] clean up server list loading (server list manager?)

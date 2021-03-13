@@ -17,6 +17,6 @@ struct LoginDisconnectPacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    server.eventManager.triggerError(reason.toText())
+    server.managers.eventManager.triggerError(reason.toText())
   }
 }
