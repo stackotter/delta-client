@@ -68,15 +68,17 @@ Minecraft Swift Edition is an open source rewrite of Minecraft Java Edition writ
     - [ ] Chat
     - [ ] F3-style stuff
     - [ ] Bossbars
+    - [ ] Scoreboard
+    - [ ] Health
+    - [ ] Hunger
+    - [ ] Experience
+    - [ ] HUD for each gamemode
   - [ ] Items
   - [ ] Entities
     - [ ] Basic entity rendering (maybe just a coloured cube)
     - [ ] Render entity models
     - [ ] Entity animations
 - [ ] GUI
-  - [ ] Health
-  - [ ] Hunger
-  - [ ] Experience
   - [ ] Hotbar
   - [ ] Inventory
     - [ ] Basic inventory
@@ -84,6 +86,7 @@ Minecraft Swift Edition is an open source rewrite of Minecraft Java Edition writ
     - [ ] Basic crafting
     - [ ] Drag actions
     - [ ] Using recipe blocks (like crafting tables and stuff)
+    - [ ] Creative inventory
 - [ ] Sound
   - [ ] Basic sounds
   - [ ] Sound settings??
@@ -99,7 +102,7 @@ Minecraft Swift Edition is an open source rewrite of Minecraft Java Edition writ
 
 At the moment when the client is connected to a server it gives you a text field for entering commands.
 
-These are not commands in the traditional minecraft sense (e.g. ```/kill``` and ```/time set day```). They are commands that I have made that let you interact with the server.
+These are NOT commands in the traditional minecraft sense (e.g. ```/kill``` and ```/time set day```). They are commands that I have made that let you interact with the server.
 
 As I implement more of the backend code -- and before I work on rendering -- I will be making more commands to reflect the current capabilities of the client. In future I will most likely also make a command for running commands on the server (this is starting to get confusing).
 
@@ -109,15 +112,25 @@ As I implement more of the backend code -- and before I work on rendering -- I w
   - sends a message in chat
 - ```swing [mainhand|offhand]```
   - causes the player's arm to swing. can be used to say hi to other players :) (and also just to test if it's working)
+- ```tablist```
+  - lists players in tab list
 - ```getblock [x] [y] [z]```
   - gets the block state id of the block at position
 
 ## Screenshots
 
-#### Server List
+#### Server list
 
 ![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/hypixel.png?raw=true)
 
-#### Playing Server Screen
+#### Playing server with commands
 
 ![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/play-screen.png?raw=true)
+
+#### Initial basic rendering (one chunk)
+
+![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/initial-chunk-rendering.png?raw=true)
+
+#### The same place but in vanilla Minecraft
+
+![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/vanilla-from-same-spot.png?raw=true)
