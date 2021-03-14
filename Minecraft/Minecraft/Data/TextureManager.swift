@@ -36,7 +36,6 @@ class TextureManager {
     
     var textureFileNames: [URL] = []
     for fileName in textureDirectoryContents {
-      Logger.debug(fileName.pathExtension)
       if fileName.pathExtension == "png" {
         textureFileNames.append(fileName)
       }

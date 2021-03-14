@@ -200,7 +200,7 @@ class BlockModelManager {
 //                throw BlockModelError.nonExistentPropertyCombination
               }
             } else {
-              Logger.error("this code shouldn't be reached i think. something is possibly wrong with loading the global block palette")
+              // handle blocks with multiple variants under the same name (randomly choose one each time)
             }
           }
         }
