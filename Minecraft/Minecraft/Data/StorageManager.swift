@@ -81,6 +81,14 @@ class StorageManager {
     return true
   }
   
+  func getBundledResourceByName(_ name: String, fileExtension: String) -> URL? {
+    guard let url = Bundle.main.url(forResource: name, withExtension: fileExtension) else {
+      Logger.debug("failed to find bundled resource with '\(name).\(fileExtension)'")
+      return nil
+    }
+    return url
+  }
+  
   func getAbsoluteFromRelative(_ path: String) -> URL? {
     let absoluteURL = storageURL.appendingPathComponent(path)
     return absoluteURL

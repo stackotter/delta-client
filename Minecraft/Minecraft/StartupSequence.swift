@@ -13,6 +13,8 @@ enum StartupError: LocalizedError {
   case missingLocale
   case failedToLoadLocale(LocaleError?)
   case failedToLoadBlockModels(BlockModelError?)
+  case failedToLoadGlobalBlockPalette(BlockModelError?)
+  case failedToLoadBlockTextures(TextureError?)
 }
 
 class StartupSequence {
@@ -40,12 +42,28 @@ class StartupSequence {
       Logger.debug("assets exist")
     }
     
+    // load block textures
+    eventManager.triggerEvent(.loadingScreenMessage("loading block textures"))
+    do {
+      try managers.textureManager.loadBlockTextures()
+    } catch {
+      throw StartupError.failedToLoadBlockTextures(error as? TextureError)
+    }
+    
     // load block models
     eventManager.triggerEvent(.loadingScreenMessage("loading block models"))
     do {
       try managers.blockModelManager.loadBlockModels()
     } catch {
       throw StartupError.failedToLoadBlockModels(error as? BlockModelError)
+    }
+    
+    // load global palette
+    eventManager.triggerEvent(.loadingScreenMessage("loading global block palette"))
+    do {
+      try managers.blockModelManager.loadGlobalPalette()
+    } catch {
+      throw StartupError.failedToLoadGlobalBlockPalette(error as? BlockModelError)
     }
     
     // load locale

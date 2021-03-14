@@ -37,6 +37,6 @@ vertex RasteriserData vertexShader(uint vertexId [[vertex_id]], constant Vertex 
   return out;
 }
 
-fragment half4 fragmentShader(RasteriserData in [[stage_in]], texture2d<half> texture [[texture(3)]]) {
-  return texture.sample(textureSampler, in.textureCoordinate);
+fragment float4 fragmentShader(RasteriserData in [[stage_in]], texture2d_array<float, access::sample> textureArray [[texture(0)]]) {
+  return textureArray.sample(textureSampler, in.textureCoordinate, 0); // samples from the first texture for now (changes each time the app is run)
 }

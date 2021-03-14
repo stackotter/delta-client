@@ -11,6 +11,7 @@ import os
 
 enum BlockModelError: LocalizedError {
   case missingBlockModelFolder
+  case missingBlockStatesFolder
   case failedToEnumerateBlockModels
   case failedToReadJSON
   case failedToParseJSON
@@ -18,6 +19,10 @@ enum BlockModelError: LocalizedError {
   case noFileForParent
   case noSuchBlockModel
   case invalidDisplayTag
+  case invalidBlockPalette
+  case invalidBlockIdentifier
+  case invalidBlockStateJSON
+  case nonExistentPropertyCombination
 }
 
 struct MojangBlockModelElementRotation {
@@ -58,17 +63,47 @@ struct MojangBlockModel {
   var elements: [MojangBlockModelElement]
 }
 
-// TODO: block model error handling
+enum CullFace: String {
+  case down = "down"
+  case up = "up"
+  case north = "north"
+  case south = "south"
+  case west = "west"
+  case east = "east"
+}
+
+struct BlockModelElementFace {
+  var textureCoordinates: (simd_float2, simd_float2)
+  var textureIndex: Int // the index of the texture to use in the block texture buffer
+  var cullface: CullFace
+  var rotation: Float
+  var tintIndex: Int?
+}
+
+struct BlockModelElement {
+  var modelMatrix: simd_float4x4
+  var faces: [BlockModelElementFace]
+}
+
+struct BlockModel {
+  var elements: [BlockModelElement]
+}
+
+// TODO: think of a better name for BlockModelManager
 class BlockModelManager {
   var assetManager: AssetManager
   
-  var identifierToBlockModel: [Identifier: MojangBlockModel] = [:]
+  // TODO: make mojang block model map not global
+  var identifierToMojangBlockModel: [Identifier: MojangBlockModel] = [:]
+  
+  var blockModelPalette: [Int: MojangBlockModel] = [:]
   
   init(assetManager: AssetManager) {
     self.assetManager = assetManager
   }
   
   func loadBlockModels() throws {
+    // load the block models into the structs appended with Mojang (to make the data easier to manipulate)
     guard let blockModelFolder = assetManager.getBlockModelFolder() else {
       throw BlockModelError.missingBlockModelFolder
     }
@@ -80,9 +115,95 @@ class BlockModelManager {
       let identifier = identifierFromFileName(file)
       do {
         let blockModel = try loadBlockModel(fileName: file)
-        identifierToBlockModel[identifier] = blockModel
+        identifierToMojangBlockModel[identifier] = blockModel
       } catch {
         throw error
+      }
+    }
+    
+    // TODO: convert the mojang block models to a more efficient structure for rendering
+  }
+  
+  func loadGlobalPalette() throws {
+    try loadBlockModels()
+    
+    guard let blockStatesFolder = assetManager.getBlockStatesFolder() else {
+      throw BlockModelError.missingBlockStatesFolder
+    }
+    let blockPalettePath = assetManager.storageManager.getBundledResourceByName("blocks", fileExtension: ".json")!
+    guard let blockPaletteDict = try? JSON.fromURL(blockPalettePath).dict as? [String: [String: Any]] else {
+      Logger.error("failed to load block palette from bundle")
+      throw BlockModelError.invalidBlockPalette
+    }
+    for (identifierString, blockDict) in blockPaletteDict {
+      let paletteBlockJSON = JSON(dict: blockDict)
+      guard let identifier = try? Identifier(identifierString) else {
+        throw BlockModelError.invalidBlockIdentifier
+      }
+      guard let paletteStatesArray = paletteBlockJSON.getArray(forKey: "states") as? [[String: Any]] else {
+        throw BlockModelError.invalidBlockPalette
+      }
+//      let palettePropertiesJSON = paletteBlockJSON.getJSON(forKey: "properties")
+      
+      let blockStateFile = blockStatesFolder.appendingPathComponent("\(identifier.name).json")
+      guard let blockStateJSON = try? JSON.fromURL(blockStateFile) else {
+        Logger.debug("failed to load block state json: invalid json in file '\(identifier.name).json'")
+        throw BlockModelError.invalidBlockStateJSON
+      }
+      
+      // loop through all states for block (and skip multiparts)
+      if let variants = blockStateJSON.getJSON(forKey: "variants") {
+        if let variant = variants.getJSON(forKey: "") { // all states for block use one variant
+          guard let variantString = variant.getString(forKey: "model") else {
+            Logger.debug("failed to load block state json: variant '' doesn't specify a model on '\(identifier.name)'")
+            throw BlockModelError.invalidBlockStateJSON
+          }
+          guard let variantBlockModelIdentifier = try? Identifier(variantString) else {
+            throw BlockModelError.invalidIdentifier
+          }
+          for paletteStateDict in paletteStatesArray {
+            let paletteStateJSON = JSON(dict: paletteStateDict)
+            guard let stateId = paletteStateJSON.getInt(forKey: "id") else {
+              Logger.debug("failed to load block palette: '\(identifier.name)' contains a state without an id")
+              throw BlockModelError.invalidBlockPalette
+            }
+            blockModelPalette[stateId] = identifierToMojangBlockModel[variantBlockModelIdentifier]
+          }
+        } else { // a different variant for each state
+          for paletteStateDict in paletteStatesArray {
+            let paletteStateJSON = JSON(dict: paletteStateDict)
+            guard let stateId = paletteStateJSON.getInt(forKey: "id") else {
+              Logger.debug("failed to load block palette: '\(identifier.name)' contains a state without an id")
+              throw BlockModelError.invalidBlockPalette
+            }
+            
+            if let properties = paletteStateJSON.getJSON(forKey: "properties")?.dict as? [String: String] { // TODO: variant rotations
+              let propertyNames = properties.keys.sorted()
+              var variantKeyParts: [String] = []
+              for propertyName in propertyNames {
+                variantKeyParts.append("\(propertyName)=\(properties[propertyName]!)")
+              }
+              let variantKey = variantKeyParts.joined(separator: ",")
+              if let variant = variants.getJSON(forKey: variantKey) {
+                guard let variantModel = variant.getString(forKey: "model") else {
+                  Logger.debug("failed to load block state json: variant '\(variantKey)' doesn't specify a model on '\(identifier.name)'")
+                  throw BlockModelError.invalidBlockStateJSON
+                }
+                guard let variantModelIdentifier = try? Identifier(variantModel) else {
+                  Logger.debug("variant's block model identifier is invalid, '\(variantModel)'")
+                  throw BlockModelError.invalidIdentifier
+                }
+                blockModelPalette[stateId] = identifierToMojangBlockModel[variantModelIdentifier]
+              } else {
+                // at the moment block states that we can't handle are just passed
+//                Logger.debug("no variant for '\(variantKey)' on '\(identifier.name)'")
+//                throw BlockModelError.nonExistentPropertyCombination
+              }
+            } else {
+              Logger.error("this code shouldn't be reached i think. something is possibly wrong with loading the global block palette")
+            }
+          }
+        }
       }
     }
   }
@@ -191,7 +312,7 @@ class BlockModelManager {
   }
   
   func blockModelForIdentifier(_ identifier: Identifier) throws -> MojangBlockModel {
-    guard let blockModel = identifierToBlockModel[identifier] else {
+    guard let blockModel = identifierToMojangBlockModel[identifier] else {
       throw BlockModelError.noSuchBlockModel
     }
     return blockModel

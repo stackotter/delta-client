@@ -23,6 +23,8 @@
 		7809944225E224B200DFDC9F /* EditBookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809944125E224B200DFDC9F /* EditBookPacket.swift */; };
 		7809944725E224F400DFDC9F /* DominantHand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809944625E224F400DFDC9F /* DominantHand.swift */; };
 		7809944C25E2255F00DFDC9F /* Hand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809944B25E2255F00DFDC9F /* Hand.swift */; };
+		780D8FAC25FDC1AE00C4C440 /* blocks.json in Resources */ = {isa = PBXBuildFile; fileRef = 780D8FAB25FDC1AE00C4C440 /* blocks.json */; };
+		780D8FB125FDE10200C4C440 /* TextureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780D8FB025FDE10200C4C440 /* TextureManager.swift */; };
 		780D9BA92596CF5900144D45 /* LauncherProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780D9BA82596CF5900144D45 /* LauncherProfile.swift */; };
 		78154AD825DBC2660009968C /* ChatComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78154AD725DBC2660009968C /* ChatComponent.swift */; };
 		78154ADE25DBC4DA0009968C /* ChatStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78154ADD25DBC4DA0009968C /* ChatStyle.swift */; };
@@ -308,6 +310,8 @@
 		7809944125E224B200DFDC9F /* EditBookPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditBookPacket.swift; sourceTree = "<group>"; };
 		7809944625E224F400DFDC9F /* DominantHand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DominantHand.swift; sourceTree = "<group>"; };
 		7809944B25E2255F00DFDC9F /* Hand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hand.swift; sourceTree = "<group>"; };
+		780D8FAB25FDC1AE00C4C440 /* blocks.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = blocks.json; sourceTree = "<group>"; };
+		780D8FB025FDE10200C4C440 /* TextureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureManager.swift; sourceTree = "<group>"; };
 		780D9BA82596CF5900144D45 /* LauncherProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauncherProfile.swift; sourceTree = "<group>"; };
 		78154AD725DBC2660009968C /* ChatComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComponent.swift; sourceTree = "<group>"; };
 		78154ADD25DBC4DA0009968C /* ChatStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStyle.swift; sourceTree = "<group>"; };
@@ -593,6 +597,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		780D8FAA25FDC18F00C4C440 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				780D8FAB25FDC1AE00C4C440 /* blocks.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		78154ADC25DBC4CC0009968C /* Chat */ = {
 			isa = PBXGroup;
 			children = (
@@ -631,6 +643,7 @@
 			isa = PBXGroup;
 			children = (
 				784194BA258204CD0070DE78 /* MinecraftApp.swift */,
+				780D8FAA25FDC18F00C4C440 /* Resources */,
 				7878B52A25844B6B007C0D3D /* Views */,
 				7884358E2585E5E3002F1F84 /* Minecraft */,
 				787D8FEF258451A8007E6441 /* Networking */,
@@ -837,6 +850,7 @@
 				78B8C97025FC7D850024846F /* Managers.swift */,
 				78B6A1DE25FC301200CFE493 /* StorageManager.swift */,
 				78B6A1F525FC5FCC00CFE493 /* AssetManager.swift */,
+				780D8FB025FDE10200C4C440 /* TextureManager.swift */,
 				78B6A20025FC673D00CFE493 /* LocaleManager.swift */,
 				787FBB6825FCC5B900A29552 /* BlockModelManager.swift */,
 				78BE299B25E0A3250058CE11 /* MinecraftLocale.swift */,
@@ -1255,6 +1269,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				780D8FAC25FDC1AE00C4C440 /* blocks.json in Resources */,
 				784194C2258204D00070DE78 /* Preview Assets.xcassets in Resources */,
 				784194BF258204D00070DE78 /* Assets.xcassets in Resources */,
 			);
@@ -1354,6 +1369,7 @@
 				78764E1025AE4B9200AE8716 /* TagsPacket.swift in Sources */,
 				7878B53125844B6B007C0D3D /* ServerListView.swift in Sources */,
 				7843EBEB25E232A600AD42A7 /* UpdateCommandBlockPacket.swift in Sources */,
+				780D8FB125FDE10200C4C440 /* TextureManager.swift in Sources */,
 				784F4B7825B7F6AC00FE21AA /* ServerPinger.swift in Sources */,
 				789451FD25D26E7200B86423 /* CloseWindowClientboundPacket.swift in Sources */,
 				7824E91E25E1006E009F0197 /* NBTQueryResponse.swift in Sources */,

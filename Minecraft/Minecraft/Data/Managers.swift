@@ -12,6 +12,7 @@ struct Managers {
   var storageManager: StorageManager
   var configManager: ConfigManager
   var assetManager: AssetManager
+  var textureManager: TextureManager
   var blockModelManager: BlockModelManager
   var localeManager: LocaleManager
   
@@ -24,6 +25,7 @@ struct Managers {
     self.storageManager = StorageManager()
     self.configManager = ConfigManager(storageManager: self.storageManager)
     self.assetManager = AssetManager(storageManager: self.storageManager)
+    self.textureManager = TextureManager(assetManager: self.assetManager)
     self.blockModelManager = BlockModelManager(assetManager: self.assetManager)
     self.localeManager = LocaleManager()
   }

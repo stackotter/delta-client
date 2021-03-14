@@ -137,10 +137,27 @@ class AssetManager {
     return nil
   }
   
+  // TODO: make the below functions throwing
   func getBlockModelFolder() -> URL? {
     let blockModelFolder = assetsFolder.appendingPathComponent("minecraft/models/block")
     if storageManager.exists(blockModelFolder) {
       return blockModelFolder
+    }
+    return nil
+  }
+  
+  func getBlockStatesFolder() -> URL? {
+    let blockStatesFolder = assetsFolder.appendingPathComponent("minecraft/blockstates")
+    if storageManager.exists(blockStatesFolder) {
+      return blockStatesFolder
+    }
+    return nil
+  }
+  
+  func getBlockTexturesFolder() -> URL? {
+    let blockTexturesFolder = assetsFolder.appendingPathComponent("minecraft/textures/block")
+    if storageManager.exists(blockTexturesFolder) {
+      return blockTexturesFolder
     }
     return nil
   }

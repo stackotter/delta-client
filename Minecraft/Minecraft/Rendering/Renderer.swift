@@ -17,7 +17,7 @@ class Renderer {
   var pipelineState: MTLRenderPipelineState
   var depthState: MTLDepthStencilState
   
-  var texture: MTLTexture
+  var arrayTexture: MTLTexture
   
   var client: Client
   var managers: Managers
@@ -43,6 +43,15 @@ class Renderer {
     pipelineStateDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
     pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float
     
+    // TODO: block transparency
+//    pipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
+//    pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
+//    pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
+//    pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+//    pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+//    pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+//    pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+    
     let depthDescriptor = MTLDepthStencilDescriptor()
     depthDescriptor.depthCompareFunction = .lessEqual
     depthDescriptor.isDepthWriteEnabled = true
@@ -52,9 +61,7 @@ class Renderer {
     pipelineState = try! self.metalDevice.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
     
     Logger.debug("loading textures")
-    let textureURL = managers.storageManager.getAssetsFolder().appendingPathComponent("minecraft/textures/block/chiseled_stone_bricks.png") // TODO: create texture manager
-    let textureLoader = MTKTextureLoader(device: self.metalDevice)
-    texture = try! textureLoader.newTexture(URL: textureURL)
+    arrayTexture = managers.textureManager.createArrayTexture(metalDevice: metalDevice)
     
     Logger.debug("initialised renderer")
     
@@ -83,9 +90,6 @@ class Renderer {
     // render player's current chunk
     let mesh = Mesh()
     if let chunk = client.server.currentWorld.chunks[client.server.player.chunkPosition] {
-//      let chunkRenderer = ChunkRenderer(chunk: chunk!)
-//      chunkRenderer.render(into: mesh)
-      
       if chunk.mesh.vertices.count == 0 {
         stopwatch.lap(detail: "generating chunk mesh")
         chunk.generateMesh()
@@ -94,61 +98,47 @@ class Renderer {
       }
       mesh.vertices = chunk.mesh.vertices
       mesh.indices = chunk.mesh.indices
-    } else {
-      mesh.vertices.append(contentsOf: [
-        Vertex(position: [0, 1, -5], textureCoordinate: [0, 0]),
-        Vertex(position: [0, 0, -5], textureCoordinate: [0, 1]),
-        Vertex(position: [1, 0, -5], textureCoordinate: [1, 1])
-      ])
-      mesh.indices.append(contentsOf: [0, 1, 2])
     }
-    
-//    var chunkMesh = ChunkMesh()
-//    chunkMesh.setBlock(5, 3, 10, to: 1)
-//    chunkMesh.setBlock(6, 4, 10, to: 1)
-//    chunkMesh.setBlock(8, 3, 10, to: 1)
-//    chunkMesh.setBlock(0, 3, 10, to: 2)
-//    chunkMesh.setBlock(0, 3, 10, to: 0)
-//    mesh.vertices = chunkMesh.vertices
-//    mesh.indices = chunkMesh.indices
     
     stopwatch.lap(detail: "created mesh objects")
     
-    let aspect = Float(view.drawableSize.width/view.drawableSize.height)
-    let matrixBuffer = createWorldToClipSpaceMatrix(aspect: aspect)
-    let vertexBuffer = mesh.createVertexBuffer(for: metalDevice)
-    let indexBuffer = mesh.createIndexBuffer(for: metalDevice)
-    
-    stopwatch.lap(detail: "created buffers")
-    
-    if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
-      if let renderPassDescriptor = view.currentRenderPassDescriptor {
-        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 1, 0, 1)
-        renderPassDescriptor.colorAttachments[0].loadAction = .clear
-        renderPassDescriptor.colorAttachments[0].storeAction = .store
-        
-        if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
-          renderEncoder.setRenderPipelineState(pipelineState)
-          renderEncoder.setDepthStencilState(depthState)
+    if mesh.vertices.count != 0 && mesh.indices.count != 0 {
+      let aspect = Float(view.drawableSize.width/view.drawableSize.height)
+      let matrixBuffer = createWorldToClipSpaceMatrix(aspect: aspect)
+      let vertexBuffer = mesh.createVertexBuffer(for: metalDevice)
+      let indexBuffer = mesh.createIndexBuffer(for: metalDevice)
+      
+      stopwatch.lap(detail: "created buffers")
+      
+      if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
+        if let renderPassDescriptor = view.currentRenderPassDescriptor {
+          renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 1, 0, 1)
+          renderPassDescriptor.colorAttachments[0].loadAction = .clear
+          renderPassDescriptor.colorAttachments[0].storeAction = .store
           
-          renderEncoder.setFrontFacing(.clockwise)
-          renderEncoder.setCullMode(.back)
-          
-          // // uncomment the lines below to enable wireframe
-          // renderEncoder.setTriangleFillMode(.lines)
-          // renderEncoder.setCullMode(.none)
-          
-          renderEncoder.setFragmentTexture(texture, index: 3)
-          
-          renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-          renderEncoder.setVertexBuffer(matrixBuffer, offset: 0, index: 1)
-          renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: mesh.indices.count, indexType: .uint32, indexBuffer: indexBuffer, indexBufferOffset: 0)
-          renderEncoder.endEncoding()
-          
-          commandBuffer.present(drawable)
-          commandBuffer.commit()
-          
-          stopwatch.lap(detail: "rendered")
+          if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
+            renderEncoder.setRenderPipelineState(pipelineState)
+            renderEncoder.setDepthStencilState(depthState)
+            
+            renderEncoder.setFrontFacing(.clockwise)
+            renderEncoder.setCullMode(.back)
+            
+            // uncomment the lines below to enable wireframe
+            // renderEncoder.setTriangleFillMode(.lines)
+            // renderEncoder.setCullMode(.none)
+            
+            renderEncoder.setFragmentTexture(arrayTexture, index: 0)
+            
+            renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+            renderEncoder.setVertexBuffer(matrixBuffer, offset: 0, index: 1)
+            renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: mesh.indices.count, indexType: .uint32, indexBuffer: indexBuffer, indexBufferOffset: 0)
+            renderEncoder.endEncoding()
+            
+            commandBuffer.present(drawable)
+            commandBuffer.commit()
+            
+            stopwatch.lap(detail: "rendered")
+          }
         }
       }
     }

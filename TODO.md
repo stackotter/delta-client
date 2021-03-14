@@ -24,7 +24,9 @@ just a bunch of random todos
   - [ ] download the mojang data on first app launch to avoid copyright stuff
     - [x] can probably just extract from the client.jar pretty easily
   - [x] load block models
-  - [ ] load block states
+  - [x] load block states
+  - [ ] convert block models to the right format
+  - [ ] cache global block model palette to save loading time if necessary?
   - [x] fix config loader
   - [x] fix locale usage throughout project
   - [ ] delete mojang files from resources folder to avoid copyright stuff
