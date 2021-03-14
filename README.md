@@ -46,11 +46,19 @@ Minecraft Swift Edition is an open source rewrite of Minecraft Java Edition writ
   - [ ] minimap just for fun?
   - [ ] maybe some block actions too?
 - [ ] Entities (entity mappings and stuff)
+- [ ] Mojang data
+  - [x] load block states
+  - [ ] load block models
+    - [x] load them from the json
+    - [ ] convert them to an efficient structure
+    - [ ] cache to speed up startup time if needed
+  - [x] load block textures
 - [ ] Basic rendering using Metal (Apple's GPU library)
   - [ ] Block rendering
     - [x] Basic textureless blocks (with just a default texture)
-    - [ ] Basic block culling (don't render blocks that are completely surrounded by other blocks)
+    - [x] Basic block culling (don't render blocks that are completely surrounded by other blocks)
     - [ ] Block textures
+    - [ ] Block models
     - [ ] Multiple chunks
   - [ ] Block Animations
   - [ ] Block entity rendering

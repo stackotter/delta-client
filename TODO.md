@@ -15,19 +15,19 @@ just a bunch of random todos
   - [x] Make it 60fps
   - [x] Optimise initial mesh preparation
   - [x] Implement block culling (saves on cpu and memory usage) (basic block culling)
-  - [ ] Implement basic block textures
+  - [ ] Implement rendering block models (instead of just a cube for everything)
   - [ ] Fix block culling to be able to do blocks on the edge of chunks
   - [ ] Optimise block culling more
 - [ ] Mojang data
   - [x] create startup sequence
   - [x] plan directory structure
-  - [ ] download the mojang data on first app launch to avoid copyright stuff
+  - [x] download the mojang data on first app launch to avoid copyright stuff
     - [x] can probably just extract from the client.jar pretty easily
   - [x] load block models
   - [x] load block states
+  - [x] load block textures
   - [ ] convert block models to the right format
   - [ ] cache global block model palette to save loading time if necessary?
   - [x] fix config loader
   - [x] fix locale usage throughout project
-  - [ ] delete mojang files from resources folder to avoid copyright stuff
-- [ ] clean up server list loading (server list manager?)
+  - [x] delete mojang files from resources folder to avoid copyright stuff
