@@ -23,7 +23,8 @@ just a bunch of random todos
   - [x] plan directory structure
   - [ ] download the mojang data on first app launch to avoid copyright stuff
     - [x] can probably just extract from the client.jar pretty easily
-  - [ ] load block models and block state info stuff from texture pack
+  - [x] load block models
+  - [ ] load block states
   - [x] fix config loader
   - [x] fix locale usage throughout project
   - [ ] delete mojang files from resources folder to avoid copyright stuff

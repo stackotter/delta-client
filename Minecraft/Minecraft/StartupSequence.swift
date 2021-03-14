@@ -9,7 +9,10 @@ import Foundation
 import os
 
 enum StartupError: LocalizedError {
+  case failedToDownloadAssets
   case missingLocale
+  case failedToLoadLocale(LocaleError?)
+  case failedToLoadBlockModels(BlockModelError?)
 }
 
 class StartupSequence {
@@ -30,12 +33,19 @@ class StartupSequence {
       eventManager.triggerEvent(.loadingScreenMessage("downloading and extracting assets (this only happens once, it shouldn't take too long, only 18mb)"))
       let success = managers.assetManager.downloadAssets()
       if !success {
-        Logger.error("failed to download assets")
-        throw AssetError.failedToDownload
+        throw StartupError.failedToDownloadAssets
       }
       Logger.debug("successfully downloaded assets")
     } else {
       Logger.debug("assets exist")
+    }
+    
+    // load block models
+    eventManager.triggerEvent(.loadingScreenMessage("loading block models"))
+    do {
+      try managers.blockModelManager.loadBlockModels()
+    } catch {
+      throw StartupError.failedToLoadBlockModels(error as? BlockModelError)
     }
     
     // load locale
@@ -47,8 +57,7 @@ class StartupSequence {
       try managers.localeManager.addLocale(fromFile: localeURL, withName: "en_us")
       try managers.localeManager.setLocale(to: "en_us")
     } catch {
-      Logger.error("failed to load locale")
-      throw error
+      throw StartupError.failedToLoadLocale(error as? LocaleError)
     }
     Logger.debug("successfully loaded locale")
     

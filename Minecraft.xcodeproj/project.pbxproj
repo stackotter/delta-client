@@ -186,6 +186,7 @@
 		787D8FF625848480007E6441 /* ClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787D8FF525848480007E6441 /* ClientboundPacket.swift */; };
 		787D8FFF258485A7007E6441 /* HandshakePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787D8FFE258485A7007E6441 /* HandshakePacket.swift */; };
 		787D900725848726007E6441 /* PacketWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787D900625848726007E6441 /* PacketWriter.swift */; };
+		787FBB6925FCC5B900A29552 /* BlockModelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787FBB6825FCC5B900A29552 /* BlockModelManager.swift */; };
 		788435902585E606002F1F84 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884358F2585E606002F1F84 /* Server.swift */; };
 		7884359B25861981002F1F84 /* ServerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884359A25861981002F1F84 /* ServerList.swift */; };
 		788435A025861B55002F1F84 /* ServerListEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884359F25861B55002F1F84 /* ServerListEntryView.swift */; };
@@ -477,6 +478,7 @@
 		787D8FF525848480007E6441 /* ClientboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientboundPacket.swift; sourceTree = "<group>"; };
 		787D8FFE258485A7007E6441 /* HandshakePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandshakePacket.swift; sourceTree = "<group>"; };
 		787D900625848726007E6441 /* PacketWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketWriter.swift; sourceTree = "<group>"; };
+		787FBB6825FCC5B900A29552 /* BlockModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModelManager.swift; sourceTree = "<group>"; };
 		7884358F2585E606002F1F84 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		7884359A25861981002F1F84 /* ServerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerList.swift; sourceTree = "<group>"; };
 		7884359F25861B55002F1F84 /* ServerListEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListEntryView.swift; sourceTree = "<group>"; };
@@ -836,6 +838,7 @@
 				78B6A1DE25FC301200CFE493 /* StorageManager.swift */,
 				78B6A1F525FC5FCC00CFE493 /* AssetManager.swift */,
 				78B6A20025FC673D00CFE493 /* LocaleManager.swift */,
+				787FBB6825FCC5B900A29552 /* BlockModelManager.swift */,
 				78BE299B25E0A3250058CE11 /* MinecraftLocale.swift */,
 			);
 			path = Data;
@@ -1432,6 +1435,7 @@
 				7873057825D931F5001259EB /* WorldBorderPacket.swift in Sources */,
 				784D97912587604700FC89F8 /* ConfigManager.swift in Sources */,
 				785E531C25F2E8D5003C3CF4 /* MetalView.swift in Sources */,
+				787FBB6925FCC5B900A29552 /* BlockModelManager.swift in Sources */,
 				781E63BB25B14CBE00ADFAB8 /* ChunkData.swift in Sources */,
 				788A578F25E1B2E400813C1B /* ConnectionState.swift in Sources */,
 				7878855F2588136700226064 /* Buffer.swift in Sources */,

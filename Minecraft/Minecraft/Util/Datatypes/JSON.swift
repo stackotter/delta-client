@@ -19,9 +19,13 @@ struct JSON {
     case failedToOpenURL
     case failedToDeserialize
     case failedToGetJSON
+    case failedToGetArray
     case failedToGetString
     case failedToGetInt
+    case failedToGetFloat
+    case failedToGetBool
     case failedToGetDouble
+    case failedToGetAny
   }
   
   static func fromURL(_ url: URL) throws -> JSON {
@@ -64,6 +68,8 @@ struct JSON {
     return dict.keys.contains(key)
   }
   
+  // Optional return getters
+  
   func getJSON(forKey key: String) -> JSON? {
     guard let value = dict[key] as? [String: Any] else {
       return nil
@@ -94,5 +100,56 @@ struct JSON {
   
   func getAny(forKey key: String) -> Any? {
     return dict[key]
+  }
+  
+  // Throwing getters
+  
+  func getJSONThrowing(forKey key: String) throws -> JSON {
+    guard let value = dict[key] as? [String: Any] else {
+      throw JSONError.failedToGetJSON
+    }
+    return JSON(dict: value)
+  }
+  
+  func getArrayThrowing(forKey key: String) throws -> [Any] {
+    guard let array = dict[key] as? [Any] else {
+      throw JSONError.failedToGetArray
+    }
+    return array
+  }
+  
+  func getStringThrowing(forKey key: String) throws -> String {
+    guard let string = dict[key] as? String else {
+      throw JSONError.failedToGetString
+    }
+    return string
+  }
+  
+  func getIntThrowing(forKey key: String) throws -> Int {
+    guard let int = dict[key] as? Int else {
+      throw JSONError.failedToGetInt
+    }
+    return int
+  }
+  
+  func getFloatThrowing(forKey key: String) throws -> Double {
+    guard let float = dict[key] as? Double else {
+      throw JSONError.failedToGetFloat
+    }
+    return float
+  }
+  
+  func getBoolThrowing(forKey key: String) throws -> Bool {
+    guard let string = getString(forKey: key) else {
+      throw JSONError.failedToGetBool
+    }
+    return string == "true"
+  }
+  
+  func getAnyThrowing(forKey key: String) throws -> Any {
+    guard let any = dict[key] else {
+      throw JSONError.failedToGetAny
+    }
+    return any
   }
 }

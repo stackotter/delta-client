@@ -30,7 +30,7 @@ struct MinecraftApp: App {
       do {
         try startupSequence.run()
       } catch {
-        startupSequence.eventManager.triggerError("failed to complete startup")
+        startupSequence.eventManager.triggerError("failed to complete startup: \(error)")
       }
     }
   }

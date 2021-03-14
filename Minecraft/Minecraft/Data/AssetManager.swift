@@ -26,6 +26,7 @@ class AssetManager {
     return storageManager.exists(assetsFolder)
   }
   
+  // TODO: make download assets a throwing function
   func downloadAssets() -> Bool {
     guard let versionURLsFile = storageManager.getAbsoluteFromRelative("version_urls.json") else {
       return false
@@ -132,6 +133,14 @@ class AssetManager {
     let localeURL = assetsFolder.appendingPathComponent("minecraft/lang/\(localeName).json")
     if storageManager.exists(localeURL) {
       return localeURL
+    }
+    return nil
+  }
+  
+  func getBlockModelFolder() -> URL? {
+    let blockModelFolder = assetsFolder.appendingPathComponent("minecraft/models/block")
+    if storageManager.exists(blockModelFolder) {
+      return blockModelFolder
     }
     return nil
   }
