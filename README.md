@@ -6,69 +6,94 @@ Minecraft Swift Edition is an open source rewrite of Minecraft Java Edition writ
 
 ## Roadmap
 
-- [x] Server list ping (reads server list from servers.dat)
-- [x] Create nice UI using SwiftUI
-- [ ] Login 
-  - [x] Without encryption and compression
-  - [ ] With compression
-  - [ ] With encryption
-- [ ] Be able to decode all clientbound packets
-  - [ ] status
-  - [ ] login
-  - [x] play
-- [ ] Be able to send all serverbound packets
-  - [ ] status
-  - [ ] login
-  - [x] play
-- [ ] Handle all packets
-  - [ ] status
-  - [ ] login
-  - [ ] play
-    - [ ] entities
-    - [ ] chunks
-      - [x] ChunkDataPacket
-      - [x] UnloadChunkPacket
-      - [x] BlockChangePacket
-      - [ ] MultiBlockChangePacket
-    - [x] player movement
-    - [ ] inventory
-    - [ ] everything else
-- [ ] First launch
-  - [x] download server jar
-  - [x] extract server jar
-  - [x] extract assets from server jar
-  - [ ] create default config
-- [ ] Create basic text interface
-  - [x] chat
-  - [ ] movement
-  - [x] tablist
-  - [ ] view entities
-  - [ ] minimap just for fun?
-  - [ ] maybe some block actions too?
-- [ ] Entities (entity mappings and stuff)
-- [ ] Mojang data
-  - [x] load block states
-  - [ ] load block models
-    - [x] load them from the json
-    - [ ] convert them to an efficient structure
-    - [ ] cache to speed up startup time if needed
-  - [x] load block textures
-- [ ] Basic rendering using Metal (Apple's GPU library)
-  - [ ] Block rendering
-    - [x] Basic textureless blocks (with just a default texture)
-    - [x] Basic block culling (don't render blocks that are completely surrounded by other blocks)
-    - [ ] Block textures
+- [ ] Networking
+  - [x] Basic networking
+  - [ ] Packet Decoding
+    - [x] Handshaking
+    - [ ] Status
+      - [x] Server list ping
+      - [ ] Ping/pong
+      - [ ] Legacy server ping
+    - [ ] Login
+      - [x] The essential packets
+      - [ ] Encryption packets
+      - [ ] Compression packets
+    - [x] Play
+  - [ ] Packet Handling
+    - [ ] Login
+      - [x] Basic login flow
+      - [ ] Mojang account login
+      - [ ] Microsoft account login
+  - [ ] Protocol Layers
+    - [ ] Compression
+    - [ ] Encryption
+  - [ ] Lan worlds
+- [ ] First Launch
+  - [x] Download assets
+  - [ ] Generate default config
+  - [ ] Progress bar for client jar download (downloading assets)
+  - [ ] One-time setup screen?
+- [ ] Mojang Data
+  - [ ] Block data
+    - [x] Load global block palette
+    - [x] Load block states
+    - [x] Load block models
+    - [x] Load block textures
+    - [ ] Flatten block models to better format
+  - [ ] Item data
+  - [ ] Entity data
+  - [ ] Sound data
+- [ ] Config
+  - [ ] Create a config system
+  - [ ] Make an interface for it
+- [ ] Command-based interface
+  - [x] Basic structure
+  - [x] Chat command
+  - [x] Tab list command
+  - [ ] Action commands
+  - [ ] Movement commands
+- [ ] Rendering
+  - [ ] Chunks
+    - [x] Basic block rendering
+    - [x] Basic chunk rendering
+    - [x] Block culling
     - [ ] Block models
+    - [ ] Random block models (randomly picked based on location it's placed at)
     - [ ] Multiple chunks
-  - [ ] Block Animations
-  - [ ] Block entity rendering
-  - [ ] Entity rendering
-  - [ ] Chat Rendering
-  - [ ] GUI Rendering (inventory and hot bar and the likes)
-- [ ] Physics
-- [ ] Inventory
-  - [ ] Crafting
-  - [ ] Other crafting (like smelting and stuff)
+    - [ ] Animated textures
+    - [ ] Block entities
+    - [ ] Chunk culling
+  - [ ] HUD
+    - [ ] Basic text
+    - [ ] Chat
+    - [ ] F3-style stuff
+    - [ ] Bossbars
+  - [ ] Items
+  - [ ] Entities
+    - [ ] Basic entity rendering (maybe just a coloured cube)
+    - [ ] Render entity models
+    - [ ] Entity animations
+- [ ] GUI
+  - [ ] Health
+  - [ ] Hunger
+  - [ ] Experience
+  - [ ] Hotbar
+  - [ ] Inventory
+    - [ ] Basic inventory
+    - [ ] Basic inventory actions
+    - [ ] Basic crafting
+    - [ ] Drag actions
+    - [ ] Using recipe blocks (like crafting tables and stuff)
+- [ ] Sound
+  - [ ] Basic sounds
+  - [ ] Sound settings??
+- [ ] Particles
+  - [ ] Basic particles
+  - [ ] Block break particles
+  - [ ] Walk on block particles
+  - [ ] Ambient particles
+  - [ ] Hit particles
+  - [ ] Other particles
 
 ## Command Interface
 
