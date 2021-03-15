@@ -23,8 +23,16 @@ enum BlockModelError: LocalizedError {
   case invalidBlockIdentifier
   case invalidBlockStateJSON
   case nonExistentPropertyCombination
+  case blockModelMissingParent
+  case invalidPositionFromJSON
+  case invalidRotationAxis
+  case invalidAngle
+  case invalidFaceDirection
+  case invalidUV
+  case invalidCullFace
 }
 
+// the format of block models basically as mojang gives it in the json
 struct MojangBlockModelElementRotation {
   var origin: [Float]
   var axis: String
@@ -63,7 +71,7 @@ struct MojangBlockModel {
   var elements: [MojangBlockModelElement]
 }
 
-enum CullFace: String {
+enum FaceDirection: String {
   case down = "down"
   case up = "up"
   case north = "north"
@@ -72,29 +80,55 @@ enum CullFace: String {
   case east = "east"
 }
 
+// an intermediate block model used before global palette is loaded
+struct IntermediateBlockModelElementFace {
+  var textureCoordinates: (simd_float2, simd_float2)
+  var textureVariable: String
+  var cullface: FaceDirection?
+  var rotation: Int
+  var tintIndex: Int?
+}
+
+struct IntermediateBlockModelElement {
+  var modelMatrix: simd_float4x4
+  var faces: [FaceDirection: IntermediateBlockModelElementFace]
+}
+
+struct IntermediateBlockModel {
+  var elements: [IntermediateBlockModelElement]
+}
+
+// the actual block model structure used for rendering
 struct BlockModelElementFace {
   var textureCoordinates: (simd_float2, simd_float2)
   var textureIndex: Int // the index of the texture to use in the block texture buffer
-  var cullface: CullFace
-  var rotation: Float
+  var cullface: FaceDirection?
   var tintIndex: Int?
 }
 
 struct BlockModelElement {
   var modelMatrix: simd_float4x4
-  var faces: [BlockModelElementFace]
+  var faces: [FaceDirection: BlockModelElementFace]
 }
 
 struct BlockModel {
   var elements: [BlockModelElement]
 }
 
+
+enum Axis: String {
+  case x = "x"
+  case y = "y"
+  case z = "z"
+}
+
+
 // TODO: think of a better name for BlockModelManager
 class BlockModelManager {
   var assetManager: AssetManager
   
-  // TODO: make mojang block model map not global
   var identifierToMojangBlockModel: [Identifier: MojangBlockModel] = [:]
+  var identifierToIntermediateBlockModel: [Identifier: IntermediateBlockModel] = [:]
   
   var blockModelPalette: [Int: MojangBlockModel] = [:]
   
@@ -103,7 +137,7 @@ class BlockModelManager {
   }
   
   func loadBlockModels() throws {
-    // load the block models into the structs appended with Mojang (to make the data easier to manipulate)
+    // load the block models into the structs prefixed with Mojang (to make the data easier to manipulate)
     guard let blockModelFolder = assetManager.getBlockModelFolder() else {
       throw BlockModelError.missingBlockModelFolder
     }
@@ -121,7 +155,142 @@ class BlockModelManager {
       }
     }
     
-    // TODO: convert the mojang block models to a more efficient structure for rendering
+    // convert mojang block models to an intermediate block model structure
+    // the actual block models will be generated after the global block palette is loaded
+    for (identifier, mojangBlockModel) in identifierToMojangBlockModel {
+      do {
+        Logger.debug("flattening: \(identifier.name)")
+        let intermediateBlockModel = try flattenMojangBlockModel(mojangBlockModel, identifier: identifier)
+        identifierToIntermediateBlockModel[identifier] = intermediateBlockModel
+        if identifier.name == "block/birch_log" {
+          Logger.debug("birch log: \(intermediateBlockModel)")
+        }
+      } catch {
+        Logger.error("failed to flatten mojang block model with error: \(error)")
+      }
+    }
+  }
+  
+  func flattenMojangBlockModel(_ mojangBlockModel: MojangBlockModel, identifier: Identifier) throws -> IntermediateBlockModel {
+    var parentBlockModel: IntermediateBlockModel? = nil
+    if let parentIdentifier = mojangBlockModel.parent {
+      if let parent = identifierToIntermediateBlockModel[parentIdentifier] {
+        parentBlockModel = parent
+      } else {
+        guard let parentMojangBlockModel = identifierToMojangBlockModel[parentIdentifier] else {
+          Logger.error("block model missing parent '\(parentIdentifier)'")
+          throw BlockModelError.blockModelMissingParent
+        }
+        do {
+          parentBlockModel = try flattenMojangBlockModel(parentMojangBlockModel, identifier: parentIdentifier)
+        } catch {
+          Logger.error("failed to flatten parent '\(parentIdentifier)'")
+        }
+      }
+    }
+    
+    var elements: [IntermediateBlockModelElement] = []
+    
+    // get elements
+    if mojangBlockModel.elements.count != 0 { // TODO: check the json format when reading json, not here
+      // flatten elements
+      for mojangElement in mojangBlockModel.elements {
+        guard mojangElement.from.count == 3 && mojangElement.to.count == 3 && mojangElement.rotation.origin.count == 3 else {
+          Logger.error("invalid number of elements in position, from: \(mojangElement.from), to: \(mojangElement.to), origin: \(mojangElement.rotation.origin)")
+          throw BlockModelError.invalidPositionFromJSON
+        }
+        let from = simd_float3(mojangElement.from)/16.0
+        let to = simd_float3(mojangElement.to)/16.0
+        
+        let rotationOrigin = simd_float3(mojangElement.rotation.origin)
+        guard let axis = Axis(rawValue: mojangElement.rotation.axis) else {
+          Logger.error("invalid rotation axis in block model: \(mojangElement.rotation.axis)")
+          throw BlockModelError.invalidRotationAxis
+        }
+        let angle = mojangElement.rotation.angle
+        let acceptableAngles: [Float] = [-45, -22.5, 0, 22.5, 45]
+        guard acceptableAngles.contains(angle) else {
+          Logger.error("block model contains invalid angle: \(angle)")
+          throw BlockModelError.invalidAngle
+        }
+        let rescale = mojangElement.rotation.rescale
+        
+        var modelMatrix = MatrixUtil.translationMatrix(from)
+        modelMatrix *= MatrixUtil.scalingMatrix(to.x, to.y, to.z) // TODO: make scaling matrix function that accepts simd_float3 as argument
+        modelMatrix *= MatrixUtil.translationMatrix(-rotationOrigin)
+        switch axis {
+          case .x:
+            modelMatrix *= MatrixUtil.rotationMatrix(x: angle)
+          case .y:
+            modelMatrix *= MatrixUtil.rotationMatrix(y: angle)
+          case .z:
+            modelMatrix *= MatrixUtil.rotationMatrix(z: angle)
+        }
+        modelMatrix *= MatrixUtil.translationMatrix(rotationOrigin)
+        // TODO: implement rescale
+        
+        var faces: [FaceDirection: IntermediateBlockModelElementFace] = [:]
+        for (directionString, mojangFace) in mojangElement.faces {
+          guard let direction = FaceDirection(rawValue: directionString) else {
+            Logger.error("block model element contains invalid face direction: \(directionString)")
+            throw BlockModelError.invalidFaceDirection
+          }
+          let cullface = FaceDirection(rawValue: mojangFace.cullface)
+          guard mojangFace.uv.count == 4 else {
+            Logger.error("block model uv contains invalid number of elements: \(mojangFace.uv)")
+            throw BlockModelError.invalidUV
+          }
+          let textureCoordinates = (
+            simd_float2(mojangFace.uv[0], mojangFace.uv[1]),
+            simd_float2(mojangFace.uv[2], mojangFace.uv[3])
+          )
+          
+          let face = IntermediateBlockModelElementFace(
+            textureCoordinates: textureCoordinates,
+            textureVariable: mojangFace.texture,
+            cullface: cullface,
+            rotation: mojangFace.rotation,
+            tintIndex: mojangFace.tintIndex
+          )
+          
+          faces[direction] = face
+        }
+        
+        let element = IntermediateBlockModelElement(
+          modelMatrix: modelMatrix,
+          faces: faces
+        )
+        
+        elements.append(element)
+      }
+    } else {
+      elements = parentBlockModel?.elements ?? []
+    }
+    
+    // substitute texture variables
+    for (index, var element) in elements.enumerated() {
+      for (direction, var face) in element.faces {
+        var texture: String
+        if face.textureVariable.starts(with: "#") {
+          texture = mojangBlockModel.textures[String(face.textureVariable.dropFirst())] ?? face.textureVariable
+          Logger.debug("replaced \(face.textureVariable) with \(texture)")
+          if texture == face.textureVariable {
+            Logger.debug("failed look up \(identifier.name) : \(face.textureVariable) in \(mojangBlockModel.textures)")
+          }
+        } else {
+          Logger.debug("using current texture")
+          texture = face.textureVariable
+        }
+        face.textureVariable = texture
+        element.faces[direction] = face
+      }
+      elements[index] = element
+    }
+    
+    let blockModel = IntermediateBlockModel(
+      elements: elements
+    )
+    return blockModel
   }
   
   func loadGlobalPalette() throws {
