@@ -18,7 +18,7 @@ enum TextureError: LocalizedError {
 class TextureManager {
   var assetManager: AssetManager
   
-  var images: [Identifier: CGImage] = [:]
+  var images: [(Identifier, CGImage)] = []
   var identifierToBlockTextureIndex: [Identifier: Int] = [:]
   
   init(assetManager: AssetManager) {
@@ -41,6 +41,7 @@ class TextureManager {
       }
     }
     
+    var index = 0
     for filename in textureFileNames {
       let textureName = filename.deletingPathExtension().lastPathComponent
       let identifier = Identifier(name: "block/\(textureName)")
@@ -48,7 +49,9 @@ class TextureManager {
       if let dataProvider = CGDataProvider(url: filename as CFURL) {
         if let cgImage = CGImage(pngDataProviderSource: dataProvider, decode: nil, shouldInterpolate: false, intent: .defaultIntent) {
           if cgImage.width == 16 && cgImage.height == 16 {
-            images[identifier] = cgImage
+            images.append((identifier, cgImage))
+            identifierToBlockTextureIndex[identifier] = index
+            index += 1
           }
         } else {
           Logger.warning("failed to load '\(textureName).png' as cgimage")
@@ -110,7 +113,6 @@ class TextureManager {
         bytesPerRow: bytesPerRow,
         bytesPerImage: bytesPerRow*height
       )
-      identifierToBlockTextureIndex[identifier] = index
     }
     
     return textureArray

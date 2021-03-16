@@ -126,14 +126,16 @@ enum Axis: String {
 // TODO: think of a better name for BlockModelManager
 class BlockModelManager {
   var assetManager: AssetManager
+  var textureManager: TextureManager
   
   var identifierToMojangBlockModel: [Identifier: MojangBlockModel] = [:]
   var identifierToIntermediateBlockModel: [Identifier: IntermediateBlockModel] = [:]
   
-  var blockModelPalette: [Int: MojangBlockModel] = [:]
+  var blockModelPalette: [Int: BlockModel] = [:]
   
-  init(assetManager: AssetManager) {
+  init(assetManager: AssetManager, textureManager: TextureManager) {
     self.assetManager = assetManager
+    self.textureManager = textureManager
   }
   
   func loadBlockModels() throws {
@@ -159,12 +161,8 @@ class BlockModelManager {
     // the actual block models will be generated after the global block palette is loaded
     for (identifier, mojangBlockModel) in identifierToMojangBlockModel {
       do {
-        Logger.debug("flattening: \(identifier.name)")
         let intermediateBlockModel = try flattenMojangBlockModel(mojangBlockModel, identifier: identifier)
         identifierToIntermediateBlockModel[identifier] = intermediateBlockModel
-        if identifier.name == "block/birch_log" {
-          Logger.debug("birch log: \(intermediateBlockModel)")
-        }
       } catch {
         Logger.error("failed to flatten mojang block model with error: \(error)")
       }
@@ -273,12 +271,7 @@ class BlockModelManager {
         var texture: String
         if face.textureVariable.starts(with: "#") {
           texture = mojangBlockModel.textures[String(face.textureVariable.dropFirst())] ?? face.textureVariable
-          Logger.debug("replaced \(face.textureVariable) with \(texture)")
-          if texture == face.textureVariable {
-            Logger.debug("failed look up \(identifier.name) : \(face.textureVariable) in \(mojangBlockModel.textures)")
-          }
         } else {
-          Logger.debug("using current texture")
           texture = face.textureVariable
         }
         face.textureVariable = texture
@@ -316,7 +309,7 @@ class BlockModelManager {
       
       let blockStateFile = blockStatesFolder.appendingPathComponent("\(identifier.name).json")
       guard let blockStateJSON = try? JSON.fromURL(blockStateFile) else {
-        Logger.debug("failed to load block state json: invalid json in file '\(identifier.name).json'")
+        Logger.error("failed to load block state json: invalid json in file '\(identifier.name).json'")
         throw BlockModelError.invalidBlockStateJSON
       }
       
@@ -324,7 +317,7 @@ class BlockModelManager {
       if let variants = blockStateJSON.getJSON(forKey: "variants") {
         if let variant = variants.getJSON(forKey: "") { // all states for block use one variant
           guard let variantString = variant.getString(forKey: "model") else {
-            Logger.debug("failed to load block state json: variant '' doesn't specify a model on '\(identifier.name)'")
+            Logger.error("failed to load block state json: variant '' doesn't specify a model on '\(identifier.name)'")
             throw BlockModelError.invalidBlockStateJSON
           }
           guard let variantBlockModelIdentifier = try? Identifier(variantString) else {
@@ -333,16 +326,21 @@ class BlockModelManager {
           for paletteStateDict in paletteStatesArray {
             let paletteStateJSON = JSON(dict: paletteStateDict)
             guard let stateId = paletteStateJSON.getInt(forKey: "id") else {
-              Logger.debug("failed to load block palette: '\(identifier.name)' contains a state without an id")
+              Logger.error("failed to load block palette: '\(identifier.name)' contains a state without an id")
               throw BlockModelError.invalidBlockPalette
             }
-            blockModelPalette[stateId] = identifierToMojangBlockModel[variantBlockModelIdentifier]
+            if let intermediateBlockModel = identifierToIntermediateBlockModel[variantBlockModelIdentifier] {
+              let blockModel = intermediateToBlockModel(intermediateBlockModel)
+              blockModelPalette[stateId] = blockModel
+            } else {
+              Logger.error("no block model '\(variantBlockModelIdentifier)' found for variant '' of block state '\(identifier)' with id \(stateId)")
+            }
           }
         } else { // a different variant for each state
           for paletteStateDict in paletteStatesArray {
             let paletteStateJSON = JSON(dict: paletteStateDict)
             guard let stateId = paletteStateJSON.getInt(forKey: "id") else {
-              Logger.debug("failed to load block palette: '\(identifier.name)' contains a state without an id")
+              Logger.error("failed to load block palette: '\(identifier.name)' contains a state without an id")
               throw BlockModelError.invalidBlockPalette
             }
             
@@ -355,26 +353,68 @@ class BlockModelManager {
               let variantKey = variantKeyParts.joined(separator: ",")
               if let variant = variants.getJSON(forKey: variantKey) {
                 guard let variantModel = variant.getString(forKey: "model") else {
-                  Logger.debug("failed to load block state json: variant '\(variantKey)' doesn't specify a model on '\(identifier.name)'")
+                  Logger.error("failed to load block state json: variant '\(variantKey)' doesn't specify a model on '\(identifier.name)'")
                   throw BlockModelError.invalidBlockStateJSON
                 }
                 guard let variantModelIdentifier = try? Identifier(variantModel) else {
-                  Logger.debug("variant's block model identifier is invalid, '\(variantModel)'")
+                  Logger.error("variant's block model identifier is invalid, '\(variantModel)'")
                   throw BlockModelError.invalidIdentifier
                 }
-                blockModelPalette[stateId] = identifierToMojangBlockModel[variantModelIdentifier]
+                if let intermediateBlockModel = identifierToIntermediateBlockModel[variantModelIdentifier] {
+                  let blockModel = intermediateToBlockModel(intermediateBlockModel)
+                  blockModelPalette[stateId] = blockModel
+                }
               } else {
                 // at the moment block states that we can't handle are just passed
 //                Logger.debug("no variant for '\(variantKey)' on '\(identifier.name)'")
 //                throw BlockModelError.nonExistentPropertyCombination
               }
             } else {
-              // handle blocks with multiple variants under the same name (randomly choose one each time)
+              // handle blocks with multiple variants under the same name (randomly choose one each time based on where the block is)
             }
           }
         }
       }
+      if identifier.name == "birch_log" {
+        Logger.debug("birch log up texture index: \(blockModelPalette[80]?.elements[0].faces[.up])")
+        Logger.debug("birch log north texture index: \(blockModelPalette[80]?.elements[0].faces[.north])")
+      }
     }
+  }
+  
+  func intermediateToBlockModel(_ intermediateBlockModel: IntermediateBlockModel) -> BlockModel {
+    var elements: [BlockModelElement] = []
+    for intermediateElement in intermediateBlockModel.elements {
+      let modelMatrix = intermediateElement.modelMatrix
+      // TODO: implement block rotations
+      
+      var faces: [FaceDirection: BlockModelElementFace] = [:]
+      for (direction, intermediateFace) in intermediateElement.faces {
+        let textureName = intermediateFace.textureVariable
+        if let textureIdentifier = try? Identifier(textureName) {
+          if let textureIndex = textureManager.identifierToBlockTextureIndex[textureIdentifier] {
+            let face = BlockModelElementFace(
+              textureCoordinates: intermediateFace.textureCoordinates,
+              textureIndex: textureIndex,
+              cullface: intermediateFace.cullface,
+              tintIndex: intermediateFace.tintIndex
+            )
+            faces[direction] = face
+          } else {
+            // currently this is reached for animated textures (because the textures are bigger than 16x16
+          }
+        } else {
+          Logger.error("block model's texture is not a valid identifier: '\(textureName)'")
+        }
+      }
+      let element = BlockModelElement(
+        modelMatrix: modelMatrix,
+        faces: faces
+      )
+      elements.append(element)
+    }
+    let blockModel = BlockModel(elements: elements)
+    return blockModel
   }
   
   func loadBlockModel(fileName: URL) throws -> MojangBlockModel {

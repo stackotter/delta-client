@@ -28,6 +28,7 @@ just a bunch of random todos
   - [x] load block textures
   - [ ] convert block models to the right format
   - [ ] cache global block model palette to save loading time if necessary?
+  - [ ] load global palette from pixlyzer instead of generated data
   - [x] fix config loader
   - [x] fix locale usage throughout project
   - [x] delete mojang files from resources folder to avoid copyright stuff

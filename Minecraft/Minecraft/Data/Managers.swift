@@ -26,7 +26,7 @@ struct Managers {
     self.configManager = ConfigManager(storageManager: self.storageManager)
     self.assetManager = AssetManager(storageManager: self.storageManager)
     self.textureManager = TextureManager(assetManager: self.assetManager)
-    self.blockModelManager = BlockModelManager(assetManager: self.assetManager)
+    self.blockModelManager = BlockModelManager(assetManager: self.assetManager, textureManager: self.textureManager)
     self.localeManager = LocaleManager()
   }
 }
