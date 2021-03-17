@@ -11,12 +11,15 @@ import os
 enum StartupError: LocalizedError {
   case failedToDownloadAssets
   case missingLocale
+  case failedToDownloadPixlyzerData(AssetError?)
   case failedToLoadLocale(LocaleError?)
   case failedToLoadBlockModels(BlockModelError?)
   case failedToLoadGlobalBlockPalette(BlockModelError?)
   case failedToLoadBlockTextures(TextureError?)
 }
 
+// TODO: make the managers' inits throw so less optionals are needed for things and errors are picked up early. use hashes to check whether assets need to be re-verified or anything
+// TODO: make a verify function and a repair function for storage and asset manager and things like that
 class StartupSequence {
   var eventManager: EventManager
   
@@ -29,8 +32,7 @@ class StartupSequence {
     eventManager.triggerEvent(.loadingScreenMessage("initialising managers"))
     let managers = Managers(eventManager: eventManager)
     
-    // start asset manager and download assets if neccessary
-    eventManager.triggerEvent(.loadingScreenMessage("starting asset manager"))
+    // download assets if neccessary
     if !managers.assetManager.checkAssetsExist() {
       eventManager.triggerEvent(.loadingScreenMessage("downloading and extracting assets (this only happens once, it shouldn't take too long, only 18mb)"))
       let success = managers.assetManager.downloadAssets()
@@ -42,20 +44,22 @@ class StartupSequence {
       Logger.debug("assets exist")
     }
     
+    // download pixlyzer data
+    if !managers.assetManager.checkPixlyzerDataExists() {
+      eventManager.triggerEvent(.loadingScreenMessage("downloading pixlyzer data (this only happens once, it shouldn't take too long, only 12mb"))
+      do {
+        try managers.assetManager.downloadPixlyzerData()
+      } catch {
+        throw StartupError.failedToDownloadPixlyzerData(error as? AssetError)
+      }
+    }
+    
     // load block textures
     eventManager.triggerEvent(.loadingScreenMessage("loading block textures"))
     do {
       try managers.textureManager.loadBlockTextures()
     } catch {
       throw StartupError.failedToLoadBlockTextures(error as? TextureError)
-    }
-    
-    // load block models
-    eventManager.triggerEvent(.loadingScreenMessage("loading block models"))
-    do {
-      try managers.blockModelManager.loadBlockModels()
-    } catch {
-      throw StartupError.failedToLoadBlockModels(error as? BlockModelError)
     }
     
     // load global palette

@@ -11,6 +11,8 @@ import Zip
 
 enum AssetError: LocalizedError {
   case failedToDownload
+  case failedToCreateFolder
+  case pixlyzerDownloadFailed
 }
 
 class AssetManager {
@@ -24,6 +26,29 @@ class AssetManager {
   
   func checkAssetsExist() -> Bool {
     return storageManager.exists(assetsFolder)
+  }
+  
+  func checkPixlyzerDataExists() -> Bool {
+    return storageManager.exists(storageManager.storageURL.appendingPathComponent("pixlyzer-data"))
+  }
+  
+  func downloadPixlyzerData() throws {
+    let pixlyzerDataFolder = storageManager.storageURL.appendingPathComponent("pixlyzer-data")
+    if !storageManager.exists(pixlyzerDataFolder) {
+      do {
+        try storageManager.fileManager.createDirectory(at: pixlyzerDataFolder, withIntermediateDirectories: true, attributes: nil)
+      } catch {
+        Logger.error("failed to create pixlyzer data folder: \(error)")
+        throw AssetError.failedToCreateFolder
+      }
+    }
+    let blockPaletteFile = pixlyzerDataFolder.appendingPathComponent("blocks.json")
+    let blockPaletteURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/1.16.1/blocks.json")!
+    let blockPaletteJSON = try Data(contentsOf: blockPaletteURL)
+    guard (try? blockPaletteJSON.write(to: blockPaletteFile)) != nil else {
+      Logger.error("failed to download pixlyzer block palette")
+      throw AssetError.pixlyzerDownloadFailed
+    }
   }
   
   // TODO: make download assets a throwing function
@@ -126,6 +151,7 @@ class AssetManager {
       Logger.error("failed to copy assets to application support")
       return false
     }
+    
     return true
   }
   
@@ -158,6 +184,14 @@ class AssetManager {
     let blockTexturesFolder = assetsFolder.appendingPathComponent("minecraft/textures/block")
     if storageManager.exists(blockTexturesFolder) {
       return blockTexturesFolder
+    }
+    return nil
+  }
+  
+  func getPixlyzerFolder() -> URL? {
+    let pixlyzerFolder = storageManager.storageURL.appendingPathComponent("pixlyzer-data")
+    if storageManager.exists(pixlyzerFolder) {
+      return pixlyzerFolder
     }
     return nil
   }
