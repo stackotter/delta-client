@@ -22,7 +22,11 @@ struct MatrixUtil {
   }
   
   static func scalingMatrix(_ x: Float, _ y: Float, _ z: Float) -> matrix_float4x4 {
-    return matrix_float4x4(diagonal: [x, y, z, 1])
+    return scalingMatrix(simd_float3(x, y, z))
+  }
+  
+  static func scalingMatrix(_ vector: simd_float3) -> matrix_float4x4 {
+    return matrix_float4x4(diagonal: simd_float4(vector, 1))
   }
   
   static func projectionMatrix(near: Float, far: Float, aspect: Float, fieldOfViewY: Float) -> matrix_float4x4 {

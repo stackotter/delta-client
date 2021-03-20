@@ -172,6 +172,12 @@ class AssetManager {
     return nil
   }
   
+  func getBlockModelJSON(for identifier: Identifier) throws -> JSON {
+    let fileName = "\(identifier.name.split(separator: "/")[1]).json"
+    let url = getBlockModelFolder()!.appendingPathComponent(fileName)
+    return try JSON.fromURL(url)
+  }
+  
   func getBlockStatesFolder() -> URL? {
     let blockStatesFolder = assetsFolder.appendingPathComponent("minecraft/blockstates")
     if storageManager.exists(blockStatesFolder) {
