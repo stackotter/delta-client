@@ -75,31 +75,28 @@ class Renderer {
   }
   
   func draw(view: MTKView, drawable: CAMetalDrawable) {
-    Logger.debug("render, starting frame")
-    var stopwatch = Stopwatch.now(label: "render")
+    var stopwatch = Stopwatch(mode: .verbose, name: "chunk mesh")
     
     // render player's current chunk
     let mesh = Mesh()
     if let chunk = client.server.currentWorld.chunks[client.server.player.chunkPosition] {
       if chunk.mesh.vertices.count == 0 {
-        stopwatch.lap(detail: "generating chunk mesh")
+        stopwatch.startMeasurement(category: "generate chunk mesh")
         chunk.generateMesh(with: managers.blockModelManager)
-        stopwatch.lap(detail: "finished generating chunk mesh")
+        stopwatch.stopMeasurement(category: "generate chunk mesh")
         Logger.debug("number of blocks in mesh: \(chunk.mesh.totalBlocks)")
       }
       mesh.vertices = chunk.mesh.vertices
       mesh.indices = chunk.mesh.indices
     }
     
-    stopwatch.lap(detail: "created mesh objects")
-    
     if mesh.vertices.count != 0 && mesh.indices.count != 0 {
+      stopwatch.startMeasurement(category: "create buffers")
       let aspect = Float(view.drawableSize.width/view.drawableSize.height)
       let matrixBuffer = createWorldToClipSpaceMatrix(aspect: aspect)
       let vertexBuffer = mesh.createVertexBuffer(for: metalDevice)
       let indexBuffer = mesh.createIndexBuffer(for: metalDevice)
-      
-      stopwatch.lap(detail: "created buffers")
+      stopwatch.stopMeasurement(category: "create buffers")
       
       if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
         if let renderPassDescriptor = view.currentRenderPassDescriptor {
@@ -127,8 +124,6 @@ class Renderer {
             
             commandBuffer.present(drawable)
             commandBuffer.commit()
-            
-            stopwatch.lap(detail: "rendered")
           }
         }
       }

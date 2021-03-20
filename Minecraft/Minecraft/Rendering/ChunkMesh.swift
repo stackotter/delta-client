@@ -60,35 +60,39 @@ struct ChunkMesh {
     quadToBlockIndex = [:]
     blockIndexToQuads = [:]
     
-    var stopwatch = Stopwatch.now(label: "chunk ingest")
+    var stopwatch = Stopwatch(mode: .summary, name: "chunk ingest")
     
-    stopwatch.lap(detail: "start new way")
+    stopwatch.startMeasurement(category: "entire loop")
     for (sectionIndex, section) in chunk.sections.enumerated() {
       if section.blockCount != 0 {
         let sectionY = sectionIndex * 16
-        stopwatch.lap(detail: "processing section \(sectionIndex)")
+        stopwatch.startMeasurement(category: "section \(sectionIndex)")
+        stopwatch.startMeasurement(category: "section")
         for i in 0..<4096 {
           let state = section.blocks[i]
           if state != 0 {
-            stopwatch.lap(detail: "processing non-air block")
+            stopwatch.startMeasurement(category: "non-air block")
             let x = i & 0x00f
             let z = (i & 0x0f0) >> 4
             let y = (i >> 8) + sectionY
-            stopwatch.lap(detail: "determining cull faces")
+            stopwatch.startMeasurement(category: "determine cull faces")
             let cullFaces = chunk.getPresentNeighbours(forX: x, y: y, andZ: z)
-            stopwatch.lap(detail: "determined cull faces")
+            stopwatch.stopMeasurement(category: "determine cull faces")
             if let blockModel = blockModelManager.blockModelPalette[state] {
-              stopwatch.lap(detail: "start add block")
+              stopwatch.startMeasurement(category: "add block")
               addBlock(x, y, z, state, cullFaces, blockModel)
-              stopwatch.lap(detail: "added block")
+              stopwatch.stopMeasurement(category: "add block")
             }
-            stopwatch.lap(detail: "processed non-air block")
+            stopwatch.stopMeasurement(category: "non-air block")
           }
         }
-        stopwatch.lap(detail: "processed section \(sectionIndex)")
+        stopwatch.stopMeasurement(category: "section \(sectionIndex)")
+        stopwatch.stopMeasurement(category: "section")
       }
     }
-    stopwatch.lap(detail: "finish new way")
+    stopwatch.stopMeasurement(category: "entire loop")
+    
+    stopwatch.summary()
   }
   
   // Helper Functions
