@@ -52,7 +52,6 @@ struct ChunkMesh {
     
   }
   
-  // TODO: don't loop through coords, just loop through indices instead
   mutating func ingestChunk(chunk: Chunk, blockModelManager: BlockModelManager) {
     // clear mesh
     vertices = []
@@ -61,11 +60,11 @@ struct ChunkMesh {
     blockIndexToQuads = [:]
     
     var stopwatch = Stopwatch(mode: .summary, name: "chunk ingest")
-    
     stopwatch.startMeasurement(category: "entire loop")
     for (sectionIndex, section) in chunk.sections.enumerated() {
       if section.blockCount != 0 {
         let sectionY = sectionIndex * 16
+        let indexOffset = sectionIndex * 4096
         stopwatch.startMeasurement(category: "section \(sectionIndex)")
         stopwatch.startMeasurement(category: "section")
         for i in 0..<4096 {
@@ -76,7 +75,8 @@ struct ChunkMesh {
             let z = (i & 0x0f0) >> 4
             let y = (i >> 8) + sectionY
             stopwatch.startMeasurement(category: "determine cull faces")
-            let cullFaces = chunk.getPresentNeighbours(forX: x, y: y, andZ: z)
+            let blockIndex = indexOffset + i
+            let cullFaces = chunk.getPresentNeighbours(forIndex: blockIndex)
             stopwatch.stopMeasurement(category: "determine cull faces")
             if let blockModel = blockModelManager.blockModelPalette[state] {
               stopwatch.startMeasurement(category: "add block")

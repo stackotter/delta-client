@@ -23,12 +23,13 @@
 
 - [ ] transparency
 - [ ] look into keeping vertices in gpu mem when they are unchanged between frames?
+- [ ] fix plants (based on the cross block model) (probably something to do with rotation and rescale)
 
 ### Chunk preparing
 
 - [ ] speed up chunk preparing
-  - [ ] flatten the for loops used
-  - [ ] for checking neighbours use math on the indices instead of looking up block at x, y, z etc.
+  - [x] flatten the for loops used
+  - [x] for checking neighbours use math on the indices instead of looking up block at x, y, z etc.
 - [ ] reimplement block changes
 - [ ] improve block culling under new block model rendering
   - [ ] figure out how cull faces work

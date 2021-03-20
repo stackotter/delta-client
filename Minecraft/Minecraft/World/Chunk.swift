@@ -58,38 +58,64 @@ class Chunk {
     return sections[sectionNum].getBlockId(atX: Int32(x), y: Int32(sectionY), andZ: Int32(z))
   }
   
-  func getPresentNeighbours(forX x: Int, y: Int, andZ z: Int) -> Set<FaceDirection> {
+  func getBlock(atIndex index: Int) -> UInt16 {
+    let sectionNum = index / 4096
+    let state = sections[sectionNum].blocks[index - (sectionNum * 4096)]
+    return state
+  }
+  
+  // index is (y*16 + z)*16 + x
+  func getPresentNeighbours(forIndex index: Int) -> Set<FaceDirection> {
     var neighbours: Set<FaceDirection> = Set<FaceDirection>()
-    if x != 0 {
-      if getBlock(atX: x-1, y: y, andZ: z) != 0 {
+    
+    let currentRow = Int((Float(index) / 16.0).rounded(.down))
+    let currentLayer = Int((Float(index) / 256.0).rounded(.down))
+    
+    let westBlockIndex = index - 1
+    let eastBlockIndex = index + 1
+    
+    let northBlockIndex = index - 16
+    let southBlockIndex = index + 16
+    
+    let downBlockIndex = index - 256
+    let upBlockIndex = index + 256
+    
+    if Int((Float(westBlockIndex) / 16.0).rounded(.down)) == currentRow {
+      if getBlock(atIndex: westBlockIndex) != 0 {
         neighbours.insert(.west)
       }
     }
-    if x != 15 {
-      if getBlock(atX: x+1, y: y, andZ: z) != 0 {
+    
+    if Int((Float(eastBlockIndex) / 16.0).rounded(.down)) == currentRow {
+      if getBlock(atIndex: eastBlockIndex) != 0 {
         neighbours.insert(.east)
       }
     }
-    if z != 0 {
-      if getBlock(atX: x, y: y, andZ: z-1) != 0 {
+    
+    if northBlockIndex >= currentLayer*256 {
+      if getBlock(atIndex: northBlockIndex) != 0 {
         neighbours.insert(.north)
       }
     }
-    if z != 15 {
-      if getBlock(atX: x, y: y, andZ: z+1) != 0 {
+    
+    if southBlockIndex < (currentLayer+1)*256 {
+      if getBlock(atIndex: southBlockIndex) != 0 {
         neighbours.insert(.south)
       }
     }
-    if y != 0 {
-      if getBlock(atX: x, y: y-1, andZ: z) != 0 {
+    
+    if downBlockIndex >= 0 {
+      if getBlock(atIndex: downBlockIndex) != 0 {
         neighbours.insert(.down)
       }
     }
-    if y != 255 {
-      if getBlock(atX: x, y: y+1, andZ: z) != 0 {
+    
+    if upBlockIndex < 16*16*256 {
+      if getBlock(atIndex: upBlockIndex) != 0 {
         neighbours.insert(.up)
       }
     }
+    
     return neighbours
   }
   
