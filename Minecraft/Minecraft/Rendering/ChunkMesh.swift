@@ -60,20 +60,35 @@ struct ChunkMesh {
     quadToBlockIndex = [:]
     blockIndexToQuads = [:]
     
-    // generate mesh
-    for x in 0..<16 {
-      for z in 0..<16 {
-        for y in 0..<255 {
-          let state = chunk.getBlock(atX: x, y: y, andZ: z)
+    var stopwatch = Stopwatch.now(label: "chunk ingest")
+    
+    stopwatch.lap(detail: "start new way")
+    for (sectionIndex, section) in chunk.sections.enumerated() {
+      if section.blockCount != 0 {
+        let sectionY = sectionIndex * 16
+        stopwatch.lap(detail: "processing section \(sectionIndex)")
+        for i in 0..<4096 {
+          let state = section.blocks[i]
           if state != 0 {
+            stopwatch.lap(detail: "processing non-air block")
+            let x = i & 0x00f
+            let z = (i & 0x0f0) >> 4
+            let y = (i >> 8) + sectionY
+            stopwatch.lap(detail: "determining cull faces")
             let cullFaces = chunk.getPresentNeighbours(forX: x, y: y, andZ: z)
+            stopwatch.lap(detail: "determined cull faces")
             if let blockModel = blockModelManager.blockModelPalette[state] {
+              stopwatch.lap(detail: "start add block")
               addBlock(x, y, z, state, cullFaces, blockModel)
+              stopwatch.lap(detail: "added block")
             }
+            stopwatch.lap(detail: "processed non-air block")
           }
         }
+        stopwatch.lap(detail: "processed section \(sectionIndex)")
       }
     }
+    stopwatch.lap(detail: "finish new way")
   }
   
   // Helper Functions
