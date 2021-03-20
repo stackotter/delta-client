@@ -15,6 +15,8 @@ class Chunk {
   var blockEntities: [BlockEntity]
   var sections: [ChunkSection]
   
+  var neighbours: [CardinalDirection: Chunk] = [:]
+  
   var mesh: ChunkMesh
   
   // private because it shouldn't be used directly cause of its weird storage format
@@ -29,6 +31,10 @@ class Chunk {
     self.blockEntities = blockEntities
     
     self.mesh = ChunkMesh()
+  }
+  
+  func setNeighbour(to chunk: Chunk, direction: CardinalDirection) {
+    neighbours[direction] = chunk
   }
   
   func generateMesh(with blockModelManager: BlockModelManager) {
@@ -64,61 +70,6 @@ class Chunk {
     return state
   }
   
-  // index is (y*16 + z)*16 + x
-  func getPresentNeighbours(forIndex index: Int) -> Set<FaceDirection> {
-    var neighbours: Set<FaceDirection> = Set<FaceDirection>()
-    
-    let currentRow = Int((Float(index) / 16.0).rounded(.down))
-    let currentLayer = Int((Float(index) / 256.0).rounded(.down))
-    
-    let westBlockIndex = index - 1
-    let eastBlockIndex = index + 1
-    
-    let northBlockIndex = index - 16
-    let southBlockIndex = index + 16
-    
-    let downBlockIndex = index - 256
-    let upBlockIndex = index + 256
-    
-    if Int((Float(westBlockIndex) / 16.0).rounded(.down)) == currentRow {
-      if getBlock(atIndex: westBlockIndex) != 0 {
-        neighbours.insert(.west)
-      }
-    }
-    
-    if Int((Float(eastBlockIndex) / 16.0).rounded(.down)) == currentRow {
-      if getBlock(atIndex: eastBlockIndex) != 0 {
-        neighbours.insert(.east)
-      }
-    }
-    
-    if northBlockIndex >= currentLayer*256 {
-      if getBlock(atIndex: northBlockIndex) != 0 {
-        neighbours.insert(.north)
-      }
-    }
-    
-    if southBlockIndex < (currentLayer+1)*256 {
-      if getBlock(atIndex: southBlockIndex) != 0 {
-        neighbours.insert(.south)
-      }
-    }
-    
-    if downBlockIndex >= 0 {
-      if getBlock(atIndex: downBlockIndex) != 0 {
-        neighbours.insert(.down)
-      }
-    }
-    
-    if upBlockIndex < 16*16*256 {
-      if getBlock(atIndex: upBlockIndex) != 0 {
-        neighbours.insert(.up)
-      }
-    }
-    
-    return neighbours
-  }
-  
   // TODO: get rid of these double functions, decide on one (after choosing int type to use)
   func setBlock(at position: Position, to newState: UInt16) {
     setBlock(atX: Int(position.x), y: Int(position.y), andZ: Int(position.z), to: newState)
@@ -143,5 +94,76 @@ class Chunk {
 //    }
 //    Logger.debug("setting block in chunk section")
 //    sections[sectionNum].setBlockId(atX: Int32(x), y: Int32(sectionY), andZ: Int32(z), to: newState)
+  }
+  
+  // index is (y*16 + z)*16 + x
+  func getPresentNeighbours(forIndex index: Int) -> Set<FaceDirection> {
+    var presentNeighbours: Set<FaceDirection> = Set<FaceDirection>()
+    
+    let currentRow = Int((Float(index) / 16.0).rounded(.down))
+    let currentLayer = Int((Float(index) / 256.0).rounded(.down))
+    
+    let westBlockIndex = index - 1
+    let eastBlockIndex = index + 1
+    
+    let northBlockIndex = index - 16
+    let southBlockIndex = index + 16
+    
+    let downBlockIndex = index - 256
+    let upBlockIndex = index + 256
+    
+    if Int((Float(westBlockIndex) / 16.0).rounded(.down)) == currentRow {
+      if getBlock(atIndex: westBlockIndex) != 0 {
+        presentNeighbours.insert(.west)
+      }
+    } else if let westChunk = neighbours[.west] {
+      if westChunk.getBlock(atIndex: index + 15) != 0 {
+        presentNeighbours.insert(.west)
+      }
+    }
+    
+    if Int((Float(eastBlockIndex) / 16.0).rounded(.down)) == currentRow {
+      if getBlock(atIndex: eastBlockIndex) != 0 {
+        presentNeighbours.insert(.east)
+      }
+    } else if let eastChunk = neighbours[.west] {
+      if eastChunk.getBlock(atIndex: index - 15) != 0 {
+        presentNeighbours.insert(.east)
+      }
+    }
+    
+    if northBlockIndex >= currentLayer*256 {
+      if getBlock(atIndex: northBlockIndex) != 0 {
+        presentNeighbours.insert(.north)
+      }
+    } else if let northChunk = neighbours[.north] {
+      if northChunk.getBlock(atIndex: index + (15*16)) != 0 {
+        presentNeighbours.insert(.north)
+      }
+    }
+    
+    if southBlockIndex < (currentLayer+1)*256 {
+      if getBlock(atIndex: southBlockIndex) != 0 {
+        presentNeighbours.insert(.south)
+      }
+    } else if let southChunk = neighbours[.south] {
+      if southChunk.getBlock(atIndex: index - (15*16)) != 0 {
+        presentNeighbours.insert(.south)
+      }
+    }
+    
+    if downBlockIndex >= 0 {
+      if getBlock(atIndex: downBlockIndex) != 0 {
+        presentNeighbours.insert(.down)
+      }
+    }
+    
+    if upBlockIndex < 16*16*256 {
+      if getBlock(atIndex: upBlockIndex) != 0 {
+        presentNeighbours.insert(.up)
+      }
+    }
+    
+    return presentNeighbours
   }
 }

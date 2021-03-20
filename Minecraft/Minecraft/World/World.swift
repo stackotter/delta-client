@@ -46,6 +46,31 @@ class World {
   }
   
   func addChunk(_ chunk: Chunk) {
+    // set chunk neighbours
+    var eastCoordinate = chunk.position
+    eastCoordinate.chunkX += 1
+    var westCoordinate = chunk.position
+    westCoordinate.chunkX -= 1
+    
+    var southCoordinate = chunk.position
+    southCoordinate.chunkZ += 1
+    var northCoordinate = chunk.position
+    northCoordinate.chunkZ -= 1
+    
+    let neighbourCoordinates: [CardinalDirection: ChunkPosition] = [
+      .north: northCoordinate,
+      .east: eastCoordinate,
+      .south: southCoordinate,
+      .west: westCoordinate
+    ]
+    
+    for (direction, coordinate) in neighbourCoordinates {
+      if let neighbour = chunks[coordinate] {
+        chunk.setNeighbour(to: neighbour, direction: direction)
+        neighbour.setNeighbour(to: chunk, direction: direction.opposite)
+      }
+    }
+    
     chunks[chunk.position] = chunk
   }
   

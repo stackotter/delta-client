@@ -250,6 +250,7 @@
 		78DB24D525C4F5A700F7D70B /* PlayerAbilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DB24D425C4F5A700F7D70B /* PlayerAbilities.swift */; };
 		78DB24DA25C51DEF00F7D70B /* PluginMessagePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DB24D925C51DEF00F7D70B /* PluginMessagePacket.swift */; };
 		78DF38DC25DC6E7A00A03FB7 /* ChatTranslateComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DF38DB25DC6E7A00A03FB7 /* ChatTranslateComponent.swift */; };
+		78E23E042606A91D00E58395 /* CardinalDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E23E032606A91D00E58395 /* CardinalDirection.swift */; };
 		78E919B925D74DBF00667C75 /* PacketRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919B825D74DBF00667C75 /* PacketRegistry.swift */; };
 		78E919BE25D7541C00667C75 /* ServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919BD25D7541C00667C75 /* ServerboundPacket.swift */; };
 		78E919C325D75C9E00667C75 /* KeepAliveServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919C225D75C9E00667C75 /* KeepAliveServerboundPacket.swift */; };
@@ -544,6 +545,7 @@
 		78DB24D425C4F5A700F7D70B /* PlayerAbilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerAbilities.swift; sourceTree = "<group>"; };
 		78DB24D925C51DEF00F7D70B /* PluginMessagePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginMessagePacket.swift; sourceTree = "<group>"; };
 		78DF38DB25DC6E7A00A03FB7 /* ChatTranslateComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTranslateComponent.swift; sourceTree = "<group>"; };
+		78E23E032606A91D00E58395 /* CardinalDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardinalDirection.swift; sourceTree = "<group>"; };
 		78E919B825D74DBF00667C75 /* PacketRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketRegistry.swift; sourceTree = "<group>"; };
 		78E919BD25D7541C00667C75 /* ServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerboundPacket.swift; sourceTree = "<group>"; };
 		78E919C225D75C9E00667C75 /* KeepAliveServerboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeepAliveServerboundPacket.swift; sourceTree = "<group>"; };
@@ -1117,6 +1119,7 @@
 			children = (
 				784CAE23259AB654003E5F87 /* UUID.swift */,
 				78965087258861FE0079C5CF /* NBTCompound.swift */,
+				78E23E032606A91D00E58395 /* CardinalDirection.swift */,
 				789BE9E22589DAC7001C08ED /* JSON.swift */,
 				7843EC1A25E2380900AD42A7 /* Direction.swift */,
 				784B393C25A17AB600556E3E /* Identifier.swift */,
@@ -1552,6 +1555,7 @@
 				784CCAF425AD349E004B3182 /* FireworkStarRecipe.swift in Sources */,
 				7824E91925E1003D009F0197 /* PlayerListHeaderAndFooterPacket.swift in Sources */,
 				785E532725F2EF7B003C3CF4 /* GameRenderView.swift in Sources */,
+				78E23E042606A91D00E58395 /* CardinalDirection.swift in Sources */,
 				7843EC0425E236CC00AD42A7 /* UpdateSignPacket.swift in Sources */,
 				787305A525D93985001259EB /* SetExperiencePacket.swift in Sources */,
 				7894523425D277C000B86423 /* OpenHorseWindowPacket.swift in Sources */,

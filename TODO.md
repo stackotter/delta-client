@@ -24,6 +24,8 @@
 - [ ] transparency
 - [ ] look into keeping vertices in gpu mem when they are unchanged between frames?
 - [ ] fix plants (based on the cross block model) (probably something to do with rotation and rescale)
+- [ ] animated textures
+- [ ] multipart structures
 
 ### Chunk preparing
 
@@ -33,6 +35,7 @@
 - [ ] reimplement block changes
 - [ ] improve block culling under new block model rendering
   - [ ] figure out how cull faces work
+- [x] implement looking in neighbouring chunks for edge block cull faces
 
 ## General clean up
 

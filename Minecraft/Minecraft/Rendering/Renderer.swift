@@ -91,12 +91,10 @@ class Renderer {
     }
     
     if mesh.vertices.count != 0 && mesh.indices.count != 0 {
-      stopwatch.startMeasurement(category: "create buffers")
       let aspect = Float(view.drawableSize.width/view.drawableSize.height)
       let matrixBuffer = createWorldToClipSpaceMatrix(aspect: aspect)
       let vertexBuffer = mesh.createVertexBuffer(for: metalDevice)
       let indexBuffer = mesh.createIndexBuffer(for: metalDevice)
-      stopwatch.stopMeasurement(category: "create buffers")
       
       if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
         if let renderPassDescriptor = view.currentRenderPassDescriptor {
