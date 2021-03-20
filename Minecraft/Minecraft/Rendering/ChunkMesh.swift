@@ -9,6 +9,7 @@ import Foundation
 import simd
 
 struct ChunkMesh {
+  // vertex data
   var vertices: [Vertex] = []
   var indices: [UInt32] = []
   let quadWinding: [UInt32] = [0, 1, 2, 2, 3, 0]
@@ -27,7 +28,7 @@ struct ChunkMesh {
     simd_float2(1, 0)
   ]
   
-  let faceVertexIndices: [Direction: [Int]] = [
+  let faceVertexIndices: [FaceDirection: [Int]] = [
     .up: [0, 3, 7, 4],
     .down: [2, 1, 5, 6],
     .east: [3, 2, 6, 7],
@@ -51,16 +52,23 @@ struct ChunkMesh {
     
   }
   
-  init(chunk: Chunk) {
+  // TODO: don't loop through coords, just loop through indices instead
+  mutating func ingestChunk(chunk: Chunk, blockModelManager: BlockModelManager) {
+    // clear mesh
+    vertices = []
+    indices = []
+    quadToBlockIndex = [:]
+    blockIndexToQuads = [:]
+    
+    // generate mesh
     for x in 0..<16 {
       for z in 0..<16 {
         for y in 0..<255 {
           let state = chunk.getBlock(atX: x, y: y, andZ: z)
-          
           if state != 0 {
-            let faces = chunk.getEmptyNeighbours(forX: x, y: y, andZ: z)
-            if !faces.isEmpty {
-              addBlock(x, y, z, faces: faces)
+            let cullFaces = chunk.getPresentNeighbours(forX: x, y: y, andZ: z)
+            if let blockModel = blockModelManager.blockModelPalette[state] {
+              addBlock(x, y, z, state, cullFaces, blockModel)
             }
           }
         }
@@ -76,39 +84,54 @@ struct ChunkMesh {
   
   // Render Functions
   
-  mutating func addBlock(_ x: Int, _ y: Int, _ z: Int, faces: Set<Direction>) {
-    let index = blockIndexFrom(x, y, z)
-    addBlock(x, y, z, index: index, faces: faces)
-  }
-  
-  mutating func addBlock(_ x: Int, _ y: Int, _ z: Int, index blockIndex: Int, faces: Set<Direction>) {
-    totalBlocks += 1
-    let startQuadIndex = vertices.count/4
-    for faceDirection in faces {
-      let modelMatrix = MatrixUtil.translationMatrix(simd_float3(Float(x), Float(y), Float(z)))
-      addQuad(x, y, z, direction: faceDirection, modelMatrix: modelMatrix)
-    }
+  mutating func addBlock(_ x: Int, _ y: Int, _ z: Int, _ state: UInt16, _ cullFaces: Set<FaceDirection>, _ blockModel: BlockModel) {
     var quadIndices: [Int] = []
-    for i in 0..<faces.count {
-      let quadIndex = startQuadIndex+i
-      quadIndices.append(quadIndex)
-      quadToBlockIndex[quadIndex] = blockIndex
+    
+    for element in blockModel.elements {
+      let modelMatrix = element.modelMatrix
+      for (faceDirection, face) in element.faces {
+        if let cullFace = face.cullface {
+          if cullFaces.contains(cullFace) {
+            continue // face doesn't need to be rendered
+          }
+        }
+        let quadIndex = addQuad(x, y, z, direction: faceDirection, modelMatrix: modelMatrix, face: face)
+        quadIndices.append(quadIndex)
+      }
     }
-    blockIndexToQuads[blockIndex] = quadIndices
+    
+    let index = blockIndexFrom(x, y, z)
+    blockIndexToQuads[index] = quadIndices
+    
+    totalBlocks += 1
   }
   
-  mutating func addQuad(_ x: Int, _ y: Int, _ z: Int, direction: Direction, modelMatrix: matrix_float4x4) {
+  mutating func addQuad(_ x: Int, _ y: Int, _ z: Int, direction: FaceDirection, modelMatrix: matrix_float4x4, face: BlockModelElementFace) -> Int {
     let offset = UInt32(vertices.count) // the index of the first vertex of the quad
     windQuad(offset: offset)
     
+    let minUV = face.uv.0
+    let maxUV = face.uv.1
+    let uvs = [
+      minUV,
+      simd_float2(minUV.x, maxUV.y),
+      maxUV,
+      simd_float2(maxUV.x, minUV.y)
+    ]
+    
+    let modelToWorld = MatrixUtil.translationMatrix(simd_float3(Float(x), Float(y), Float(z)))
+    
     let vertexIndices = faceVertexIndices[direction]!
-    for (textureCoordinateIndex, vertexIndex) in vertexIndices.enumerated() {
-      let vertexPosition = simd_make_float3(simd_float4(cubeVertexPositions[vertexIndex], 1) * modelMatrix)
-      let textureCoordinate = cubeTextureCoordinates[textureCoordinateIndex]
+    for (uvIndex, vertexIndex) in vertexIndices.enumerated() {
+      let position = simd_float4(cubeVertexPositions[vertexIndex], 1) * modelMatrix * modelToWorld
+      let uv = uvs[uvIndex]
       vertices.append(
-        Vertex(position: vertexPosition, textureCoordinate: textureCoordinate)
+        Vertex(position: simd_make_float3(position), uv: uv, textureIndex: face.textureIndex)
       )
     }
+    
+    let index = vertices.count/4
+    return index
   }
   
   mutating func windQuad(offset: UInt32) {

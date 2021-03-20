@@ -11,13 +11,15 @@ using namespace metal;
 struct Vertex
 {
   float3 position;
-  float2 textureCoordinate;
+  float2 uv;
+  uint16_t textureIndex;
 };
 
 struct RasteriserData
 {
   float4 position [[position]];
-  float2 textureCoordinate;
+  float2 uv;
+  uint textureIndex;
 };
 
 constexpr sampler textureSampler (mag_filter::nearest,
@@ -32,11 +34,12 @@ vertex RasteriserData vertexShader(uint vertexId [[vertex_id]], constant Vertex 
   out.position.xyz = in.position;
   out.position = out.position * modelToClipSpace;
   
-  out.textureCoordinate = in.textureCoordinate;
+  out.uv = in.uv;
+  out.textureIndex = in.textureIndex;
   
   return out;
 }
 
 fragment float4 fragmentShader(RasteriserData in [[stage_in]], texture2d_array<float, access::sample> textureArray [[texture(0)]]) {
-  return textureArray.sample(textureSampler, in.textureCoordinate, 0); // samples from the first texture for now (changes each time the app is run)
+  return textureArray.sample(textureSampler, in.uv, in.textureIndex);
 }

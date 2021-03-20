@@ -264,7 +264,6 @@
 		78E919F825D7FD9E00667C75 /* OpenBookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919F725D7FD9E00667C75 /* OpenBookPacket.swift */; };
 		78E919FD25D7FE0700667C75 /* OpenWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919FC25D7FE0700667C75 /* OpenWindowPacket.swift */; };
 		78EF27B725F39381007F788A /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EF27B625F39381007F788A /* Stopwatch.swift */; };
-		78EF27BC25F3A310007F788A /* ChunkRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EF27BB25F3A30F007F788A /* ChunkRenderer.swift */; };
 		78F29B1E25AE769B00D85CCB /* CompactedLongArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */; };
 		78F29B2425AE818700D85CCB /* Chunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B2325AE818700D85CCB /* Chunk.swift */; };
 		78F29B2C25AE81E000D85CCB /* ChunkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B2B25AE81E000D85CCB /* ChunkSection.swift */; };
@@ -559,7 +558,6 @@
 		78E919F725D7FD9E00667C75 /* OpenBookPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenBookPacket.swift; sourceTree = "<group>"; };
 		78E919FC25D7FE0700667C75 /* OpenWindowPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWindowPacket.swift; sourceTree = "<group>"; };
 		78EF27B625F39381007F788A /* Stopwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
-		78EF27BB25F3A30F007F788A /* ChunkRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkRenderer.swift; sourceTree = "<group>"; };
 		78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactedLongArray.swift; sourceTree = "<group>"; };
 		78F29B2325AE818700D85CCB /* Chunk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chunk.swift; sourceTree = "<group>"; };
 		78F29B2B25AE81E000D85CCB /* ChunkSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkSection.swift; sourceTree = "<group>"; };
@@ -750,7 +748,6 @@
 				785E532B25F2F29C003C3CF4 /* RenderCoordinator.swift */,
 				785E534925F30B26003C3CF4 /* Renderer.swift */,
 				783FC18125F5747B009EC3CA /* ChunkMesh.swift */,
-				78EF27BB25F3A30F007F788A /* ChunkRenderer.swift */,
 				785E533925F2F770003C3CF4 /* shaders.metal */,
 			);
 			path = Rendering;
@@ -1478,7 +1475,6 @@
 				7809942425E222AB00DFDC9F /* TabCompleteServerboundPacket.swift in Sources */,
 				7873056E25D93160001259EB /* EntityHeadLookPacket.swift in Sources */,
 				789451F825D26E2000B86423 /* WindowConfirmationClientboundPacket.swift in Sources */,
-				78EF27BC25F3A310007F788A /* ChunkRenderer.swift in Sources */,
 				784CCAEF25AD3487004B3182 /* FireworkRocketRecipe.swift in Sources */,
 				78F29B2C25AE81E000D85CCB /* ChunkSection.swift in Sources */,
 				78B6A20125FC673D00CFE493 /* LocaleManager.swift in Sources */,

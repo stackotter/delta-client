@@ -10,5 +10,6 @@ import simd
 
 struct Vertex {
   var position: simd_float3 // using tuples instead of simd types because the stride is less
-  var textureCoordinate: simd_float2
+  var uv: simd_float2
+  var textureIndex: uint16
 }

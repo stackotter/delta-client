@@ -43,15 +43,6 @@ class Renderer {
     pipelineStateDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
     pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float
     
-    // TODO: block transparency
-//    pipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
-//    pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
-//    pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
-//    pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
-//    pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
-//    pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
-//    pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
-    
     let depthDescriptor = MTLDepthStencilDescriptor()
     depthDescriptor.depthCompareFunction = .lessEqual
     depthDescriptor.isDepthWriteEnabled = true
@@ -92,7 +83,7 @@ class Renderer {
     if let chunk = client.server.currentWorld.chunks[client.server.player.chunkPosition] {
       if chunk.mesh.vertices.count == 0 {
         stopwatch.lap(detail: "generating chunk mesh")
-        chunk.generateMesh()
+        chunk.generateMesh(with: managers.blockModelManager)
         stopwatch.lap(detail: "finished generating chunk mesh")
         Logger.debug("number of blocks in mesh: \(chunk.mesh.totalBlocks)")
       }

@@ -8,44 +8,20 @@ Minecraft Swift Edition is an open source rewrite of Minecraft Java Edition writ
 
 - [ ] Networking
   - [x] Basic networking
-  - [ ] Packet Decoding
-    - [x] Handshaking
-    - [ ] Status
-      - [x] Server list ping
-      - [ ] Ping/pong
-      - [ ] Legacy server ping
-    - [ ] Login
-      - [x] The essential packets
-      - [ ] Encryption packets
-      - [ ] Compression packets
-    - [x] Play
-  - [ ] Packet Handling
-    - [ ] Login
-      - [x] Basic login flow
-      - [ ] Mojang account login
-      - [ ] Microsoft account login
-  - [ ] Protocol Layers
-    - [ ] Compression
-    - [ ] Encryption
-  - [ ] Lan worlds
+  - [x] Server list ping
+  - [ ] Encryption (for non-offline mode servers)
+    - [ ] Mojang accounts
+    - [ ] Microsoft accounts
+  - [ ] LAN servers
 - [ ] First Launch
   - [x] Download assets
   - [ ] Generate default config
-  - [ ] Progress bar for client jar download (downloading assets)
-  - [ ] One-time setup screen?
 - [ ] Mojang Data
-  - [ ] Block data
-    - [x] Load global block palette
-    - [x] Load block states
-    - [x] Load block models
-    - [x] Load block textures
-    - [ ] Flatten block models to better format
+  - [x] Load block models and global block palette
   - [ ] Item data
   - [ ] Entity data
   - [ ] Sound data
-- [ ] Config
-  - [ ] Create a config system
-  - [ ] Make an interface for it
+- [ ] Basic config interface
 - [ ] Command-based interface
   - [x] Basic structure
   - [x] Chat command
@@ -58,7 +34,6 @@ Minecraft Swift Edition is an open source rewrite of Minecraft Java Edition writ
     - [x] Basic chunk rendering
     - [x] Block culling
     - [ ] Block models
-    - [ ] Random block models (randomly picked based on location it's placed at)
     - [ ] Multiple chunks
     - [ ] Animated textures
     - [ ] Block entities
@@ -127,10 +102,10 @@ As I implement more of the backend code -- and before I work on rendering -- I w
 
 ![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/play-screen.png?raw=true)
 
-#### Initial basic rendering (one chunk)
+#### Current rendering (uses block models but has a bunch of weird things atm as you can probably tell)
 
-![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/initial-chunk-rendering.png?raw=true)
+![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/first-block-model-rendering.png?raw=true)
 
 #### The same place but in vanilla Minecraft
 
-![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/vanilla-from-same-spot.png?raw=true)
+![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/first-block-model-vanilla.png?raw=true)

@@ -43,7 +43,7 @@ struct IntermediateBlockModel {
 // the actual block model structure used for rendering
 struct BlockModelElementFace {
   var uv: (simd_float2, simd_float2)
-  var textureIndex: Int // the index of the texture to use in the block texture buffer
+  var textureIndex: UInt16 // the index of the texture to use in the block texture buffer
   var cullface: FaceDirection?
   var rotation: Int
   var tintIndex: Int?
@@ -65,7 +65,7 @@ class BlockModelManager {
   var textureManager: TextureManager
   
   var intermediateCache: [Identifier: IntermediateBlockModel] = [:]
-  var blockModelPalette: [Int: BlockModel] = [:]
+  var blockModelPalette: [UInt16: BlockModel] = [:]
   
   init(assetManager: AssetManager, textureManager: TextureManager) {
     self.assetManager = assetManager
@@ -104,7 +104,7 @@ class BlockModelManager {
             do {
               let modelIdentifier = try Identifier(modelIdentifierString!)
               let blockModel = try loadBlockModel(for: modelIdentifier)
-              blockModelPalette[stateId] = blockModel
+              blockModelPalette[UInt16(stateId)] = blockModel
             } catch {
               Logger.error("failed to load model for \(modelIdentifierString!): \(error)")
             }
@@ -118,6 +118,8 @@ class BlockModelManager {
     }
     
     intermediateCache = [:]
+    
+    Logger.debug("model matrix birch: \(blockModelPalette[80]!.elements[0].modelMatrix)")
   }
   
   func loadBlockModel(for identifier: Identifier) throws -> BlockModel {
@@ -208,8 +210,8 @@ class BlockModelManager {
               }
               if uv.count == 4 {
                 let textureCoordinates = (
-                  simd_float2(uv[0], uv[1]),
-                  simd_float2(uv[2], uv[3])
+                  simd_float2(uv[0], uv[1]) / 16.0,
+                  simd_float2(uv[2], uv[3]) / 16.0
                 )
                 let face = IntermediateBlockModelElementFace(
                   uv: textureCoordinates,

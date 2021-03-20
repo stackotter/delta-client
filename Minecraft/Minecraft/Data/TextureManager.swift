@@ -19,7 +19,7 @@ class TextureManager {
   var assetManager: AssetManager
   
   var images: [(Identifier, CGImage)] = []
-  var identifierToBlockTextureIndex: [Identifier: Int] = [:]
+  var identifierToBlockTextureIndex: [Identifier: UInt16] = [:]
   
   init(assetManager: AssetManager) {
     self.assetManager = assetManager
@@ -41,7 +41,7 @@ class TextureManager {
       }
     }
     
-    var index = 0
+    var index: UInt16 = 0
     for filename in textureFileNames {
       let textureName = filename.deletingPathExtension().lastPathComponent
       let identifier = Identifier(name: "block/\(textureName)")
