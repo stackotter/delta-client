@@ -98,15 +98,13 @@ class ChunkMesh: Mesh {
   
   func replaceBlock(at index: Int, newState: UInt16) {
     queue.sync {
-      if chunk.getBlock(atIndex: index) != 0 {
-        removeBlock(atIndex: index)
-      }
+      removeBlock(atIndex: index)
       if newState != 0 {
         addBlock(at: index, with: newState)
       }
-//      updateNeighbours(of: index)
-      // TODO: get update neighbours working
     }
+    
+    updateNeighbours(of: index)
   }
   
   // mesh building functions
@@ -223,9 +221,11 @@ class ChunkMesh: Mesh {
   private func updateNeighbours(of index: Int) {
     let presentNeighbours = chunk.getPresentNeighbours(forIndex: index)
     for (_, (neighbourChunk, neighbourIndex)) in presentNeighbours {
-      let state = neighbourChunk.getBlock(atIndex: index)
-      neighbourChunk.mesh.removeBlock(atIndex: neighbourIndex)
-      neighbourChunk.mesh.addBlock(at: neighbourIndex, with: state)
+      neighbourChunk.mesh.queue.sync {
+        let state = neighbourChunk.getBlock(atIndex: neighbourIndex)
+        neighbourChunk.mesh.removeBlock(atIndex: neighbourIndex)
+        neighbourChunk.mesh.addBlock(at: neighbourIndex, with: state)
+      }
     }
   }
 }

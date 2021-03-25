@@ -83,11 +83,11 @@ class Chunk {
       return
     }
     
-    mesh.replaceBlock(at: blockIndex, newState: newState)
-    
     let sectionNum = Int(position.y / ChunkSection.HEIGHT)
     let sectionIndex = blockIndex - sectionNum * ChunkSection.NUM_BLOCKS
     sections[sectionNum].blocks[sectionIndex] = newState
+    
+    mesh.replaceBlock(at: blockIndex, newState: newState)
   }
   
   func getNeighbouringBlocks(forIndex index: Int) -> [FaceDirection: (Chunk, Int)] {
