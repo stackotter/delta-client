@@ -12,6 +12,7 @@
 
 ## Startup
 
+- [ ] optimise creation of global palette
 - [ ] cache global palette
 - [ ] make managers throw in initialiser to avoid optional and throwing functions elsewhere
   - [ ] storage manager
@@ -23,24 +24,27 @@
 
 - [ ] transparency
 - [ ] look into keeping vertices in gpu mem when they are unchanged between frames?
-- [ ] fix plants (based on the cross block model) (probably something to do with rotation and rescale)
 - [ ] animated textures
 - [ ] multipart structures
 
 ### Chunk preparing
 
-- [ ] speed up chunk preparing
+- [x] speed up chunk preparing
   - [x] flatten the for loops used
   - [x] for checking neighbours use math on the indices instead of looking up block at x, y, z etc.
-- [ ] reimplement block changes
-- [ ] improve block culling under new block model rendering
-  - [ ] figure out how cull faces work
+- [x] reimplement block changes
+- [x] improve block culling under new block model rendering
 - [x] implement looking in neighbouring chunks for edge block cull faces
-- [ ] make chunk mesh thread safe
+- [x] make chunk mesh thread safe
+- [ ] fix plants (based on the cross block model) (probably something to do with rotation and rescale)
+- [ ] fix stairs
+- [ ] fix x-ray from partial blocks
+  - [ ] generate list of full faces for each block from block models
 
 ## General clean up
 
 - [ ] improve error handling in networking (certain things like readIdentifier probably don't need to throw)
+- [x] use normal int and uint types instead of specifying 32 or 64. avoids annoying conversions
 
 ## Other
 
