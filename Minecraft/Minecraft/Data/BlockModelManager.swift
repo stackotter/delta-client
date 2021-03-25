@@ -249,7 +249,7 @@ class BlockModelManager {
             if rotationOrigin.count == 3 {
               let rotationOriginVector = simd_float3(rotationOrigin) / Float(16.0)
               let rotation = angle != nil ? Float(angle!) : 0
-              modelMatrix *= MatrixUtil.scalingMatrix(-rotationOriginVector)
+              modelMatrix *= MatrixUtil.translationMatrix(-rotationOriginVector)
               switch rotationAxis {
                 case "x":
                   modelMatrix *= MatrixUtil.rotationMatrix(x: rotation)
@@ -260,7 +260,7 @@ class BlockModelManager {
                 default:
                   Logger.error("invalid rotation axis")
               }
-              modelMatrix *= MatrixUtil.scalingMatrix(rotationOriginVector)
+              modelMatrix *= MatrixUtil.translationMatrix(rotationOriginVector)
             } else {
               Logger.error("invalid rotation on block model element")
             }
