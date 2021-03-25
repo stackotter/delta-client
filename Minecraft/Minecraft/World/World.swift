@@ -26,8 +26,8 @@ class World {
   }
   
   func setBlock(at position: Position, to state: UInt16) {
-    if chunks[position.chunkPosition] != nil {
-      chunks[position.chunkPosition]!.setBlock(at: position.relativeToChunk, to: state)
+    if let chunk = chunks[position.chunkPosition] {
+      chunk.setBlock(at: position.relativeToChunk, to: state)
     } else {
       Logger.log("attempt to update block in non-existent chunk at \(position.chunkPosition)")
     }

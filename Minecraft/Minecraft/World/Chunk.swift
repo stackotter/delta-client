@@ -82,6 +82,7 @@ class Chunk {
       Logger.debug("doing nothing, state not changing")
       return
     }
+    
     mesh.replaceBlock(at: blockIndex, newState: newState)
     
     let sectionNum = Int(position.y / ChunkSection.HEIGHT)

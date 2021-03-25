@@ -7,6 +7,7 @@
 
 import Foundation
 import simd
+import os
 
 class ChunkMesh: Mesh {
   var chunk: Chunk
@@ -97,19 +98,22 @@ class ChunkMesh: Mesh {
   
   func replaceBlock(at index: Int, newState: UInt16) {
     queue.sync {
-      removeBlock(atIndex: index)
+      if chunk.getBlock(atIndex: index) != 0 {
+        removeBlock(atIndex: index)
+      }
       if newState != 0 {
         addBlock(at: index, with: newState)
       }
+//      updateNeighbours(of: index)
+      // TODO: get update neighbours working
     }
-    updateNeighbours(of: index)
   }
   
   // mesh building functions
   
   private func addBlock(at index: Int, with state: UInt16) {
     let x = index & 0x0f
-    let z = index & 0xf0 >> 4
+    let z = (index & 0xf0) >> 4
     let y = index >> 8
     addBlock(x, y, z, index: index, state: state)
   }
@@ -136,8 +140,13 @@ class ChunkMesh: Mesh {
         }
       }
       
-      blockIndexToQuads[index] = quadIndices
+      if !quadIndices.isEmpty {
+        blockIndexToQuads[index] = quadIndices
+      }
+      
       totalBlocks += 1
+    } else {
+      Logger.debug("skipping block because no block model found")
     }
   }
   
@@ -177,10 +186,9 @@ class ChunkMesh: Mesh {
   
   private func removeBlock(atIndex index: Int) {
     // multiply each quadIndex by 4 to get the start index of each of the block's rendered faces
-    if blockIndexToQuads[index] != nil {
+    if let quads = blockIndexToQuads[index] {
       print("removing block")
-      let numQuads = blockIndexToQuads[index]!.count
-      for i in (0..<numQuads).reversed() {
+      for i in (0..<quads.count).reversed() {
         removeQuad(atIndex: blockIndexToQuads[index]![i])
         print("removing quad")
       }
@@ -189,25 +197,35 @@ class ChunkMesh: Mesh {
   }
   
   private func removeQuad(atIndex quadIndex: Int) {
-    let isLastQuad = quadIndex*4+4 == vertices.count
-    indices.removeLast(6) // remove a winding
+    let lastQuad = vertices.count / 4 - 1
+    let isLastQuad = quadIndex == lastQuad
+    let blockIndex = quadToBlockIndex[quadIndex]!
     
-    let oldBlockIndex = quadToBlockIndex[quadIndex]!
+    indices.removeLast(quadWinding.count) // remove a winding
+    
     if !isLastQuad {
-      quadToBlockIndex[quadIndex] = quadToBlockIndex[vertices.count/4]
-      vertices.replaceSubrange((quadIndex*4)..<(quadIndex*4+4), with: vertices.suffix(4))
+      let lastBlockIndex = quadToBlockIndex[lastQuad]!
+      quadToBlockIndex[quadIndex] = lastBlockIndex
+      let indexOfIndex = blockIndexToQuads[lastBlockIndex]!.firstIndex(of: lastQuad)!
+      blockIndexToQuads[lastBlockIndex]!.remove(at: indexOfIndex)
+      blockIndexToQuads[lastBlockIndex]!.insert(quadIndex, at: indexOfIndex)
+      
+      let quadBegin = quadIndex * 4
+      let quadEnd = quadBegin + 4
+      vertices.replaceSubrange(quadBegin..<quadEnd, with: vertices.suffix(4))
     }
-    quadToBlockIndex.removeValue(forKey: vertices.count/4)
+    quadToBlockIndex.removeValue(forKey: lastQuad)
     vertices.removeLast(4)
     
-    blockIndexToQuads[oldBlockIndex]?.removeAll { $0 == quadIndex }
+    blockIndexToQuads[blockIndex]!.remove(at: blockIndexToQuads[blockIndex]!.lastIndex(of: quadIndex)!)
   }
   
   private func updateNeighbours(of index: Int) {
     let presentNeighbours = chunk.getPresentNeighbours(forIndex: index)
     for (_, (neighbourChunk, neighbourIndex)) in presentNeighbours {
       let state = neighbourChunk.getBlock(atIndex: index)
-      neighbourChunk.mesh.replaceBlock(at: neighbourIndex, newState: state)
+      neighbourChunk.mesh.removeBlock(atIndex: neighbourIndex)
+      neighbourChunk.mesh.addBlock(at: neighbourIndex, with: state)
     }
   }
 }
