@@ -67,9 +67,9 @@ class Client {
         case "getblock":
           if options.count == 3 {
             guard
-              let x = Int32(options[0]),
-              let y = Int32(options[1]),
-              let z = Int32(options[2])
+              let x = Int(options[0]),
+              let y = Int(options[1]),
+              let z = Int(options[2])
             else {
               Logger.log("x y z must be integers")
               return

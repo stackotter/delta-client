@@ -11,8 +11,8 @@ struct OpenHorseWindowPacket: ClientboundPacket {
   static let id: Int = 0x1f
   
   var windowId: Int8
-  var numberOfSlots: Int32
-  var entityId: Int32
+  var numberOfSlots: Int
+  var entityId: Int
   
   init(from packetReader: inout PacketReader) throws {
     windowId = packetReader.readByte()

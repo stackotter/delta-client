@@ -11,7 +11,7 @@ import os
 struct KeepAliveClientboundPacket: ClientboundPacket {
   static let id: Int = 0x20
   
-  var keepAliveId: Int64
+  var keepAliveId: Int
   
   init(from packetReader: inout PacketReader) throws {
     keepAliveId = packetReader.readLong()

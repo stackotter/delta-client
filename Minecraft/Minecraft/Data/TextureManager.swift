@@ -77,10 +77,7 @@ class TextureManager {
     let colorSpace = CGColorSpaceCreateDeviceRGB()
     let bitmapInfo = UInt32(Int(kColorSyncAlphaPremultipliedFirst.rawValue) | kColorSyncByteOrder32Little)
     
-    for (index, (identifier, image)) in images.enumerated() {
-      if index == 0 { // logs what texture is currently being used to render chunk
-        Logger.debug("at index 0: \(identifier)")
-      }
+    for (index, (_, image)) in images.enumerated() {
       let width = image.width
       let height = image.height
       let bytesPerRow = bytesPerPixel*16

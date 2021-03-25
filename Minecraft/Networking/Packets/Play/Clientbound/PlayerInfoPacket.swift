@@ -16,7 +16,7 @@ struct PlayerInfoPacket: ClientboundPacket {
   enum PlayerInfoAction {
     case addPlayer(playerInfo: PlayerInfo)
     case updateGamemode(gamemode: Gamemode)
-    case updateLatency(ping: Int32)
+    case updateLatency(ping: Int)
     case updateDisplayName(displayName: ChatComponent?)
     case removePlayer
   }

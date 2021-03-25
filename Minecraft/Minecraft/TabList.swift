@@ -20,7 +20,7 @@ struct TabList {
     players[uuid]?.gamemode = gamemode
   }
   
-  mutating func updateLatency(_ ping: Int32, uuid: UUID) {
+  mutating func updateLatency(_ ping: Int, uuid: UUID) {
     players[uuid]?.ping = ping
   }
   

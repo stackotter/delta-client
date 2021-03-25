@@ -10,7 +10,7 @@ import Foundation
 struct MapDataPacket: ClientboundPacket {
   static let id: Int = 0x26
   
-  var mapId: Int32
+  var mapId: Int
   var scale: Int8
   var trackingPosition: Bool
   var locked: Bool
@@ -18,7 +18,7 @@ struct MapDataPacket: ClientboundPacket {
   var columns: UInt8
   
   struct MapIcon {
-    var type: Int32
+    var type: Int
     var x: Int8
     var z: Int8
     var direction: Int8

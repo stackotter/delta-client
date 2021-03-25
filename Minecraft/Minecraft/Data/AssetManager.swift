@@ -43,7 +43,7 @@ class AssetManager {
       }
     }
     let blockPaletteFile = pixlyzerDataFolder.appendingPathComponent("blocks.json")
-    let blockPaletteURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/1.16.1/blocks.json")!
+    let blockPaletteURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(VERSION_STRING)/blocks.json")!
     let blockPaletteJSON = try Data(contentsOf: blockPaletteURL)
     guard (try? blockPaletteJSON.write(to: blockPaletteFile)) != nil else {
       Logger.error("failed to download pixlyzer block palette")
@@ -95,22 +95,22 @@ class AssetManager {
       return false
     }
     Logger.debug("downloading client jar metadata")
-    guard let downloadURLString = downloadURLs.getString(forKey: "1.16.1") else { // TODO: don't hardcode version
-      Logger.error("failed to find download url for version 1.16.1 metadata json")
+    guard let downloadURLString = downloadURLs.getString(forKey: VERSION_STRING) else {
+      Logger.error("failed to find download url for version \(VERSION_STRING) metadata json")
       return false
     }
     guard let downloadURL = URL(string: downloadURLString) else {
-      Logger.error("invalid client metadata download url for version 1.16.1 in version_urls.json")
+      Logger.error("invalid client metadata download url for version \(VERSION_STRING) in version_urls.json")
       return false
     }
     guard let clientVersionMetadata = try? JSON.fromURL(downloadURL) else {
-      Logger.error("failed to download 1.16.1 metadata")
+      Logger.error("failed to download \(VERSION_STRING) metadata")
       return false
     }
     
     // download client jar
     guard let clientJarURLString = clientVersionMetadata.getJSON(forKey: "downloads")?.getJSON(forKey: "client")?.getString(forKey: "url") else {
-      Logger.error("invalid version json for 1.16.1")
+      Logger.error("invalid version json for \(VERSION_STRING)")
       return false
     }
     guard let clientJarURL = URL(string: clientJarURLString) else {
@@ -118,8 +118,8 @@ class AssetManager {
       return false
     }
     
-    let clientJar = FileManager.default.temporaryDirectory.appendingPathComponent("1.16.1-client.jar")
-    let clientJarExtracted = FileManager.default.temporaryDirectory.appendingPathComponent("1.16.1-client", isDirectory: true)
+    let clientJar = FileManager.default.temporaryDirectory.appendingPathComponent("\(VERSION_STRING)-client.jar")
+    let clientJarExtracted = FileManager.default.temporaryDirectory.appendingPathComponent("\(VERSION_STRING)-client", isDirectory: true)
     do {
       try FileManager.default.createDirectory(at: clientJarExtracted, withIntermediateDirectories: true, attributes: nil)
     } catch {

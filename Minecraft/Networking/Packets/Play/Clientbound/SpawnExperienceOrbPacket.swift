@@ -10,7 +10,7 @@ import Foundation
 struct SpawnExperienceOrbPacket: ClientboundPacket {
   static let id: Int = 0x01
   
-  var entityId: Int32
+  var entityId: Int
   var position: EntityPosition
   var count: Int16
   

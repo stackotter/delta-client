@@ -10,7 +10,7 @@ import Foundation
 struct DestroyEntitiesPacket: ClientboundPacket {
   static let id: Int = 0x37
   
-  var entityIds: [Int32]
+  var entityIds: [Int]
 
   init(from packetReader: inout PacketReader) throws {
     entityIds = []

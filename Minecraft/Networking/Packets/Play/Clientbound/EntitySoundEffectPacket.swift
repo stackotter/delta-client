@@ -10,9 +10,9 @@ import Foundation
 struct EntitySoundEffectPacket: ClientboundPacket {
   static let id: Int = 0x50
   
-  var soundId: Int32
-  var soundCategory: Int32
-  var entityId: Int32
+  var soundId: Int
+  var soundCategory: Int
+  var entityId: Int
   var volume: Float
   var pitch: Float
 

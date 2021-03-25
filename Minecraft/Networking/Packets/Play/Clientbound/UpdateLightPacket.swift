@@ -12,10 +12,10 @@ struct UpdateLightPacket: ClientboundPacket {
   
   var chunkPosition: ChunkPosition
   var trustEdges: Bool
-  var skyLightMask: Int32
-  var blockLightMask: Int32
-  var emptySkyLightMask: Int32
-  var emptyBlockLightMask: Int32
+  var skyLightMask: Int
+  var blockLightMask: Int
+  var emptySkyLightMask: Int
+  var emptyBlockLightMask: Int
   var skyLightArrays: [[UInt8]]
   var blockLightArrays: [[UInt8]]
   
@@ -35,7 +35,7 @@ struct UpdateLightPacket: ClientboundPacket {
       numArrays += Int(skyLightMask >> i) & 0x01
     }
     for _ in 0..<numArrays {
-      let length = Int(packetReader.readVarInt())
+      let length = packetReader.readVarInt()
       let bytes = packetReader.readByteArray(length: length)
       skyLightArrays.append(bytes)
     }
@@ -46,7 +46,7 @@ struct UpdateLightPacket: ClientboundPacket {
       numArrays += Int(blockLightMask >> i) & 0x01
     }
     for _ in 0..<numArrays {
-      let length = Int(packetReader.readVarInt())
+      let length = packetReader.readVarInt()
       let bytes = packetReader.readByteArray(length: length)
       blockLightArrays.append(bytes)
     }

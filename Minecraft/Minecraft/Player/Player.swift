@@ -15,10 +15,10 @@ struct Player {
   var chunkPosition: ChunkPosition = ChunkPosition(chunkX: 0, chunkZ: 0)
   
   var experienceBar: Float = -1
-  var totalExperience: Int32 = -1
-  var experienceLevel: Int32 = -1
+  var totalExperience: Int = -1
+  var experienceLevel: Int = -1
   var health: Float = -1
-  var food: Int32 = -1
+  var food: Int = -1
   var saturation: Float = -1
   
   var hotbarSlot: Int8 = -1

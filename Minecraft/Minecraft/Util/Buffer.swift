@@ -43,15 +43,17 @@ struct Buffer {
     index += n
   }
   
-  mutating func readBitPattern(n: Int, endian: Endian) -> UInt64 {
+  mutating func readBitPattern(n: Int, endian: Endian) -> UInt {
     var bytes = readBytes(n: n)
     if bytes.count < 8 {
       let padLength = 8 - bytes.count
       bytes = [UInt8](repeating: 0, count: padLength) + bytes
     }
-    var bitPattern: UInt64 = 0
+    // using uint will cause problems on 32 bit platforms
+    // apple only releases 64 bit now tho anyway
+    var bitPattern: UInt = 0
     bytes.withUnsafeBytes {
-      bitPattern = $0.load(as: UInt64.self)
+      bitPattern = $0.load(as: UInt.self)
     }
     
     if endian == .big {
@@ -96,38 +98,38 @@ struct Buffer {
     return signedShort
   }
   
-  mutating func readInt(endian: Endian) -> UInt32 {
-    let int = UInt32(readBitPattern(n: 4, endian: endian))
+  mutating func readInt(endian: Endian) -> UInt {
+    let int = UInt(readBitPattern(n: 4, endian: endian))
     return int
   }
   
-  mutating func readSignedInt(endian: Endian) -> Int32 {
-    let signedInt = Int32(bitPattern: readInt(endian: endian))
+  mutating func readSignedInt(endian: Endian) -> Int {
+    let signedInt = Int(bitPattern: readInt(endian: endian))
     return signedInt
   }
   
-  mutating func readLong(endian: Endian) -> UInt64 {
-    let long = readBitPattern(n: 8, endian: endian)
+  mutating func readLong(endian: Endian) -> UInt {
+    let long = UInt(readBitPattern(n: 8, endian: endian))
     return long
   }
   
-  mutating func readSignedLong(endian: Endian) -> Int64 {
-    let signedLong = Int64(bitPattern: readLong(endian: endian))
+  mutating func readSignedLong(endian: Endian) -> Int {
+    let signedLong = Int(bitPattern: readLong(endian: endian))
     return signedLong
   }
   
   mutating func readFloat(endian: Endian) -> Float {
-    let float = Float(bitPattern: readInt(endian: endian))
+    let float = Float(bitPattern: UInt32(readInt(endian: endian)))
     return float
   }
   
   mutating func readDouble(endian: Endian) -> Double {
-    let double = Double(bitPattern: readLong(endian: endian))
+    let double = Double(bitPattern: UInt64(readLong(endian: endian)))
     return double
   }
   
-  mutating func readVarBitPattern(maxBytes: Int) -> UInt64 {
-    var bitPattern: UInt64 = 0
+  mutating func readVarBitPattern(maxBytes: Int) -> UInt {
+    var bitPattern: UInt = 0
     var i = 0
     var byte: UInt8
     if maxBytes > 10 || maxBytes < 1 {
@@ -139,21 +141,21 @@ struct Buffer {
         fatalError("var num too long")
       }
       byte = readByte()
-      bitPattern += UInt64(byte & 0x7f) << (i * 7)
+      bitPattern += UInt(byte & 0x7f) << (i * 7)
       i += 1
     } while (byte & 0x80) == 0x80
     
     return bitPattern
   }
   
-  mutating func readVarInt() -> Int32 {
-    let bitPattern = UInt32(readVarBitPattern(maxBytes: 5))
-    return Int32(bitPattern: bitPattern)
+  mutating func readVarInt() -> Int {
+    let bitPattern = UInt(readVarBitPattern(maxBytes: 5))
+    return Int(bitPattern: bitPattern)
   }
   
-  mutating func readVarLong() -> Int64 {
+  mutating func readVarLong() -> Int {
     let bitPattern = readVarBitPattern(maxBytes: 10)
-    return Int64(bitPattern: bitPattern)
+    return Int(bitPattern: bitPattern)
   }
   
   mutating func readString(length: Int) -> String {
@@ -163,7 +165,10 @@ struct Buffer {
   }
   
   
-  // [ Write Functions ]
+  // Write Functions:
+  // these require specific int types for int and long still
+  // as these functions aren't used much and it improves semantics
+  
   mutating func writeByte(_ byte: UInt8) {
     byteBuf.append(byte)
   }

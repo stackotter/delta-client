@@ -10,12 +10,12 @@ import Foundation
 struct SpawnEntityPacket: ClientboundPacket {
   static let id: Int = 0x00
   
-  var entityId: Int32
+  var entityId: Int
   var objectUUID: UUID
-  var type: Int32
+  var type: Int
   var position: EntityPosition
   var rotation: EntityRotation
-  var data: Int32
+  var data: Int
   var velocity: EntityVelocity?
   
   // TODO_LATER: figure out all the entity madness

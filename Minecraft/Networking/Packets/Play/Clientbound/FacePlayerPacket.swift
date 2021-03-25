@@ -10,11 +10,11 @@ import Foundation
 struct FacePlayerPacket: ClientboundPacket {
   static let id: Int = 0x34
 
-  var feetOrEyes: Int32
+  var feetOrEyes: Int
   var targetPosition: EntityPosition
   var isEntity: Bool
-  var entityId: Int32?
-  var entityFeetOrEyes: Int32?
+  var entityId: Int?
+  var entityFeetOrEyes: Int?
   
   init(from packetReader: inout PacketReader) throws {
     feetOrEyes = packetReader.readVarInt()

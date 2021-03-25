@@ -10,9 +10,9 @@ import Foundation
 struct CollectItemPacket: ClientboundPacket {
   static let id: Int = 0x55
   
-  var collectedEntityId: Int32
-  var collectorEntityId: Int32
-  var pickupItemCount: Int32
+  var collectedEntityId: Int
+  var collectorEntityId: Int
+  var pickupItemCount: Int
 
   init(from packetReader: inout PacketReader) throws {
     collectedEntityId = packetReader.readVarInt()

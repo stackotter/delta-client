@@ -15,11 +15,11 @@ struct BossBarPacket: ClientboundPacket {
   var action: BossBarAction
   
   enum BossBarAction {
-    case add(title: ChatComponent, health: Float, color: Int32, division: Int32, flags: UInt8)
+    case add(title: ChatComponent, health: Float, color: Int, division: Int, flags: UInt8)
     case remove
     case updateHealth(health: Float)
     case updateTitle(title: ChatComponent)
-    case updateStyle(color: Int32, division: Int32)
+    case updateStyle(color: Int, division: Int)
     case updateFlags(flags: UInt8)
   }
   

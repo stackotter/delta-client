@@ -10,8 +10,8 @@ import Foundation
 struct TimeUpdatePacket: ClientboundPacket {
   static let id: Int = 0x4e
   
-  var worldAge: Int64
-  var timeOfDay: Int64
+  var worldAge: Int
+  var timeOfDay: Int
 
   init(from packetReader: inout PacketReader) throws {
     worldAge = packetReader.readLong()

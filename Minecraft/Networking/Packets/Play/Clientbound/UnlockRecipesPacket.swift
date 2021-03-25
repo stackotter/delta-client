@@ -10,7 +10,7 @@ import Foundation
 struct UnlockRecipesPacket: ClientboundPacket {
   static let id: Int = 0x36
   
-  var action: Int32
+  var action: Int
   var craftingRecipeBookOpen: Bool
   var craftingRecipeBookFilterActive: Bool
   var smeltingRecipeBookOpen: Bool

@@ -10,8 +10,8 @@ import Foundation
 struct AttachEntityPacket: ClientboundPacket {
   static let id: Int = 0x45
   
-  var attachedEntityId: Int32
-  var holdingEntityId: Int32
+  var attachedEntityId: Int
+  var holdingEntityId: Int
 
   init(from packetReader: inout PacketReader) throws {
     attachedEntityId = packetReader.readInt()

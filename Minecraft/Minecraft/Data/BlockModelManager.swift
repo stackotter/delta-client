@@ -164,7 +164,7 @@ class BlockModelManager {
       parent = try loadIntermediateBlockModel(for: try Identifier(parentName))
     }
     
-    let ambientOcclusion = blockModelJSON.getString(forKey: "ambientocclusion")
+    _ = blockModelJSON.getString(forKey: "ambientocclusion")
     
     let textures = (blockModelJSON.getJSON(forKey: "textures")?.dict as? [String: String]) ?? [:]
     
@@ -187,9 +187,9 @@ class BlockModelManager {
         }
         let rotationAxis = rotationJSON?.getString(forKey: "axis")
         let angle = rotationJSON?.getFloat(forKey: "angle")
-        let rescale = rotationJSON?.getBool(forKey: "rescale")
+        _ = rotationJSON?.getBool(forKey: "rescale")
         
-        let shade = elementJSON.getBool(forKey: "shade")
+        _ = elementJSON.getBool(forKey: "shade")
         
         var faces: [FaceDirection: IntermediateBlockModelElementFace] = [:]
         let facesDict = (elementJSON.getJSON(forKey: "faces")?.dict as? [String: [String: Any]]) ?? [:]
@@ -247,7 +247,7 @@ class BlockModelManager {
           // rotation
           if hasRotation {
             if rotationOrigin.count == 3 {
-              let rotationOriginVector = simd_float3(rotationOrigin)
+              let rotationOriginVector = simd_float3(rotationOrigin) / Float(16.0)
               let rotation = angle != nil ? Float(angle!) : 0
               modelMatrix *= MatrixUtil.scalingMatrix(-rotationOriginVector)
               switch rotationAxis {

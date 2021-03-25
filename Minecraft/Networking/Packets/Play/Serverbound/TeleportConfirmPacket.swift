@@ -10,9 +10,9 @@ import Foundation
 struct TeleportConfirmPacket: ServerboundPacket {
   static let id: Int = 0x00
   
-  var teleportId: Int32
+  var teleportId: Int
   
   func writePayload(to writer: inout PacketWriter) {
-    writer.writeVarInt(teleportId)
+    writer.writeVarInt(Int32(teleportId))
   }
 }

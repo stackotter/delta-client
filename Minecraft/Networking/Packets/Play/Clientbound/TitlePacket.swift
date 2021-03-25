@@ -17,7 +17,7 @@ struct TitlePacket: ClientboundPacket {
     case setTitle(text: ChatComponent)
     case setSubtitle(text: ChatComponent)
     case setActionBar(text: ChatComponent)
-    case setTimesAndDisplay(fadeIn: Int32, stay: Int32, fadeOut: Int32)
+    case setTimesAndDisplay(fadeIn: Int, stay: Int, fadeOut: Int)
     case hide
     case reset
   }

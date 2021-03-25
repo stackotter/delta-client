@@ -36,7 +36,12 @@
 - [ ] improve block culling under new block model rendering
   - [ ] figure out how cull faces work
 - [x] implement looking in neighbouring chunks for edge block cull faces
+- [ ] make chunk mesh thread safe
 
 ## General clean up
 
 - [ ] improve error handling in networking (certain things like readIdentifier probably don't need to throw)
+
+## Other
+
+- [ ] add os_signpost support to the stopwatch

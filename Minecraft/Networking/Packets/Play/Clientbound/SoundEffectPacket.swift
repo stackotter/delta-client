@@ -10,11 +10,11 @@ import Foundation
 struct SoundEffectPacket: ClientboundPacket {
   static let id: Int = 0x51
   
-  var soundId: Int32
-  var soundCategory: Int32
-  var effectPositionX: Int32
-  var effectPositionY: Int32
-  var effectPositionZ: Int32
+  var soundId: Int
+  var soundCategory: Int
+  var effectPositionX: Int
+  var effectPositionY: Int
+  var effectPositionZ: Int
   var volume: Float
   var pitch: Float
 

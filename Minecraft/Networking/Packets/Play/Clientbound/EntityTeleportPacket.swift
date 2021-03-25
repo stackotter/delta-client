@@ -10,7 +10,7 @@ import Foundation
 struct EntityTeleportPacket: ClientboundPacket {
   static let id: Int = 0x56
   
-  var entityId: Int32
+  var entityId: Int
   var position: EntityPosition
   var rotation: EntityRotation
   var onGround: Bool

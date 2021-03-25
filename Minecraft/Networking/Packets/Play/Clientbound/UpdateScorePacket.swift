@@ -13,7 +13,7 @@ struct UpdateScorePacket: ClientboundPacket {
   var entityName: String
   var action: Int8
   var objectiveName: String
-  var value: Int32?
+  var value: Int?
   
   init(from packetReader: inout PacketReader) throws {
     // TODO: implement strings with max length in packetreader

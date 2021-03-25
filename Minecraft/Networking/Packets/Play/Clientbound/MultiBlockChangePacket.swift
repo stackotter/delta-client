@@ -16,15 +16,15 @@ struct MultiBlockChangePacket: ClientboundPacket {
     var y: UInt8
     var z: UInt8
     
-    var blockId: Int32
+    var blockId: Int
   }
   
   var chunkPosition: ChunkPosition
   var records: [BlockChangeRecord]
   
   init(from packetReader: inout PacketReader) throws {
-    let chunkX = packetReader.readInt()
-    let chunkZ = packetReader.readInt()
+    let chunkX = Int(packetReader.readInt())
+    let chunkZ = Int(packetReader.readInt())
     chunkPosition = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
     
     records = []

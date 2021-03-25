@@ -10,12 +10,11 @@ import Foundation
 struct NBTQueryResponse: ClientboundPacket {
   static let id: Int = 0x54
   
-  var transactionId: Int32
+  var transactionId: Int
   var nbt: NBTCompound
 
   init(from packetReader: inout PacketReader) throws {
     transactionId = packetReader.readVarInt()
-    // TODO: make nbt just pass too maybe?
     nbt = try packetReader.readNBTTag()
   }
 }

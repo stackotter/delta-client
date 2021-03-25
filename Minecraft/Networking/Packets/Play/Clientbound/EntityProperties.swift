@@ -10,7 +10,7 @@ import Foundation
 struct EntityProperties: ClientboundPacket {
   static let id: Int = 0x58
   
-  var entityId: Int32
+  var entityId: Int
   var properties: [EntityProperty]
   
   // TODO_LATER: this deserves it's own file

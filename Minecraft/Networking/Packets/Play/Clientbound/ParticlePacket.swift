@@ -10,14 +10,14 @@ import Foundation
 struct ParticlePacket: ClientboundPacket {
   static let id: Int = 0x23
   
-  var particleId: Int32
+  var particleId: Int
   var isLongDistance: Bool
   var position: EntityPosition
   var offsetX: Float
   var offsetY: Float
   var offsetZ: Float
   var particleData: Float
-  var particleCount: Int32
+  var particleCount: Int
 
   init(from packetReader: inout PacketReader) throws {
     particleId = packetReader.readInt()

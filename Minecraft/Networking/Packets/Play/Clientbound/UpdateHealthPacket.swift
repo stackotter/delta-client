@@ -11,7 +11,7 @@ struct UpdateHealthPacket: ClientboundPacket {
   static let id: Int = 0x49
   
   var health: Float
-  var food: Int32
+  var food: Int
   var foodSaturation: Float
 
   init(from packetReader: inout PacketReader) throws {

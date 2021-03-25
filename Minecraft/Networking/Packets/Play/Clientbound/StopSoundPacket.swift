@@ -11,7 +11,7 @@ struct StopSoundPacket: ClientboundPacket {
   static let id: Int = 0x52
   
   var flags: Int8
-  var source: Int32?
+  var source: Int?
   var sound: Identifier?
 
   init(from packetReader: inout PacketReader) throws {

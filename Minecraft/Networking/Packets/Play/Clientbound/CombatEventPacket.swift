@@ -14,8 +14,8 @@ struct CombatEventPacket: ClientboundPacket {
   
   enum CombatEvent {
     case enterCombat
-    case endCombat(duration: Int32, entityId: Int32)
-    case entityDead(playerId: Int32, entityId: Int32, message: ChatComponent)
+    case endCombat(duration: Int, entityId: Int)
+    case entityDead(playerId: Int, entityId: Int, message: ChatComponent)
   }
   
   init(from packetReader: inout PacketReader) throws {

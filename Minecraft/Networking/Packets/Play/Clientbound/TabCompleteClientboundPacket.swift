@@ -16,9 +16,9 @@ struct TabCompleteClientboundPacket: ClientboundPacket {
     let tooltip: ChatComponent?
   }
   
-  var id: Int32
-  var start: Int32
-  var length: Int32
+  var id: Int
+  var start: Int
+  var length: Int
   var matches: [TabCompleteMatch]
   
   init(from packetReader: inout PacketReader) throws {

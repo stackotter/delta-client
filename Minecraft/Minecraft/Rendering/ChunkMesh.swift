@@ -8,27 +8,31 @@
 import Foundation
 import simd
 
-struct ChunkMesh {
-  // vertex data
-  var vertices: [Vertex] = []
-  var indices: [UInt32] = []
-  let quadWinding: [UInt32] = [0, 1, 2, 2, 3, 0]
-  
-  // maps block index to where its quads are in the vertex data
-  var blockIndexToQuads: [Int: [Int]] = [:]
-  var quadToBlockIndex: [Int: Int] = [:]
-  
+class ChunkMesh: Mesh {
+  var chunk: Chunk
   var totalBlocks = 0
   
+  private var blockModelManager: BlockModelManager
+  
+  // vertex data
+  private let quadWinding: [UInt32] = [0, 1, 2, 2, 3, 0]
+  
+  // maps block index to where its quads are in the vertex data
+  private var blockIndexToQuads: [Int: [Int]] = [:]
+  private var quadToBlockIndex: [Int: Int] = [:]
+  
+  // debug stopwatch
+  private var stopwatch = Stopwatch(mode: .summary, name: "chunk ingest")
+  
   // cube geometry constants
-  let cubeTextureCoordinates: [simd_float2] = [
+  private let cubeTextureCoordinates: [simd_float2] = [
     simd_float2(0, 0),
     simd_float2(0, 1),
     simd_float2(1, 1),
     simd_float2(1, 0)
   ]
   
-  let faceVertexIndices: [FaceDirection: [Int]] = [
+  private let faceVertexIndices: [FaceDirection: [Int]] = [
     .up: [0, 3, 7, 4],
     .down: [2, 1, 5, 6],
     .east: [3, 2, 6, 7],
@@ -37,7 +41,7 @@ struct ChunkMesh {
     .south: [7, 6, 5, 4]
   ]
   
-  let cubeVertexPositions: [simd_float3] = [
+  private let cubeVertexPositions: [simd_float3] = [
     simd_float3([0,  1,  0]),
     simd_float3([0,  0,  0]),
     simd_float3([1,  0,  0]),
@@ -48,87 +52,103 @@ struct ChunkMesh {
     simd_float3([1,  1,  1]),
   ]
   
-  init() {
+  init(blockModelManager: BlockModelManager, chunk: Chunk) {
+    self.blockModelManager = blockModelManager
+    self.chunk = chunk
     
+    super.init()
   }
   
-  mutating func ingestChunk(chunk: Chunk, blockModelManager: BlockModelManager) {
-    // clear mesh
-    vertices = []
-    indices = []
-    quadToBlockIndex = [:]
-    blockIndexToQuads = [:]
-    
-    var stopwatch = Stopwatch(mode: .summary, name: "chunk ingest")
-    stopwatch.startMeasurement(category: "entire loop")
-    for (sectionIndex, section) in chunk.sections.enumerated() {
-      if section.blockCount != 0 {
-        let sectionY = sectionIndex * 16
-        let indexOffset = sectionIndex * 4096
-        stopwatch.startMeasurement(category: "section \(sectionIndex)")
-        stopwatch.startMeasurement(category: "section")
-        for i in 0..<4096 {
-          let state = section.blocks[i]
-          if state != 0 {
-            stopwatch.startMeasurement(category: "non-air block")
-            let x = i & 0x00f
-            let z = (i & 0x0f0) >> 4
-            let y = (i >> 8) + sectionY
-            stopwatch.startMeasurement(category: "determine cull faces")
-            let blockIndex = indexOffset + i
-            let cullFaces = chunk.getPresentNeighbours(forIndex: blockIndex)
-            stopwatch.stopMeasurement(category: "determine cull faces")
-            if let blockModel = blockModelManager.blockModelPalette[state] {
-              stopwatch.startMeasurement(category: "add block")
-              addBlock(x, y, z, state, cullFaces, blockModel)
-              stopwatch.stopMeasurement(category: "add block")
+  // public interface functions
+  
+  func ingestChunk() {
+    queue.sync {
+      vertices = []
+      indices = []
+      quadToBlockIndex = [:]
+      blockIndexToQuads = [:]
+      
+      var x = 0
+      var y = 0
+      var z = 0
+      
+      for (sectionIndex, section) in chunk.sections.enumerated() {
+        if section.blockCount != 0 { // section isn't empty
+          let offset = sectionIndex * ChunkSection.NUM_BLOCKS
+          for i in 0..<ChunkSection.NUM_BLOCKS {
+            // get block state and add block to mesh if not air
+            let state = section.blocks[i]
+            if state != 0 { // block isn't air
+              let blockIndex = offset + i // block index in chunk
+              addBlock(x , y, z, index: blockIndex, state: state)
             }
-            stopwatch.stopMeasurement(category: "non-air block")
+            
+            // move xyz to next block with speedy magic
+            x += 1
+            z += (x == ChunkSection.WIDTH) ? 1 : 0
+            y += (z == ChunkSection.DEPTH) ? 1 : 0
+            x = x & 0xf
+            z = z & 0xf
           }
         }
-        stopwatch.stopMeasurement(category: "section \(sectionIndex)")
-        stopwatch.stopMeasurement(category: "section")
       }
     }
-    stopwatch.stopMeasurement(category: "entire loop")
-    
-    stopwatch.summary()
   }
   
-  // Helper Functions
-  
-  func blockIndexFrom(_ x: Int, _ y: Int, _ z: Int) -> Int {
-    return (y*16 + z)*16 + x
+  func replaceBlock(at index: Int, newState: UInt16) {
+    queue.sync {
+      removeBlock(atIndex: index)
+      if newState != 0 {
+        addBlock(at: index, with: newState)
+      }
+    }
+    updateNeighbours(of: index)
   }
   
-  // Render Functions
+  // mesh building functions
   
-  mutating func addBlock(_ x: Int, _ y: Int, _ z: Int, _ state: UInt16, _ cullFaces: Set<FaceDirection>, _ blockModel: BlockModel) {
-    var quadIndices: [Int] = []
+  private func addBlock(at index: Int, with state: UInt16) {
+    let x = index & 0x0f
+    let z = index & 0xf0 >> 4
+    let y = index >> 8
+    addBlock(x, y, z, index: index, state: state)
+  }
+  
+  private func addBlock(_ x: Int, _ y: Int, _ z: Int, index: Int, state: UInt16) {
+    let cullFaces = chunk.getPresentNeighbours(forIndex: index).keys
     
-    for element in blockModel.elements {
-      let modelMatrix = element.modelMatrix
-      for (faceDirection, face) in element.faces {
-        if let cullFace = face.cullface {
-          if cullFaces.contains(cullFace) {
-            continue // face doesn't need to be rendered
+    if let blockModel = blockModelManager.blockModelPalette[state] {
+      var quadIndices: [Int] = []
+      
+      let modelToWorld = MatrixUtil.translationMatrix(simd_float3(Float(x), Float(y), Float(z)))
+      for element in blockModel.elements {
+        let vertexToWorld = element.modelMatrix * modelToWorld
+        
+        for (faceDirection, face) in element.faces {
+          if let cullFace = face.cullface {
+            if cullFaces.contains(cullFace) {
+              continue // face doesn't need to be rendered
+            }
           }
+          let quadIndex = addQuad(x, y, z, direction: faceDirection, matrix: vertexToWorld, face: face)
+          quadIndices.append(quadIndex)
+          quadToBlockIndex[quadIndex] = index
         }
-        let quadIndex = addQuad(x, y, z, direction: faceDirection, modelMatrix: modelMatrix, face: face)
-        quadIndices.append(quadIndex)
       }
+      
+      blockIndexToQuads[index] = quadIndices
+      totalBlocks += 1
     }
-    
-    let index = blockIndexFrom(x, y, z)
-    blockIndexToQuads[index] = quadIndices
-    
-    totalBlocks += 1
   }
   
-  mutating func addQuad(_ x: Int, _ y: Int, _ z: Int, direction: FaceDirection, modelMatrix: matrix_float4x4, face: BlockModelElementFace) -> Int {
+  private func addQuad(_ x: Int, _ y: Int, _ z: Int, direction: FaceDirection, matrix: matrix_float4x4, face: BlockModelElementFace) -> Int {
+    // add windings
     let offset = UInt32(vertices.count) // the index of the first vertex of the quad
-    windQuad(offset: offset)
+    for index in quadWinding {
+      indices.append(index + offset)
+    }
     
+    // create uv's
     let minUV = face.uv.0
     let maxUV = face.uv.1
     let uvs = [
@@ -138,28 +158,24 @@ struct ChunkMesh {
       simd_float2(maxUV.x, minUV.y)
     ]
     
-    let modelToWorld = MatrixUtil.translationMatrix(simd_float3(Float(x), Float(y), Float(z)))
-    
+    // add vertices
     let vertexIndices = faceVertexIndices[direction]!
     for (uvIndex, vertexIndex) in vertexIndices.enumerated() {
-      let position = simd_float4(cubeVertexPositions[vertexIndex], 1) * modelMatrix * modelToWorld
+      let position = simd_float4(cubeVertexPositions[vertexIndex], 1) * matrix
       let uv = uvs[uvIndex]
       vertices.append(
         Vertex(position: simd_make_float3(position), uv: uv, textureIndex: face.textureIndex)
       )
     }
     
-    let index = vertices.count/4
+    // get and return the quad's index
+    let index = vertices.count / 4 - 1
     return index
   }
   
-  mutating func windQuad(offset: UInt32) {
-    for index in quadWinding {
-      indices.append(index + offset)
-    }
-  }
+  // Mesh Editing Functions
   
-  mutating func removeBlock(atIndex index: Int) {
+  private func removeBlock(atIndex index: Int) {
     // multiply each quadIndex by 4 to get the start index of each of the block's rendered faces
     if blockIndexToQuads[index] != nil {
       print("removing block")
@@ -172,7 +188,7 @@ struct ChunkMesh {
     }
   }
   
-  mutating func removeQuad(atIndex quadIndex: Int) {
+  private func removeQuad(atIndex quadIndex: Int) {
     let isLastQuad = quadIndex*4+4 == vertices.count
     indices.removeLast(6) // remove a winding
     
@@ -185,5 +201,13 @@ struct ChunkMesh {
     vertices.removeLast(4)
     
     blockIndexToQuads[oldBlockIndex]?.removeAll { $0 == quadIndex }
+  }
+  
+  private func updateNeighbours(of index: Int) {
+    let presentNeighbours = chunk.getPresentNeighbours(forIndex: index)
+    for (_, (neighbourChunk, neighbourIndex)) in presentNeighbours {
+      let state = neighbourChunk.getBlock(atIndex: index)
+      neighbourChunk.mesh.replaceBlock(at: neighbourIndex, newState: state)
+    }
   }
 }

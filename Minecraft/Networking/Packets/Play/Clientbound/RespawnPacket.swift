@@ -12,7 +12,7 @@ struct RespawnPacket: ClientboundPacket {
   
   var dimension: Identifier
   var worldName: Identifier
-  var hashedSeed: Int64
+  var hashedSeed: Int
   var gamemode: Gamemode
   var previousGamemode: Gamemode
   var isDebug: Bool
@@ -41,9 +41,8 @@ struct RespawnPacket: ClientboundPacket {
         worldName: worldName, dimension: dimension,
         hashedSeed: hashedSeed, isDebug: isDebug, isFlat: isFlat
       )
-      let world = World(config: worldConfig, managers: server.managers) // TODO: make a create world function on server
-      server.worlds[worldName] = world
-      server.currentWorldName = worldName
+      server.addWorld(config: worldConfig)
+      server.setCurrentWorld(identifier: worldName)
     }
     server.currentWorldName = worldName
     server.player.gamemode = gamemode

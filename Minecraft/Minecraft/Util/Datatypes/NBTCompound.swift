@@ -219,7 +219,7 @@ struct NBTCompound: CustomStringConvertible {
         value = compound
       case .intArray:
         let count = buffer.readSignedInt(endian: .big)
-        var array: [Int32] = []
+        var array: [Int] = []
         for _ in 0..<count {
           let int = buffer.readSignedInt(endian: .big)
           array.append(int)
@@ -227,7 +227,7 @@ struct NBTCompound: CustomStringConvertible {
         value = array
       case .longArray:
         let count = buffer.readSignedInt(endian: .big)
-        var array: [Int64] = []
+        var array: [Int] = []
         for _ in 0..<count {
           let long = buffer.readSignedLong(endian: .big)
           array.append(long)

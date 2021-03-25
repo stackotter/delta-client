@@ -14,21 +14,21 @@ struct WorldBorderPacket: ClientboundPacket {
   
   enum WorldBorderAction {
     case setSize(diameter: Double)
-    case lerpSize(oldDiameter: Double, newDiameter: Double, speed: Int64)
+    case lerpSize(oldDiameter: Double, newDiameter: Double, speed: Int)
     case setCenter(x: Double, z: Double)
     case initialise(action: InitialiseAction)
-    case setWarningTime(warningTime: Int32)
-    case setWarningBlocks(warningBlocks: Int32)
+    case setWarningTime(warningTime: Int)
+    case setWarningBlocks(warningBlocks: Int)
     
     struct InitialiseAction {
       var x: Double
       var z: Double
       var oldDiameter: Double
       var newDiameter: Double
-      var speed: Int64
-      var portalTeleportBoundary: Int32
-      var warningTime: Int32
-      var warningBlocks: Int32
+      var speed: Int
+      var portalTeleportBoundary: Int
+      var warningTime: Int
+      var warningBlocks: Int
     }
   }
   

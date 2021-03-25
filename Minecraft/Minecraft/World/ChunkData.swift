@@ -18,7 +18,7 @@ struct ChunkData {
   // chunkX and chunkZ have already been read
   var buf: Buffer
   
-  func unpack() throws -> Chunk {
+  func unpack(blockModelManager: BlockModelManager) throws -> Chunk {
     do {
       let start = CFAbsoluteTimeGetCurrent()
       var packetReader = PacketReader(buffer: buf)
@@ -47,9 +47,9 @@ struct ChunkData {
       for _ in 0..<numBlockEntities {
         let blockEntityNBT = try packetReader.readNBTTag()
         do {
-          let x: Int32 = try blockEntityNBT.get("x")
-          let y: Int32 = try blockEntityNBT.get("y")
-          let z: Int32 = try blockEntityNBT.get("z")
+          let x: Int = try blockEntityNBT.get("x")
+          let y: Int = try blockEntityNBT.get("y")
+          let z: Int = try blockEntityNBT.get("z")
           let position = Position(x: x, y: y, z: z)
           let identifierString: String = try! blockEntityNBT.get("id")
           let identifier = try! Identifier(identifierString)
@@ -62,7 +62,7 @@ struct ChunkData {
       let elapsed = CFAbsoluteTimeGetCurrent() - start
       Logger.log(String(format: "completed chunk in %.2fms", elapsed*1000))
       
-      let chunk = Chunk(position: position, heightMaps: heightMaps, ignoreOldData: ignoreOldData, biomes: biomes, sections: sections, blockEntities: blockEntities)
+      let chunk = Chunk(position: position, heightMaps: heightMaps, ignoreOldData: ignoreOldData, biomes: biomes, sections: sections, blockEntities: blockEntities, blockModelManager: blockModelManager)
       return chunk
     } catch {
       Logger.log("failed to unpack chunk: \(error.localizedDescription)")
@@ -70,7 +70,7 @@ struct ChunkData {
     }
   }
   
-  func readChunkSections(_ packetReader: inout PacketReader, primaryBitMask: Int32) -> [ChunkSection] {
+  func readChunkSections(_ packetReader: inout PacketReader, primaryBitMask: Int) -> [ChunkSection] {
     var sections: [ChunkSection] = []
     for i in 0..<16 { // TODO_LATER: 16 hardcoded here could break future versions
       if primaryBitMask >> i & 0x1 == 0x1 {
@@ -88,7 +88,7 @@ struct ChunkData {
         let dataArrayLength = packetReader.readVarInt()
         var dataArray: [UInt64] = []
         for _ in 0..<dataArrayLength {
-          dataArray.append(packetReader.buf.readLong(endian: .big))
+          dataArray.append(UInt64(packetReader.buf.readLong(endian: .big)))
         }
         
         var blocks: [UInt16] = [UInt16](repeating: 0, count: 4096)

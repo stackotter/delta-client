@@ -11,7 +11,7 @@ import os
 struct WorldConfig {
   var worldName: Identifier
   var dimension: Identifier
-  var hashedSeed: Int64
+  var hashedSeed: Int
   var isDebug: Bool
   var isFlat: Bool
   

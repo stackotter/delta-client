@@ -25,7 +25,7 @@ struct TeamsPacket: ClientboundPacket {
       var friendlyFlags: Int8
       var nameTagVisibility: String
       var collisionRule: String
-      var teamColor: Int32
+      var teamColor: Int
       var teamPrefix: ChatComponent
       var teamSuffix: ChatComponent
       var entities: [String]
@@ -36,7 +36,7 @@ struct TeamsPacket: ClientboundPacket {
       var friendlyFlags: Int8
       var nameTagVisibility: String
       var collisionRule: String
-      var teamColor: Int32
+      var teamColor: Int
       var teamPrefix: ChatComponent
       var teamSuffix: ChatComponent
     }

@@ -10,7 +10,7 @@ import Foundation
 struct SpawnPlayerPacket: ClientboundPacket {
   static let id: Int = 0x04
   
-  var entityId: Int32
+  var entityId: Int
   var playerUUID: UUID
   var position: EntityPosition
   var rotation: EntityRotation

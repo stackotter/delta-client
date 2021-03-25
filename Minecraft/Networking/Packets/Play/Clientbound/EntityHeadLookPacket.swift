@@ -10,7 +10,7 @@ import Foundation
 struct EntityHeadLookPacket: ClientboundPacket {
   static let id: Int = 0x3b
   
-  var entityId: Int32
+  var entityId: Int
   var headYaw: UInt8
 
   init(from packetReader: inout PacketReader) throws {

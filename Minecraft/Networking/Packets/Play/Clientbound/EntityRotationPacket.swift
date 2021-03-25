@@ -10,7 +10,7 @@ import Foundation
 struct EntityRotationPacket: ClientboundPacket {
   static let id: Int = 0x2a
 
-  var entityId: Int32
+  var entityId: Int
   var rotation: EntityRotation
   var onGround: Bool
   

@@ -10,9 +10,9 @@ import Foundation
 struct EffectPacket: ClientboundPacket {
   static let id: Int = 0x22
   
-  var effectId: Int32
+  var effectId: Int
   var location: Position
-  var data: Int32
+  var data: Int
   var disableRelativeVolume: Bool
   
   init(from packetReader: inout PacketReader) throws {

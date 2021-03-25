@@ -10,7 +10,7 @@ import Foundation
 struct EntityPositionPacket: ClientboundPacket {
   static let id: Int = 0x28
   
-  var entityId: Int32
+  var entityId: Int
   var deltaX: Int16
   var deltaY: Int16
   var deltaZ: Int16

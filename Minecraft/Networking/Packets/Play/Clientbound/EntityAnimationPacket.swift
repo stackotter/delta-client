@@ -10,7 +10,7 @@ import Foundation
 struct EntityAnimationPacket: ClientboundPacket {
   static let id: Int = 0x05
   
-  var entityId: Int32
+  var entityId: Int
   var animationId: UInt8
   
   init(from packetReader: inout PacketReader) throws {

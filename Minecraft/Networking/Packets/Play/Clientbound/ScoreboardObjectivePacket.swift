@@ -13,7 +13,7 @@ struct ScoreboardObjectivePacket: ClientboundPacket {
   var objectiveName: String
   var mode: UInt8
   var objectiveValue: ChatComponent?
-  var type: Int32?
+  var type: Int?
 
   init(from packetReader: inout PacketReader) throws {
     objectiveName = packetReader.readString()

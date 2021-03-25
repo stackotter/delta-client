@@ -10,8 +10,8 @@ import Foundation
 struct OpenWindowPacket: ClientboundPacket {
   static let id: Int = 0x2e
   
-  var windowId: Int32
-  var windowType: Int32
+  var windowId: Int
+  var windowType: Int
   var windowTitle: ChatComponent
   
   init(from packetReader: inout PacketReader) throws {

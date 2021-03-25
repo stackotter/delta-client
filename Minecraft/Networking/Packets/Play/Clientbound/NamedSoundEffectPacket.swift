@@ -11,10 +11,10 @@ struct NamedSoundEffectPacket: ClientboundPacket {
   static let id: Int = 0x19
   
   var soundName: Identifier
-  var soundCategory: Int32
-  var effectPositionX: Int32
-  var effectPositionY: Int32
-  var effectPositionZ: Int32
+  var soundCategory: Int
+  var effectPositionX: Int
+  var effectPositionY: Int
+  var effectPositionZ: Int
   var volume: Float
   var pitch: Float
   

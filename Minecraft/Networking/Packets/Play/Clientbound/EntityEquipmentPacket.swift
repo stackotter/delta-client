@@ -10,7 +10,7 @@ import Foundation
 struct EntityEquipmentPacket: ClientboundPacket {
   static let id: Int = 0x47
   
-  var entityId: Int32
+  var entityId: Int
   var equipments: [Equipment]
   
   // TODO: could probably give this it's own file

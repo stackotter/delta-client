@@ -11,7 +11,7 @@ struct BlockChangePacket: ClientboundPacket {
   static let id: Int = 0x0b
   
   var location: Position
-  var blockId: Int32 // the new block state id
+  var blockId: Int // the new block state id
   
   init(from packetReader: inout PacketReader) throws {
     location = packetReader.readPosition()

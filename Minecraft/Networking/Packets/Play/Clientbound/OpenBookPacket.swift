@@ -10,7 +10,7 @@ import Foundation
 struct OpenBookPacket: ClientboundPacket {
   static let id: Int = 0x2d
   
-  var hand: Int32
+  var hand: Int
   
   init(from packetReader: inout PacketReader) throws {
     hand = packetReader.readVarInt()

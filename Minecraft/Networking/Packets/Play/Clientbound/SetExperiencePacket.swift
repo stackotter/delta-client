@@ -11,8 +11,8 @@ struct SetExperiencePacket: ClientboundPacket {
   static let id: Int = 0x48
   
   var experienceBar: Float
-  var level: Int32
-  var totalExperience: Int32
+  var level: Int
+  var totalExperience: Int
 
   init(from packetReader: inout PacketReader) throws {
     experienceBar = packetReader.readFloat()

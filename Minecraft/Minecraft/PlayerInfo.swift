@@ -12,6 +12,6 @@ struct PlayerInfo {
   var name: String
   var properties: [PlayerProperty]
   var gamemode: Gamemode
-  var ping: Int32
+  var ping: Int
   var displayName: ChatComponent?
 }

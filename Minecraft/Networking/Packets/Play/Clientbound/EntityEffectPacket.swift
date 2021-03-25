@@ -10,10 +10,10 @@ import Foundation
 struct EntityEffectPacket: ClientboundPacket {
   static let id: Int = 0x59
   
-  var entityId: Int32
+  var entityId: Int
   var effectId: Int8
   var amplifier: Int8
-  var duration: Int32
+  var duration: Int
   var flags: Int8
 
   init(from packetReader: inout PacketReader) throws {

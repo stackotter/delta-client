@@ -10,8 +10,8 @@ import Foundation
 struct SetCooldownPacket: ClientboundPacket {
   static let id: Int = 0x17
   
-  var itemId: Int32
-  var cooldownTicks: Int32
+  var itemId: Int
+  var cooldownTicks: Int
   
   init(from packetReader: inout PacketReader) throws {
     itemId = packetReader.readVarInt()

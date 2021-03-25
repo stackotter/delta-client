@@ -10,10 +10,10 @@ import Foundation
 struct TradeListPacket: ClientboundPacket {
   static let id: Int = 0x27
   
-  var windowId: Int32
+  var windowId: Int
   var trades: [Trade]
-  var villagerLevel: Int32
-  var experience: Int32
+  var villagerLevel: Int
+  var experience: Int
   var isRegularVillager: Bool
   var canRestock: Bool
   
@@ -22,12 +22,12 @@ struct TradeListPacket: ClientboundPacket {
     var outputItem: Slot
     var secondInputItem: Slot?
     var tradeDisabled: Bool
-    var numUses: Int32 // number of uses so far
-    var maxUses: Int32 // maximum number of uses before disabled
-    var xp: Int32
-    var specialPrice: Int32
+    var numUses: Int // number of uses so far
+    var maxUses: Int // maximum number of uses before disabled
+    var xp: Int
+    var specialPrice: Int
     var priceMultiplier: Float
-    var demand: Int32
+    var demand: Int
   }
   
   init(from packetReader: inout PacketReader) throws {

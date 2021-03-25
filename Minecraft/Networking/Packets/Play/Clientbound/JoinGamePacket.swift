@@ -10,18 +10,18 @@ import Foundation
 struct JoinGamePacket: ClientboundPacket {
   static let id: Int = 0x25
   
-  var playerEntityId: Int32
+  var playerEntityId: Int
   var isHardcore: Bool
   var gamemode: Gamemode
   var previousGamemode: Gamemode
-  var worldCount: Int32
+  var worldCount: Int
   var worldNames: [Identifier]
   var dimensionCodec: NBTCompound
   var dimension: Identifier
   var worldName: Identifier
-  var hashedSeed: Int64
+  var hashedSeed: Int
   var maxPlayers: UInt8
-  var viewDistance: Int32
+  var viewDistance: Int
   var reducedDebugInfo: Bool
   var enableRespawnScreen: Bool
   var isDebug: Bool

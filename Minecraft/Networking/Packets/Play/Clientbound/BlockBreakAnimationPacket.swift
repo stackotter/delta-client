@@ -10,7 +10,7 @@ import Foundation
 struct BlockBreakAnimationPacket: ClientboundPacket {
   static let id: Int = 0x08
   
-  var entityId: Int32
+  var entityId: Int
   var location: Position
   var destroyStage: Int8
   

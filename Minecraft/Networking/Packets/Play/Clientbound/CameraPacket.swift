@@ -10,7 +10,7 @@ import Foundation
 struct CameraPacket: ClientboundPacket {
   static let id: Int = 0x3e
   
-  var cameraEntityId: Int32
+  var cameraEntityId: Int
 
   init(from packetReader: inout PacketReader) throws {
     cameraEntityId = packetReader.readVarInt()

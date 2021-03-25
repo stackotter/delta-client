@@ -15,7 +15,7 @@ struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
   var yaw: Float
   var pitch: Float
   var flags: PositionAndLookFlags
-  var teleportId: Int32
+  var teleportId: Int
   
   struct PositionAndLookFlags: OptionSet {
     let rawValue: UInt8
@@ -38,8 +38,6 @@ struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
   func handle(for server: Server) throws {
     let teleportConfirm = TeleportConfirmPacket(teleportId: teleportId)
     server.sendPacket(teleportConfirm)
-    
-    Logger.debug("position and look flags: \(flags), position: \(position), look: \(yaw), \(pitch)")
     
     if flags.contains(.x) {
       server.player.position.x += position.x

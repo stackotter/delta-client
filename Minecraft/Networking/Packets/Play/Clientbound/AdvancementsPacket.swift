@@ -28,8 +28,8 @@ struct AdvancementsPacket: ClientboundPacket {
     var title: ChatComponent
     var description: ChatComponent
     var icon: Slot
-    var frameType: Int32
-    var flags: Int32
+    var frameType: Int
+    var flags: Int
     var backgroundTexture: Identifier?
     var xCoord: Float
     var yCoord: Float
@@ -41,7 +41,7 @@ struct AdvancementsPacket: ClientboundPacket {
   
   struct CriterionProgress {
     var achieved: Bool
-    var dateOfAchieving: Int64?
+    var dateOfAchieving: Int?
   }
 
   init(from packetReader: inout PacketReader) throws {
@@ -60,7 +60,6 @@ struct AdvancementsPacket: ClientboundPacket {
       if hasDisplay {
         let title = packetReader.readChat()
         let description = packetReader.readChat()
-        // TODO: should getslot throw?
         let icon = try packetReader.readSlot()
         let frameType = packetReader.readVarInt()
         let flags = packetReader.readInt() // 0x1: has background texture, 0x2: show toast, 0x4: hidden

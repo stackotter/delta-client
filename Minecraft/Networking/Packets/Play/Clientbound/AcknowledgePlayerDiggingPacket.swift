@@ -11,8 +11,8 @@ struct AcknowledgePlayerDiggingPacket: ClientboundPacket {
   static let id: Int = 0x07
   
   var location: Position
-  var block: Int32
-  var status: Int32
+  var block: Int
+  var status: Int
   var successful: Bool
   
   init(from packetReader: inout PacketReader) throws {

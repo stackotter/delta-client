@@ -37,7 +37,7 @@ class Server: Hashable {
   var difficulty: Difficulty = .normal
   var isDifficultyLocked: Bool = true
   
-  var timeOfDay: Int64 = -1
+  var timeOfDay: Int = -1
   
   var tabList: TabList = TabList()
   
@@ -64,6 +64,19 @@ class Server: Hashable {
     self.connection.setHandler(handlePacket)
   }
   
+  // World
+  
+  func addWorld(config: WorldConfig) {
+    let world = World(config: config, managers: managers)
+    worlds[config.worldName] = world
+  }
+  
+  func setCurrentWorld(identifier: Identifier) {
+    currentWorldName = identifier
+  }
+  
+  // Networking
+  
   func handlePacket(_ packetReader: PacketReader, _ state: PacketState) {
     var reader = packetReader
     do {
@@ -86,7 +99,6 @@ class Server: Hashable {
     connection.sendPacket(packet)
   }
   
-  // just a prototype for later
   func login() {
     connection.restart()
     managers.eventManager.registerOneTimeEventHandler({
@@ -95,7 +107,9 @@ class Server: Hashable {
         let loginStart = LoginStartPacket(username: self.player.username)
         self.connection.sendPacket(loginStart, callback: .contentProcessed({
           (error) in
-          Logger.debug("sent login start packet")
+          if error != nil {
+            Logger.error("error sending login start: \(String(describing: error))")
+          }
         }))
       }
     }, eventName: "connectionReady")
@@ -103,6 +117,7 @@ class Server: Hashable {
   }
   
   // Things so that SwiftUI ForEach loop works
+  
   static func == (lhs: Server, rhs: Server) -> Bool {
     return (lhs.info.name == rhs.info.name && lhs.info.host == rhs.info.host && lhs.info.port == rhs.info.port)
   }

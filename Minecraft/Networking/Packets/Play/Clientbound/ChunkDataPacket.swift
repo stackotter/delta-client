@@ -14,8 +14,8 @@ struct ChunkDataPacket: ClientboundPacket {
   var chunkData: ChunkData
   
   init(from packetReader: inout PacketReader) throws {
-    let chunkX = packetReader.readInt()
-    let chunkZ = packetReader.readInt()
+    let chunkX = Int(packetReader.readInt())
+    let chunkZ = Int(packetReader.readInt())
     let position = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
     chunkData = ChunkData(position: position, buf: packetReader.buf)
   }

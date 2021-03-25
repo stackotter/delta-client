@@ -13,7 +13,7 @@ struct BlockActionPacket: ClientboundPacket {
   var location: Position
   var actionId: UInt8
   var actionParam: UInt8
-  var blockType: Int32 // this is the block id not the block state
+  var blockType: Int // this is the block id not the block state
   
   init(from packetReader: inout PacketReader) throws {
     location = packetReader.readPosition()

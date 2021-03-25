@@ -74,11 +74,11 @@ struct PacketReader {
     return buf.readShort(endian: .big)
   }
   
-  mutating func readInt() -> Int32 {
+  mutating func readInt() -> Int {
     return buf.readSignedInt(endian: .big)
   }
   
-  mutating func readLong() -> Int64 {
+  mutating func readLong() -> Int {
     return buf.readSignedLong(endian: .big)
   }
   
@@ -124,11 +124,11 @@ struct PacketReader {
     }
   }
   
-  mutating func readVarInt() -> Int32 {
+  mutating func readVarInt() -> Int {
     return buf.readVarInt()
   }
   
-  mutating func readVarLong() -> Int64 {
+  mutating func readVarLong() -> Int {
     return buf.readVarLong()
   }
   
@@ -193,9 +193,9 @@ struct PacketReader {
   
   mutating func readPosition() -> Position {
     let val = buf.readLong(endian: .big)
-    let x = Int32(val >> 38)
-    let y = Int32(val & 0xfff)
-    let z = Int32((val << 26) >> 38)
+    let x = Int(val >> 38)
+    let y = Int(val & 0xfff)
+    let z = Int((val << 26) >> 38)
     return Position(x: x, y: y, z: z)
   }
   

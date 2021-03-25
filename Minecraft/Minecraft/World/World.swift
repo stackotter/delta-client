@@ -13,7 +13,7 @@ class World {
   var packedChunks: [ChunkPosition: ChunkData] = [:] // chunks that haven't been unpacked yet
   var chunks: [ChunkPosition: Chunk] = [:]
   var config: WorldConfig
-  var age: Int64 = -1
+  var age: Int = -1
   
   var downloadingTerrain: Bool = true
   
@@ -46,7 +46,7 @@ class World {
   }
   
   func addChunk(_ chunk: Chunk) {
-    // set chunk neighbours
+    // set chunk's neighbours
     var eastCoordinate = chunk.position
     eastCoordinate.chunkX += 1
     var westCoordinate = chunk.position
@@ -71,6 +71,7 @@ class World {
       }
     }
     
+    // add chunk
     chunks[chunk.position] = chunk
   }
   
@@ -78,7 +79,7 @@ class World {
     if unpack {
       chunkThread.async {
         do {
-          let chunk = try chunkData.unpack()
+          let chunk = try chunkData.unpack(blockModelManager: self.managers.blockModelManager)
           self.addChunk(chunk)
           self.packedChunks.removeValue(forKey: chunk.position)
           if self.packedChunks.count == 0 {

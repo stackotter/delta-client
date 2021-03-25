@@ -8,7 +8,7 @@
 import Foundation
 
 struct Statistic {
-  var categoryId: Int32
-  var statisticId: Int32
-  var value: Int32
+  var categoryId: Int
+  var statisticId: Int
+  var value: Int
 }

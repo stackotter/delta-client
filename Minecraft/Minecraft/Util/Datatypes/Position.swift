@@ -8,9 +8,9 @@
 import Foundation
 
 struct Position {
-  var x: Int32
-  var y: Int32
-  var z: Int32
+  var x: Int
+  var y: Int
+  var z: Int
   
   var chunkPosition: ChunkPosition {
     let chunkX = x >> 4 // divides by 16 and rounds down

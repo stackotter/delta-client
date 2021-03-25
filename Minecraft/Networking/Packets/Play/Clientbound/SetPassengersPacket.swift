@@ -10,8 +10,8 @@ import Foundation
 struct SetPassengersPacket: ClientboundPacket {
   static let id: Int = 0x4b
   
-  var entityId: Int32
-  var passengers: [Int32]
+  var entityId: Int
+  var passengers: [Int]
 
   init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()

@@ -10,9 +10,9 @@ import Foundation
 struct SpawnPaintingPacket: ClientboundPacket {
   static let id: Int =  0x03
   
-  var entityId: Int32
+  var entityId: Int
   var entityUUID: UUID
-  var motive: Int32
+  var motive: Int
   var location: Position
   var direction: UInt8 // TODO_LATER
   

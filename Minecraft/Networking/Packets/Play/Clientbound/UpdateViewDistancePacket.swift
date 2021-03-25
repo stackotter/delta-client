@@ -10,7 +10,7 @@ import Foundation
 struct UpdateViewDistancePacket: ClientboundPacket {
   static let id: Int = 0x41
   
-  var viewDistance: Int32
+  var viewDistance: Int
 
   init(from packetReader: inout PacketReader) throws {
     viewDistance = packetReader.readVarInt()

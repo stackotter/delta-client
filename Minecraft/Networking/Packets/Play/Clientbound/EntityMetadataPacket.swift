@@ -10,7 +10,7 @@ import Foundation
 struct EntityMetadataPacket: ClientboundPacket {
   static let id: Int = 0x44
   
-  var entityId: Int32
+  var entityId: Int
 
   init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
