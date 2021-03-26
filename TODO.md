@@ -26,6 +26,7 @@
 - [ ] look into keeping vertices in gpu mem when they are unchanged between frames?
 - [ ] animated textures
 - [ ] multipart structures
+- [x] render looking the correct direction (use player look from position and look)
 
 ### Chunk preparing
 
@@ -36,7 +37,7 @@
 - [x] improve block culling under new block model rendering
 - [x] implement looking in neighbouring chunks for edge block cull faces
 - [x] make chunk mesh thread safe
-- [ ] fix plants (based on the cross block model) (probably something to do with rotation and rescale)
+- [x] fix plants (based on the cross block model) (probably something to do with rotation and rescale)
 - [ ] fix stairs
 - [ ] fix x-ray from partial blocks
   - [ ] generate list of full faces for each block from block models

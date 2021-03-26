@@ -187,7 +187,7 @@ class BlockModelManager {
         }
         let rotationAxis = rotationJSON?.getString(forKey: "axis")
         let angle = rotationJSON?.getFloat(forKey: "angle")
-        let rescale = rotationJSON?.getBool(forKey: "rescale")
+        let rescale = rotationJSON?.getBool(forKey: "rescale") ?? false
         
         _ = elementJSON.getBool(forKey: "shade")
         
@@ -244,11 +244,16 @@ class BlockModelManager {
           modelMatrix *= MatrixUtil.scalingMatrix(scale.x, scale.y, scale.z)
           modelMatrix *= MatrixUtil.translationMatrix(origin)
           
+          // IMPLEMENT: rescale
+//          if rescale {
+//            modelMatrix *= MatrixUtil.scalingMatrix(5, 1, 5)
+//          }
+          
           // rotation
           if hasRotation {
             if rotationOrigin.count == 3 {
               let rotationOriginVector = simd_float3(rotationOrigin) / Float(16.0)
-              let rotation = angle != nil ? Float(angle!) : 0
+              let rotation = angle != nil ? Float(angle!) / 180 * Float.pi : 0
               modelMatrix *= MatrixUtil.translationMatrix(-rotationOriginVector)
               switch rotationAxis {
                 case "x":
@@ -264,11 +269,6 @@ class BlockModelManager {
             } else {
               Logger.error("invalid rotation on block model element")
             }
-          }
-          
-          // IMPLEMENT: rescale
-          if rescale ?? false {
-            modelMatrix *= MatrixUtil.scalingMatrix(1.414, 1, 1.414)
           }
           
           let element = IntermediateBlockModelElement(

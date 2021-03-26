@@ -64,10 +64,17 @@ class Renderer {
     var playerRelativePosition = client.server.player.position
     playerRelativePosition.x -= Double(chunkPosition.chunkX*16)
     playerRelativePosition.z -= Double(chunkPosition.chunkZ*16)
+    
+    let look = client.server.player.look
+    let xRot = look.pitch / 180 * Float.pi
+    let yRot = look.yaw / 180 * Float.pi
+    
+    let fov = 90 / 180 * Float.pi
+    
     let cameraPosition = simd_float3([Float(-playerRelativePosition.x), Float(-(playerRelativePosition.y+1.625)), Float(-playerRelativePosition.z)])
     
-    let worldToCamera = MatrixUtil.translationMatrix(cameraPosition) * MatrixUtil.rotationMatrix(y: 3.14)
-    let cameraToClip = MatrixUtil.projectionMatrix(near: 1, far: 1000, aspect: aspect, fieldOfViewY: 3.14/2)
+    let worldToCamera = MatrixUtil.translationMatrix(cameraPosition) * MatrixUtil.rotationMatrix(y: -(Float.pi + yRot)) * MatrixUtil.rotationMatrix(x: -xRot)
+    let cameraToClip = MatrixUtil.projectionMatrix(near: 1, far: 1000, aspect: aspect, fieldOfViewY: fov)
     var modelToClipSpace = worldToCamera * cameraToClip
     
     let matrixBuffer = metalDevice.makeBuffer(bytes: &modelToClipSpace, length: MemoryLayout<matrix_float4x4>.stride, options: [])!
