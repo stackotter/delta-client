@@ -187,7 +187,7 @@ class BlockModelManager {
         }
         let rotationAxis = rotationJSON?.getString(forKey: "axis")
         let angle = rotationJSON?.getFloat(forKey: "angle")
-        _ = rotationJSON?.getBool(forKey: "rescale")
+        let rescale = rotationJSON?.getBool(forKey: "rescale")
         
         _ = elementJSON.getBool(forKey: "shade")
         
@@ -267,6 +267,9 @@ class BlockModelManager {
           }
           
           // IMPLEMENT: rescale
+          if rescale ?? false {
+            modelMatrix *= MatrixUtil.scalingMatrix(1.414, 1, 1.414)
+          }
           
           let element = IntermediateBlockModelElement(
             modelMatrix: modelMatrix,
