@@ -20,6 +20,46 @@ enum FaceDirection: String {
   case south = "south"
   case west = "west"
   case east = "east"
+  
+  func toVector() -> simd_float3 {
+    switch self {
+      case .down:
+        return simd_float3(0, -1, 0)
+      case .up:
+        return simd_float3(0, 1, 0)
+      case .north:
+        return simd_float3(0, 0, -1)
+      case .south:
+        return simd_float3(0, 0, 1)
+      case .west:
+        return simd_float3(-1, 0, 0)
+      case .east:
+        return simd_float3(1, 0, 0)
+    }
+  }
+  
+  static func fromVector(vector: simd_float3) -> FaceDirection {
+    let x = vector.x.rounded()
+    let y = vector.y.rounded()
+    let z = vector.z.rounded()
+    
+    if x == 1 {
+      return .east
+    } else if x == -1 {
+      return .west
+    } else if z == 1 {
+      return .south
+    } else if z == -1 {
+      return .north
+    } else if y == 1 {
+      return .up
+    } else if y == -1 {
+      return .down
+    }
+    
+    Logger.debug("vector \(vector) did not match a direction")
+    return .up
+  }
 }
 
 // an intermediate block model used before global palette is loaded
@@ -94,16 +134,53 @@ class BlockModelManager {
         if let stateId = Int(stateIdString) {
           let stateJSON = JSON(dict: state)
           var modelIdentifierString: String? = nil
+          var x: Float = 0
+          var y: Float = 0
+          var z: Float = 0
+          
           if let render = stateJSON.getJSON(forKey: "render") {
             modelIdentifierString = render.getString(forKey: "model")
+            x = Float(render.getInt(forKey: "x") ?? 0)
+            y = Float(render.getInt(forKey: "y") ?? 0)
+            z = Float(render.getInt(forKey: "z") ?? 0)
           } else if let render = stateJSON.getArray(forKey: "render") as? [[String: Any]] {
             // IMPLEMENT: handling multiple states for one state id
-            modelIdentifierString = JSON(dict: render[0]).getString(forKey: "model")
+            let json = JSON(dict: render[0])
+            modelIdentifierString = json.getString(forKey: "model")
+            x = Float(json.getInt(forKey: "x") ?? 0)
+            y = Float(json.getInt(forKey: "y") ?? 0)
+            z = Float(json.getInt(forKey: "z") ?? 0)
           }
+          
+          x = x / 180 * Float.pi
+          y = y / 180 * Float.pi
+          z = z / 180 * Float.pi
+          
+          let rotationMatrix = MatrixUtil.rotationMatrix(x: x) * MatrixUtil.rotationMatrix(y: y) * MatrixUtil.rotationMatrix(z: z)
+          let modelMatrix = MatrixUtil.translationMatrix([-0.5, -0.5, -0.5]) * rotationMatrix * MatrixUtil.translationMatrix([0.5, 0.5, 0.5])
+//          let rotationMatrix = matrix_float4x4(1)
+//          let modelMatrix = matrix_float4x4(1)
+          
           if modelIdentifierString != nil {
             do {
               let modelIdentifier = try Identifier(modelIdentifierString!)
-              let blockModel = try loadBlockModel(for: modelIdentifier)
+              var blockModel = try loadBlockModel(for: modelIdentifier)
+              
+              if modelMatrix != matrix_float4x4(1) {
+                for (index, var element) in blockModel.elements.enumerated() {
+                  element.modelMatrix *= modelMatrix
+                  for (faceIndex, var face) in element.faces {
+                    if var cullface = face.cullface {
+                      let vector = simd_float4(cullface.toVector(), 1) * rotationMatrix
+                      cullface = FaceDirection.fromVector(vector: simd_make_float3(vector))
+                      face.cullface = cullface
+                      element.faces[faceIndex] = face
+                    }
+                  }
+                  blockModel.elements[index] = element
+                }
+              }
+              
               blockModelPalette[UInt16(stateId)] = blockModel
             } catch {
               Logger.error("failed to load model for \(modelIdentifierString!): \(error)")

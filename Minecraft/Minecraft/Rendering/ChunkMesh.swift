@@ -26,18 +26,11 @@ class ChunkMesh: Mesh {
   private var stopwatch = Stopwatch(mode: .summary, name: "chunk ingest")
   
   // cube geometry constants
-  private let cubeTextureCoordinates: [simd_float2] = [
-    simd_float2(0, 0),
-    simd_float2(0, 1),
-    simd_float2(1, 1),
-    simd_float2(1, 0)
-  ]
-  
   private let faceVertexIndices: [FaceDirection: [Int]] = [
-    .up: [0, 3, 7, 4],
-    .down: [2, 1, 5, 6],
+    .up: [3, 7, 4, 0],
+    .down: [6, 2, 1, 5],
     .east: [3, 2, 6, 7],
-    .west: [1, 0, 4, 5],
+    .west: [4, 5, 1, 0],
     .north: [0, 1, 2, 3],
     .south: [7, 6, 5, 4]
   ]
@@ -158,12 +151,7 @@ class ChunkMesh: Mesh {
     // create uv's
     let minUV = face.uv.0
     let maxUV = face.uv.1
-    let uvs = [
-      minUV,
-      simd_float2(minUV.x, maxUV.y),
-      maxUV,
-      simd_float2(maxUV.x, minUV.y)
-    ]
+    let uvs = textureCoordsFrom(minUV, maxUV, rotation: face.rotation)
     
     // add vertices
     let vertexIndices = faceVertexIndices[direction]!
@@ -178,6 +166,25 @@ class ChunkMesh: Mesh {
     // get and return the quad's index
     let index = vertices.count / 4 - 1
     return index
+  }
+  
+  // rotation: angle 0, 90, 180 or 270
+  private func textureCoordsFrom(_ minUV: simd_float2, _ maxUV: simd_float2, rotation: Int) -> [simd_float2] {
+    let validAngles = [0, 90, 180, 270]
+    
+    var uvs = [
+      simd_float2(maxUV.x, minUV.y),
+      maxUV,
+      simd_float2(minUV.x, maxUV.y),
+      minUV
+    ]
+    
+    if validAngles.contains(rotation) {
+      let rotationNum = rotation / 90
+      uvs = Array(uvs[(4 - rotationNum)...]) + Array(uvs[..<(4 - rotationNum)])
+    }
+    
+    return uvs
   }
   
   // Mesh Editing Functions

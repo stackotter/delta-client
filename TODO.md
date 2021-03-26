@@ -27,6 +27,8 @@
 - [ ] animated textures
 - [ ] multipart structures
 - [x] render looking the correct direction (use player look from position and look)
+- [ ] uvlock
+- [x] get terracotta rotations working
 
 ### Chunk preparing
 
@@ -38,7 +40,8 @@
 - [x] implement looking in neighbouring chunks for edge block cull faces
 - [x] make chunk mesh thread safe
 - [x] fix plants (based on the cross block model) (probably something to do with rotation and rescale)
-- [ ] fix stairs
+- [x] fix stairs
+- [x] block rotations
 - [ ] fix x-ray from partial blocks
   - [ ] generate list of full faces for each block from block models
 
