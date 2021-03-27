@@ -128,13 +128,15 @@ class BlockModelManager {
                       face.cullface = cullface
                     }
                     
-                    switch direction.axis {
-                      case .x:
-                        face.rotation += xRot
-                      case .y:
-                        face.rotation += yRot
-                      case .z:
-                        face.rotation += zRot
+                    if uvlock {
+                      switch direction.axis {
+                        case .x:
+                          face.rotation += xRot
+                        case .y:
+                          face.rotation += yRot
+                        case .z:
+                          face.rotation += zRot
+                      }
                     }
                     
                     face.rotation = face.rotation % 360

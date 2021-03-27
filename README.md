@@ -102,10 +102,12 @@ As I implement more of the backend code -- and before I work on rendering -- I w
 
 ![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/play-screen.png?raw=true)
 
-#### Current rendering (uses block models but has a bunch of weird things atm as you can probably tell)
+#### Current rendering
 
-![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/first-block-model-rendering.png?raw=true)
+The biggest problems with rendering at the moment are biome tints and transparency.
+
+![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/progress-3.png?raw=true)
 
 #### The same place but in vanilla Minecraft
 
-![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/first-block-model-vanilla.png?raw=true)
+![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/progress-3-vanilla.png?raw=true)
