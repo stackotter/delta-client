@@ -93,9 +93,13 @@ struct JSON {
     return dict[key] as? Double
   }
   
-  func getBool(forKey key: String) -> Bool? {
+  func getBoolString(forKey key: String) -> Bool? {
     let string = getString(forKey: key)
     return string == "true"
+  }
+  
+  func getBool(forKey key: String) -> Bool? {
+    return dict[key] as? Bool
   }
   
   func getAny(forKey key: String) -> Any? {

@@ -18,11 +18,11 @@ struct ChatStyle {
   init() {}
   
   init(from json: JSON) {
-    bold = json.getBool(forKey: "bold") ?? bold
-    italic = json.getBool(forKey: "bold") ?? italic
-    underlined = json.getBool(forKey: "bold") ?? underlined
-    strikethrough = json.getBool(forKey: "bold") ?? strikethrough
-    obfuscated = json.getBool(forKey: "bold") ?? obfuscated
+    bold = json.getBoolString(forKey: "bold") ?? bold
+    italic = json.getBoolString(forKey: "bold") ?? italic
+    underlined = json.getBoolString(forKey: "bold") ?? underlined
+    strikethrough = json.getBoolString(forKey: "bold") ?? strikethrough
+    obfuscated = json.getBoolString(forKey: "bold") ?? obfuscated
     color = json.getString(forKey: "color") ?? color
   }
 }
