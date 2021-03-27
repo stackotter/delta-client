@@ -168,10 +168,8 @@ class ChunkMesh: Mesh {
     return index
   }
   
-  // rotation: angle 0, 90, 180 or 270
   private func textureCoordsFrom(_ minUV: simd_float2, _ maxUV: simd_float2, rotation: Int) -> [simd_float2] {
-    let validAngles = [0, 90, 180, 270]
-    
+    // one uv coordinate for each corner
     var uvs = [
       simd_float2(maxUV.x, minUV.y),
       maxUV,
@@ -179,9 +177,16 @@ class ChunkMesh: Mesh {
       minUV
     ]
     
-    if validAngles.contains(rotation) {
-      let rotationNum = rotation / 90
-      uvs = Array(uvs[(4 - rotationNum)...]) + Array(uvs[..<(4 - rotationNum)])
+    // rotate the texture coordinates
+    if rotation != 0 {
+      let textureCenter = simd_float2(0.5, 0.5)
+      let matrix = MatrixUtil.rotationMatrix2d(Float(rotation) / 180 * Float.pi)
+      for (index, var uv) in uvs.enumerated() {
+        uv -= textureCenter
+        uv = uv * matrix
+        uv += textureCenter
+        uvs[index] = uv
+      }
     }
     
     return uvs

@@ -27,7 +27,7 @@
 - [ ] animated textures
 - [ ] multipart structures
 - [x] render looking the correct direction (use player look from position and look)
-- [ ] uvlock
+- [x] uvlock
 - [x] get terracotta rotations working
 
 ### Chunk preparing

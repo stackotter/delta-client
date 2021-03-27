@@ -13,6 +13,12 @@ enum BlockModelError: LocalizedError {
   case invalidPixlyzerData
 }
 
+enum Axis {
+  case x
+  case y
+  case z
+}
+
 enum FaceDirection: String {
   case down = "down"
   case up = "up"
@@ -20,6 +26,17 @@ enum FaceDirection: String {
   case south = "south"
   case west = "west"
   case east = "east"
+  
+  var axis: Axis {
+    switch self {
+      case .west, .east:
+        return .x
+      case .up, .down:
+        return .y
+      case .north, .south:
+        return .z
+    }
+  }
   
   func toVector() -> simd_float3 {
     switch self {
@@ -134,32 +151,32 @@ class BlockModelManager {
         if let stateId = Int(stateIdString) {
           let stateJSON = JSON(dict: state)
           var modelIdentifierString: String? = nil
-          var x: Float = 0
-          var y: Float = 0
-          var z: Float = 0
+          var xRot: Int = 0
+          var yRot: Int = 0
+          var zRot: Int = 0
+          var uvlock: Bool = false
           
           if let render = stateJSON.getJSON(forKey: "render") {
             modelIdentifierString = render.getString(forKey: "model")
-            x = Float(render.getInt(forKey: "x") ?? 0)
-            y = Float(render.getInt(forKey: "y") ?? 0)
-            z = Float(render.getInt(forKey: "z") ?? 0)
+            xRot = render.getInt(forKey: "x") ?? 0
+            yRot = render.getInt(forKey: "y") ?? 0
+            zRot = render.getInt(forKey: "z") ?? 0
+            uvlock = render.getBool(forKey: "uvlock") ?? false
           } else if let render = stateJSON.getArray(forKey: "render") as? [[String: Any]] {
             // IMPLEMENT: handling multiple states for one state id
             let json = JSON(dict: render[0])
             modelIdentifierString = json.getString(forKey: "model")
-            x = Float(json.getInt(forKey: "x") ?? 0)
-            y = Float(json.getInt(forKey: "y") ?? 0)
-            z = Float(json.getInt(forKey: "z") ?? 0)
+            xRot = json.getInt(forKey: "x") ?? 0
+            yRot = json.getInt(forKey: "y") ?? 0
+            zRot = json.getInt(forKey: "z") ?? 0
+            uvlock = json.getBool(forKey: "uvlock") ?? false
           }
           
-          x = x / 180 * Float.pi
-          y = y / 180 * Float.pi
-          z = z / 180 * Float.pi
+          let rotationMatrix = MatrixUtil.rotationMatrix(x: Float(xRot) / 180 * Float.pi)
+            * MatrixUtil.rotationMatrix(y: Float(yRot) / 180 * Float.pi)
+            * MatrixUtil.rotationMatrix(z: Float(zRot) / 180 * Float.pi)
           
-          let rotationMatrix = MatrixUtil.rotationMatrix(x: x) * MatrixUtil.rotationMatrix(y: y) * MatrixUtil.rotationMatrix(z: z)
           let modelMatrix = MatrixUtil.translationMatrix([-0.5, -0.5, -0.5]) * rotationMatrix * MatrixUtil.translationMatrix([0.5, 0.5, 0.5])
-//          let rotationMatrix = matrix_float4x4(1)
-//          let modelMatrix = matrix_float4x4(1)
           
           if modelIdentifierString != nil {
             do {
@@ -169,13 +186,25 @@ class BlockModelManager {
               if modelMatrix != matrix_float4x4(1) {
                 for (index, var element) in blockModel.elements.enumerated() {
                   element.modelMatrix *= modelMatrix
-                  for (faceIndex, var face) in element.faces {
+                  for (direction, var face) in element.faces {
                     if var cullface = face.cullface {
                       let vector = simd_float4(cullface.toVector(), 1) * rotationMatrix
                       cullface = FaceDirection.fromVector(vector: simd_make_float3(vector))
                       face.cullface = cullface
-                      element.faces[faceIndex] = face
                     }
+                    
+                    switch direction.axis {
+                      case .x:
+                        face.rotation += xRot
+                      case .y:
+                        face.rotation += yRot
+                      case .z:
+                        face.rotation += zRot
+                    }
+                    
+                    face.rotation = face.rotation % 360
+                    
+                    element.faces[direction] = face
                   }
                   blockModel.elements[index] = element
                 }
