@@ -23,6 +23,7 @@ class Chunk {
   
   var neighbours: [CardinalDirection: Chunk] = [:]
   
+  var blockModelManager: BlockModelManager
   var mesh: ChunkMesh!
   
   // private because it shouldn't be used directly cause of its weird storage format
@@ -36,6 +37,7 @@ class Chunk {
     self.sections = sections
     self.blockEntities = blockEntities
     
+    self.blockModelManager = blockModelManager
     self.mesh = ChunkMesh(blockModelManager: blockModelManager, chunk: self)
   }
   
@@ -151,5 +153,23 @@ class Chunk {
     }
     
     return presentNeighbours
+  }
+  
+  func getCullingNeighbours(forIndex index: Int) -> [FaceDirection] {
+    let presentNeighbours = getNeighbouringBlocks(forIndex: index)
+    var cullingNeighbours: [FaceDirection] = []
+    
+    for (direction, (chunk, index)) in presentNeighbours {
+      let state = chunk.getBlock(atIndex: index)
+      if state != 0 {
+        if let blockModel = blockModelManager.blockModelPalette[state] {
+          if blockModel.fullFaces.contains(direction.opposite) {
+            cullingNeighbours.append(direction)
+          }
+        }
+      }
+    }
+    
+    return cullingNeighbours
   }
 }

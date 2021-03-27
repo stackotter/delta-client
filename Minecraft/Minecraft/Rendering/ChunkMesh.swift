@@ -110,7 +110,7 @@ class ChunkMesh: Mesh {
   }
   
   private func addBlock(_ x: Int, _ y: Int, _ z: Int, index: Int, state: UInt16) {
-    let cullFaces = chunk.getPresentNeighbours(forIndex: index).keys
+    let cullFaces = chunk.getCullingNeighbours(forIndex: index)
     
     if let blockModel = blockModelManager.blockModelPalette[state] {
       var quadIndices: [Int] = []

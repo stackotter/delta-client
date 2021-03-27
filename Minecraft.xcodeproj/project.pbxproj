@@ -189,6 +189,8 @@
 		787D8FFF258485A7007E6441 /* HandshakePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787D8FFE258485A7007E6441 /* HandshakePacket.swift */; };
 		787D900725848726007E6441 /* PacketWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787D900625848726007E6441 /* PacketWriter.swift */; };
 		787FBB6925FCC5B900A29552 /* BlockModelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787FBB6825FCC5B900A29552 /* BlockModelManager.swift */; };
+		7882620D260EC8360004C259 /* FaceDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7882620C260EC8360004C259 /* FaceDirection.swift */; };
+		78826212260EC8640004C259 /* Axis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78826211260EC8640004C259 /* Axis.swift */; };
 		788435902585E606002F1F84 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884358F2585E606002F1F84 /* Server.swift */; };
 		7884359B25861981002F1F84 /* ServerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884359A25861981002F1F84 /* ServerList.swift */; };
 		788435A025861B55002F1F84 /* ServerListEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884359F25861B55002F1F84 /* ServerListEntryView.swift */; };
@@ -483,6 +485,8 @@
 		787D8FFE258485A7007E6441 /* HandshakePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandshakePacket.swift; sourceTree = "<group>"; };
 		787D900625848726007E6441 /* PacketWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketWriter.swift; sourceTree = "<group>"; };
 		787FBB6825FCC5B900A29552 /* BlockModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModelManager.swift; sourceTree = "<group>"; };
+		7882620C260EC8360004C259 /* FaceDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDirection.swift; sourceTree = "<group>"; };
+		78826211260EC8640004C259 /* Axis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Axis.swift; sourceTree = "<group>"; };
 		7884358F2585E606002F1F84 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		7884359A25861981002F1F84 /* ServerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerList.swift; sourceTree = "<group>"; };
 		7884359F25861B55002F1F84 /* ServerListEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListEntryView.swift; sourceTree = "<group>"; };
@@ -750,6 +754,7 @@
 				785E532B25F2F29C003C3CF4 /* RenderCoordinator.swift */,
 				785E534925F30B26003C3CF4 /* Renderer.swift */,
 				783FC18125F5747B009EC3CA /* ChunkMesh.swift */,
+				7882620C260EC8360004C259 /* FaceDirection.swift */,
 				785E533925F2F770003C3CF4 /* shaders.metal */,
 			);
 			path = Rendering;
@@ -1120,6 +1125,7 @@
 				784CAE23259AB654003E5F87 /* UUID.swift */,
 				78965087258861FE0079C5CF /* NBTCompound.swift */,
 				78E23E032606A91D00E58395 /* CardinalDirection.swift */,
+				78826211260EC8640004C259 /* Axis.swift */,
 				789BE9E22589DAC7001C08ED /* JSON.swift */,
 				7843EC1A25E2380900AD42A7 /* Direction.swift */,
 				784B393C25A17AB600556E3E /* Identifier.swift */,
@@ -1331,6 +1337,7 @@
 				7889A9E925C4EED80007B2D7 /* Constants.swift in Sources */,
 				78CC6E6825D2651D00CA3DFF /* BlockBreakAnimationPacket.swift in Sources */,
 				7843EBA225E22ADD00AD42A7 /* PickItemPacket.swift in Sources */,
+				78826212260EC8640004C259 /* Axis.swift in Sources */,
 				7873058C25D936DF001259EB /* DisplayScoreboardPacket.swift in Sources */,
 				787305B425D93AC3001259EB /* SetPassengersPacket.swift in Sources */,
 				784CCAF925AD34CC004B3182 /* FireworkStarFadeRecipe.swift in Sources */,
@@ -1391,6 +1398,7 @@
 				78CB942625E2388000FC509B /* UseItemPacket.swift in Sources */,
 				7824E8F625E0F8BB009F0197 /* TeamsPacket.swift in Sources */,
 				7894521B25D2723800B86423 /* PlayDisconnectPacket.swift in Sources */,
+				7882620D260EC8360004C259 /* FaceDirection.swift in Sources */,
 				7830D8C925940BE500D35180 /* Logger.swift in Sources */,
 				7894521125D26FB800B86423 /* SetCooldownPacket.swift in Sources */,
 				784B395025A19D8300556E3E /* ServerDifficultyPacket.swift in Sources */,

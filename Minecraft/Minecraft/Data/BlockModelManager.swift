@@ -13,72 +13,6 @@ enum BlockModelError: LocalizedError {
   case invalidPixlyzerData
 }
 
-enum Axis {
-  case x
-  case y
-  case z
-}
-
-enum FaceDirection: String {
-  case down = "down"
-  case up = "up"
-  case north = "north"
-  case south = "south"
-  case west = "west"
-  case east = "east"
-  
-  var axis: Axis {
-    switch self {
-      case .west, .east:
-        return .x
-      case .up, .down:
-        return .y
-      case .north, .south:
-        return .z
-    }
-  }
-  
-  func toVector() -> simd_float3 {
-    switch self {
-      case .down:
-        return simd_float3(0, -1, 0)
-      case .up:
-        return simd_float3(0, 1, 0)
-      case .north:
-        return simd_float3(0, 0, -1)
-      case .south:
-        return simd_float3(0, 0, 1)
-      case .west:
-        return simd_float3(-1, 0, 0)
-      case .east:
-        return simd_float3(1, 0, 0)
-    }
-  }
-  
-  static func fromVector(vector: simd_float3) -> FaceDirection {
-    let x = vector.x.rounded()
-    let y = vector.y.rounded()
-    let z = vector.z.rounded()
-    
-    if x == 1 {
-      return .east
-    } else if x == -1 {
-      return .west
-    } else if z == 1 {
-      return .south
-    } else if z == -1 {
-      return .north
-    } else if y == 1 {
-      return .up
-    } else if y == -1 {
-      return .down
-    }
-    
-    Logger.debug("vector \(vector) did not match a direction")
-    return .up
-  }
-}
-
 // an intermediate block model used before global palette is loaded
 struct IntermediateBlockModelElementFace {
   var uv: (simd_float2, simd_float2)
@@ -112,6 +46,7 @@ struct BlockModelElement {
 }
 
 struct BlockModel {
+  var fullFaces: Set<FaceDirection>
   var elements: [BlockModelElement]
 }
 
@@ -231,6 +166,8 @@ class BlockModelManager {
   func loadBlockModel(for identifier: Identifier) throws -> BlockModel {
     // IMPLEMENT: block model rotations
     let intermediate = try loadIntermediateBlockModel(for: identifier)
+    
+    var fullFaces = Set<FaceDirection>()
     var elements: [BlockModelElement] = []
     for intermediateElement in intermediate.elements {
       var faces: [FaceDirection: BlockModelElementFace] = [:]
@@ -252,10 +189,55 @@ class BlockModelManager {
           Logger.error("invalid texture variable: \(intermediateFace.textureVariable) on \(identifier)")
         }
       }
-      let element = BlockModelElement(modelMatrix: intermediateElement.modelMatrix, faces: faces)
+      let modelMatrix = intermediateElement.modelMatrix
+      let element = BlockModelElement(modelMatrix: modelMatrix, faces: faces)
       elements.append(element)
+      
+      let point1 = simd_make_float3(simd_float4(0, 0, 0, 1) * modelMatrix)
+      let point2 = simd_make_float3(simd_float4(1, 1, 1, 1) * modelMatrix)
+      
+      for direction in FaceDirection.directions {
+        // 0 if the direction is a negative direction, otherwise 1
+        let value = (simd_dot(direction.toVector(), simd_float3(repeating: 1)) + 1) / 2.0
+        
+        if identifier.name == "block/dirt" {
+          Logger.debug("dirt: \(point1), \(point2), \(value)")
+        }
+        
+        let maxPoint: simd_float2
+        let minPoint: simd_float2
+        switch direction.axis {
+          case .x:
+            if point1.x != value && point2.x != value {
+              continue
+            }
+            maxPoint = simd_float2(max(point1.y, point2.y), max(point1.z, point2.z))
+            minPoint = simd_float2(min(point1.y, point2.y), min(point1.z, point2.z))
+          case .y:
+            if point1.y != value && point2.y != value {
+              continue
+            }
+            maxPoint = simd_float2(max(point1.x, point2.x), max(point1.z, point2.z))
+            minPoint = simd_float2(min(point1.x, point2.x), min(point1.z, point2.z))
+          case .z:
+            if point1.z != value && point2.z != value {
+              continue
+            }
+            maxPoint = simd_float2(max(point1.x, point2.x), max(point1.y, point2.y))
+            minPoint = simd_float2(min(point1.x, point2.x), min(point1.y, point2.y))
+        }
+        
+        if identifier.name == "block/dirt" {
+          Logger.debug("dirt 2: \(maxPoint), \(minPoint)")
+        }
+        
+        if minPoint.x <= 0 && minPoint.y <= 0 && maxPoint.x >= 1 && maxPoint.y >= 1 {
+          fullFaces.insert(direction)
+        }
+      }
     }
-    let blockModel = BlockModel(elements: elements)
+    
+    let blockModel = BlockModel(fullFaces: fullFaces, elements: elements)
     return blockModel
   }
   
@@ -293,7 +275,7 @@ class BlockModelManager {
         }
         let rotationAxis = rotationJSON?.getString(forKey: "axis")
         let angle = rotationJSON?.getFloat(forKey: "angle")
-        let rescale = rotationJSON?.getBool(forKey: "rescale") ?? false
+        let _ = rotationJSON?.getBool(forKey: "rescale") ?? false
         
         _ = elementJSON.getBool(forKey: "shade")
         

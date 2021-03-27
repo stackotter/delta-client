@@ -42,12 +42,14 @@
 - [x] fix plants (based on the cross block model) (probably something to do with rotation and rescale)
 - [x] fix stairs
 - [x] block rotations
-- [ ] fix x-ray from partial blocks
-  - [ ] generate list of full faces for each block from block models
+- [x] fix x-ray from partial blocks
+  - [x] generate list of full faces for each block from block models
+- [ ] optimise new parts
+- [ ] optimise by replacing the slowest parts with c probably lol
 
 ## General clean up
 
-- [ ] improve error handling in networking (certain things like readIdentifier probably don't need to throw)
+- [ ] improve error handling in networking
 - [x] use normal int and uint types instead of specifying 32 or 64. avoids annoying conversions
 
 ## Other
