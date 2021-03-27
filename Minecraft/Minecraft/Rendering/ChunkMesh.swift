@@ -11,7 +11,6 @@ import os
 
 class ChunkMesh: Mesh {
   var chunk: Chunk
-  var totalBlocks = 0
   
   private var blockModelManager: BlockModelManager
   
@@ -22,8 +21,8 @@ class ChunkMesh: Mesh {
   private var blockIndexToQuads: [Int: [Int]] = [:]
   private var quadToBlockIndex: [Int: Int] = [:]
   
-  // debug stopwatch
-  private var stopwatch = Stopwatch(mode: .summary, name: "chunk ingest")
+  private var profiler: Profiler
+  private var stopwatch = Stopwatch(mode: .summary, name: "chunk mesh")
   
   // cube geometry constants
   private let faceVertexIndices: [FaceDirection: [Int]] = [
@@ -49,6 +48,7 @@ class ChunkMesh: Mesh {
   init(blockModelManager: BlockModelManager, chunk: Chunk) {
     self.blockModelManager = blockModelManager
     self.chunk = chunk
+    self.profiler = Profiler(name: "chunk mesh")
     
     super.init()
   }
@@ -66,27 +66,38 @@ class ChunkMesh: Mesh {
       var y = 0
       var z = 0
       
+      stopwatch.startMeasurement("ingestChunk")
       for (sectionIndex, section) in chunk.sections.enumerated() {
         if section.blockCount != 0 { // section isn't empty
           let offset = sectionIndex * ChunkSection.NUM_BLOCKS
           for i in 0..<ChunkSection.NUM_BLOCKS {
+            stopwatch.startMeasurement("ingestChunk: chunk section block")
             // get block state and add block to mesh if not air
+            stopwatch.startMeasurement("ingestChunk: add block")
             let state = section.blocks[i]
             if state != 0 { // block isn't air
               let blockIndex = offset + i // block index in chunk
-              addBlock(x , y, z, index: blockIndex, state: state)
+              
+              addBlock(x, y, z, index: blockIndex, state: state)
             }
+            stopwatch.stopMeasurement("ingestChunk: add block")
             
             // move xyz to next block with speedy magic
+            stopwatch.startMeasurement("ingestChunk: update indices")
             x += 1
             z += (x == ChunkSection.WIDTH) ? 1 : 0
             y += (z == ChunkSection.DEPTH) ? 1 : 0
             x = x & 0xf
             z = z & 0xf
+            stopwatch.stopMeasurement("ingestChunk: update indices")
+            stopwatch.stopMeasurement("ingestChunk: chunk section block")
           }
         }
       }
+      stopwatch.stopMeasurement("ingestChunk")
     }
+    
+    stopwatch.summary()
   }
   
   func replaceBlock(at index: Int, newState: UInt16) {
@@ -110,7 +121,9 @@ class ChunkMesh: Mesh {
   }
   
   private func addBlock(_ x: Int, _ y: Int, _ z: Int, index: Int, state: UInt16) {
+    stopwatch.startMeasurement("getCullingNeighbours")
     let cullFaces = chunk.getCullingNeighbours(forIndex: index)
+    stopwatch.stopMeasurement("getCullingNeighbours")
     
     if let blockModel = blockModelManager.blockModelPalette[state] {
       var quadIndices: [Int] = []
@@ -125,7 +138,9 @@ class ChunkMesh: Mesh {
               continue // face doesn't need to be rendered
             }
           }
+          stopwatch.startMeasurement("addQuad")
           let quadIndex = addQuad(x, y, z, direction: faceDirection, matrix: vertexToWorld, face: face)
+          stopwatch.stopMeasurement("addQuad")
           quadIndices.append(quadIndex)
           quadToBlockIndex[quadIndex] = index
         }
@@ -134,8 +149,6 @@ class ChunkMesh: Mesh {
       if !quadIndices.isEmpty {
         blockIndexToQuads[index] = quadIndices
       }
-      
-      totalBlocks += 1
     } else {
       Logger.debug("skipping block because no block model found")
     }
@@ -143,55 +156,30 @@ class ChunkMesh: Mesh {
   
   private func addQuad(_ x: Int, _ y: Int, _ z: Int, direction: FaceDirection, matrix: matrix_float4x4, face: BlockModelElementFace) -> Int {
     // add windings
+    stopwatch.startMeasurement("addQuad: add windings")
     let offset = UInt32(vertices.count) // the index of the first vertex of the quad
     for index in quadWinding {
       indices.append(index + offset)
     }
-    
-    // create uv's
-    let minUV = face.uv.0
-    let maxUV = face.uv.1
-    let uvs = textureCoordsFrom(minUV, maxUV, rotation: face.rotation)
+    stopwatch.stopMeasurement("addQuad: add windings")
     
     // add vertices
+    stopwatch.startMeasurement("addQuad: add vertices")
     let vertexIndices = faceVertexIndices[direction]!
     for (uvIndex, vertexIndex) in vertexIndices.enumerated() {
       let position = simd_float4(cubeVertexPositions[vertexIndex], 1) * matrix
-      let uv = uvs[uvIndex]
-      let tintIndex = Int8(face.tintIndex ?? -1)
       vertices.append(
-        Vertex(position: simd_make_float3(position), uv: uv, textureIndex: face.textureIndex, tintIndex: tintIndex)
+        Vertex(position: simd_make_float3(position), uv: face.uvs[uvIndex], textureIndex: face.textureIndex, tintIndex: face.tintIndex)
       )
     }
+    stopwatch.stopMeasurement("addQuad: add vertices")
     
     // get and return the quad's index
     let index = vertices.count / 4 - 1
     return index
   }
   
-  private func textureCoordsFrom(_ minUV: simd_float2, _ maxUV: simd_float2, rotation: Int) -> [simd_float2] {
-    // one uv coordinate for each corner
-    var uvs = [
-      simd_float2(maxUV.x, minUV.y),
-      maxUV,
-      simd_float2(minUV.x, maxUV.y),
-      minUV
-    ]
-    
-    // rotate the texture coordinates
-    if rotation != 0 {
-      let textureCenter = simd_float2(0.5, 0.5)
-      let matrix = MatrixUtil.rotationMatrix2d(Float(rotation) / 180 * Float.pi)
-      for (index, var uv) in uvs.enumerated() {
-        uv -= textureCenter
-        uv = uv * matrix
-        uv += textureCenter
-        uvs[index] = uv
-      }
-    }
-    
-    return uvs
-  }
+  
   
   // Mesh Editing Functions
   

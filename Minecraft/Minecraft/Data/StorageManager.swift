@@ -42,6 +42,15 @@ class StorageManager {
     return assetsFolderPath
   }
   
+  func getCacheFile(name: String) -> URL? {
+    let cacheFolder = getAbsoluteFromRelative("cache")!
+    let file = cacheFolder.appendingPathComponent(name)
+    if exists(file) {
+      return file
+    }
+    return nil
+  }
+  
   func exists(_ url: URL) -> Bool {
     return fileManager.fileExists(atPath: url.path)
   }

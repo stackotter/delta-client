@@ -4,6 +4,7 @@
 
 - [ ] Support compression
 - [ ] Support encryption
+- [ ] Optimise chunk data decoding
 
 ## Config
 
@@ -25,6 +26,7 @@
 - [x] transparency
 - [x] fix near clipping plane
 - [x] sky colour
+- [ ] basic normal shading
 - [ ] translucency
 - [ ] look into keeping vertices in gpu mem when they are unchanged between frames?
 - [ ] animated textures
@@ -54,6 +56,7 @@
 
 - [ ] improve error handling in networking
 - [x] use normal int and uint types instead of specifying 32 or 64. avoids annoying conversions
+- [ ] use swifts fancy json instead of mine
 
 ## Other
 

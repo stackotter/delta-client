@@ -65,7 +65,7 @@ class StartupSequence {
     // load global palette
     eventManager.triggerEvent(.loadingScreenMessage("loading global block palette"))
     do {
-      try managers.blockModelManager.loadGlobalPalette()
+      try managers.blockModelManager.generateGlobalPalette()
     } catch {
       throw StartupError.failedToLoadGlobalBlockPalette(error as? BlockModelError)
     }

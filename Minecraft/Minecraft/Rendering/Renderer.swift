@@ -89,9 +89,9 @@ class Renderer {
     // render player's current chunk
     if let chunk = client.server.currentWorld.chunks[client.server.player.chunkPosition] {
       if chunk.mesh.isEmpty {
-        stopwatch.startMeasurement(category: "generate chunk mesh")
+        stopwatch.startMeasurement("generate chunk mesh")
         chunk.generateMesh(with: managers.blockModelManager)
-        stopwatch.stopMeasurement(category: "generate chunk mesh")
+        stopwatch.stopMeasurement("generate chunk mesh")
       }
       if !chunk.mesh.isEmpty {
         let aspect = Float(view.drawableSize.width/view.drawableSize.height)

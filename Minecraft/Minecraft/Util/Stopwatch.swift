@@ -29,11 +29,11 @@ struct Stopwatch {
     return CFAbsoluteTimeGetCurrent()*1000
   }
   
-  mutating func startMeasurement(category: String) {
+  mutating func startMeasurement(_ category: String) {
     measurementStarts[category] = currentMillis()
   }
   
-  mutating func stopMeasurement(category: String) {
+  mutating func stopMeasurement(_ category: String) {
     if let start = measurementStarts[category] {
       let measurement = currentMillis() - start
       if measurements[category] == nil {

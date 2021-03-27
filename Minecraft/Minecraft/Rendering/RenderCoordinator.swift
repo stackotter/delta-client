@@ -34,9 +34,9 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
       return
     }
     
-    stopwatch.startMeasurement(category: "render frame")
+    stopwatch.startMeasurement("render frame")
     renderer.draw(view: view, drawable: drawable)
-    stopwatch.stopMeasurement(category: "render frame")
+    stopwatch.stopMeasurement("render frame")
     
     if frameCounter == logInterval {
       stopwatch.summary()

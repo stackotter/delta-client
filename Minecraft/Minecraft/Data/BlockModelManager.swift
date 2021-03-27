@@ -33,11 +33,13 @@ struct IntermediateBlockModel {
 
 // the actual block model structure used for rendering
 struct BlockModelElementFace {
-  var uv: (simd_float2, simd_float2)
+  var uvs: [simd_float2]
+  var minUV: simd_float2
+  var maxUV: simd_float2
   var textureIndex: UInt16 // the index of the texture to use in the block texture buffer
   var cullface: FaceDirection?
   var rotation: Int
-  var tintIndex: Int?
+  var tintIndex: Int8
 }
 
 struct BlockModelElement {
@@ -65,6 +67,25 @@ class BlockModelManager {
   }
   
   func loadGlobalPalette() throws {
+    if let cache = assetManager.storageManager.getCacheFile(name: "block-palette.json") {
+      try loadGlobalPaletteCache(url: cache)
+      return
+    }
+    try generateGlobalPalette()
+    try cacheGlobalPalette()
+  }
+  
+  func loadGlobalPaletteCache(url: URL) throws {
+    
+  }
+  
+  func cacheGlobalPalette() throws {
+    for (state, blockModel) in blockModelPalette {
+      
+    }
+  }
+  
+  func generateGlobalPalette() throws {
     let pixlyzerDataFile = assetManager.getPixlyzerFolder()!.appendingPathComponent("blocks.json")
     guard let pixlyzerJSON = try? JSON.fromURL(pixlyzerDataFile).dict as? [String: [String: Any]] else {
       Logger.error("failed to parse pixlyzer block palette")
@@ -91,15 +112,15 @@ class BlockModelManager {
           var zRot: Int = 0
           var uvlock: Bool = false
           
+          // TODO: handling multiple states for one state id
+          var modelJSON: JSON? = nil
           if let render = stateJSON.getJSON(forKey: "render") {
-            modelIdentifierString = render.getString(forKey: "model")
-            xRot = render.getInt(forKey: "x") ?? 0
-            yRot = render.getInt(forKey: "y") ?? 0
-            zRot = render.getInt(forKey: "z") ?? 0
-            uvlock = render.getBool(forKey: "uvlock") ?? false
+            modelJSON = render
           } else if let render = stateJSON.getArray(forKey: "render") as? [[String: Any]] {
-            // IMPLEMENT: handling multiple states for one state id
-            let json = JSON(dict: render[0])
+            modelJSON = JSON(dict: render[0])
+          }
+          
+          if let json = modelJSON {
             modelIdentifierString = json.getString(forKey: "model")
             xRot = json.getInt(forKey: "x") ?? 0
             yRot = json.getInt(forKey: "y") ?? 0
@@ -107,45 +128,10 @@ class BlockModelManager {
             uvlock = json.getBool(forKey: "uvlock") ?? false
           }
           
-          let rotationMatrix = MatrixUtil.rotationMatrix(x: Float(xRot) / 180 * Float.pi)
-            * MatrixUtil.rotationMatrix(y: Float(yRot) / 180 * Float.pi)
-            * MatrixUtil.rotationMatrix(z: Float(zRot) / 180 * Float.pi)
-          
-          let modelMatrix = MatrixUtil.translationMatrix([-0.5, -0.5, -0.5]) * rotationMatrix * MatrixUtil.translationMatrix([0.5, 0.5, 0.5])
-          
           if modelIdentifierString != nil {
             do {
               let modelIdentifier = try Identifier(modelIdentifierString!)
-              var blockModel = try loadBlockModel(for: modelIdentifier)
-              
-              if modelMatrix != matrix_float4x4(1) {
-                for (index, var element) in blockModel.elements.enumerated() {
-                  element.modelMatrix *= modelMatrix
-                  for (direction, var face) in element.faces {
-                    if var cullface = face.cullface {
-                      let vector = simd_float4(cullface.toVector(), 1) * rotationMatrix
-                      cullface = FaceDirection.fromVector(vector: simd_make_float3(vector))
-                      face.cullface = cullface
-                    }
-                    
-                    if uvlock {
-                      switch direction.axis {
-                        case .x:
-                          face.rotation += xRot
-                        case .y:
-                          face.rotation += yRot
-                        case .z:
-                          face.rotation += zRot
-                      }
-                    }
-                    
-                    face.rotation = face.rotation % 360
-                    
-                    element.faces[direction] = face
-                  }
-                  blockModel.elements[index] = element
-                }
-              }
+              let blockModel = try loadBlockModel(for: modelIdentifier, xRot: xRot, yRot: yRot, zRot: zRot, uvlock: uvlock)
               
               blockModelPalette[UInt16(stateId)] = blockModel
             } catch {
@@ -163,9 +149,17 @@ class BlockModelManager {
     intermediateCache = [:]
   }
   
-  func loadBlockModel(for identifier: Identifier) throws -> BlockModel {
+  func loadBlockModel(for identifier: Identifier, xRot: Int, yRot: Int, zRot: Int, uvlock: Bool) throws -> BlockModel {
     // IMPLEMENT: block model rotations
     let intermediate = try loadIntermediateBlockModel(for: identifier)
+    
+    let rotationMatrix = MatrixUtil.rotationMatrix(x: Float(xRot) / 180 * Float.pi)
+      * MatrixUtil.rotationMatrix(y: Float(yRot) / 180 * Float.pi)
+      * MatrixUtil.rotationMatrix(z: Float(zRot) / 180 * Float.pi)
+    
+    let modelMatrix = MatrixUtil.translationMatrix([-0.5, -0.5, -0.5])
+      * rotationMatrix
+      * MatrixUtil.translationMatrix([0.5, 0.5, 0.5])
     
     var fullFaces = Set<FaceDirection>()
     var elements: [BlockModelElement] = []
@@ -174,12 +168,38 @@ class BlockModelManager {
       for (direction, intermediateFace) in intermediateElement.faces {
         if let textureIdentifier = try? Identifier(intermediateFace.textureVariable) {
           if let textureIndex = textureManager.identifierToBlockTextureIndex[textureIdentifier] {
+            var cullface = intermediateFace.cullface
+            if cullface != nil {
+              let vector = simd_float4(cullface!.toVector(), 1) * rotationMatrix
+              cullface = FaceDirection.fromVector(vector: simd_make_float3(vector))
+            }
+            
+            var rotation = intermediateFace.rotation
+            if uvlock {
+              switch direction.axis {
+                case .x:
+                  rotation += xRot
+                case .y:
+                  rotation += yRot
+                case .z:
+                  rotation += zRot
+              }
+            }
+            
+            rotation = rotation % 360
+            
+            let minUV = intermediateFace.uv.0
+            let maxUV = intermediateFace.uv.1
+            let uvs = textureCoordsFrom(minUV, maxUV, rotation: rotation)
+            
             let face = BlockModelElementFace(
-              uv: intermediateFace.uv,
+              uvs: uvs,
+              minUV: minUV,
+              maxUV: maxUV,
               textureIndex: textureIndex,
-              cullface: intermediateFace.cullface,
+              cullface: cullface,
               rotation: intermediateFace.rotation,
-              tintIndex: intermediateFace.tintIndex
+              tintIndex: Int8(intermediateFace.tintIndex ?? -1)
             )
             faces[direction] = face
           } else {
@@ -189,7 +209,7 @@ class BlockModelManager {
           Logger.error("invalid texture variable: \(intermediateFace.textureVariable) on \(identifier)")
         }
       }
-      let modelMatrix = intermediateElement.modelMatrix
+      let modelMatrix = intermediateElement.modelMatrix * modelMatrix
       let element = BlockModelElement(modelMatrix: modelMatrix, faces: faces)
       elements.append(element)
       
@@ -379,5 +399,29 @@ class BlockModelManager {
     let blockModel = IntermediateBlockModel(elements: elements)
     intermediateCache[identifier] = blockModel // cache block model for later
     return blockModel
+  }
+  
+  private func textureCoordsFrom(_ minUV: simd_float2, _ maxUV: simd_float2, rotation: Int) -> [simd_float2] {
+    // one uv coordinate for each corner
+    var uvs = [
+      simd_float2(maxUV.x, minUV.y),
+      maxUV,
+      simd_float2(minUV.x, maxUV.y),
+      minUV
+    ]
+    
+    // rotate the texture coordinates
+    if rotation != 0 {
+      let textureCenter = simd_float2(0.5, 0.5)
+      let matrix = MatrixUtil.rotationMatrix2d(Float(rotation) / 180 * Float.pi)
+      for (index, var uv) in uvs.enumerated() {
+        uv -= textureCenter
+        uv = uv * matrix
+        uv += textureCenter
+        uvs[index] = uv
+      }
+    }
+    
+    return uvs
   }
 }
