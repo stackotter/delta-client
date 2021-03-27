@@ -161,8 +161,6 @@ class BlockModelManager {
     }
     
     intermediateCache = [:]
-    
-    Logger.debug("model matrix birch: \(blockModelPalette[80]!.elements[0].modelMatrix)")
   }
   
   func loadBlockModel(for identifier: Identifier) throws -> BlockModel {
@@ -202,10 +200,6 @@ class BlockModelManager {
         // 0 if the direction is a negative direction, otherwise 1
         let value = (simd_dot(direction.toVector(), simd_float3(repeating: 1)) + 1) / 2.0
         
-        if identifier.name == "block/dirt" {
-          Logger.debug("dirt: \(point1), \(point2), \(value)")
-        }
-        
         let maxPoint: simd_float2
         let minPoint: simd_float2
         switch direction.axis {
@@ -227,10 +221,6 @@ class BlockModelManager {
             }
             maxPoint = simd_float2(max(point1.x, point2.x), max(point1.y, point2.y))
             minPoint = simd_float2(min(point1.x, point2.x), min(point1.y, point2.y))
-        }
-        
-        if identifier.name == "block/dirt" {
-          Logger.debug("dirt 2: \(maxPoint), \(minPoint)")
         }
         
         if minPoint.x <= 0 && minPoint.y <= 0 && maxPoint.x >= 1 && maxPoint.y >= 1 {
@@ -290,7 +280,7 @@ class BlockModelManager {
             let uv = faceJSON.getArray(forKey: "uv") as? [Float] ?? [0, 0, 16, 16]
             let cullface = faceJSON.getString(forKey: "cullface")
             let rotation = faceJSON.getInt(forKey: "rotation") ?? 0
-            let tintIndex = faceJSON.getInt(forKey: "tintIndex")
+            let tintIndex = faceJSON.getInt(forKey: "tintindex")
             
             if let textureVariable = faceJSON.getString(forKey: "texture") {
               var texture = textureVariable

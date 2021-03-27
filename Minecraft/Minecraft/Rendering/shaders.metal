@@ -13,6 +13,7 @@ struct Vertex
   float3 position;
   float2 uv;
   uint16_t textureIndex;
+  int8_t tintIndex;
 };
 
 struct RasteriserData
@@ -20,6 +21,7 @@ struct RasteriserData
   float4 position [[position]];
   float2 uv;
   uint textureIndex;
+  int8_t tintIndex;
 };
 
 constexpr sampler textureSampler (mag_filter::nearest,
@@ -36,6 +38,7 @@ vertex RasteriserData vertexShader(uint vertexId [[vertex_id]], constant Vertex 
   
   out.uv = in.uv;
   out.textureIndex = in.textureIndex;
+  out.tintIndex = in.tintIndex;
   
   return out;
 }
@@ -44,6 +47,9 @@ fragment float4 fragmentShader(RasteriserData in [[stage_in]], texture2d_array<f
   float4 color = textureArray.sample(textureSampler, in.uv, in.textureIndex);
   if (color.w != 1) {
     discard_fragment();
+  }
+  if (in.tintIndex != -1) {
+    color = color * float4(0.53, 0.75, 0.38, 1.0);
   }
   return color;
 }
