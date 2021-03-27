@@ -22,6 +22,8 @@ class Renderer {
   var client: Client
   var managers: Managers
   
+  let skyColor = MTLClearColorMake(0.65, 0.8, 1, 1)
+  
   init(device: MTLDevice, client: Client) {
     self.metalDevice = device
     self.client = client
@@ -74,7 +76,7 @@ class Renderer {
     let cameraPosition = simd_float3([Float(-playerRelativePosition.x), Float(-(playerRelativePosition.y+1.625)), Float(-playerRelativePosition.z)])
     
     let worldToCamera = MatrixUtil.translationMatrix(cameraPosition) * MatrixUtil.rotationMatrix(y: -(Float.pi + yRot)) * MatrixUtil.rotationMatrix(x: -xRot)
-    let cameraToClip = MatrixUtil.projectionMatrix(near: 1, far: 1000, aspect: aspect, fieldOfViewY: fov)
+    let cameraToClip = MatrixUtil.projectionMatrix(near: 0.0001, far: 1000, aspect: aspect, fieldOfViewY: fov)
     var modelToClipSpace = worldToCamera * cameraToClip
     
     let matrixBuffer = metalDevice.makeBuffer(bytes: &modelToClipSpace, length: MemoryLayout<matrix_float4x4>.stride, options: [])!
@@ -99,7 +101,7 @@ class Renderer {
         
         if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
           if let renderPassDescriptor = view.currentRenderPassDescriptor {
-            renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 1, 0, 1)
+            renderPassDescriptor.colorAttachments[0].clearColor = skyColor
             renderPassDescriptor.colorAttachments[0].loadAction = .clear
             renderPassDescriptor.colorAttachments[0].storeAction = .store
             

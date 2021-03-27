@@ -22,7 +22,10 @@
 
 ## Rendering
 
-- [ ] transparency
+- [x] transparency
+- [x] fix near clipping plane
+- [x] sky colour
+- [ ] translucency
 - [ ] look into keeping vertices in gpu mem when they are unchanged between frames?
 - [ ] animated textures
 - [ ] multipart structures
@@ -55,3 +58,4 @@
 ## Other
 
 - [ ] add os_signpost support to the stopwatch
+- [ ] rename project to not include word minecraft

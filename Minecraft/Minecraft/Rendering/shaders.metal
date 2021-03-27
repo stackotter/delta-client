@@ -41,5 +41,9 @@ vertex RasteriserData vertexShader(uint vertexId [[vertex_id]], constant Vertex 
 }
 
 fragment float4 fragmentShader(RasteriserData in [[stage_in]], texture2d_array<float, access::sample> textureArray [[texture(0)]]) {
-  return textureArray.sample(textureSampler, in.uv, in.textureIndex);
+  float4 color = textureArray.sample(textureSampler, in.uv, in.textureIndex);
+  if (color.w != 1) {
+    discard_fragment();
+  }
+  return color;
 }
