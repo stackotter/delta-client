@@ -9,7 +9,7 @@ import Foundation
 import simd
 import os
 
-enum FaceDirection: String {
+enum FaceDirection: String, Codable {
   case down = "down"
   case up = "up"
   case north = "north"

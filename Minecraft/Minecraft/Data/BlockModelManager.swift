@@ -32,26 +32,50 @@ struct IntermediateBlockModel {
 }
 
 // the actual block model structure used for rendering
-struct BlockModelElementFace {
+struct BlockModelElementFace: Codable {
   var uvs: [simd_float2]
-  var minUV: simd_float2
-  var maxUV: simd_float2
   var textureIndex: UInt16 // the index of the texture to use in the block texture buffer
   var cullface: FaceDirection?
-  var rotation: Int
   var tintIndex: Int8
 }
 
-struct BlockModelElement {
+struct BlockModelElement: Codable {
   var modelMatrix: simd_float4x4
   var faces: [FaceDirection: BlockModelElementFace]
 }
 
-struct BlockModel {
+struct BlockModel: Codable {
   var fullFaces: Set<FaceDirection>
   var elements: [BlockModelElement]
 }
 
+extension matrix_float4x4: Codable {
+  enum CodingKeys: String, CodingKey {
+    case col0
+    case col1
+    case col2
+    case col3
+  }
+  
+  public init(from decoder: Decoder) throws {
+    self.init()
+    let values = try decoder.container(keyedBy: CodingKeys.self)
+    self.columns = (
+      try values.decode(simd_float4.self, forKey: .col0),
+      try values.decode(simd_float4.self, forKey: .col1),
+      try values.decode(simd_float4.self, forKey: .col2),
+      try values.decode(simd_float4.self, forKey: .col3)
+    )
+  }
+  
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(columns.0, forKey: .col0)
+    try container.encode(columns.1, forKey: .col1)
+    try container.encode(columns.2, forKey: .col2)
+    try container.encode(columns.3, forKey: .col3)
+  }
+}
 
 // TODO: think of a better name for BlockModelManager
 class BlockModelManager {
@@ -68,21 +92,29 @@ class BlockModelManager {
   
   func loadGlobalPalette() throws {
     if let cache = assetManager.storageManager.getCacheFile(name: "block-palette.json") {
+      Logger.debug("loading from cache")
       try loadGlobalPaletteCache(url: cache)
       return
     }
+    
     try generateGlobalPalette()
     try cacheGlobalPalette()
   }
   
   func loadGlobalPaletteCache(url: URL) throws {
-    
+    Logger.debug("loading from cache")
+    let data = try Data(contentsOf: url)
+    let decoder = JSONDecoder()
+    blockModelPalette = try decoder.decode([UInt16: BlockModel].self, from: data)
+    Logger.debug("finished loading from cache")
   }
   
   func cacheGlobalPalette() throws {
-    for (state, blockModel) in blockModelPalette {
-      
-    }
+    _ = assetManager.storageManager.createFolder(atRelativePath: "cache")
+    
+    let encoder = JSONEncoder()
+    let data = try encoder.encode(blockModelPalette)
+    try data.write(to: assetManager.storageManager.getAbsoluteFromRelative("cache/block-palette.json")!)
   }
   
   func generateGlobalPalette() throws {
@@ -194,11 +226,8 @@ class BlockModelManager {
             
             let face = BlockModelElementFace(
               uvs: uvs,
-              minUV: minUV,
-              maxUV: maxUV,
               textureIndex: textureIndex,
               cullface: cullface,
-              rotation: intermediateFace.rotation,
               tintIndex: Int8(intermediateFace.tintIndex ?? -1)
             )
             faces[direction] = face

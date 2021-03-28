@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7802C19E26108EC00068E8A1 /* test.proto in Sources */ = {isa = PBXBuildFile; fileRef = 7802C19C26108EC00068E8A1 /* test.proto */; };
+		7802C19F26108EC00068E8A1 /* test.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7802C19D26108EC00068E8A1 /* test.pb.swift */; };
+		7802C1A42610932A0068E8A1 /* BlockModel.proto in Sources */ = {isa = PBXBuildFile; fileRef = 7802C1A32610932A0068E8A1 /* BlockModel.proto */; };
+		7802C1A92610978C0068E8A1 /* BlockModel.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7802C1A82610978C0068E8A1 /* BlockModel.pb.swift */; };
+		7802C1AF261097F00068E8A1 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 7802C1AE261097F00068E8A1 /* SwiftProtobuf */; };
 		780993FE25E21D2D00DFDC9F /* TeleportConfirmPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780993FD25E21D2D00DFDC9F /* TeleportConfirmPacket.swift */; };
 		7809940325E21D5300DFDC9F /* QueryBlockNBTPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809940225E21D5300DFDC9F /* QueryBlockNBTPacket.swift */; };
 		7809940825E21FB000DFDC9F /* QueryEntityNBTPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7809940725E21FB000DFDC9F /* QueryEntityNBTPacket.swift */; };
@@ -297,6 +302,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7802C19C26108EC00068E8A1 /* test.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = test.proto; sourceTree = "<group>"; };
+		7802C19D26108EC00068E8A1 /* test.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = test.pb.swift; sourceTree = "<group>"; };
+		7802C1A32610932A0068E8A1 /* BlockModel.proto */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.protobuf; path = BlockModel.proto; sourceTree = "<group>"; };
+		7802C1A82610978C0068E8A1 /* BlockModel.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockModel.pb.swift; sourceTree = "<group>"; };
 		780993FD25E21D2D00DFDC9F /* TeleportConfirmPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleportConfirmPacket.swift; sourceTree = "<group>"; };
 		7809940225E21D5300DFDC9F /* QueryBlockNBTPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryBlockNBTPacket.swift; sourceTree = "<group>"; };
 		7809940725E21FB000DFDC9F /* QueryEntityNBTPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryEntityNBTPacket.swift; sourceTree = "<group>"; };
@@ -583,6 +592,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				78B6A1EB25FC588000CFE493 /* Zip in Frameworks */,
+				7802C1AF261097F00068E8A1 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -603,6 +613,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7802C19B26108EC00068E8A1 /* Protobuf */ = {
+			isa = PBXGroup;
+			children = (
+				7802C19C26108EC00068E8A1 /* test.proto */,
+				7802C1A32610932A0068E8A1 /* BlockModel.proto */,
+				7802C1A82610978C0068E8A1 /* BlockModel.pb.swift */,
+				7802C19D26108EC00068E8A1 /* test.pb.swift */,
+			);
+			path = Protobuf;
+			sourceTree = "<group>";
+		};
 		780D8FAA25FDC18F00C4C440 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -853,6 +874,7 @@
 		78B6A1DD25FC2EA700CFE493 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				7802C19B26108EC00068E8A1 /* Protobuf */,
 				78B8C97025FC7D850024846F /* Managers.swift */,
 				78B6A1DE25FC301200CFE493 /* StorageManager.swift */,
 				78B6A1F525FC5FCC00CFE493 /* AssetManager.swift */,
@@ -1186,6 +1208,7 @@
 			name = Minecraft;
 			packageProductDependencies = (
 				78B6A1EA25FC588000CFE493 /* Zip */,
+				7802C1AE261097F00068E8A1 /* SwiftProtobuf */,
 			);
 			productName = Minecraft;
 			productReference = 784194B7258204CD0070DE78 /* Minecraft.app */;
@@ -1261,6 +1284,7 @@
 			mainGroup = 784194AE258204CD0070DE78;
 			packageReferences = (
 				78B6A1E925FC588000CFE493 /* XCRemoteSwiftPackageReference "Zip" */,
+				7802C1AD261097F00068E8A1 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 			);
 			productRefGroup = 784194B8258204CD0070DE78 /* Products */;
 			projectDirPath = "";
@@ -1344,6 +1368,7 @@
 				78826212260EC8640004C259 /* Axis.swift in Sources */,
 				7873058C25D936DF001259EB /* DisplayScoreboardPacket.swift in Sources */,
 				787305B425D93AC3001259EB /* SetPassengersPacket.swift in Sources */,
+				7802C19F26108EC00068E8A1 /* test.pb.swift in Sources */,
 				784CCAF925AD34CC004B3182 /* FireworkStarFadeRecipe.swift in Sources */,
 				784194BB258204CD0070DE78 /* MinecraftApp.swift in Sources */,
 				7894522A25D2773500B86423 /* UnloadChunkPacket.swift in Sources */,
@@ -1392,6 +1417,7 @@
 				789088AF25EC80FB00CA6DF0 /* chunkunpack.c in Sources */,
 				78CC6E5125D2636F00CA3DFF /* StatisticsPacket.swift in Sources */,
 				7894520225D26EA700B86423 /* WindowItemsPacket.swift in Sources */,
+				7802C1A42610932A0068E8A1 /* BlockModel.proto in Sources */,
 				78C2D58A2585955500883DF5 /* StatusResponsePacket.swift in Sources */,
 				78764DF025AD9BFF00AE8716 /* SuspiciousStewRecipe.swift in Sources */,
 				7843EBB925E22D2000AD42A7 /* EntityActionPacket.swift in Sources */,
@@ -1409,6 +1435,7 @@
 				7894520725D26F1100B86423 /* WindowPropertyPacket.swift in Sources */,
 				78E919C825D7E79F00667C75 /* UpdateLightPacket.swift in Sources */,
 				7843EBFA25E2347700AD42A7 /* UpdateJigsawBlockPacket.swift in Sources */,
+				7802C19E26108EC00068E8A1 /* test.proto in Sources */,
 				784CCA8C25AD2E40004B3182 /* CraftingShapeless.swift in Sources */,
 				78CC6E7725D2669400CA3DFF /* BlockChangePacket.swift in Sources */,
 				784CCB1225AD3545004B3182 /* ShieldDecorationRecipe.swift in Sources */,
@@ -1473,6 +1500,7 @@
 				7843EBC825E22E9C00AD42A7 /* RecipeBookDataPacket.swift in Sources */,
 				789451F325D26DBC00B86423 /* DeclareCommandsPacket.swift in Sources */,
 				7824E93225E1095D009F0197 /* EntityProperties.swift in Sources */,
+				7802C1A92610978C0068E8A1 /* BlockModel.pb.swift in Sources */,
 				7843EBDC25E2310F00AD42A7 /* SelectTradePacket.swift in Sources */,
 				784CCACC25AD328A004B3182 /* SmithingRecipe.swift in Sources */,
 				784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */,
@@ -1923,6 +1951,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		7802C1AD261097F00068E8A1 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.15.0;
+			};
+		};
 		78B6A1E925FC588000CFE493 /* XCRemoteSwiftPackageReference "Zip" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/marmelroy/Zip";
@@ -1934,6 +1970,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		7802C1AE261097F00068E8A1 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7802C1AD261097F00068E8A1 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
 		78B6A1EA25FC588000CFE493 /* Zip */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 78B6A1E925FC588000CFE493 /* XCRemoteSwiftPackageReference "Zip" */;
