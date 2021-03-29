@@ -9,13 +9,13 @@ import Foundation
 import simd
 import os
 
-enum FaceDirection: String, Codable {
-  case down = "down"
-  case up = "up"
-  case north = "north"
-  case south = "south"
-  case west = "west"
-  case east = "east"
+enum FaceDirection: Int32 {
+  case up = 0
+  case down = 1
+  case north = 2
+  case south = 3
+  case east = 4
+  case west = 5
   
   static var directions: [FaceDirection] {
     return [.down, .up, .north, .south, .west, .east]
@@ -46,6 +46,44 @@ enum FaceDirection: String, Codable {
         return .west
       case .west:
         return .east
+    }
+  }
+  
+  init?(fromCache cache: CacheFaceDirection) {
+    switch cache {
+      case .down:
+        self = .down
+      case .up:
+        self = .up
+      case .south:
+        self = .south
+      case .north:
+        self = .north
+      case .east:
+        self = .east
+      case .west:
+        self = .west
+      default:
+        return nil
+    }
+  }
+  
+  init?(string: String) {
+    switch string {
+      case "down":
+        self = .down
+      case "up":
+        self = .up
+      case "north":
+        self = .north
+      case "south":
+        self = .south
+      case "west":
+        self = .west
+      case "east":
+        self = .east
+      default:
+        return nil
     }
   }
   
@@ -87,5 +125,22 @@ enum FaceDirection: String, Codable {
     
     Logger.debug("vector \(vector) did not match a direction")
     return .up
+  }
+  
+  func toCache() -> CacheFaceDirection {
+    switch self {
+      case .down:
+        return CacheFaceDirection.down
+      case .up:
+        return CacheFaceDirection.up
+      case .south:
+        return CacheFaceDirection.south
+      case .north:
+        return CacheFaceDirection.north
+      case .east:
+        return CacheFaceDirection.east
+      case .west:
+        return CacheFaceDirection.west
+    }
   }
 }

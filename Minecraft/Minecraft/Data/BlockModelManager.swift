@@ -32,48 +32,133 @@ struct IntermediateBlockModel {
 }
 
 // the actual block model structure used for rendering
-struct BlockModelElementFace: Codable {
+struct BlockModelElementFace {
   var uvs: [simd_float2]
   var textureIndex: UInt16 // the index of the texture to use in the block texture buffer
   var cullface: FaceDirection?
   var tintIndex: Int8
+  
+  init(uvs: [simd_float2], textureIndex: UInt16, cullface: FaceDirection?, tintIndex: Int8) {
+    self.uvs = uvs
+    self.textureIndex = textureIndex
+    self.cullface = cullface
+    self.tintIndex = tintIndex
+  }
+  
+  init(fromCache cache: CacheBlockModelElementFace) {
+    uvs = []
+    for i in 0..<(cache.uvs.count / 2) {
+      uvs.append(simd_float2(cache.uvs[i * 2], cache.uvs[i * 2 + 1]))
+    }
+    textureIndex = UInt16(cache.textureIndex)
+    cullface = FaceDirection(fromCache: cache.cullFace)
+    tintIndex = Int8(cache.tintIndex)
+  }
+  
+  func toCache() -> CacheBlockModelElementFace {
+    var cacheFace = CacheBlockModelElementFace()
+    var uvFloats: [Float] = []
+    for uv in uvs {
+      uvFloats.append(uv.x)
+      uvFloats.append(uv.y)
+    }
+    cacheFace.uvs = uvFloats
+    cacheFace.textureIndex = UInt32(textureIndex)
+    if let cacheCullface = cullface?.toCache() {
+      cacheFace.cullFace = cacheCullface
+    }
+    cacheFace.tintIndex = Int32(tintIndex)
+    return cacheFace
+  }
 }
 
-struct BlockModelElement: Codable {
+struct BlockModelElement {
   var modelMatrix: simd_float4x4
   var faces: [FaceDirection: BlockModelElementFace]
+  
+  init(modelMatrix: simd_float4x4, faces: [FaceDirection: BlockModelElementFace]) {
+    self.modelMatrix = modelMatrix
+    self.faces = faces
+  }
+  
+  init(fromCache cache: CacheBlockModelElement) {
+    modelMatrix = matrix_float4x4.fromData(cache.modelMatrix)
+    faces = [:]
+    for (cacheDirectionRaw, cacheFace) in cache.faces {
+      let direction = FaceDirection(rawValue: cacheDirectionRaw)!
+      let face = BlockModelElementFace(fromCache: cacheFace)
+      faces[direction] = face
+    }
+  }
+  
+  func toCache() -> CacheBlockModelElement {
+    let cacheModelMatrix = modelMatrix.toData()
+    var cacheFaces: [Int32: CacheBlockModelElementFace] = [:]
+    for (direction, face) in faces {
+      let cacheDirection = direction.toCache()
+      let cacheFace = face.toCache()
+      let cacheDirectionRaw = Int32(cacheDirection.rawValue)
+      cacheFaces[cacheDirectionRaw] = cacheFace
+    }
+    
+    var cacheElement = CacheBlockModelElement()
+    cacheElement.modelMatrix = cacheModelMatrix
+    cacheElement.faces = cacheFaces
+    
+    return cacheElement
+  }
 }
 
-struct BlockModel: Codable {
+struct BlockModel {
   var fullFaces: Set<FaceDirection>
   var elements: [BlockModelElement]
+  
+  init(fullFaces: Set<FaceDirection>, elements: [BlockModelElement]) {
+    self.fullFaces = fullFaces
+    self.elements = elements
+  }
+  
+  init(fromCache cache: CacheBlockModel) {
+    fullFaces = Set<FaceDirection>()
+    for cacheFullFace in cache.fullFaces {
+      fullFaces.insert(FaceDirection(fromCache: cacheFullFace)!)
+    }
+    elements = []
+    for cacheElement in cache.elements {
+      elements.append(BlockModelElement(fromCache: cacheElement))
+    }
+  }
+  
+  func toCache() -> CacheBlockModel {
+    let cacheFullFaces = fullFaces.map {
+      return $0.toCache()
+    }
+    
+    let cacheElements = elements.map {
+      return $0.toCache()
+    }
+    
+    var cacheBlockModel = CacheBlockModel()
+    cacheBlockModel.fullFaces = cacheFullFaces
+    cacheBlockModel.elements = cacheElements
+    
+    return cacheBlockModel
+  }
 }
 
-extension matrix_float4x4: Codable {
-  enum CodingKeys: String, CodingKey {
-    case col0
-    case col1
-    case col2
-    case col3
+extension matrix_float4x4 {
+  func toData() -> Data {
+    var mutableSelf = self
+    let data = Data(bytes: &mutableSelf, count: MemoryLayout<matrix_float4x4>.size)
+    return data
   }
   
-  public init(from decoder: Decoder) throws {
-    self.init()
-    let values = try decoder.container(keyedBy: CodingKeys.self)
-    self.columns = (
-      try values.decode(simd_float4.self, forKey: .col0),
-      try values.decode(simd_float4.self, forKey: .col1),
-      try values.decode(simd_float4.self, forKey: .col2),
-      try values.decode(simd_float4.self, forKey: .col3)
-    )
-  }
-  
-  public func encode(to encoder: Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(columns.0, forKey: .col0)
-    try container.encode(columns.1, forKey: .col1)
-    try container.encode(columns.2, forKey: .col2)
-    try container.encode(columns.3, forKey: .col3)
+  static func fromData(_ data: Data) -> matrix_float4x4 {
+    var matrix = matrix_float4x4()
+    _ = withUnsafeMutableBytes(of: &matrix.columns) {
+      data.copyBytes(to: $0)
+    }
+    return matrix
   }
 }
 
@@ -91,7 +176,7 @@ class BlockModelManager {
   }
   
   func loadGlobalPalette() throws {
-    if let cache = assetManager.storageManager.getCacheFile(name: "block-palette.json") {
+    if let cache = assetManager.storageManager.getCacheFile(name: "block-palette.bin") {
       Logger.debug("loading from cache")
       try loadGlobalPaletteCache(url: cache)
       return
@@ -102,19 +187,26 @@ class BlockModelManager {
   }
   
   func loadGlobalPaletteCache(url: URL) throws {
-    Logger.debug("loading from cache")
     let data = try Data(contentsOf: url)
-    let decoder = JSONDecoder()
-    blockModelPalette = try decoder.decode([UInt16: BlockModel].self, from: data)
-    Logger.debug("finished loading from cache")
+    let cacheGlobalPalette = try CacheBlockModelPalette(serializedData: data)
+    blockModelPalette = [:]
+    for (state, cacheBlockModel) in cacheGlobalPalette.blockModelPalette {
+      blockModelPalette[UInt16(state)] = BlockModel(fromCache: cacheBlockModel)
+    }
   }
   
   func cacheGlobalPalette() throws {
     _ = assetManager.storageManager.createFolder(atRelativePath: "cache")
+    let url = assetManager.storageManager.getAbsoluteFromRelative("cache/block-palette.bin")!
     
-    let encoder = JSONEncoder()
-    let data = try encoder.encode(blockModelPalette)
-    try data.write(to: assetManager.storageManager.getAbsoluteFromRelative("cache/block-palette.json")!)
+    // TODO: make state UInt32
+    var cache = CacheBlockModelPalette()
+    for (state, blockModel) in blockModelPalette {
+      let cacheBlockModel = blockModel.toCache()
+      cache.blockModelPalette[UInt32(state)] = cacheBlockModel
+    }
+    let data = try cache.serializedData()
+    try data.write(to: url)
   }
   
   func generateGlobalPalette() throws {
@@ -323,7 +415,7 @@ class BlockModelManager {
         var faces: [FaceDirection: IntermediateBlockModelElementFace] = [:]
         let facesDict = (elementJSON.getJSON(forKey: "faces")?.dict as? [String: [String: Any]]) ?? [:]
         for (faceName, faceDict) in facesDict {
-          if let direction = FaceDirection(rawValue: faceName) {
+          if let direction = FaceDirection(string: faceName) {
             let faceJSON = JSON(dict: faceDict)
             
             let uv = faceJSON.getArray(forKey: "uv") as? [Float] ?? [0, 0, 16, 16]
@@ -345,7 +437,7 @@ class BlockModelManager {
                 let face = IntermediateBlockModelElementFace(
                   uv: textureCoordinates,
                   textureVariable: texture,
-                  cullface: cullface != nil ? FaceDirection(rawValue: cullface!) : nil,
+                  cullface: cullface != nil ? FaceDirection(string: cullface!) : nil,
                   rotation: rotation,
                   tintIndex: tintIndex
                 )

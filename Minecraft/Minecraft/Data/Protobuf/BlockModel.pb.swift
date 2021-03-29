@@ -85,8 +85,6 @@ struct CacheBlockModelElementFace {
 
   var textureIndex: UInt32 = 0
 
-  var hasCullface_p: Bool = false
-
   var cullFace: CacheFaceDirection {
     get {return _cullFace ?? .up}
     set {_cullFace = newValue}
@@ -96,7 +94,7 @@ struct CacheBlockModelElementFace {
   /// Clears the value of `cullFace`. Subsequent reads from it will return its default value.
   mutating func clearCullFace() {self._cullFace = nil}
 
-  var tintIndex: UInt32 = 0
+  var tintIndex: Int32 = 0
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -112,7 +110,7 @@ struct CacheBlockModelElement {
 
   var modelMatrix: Data = Data()
 
-  var faces: [CacheBlockModelElementFace] = []
+  var faces: Dictionary<Int32,CacheBlockModelElementFace> = [:]
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -127,6 +125,18 @@ struct CacheBlockModel {
   var fullFaces: [CacheFaceDirection] = []
 
   var elements: [CacheBlockModelElement] = []
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct CacheBlockModelPalette {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var blockModelPalette: Dictionary<UInt32,CacheBlockModel> = [:]
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -151,7 +161,6 @@ extension CacheBlockModelElementFace: SwiftProtobuf.Message, SwiftProtobuf._Mess
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "uvs"),
     2: .same(proto: "textureIndex"),
-    3: .same(proto: "hasCullface"),
     4: .same(proto: "cullFace"),
     5: .same(proto: "tintIndex"),
   ]
@@ -164,9 +173,8 @@ extension CacheBlockModelElementFace: SwiftProtobuf.Message, SwiftProtobuf._Mess
       switch fieldNumber {
       case 1: try { try decoder.decodeRepeatedFloatField(value: &self.uvs) }()
       case 2: try { try decoder.decodeSingularUInt32Field(value: &self.textureIndex) }()
-      case 3: try { try decoder.decodeSingularBoolField(value: &self.hasCullface_p) }()
       case 4: try { try decoder.decodeSingularEnumField(value: &self._cullFace) }()
-      case 5: try { try decoder.decodeSingularUInt32Field(value: &self.tintIndex) }()
+      case 5: try { try decoder.decodeSingularSInt32Field(value: &self.tintIndex) }()
       default: break
       }
     }
@@ -179,14 +187,11 @@ extension CacheBlockModelElementFace: SwiftProtobuf.Message, SwiftProtobuf._Mess
     if self.textureIndex != 0 {
       try visitor.visitSingularUInt32Field(value: self.textureIndex, fieldNumber: 2)
     }
-    if self.hasCullface_p != false {
-      try visitor.visitSingularBoolField(value: self.hasCullface_p, fieldNumber: 3)
-    }
     if let v = self._cullFace {
       try visitor.visitSingularEnumField(value: v, fieldNumber: 4)
     }
     if self.tintIndex != 0 {
-      try visitor.visitSingularUInt32Field(value: self.tintIndex, fieldNumber: 5)
+      try visitor.visitSingularSInt32Field(value: self.tintIndex, fieldNumber: 5)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -194,7 +199,6 @@ extension CacheBlockModelElementFace: SwiftProtobuf.Message, SwiftProtobuf._Mess
   static func ==(lhs: CacheBlockModelElementFace, rhs: CacheBlockModelElementFace) -> Bool {
     if lhs.uvs != rhs.uvs {return false}
     if lhs.textureIndex != rhs.textureIndex {return false}
-    if lhs.hasCullface_p != rhs.hasCullface_p {return false}
     if lhs._cullFace != rhs._cullFace {return false}
     if lhs.tintIndex != rhs.tintIndex {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -216,7 +220,7 @@ extension CacheBlockModelElement: SwiftProtobuf.Message, SwiftProtobuf._MessageI
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularBytesField(value: &self.modelMatrix) }()
-      case 2: try { try decoder.decodeRepeatedMessageField(value: &self.faces) }()
+      case 2: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,CacheBlockModelElementFace>.self, value: &self.faces) }()
       default: break
       }
     }
@@ -227,7 +231,7 @@ extension CacheBlockModelElement: SwiftProtobuf.Message, SwiftProtobuf._MessageI
       try visitor.visitSingularBytesField(value: self.modelMatrix, fieldNumber: 1)
     }
     if !self.faces.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.faces, fieldNumber: 2)
+      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,CacheBlockModelElementFace>.self, value: self.faces, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -273,6 +277,38 @@ extension CacheBlockModel: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
   static func ==(lhs: CacheBlockModel, rhs: CacheBlockModel) -> Bool {
     if lhs.fullFaces != rhs.fullFaces {return false}
     if lhs.elements != rhs.elements {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CacheBlockModelPalette: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "CacheBlockModelPalette"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "blockModelPalette"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufUInt32,CacheBlockModel>.self, value: &self.blockModelPalette) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.blockModelPalette.isEmpty {
+      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufUInt32,CacheBlockModel>.self, value: self.blockModelPalette, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: CacheBlockModelPalette, rhs: CacheBlockModelPalette) -> Bool {
+    if lhs.blockModelPalette != rhs.blockModelPalette {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

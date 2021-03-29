@@ -12,17 +12,20 @@ enum CacheFaceDirection {
 message CacheBlockModelElementFace {
   repeated float uvs = 1;
   uint32 textureIndex = 2;
-  bool hasCullface = 3;
   optional CacheFaceDirection cullFace = 4;
-  uint32 tintIndex = 5;
+  sint32 tintIndex = 5;
 }
 
 message CacheBlockModelElement {
   bytes modelMatrix = 1;
-  repeated CacheBlockModelElementFace faces = 2;
+  map<int32, CacheBlockModelElementFace> faces = 2;
 }
 
 message CacheBlockModel {
   repeated CacheFaceDirection fullFaces = 1;
   repeated CacheBlockModelElement elements = 2;
+}
+
+message CacheBlockModelPalette {
+  map<uint32, CacheBlockModel> blockModelPalette = 1;
 }

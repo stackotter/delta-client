@@ -34,6 +34,7 @@
 - [x] render looking the correct direction (use player look from position and look)
 - [x] uvlock
 - [x] get terracotta rotations working
+- [ ] fix upside-down stairs (the uvlock doesn't work for the side textures)
 
 ### Chunk preparing
 
