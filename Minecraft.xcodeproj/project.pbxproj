@@ -7,9 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7802C19E26108EC00068E8A1 /* test.proto in Sources */ = {isa = PBXBuildFile; fileRef = 7802C19C26108EC00068E8A1 /* test.proto */; };
 		7802C19F26108EC00068E8A1 /* test.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7802C19D26108EC00068E8A1 /* test.pb.swift */; };
-		7802C1A42610932A0068E8A1 /* BlockModel.proto in Sources */ = {isa = PBXBuildFile; fileRef = 7802C1A32610932A0068E8A1 /* BlockModel.proto */; };
 		7802C1A92610978C0068E8A1 /* BlockModel.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7802C1A82610978C0068E8A1 /* BlockModel.pb.swift */; };
 		7802C1AF261097F00068E8A1 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 7802C1AE261097F00068E8A1 /* SwiftProtobuf */; };
 		780993FE25E21D2D00DFDC9F /* TeleportConfirmPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780993FD25E21D2D00DFDC9F /* TeleportConfirmPacket.swift */; };
@@ -1417,7 +1415,6 @@
 				789088AF25EC80FB00CA6DF0 /* chunkunpack.c in Sources */,
 				78CC6E5125D2636F00CA3DFF /* StatisticsPacket.swift in Sources */,
 				7894520225D26EA700B86423 /* WindowItemsPacket.swift in Sources */,
-				7802C1A42610932A0068E8A1 /* BlockModel.proto in Sources */,
 				78C2D58A2585955500883DF5 /* StatusResponsePacket.swift in Sources */,
 				78764DF025AD9BFF00AE8716 /* SuspiciousStewRecipe.swift in Sources */,
 				7843EBB925E22D2000AD42A7 /* EntityActionPacket.swift in Sources */,
@@ -1435,7 +1432,6 @@
 				7894520725D26F1100B86423 /* WindowPropertyPacket.swift in Sources */,
 				78E919C825D7E79F00667C75 /* UpdateLightPacket.swift in Sources */,
 				7843EBFA25E2347700AD42A7 /* UpdateJigsawBlockPacket.swift in Sources */,
-				7802C19E26108EC00068E8A1 /* test.proto in Sources */,
 				784CCA8C25AD2E40004B3182 /* CraftingShapeless.swift in Sources */,
 				78CC6E7725D2669400CA3DFF /* BlockChangePacket.swift in Sources */,
 				784CCB1225AD3545004B3182 /* ShieldDecorationRecipe.swift in Sources */,

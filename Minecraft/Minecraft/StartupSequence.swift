@@ -39,9 +39,9 @@ class StartupSequence {
       if !success {
         throw StartupError.failedToDownloadAssets
       }
-      Logger.debug("successfully downloaded assets")
+      Logger.log("successfully downloaded assets")
     } else {
-      Logger.debug("assets exist")
+      Logger.log("assets exist")
     }
     
     // download pixlyzer data
@@ -52,6 +52,7 @@ class StartupSequence {
       } catch {
         throw StartupError.failedToDownloadPixlyzerData(error as? AssetError)
       }
+      Logger.log("downloaded pixlyzer data")
     }
     
     // load block textures
@@ -61,14 +62,16 @@ class StartupSequence {
     } catch {
       throw StartupError.failedToLoadBlockTextures(error as? TextureError)
     }
+    Logger.log("successfully loaded block textures")
     
     // load global palette
-    eventManager.triggerEvent(.loadingScreenMessage("loading global block palette"))
+    eventManager.triggerEvent(.loadingScreenMessage("loading global palette"))
     do {
       try managers.blockModelManager.loadGlobalPalette()
     } catch {
       throw StartupError.failedToLoadGlobalBlockPalette(error as? BlockModelError)
     }
+    Logger.log("successfully loaded global palette")
     
     // load locale
     eventManager.triggerEvent(.loadingScreenMessage("loading locale 'en_us'.."))
@@ -81,7 +84,7 @@ class StartupSequence {
     } catch {
       throw StartupError.failedToLoadLocale(error as? LocaleError)
     }
-    Logger.debug("successfully loaded locale")
+    Logger.log("successfully loaded locale")
     
     eventManager.triggerEvent(.loadingComplete(managers))
   }

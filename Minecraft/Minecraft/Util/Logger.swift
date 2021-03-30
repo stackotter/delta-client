@@ -27,6 +27,9 @@ extension Logger {
       Logger(for: object!).log("\(message)")
     }
     Logger().log("\(message)")
+    #if !DEBUG
+    print(message)
+    #endif
   }
   
   static func info(_ message: String, for object: Any? = nil) {

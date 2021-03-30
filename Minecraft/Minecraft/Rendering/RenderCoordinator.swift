@@ -30,7 +30,7 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
   
   func draw(in view: MTKView) {
     guard let drawable = view.currentDrawable else {
-      Logger.warning("failed to get current drawable")
+      Logger.error("failed to get current drawable")
       return
     }
     

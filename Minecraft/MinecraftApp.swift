@@ -38,7 +38,7 @@ struct MinecraftApp: App {
   func handleEvent(_ event: EventManager.Event) {
     switch event {
       case .loadingScreenMessage(let message):
-        Logger.debug(message)
+        Logger.log(message)
         state.update(to: .loading(message: message))
       case .loadingComplete(let managers):
         state.update(to: .loaded(managers: managers))
