@@ -21,7 +21,7 @@ class ServerConnection {
   var packetRegistry: PacketRegistry
   
   var connectionState: ConnectionState = .idle
-  var serverState: PacketState = .handshaking
+  var state: PacketState = .handshaking
   
   // used in the packet receiving loop because of chunking
   struct ReceiveState {
@@ -44,7 +44,7 @@ class ServerConnection {
     self.packetHandlingThread = PacketHandlingThread(managers: managers, packetRegistry: self.packetRegistry)
   }
   
-  func setHandler(_ handler: @escaping (PacketReader, PacketState) -> Void) {
+  func setHandler(_ handler: @escaping (PacketReader) -> Void) {
     packetHandlingThread.setHandler(handler)
   }
   
@@ -92,7 +92,7 @@ class ServerConnection {
   }
   
   func handshake(nextState: HandshakePacket.NextState, callback: @escaping () -> Void = {}) {
-    serverState = .handshaking
+    state = .handshaking
     // move protocol version to config or constants file of some sort
     let handshake = HandshakePacket(protocolVersion: PROTOCOL_VERSION, serverAddr: host, serverPort: port, nextState: nextState)
 
@@ -100,7 +100,7 @@ class ServerConnection {
       if error != nil {
         Logger.error("failed to send packet: \(error!.debugDescription)")
       } else {
-        self.serverState = (nextState == .login) ? .login : .status
+        self.state = (nextState == .login) ? .login : .status
         callback()
       }
     }))
@@ -172,7 +172,7 @@ class ServerConnection {
             packet.append(byte)
             
             if (packet.count == length) {
-              self.packetHandlingThread.handleBytes(packet, state: self.serverState)
+              self.packetHandlingThread.handleBytes(packet)
               packet = []
               length = -1
               lengthBytes = []

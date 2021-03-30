@@ -77,10 +77,10 @@ class Server: Hashable {
   
   // Networking
   
-  func handlePacket(_ packetReader: PacketReader, _ state: PacketState) {
+  func handlePacket(_ packetReader: PacketReader) {
     var reader = packetReader
     do {
-      try packetRegistry.handlePacket(&reader, forServer: self, inState: state)
+      try packetRegistry.handlePacket(&reader, forServer: self, inState: connection.state)
     } catch {
       Logger.debug("failed to handle status packet")
     }

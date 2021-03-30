@@ -19,7 +19,7 @@ struct LoginSuccessPacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    server.connection.serverState = .play
+    server.connection.state = .play
   }
 }
 
