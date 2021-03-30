@@ -34,7 +34,8 @@
 - [x] render looking the correct direction (use player look from position and look)
 - [x] uvlock
 - [x] get terracotta rotations working
-- [ ] fix upside-down stairs (the uvlock doesn't work for the side textures)
+- [x] fix upside-down stairs (the uvlock doesn't work for the side textures)
+- [ ] fix stair sides not being detected as full faces (because they're made of two elements)
 
 ### Chunk preparing
 
@@ -52,6 +53,12 @@
   - [x] generate list of full faces for each block from block models
 - [ ] optimise new parts
 - [ ] optimise by replacing the slowest parts with c probably lol
+- [ ] fix grass block overlay render order (possibly just bodge and make the underneath element slightly smaller)
+
+## Other chunk stuff
+
+- [ ] multi block changes
+- [ ] multiple chunks first test
 
 ## General clean up
 

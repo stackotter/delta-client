@@ -307,10 +307,18 @@ class BlockModelManager {
               switch direction.axis {
                 case .x:
                   rotation += xRot
+                  
+                  if zRot == 180 {
+                    rotation += 180
+                  }
                 case .y:
                   rotation += yRot
                 case .z:
                   rotation += zRot
+                  
+                  if xRot == 180 {
+                    rotation += 180
+                  }
               }
             }
             
@@ -318,7 +326,7 @@ class BlockModelManager {
             
             let minUV = intermediateFace.uv.0
             let maxUV = intermediateFace.uv.1
-            let uvs = textureCoordsFrom(minUV, maxUV, rotation: rotation)
+            let uvs = textureCoordsFrom(minUV, maxUV, rotation: -rotation) // minecraft does rotation the other way
             
             let face = BlockModelElementFace(
               uvs: uvs,
