@@ -257,6 +257,10 @@ class BlockModelManager {
               let modelIdentifier = try Identifier(modelIdentifierString!)
               let blockModel = try loadBlockModel(for: modelIdentifier, xRot: xRot, yRot: yRot, zRot: zRot, uvlock: uvlock)
               
+              if stateId == 2014 {
+                Logger.debug("oak_stairs 2014: \(blockModel)")
+              }
+              
               blockModelPalette[UInt16(stateId)] = blockModel
             } catch {
               Logger.error("failed to load model for \(modelIdentifierString!): \(error)")
@@ -298,6 +302,9 @@ class BlockModelManager {
               cullface = FaceDirection.fromVector(vector: simd_make_float3(vector))
             }
             
+            let directionVector = simd_float4(direction.toVector(), 1) * rotationMatrix
+            let newDirection = FaceDirection.fromVector(vector: simd_make_float3(directionVector))
+            
             var rotation = intermediateFace.rotation
             if uvlock {
               switch direction.axis {
@@ -322,7 +329,7 @@ class BlockModelManager {
               cullface: cullface,
               tintIndex: Int8(intermediateFace.tintIndex ?? -1)
             )
-            faces[direction] = face
+            faces[newDirection] = face
           } else {
             // most likely an animated texture
           }
@@ -333,6 +340,8 @@ class BlockModelManager {
       let modelMatrix = intermediateElement.modelMatrix * modelMatrix
       let element = BlockModelElement(modelMatrix: modelMatrix, faces: faces)
       elements.append(element)
+      
+      // check if block has any full faces
       
       let point1 = simd_make_float3(simd_float4(0, 0, 0, 1) * modelMatrix)
       let point2 = simd_make_float3(simd_float4(1, 1, 1, 1) * modelMatrix)

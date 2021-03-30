@@ -94,10 +94,12 @@ class Renderer {
         stopwatch.stopMeasurement("generate chunk mesh")
       }
       if !chunk.mesh.isEmpty {
+        // create uniforms
         let aspect = Float(view.drawableSize.width/view.drawableSize.height)
         let matrixBuffer = createWorldToClipSpaceMatrix(aspect: aspect)
-        let vertexBuffer = chunk.mesh.createVertexBuffer(for: metalDevice)
-        let indexBuffer = chunk.mesh.createIndexBuffer(for: metalDevice)
+        
+        // move mesh data to gpu
+        chunk.mesh.createBuffers(device: metalDevice)
         
         if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
           if let renderPassDescriptor = view.currentRenderPassDescriptor {
@@ -118,9 +120,9 @@ class Renderer {
               
               renderEncoder.setFragmentTexture(arrayTexture, index: 0)
               
-              renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+              renderEncoder.setVertexBuffer(chunk.mesh.vertexBuffer, offset: 0, index: 0)
               renderEncoder.setVertexBuffer(matrixBuffer, offset: 0, index: 1)
-              renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: chunk.mesh.numIndices, indexType: .uint32, indexBuffer: indexBuffer, indexBufferOffset: 0)
+              renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: chunk.mesh.indexBuffer.length/4, indexType: .uint32, indexBuffer: chunk.mesh.indexBuffer, indexBufferOffset: 0)
               renderEncoder.endEncoding()
               
               commandBuffer.present(drawable)

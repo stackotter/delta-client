@@ -186,10 +186,8 @@ class ChunkMesh: Mesh {
   private func removeBlock(atIndex index: Int) {
     // multiply each quadIndex by 4 to get the start index of each of the block's rendered faces
     if let quads = blockIndexToQuads[index] {
-      print("removing block")
       for i in (0..<quads.count).reversed() {
         removeQuad(atIndex: blockIndexToQuads[index]![i])
-        print("removing quad")
       }
       blockIndexToQuads.removeValue(forKey: index)
     }
