@@ -176,14 +176,14 @@ class BlockModelManager {
   }
   
   func loadGlobalPalette() throws {
-    if let cache = assetManager.storageManager.getCacheFile(name: "block-palette.bin") {
-      Logger.debug("loading from cache")
-      try loadGlobalPaletteCache(url: cache)
-      return
-    }
+//    if let cache = assetManager.storageManager.getCacheFile(name: "block-palette.bin") {
+//      Logger.debug("loading from cache")
+//      try loadGlobalPaletteCache(url: cache)
+//      return
+//    }
     
     try generateGlobalPalette()
-    try cacheGlobalPalette()
+//    try cacheGlobalPalette()
   }
   
   func loadGlobalPaletteCache(url: URL) throws {
@@ -432,7 +432,55 @@ class BlockModelManager {
           if let direction = FaceDirection(string: faceName) {
             let faceJSON = JSON(dict: faceDict)
             
-            let uv = faceJSON.getArray(forKey: "uv") as? [Float] ?? [0, 0, 16, 16]
+            var uv: [Float] = []
+            if let uvArray = faceJSON.getArray(forKey: "uv") as? [Float] {
+              uv = uvArray
+            } else { // calculate the uv coordinates from from and to
+              switch direction {
+                case .west:
+                  uv = [
+                    from[2],
+                    16 - to[1],
+                    to[2],
+                    16 - from[1]
+                  ]
+                case .east:
+                  uv = [
+                    16 - to[2],
+                    16 - to[1],
+                    16 - from[2],
+                    16 - from[1]
+                  ]
+                case .down:
+                  uv = [
+                    from[0],
+                    16 - to[2],
+                    to[0],
+                    16 - from[2]
+                  ]
+                case .up:
+                  uv = [
+                    from[0],
+                    from[2],
+                    to[0],
+                    to[2]
+                  ]
+                case .south:
+                  uv = [
+                    from[0],
+                    16 - to[1],
+                    to[0],
+                    16 - from[1]
+                  ]
+                case .north:
+                  uv = [
+                    16 - to[0],
+                    16 - to[1],
+                    16 - from[0],
+                    16 - from[1]
+                  ]
+              }
+            }
             let cullface = faceJSON.getString(forKey: "cullface")
             let rotation = faceJSON.getInt(forKey: "rotation") ?? 0
             let tintIndex = faceJSON.getInt(forKey: "tintindex")

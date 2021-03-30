@@ -26,7 +26,7 @@
 - [x] transparency
 - [x] fix near clipping plane
 - [x] sky colour
-- [ ] basic normal shading
+- [ ] basic shading
 - [ ] translucency
 - [ ] look into keeping vertices in gpu mem when they are unchanged between frames?
 - [ ] animated textures
@@ -35,6 +35,12 @@
 - [x] uvlock
 - [x] get terracotta rotations working
 - [x] fix upside-down stairs (the uvlock doesn't work for the side textures)
+
+### Block models
+
+- [ ] multipart
+- [ ] multiple models for one block
+- [ ] implied uv coordinates
 - [ ] fix stair sides not being detected as full faces (because they're made of two elements)
 
 ### Chunk preparing
