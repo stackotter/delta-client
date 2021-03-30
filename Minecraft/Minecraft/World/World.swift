@@ -87,7 +87,7 @@ class World {
             self.managers.eventManager.triggerEvent(.downloadedTerrain)
           }
         } catch {
-          Logger.log("failed to unpack chunk at (\(chunkData.position.chunkX), \(chunkData.position.chunkZ))")
+          Logger.error("failed to unpack chunk at (\(chunkData.position.chunkX), \(chunkData.position.chunkZ))")
         }
       }
     } else {

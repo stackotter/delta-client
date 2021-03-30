@@ -16,13 +16,14 @@ class Server: Hashable {
   
   var currentWorldName: Identifier?
   var worlds: [Identifier: World] = [:]
-  var currentWorld: World {
+  var currentWorld: World? {
     if let worldName = currentWorldName {
       if let world = worlds[worldName] {
         return world
       }
     }
-    return World(config: WorldConfig.createDefault(), managers: managers)
+    Logger.warning("current world '\(currentWorldName?.toString() ?? "")' does not exist")
+    return nil
   }
   
   // TODO: maybe use a Registry object that stores all registries for neater code

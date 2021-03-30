@@ -87,7 +87,7 @@ class Renderer {
     var stopwatch = Stopwatch(mode: .verbose, name: "chunk mesh")
     
     // render player's current chunk
-    if let chunk = client.server.currentWorld.chunks[client.server.player.chunkPosition] {
+    if let chunk = client.server.currentWorld?.chunks[client.server.player.chunkPosition] {
       if chunk.mesh.isEmpty {
         stopwatch.startMeasurement("generate chunk mesh")
         chunk.generateMesh(with: managers.blockModelManager)

@@ -75,7 +75,7 @@ class Client {
               return
             }
             let position = Position(x: x, y: y, z: z)
-            let block = server.currentWorld.getBlock(at: position)
+            let block = server.currentWorld?.getBlock(at: position) ?? 0
             Logger.log("block has state \(block)")
           } else {
             Logger.log("usage: getblock x y z")

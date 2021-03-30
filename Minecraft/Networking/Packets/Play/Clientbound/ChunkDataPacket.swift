@@ -20,18 +20,20 @@ struct ChunkDataPacket: ClientboundPacket {
     chunkData = ChunkData(position: position, buf: packetReader.buf)
   }
   
-  // TODO_LATER: clean up how downloading terrain is triggered to end
+  // TODO: clean up how downloading terrain is triggered to end
   func handle(for server: Server) throws {
-    server.currentWorld.addChunkData(chunkData, unpack: !server.currentWorld.downloadingTerrain)
-    if server.currentWorld.downloadingTerrain {
-      let viewDiameter = server.config.viewDistance * 2 + (3)
-      let targetNumChunks = viewDiameter * viewDiameter
-      if server.currentWorld.packedChunks.count == targetNumChunks {
-        Logger.log("unpacking chunks")
-        do {
-          try server.currentWorld.unpackChunks() // TODO_LATER: fix to use view distance
-        } catch {
-          Logger.log("failed to unpack chunks after downloading terrain")
+    if let world = server.currentWorld {
+      world.addChunkData(chunkData, unpack: !world.downloadingTerrain)
+      if world.downloadingTerrain {
+        let viewDiameter = server.config.viewDistance * 2 + (3)
+        let targetNumChunks = viewDiameter * viewDiameter
+        if world.packedChunks.count == targetNumChunks {
+          Logger.log("unpacking chunks")
+          do {
+            try world.unpackChunks()
+          } catch {
+            Logger.error("failed to unpack chunks")
+          }
         }
       }
     }

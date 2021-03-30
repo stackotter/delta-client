@@ -19,6 +19,6 @@ struct UnloadChunkPacket: ClientboundPacket {
   }
   
   func handle(for server: Server) {
-    server.currentWorld.removeChunk(at: chunkPosition)
+    server.currentWorld?.removeChunk(at: chunkPosition)
   }
 }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 struct MultiBlockChangePacket: ClientboundPacket {
   static let id: Int = 0x0f
@@ -23,8 +24,8 @@ struct MultiBlockChangePacket: ClientboundPacket {
   var records: [BlockChangeRecord]
   
   init(from packetReader: inout PacketReader) throws {
-    let chunkX = Int(packetReader.readInt())
-    let chunkZ = Int(packetReader.readInt())
+    let chunkX = packetReader.readInt()
+    let chunkZ = packetReader.readInt()
     chunkPosition = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
     
     records = []
@@ -32,12 +33,30 @@ struct MultiBlockChangePacket: ClientboundPacket {
     let recordCount = packetReader.readVarInt()
     for _ in 0..<recordCount {
       let val = packetReader.readUnsignedByte()
-      let x = val >> 4
+      let x = val >> 4 & 0x0f
       let z = val & 0x0f
       let y = packetReader.readUnsignedByte()
       let blockId = packetReader.readVarInt()
       let record = BlockChangeRecord(x: x, y: y, z: z, blockId: blockId)
       records.append(record)
+    }
+  }
+  
+  func handle(for server: Server) throws {
+    if let chunk = server.currentWorld?.chunks[chunkPosition] {
+      for record in records {
+        // TODO: don't use uint16 for block id
+        chunk.setBlock(
+          at: Position(
+            x: Int(record.x),
+            y: Int(record.y),
+            z: Int(record.z)
+          ),
+          to: UInt16(record.blockId)
+        )
+      }
+    } else {
+      Logger.error("multi block change received for non-loaded chunk")
     }
   }
 }

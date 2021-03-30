@@ -176,14 +176,14 @@ class BlockModelManager {
   }
   
   func loadGlobalPalette() throws {
-//    if let cache = assetManager.storageManager.getCacheFile(name: "block-palette.bin") {
-//      Logger.debug("loading from cache")
-//      try loadGlobalPaletteCache(url: cache)
-//      return
-//    }
+    if let cache = assetManager.storageManager.getCacheFile(name: "block-palette.bin") {
+      Logger.debug("loading from cache")
+      try loadGlobalPaletteCache(url: cache)
+      return
+    }
     
     try generateGlobalPalette()
-//    try cacheGlobalPalette()
+    try cacheGlobalPalette()
   }
   
   func loadGlobalPaletteCache(url: URL) throws {
