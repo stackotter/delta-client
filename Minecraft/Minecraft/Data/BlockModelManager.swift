@@ -302,9 +302,6 @@ class BlockModelManager {
               cullface = FaceDirection.fromVector(vector: simd_make_float3(vector))
             }
             
-            let directionVector = simd_float4(direction.toVector(), 1) * rotationMatrix
-            let newDirection = FaceDirection.fromVector(vector: simd_make_float3(directionVector))
-            
             var rotation = intermediateFace.rotation
             if uvlock {
               switch direction.axis {
@@ -329,7 +326,7 @@ class BlockModelManager {
               cullface: cullface,
               tintIndex: Int8(intermediateFace.tintIndex ?? -1)
             )
-            faces[newDirection] = face
+            faces[direction] = face
           } else {
             // most likely an animated texture
           }
