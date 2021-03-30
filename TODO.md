@@ -2,9 +2,11 @@
 
 ## Networking
 
-- [ ] Support compression
-- [ ] Support encryption
-- [ ] Optimise chunk data decoding
+- [ ] Refactor networking into a network stack
+  - [ ] Initial refactor
+  - [ ] Compression layer
+  - [ ] Encryption layer
+- [x] Optimise chunk data decoding
 
 ## Config
 
@@ -13,8 +15,8 @@
 
 ## Startup
 
-- [ ] optimise creation of global palette
-- [ ] cache global palette
+- [x] optimise creation of global palette
+- [x] cache global palette
 - [ ] make managers throw in initialiser to avoid optional and throwing functions elsewhere
   - [ ] storage manager
   - [ ] asset manager
@@ -40,7 +42,7 @@
 
 - [ ] multipart
 - [ ] multiple models for one block
-- [ ] implied uv coordinates
+- [x] implied uv coordinates
 - [ ] fix stair sides not being detected as full faces (because they're made of two elements)
 
 ### Chunk preparing
@@ -63,7 +65,7 @@
 
 ## Other chunk stuff
 
-- [ ] multi block changes
+- [x] multi block changes
 - [ ] multiple chunks first test
 
 ## General clean up
