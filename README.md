@@ -1,4 +1,4 @@
-# Minecraft Delta Client - Change the meaning of speed
+# Minecraft Delta Client - Changing the meaning of speed
 
 ## Overview
 
