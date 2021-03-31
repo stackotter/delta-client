@@ -1,14 +1,14 @@
 //
-//  MinecraftTests.swift
-//  MinecraftTests
+//  DeltaClientTests.swift
+//  DeltaClientTests
 //
 //  Created by Rohan van Klinken on 10/12/20.
 //
 
 import XCTest
-@testable import Minecraft
+@testable import DeltaClient
 
-class MinecraftTests: XCTestCase {
+class DeltaClientTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

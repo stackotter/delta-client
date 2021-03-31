@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "784194B6258204CD0070DE78"
-               BuildableName = "Minecraft.app"
-               BlueprintName = "Minecraft"
-               ReferencedContainer = "container:Minecraft.xcodeproj">
+               BuildableName = "DeltaClient.app"
+               BlueprintName = "DeltaClient"
+               ReferencedContainer = "container:DeltaClient.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "784194C8258204D10070DE78"
-               BuildableName = "MinecraftTests.xctest"
-               BlueprintName = "MinecraftTests"
-               ReferencedContainer = "container:Minecraft.xcodeproj">
+               BuildableName = "DeltaClientTests.xctest"
+               BlueprintName = "DeltaClientTests"
+               ReferencedContainer = "container:DeltaClient.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -43,15 +43,15 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "784194D3258204D10070DE78"
-               BuildableName = "MinecraftUITests.xctest"
-               BlueprintName = "MinecraftUITests"
-               ReferencedContainer = "container:Minecraft.xcodeproj">
+               BuildableName = "DeltaClientUITests.xctest"
+               BlueprintName = "DeltaClientUITests"
+               ReferencedContainer = "container:DeltaClient.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -65,9 +65,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "784194B6258204CD0070DE78"
-            BuildableName = "Minecraft.app"
-            BlueprintName = "Minecraft"
-            ReferencedContainer = "container:Minecraft.xcodeproj">
+            BuildableName = "DeltaClient.app"
+            BlueprintName = "DeltaClient"
+            ReferencedContainer = "container:DeltaClient.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -82,9 +82,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "784194B6258204CD0070DE78"
-            BuildableName = "Minecraft.app"
-            BlueprintName = "Minecraft"
-            ReferencedContainer = "container:Minecraft.xcodeproj">
+            BuildableName = "DeltaClient.app"
+            BlueprintName = "DeltaClient"
+            ReferencedContainer = "container:DeltaClient.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

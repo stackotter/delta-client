@@ -1,5 +1,5 @@
 //
-//  MinecraftApp.swift
+//  DeltaClient.swift
 //  Minecraft
 //
 //  Created by Rohan van Klinken on 10/12/20.
@@ -9,7 +9,7 @@ import SwiftUI
 import os
 
 @main
-struct MinecraftApp: App {
+struct DeltaClient: App {
   @ObservedObject var state = ViewState<AppStateEnum>(initialState: .loading(message: "loading game.."))
   let eventManager = EventManager()
   

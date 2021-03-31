@@ -1,0 +1,1995 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7802C1AF261097F00068E8A1 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 7802C1AE261097F00068E8A1 /* SwiftProtobuf */; };
+		780522AD261433A700079A01 /* PacketRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052174261433A600079A01 /* PacketRegistry.swift */; };
+		780522AE261433A700079A01 /* ClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052175261433A600079A01 /* ClientboundPacket.swift */; };
+		780522AF261433A700079A01 /* PacketWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052176261433A600079A01 /* PacketWriter.swift */; };
+		780522B0261433A700079A01 /* ServerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052177261433A600079A01 /* ServerConnection.swift */; };
+		780522B1261433A700079A01 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052178261433A600079A01 /* ConnectionState.swift */; };
+		780522B2261433A700079A01 /* ServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052179261433A600079A01 /* ServerboundPacket.swift */; };
+		780522B3261433A700079A01 /* StatusRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805217D261433A600079A01 /* StatusRequestPacket.swift */; };
+		780522B4261433A700079A01 /* StatusResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805217F261433A600079A01 /* StatusResponsePacket.swift */; };
+		780522B5261433A700079A01 /* HandshakePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052182261433A600079A01 /* HandshakePacket.swift */; };
+		780522B6261433A700079A01 /* NameItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052185261433A600079A01 /* NameItemPacket.swift */; };
+		780522B7261433A700079A01 /* UpdateJigsawBlockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052186261433A600079A01 /* UpdateJigsawBlockPacket.swift */; };
+		780522B8261433A700079A01 /* TeleportConfirmPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052187261433A600079A01 /* TeleportConfirmPacket.swift */; };
+		780522B9261433A700079A01 /* ClickWindowButtonPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052188261433A600079A01 /* ClickWindowButtonPacket.swift */; };
+		780522BA261433A700079A01 /* ChatMessageServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052189261433A600079A01 /* ChatMessageServerboundPacket.swift */; };
+		780522BB261433A700079A01 /* UpdateSignPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805218A261433A600079A01 /* UpdateSignPacket.swift */; };
+		780522BC261433A700079A01 /* QueryEntityNBTPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805218B261433A600079A01 /* QueryEntityNBTPacket.swift */; };
+		780522BD261433A700079A01 /* ClickWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805218C261433A600079A01 /* ClickWindowPacket.swift */; };
+		780522BE261433A700079A01 /* PlayerDiggingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805218D261433A600079A01 /* PlayerDiggingPacket.swift */; };
+		780522BF261433A700079A01 /* AnimationServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805218E261433A600079A01 /* AnimationServerboundPacket.swift */; };
+		780522C0261433A700079A01 /* SteerVehiclePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805218F261433A600079A01 /* SteerVehiclePacket.swift */; };
+		780522C1261433A700079A01 /* LockDifficultyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052190261433A600079A01 /* LockDifficultyPacket.swift */; };
+		780522C2261433A700079A01 /* PluginMessageServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052191261433A600079A01 /* PluginMessageServerboundPacket.swift */; };
+		780522C3261433A700079A01 /* SpectatePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052192261433A600079A01 /* SpectatePacket.swift */; };
+		780522C4261433A700079A01 /* UpdateCommandBlockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052193261433A600079A01 /* UpdateCommandBlockPacket.swift */; };
+		780522C5261433A700079A01 /* TabCompleteServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052194261433A600079A01 /* TabCompleteServerboundPacket.swift */; };
+		780522C6261433A700079A01 /* UpdateCommandBlockMinecartPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052195261433A600079A01 /* UpdateCommandBlockMinecartPacket.swift */; };
+		780522C7261433A700079A01 /* QueryBlockNBTPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052196261433A600079A01 /* QueryBlockNBTPacket.swift */; };
+		780522C8261433A700079A01 /* ResourcePackStatusPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052197261433A600079A01 /* ResourcePackStatusPacket.swift */; };
+		780522C9261433A700079A01 /* SteerBoatPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052198261433A600079A01 /* SteerBoatPacket.swift */; };
+		780522CA261433A700079A01 /* VehicleMoveServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052199261433A600079A01 /* VehicleMoveServerboundPacket.swift */; };
+		780522CB261433A700079A01 /* ClientSettingsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805219A261433A600079A01 /* ClientSettingsPacket.swift */; };
+		780522CC261433A700079A01 /* UseItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805219B261433A600079A01 /* UseItemPacket.swift */; };
+		780522CD261433A700079A01 /* CloseWindowServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805219C261433A600079A01 /* CloseWindowServerboundPacket.swift */; };
+		780522CE261433A700079A01 /* PickItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805219D261433A600079A01 /* PickItemPacket.swift */; };
+		780522CF261433A700079A01 /* SetDifficultyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805219E261433A600079A01 /* SetDifficultyPacket.swift */; };
+		780522D0261433A700079A01 /* CreativeInventoryActionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805219F261433A600079A01 /* CreativeInventoryActionPacket.swift */; };
+		780522D1261433A700079A01 /* WindowConfirmationServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A0261433A600079A01 /* WindowConfirmationServerboundPacket.swift */; };
+		780522D2261433A700079A01 /* AdvancementTabPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A1261433A600079A01 /* AdvancementTabPacket.swift */; };
+		780522D3261433A700079A01 /* EntityActionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A2261433A600079A01 /* EntityActionPacket.swift */; };
+		780522D4261433A700079A01 /* PlayerAbilitiesServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A3261433A600079A01 /* PlayerAbilitiesServerboundPacket.swift */; };
+		780522D5261433A700079A01 /* PlayerMovementPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A4261433A600079A01 /* PlayerMovementPacket.swift */; };
+		780522D6261433A700079A01 /* RecipeBookDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A5261433A600079A01 /* RecipeBookDataPacket.swift */; };
+		780522D7261433A700079A01 /* GenerateStructurePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A6261433A600079A01 /* GenerateStructurePacket.swift */; };
+		780522D8261433A700079A01 /* PlayerBlockPlacementPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A7261433A600079A01 /* PlayerBlockPlacementPacket.swift */; };
+		780522D9261433A700079A01 /* ClientStatusPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A8261433A600079A01 /* ClientStatusPacket.swift */; };
+		780522DA261433A700079A01 /* PlayerPositionAndRotationServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A9261433A600079A01 /* PlayerPositionAndRotationServerboundPacket.swift */; };
+		780522DB261433A700079A01 /* EditBookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521AA261433A600079A01 /* EditBookPacket.swift */; };
+		780522DC261433A700079A01 /* PlayerRotationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521AB261433A600079A01 /* PlayerRotationPacket.swift */; };
+		780522DD261433A700079A01 /* PlayerPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521AC261433A600079A01 /* PlayerPositionPacket.swift */; };
+		780522DE261433A700079A01 /* SelectTradePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521AD261433A600079A01 /* SelectTradePacket.swift */; };
+		780522DF261433A700079A01 /* InteractEntityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521AE261433A600079A01 /* InteractEntityPacket.swift */; };
+		780522E0261433A700079A01 /* HeldItemChangeServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521AF261433A600079A01 /* HeldItemChangeServerboundPacket.swift */; };
+		780522E1261433A700079A01 /* SetBeaconEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B0261433A600079A01 /* SetBeaconEffectPacket.swift */; };
+		780522E2261433A700079A01 /* KeepAliveServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B1261433A600079A01 /* KeepAliveServerboundPacket.swift */; };
+		780522E3261433A700079A01 /* CraftRecipeRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B2261433A600079A01 /* CraftRecipeRequestPacket.swift */; };
+		780522E4261433A700079A01 /* UpdateStructureBlockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B3261433A600079A01 /* UpdateStructureBlockPacket.swift */; };
+		780522E5261433A700079A01 /* TradeListPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B5261433A600079A01 /* TradeListPacket.swift */; };
+		780522E6261433A700079A01 /* TagsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B6261433A600079A01 /* TagsPacket.swift */; };
+		780522E7261433A700079A01 /* WindowConfirmationClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B7261433A600079A01 /* WindowConfirmationClientboundPacket.swift */; };
+		780522E8261433A700079A01 /* UpdateViewDistancePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B8261433A600079A01 /* UpdateViewDistancePacket.swift */; };
+		780522E9261433A700079A01 /* MultiBlockChangePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B9261433A600079A01 /* MultiBlockChangePacket.swift */; };
+		780522EA261433A700079A01 /* SpawnLivingEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521BA261433A600079A01 /* SpawnLivingEntity.swift */; };
+		780522EB261433A700079A01 /* EntityVelocityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521BB261433A600079A01 /* EntityVelocityPacket.swift */; };
+		780522EC261433A700079A01 /* EntityHeadLookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521BC261433A600079A01 /* EntityHeadLookPacket.swift */; };
+		780522ED261433A700079A01 /* CollectItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521BD261433A600079A01 /* CollectItemPacket.swift */; };
+		780522EE261433A700079A01 /* OpenWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521BE261433A600079A01 /* OpenWindowPacket.swift */; };
+		780522EF261433A700079A01 /* PlayerAbilitiesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521BF261433A600079A01 /* PlayerAbilitiesPacket.swift */; };
+		780522F0261433A700079A01 /* EntityMovementPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C0261433A600079A01 /* EntityMovementPacket.swift */; };
+		780522F1261433A700079A01 /* UpdateViewPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C1261433A600079A01 /* UpdateViewPositionPacket.swift */; };
+		780522F2261433A700079A01 /* NBTQueryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C2261433A600079A01 /* NBTQueryResponse.swift */; };
+		780522F3261433A700079A01 /* RemoveEntityEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C3261433A600079A01 /* RemoveEntityEffectPacket.swift */; };
+		780522F4261433A700079A01 /* OpenBookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C4261433A600079A01 /* OpenBookPacket.swift */; };
+		780522F5261433A700079A01 /* PlayerListHeaderAndFooterPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C5261433A600079A01 /* PlayerListHeaderAndFooterPacket.swift */; };
+		780522F6261433A700079A01 /* EntityMetadataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C6261433A600079A01 /* EntityMetadataPacket.swift */; };
+		780522F7261433A700079A01 /* BlockBreakAnimationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C7261433A600079A01 /* BlockBreakAnimationPacket.swift */; };
+		780522F8261433A700079A01 /* BlockActionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C8261433A600079A01 /* BlockActionPacket.swift */; };
+		780522F9261433A700079A01 /* StatisticsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C9261433A600079A01 /* StatisticsPacket.swift */; };
+		780522FA261433A800079A01 /* WindowItemsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521CA261433A600079A01 /* WindowItemsPacket.swift */; };
+		780522FB261433A800079A01 /* ChunkDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521CB261433A600079A01 /* ChunkDataPacket.swift */; };
+		780522FC261433A800079A01 /* UnloadChunkPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521CC261433A600079A01 /* UnloadChunkPacket.swift */; };
+		780522FD261433A800079A01 /* EffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521CD261433A600079A01 /* EffectPacket.swift */; };
+		780522FE261433A800079A01 /* SpawnExperienceOrbPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521CE261433A600079A01 /* SpawnExperienceOrbPacket.swift */; };
+		780522FF261433A800079A01 /* WindowPropertyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521CF261433A600079A01 /* WindowPropertyPacket.swift */; };
+		78052300261433A800079A01 /* MapDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D0261433A600079A01 /* MapDataPacket.swift */; };
+		78052301261433A800079A01 /* EntityPositionAndRotationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D1261433A600079A01 /* EntityPositionAndRotationPacket.swift */; };
+		78052302261433A800079A01 /* DeclareRecipesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D2261433A600079A01 /* DeclareRecipesPacket.swift */; };
+		78052303261433A800079A01 /* CameraPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D3261433A600079A01 /* CameraPacket.swift */; };
+		78052304261433A800079A01 /* EntityProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D4261433A600079A01 /* EntityProperties.swift */; };
+		78052305261433A800079A01 /* EntitySoundEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D5261433A600079A01 /* EntitySoundEffectPacket.swift */; };
+		78052306261433A800079A01 /* ServerDifficultyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D6261433A600079A01 /* ServerDifficultyPacket.swift */; };
+		78052307261433A800079A01 /* AttachEntityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D7261433A600079A01 /* AttachEntityPacket.swift */; };
+		78052308261433A800079A01 /* EntityPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D8261433A600079A01 /* EntityPositionPacket.swift */; };
+		78052309261433A800079A01 /* UnlockRecipesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D9261433A600079A01 /* UnlockRecipesPacket.swift */; };
+		7805230A261433A800079A01 /* ExplosionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521DA261433A600079A01 /* ExplosionPacket.swift */; };
+		7805230B261433A800079A01 /* SpawnPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521DB261433A600079A01 /* SpawnPositionPacket.swift */; };
+		7805230C261433A800079A01 /* EntityEquipmentPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521DC261433A600079A01 /* EntityEquipmentPacket.swift */; };
+		7805230D261433A800079A01 /* TimeUpdatePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521DD261433A600079A01 /* TimeUpdatePacket.swift */; };
+		7805230E261433A800079A01 /* KeepAliveClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521DE261433A600079A01 /* KeepAliveClientboundPacket.swift */; };
+		7805230F261433A800079A01 /* EntityEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521DF261433A600079A01 /* EntityEffectPacket.swift */; };
+		78052310261433A800079A01 /* SpawnEntityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E0261433A600079A01 /* SpawnEntityPacket.swift */; };
+		78052311261433A800079A01 /* OpenSignEditorPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E1261433A600079A01 /* OpenSignEditorPacket.swift */; };
+		78052312261433A800079A01 /* EntityRotationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E2261433A600079A01 /* EntityRotationPacket.swift */; };
+		78052313261433A800079A01 /* DisplayScoreboardPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E3261433A600079A01 /* DisplayScoreboardPacket.swift */; };
+		78052314261433A800079A01 /* AdvancementsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E4261433A600079A01 /* AdvancementsPacket.swift */; };
+		78052315261433A800079A01 /* EntityStatusPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E5261433A600079A01 /* EntityStatusPacket.swift */; };
+		78052316261433A800079A01 /* RespawnPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E6261433A600079A01 /* RespawnPacket.swift */; };
+		78052317261433A800079A01 /* BlockChangePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E7261433A600079A01 /* BlockChangePacket.swift */; };
+		78052318261433A800079A01 /* CraftRecipeResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E8261433A600079A01 /* CraftRecipeResponsePacket.swift */; };
+		78052319261433A800079A01 /* TitlePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E9261433A600079A01 /* TitlePacket.swift */; };
+		7805231A261433A800079A01 /* SetPassengersPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521EA261433A600079A01 /* SetPassengersPacket.swift */; };
+		7805231B261433A800079A01 /* DeclareCommandsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521EB261433A600079A01 /* DeclareCommandsPacket.swift */; };
+		7805231C261433A800079A01 /* JoinGamePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521EC261433A600079A01 /* JoinGamePacket.swift */; };
+		7805231D261433A800079A01 /* AcknowledgePlayerDiggingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521ED261433A600079A01 /* AcknowledgePlayerDiggingPacket.swift */; };
+		7805231E261433A800079A01 /* SetSlotPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521EE261433A600079A01 /* SetSlotPacket.swift */; };
+		7805231F261433A800079A01 /* NamedSoundEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521EF261433A600079A01 /* NamedSoundEffectPacket.swift */; };
+		78052320261433A800079A01 /* SpawnPaintingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F0261433A600079A01 /* SpawnPaintingPacket.swift */; };
+		78052321261433A800079A01 /* ChatMessageClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F1261433A600079A01 /* ChatMessageClientboundPacket.swift */; };
+		78052322261433A800079A01 /* PlayerInfoPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F2261433A600079A01 /* PlayerInfoPacket.swift */; };
+		78052323261433A800079A01 /* EntityTeleportPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F3261433A600079A01 /* EntityTeleportPacket.swift */; };
+		78052324261433A800079A01 /* WorldBorderPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F4261433A600079A01 /* WorldBorderPacket.swift */; };
+		78052325261433A800079A01 /* SetCooldownPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F5261433A600079A01 /* SetCooldownPacket.swift */; };
+		78052326261433A800079A01 /* SpawnPlayerPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F6261433A600079A01 /* SpawnPlayerPacket.swift */; };
+		78052327261433A800079A01 /* ScoreboardObjectivePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F7261433A600079A01 /* ScoreboardObjectivePacket.swift */; };
+		78052328261433A800079A01 /* OpenHorseWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F8261433A600079A01 /* OpenHorseWindowPacket.swift */; };
+		78052329261433A800079A01 /* UpdateHealthPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F9261433A600079A01 /* UpdateHealthPacket.swift */; };
+		7805232A261433A800079A01 /* EntityAnimationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521FA261433A600079A01 /* EntityAnimationPacket.swift */; };
+		7805232B261433A800079A01 /* ResourcePackSendPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521FB261433A600079A01 /* ResourcePackSendPacket.swift */; };
+		7805232C261433A800079A01 /* FacePlayerPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521FC261433A600079A01 /* FacePlayerPacket.swift */; };
+		7805232D261433A800079A01 /* ChangeGameStatePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521FD261433A600079A01 /* ChangeGameStatePacket.swift */; };
+		7805232E261433A800079A01 /* BossBarPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521FE261433A600079A01 /* BossBarPacket.swift */; };
+		7805232F261433A800079A01 /* TabCompleteClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521FF261433A600079A01 /* TabCompleteClientboundPacket.swift */; };
+		78052330261433A800079A01 /* UpdateLightPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052200261433A600079A01 /* UpdateLightPacket.swift */; };
+		78052331261433A800079A01 /* BlockEntityDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052201261433A600079A01 /* BlockEntityDataPacket.swift */; };
+		78052332261433A800079A01 /* SoundEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052202261433A600079A01 /* SoundEffectPacket.swift */; };
+		78052333261433A800079A01 /* SelectAdvancementTabPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052203261433A600079A01 /* SelectAdvancementTabPacket.swift */; };
+		78052334261433A800079A01 /* CombatEventPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052204261433A600079A01 /* CombatEventPacket.swift */; };
+		78052335261433A800079A01 /* SetExperiencePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052205261433A600079A01 /* SetExperiencePacket.swift */; };
+		78052336261433A800079A01 /* ParticlePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052206261433A600079A01 /* ParticlePacket.swift */; };
+		78052337261433A800079A01 /* TeamsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052207261433A600079A01 /* TeamsPacket.swift */; };
+		78052338261433A800079A01 /* PlayerPositionAndLookClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052208261433A600079A01 /* PlayerPositionAndLookClientboundPacket.swift */; };
+		78052339261433A800079A01 /* VehicleMoveClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052209261433A700079A01 /* VehicleMoveClientboundPacket.swift */; };
+		7805233A261433A800079A01 /* UpdateScorePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805220A261433A700079A01 /* UpdateScorePacket.swift */; };
+		7805233B261433A800079A01 /* DestroyEntitiesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805220B261433A700079A01 /* DestroyEntitiesPacket.swift */; };
+		7805233C261433A800079A01 /* CloseWindowClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805220C261433A700079A01 /* CloseWindowClientboundPacket.swift */; };
+		7805233D261433A800079A01 /* PlayDisconnectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805220D261433A700079A01 /* PlayDisconnectPacket.swift */; };
+		7805233E261433A800079A01 /* PluginMessagePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805220E261433A700079A01 /* PluginMessagePacket.swift */; };
+		7805233F261433A800079A01 /* StopSoundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805220F261433A700079A01 /* StopSoundPacket.swift */; };
+		78052340261433A800079A01 /* HeldItemChangePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052210261433A700079A01 /* HeldItemChangePacket.swift */; };
+		78052341261433A800079A01 /* LoginStartPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052213261433A700079A01 /* LoginStartPacket.swift */; };
+		78052342261433A800079A01 /* LoginSuccessPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052215261433A700079A01 /* LoginSuccessPacket.swift */; };
+		78052343261433A800079A01 /* LoginDisconnectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052216261433A700079A01 /* LoginDisconnectPacket.swift */; };
+		78052344261433A800079A01 /* PacketReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052217261433A700079A01 /* PacketReader.swift */; };
+		78052345261433A800079A01 /* PacketState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052218261433A700079A01 /* PacketState.swift */; };
+		78052346261433A800079A01 /* PacketHandlingThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052219261433A700079A01 /* PacketHandlingThread.swift */; };
+		78052347261433A800079A01 /* blocks.json in Resources */ = {isa = PBXBuildFile; fileRef = 7805221B261433A700079A01 /* blocks.json */; };
+		78052348261433A800079A01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7805221C261433A700079A01 /* Assets.xcassets */; };
+		7805234A261433A800079A01 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052220261433A700079A01 /* Constants.swift */; };
+		7805234B261433A800079A01 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052221261433A700079A01 /* ConfigManager.swift */; };
+		7805234C261433A800079A01 /* CraftingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052224261433A700079A01 /* CraftingRecipe.swift */; };
+		7805234D261433A800079A01 /* CraftingShapeless.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052225261433A700079A01 /* CraftingShapeless.swift */; };
+		7805234E261433A800079A01 /* CraftingShaped.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052226261433A700079A01 /* CraftingShaped.swift */; };
+		7805234F261433A800079A01 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052227261433A700079A01 /* Item.swift */; };
+		78052350261433A800079A01 /* SmeltingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052228261433A700079A01 /* SmeltingRecipe.swift */; };
+		78052351261433A800079A01 /* StonecuttingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052229261433A700079A01 /* StonecuttingRecipe.swift */; };
+		78052352261433A800079A01 /* SmokingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805222A261433A700079A01 /* SmokingRecipe.swift */; };
+		78052353261433A800079A01 /* BannerDuplicateRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805222C261433A700079A01 /* BannerDuplicateRecipe.swift */; };
+		78052354261433A800079A01 /* BannerAddPatternRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805222D261433A700079A01 /* BannerAddPatternRecipe.swift */; };
+		78052355261433A800079A01 /* MapCloningRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805222E261433A700079A01 /* MapCloningRecipe.swift */; };
+		78052356261433A800079A01 /* FireworkStarFadeRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805222F261433A700079A01 /* FireworkStarFadeRecipe.swift */; };
+		78052357261433A800079A01 /* ArmorDyeRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052230261433A700079A01 /* ArmorDyeRecipe.swift */; };
+		78052358261433A800079A01 /* SuspiciousStewRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052231261433A700079A01 /* SuspiciousStewRecipe.swift */; };
+		78052359261433A800079A01 /* FireworkRocketRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052232261433A700079A01 /* FireworkRocketRecipe.swift */; };
+		7805235A261433A800079A01 /* BookCloningRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052233261433A700079A01 /* BookCloningRecipe.swift */; };
+		7805235B261433A800079A01 /* FireworkStarRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052234261433A700079A01 /* FireworkStarRecipe.swift */; };
+		7805235C261433A800079A01 /* MapExtendingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052235261433A700079A01 /* MapExtendingRecipe.swift */; };
+		7805235D261433A800079A01 /* ShulkerBoxColouringRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052236261433A700079A01 /* ShulkerBoxColouringRecipe.swift */; };
+		7805235E261433A800079A01 /* SpecialRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052237261433A700079A01 /* SpecialRecipe.swift */; };
+		7805235F261433A800079A01 /* TippedArrowRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052238261433A700079A01 /* TippedArrowRecipe.swift */; };
+		78052360261433A800079A01 /* RepairItemRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052239261433A700079A01 /* RepairItemRecipe.swift */; };
+		78052361261433A800079A01 /* ShieldDecorationRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805223A261433A700079A01 /* ShieldDecorationRecipe.swift */; };
+		78052362261433A800079A01 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805223B261433A700079A01 /* Ingredient.swift */; };
+		78052363261433A800079A01 /* SmithingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805223C261433A700079A01 /* SmithingRecipe.swift */; };
+		78052364261433A800079A01 /* CampfireCookingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805223D261433A700079A01 /* CampfireCookingRecipe.swift */; };
+		78052365261433A800079A01 /* BlastingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805223E261433A700079A01 /* BlastingRecipe.swift */; };
+		78052366261433A800079A01 /* HeatRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805223F261433A700079A01 /* HeatRecipe.swift */; };
+		78052367261433A800079A01 /* RecipeRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052240261433A700079A01 /* RecipeRegistry.swift */; };
+		78052368261433A800079A01 /* ChatStringComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052242261433A700079A01 /* ChatStringComponent.swift */; };
+		78052369261433A800079A01 /* ChatTranslateComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052243261433A700079A01 /* ChatTranslateComponent.swift */; };
+		7805236A261433A800079A01 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052244261433A700079A01 /* File.swift */; };
+		7805236B261433A800079A01 /* ChatComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052245261433A700079A01 /* ChatComponent.swift */; };
+		7805236C261433A800079A01 /* ChatScoreComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052246261433A700079A01 /* ChatScoreComponent.swift */; };
+		7805236D261433A800079A01 /* ChatStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052247261433A700079A01 /* ChatStyle.swift */; };
+		7805236E261433A800079A01 /* ChatKeybindComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052248261433A700079A01 /* ChatKeybindComponent.swift */; };
+		7805236F261433A800079A01 /* ChatComponentUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052249261433A700079A01 /* ChatComponentUtil.swift */; };
+		78052370261433A800079A01 /* EventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805224B261433A700079A01 /* EventManager.swift */; };
+		78052371261433A800079A01 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805224C261433A700079A01 /* Buffer.swift */; };
+		78052372261433A800079A01 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805224D261433A700079A01 /* Logger.swift */; };
+		78052373261433A800079A01 /* Equipment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805224F261433A700079A01 /* Equipment.swift */; };
+		78052374261433A800079A01 /* LauncherProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052250261433A700079A01 /* LauncherProfile.swift */; };
+		78052375261433A800079A01 /* NBTCompound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052251261433A700079A01 /* NBTCompound.swift */; };
+		78052376261433A800079A01 /* Gamemode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052252261433A700079A01 /* Gamemode.swift */; };
+		78052377261433A800079A01 /* CardinalDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052253261433A700079A01 /* CardinalDirection.swift */; };
+		78052378261433A800079A01 /* Axis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052254261433A700079A01 /* Axis.swift */; };
+		78052379261433A800079A01 /* ItemStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052255261433A700079A01 /* ItemStack.swift */; };
+		7805237A261433A800079A01 /* UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052256261433A700079A01 /* UUID.swift */; };
+		7805237B261433A800079A01 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052257261433A700079A01 /* JSON.swift */; };
+		7805237C261433A800079A01 /* Statistic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052258261433A700079A01 /* Statistic.swift */; };
+		7805237D261433A800079A01 /* CompactedLongArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052259261433A700079A01 /* CompactedLongArray.swift */; };
+		7805237E261433A800079A01 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805225A261433A700079A01 /* Position.swift */; };
+		7805237F261433A800079A01 /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805225B261433A700079A01 /* Difficulty.swift */; };
+		78052380261433A800079A01 /* Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805225C261433A700079A01 /* Identifier.swift */; };
+		78052381261433A800079A01 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805225D261433A700079A01 /* Direction.swift */; };
+		78052382261433A800079A01 /* Profiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805225E261433A700079A01 /* Profiler.swift */; };
+		78052383261433A800079A01 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805225F261433A700079A01 /* Stopwatch.swift */; };
+		78052384261433A800079A01 /* MatrixUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052260261433A700079A01 /* MatrixUtil.swift */; };
+		78052385261433A800079A01 /* chunkunpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 78052262261433A700079A01 /* chunkunpack.c */; };
+		78052386261433A800079A01 /* EntityVelocity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052266261433A700079A01 /* EntityVelocity.swift */; };
+		78052387261433A800079A01 /* EntityPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052267261433A700079A01 /* EntityPosition.swift */; };
+		78052388261433A800079A01 /* EntityRotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052268261433A700079A01 /* EntityRotation.swift */; };
+		78052389261433A800079A01 /* BlockEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052269261433A700079A01 /* BlockEntity.swift */; };
+		7805238A261433A800079A01 /* ChunkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805226B261433A700079A01 /* ChunkSection.swift */; };
+		7805238B261433A800079A01 /* ChunkPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805226C261433A700079A01 /* ChunkPosition.swift */; };
+		7805238C261433A800079A01 /* World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805226D261433A700079A01 /* World.swift */; };
+		7805238D261433A800079A01 /* WorldConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805226E261433A700079A01 /* WorldConfig.swift */; };
+		7805238E261433A800079A01 /* Chunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805226F261433A700079A01 /* Chunk.swift */; };
+		7805238F261433A800079A01 /* ChunkData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052270261433A700079A01 /* ChunkData.swift */; };
+		78052390261433A800079A01 /* PingInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052272261433A700079A01 /* PingInfo.swift */; };
+		78052391261433A800079A01 /* ServerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052273261433A700079A01 /* ServerList.swift */; };
+		78052392261433A800079A01 /* ServerPinger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052274261433A700079A01 /* ServerPinger.swift */; };
+		78052393261433A800079A01 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052275261433A700079A01 /* Server.swift */; };
+		78052394261433A800079A01 /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052276261433A700079A01 /* ServerConfig.swift */; };
+		78052395261433A800079A01 /* ServerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052277261433A700079A01 /* ServerInfo.swift */; };
+		78052396261433A800079A01 /* StartupSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052278261433A700079A01 /* StartupSequence.swift */; };
+		78052397261433A800079A01 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052279261433A700079A01 /* Client.swift */; };
+		78052398261433A800079A01 /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805227C261433A700079A01 /* Mesh.swift */; };
+		78052399261433A800079A01 /* CubeFaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805227D261433A700079A01 /* CubeFaces.swift */; };
+		7805239A261433A800079A01 /* Vertex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805227E261433A700079A01 /* Vertex.swift */; };
+		7805239B261433A800079A01 /* FaceDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805227F261433A700079A01 /* FaceDirection.swift */; };
+		7805239C261433A800079A01 /* RenderCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052280261433A700079A01 /* RenderCoordinator.swift */; };
+		7805239D261433A800079A01 /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052281261433A700079A01 /* MetalView.swift */; };
+		7805239E261433A800079A01 /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 78052282261433A700079A01 /* shaders.metal */; };
+		7805239F261433A800079A01 /* ChunkMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052283261433A700079A01 /* ChunkMesh.swift */; };
+		780523A0261433A800079A01 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052284261433A700079A01 /* Renderer.swift */; };
+		780523A1261433A800079A01 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052286261433A700079A01 /* StorageManager.swift */; };
+		780523A2261433A800079A01 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052287261433A700079A01 /* CacheManager.swift */; };
+		780523A3261433A800079A01 /* LocaleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052288261433A700079A01 /* LocaleManager.swift */; };
+		780523A4261433A800079A01 /* TextureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052289261433A700079A01 /* TextureManager.swift */; };
+		780523A5261433A800079A01 /* MinecraftLocale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805228A261433A700079A01 /* MinecraftLocale.swift */; };
+		780523A6261433A800079A01 /* Managers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805228B261433A700079A01 /* Managers.swift */; };
+		780523A7261433A800079A01 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805228C261433A700079A01 /* AssetManager.swift */; };
+		780523A8261433A800079A01 /* BlockPaletteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805228D261433A700079A01 /* BlockPaletteManager.swift */; };
+		780523A9261433A800079A01 /* BlockModel.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805228F261433A700079A01 /* BlockModel.pb.swift */; };
+		780523AC261433A800079A01 /* test.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052292261433A700079A01 /* test.pb.swift */; };
+		780523AD261433A800079A01 /* TabList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052293261433A700079A01 /* TabList.swift */; };
+		780523AE261433A800079A01 /* PlayerProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052294261433A700079A01 /* PlayerProperty.swift */; };
+		780523AF261433A800079A01 /* Hand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052296261433A700079A01 /* Hand.swift */; };
+		780523B0261433A800079A01 /* PlayerEntityAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052297261433A700079A01 /* PlayerEntityAction.swift */; };
+		780523B1261433A800079A01 /* PlayerRotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052298261433A700079A01 /* PlayerRotation.swift */; };
+		780523B2261433A800079A01 /* PlayerAbilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052299261433A700079A01 /* PlayerAbilities.swift */; };
+		780523B3261433A800079A01 /* DominantHand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229A261433A700079A01 /* DominantHand.swift */; };
+		780523B4261433A800079A01 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229B261433A700079A01 /* Player.swift */; };
+		780523B5261433A800079A01 /* PlayerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229C261433A700079A01 /* PlayerInfo.swift */; };
+		780523B6261433A800079A01 /* DeltaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229D261433A700079A01 /* DeltaClient.swift */; };
+		780523B7261433A800079A01 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A0261433A700079A01 /* AppView.swift */; };
+		780523B8261433A800079A01 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A1261433A700079A01 /* ViewState.swift */; };
+		780523B9261433A800079A01 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A2261433A700079A01 /* ServerDetailView.swift */; };
+		780523BA261433A800079A01 /* ServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A3261433A700079A01 /* ServerListView.swift */; };
+		780523BB261433A800079A01 /* ServerListEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A4261433A700079A01 /* ServerListEntryView.swift */; };
+		780523BC261433A800079A01 /* GameCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A5261433A700079A01 /* GameCommandView.swift */; };
+		780523BD261433A800079A01 /* GameRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A6261433A700079A01 /* GameRenderView.swift */; };
+		780523CF2614349200079A01 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 780523CE2614349200079A01 /* Preview Assets.xcassets */; };
+		7892880E261438A000F17DBB /* DeltaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A9261433A700079A01 /* DeltaClientTests.swift */; };
+		78928812261438A500F17DBB /* DeltaClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052170261433A600079A01 /* DeltaClientUITests.swift */; };
+		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		784194D5258204D10070DE78 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 784194AF258204CD0070DE78 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 784194B6258204CD0070DE78;
+			remoteInfo = Minecraft;
+		};
+		789288322614396300F17DBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 784194AF258204CD0070DE78 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 784194B6258204CD0070DE78;
+			remoteInfo = DeltaClient;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		78052170261433A600079A01 /* DeltaClientUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeltaClientUITests.swift; sourceTree = "<group>"; };
+		78052171261433A600079A01 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		78052174261433A600079A01 /* PacketRegistry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketRegistry.swift; sourceTree = "<group>"; };
+		78052175261433A600079A01 /* ClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientboundPacket.swift; sourceTree = "<group>"; };
+		78052176261433A600079A01 /* PacketWriter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketWriter.swift; sourceTree = "<group>"; };
+		78052177261433A600079A01 /* ServerConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerConnection.swift; sourceTree = "<group>"; };
+		78052178261433A600079A01 /* ConnectionState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
+		78052179261433A600079A01 /* ServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerboundPacket.swift; sourceTree = "<group>"; };
+		7805217D261433A600079A01 /* StatusRequestPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusRequestPacket.swift; sourceTree = "<group>"; };
+		7805217F261433A600079A01 /* StatusResponsePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusResponsePacket.swift; sourceTree = "<group>"; };
+		78052182261433A600079A01 /* HandshakePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandshakePacket.swift; sourceTree = "<group>"; };
+		78052185261433A600079A01 /* NameItemPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameItemPacket.swift; sourceTree = "<group>"; };
+		78052186261433A600079A01 /* UpdateJigsawBlockPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateJigsawBlockPacket.swift; sourceTree = "<group>"; };
+		78052187261433A600079A01 /* TeleportConfirmPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeleportConfirmPacket.swift; sourceTree = "<group>"; };
+		78052188261433A600079A01 /* ClickWindowButtonPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClickWindowButtonPacket.swift; sourceTree = "<group>"; };
+		78052189261433A600079A01 /* ChatMessageServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageServerboundPacket.swift; sourceTree = "<group>"; };
+		7805218A261433A600079A01 /* UpdateSignPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateSignPacket.swift; sourceTree = "<group>"; };
+		7805218B261433A600079A01 /* QueryEntityNBTPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryEntityNBTPacket.swift; sourceTree = "<group>"; };
+		7805218C261433A600079A01 /* ClickWindowPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClickWindowPacket.swift; sourceTree = "<group>"; };
+		7805218D261433A600079A01 /* PlayerDiggingPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerDiggingPacket.swift; sourceTree = "<group>"; };
+		7805218E261433A600079A01 /* AnimationServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationServerboundPacket.swift; sourceTree = "<group>"; };
+		7805218F261433A600079A01 /* SteerVehiclePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteerVehiclePacket.swift; sourceTree = "<group>"; };
+		78052190261433A600079A01 /* LockDifficultyPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockDifficultyPacket.swift; sourceTree = "<group>"; };
+		78052191261433A600079A01 /* PluginMessageServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PluginMessageServerboundPacket.swift; sourceTree = "<group>"; };
+		78052192261433A600079A01 /* SpectatePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpectatePacket.swift; sourceTree = "<group>"; };
+		78052193261433A600079A01 /* UpdateCommandBlockPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateCommandBlockPacket.swift; sourceTree = "<group>"; };
+		78052194261433A600079A01 /* TabCompleteServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabCompleteServerboundPacket.swift; sourceTree = "<group>"; };
+		78052195261433A600079A01 /* UpdateCommandBlockMinecartPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateCommandBlockMinecartPacket.swift; sourceTree = "<group>"; };
+		78052196261433A600079A01 /* QueryBlockNBTPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryBlockNBTPacket.swift; sourceTree = "<group>"; };
+		78052197261433A600079A01 /* ResourcePackStatusPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourcePackStatusPacket.swift; sourceTree = "<group>"; };
+		78052198261433A600079A01 /* SteerBoatPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteerBoatPacket.swift; sourceTree = "<group>"; };
+		78052199261433A600079A01 /* VehicleMoveServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VehicleMoveServerboundPacket.swift; sourceTree = "<group>"; };
+		7805219A261433A600079A01 /* ClientSettingsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientSettingsPacket.swift; sourceTree = "<group>"; };
+		7805219B261433A600079A01 /* UseItemPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UseItemPacket.swift; sourceTree = "<group>"; };
+		7805219C261433A600079A01 /* CloseWindowServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloseWindowServerboundPacket.swift; sourceTree = "<group>"; };
+		7805219D261433A600079A01 /* PickItemPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickItemPacket.swift; sourceTree = "<group>"; };
+		7805219E261433A600079A01 /* SetDifficultyPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetDifficultyPacket.swift; sourceTree = "<group>"; };
+		7805219F261433A600079A01 /* CreativeInventoryActionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreativeInventoryActionPacket.swift; sourceTree = "<group>"; };
+		780521A0261433A600079A01 /* WindowConfirmationServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowConfirmationServerboundPacket.swift; sourceTree = "<group>"; };
+		780521A1261433A600079A01 /* AdvancementTabPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdvancementTabPacket.swift; sourceTree = "<group>"; };
+		780521A2261433A600079A01 /* EntityActionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityActionPacket.swift; sourceTree = "<group>"; };
+		780521A3261433A600079A01 /* PlayerAbilitiesServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerAbilitiesServerboundPacket.swift; sourceTree = "<group>"; };
+		780521A4261433A600079A01 /* PlayerMovementPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerMovementPacket.swift; sourceTree = "<group>"; };
+		780521A5261433A600079A01 /* RecipeBookDataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecipeBookDataPacket.swift; sourceTree = "<group>"; };
+		780521A6261433A600079A01 /* GenerateStructurePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenerateStructurePacket.swift; sourceTree = "<group>"; };
+		780521A7261433A600079A01 /* PlayerBlockPlacementPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerBlockPlacementPacket.swift; sourceTree = "<group>"; };
+		780521A8261433A600079A01 /* ClientStatusPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientStatusPacket.swift; sourceTree = "<group>"; };
+		780521A9261433A600079A01 /* PlayerPositionAndRotationServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerPositionAndRotationServerboundPacket.swift; sourceTree = "<group>"; };
+		780521AA261433A600079A01 /* EditBookPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditBookPacket.swift; sourceTree = "<group>"; };
+		780521AB261433A600079A01 /* PlayerRotationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerRotationPacket.swift; sourceTree = "<group>"; };
+		780521AC261433A600079A01 /* PlayerPositionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerPositionPacket.swift; sourceTree = "<group>"; };
+		780521AD261433A600079A01 /* SelectTradePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectTradePacket.swift; sourceTree = "<group>"; };
+		780521AE261433A600079A01 /* InteractEntityPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InteractEntityPacket.swift; sourceTree = "<group>"; };
+		780521AF261433A600079A01 /* HeldItemChangeServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeldItemChangeServerboundPacket.swift; sourceTree = "<group>"; };
+		780521B0261433A600079A01 /* SetBeaconEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetBeaconEffectPacket.swift; sourceTree = "<group>"; };
+		780521B1261433A600079A01 /* KeepAliveServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeepAliveServerboundPacket.swift; sourceTree = "<group>"; };
+		780521B2261433A600079A01 /* CraftRecipeRequestPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftRecipeRequestPacket.swift; sourceTree = "<group>"; };
+		780521B3261433A600079A01 /* UpdateStructureBlockPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateStructureBlockPacket.swift; sourceTree = "<group>"; };
+		780521B5261433A600079A01 /* TradeListPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TradeListPacket.swift; sourceTree = "<group>"; };
+		780521B6261433A600079A01 /* TagsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsPacket.swift; sourceTree = "<group>"; };
+		780521B7261433A600079A01 /* WindowConfirmationClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowConfirmationClientboundPacket.swift; sourceTree = "<group>"; };
+		780521B8261433A600079A01 /* UpdateViewDistancePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateViewDistancePacket.swift; sourceTree = "<group>"; };
+		780521B9261433A600079A01 /* MultiBlockChangePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiBlockChangePacket.swift; sourceTree = "<group>"; };
+		780521BA261433A600079A01 /* SpawnLivingEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnLivingEntity.swift; sourceTree = "<group>"; };
+		780521BB261433A600079A01 /* EntityVelocityPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityVelocityPacket.swift; sourceTree = "<group>"; };
+		780521BC261433A600079A01 /* EntityHeadLookPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityHeadLookPacket.swift; sourceTree = "<group>"; };
+		780521BD261433A600079A01 /* CollectItemPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectItemPacket.swift; sourceTree = "<group>"; };
+		780521BE261433A600079A01 /* OpenWindowPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenWindowPacket.swift; sourceTree = "<group>"; };
+		780521BF261433A600079A01 /* PlayerAbilitiesPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerAbilitiesPacket.swift; sourceTree = "<group>"; };
+		780521C0261433A600079A01 /* EntityMovementPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityMovementPacket.swift; sourceTree = "<group>"; };
+		780521C1261433A600079A01 /* UpdateViewPositionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateViewPositionPacket.swift; sourceTree = "<group>"; };
+		780521C2261433A600079A01 /* NBTQueryResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBTQueryResponse.swift; sourceTree = "<group>"; };
+		780521C3261433A600079A01 /* RemoveEntityEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoveEntityEffectPacket.swift; sourceTree = "<group>"; };
+		780521C4261433A600079A01 /* OpenBookPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenBookPacket.swift; sourceTree = "<group>"; };
+		780521C5261433A600079A01 /* PlayerListHeaderAndFooterPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerListHeaderAndFooterPacket.swift; sourceTree = "<group>"; };
+		780521C6261433A600079A01 /* EntityMetadataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityMetadataPacket.swift; sourceTree = "<group>"; };
+		780521C7261433A600079A01 /* BlockBreakAnimationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockBreakAnimationPacket.swift; sourceTree = "<group>"; };
+		780521C8261433A600079A01 /* BlockActionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockActionPacket.swift; sourceTree = "<group>"; };
+		780521C9261433A600079A01 /* StatisticsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsPacket.swift; sourceTree = "<group>"; };
+		780521CA261433A600079A01 /* WindowItemsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowItemsPacket.swift; sourceTree = "<group>"; };
+		780521CB261433A600079A01 /* ChunkDataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkDataPacket.swift; sourceTree = "<group>"; };
+		780521CC261433A600079A01 /* UnloadChunkPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnloadChunkPacket.swift; sourceTree = "<group>"; };
+		780521CD261433A600079A01 /* EffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EffectPacket.swift; sourceTree = "<group>"; };
+		780521CE261433A600079A01 /* SpawnExperienceOrbPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnExperienceOrbPacket.swift; sourceTree = "<group>"; };
+		780521CF261433A600079A01 /* WindowPropertyPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowPropertyPacket.swift; sourceTree = "<group>"; };
+		780521D0261433A600079A01 /* MapDataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapDataPacket.swift; sourceTree = "<group>"; };
+		780521D1261433A600079A01 /* EntityPositionAndRotationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityPositionAndRotationPacket.swift; sourceTree = "<group>"; };
+		780521D2261433A600079A01 /* DeclareRecipesPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeclareRecipesPacket.swift; sourceTree = "<group>"; };
+		780521D3261433A600079A01 /* CameraPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraPacket.swift; sourceTree = "<group>"; };
+		780521D4261433A600079A01 /* EntityProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityProperties.swift; sourceTree = "<group>"; };
+		780521D5261433A600079A01 /* EntitySoundEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntitySoundEffectPacket.swift; sourceTree = "<group>"; };
+		780521D6261433A600079A01 /* ServerDifficultyPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDifficultyPacket.swift; sourceTree = "<group>"; };
+		780521D7261433A600079A01 /* AttachEntityPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachEntityPacket.swift; sourceTree = "<group>"; };
+		780521D8261433A600079A01 /* EntityPositionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityPositionPacket.swift; sourceTree = "<group>"; };
+		780521D9261433A600079A01 /* UnlockRecipesPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnlockRecipesPacket.swift; sourceTree = "<group>"; };
+		780521DA261433A600079A01 /* ExplosionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExplosionPacket.swift; sourceTree = "<group>"; };
+		780521DB261433A600079A01 /* SpawnPositionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnPositionPacket.swift; sourceTree = "<group>"; };
+		780521DC261433A600079A01 /* EntityEquipmentPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityEquipmentPacket.swift; sourceTree = "<group>"; };
+		780521DD261433A600079A01 /* TimeUpdatePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeUpdatePacket.swift; sourceTree = "<group>"; };
+		780521DE261433A600079A01 /* KeepAliveClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeepAliveClientboundPacket.swift; sourceTree = "<group>"; };
+		780521DF261433A600079A01 /* EntityEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityEffectPacket.swift; sourceTree = "<group>"; };
+		780521E0261433A600079A01 /* SpawnEntityPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnEntityPacket.swift; sourceTree = "<group>"; };
+		780521E1261433A600079A01 /* OpenSignEditorPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSignEditorPacket.swift; sourceTree = "<group>"; };
+		780521E2261433A600079A01 /* EntityRotationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityRotationPacket.swift; sourceTree = "<group>"; };
+		780521E3261433A600079A01 /* DisplayScoreboardPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayScoreboardPacket.swift; sourceTree = "<group>"; };
+		780521E4261433A600079A01 /* AdvancementsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdvancementsPacket.swift; sourceTree = "<group>"; };
+		780521E5261433A600079A01 /* EntityStatusPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityStatusPacket.swift; sourceTree = "<group>"; };
+		780521E6261433A600079A01 /* RespawnPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RespawnPacket.swift; sourceTree = "<group>"; };
+		780521E7261433A600079A01 /* BlockChangePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockChangePacket.swift; sourceTree = "<group>"; };
+		780521E8261433A600079A01 /* CraftRecipeResponsePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftRecipeResponsePacket.swift; sourceTree = "<group>"; };
+		780521E9261433A600079A01 /* TitlePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitlePacket.swift; sourceTree = "<group>"; };
+		780521EA261433A600079A01 /* SetPassengersPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetPassengersPacket.swift; sourceTree = "<group>"; };
+		780521EB261433A600079A01 /* DeclareCommandsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeclareCommandsPacket.swift; sourceTree = "<group>"; };
+		780521EC261433A600079A01 /* JoinGamePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JoinGamePacket.swift; sourceTree = "<group>"; };
+		780521ED261433A600079A01 /* AcknowledgePlayerDiggingPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AcknowledgePlayerDiggingPacket.swift; sourceTree = "<group>"; };
+		780521EE261433A600079A01 /* SetSlotPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetSlotPacket.swift; sourceTree = "<group>"; };
+		780521EF261433A600079A01 /* NamedSoundEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamedSoundEffectPacket.swift; sourceTree = "<group>"; };
+		780521F0261433A600079A01 /* SpawnPaintingPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnPaintingPacket.swift; sourceTree = "<group>"; };
+		780521F1261433A600079A01 /* ChatMessageClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageClientboundPacket.swift; sourceTree = "<group>"; };
+		780521F2261433A600079A01 /* PlayerInfoPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerInfoPacket.swift; sourceTree = "<group>"; };
+		780521F3261433A600079A01 /* EntityTeleportPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityTeleportPacket.swift; sourceTree = "<group>"; };
+		780521F4261433A600079A01 /* WorldBorderPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorldBorderPacket.swift; sourceTree = "<group>"; };
+		780521F5261433A600079A01 /* SetCooldownPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetCooldownPacket.swift; sourceTree = "<group>"; };
+		780521F6261433A600079A01 /* SpawnPlayerPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnPlayerPacket.swift; sourceTree = "<group>"; };
+		780521F7261433A600079A01 /* ScoreboardObjectivePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreboardObjectivePacket.swift; sourceTree = "<group>"; };
+		780521F8261433A600079A01 /* OpenHorseWindowPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenHorseWindowPacket.swift; sourceTree = "<group>"; };
+		780521F9261433A600079A01 /* UpdateHealthPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateHealthPacket.swift; sourceTree = "<group>"; };
+		780521FA261433A600079A01 /* EntityAnimationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityAnimationPacket.swift; sourceTree = "<group>"; };
+		780521FB261433A600079A01 /* ResourcePackSendPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourcePackSendPacket.swift; sourceTree = "<group>"; };
+		780521FC261433A600079A01 /* FacePlayerPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacePlayerPacket.swift; sourceTree = "<group>"; };
+		780521FD261433A600079A01 /* ChangeGameStatePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeGameStatePacket.swift; sourceTree = "<group>"; };
+		780521FE261433A600079A01 /* BossBarPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BossBarPacket.swift; sourceTree = "<group>"; };
+		780521FF261433A600079A01 /* TabCompleteClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabCompleteClientboundPacket.swift; sourceTree = "<group>"; };
+		78052200261433A600079A01 /* UpdateLightPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateLightPacket.swift; sourceTree = "<group>"; };
+		78052201261433A600079A01 /* BlockEntityDataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockEntityDataPacket.swift; sourceTree = "<group>"; };
+		78052202261433A600079A01 /* SoundEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundEffectPacket.swift; sourceTree = "<group>"; };
+		78052203261433A600079A01 /* SelectAdvancementTabPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectAdvancementTabPacket.swift; sourceTree = "<group>"; };
+		78052204261433A600079A01 /* CombatEventPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CombatEventPacket.swift; sourceTree = "<group>"; };
+		78052205261433A600079A01 /* SetExperiencePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetExperiencePacket.swift; sourceTree = "<group>"; };
+		78052206261433A600079A01 /* ParticlePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticlePacket.swift; sourceTree = "<group>"; };
+		78052207261433A600079A01 /* TeamsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamsPacket.swift; sourceTree = "<group>"; };
+		78052208261433A600079A01 /* PlayerPositionAndLookClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerPositionAndLookClientboundPacket.swift; sourceTree = "<group>"; };
+		78052209261433A700079A01 /* VehicleMoveClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VehicleMoveClientboundPacket.swift; sourceTree = "<group>"; };
+		7805220A261433A700079A01 /* UpdateScorePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateScorePacket.swift; sourceTree = "<group>"; };
+		7805220B261433A700079A01 /* DestroyEntitiesPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DestroyEntitiesPacket.swift; sourceTree = "<group>"; };
+		7805220C261433A700079A01 /* CloseWindowClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloseWindowClientboundPacket.swift; sourceTree = "<group>"; };
+		7805220D261433A700079A01 /* PlayDisconnectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayDisconnectPacket.swift; sourceTree = "<group>"; };
+		7805220E261433A700079A01 /* PluginMessagePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PluginMessagePacket.swift; sourceTree = "<group>"; };
+		7805220F261433A700079A01 /* StopSoundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StopSoundPacket.swift; sourceTree = "<group>"; };
+		78052210261433A700079A01 /* HeldItemChangePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeldItemChangePacket.swift; sourceTree = "<group>"; };
+		78052213261433A700079A01 /* LoginStartPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginStartPacket.swift; sourceTree = "<group>"; };
+		78052215261433A700079A01 /* LoginSuccessPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginSuccessPacket.swift; sourceTree = "<group>"; };
+		78052216261433A700079A01 /* LoginDisconnectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginDisconnectPacket.swift; sourceTree = "<group>"; };
+		78052217261433A700079A01 /* PacketReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketReader.swift; sourceTree = "<group>"; };
+		78052218261433A700079A01 /* PacketState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketState.swift; sourceTree = "<group>"; };
+		78052219261433A700079A01 /* PacketHandlingThread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketHandlingThread.swift; sourceTree = "<group>"; };
+		7805221B261433A700079A01 /* blocks.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = blocks.json; sourceTree = "<group>"; };
+		7805221C261433A700079A01 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		78052220261433A700079A01 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		78052221261433A700079A01 /* ConfigManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
+		78052224261433A700079A01 /* CraftingRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftingRecipe.swift; sourceTree = "<group>"; };
+		78052225261433A700079A01 /* CraftingShapeless.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftingShapeless.swift; sourceTree = "<group>"; };
+		78052226261433A700079A01 /* CraftingShaped.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftingShaped.swift; sourceTree = "<group>"; };
+		78052227261433A700079A01 /* Item.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		78052228261433A700079A01 /* SmeltingRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SmeltingRecipe.swift; sourceTree = "<group>"; };
+		78052229261433A700079A01 /* StonecuttingRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StonecuttingRecipe.swift; sourceTree = "<group>"; };
+		7805222A261433A700079A01 /* SmokingRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SmokingRecipe.swift; sourceTree = "<group>"; };
+		7805222C261433A700079A01 /* BannerDuplicateRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerDuplicateRecipe.swift; sourceTree = "<group>"; };
+		7805222D261433A700079A01 /* BannerAddPatternRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerAddPatternRecipe.swift; sourceTree = "<group>"; };
+		7805222E261433A700079A01 /* MapCloningRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapCloningRecipe.swift; sourceTree = "<group>"; };
+		7805222F261433A700079A01 /* FireworkStarFadeRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireworkStarFadeRecipe.swift; sourceTree = "<group>"; };
+		78052230261433A700079A01 /* ArmorDyeRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArmorDyeRecipe.swift; sourceTree = "<group>"; };
+		78052231261433A700079A01 /* SuspiciousStewRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuspiciousStewRecipe.swift; sourceTree = "<group>"; };
+		78052232261433A700079A01 /* FireworkRocketRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireworkRocketRecipe.swift; sourceTree = "<group>"; };
+		78052233261433A700079A01 /* BookCloningRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookCloningRecipe.swift; sourceTree = "<group>"; };
+		78052234261433A700079A01 /* FireworkStarRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireworkStarRecipe.swift; sourceTree = "<group>"; };
+		78052235261433A700079A01 /* MapExtendingRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapExtendingRecipe.swift; sourceTree = "<group>"; };
+		78052236261433A700079A01 /* ShulkerBoxColouringRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShulkerBoxColouringRecipe.swift; sourceTree = "<group>"; };
+		78052237261433A700079A01 /* SpecialRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpecialRecipe.swift; sourceTree = "<group>"; };
+		78052238261433A700079A01 /* TippedArrowRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TippedArrowRecipe.swift; sourceTree = "<group>"; };
+		78052239261433A700079A01 /* RepairItemRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepairItemRecipe.swift; sourceTree = "<group>"; };
+		7805223A261433A700079A01 /* ShieldDecorationRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShieldDecorationRecipe.swift; sourceTree = "<group>"; };
+		7805223B261433A700079A01 /* Ingredient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
+		7805223C261433A700079A01 /* SmithingRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SmithingRecipe.swift; sourceTree = "<group>"; };
+		7805223D261433A700079A01 /* CampfireCookingRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CampfireCookingRecipe.swift; sourceTree = "<group>"; };
+		7805223E261433A700079A01 /* BlastingRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlastingRecipe.swift; sourceTree = "<group>"; };
+		7805223F261433A700079A01 /* HeatRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeatRecipe.swift; sourceTree = "<group>"; };
+		78052240261433A700079A01 /* RecipeRegistry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecipeRegistry.swift; sourceTree = "<group>"; };
+		78052242261433A700079A01 /* ChatStringComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatStringComponent.swift; sourceTree = "<group>"; };
+		78052243261433A700079A01 /* ChatTranslateComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatTranslateComponent.swift; sourceTree = "<group>"; };
+		78052244261433A700079A01 /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		78052245261433A700079A01 /* ChatComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatComponent.swift; sourceTree = "<group>"; };
+		78052246261433A700079A01 /* ChatScoreComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatScoreComponent.swift; sourceTree = "<group>"; };
+		78052247261433A700079A01 /* ChatStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatStyle.swift; sourceTree = "<group>"; };
+		78052248261433A700079A01 /* ChatKeybindComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatKeybindComponent.swift; sourceTree = "<group>"; };
+		78052249261433A700079A01 /* ChatComponentUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatComponentUtil.swift; sourceTree = "<group>"; };
+		7805224B261433A700079A01 /* EventManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventManager.swift; sourceTree = "<group>"; };
+		7805224C261433A700079A01 /* Buffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
+		7805224D261433A700079A01 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		7805224F261433A700079A01 /* Equipment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Equipment.swift; sourceTree = "<group>"; };
+		78052250261433A700079A01 /* LauncherProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LauncherProfile.swift; sourceTree = "<group>"; };
+		78052251261433A700079A01 /* NBTCompound.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBTCompound.swift; sourceTree = "<group>"; };
+		78052252261433A700079A01 /* Gamemode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gamemode.swift; sourceTree = "<group>"; };
+		78052253261433A700079A01 /* CardinalDirection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardinalDirection.swift; sourceTree = "<group>"; };
+		78052254261433A700079A01 /* Axis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Axis.swift; sourceTree = "<group>"; };
+		78052255261433A700079A01 /* ItemStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemStack.swift; sourceTree = "<group>"; };
+		78052256261433A700079A01 /* UUID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UUID.swift; sourceTree = "<group>"; };
+		78052257261433A700079A01 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
+		78052258261433A700079A01 /* Statistic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Statistic.swift; sourceTree = "<group>"; };
+		78052259261433A700079A01 /* CompactedLongArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompactedLongArray.swift; sourceTree = "<group>"; };
+		7805225A261433A700079A01 /* Position.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
+		7805225B261433A700079A01 /* Difficulty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
+		7805225C261433A700079A01 /* Identifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Identifier.swift; sourceTree = "<group>"; };
+		7805225D261433A700079A01 /* Direction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
+		7805225E261433A700079A01 /* Profiler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Profiler.swift; sourceTree = "<group>"; };
+		7805225F261433A700079A01 /* Stopwatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
+		78052260261433A700079A01 /* MatrixUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MatrixUtil.swift; sourceTree = "<group>"; };
+		78052262261433A700079A01 /* chunkunpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = chunkunpack.c; sourceTree = "<group>"; };
+		78052263261433A700079A01 /* bridging-header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "bridging-header.h"; sourceTree = "<group>"; };
+		78052264261433A700079A01 /* chunkunpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chunkunpack.h; sourceTree = "<group>"; };
+		78052266261433A700079A01 /* EntityVelocity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityVelocity.swift; sourceTree = "<group>"; };
+		78052267261433A700079A01 /* EntityPosition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityPosition.swift; sourceTree = "<group>"; };
+		78052268261433A700079A01 /* EntityRotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityRotation.swift; sourceTree = "<group>"; };
+		78052269261433A700079A01 /* BlockEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockEntity.swift; sourceTree = "<group>"; };
+		7805226B261433A700079A01 /* ChunkSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkSection.swift; sourceTree = "<group>"; };
+		7805226C261433A700079A01 /* ChunkPosition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkPosition.swift; sourceTree = "<group>"; };
+		7805226D261433A700079A01 /* World.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = World.swift; sourceTree = "<group>"; };
+		7805226E261433A700079A01 /* WorldConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorldConfig.swift; sourceTree = "<group>"; };
+		7805226F261433A700079A01 /* Chunk.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chunk.swift; sourceTree = "<group>"; };
+		78052270261433A700079A01 /* ChunkData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkData.swift; sourceTree = "<group>"; };
+		78052272261433A700079A01 /* PingInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PingInfo.swift; sourceTree = "<group>"; };
+		78052273261433A700079A01 /* ServerList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerList.swift; sourceTree = "<group>"; };
+		78052274261433A700079A01 /* ServerPinger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerPinger.swift; sourceTree = "<group>"; };
+		78052275261433A700079A01 /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
+		78052276261433A700079A01 /* ServerConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerConfig.swift; sourceTree = "<group>"; };
+		78052277261433A700079A01 /* ServerInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerInfo.swift; sourceTree = "<group>"; };
+		78052278261433A700079A01 /* StartupSequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupSequence.swift; sourceTree = "<group>"; };
+		78052279261433A700079A01 /* Client.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		7805227C261433A700079A01 /* Mesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mesh.swift; sourceTree = "<group>"; };
+		7805227D261433A700079A01 /* CubeFaces.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CubeFaces.swift; sourceTree = "<group>"; };
+		7805227E261433A700079A01 /* Vertex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vertex.swift; sourceTree = "<group>"; };
+		7805227F261433A700079A01 /* FaceDirection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaceDirection.swift; sourceTree = "<group>"; };
+		78052280261433A700079A01 /* RenderCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenderCoordinator.swift; sourceTree = "<group>"; };
+		78052281261433A700079A01 /* MetalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
+		78052282261433A700079A01 /* shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = shaders.metal; sourceTree = "<group>"; };
+		78052283261433A700079A01 /* ChunkMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkMesh.swift; sourceTree = "<group>"; };
+		78052284261433A700079A01 /* Renderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		78052286261433A700079A01 /* StorageManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		78052287261433A700079A01 /* CacheManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
+		78052288261433A700079A01 /* LocaleManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocaleManager.swift; sourceTree = "<group>"; };
+		78052289261433A700079A01 /* TextureManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextureManager.swift; sourceTree = "<group>"; };
+		7805228A261433A700079A01 /* MinecraftLocale.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MinecraftLocale.swift; sourceTree = "<group>"; };
+		7805228B261433A700079A01 /* Managers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Managers.swift; sourceTree = "<group>"; };
+		7805228C261433A700079A01 /* AssetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
+		7805228D261433A700079A01 /* BlockPaletteManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockPaletteManager.swift; sourceTree = "<group>"; };
+		7805228F261433A700079A01 /* BlockModel.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockModel.pb.swift; sourceTree = "<group>"; };
+		78052290261433A700079A01 /* BlockModel.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = BlockModel.proto; sourceTree = "<group>"; };
+		78052291261433A700079A01 /* test.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = test.proto; sourceTree = "<group>"; };
+		78052292261433A700079A01 /* test.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = test.pb.swift; sourceTree = "<group>"; };
+		78052293261433A700079A01 /* TabList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabList.swift; sourceTree = "<group>"; };
+		78052294261433A700079A01 /* PlayerProperty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerProperty.swift; sourceTree = "<group>"; };
+		78052296261433A700079A01 /* Hand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hand.swift; sourceTree = "<group>"; };
+		78052297261433A700079A01 /* PlayerEntityAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerEntityAction.swift; sourceTree = "<group>"; };
+		78052298261433A700079A01 /* PlayerRotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerRotation.swift; sourceTree = "<group>"; };
+		78052299261433A700079A01 /* PlayerAbilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerAbilities.swift; sourceTree = "<group>"; };
+		7805229A261433A700079A01 /* DominantHand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DominantHand.swift; sourceTree = "<group>"; };
+		7805229B261433A700079A01 /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		7805229C261433A700079A01 /* PlayerInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerInfo.swift; sourceTree = "<group>"; };
+		7805229D261433A700079A01 /* DeltaClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeltaClient.swift; sourceTree = "<group>"; };
+		7805229E261433A700079A01 /* DeltaClient.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = DeltaClient.entitlements; sourceTree = "<group>"; };
+		780522A0261433A700079A01 /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
+		780522A1261433A700079A01 /* ViewState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
+		780522A2261433A700079A01 /* ServerDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
+		780522A3261433A700079A01 /* ServerListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
+		780522A4261433A700079A01 /* ServerListEntryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerListEntryView.swift; sourceTree = "<group>"; };
+		780522A5261433A700079A01 /* GameCommandView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameCommandView.swift; sourceTree = "<group>"; };
+		780522A6261433A700079A01 /* GameRenderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameRenderView.swift; sourceTree = "<group>"; };
+		780522A7261433A700079A01 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		780522A9261433A700079A01 /* DeltaClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeltaClientTests.swift; sourceTree = "<group>"; };
+		780522AA261433A700079A01 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		780523CE2614349200079A01 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		784194B7258204CD0070DE78 /* DeltaClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		784194C9258204D10070DE78 /* DeltaClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		784194D4258204D10070DE78 /* DeltaClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		784194B4258204CD0070DE78 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				78B6A1EB25FC588000CFE493 /* Zip in Frameworks */,
+				7802C1AF261097F00068E8A1 /* SwiftProtobuf in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		784194C6258204D10070DE78 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		784194D1258204D10070DE78 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7805216F261433A600079A01 /* DeltaClientUITests */ = {
+			isa = PBXGroup;
+			children = (
+				78052170261433A600079A01 /* DeltaClientUITests.swift */,
+				78052171261433A600079A01 /* Info.plist */,
+			);
+			path = DeltaClientUITests;
+			sourceTree = "<group>";
+		};
+		78052172261433A600079A01 /* DeltaClient */ = {
+			isa = PBXGroup;
+			children = (
+				7805229D261433A700079A01 /* DeltaClient.swift */,
+				7805229F261433A700079A01 /* Views */,
+				7805221F261433A700079A01 /* DeltaClient */,
+				78052173261433A600079A01 /* Networking */,
+				7805221A261433A700079A01 /* Resources */,
+				780523CD2614349200079A01 /* Preview Content */,
+				780522A7261433A700079A01 /* Info.plist */,
+				7805221C261433A700079A01 /* Assets.xcassets */,
+				7805229E261433A700079A01 /* DeltaClient.entitlements */,
+			);
+			path = DeltaClient;
+			sourceTree = "<group>";
+		};
+		78052173261433A600079A01 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				7805217A261433A600079A01 /* Packets */,
+				78052177261433A600079A01 /* ServerConnection.swift */,
+				78052178261433A600079A01 /* ConnectionState.swift */,
+				78052218261433A700079A01 /* PacketState.swift */,
+				78052217261433A700079A01 /* PacketReader.swift */,
+				78052176261433A600079A01 /* PacketWriter.swift */,
+				78052175261433A600079A01 /* ClientboundPacket.swift */,
+				78052179261433A600079A01 /* ServerboundPacket.swift */,
+				78052219261433A700079A01 /* PacketHandlingThread.swift */,
+				78052174261433A600079A01 /* PacketRegistry.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		7805217A261433A600079A01 /* Packets */ = {
+			isa = PBXGroup;
+			children = (
+				78052180261433A600079A01 /* Handshaking */,
+				7805217B261433A600079A01 /* Status */,
+				78052211261433A700079A01 /* Login */,
+				78052183261433A600079A01 /* Play */,
+			);
+			path = Packets;
+			sourceTree = "<group>";
+		};
+		7805217B261433A600079A01 /* Status */ = {
+			isa = PBXGroup;
+			children = (
+				7805217E261433A600079A01 /* Clientbound */,
+				7805217C261433A600079A01 /* Serverbound */,
+			);
+			path = Status;
+			sourceTree = "<group>";
+		};
+		7805217C261433A600079A01 /* Serverbound */ = {
+			isa = PBXGroup;
+			children = (
+				7805217D261433A600079A01 /* StatusRequestPacket.swift */,
+			);
+			path = Serverbound;
+			sourceTree = "<group>";
+		};
+		7805217E261433A600079A01 /* Clientbound */ = {
+			isa = PBXGroup;
+			children = (
+				7805217F261433A600079A01 /* StatusResponsePacket.swift */,
+			);
+			path = Clientbound;
+			sourceTree = "<group>";
+		};
+		78052180261433A600079A01 /* Handshaking */ = {
+			isa = PBXGroup;
+			children = (
+				78052181261433A600079A01 /* Serverbound */,
+			);
+			path = Handshaking;
+			sourceTree = "<group>";
+		};
+		78052181261433A600079A01 /* Serverbound */ = {
+			isa = PBXGroup;
+			children = (
+				78052182261433A600079A01 /* HandshakePacket.swift */,
+			);
+			path = Serverbound;
+			sourceTree = "<group>";
+		};
+		78052183261433A600079A01 /* Play */ = {
+			isa = PBXGroup;
+			children = (
+				780521B4261433A600079A01 /* Clientbound */,
+				78052184261433A600079A01 /* Serverbound */,
+			);
+			path = Play;
+			sourceTree = "<group>";
+		};
+		78052184261433A600079A01 /* Serverbound */ = {
+			isa = PBXGroup;
+			children = (
+				78052185261433A600079A01 /* NameItemPacket.swift */,
+				78052186261433A600079A01 /* UpdateJigsawBlockPacket.swift */,
+				78052187261433A600079A01 /* TeleportConfirmPacket.swift */,
+				78052188261433A600079A01 /* ClickWindowButtonPacket.swift */,
+				78052189261433A600079A01 /* ChatMessageServerboundPacket.swift */,
+				7805218A261433A600079A01 /* UpdateSignPacket.swift */,
+				7805218B261433A600079A01 /* QueryEntityNBTPacket.swift */,
+				7805218C261433A600079A01 /* ClickWindowPacket.swift */,
+				7805218D261433A600079A01 /* PlayerDiggingPacket.swift */,
+				7805218E261433A600079A01 /* AnimationServerboundPacket.swift */,
+				7805218F261433A600079A01 /* SteerVehiclePacket.swift */,
+				78052190261433A600079A01 /* LockDifficultyPacket.swift */,
+				78052191261433A600079A01 /* PluginMessageServerboundPacket.swift */,
+				78052192261433A600079A01 /* SpectatePacket.swift */,
+				78052193261433A600079A01 /* UpdateCommandBlockPacket.swift */,
+				78052194261433A600079A01 /* TabCompleteServerboundPacket.swift */,
+				78052195261433A600079A01 /* UpdateCommandBlockMinecartPacket.swift */,
+				78052196261433A600079A01 /* QueryBlockNBTPacket.swift */,
+				78052197261433A600079A01 /* ResourcePackStatusPacket.swift */,
+				78052198261433A600079A01 /* SteerBoatPacket.swift */,
+				78052199261433A600079A01 /* VehicleMoveServerboundPacket.swift */,
+				7805219A261433A600079A01 /* ClientSettingsPacket.swift */,
+				7805219B261433A600079A01 /* UseItemPacket.swift */,
+				7805219C261433A600079A01 /* CloseWindowServerboundPacket.swift */,
+				7805219D261433A600079A01 /* PickItemPacket.swift */,
+				7805219E261433A600079A01 /* SetDifficultyPacket.swift */,
+				7805219F261433A600079A01 /* CreativeInventoryActionPacket.swift */,
+				780521A0261433A600079A01 /* WindowConfirmationServerboundPacket.swift */,
+				780521A1261433A600079A01 /* AdvancementTabPacket.swift */,
+				780521A2261433A600079A01 /* EntityActionPacket.swift */,
+				780521A3261433A600079A01 /* PlayerAbilitiesServerboundPacket.swift */,
+				780521A4261433A600079A01 /* PlayerMovementPacket.swift */,
+				780521A5261433A600079A01 /* RecipeBookDataPacket.swift */,
+				780521A6261433A600079A01 /* GenerateStructurePacket.swift */,
+				780521A7261433A600079A01 /* PlayerBlockPlacementPacket.swift */,
+				780521A8261433A600079A01 /* ClientStatusPacket.swift */,
+				780521A9261433A600079A01 /* PlayerPositionAndRotationServerboundPacket.swift */,
+				780521AA261433A600079A01 /* EditBookPacket.swift */,
+				780521AB261433A600079A01 /* PlayerRotationPacket.swift */,
+				780521AC261433A600079A01 /* PlayerPositionPacket.swift */,
+				780521AD261433A600079A01 /* SelectTradePacket.swift */,
+				780521AE261433A600079A01 /* InteractEntityPacket.swift */,
+				780521AF261433A600079A01 /* HeldItemChangeServerboundPacket.swift */,
+				780521B0261433A600079A01 /* SetBeaconEffectPacket.swift */,
+				780521B1261433A600079A01 /* KeepAliveServerboundPacket.swift */,
+				780521B2261433A600079A01 /* CraftRecipeRequestPacket.swift */,
+				780521B3261433A600079A01 /* UpdateStructureBlockPacket.swift */,
+			);
+			path = Serverbound;
+			sourceTree = "<group>";
+		};
+		780521B4261433A600079A01 /* Clientbound */ = {
+			isa = PBXGroup;
+			children = (
+				780521B5261433A600079A01 /* TradeListPacket.swift */,
+				780521B6261433A600079A01 /* TagsPacket.swift */,
+				780521B7261433A600079A01 /* WindowConfirmationClientboundPacket.swift */,
+				780521B8261433A600079A01 /* UpdateViewDistancePacket.swift */,
+				780521B9261433A600079A01 /* MultiBlockChangePacket.swift */,
+				780521BA261433A600079A01 /* SpawnLivingEntity.swift */,
+				780521BB261433A600079A01 /* EntityVelocityPacket.swift */,
+				780521BC261433A600079A01 /* EntityHeadLookPacket.swift */,
+				780521BD261433A600079A01 /* CollectItemPacket.swift */,
+				780521BE261433A600079A01 /* OpenWindowPacket.swift */,
+				780521BF261433A600079A01 /* PlayerAbilitiesPacket.swift */,
+				780521C0261433A600079A01 /* EntityMovementPacket.swift */,
+				780521C1261433A600079A01 /* UpdateViewPositionPacket.swift */,
+				780521C2261433A600079A01 /* NBTQueryResponse.swift */,
+				780521C3261433A600079A01 /* RemoveEntityEffectPacket.swift */,
+				780521C4261433A600079A01 /* OpenBookPacket.swift */,
+				780521C5261433A600079A01 /* PlayerListHeaderAndFooterPacket.swift */,
+				780521C6261433A600079A01 /* EntityMetadataPacket.swift */,
+				780521C7261433A600079A01 /* BlockBreakAnimationPacket.swift */,
+				780521C8261433A600079A01 /* BlockActionPacket.swift */,
+				780521C9261433A600079A01 /* StatisticsPacket.swift */,
+				780521CA261433A600079A01 /* WindowItemsPacket.swift */,
+				780521CB261433A600079A01 /* ChunkDataPacket.swift */,
+				780521CC261433A600079A01 /* UnloadChunkPacket.swift */,
+				780521CD261433A600079A01 /* EffectPacket.swift */,
+				780521CE261433A600079A01 /* SpawnExperienceOrbPacket.swift */,
+				780521CF261433A600079A01 /* WindowPropertyPacket.swift */,
+				780521D0261433A600079A01 /* MapDataPacket.swift */,
+				780521D1261433A600079A01 /* EntityPositionAndRotationPacket.swift */,
+				780521D2261433A600079A01 /* DeclareRecipesPacket.swift */,
+				780521D3261433A600079A01 /* CameraPacket.swift */,
+				780521D4261433A600079A01 /* EntityProperties.swift */,
+				780521D5261433A600079A01 /* EntitySoundEffectPacket.swift */,
+				780521D6261433A600079A01 /* ServerDifficultyPacket.swift */,
+				780521D7261433A600079A01 /* AttachEntityPacket.swift */,
+				780521D8261433A600079A01 /* EntityPositionPacket.swift */,
+				780521D9261433A600079A01 /* UnlockRecipesPacket.swift */,
+				780521DA261433A600079A01 /* ExplosionPacket.swift */,
+				780521DB261433A600079A01 /* SpawnPositionPacket.swift */,
+				780521DC261433A600079A01 /* EntityEquipmentPacket.swift */,
+				780521DD261433A600079A01 /* TimeUpdatePacket.swift */,
+				780521DE261433A600079A01 /* KeepAliveClientboundPacket.swift */,
+				780521DF261433A600079A01 /* EntityEffectPacket.swift */,
+				780521E0261433A600079A01 /* SpawnEntityPacket.swift */,
+				780521E1261433A600079A01 /* OpenSignEditorPacket.swift */,
+				780521E2261433A600079A01 /* EntityRotationPacket.swift */,
+				780521E3261433A600079A01 /* DisplayScoreboardPacket.swift */,
+				780521E4261433A600079A01 /* AdvancementsPacket.swift */,
+				780521E5261433A600079A01 /* EntityStatusPacket.swift */,
+				780521E6261433A600079A01 /* RespawnPacket.swift */,
+				780521E7261433A600079A01 /* BlockChangePacket.swift */,
+				780521E8261433A600079A01 /* CraftRecipeResponsePacket.swift */,
+				780521E9261433A600079A01 /* TitlePacket.swift */,
+				780521EA261433A600079A01 /* SetPassengersPacket.swift */,
+				780521EB261433A600079A01 /* DeclareCommandsPacket.swift */,
+				780521EC261433A600079A01 /* JoinGamePacket.swift */,
+				780521ED261433A600079A01 /* AcknowledgePlayerDiggingPacket.swift */,
+				780521EE261433A600079A01 /* SetSlotPacket.swift */,
+				780521EF261433A600079A01 /* NamedSoundEffectPacket.swift */,
+				780521F0261433A600079A01 /* SpawnPaintingPacket.swift */,
+				780521F1261433A600079A01 /* ChatMessageClientboundPacket.swift */,
+				780521F2261433A600079A01 /* PlayerInfoPacket.swift */,
+				780521F3261433A600079A01 /* EntityTeleportPacket.swift */,
+				780521F4261433A600079A01 /* WorldBorderPacket.swift */,
+				780521F5261433A600079A01 /* SetCooldownPacket.swift */,
+				780521F6261433A600079A01 /* SpawnPlayerPacket.swift */,
+				780521F7261433A600079A01 /* ScoreboardObjectivePacket.swift */,
+				780521F8261433A600079A01 /* OpenHorseWindowPacket.swift */,
+				780521F9261433A600079A01 /* UpdateHealthPacket.swift */,
+				780521FA261433A600079A01 /* EntityAnimationPacket.swift */,
+				780521FB261433A600079A01 /* ResourcePackSendPacket.swift */,
+				780521FC261433A600079A01 /* FacePlayerPacket.swift */,
+				780521FD261433A600079A01 /* ChangeGameStatePacket.swift */,
+				780521FE261433A600079A01 /* BossBarPacket.swift */,
+				780521FF261433A600079A01 /* TabCompleteClientboundPacket.swift */,
+				78052200261433A600079A01 /* UpdateLightPacket.swift */,
+				78052201261433A600079A01 /* BlockEntityDataPacket.swift */,
+				78052202261433A600079A01 /* SoundEffectPacket.swift */,
+				78052203261433A600079A01 /* SelectAdvancementTabPacket.swift */,
+				78052204261433A600079A01 /* CombatEventPacket.swift */,
+				78052205261433A600079A01 /* SetExperiencePacket.swift */,
+				78052206261433A600079A01 /* ParticlePacket.swift */,
+				78052207261433A600079A01 /* TeamsPacket.swift */,
+				78052208261433A600079A01 /* PlayerPositionAndLookClientboundPacket.swift */,
+				78052209261433A700079A01 /* VehicleMoveClientboundPacket.swift */,
+				7805220A261433A700079A01 /* UpdateScorePacket.swift */,
+				7805220B261433A700079A01 /* DestroyEntitiesPacket.swift */,
+				7805220C261433A700079A01 /* CloseWindowClientboundPacket.swift */,
+				7805220D261433A700079A01 /* PlayDisconnectPacket.swift */,
+				7805220E261433A700079A01 /* PluginMessagePacket.swift */,
+				7805220F261433A700079A01 /* StopSoundPacket.swift */,
+				78052210261433A700079A01 /* HeldItemChangePacket.swift */,
+			);
+			path = Clientbound;
+			sourceTree = "<group>";
+		};
+		78052211261433A700079A01 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				78052212261433A700079A01 /* Serverbound */,
+				78052214261433A700079A01 /* Clientbound */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		78052212261433A700079A01 /* Serverbound */ = {
+			isa = PBXGroup;
+			children = (
+				78052213261433A700079A01 /* LoginStartPacket.swift */,
+			);
+			path = Serverbound;
+			sourceTree = "<group>";
+		};
+		78052214261433A700079A01 /* Clientbound */ = {
+			isa = PBXGroup;
+			children = (
+				78052215261433A700079A01 /* LoginSuccessPacket.swift */,
+				78052216261433A700079A01 /* LoginDisconnectPacket.swift */,
+			);
+			path = Clientbound;
+			sourceTree = "<group>";
+		};
+		7805221A261433A700079A01 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				7805221B261433A700079A01 /* blocks.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		7805221F261433A700079A01 /* DeltaClient */ = {
+			isa = PBXGroup;
+			children = (
+				78052271261433A700079A01 /* Server */,
+				7805226A261433A700079A01 /* World */,
+				78052265261433A700079A01 /* Entity */,
+				78052295261433A700079A01 /* Player */,
+				7805227A261433A700079A01 /* Rendering */,
+				78052285261433A700079A01 /* Data */,
+				78052241261433A700079A01 /* Chat */,
+				78052222261433A700079A01 /* Registries */,
+				7805224A261433A700079A01 /* Util */,
+				78052220261433A700079A01 /* Constants.swift */,
+				78052221261433A700079A01 /* ConfigManager.swift */,
+				78052278261433A700079A01 /* StartupSequence.swift */,
+				78052279261433A700079A01 /* Client.swift */,
+				78052293261433A700079A01 /* TabList.swift */,
+				78052294261433A700079A01 /* PlayerProperty.swift */,
+				7805229C261433A700079A01 /* PlayerInfo.swift */,
+			);
+			path = DeltaClient;
+			sourceTree = "<group>";
+		};
+		78052222261433A700079A01 /* Registries */ = {
+			isa = PBXGroup;
+			children = (
+				78052223261433A700079A01 /* Recipes */,
+				78052240261433A700079A01 /* RecipeRegistry.swift */,
+			);
+			path = Registries;
+			sourceTree = "<group>";
+		};
+		78052223261433A700079A01 /* Recipes */ = {
+			isa = PBXGroup;
+			children = (
+				7805222B261433A700079A01 /* SpecialCrafting */,
+				78052224261433A700079A01 /* CraftingRecipe.swift */,
+				78052225261433A700079A01 /* CraftingShapeless.swift */,
+				78052226261433A700079A01 /* CraftingShaped.swift */,
+				78052227261433A700079A01 /* Item.swift */,
+				78052228261433A700079A01 /* SmeltingRecipe.swift */,
+				78052229261433A700079A01 /* StonecuttingRecipe.swift */,
+				7805222A261433A700079A01 /* SmokingRecipe.swift */,
+				7805223B261433A700079A01 /* Ingredient.swift */,
+				7805223C261433A700079A01 /* SmithingRecipe.swift */,
+				7805223D261433A700079A01 /* CampfireCookingRecipe.swift */,
+				7805223E261433A700079A01 /* BlastingRecipe.swift */,
+				7805223F261433A700079A01 /* HeatRecipe.swift */,
+			);
+			path = Recipes;
+			sourceTree = "<group>";
+		};
+		7805222B261433A700079A01 /* SpecialCrafting */ = {
+			isa = PBXGroup;
+			children = (
+				7805222C261433A700079A01 /* BannerDuplicateRecipe.swift */,
+				7805222D261433A700079A01 /* BannerAddPatternRecipe.swift */,
+				7805222E261433A700079A01 /* MapCloningRecipe.swift */,
+				7805222F261433A700079A01 /* FireworkStarFadeRecipe.swift */,
+				78052230261433A700079A01 /* ArmorDyeRecipe.swift */,
+				78052231261433A700079A01 /* SuspiciousStewRecipe.swift */,
+				78052232261433A700079A01 /* FireworkRocketRecipe.swift */,
+				78052233261433A700079A01 /* BookCloningRecipe.swift */,
+				78052234261433A700079A01 /* FireworkStarRecipe.swift */,
+				78052235261433A700079A01 /* MapExtendingRecipe.swift */,
+				78052236261433A700079A01 /* ShulkerBoxColouringRecipe.swift */,
+				78052237261433A700079A01 /* SpecialRecipe.swift */,
+				78052238261433A700079A01 /* TippedArrowRecipe.swift */,
+				78052239261433A700079A01 /* RepairItemRecipe.swift */,
+				7805223A261433A700079A01 /* ShieldDecorationRecipe.swift */,
+			);
+			path = SpecialCrafting;
+			sourceTree = "<group>";
+		};
+		78052241261433A700079A01 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				78052242261433A700079A01 /* ChatStringComponent.swift */,
+				78052243261433A700079A01 /* ChatTranslateComponent.swift */,
+				78052244261433A700079A01 /* File.swift */,
+				78052245261433A700079A01 /* ChatComponent.swift */,
+				78052246261433A700079A01 /* ChatScoreComponent.swift */,
+				78052247261433A700079A01 /* ChatStyle.swift */,
+				78052248261433A700079A01 /* ChatKeybindComponent.swift */,
+				78052249261433A700079A01 /* ChatComponentUtil.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		7805224A261433A700079A01 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				7805224B261433A700079A01 /* EventManager.swift */,
+				7805224C261433A700079A01 /* Buffer.swift */,
+				7805224D261433A700079A01 /* Logger.swift */,
+				7805224E261433A700079A01 /* Datatypes */,
+				7805225E261433A700079A01 /* Profiler.swift */,
+				7805225F261433A700079A01 /* Stopwatch.swift */,
+				78052260261433A700079A01 /* MatrixUtil.swift */,
+				78052261261433A700079A01 /* C */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		7805224E261433A700079A01 /* Datatypes */ = {
+			isa = PBXGroup;
+			children = (
+				7805224F261433A700079A01 /* Equipment.swift */,
+				78052250261433A700079A01 /* LauncherProfile.swift */,
+				78052251261433A700079A01 /* NBTCompound.swift */,
+				78052252261433A700079A01 /* Gamemode.swift */,
+				78052253261433A700079A01 /* CardinalDirection.swift */,
+				78052254261433A700079A01 /* Axis.swift */,
+				78052255261433A700079A01 /* ItemStack.swift */,
+				78052256261433A700079A01 /* UUID.swift */,
+				78052257261433A700079A01 /* JSON.swift */,
+				78052258261433A700079A01 /* Statistic.swift */,
+				78052259261433A700079A01 /* CompactedLongArray.swift */,
+				7805225A261433A700079A01 /* Position.swift */,
+				7805225B261433A700079A01 /* Difficulty.swift */,
+				7805225C261433A700079A01 /* Identifier.swift */,
+				7805225D261433A700079A01 /* Direction.swift */,
+			);
+			path = Datatypes;
+			sourceTree = "<group>";
+		};
+		78052261261433A700079A01 /* C */ = {
+			isa = PBXGroup;
+			children = (
+				78052262261433A700079A01 /* chunkunpack.c */,
+				78052263261433A700079A01 /* bridging-header.h */,
+				78052264261433A700079A01 /* chunkunpack.h */,
+			);
+			path = C;
+			sourceTree = "<group>";
+		};
+		78052265261433A700079A01 /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				78052266261433A700079A01 /* EntityVelocity.swift */,
+				78052267261433A700079A01 /* EntityPosition.swift */,
+				78052268261433A700079A01 /* EntityRotation.swift */,
+				78052269261433A700079A01 /* BlockEntity.swift */,
+			);
+			path = Entity;
+			sourceTree = "<group>";
+		};
+		7805226A261433A700079A01 /* World */ = {
+			isa = PBXGroup;
+			children = (
+				7805226B261433A700079A01 /* ChunkSection.swift */,
+				7805226C261433A700079A01 /* ChunkPosition.swift */,
+				7805226D261433A700079A01 /* World.swift */,
+				7805226E261433A700079A01 /* WorldConfig.swift */,
+				7805226F261433A700079A01 /* Chunk.swift */,
+				78052270261433A700079A01 /* ChunkData.swift */,
+			);
+			path = World;
+			sourceTree = "<group>";
+		};
+		78052271261433A700079A01 /* Server */ = {
+			isa = PBXGroup;
+			children = (
+				78052272261433A700079A01 /* PingInfo.swift */,
+				78052273261433A700079A01 /* ServerList.swift */,
+				78052274261433A700079A01 /* ServerPinger.swift */,
+				78052275261433A700079A01 /* Server.swift */,
+				78052276261433A700079A01 /* ServerConfig.swift */,
+				78052277261433A700079A01 /* ServerInfo.swift */,
+			);
+			path = Server;
+			sourceTree = "<group>";
+		};
+		7805227A261433A700079A01 /* Rendering */ = {
+			isa = PBXGroup;
+			children = (
+				7805227B261433A700079A01 /* Mesh */,
+				7805227F261433A700079A01 /* FaceDirection.swift */,
+				78052280261433A700079A01 /* RenderCoordinator.swift */,
+				78052281261433A700079A01 /* MetalView.swift */,
+				78052282261433A700079A01 /* shaders.metal */,
+				78052283261433A700079A01 /* ChunkMesh.swift */,
+				78052284261433A700079A01 /* Renderer.swift */,
+			);
+			path = Rendering;
+			sourceTree = "<group>";
+		};
+		7805227B261433A700079A01 /* Mesh */ = {
+			isa = PBXGroup;
+			children = (
+				7805227C261433A700079A01 /* Mesh.swift */,
+				7805227D261433A700079A01 /* CubeFaces.swift */,
+				7805227E261433A700079A01 /* Vertex.swift */,
+			);
+			path = Mesh;
+			sourceTree = "<group>";
+		};
+		78052285261433A700079A01 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				78052286261433A700079A01 /* StorageManager.swift */,
+				78052287261433A700079A01 /* CacheManager.swift */,
+				78052288261433A700079A01 /* LocaleManager.swift */,
+				78052289261433A700079A01 /* TextureManager.swift */,
+				7805228A261433A700079A01 /* MinecraftLocale.swift */,
+				7805228B261433A700079A01 /* Managers.swift */,
+				7805228C261433A700079A01 /* AssetManager.swift */,
+				7805228D261433A700079A01 /* BlockPaletteManager.swift */,
+				7805228E261433A700079A01 /* Protobuf */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		7805228E261433A700079A01 /* Protobuf */ = {
+			isa = PBXGroup;
+			children = (
+				7805228F261433A700079A01 /* BlockModel.pb.swift */,
+				78052290261433A700079A01 /* BlockModel.proto */,
+				78052291261433A700079A01 /* test.proto */,
+				78052292261433A700079A01 /* test.pb.swift */,
+			);
+			path = Protobuf;
+			sourceTree = "<group>";
+		};
+		78052295261433A700079A01 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				78052296261433A700079A01 /* Hand.swift */,
+				78052297261433A700079A01 /* PlayerEntityAction.swift */,
+				78052298261433A700079A01 /* PlayerRotation.swift */,
+				78052299261433A700079A01 /* PlayerAbilities.swift */,
+				7805229A261433A700079A01 /* DominantHand.swift */,
+				7805229B261433A700079A01 /* Player.swift */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
+		7805229F261433A700079A01 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				780522A0261433A700079A01 /* AppView.swift */,
+				780522A1261433A700079A01 /* ViewState.swift */,
+				780522A2261433A700079A01 /* ServerDetailView.swift */,
+				780522A3261433A700079A01 /* ServerListView.swift */,
+				780522A4261433A700079A01 /* ServerListEntryView.swift */,
+				780522A5261433A700079A01 /* GameCommandView.swift */,
+				780522A6261433A700079A01 /* GameRenderView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		780522A8261433A700079A01 /* DeltaClientTests */ = {
+			isa = PBXGroup;
+			children = (
+				780522A9261433A700079A01 /* DeltaClientTests.swift */,
+				780522AA261433A700079A01 /* Info.plist */,
+			);
+			path = DeltaClientTests;
+			sourceTree = "<group>";
+		};
+		780523CD2614349200079A01 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				780523CE2614349200079A01 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		784194AE258204CD0070DE78 = {
+			isa = PBXGroup;
+			children = (
+				78052172261433A600079A01 /* DeltaClient */,
+				780522A8261433A700079A01 /* DeltaClientTests */,
+				7805216F261433A600079A01 /* DeltaClientUITests */,
+				784194B8258204CD0070DE78 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		784194B8258204CD0070DE78 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				784194B7258204CD0070DE78 /* DeltaClient.app */,
+				784194C9258204D10070DE78 /* DeltaClientTests.xctest */,
+				784194D4258204D10070DE78 /* DeltaClientUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		784194B6258204CD0070DE78 /* DeltaClient */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 784194DD258204D10070DE78 /* Build configuration list for PBXNativeTarget "DeltaClient" */;
+			buildPhases = (
+				784194B3258204CD0070DE78 /* Sources */,
+				784194B4258204CD0070DE78 /* Frameworks */,
+				784194B5258204CD0070DE78 /* Resources */,
+				78B4A35A25932E4700961E0F /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DeltaClient;
+			packageProductDependencies = (
+				78B6A1EA25FC588000CFE493 /* Zip */,
+				7802C1AE261097F00068E8A1 /* SwiftProtobuf */,
+			);
+			productName = Minecraft;
+			productReference = 784194B7258204CD0070DE78 /* DeltaClient.app */;
+			productType = "com.apple.product-type.application";
+		};
+		784194C8258204D10070DE78 /* DeltaClientTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 784194E0258204D10070DE78 /* Build configuration list for PBXNativeTarget "DeltaClientTests" */;
+			buildPhases = (
+				784194C5258204D10070DE78 /* Sources */,
+				784194C6258204D10070DE78 /* Frameworks */,
+				784194C7258204D10070DE78 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				789288332614396300F17DBB /* PBXTargetDependency */,
+			);
+			name = DeltaClientTests;
+			productName = MinecraftTests;
+			productReference = 784194C9258204D10070DE78 /* DeltaClientTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		784194D3258204D10070DE78 /* DeltaClientUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 784194E3258204D10070DE78 /* Build configuration list for PBXNativeTarget "DeltaClientUITests" */;
+			buildPhases = (
+				784194D0258204D10070DE78 /* Sources */,
+				784194D1258204D10070DE78 /* Frameworks */,
+				784194D2258204D10070DE78 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				784194D6258204D10070DE78 /* PBXTargetDependency */,
+			);
+			name = DeltaClientUITests;
+			productName = MinecraftUITests;
+			productReference = 784194D4258204D10070DE78 /* DeltaClientUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		784194AF258204CD0070DE78 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1220;
+				LastUpgradeCheck = 1220;
+				TargetAttributes = {
+					784194B6258204CD0070DE78 = {
+						CreatedOnToolsVersion = 12.2;
+						LastSwiftMigration = 1240;
+					};
+					784194C8258204D10070DE78 = {
+						CreatedOnToolsVersion = 12.2;
+						TestTargetID = 784194B6258204CD0070DE78;
+					};
+					784194D3258204D10070DE78 = {
+						CreatedOnToolsVersion = 12.2;
+						TestTargetID = 784194B6258204CD0070DE78;
+					};
+				};
+			};
+			buildConfigurationList = 784194B2258204CD0070DE78 /* Build configuration list for PBXProject "DeltaClient" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 784194AE258204CD0070DE78;
+			packageReferences = (
+				78B6A1E925FC588000CFE493 /* XCRemoteSwiftPackageReference "Zip" */,
+				7802C1AD261097F00068E8A1 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
+			);
+			productRefGroup = 784194B8258204CD0070DE78 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				784194B6258204CD0070DE78 /* DeltaClient */,
+				784194C8258204D10070DE78 /* DeltaClientTests */,
+				784194D3258204D10070DE78 /* DeltaClientUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		784194B5258204CD0070DE78 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				78052348261433A800079A01 /* Assets.xcassets in Resources */,
+				780523CF2614349200079A01 /* Preview Assets.xcassets in Resources */,
+				78052347261433A800079A01 /* blocks.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		784194C7258204D10070DE78 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		784194D2258204D10070DE78 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		78B4A35A25932E4700961E0F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nTAGS=\"TODO:|FIXME:\"\necho \"searching ${SRCROOT} for ${TAGS}\"\nfind \"${SRCROOT}\" \\( -name \"*.swift\" \\) -print0 | xargs -0 egrep --with-filename --line-number --only-matching \"($TAGS).*\\$\" | perl -p -e \"s/($TAGS)/ warning: \\$1/\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		784194B3258204CD0070DE78 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7805233C261433A800079A01 /* CloseWindowClientboundPacket.swift in Sources */,
+				7805237D261433A800079A01 /* CompactedLongArray.swift in Sources */,
+				78052322261433A800079A01 /* PlayerInfoPacket.swift in Sources */,
+				780522E2261433A700079A01 /* KeepAliveServerboundPacket.swift in Sources */,
+				780522EF261433A700079A01 /* PlayerAbilitiesPacket.swift in Sources */,
+				780522F7261433A700079A01 /* BlockBreakAnimationPacket.swift in Sources */,
+				7805239C261433A800079A01 /* RenderCoordinator.swift in Sources */,
+				780522C3261433A700079A01 /* SpectatePacket.swift in Sources */,
+				780523B8261433A800079A01 /* ViewState.swift in Sources */,
+				78052318261433A800079A01 /* CraftRecipeResponsePacket.swift in Sources */,
+				78052315261433A800079A01 /* EntityStatusPacket.swift in Sources */,
+				78052376261433A800079A01 /* Gamemode.swift in Sources */,
+				78052371261433A800079A01 /* Buffer.swift in Sources */,
+				780522AD261433A700079A01 /* PacketRegistry.swift in Sources */,
+				780522B4261433A700079A01 /* StatusResponsePacket.swift in Sources */,
+				780522DA261433A700079A01 /* PlayerPositionAndRotationServerboundPacket.swift in Sources */,
+				780523B2261433A800079A01 /* PlayerAbilities.swift in Sources */,
+				780522B3261433A700079A01 /* StatusRequestPacket.swift in Sources */,
+				7805231F261433A800079A01 /* NamedSoundEffectPacket.swift in Sources */,
+				780522C1261433A700079A01 /* LockDifficultyPacket.swift in Sources */,
+				780522B7261433A700079A01 /* UpdateJigsawBlockPacket.swift in Sources */,
+				780522F0261433A700079A01 /* EntityMovementPacket.swift in Sources */,
+				78052386261433A800079A01 /* EntityVelocity.swift in Sources */,
+				780523A1261433A800079A01 /* StorageManager.swift in Sources */,
+				78052306261433A800079A01 /* ServerDifficultyPacket.swift in Sources */,
+				780522E7261433A700079A01 /* WindowConfirmationClientboundPacket.swift in Sources */,
+				78052338261433A800079A01 /* PlayerPositionAndLookClientboundPacket.swift in Sources */,
+				780522F2261433A700079A01 /* NBTQueryResponse.swift in Sources */,
+				780523BC261433A800079A01 /* GameCommandView.swift in Sources */,
+				780522BF261433A700079A01 /* AnimationServerboundPacket.swift in Sources */,
+				780522DB261433A700079A01 /* EditBookPacket.swift in Sources */,
+				78052340261433A800079A01 /* HeldItemChangePacket.swift in Sources */,
+				7805236B261433A800079A01 /* ChatComponent.swift in Sources */,
+				7805234C261433A800079A01 /* CraftingRecipe.swift in Sources */,
+				780522E9261433A700079A01 /* MultiBlockChangePacket.swift in Sources */,
+				780522E3261433A700079A01 /* CraftRecipeRequestPacket.swift in Sources */,
+				780522DD261433A700079A01 /* PlayerPositionPacket.swift in Sources */,
+				780522C6261433A700079A01 /* UpdateCommandBlockMinecartPacket.swift in Sources */,
+				78052339261433A800079A01 /* VehicleMoveClientboundPacket.swift in Sources */,
+				780522C8261433A700079A01 /* ResourcePackStatusPacket.swift in Sources */,
+				78052395261433A800079A01 /* ServerInfo.swift in Sources */,
+				78052368261433A800079A01 /* ChatStringComponent.swift in Sources */,
+				78052325261433A800079A01 /* SetCooldownPacket.swift in Sources */,
+				780522B6261433A700079A01 /* NameItemPacket.swift in Sources */,
+				7805231E261433A800079A01 /* SetSlotPacket.swift in Sources */,
+				7805232C261433A800079A01 /* FacePlayerPacket.swift in Sources */,
+				78052343261433A800079A01 /* LoginDisconnectPacket.swift in Sources */,
+				78052383261433A800079A01 /* Stopwatch.swift in Sources */,
+				78052375261433A800079A01 /* NBTCompound.swift in Sources */,
+				78052390261433A800079A01 /* PingInfo.swift in Sources */,
+				78052377261433A800079A01 /* CardinalDirection.swift in Sources */,
+				7805235F261433A800079A01 /* TippedArrowRecipe.swift in Sources */,
+				780522C7261433A700079A01 /* QueryBlockNBTPacket.swift in Sources */,
+				7805238F261433A800079A01 /* ChunkData.swift in Sources */,
+				780522F8261433A700079A01 /* BlockActionPacket.swift in Sources */,
+				780522C5261433A700079A01 /* TabCompleteServerboundPacket.swift in Sources */,
+				7805237E261433A800079A01 /* Position.swift in Sources */,
+				780522D9261433A700079A01 /* ClientStatusPacket.swift in Sources */,
+				7805232B261433A800079A01 /* ResourcePackSendPacket.swift in Sources */,
+				7805238A261433A800079A01 /* ChunkSection.swift in Sources */,
+				7805239E261433A800079A01 /* shaders.metal in Sources */,
+				780523B1261433A800079A01 /* PlayerRotation.swift in Sources */,
+				78052353261433A800079A01 /* BannerDuplicateRecipe.swift in Sources */,
+				78052320261433A800079A01 /* SpawnPaintingPacket.swift in Sources */,
+				780522F6261433A700079A01 /* EntityMetadataPacket.swift in Sources */,
+				780523A7261433A800079A01 /* AssetManager.swift in Sources */,
+				78052392261433A800079A01 /* ServerPinger.swift in Sources */,
+				78052323261433A800079A01 /* EntityTeleportPacket.swift in Sources */,
+				78052367261433A800079A01 /* RecipeRegistry.swift in Sources */,
+				780523AE261433A800079A01 /* PlayerProperty.swift in Sources */,
+				780523BB261433A800079A01 /* ServerListEntryView.swift in Sources */,
+				7805237C261433A800079A01 /* Statistic.swift in Sources */,
+				78052385261433A800079A01 /* chunkunpack.c in Sources */,
+				78052351261433A800079A01 /* StonecuttingRecipe.swift in Sources */,
+				7805238C261433A800079A01 /* World.swift in Sources */,
+				780522FD261433A800079A01 /* EffectPacket.swift in Sources */,
+				78052324261433A800079A01 /* WorldBorderPacket.swift in Sources */,
+				7805238E261433A800079A01 /* Chunk.swift in Sources */,
+				7805230A261433A800079A01 /* ExplosionPacket.swift in Sources */,
+				78052331261433A800079A01 /* BlockEntityDataPacket.swift in Sources */,
+				78052300261433A800079A01 /* MapDataPacket.swift in Sources */,
+				78052378261433A800079A01 /* Axis.swift in Sources */,
+				78052344261433A800079A01 /* PacketReader.swift in Sources */,
+				780522E0261433A700079A01 /* HeldItemChangeServerboundPacket.swift in Sources */,
+				78052330261433A800079A01 /* UpdateLightPacket.swift in Sources */,
+				780522ED261433A700079A01 /* CollectItemPacket.swift in Sources */,
+				780522B5261433A700079A01 /* HandshakePacket.swift in Sources */,
+				7805230C261433A800079A01 /* EntityEquipmentPacket.swift in Sources */,
+				78052321261433A800079A01 /* ChatMessageClientboundPacket.swift in Sources */,
+				78052317261433A800079A01 /* BlockChangePacket.swift in Sources */,
+				780522E4261433A700079A01 /* UpdateStructureBlockPacket.swift in Sources */,
+				780522D0261433A700079A01 /* CreativeInventoryActionPacket.swift in Sources */,
+				780522BE261433A700079A01 /* PlayerDiggingPacket.swift in Sources */,
+				78052361261433A800079A01 /* ShieldDecorationRecipe.swift in Sources */,
+				780522EB261433A700079A01 /* EntityVelocityPacket.swift in Sources */,
+				7805234A261433A800079A01 /* Constants.swift in Sources */,
+				7805235B261433A800079A01 /* FireworkStarRecipe.swift in Sources */,
+				7805235A261433A800079A01 /* BookCloningRecipe.swift in Sources */,
+				7805236A261433A800079A01 /* File.swift in Sources */,
+				7805232D261433A800079A01 /* ChangeGameStatePacket.swift in Sources */,
+				780522AE261433A700079A01 /* ClientboundPacket.swift in Sources */,
+				78052355261433A800079A01 /* MapCloningRecipe.swift in Sources */,
+				780522FC261433A800079A01 /* UnloadChunkPacket.swift in Sources */,
+				780522D7261433A700079A01 /* GenerateStructurePacket.swift in Sources */,
+				780522CF261433A700079A01 /* SetDifficultyPacket.swift in Sources */,
+				78052313261433A800079A01 /* DisplayScoreboardPacket.swift in Sources */,
+				780522FF261433A800079A01 /* WindowPropertyPacket.swift in Sources */,
+				7805231D261433A800079A01 /* AcknowledgePlayerDiggingPacket.swift in Sources */,
+				780523A9261433A800079A01 /* BlockModel.pb.swift in Sources */,
+				78052311261433A800079A01 /* OpenSignEditorPacket.swift in Sources */,
+				7805231B261433A800079A01 /* DeclareCommandsPacket.swift in Sources */,
+				78052396261433A800079A01 /* StartupSequence.swift in Sources */,
+				78052356261433A800079A01 /* FireworkStarFadeRecipe.swift in Sources */,
+				78052345261433A800079A01 /* PacketState.swift in Sources */,
+				780523A3261433A800079A01 /* LocaleManager.swift in Sources */,
+				7805237F261433A800079A01 /* Difficulty.swift in Sources */,
+				780522EE261433A700079A01 /* OpenWindowPacket.swift in Sources */,
+				7805239A261433A800079A01 /* Vertex.swift in Sources */,
+				78052333261433A800079A01 /* SelectAdvancementTabPacket.swift in Sources */,
+				7805239B261433A800079A01 /* FaceDirection.swift in Sources */,
+				7805237B261433A800079A01 /* JSON.swift in Sources */,
+				78052342261433A800079A01 /* LoginSuccessPacket.swift in Sources */,
+				780522D8261433A700079A01 /* PlayerBlockPlacementPacket.swift in Sources */,
+				78052332261433A800079A01 /* SoundEffectPacket.swift in Sources */,
+				78052399261433A800079A01 /* CubeFaces.swift in Sources */,
+				780522C0261433A700079A01 /* SteerVehiclePacket.swift in Sources */,
+				780523AC261433A800079A01 /* test.pb.swift in Sources */,
+				7805239F261433A800079A01 /* ChunkMesh.swift in Sources */,
+				780522B8261433A700079A01 /* TeleportConfirmPacket.swift in Sources */,
+				78052388261433A800079A01 /* EntityRotation.swift in Sources */,
+				7805231C261433A800079A01 /* JoinGamePacket.swift in Sources */,
+				780522CA261433A700079A01 /* VehicleMoveServerboundPacket.swift in Sources */,
+				78052328261433A800079A01 /* OpenHorseWindowPacket.swift in Sources */,
+				78052373261433A800079A01 /* Equipment.swift in Sources */,
+				78052360261433A800079A01 /* RepairItemRecipe.swift in Sources */,
+				780522AF261433A700079A01 /* PacketWriter.swift in Sources */,
+				78052362261433A800079A01 /* Ingredient.swift in Sources */,
+				780522BA261433A700079A01 /* ChatMessageServerboundPacket.swift in Sources */,
+				78052397261433A800079A01 /* Client.swift in Sources */,
+				78052365261433A800079A01 /* BlastingRecipe.swift in Sources */,
+				780522FB261433A800079A01 /* ChunkDataPacket.swift in Sources */,
+				780522E6261433A700079A01 /* TagsPacket.swift in Sources */,
+				7805233F261433A800079A01 /* StopSoundPacket.swift in Sources */,
+				780522C9261433A700079A01 /* SteerBoatPacket.swift in Sources */,
+				78052327261433A800079A01 /* ScoreboardObjectivePacket.swift in Sources */,
+				780522BC261433A700079A01 /* QueryEntityNBTPacket.swift in Sources */,
+				780522D2261433A700079A01 /* AdvancementTabPacket.swift in Sources */,
+				780523A8261433A800079A01 /* BlockPaletteManager.swift in Sources */,
+				78052307261433A800079A01 /* AttachEntityPacket.swift in Sources */,
+				780522D5261433A700079A01 /* PlayerMovementPacket.swift in Sources */,
+				78052359261433A800079A01 /* FireworkRocketRecipe.swift in Sources */,
+				780523BA261433A800079A01 /* ServerListView.swift in Sources */,
+				78052312261433A800079A01 /* EntityRotationPacket.swift in Sources */,
+				7805236E261433A800079A01 /* ChatKeybindComponent.swift in Sources */,
+				780522FA261433A800079A01 /* WindowItemsPacket.swift in Sources */,
+				78052319261433A800079A01 /* TitlePacket.swift in Sources */,
+				7805235E261433A800079A01 /* SpecialRecipe.swift in Sources */,
+				78052303261433A800079A01 /* CameraPacket.swift in Sources */,
+				780522EA261433A700079A01 /* SpawnLivingEntity.swift in Sources */,
+				780522E1261433A700079A01 /* SetBeaconEffectPacket.swift in Sources */,
+				78052314261433A800079A01 /* AdvancementsPacket.swift in Sources */,
+				78052336261433A800079A01 /* ParticlePacket.swift in Sources */,
+				780522DF261433A700079A01 /* InteractEntityPacket.swift in Sources */,
+				780523AF261433A800079A01 /* Hand.swift in Sources */,
+				78052350261433A800079A01 /* SmeltingRecipe.swift in Sources */,
+				780523A2261433A800079A01 /* CacheManager.swift in Sources */,
+				7805235D261433A800079A01 /* ShulkerBoxColouringRecipe.swift in Sources */,
+				78052384261433A800079A01 /* MatrixUtil.swift in Sources */,
+				78052372261433A800079A01 /* Logger.swift in Sources */,
+				780522CD261433A700079A01 /* CloseWindowServerboundPacket.swift in Sources */,
+				7805239D261433A800079A01 /* MetalView.swift in Sources */,
+				780522D6261433A700079A01 /* RecipeBookDataPacket.swift in Sources */,
+				780523AD261433A800079A01 /* TabList.swift in Sources */,
+				78052380261433A800079A01 /* Identifier.swift in Sources */,
+				78052341261433A800079A01 /* LoginStartPacket.swift in Sources */,
+				7805237A261433A800079A01 /* UUID.swift in Sources */,
+				780523B5261433A800079A01 /* PlayerInfo.swift in Sources */,
+				78052394261433A800079A01 /* ServerConfig.swift in Sources */,
+				78052369261433A800079A01 /* ChatTranslateComponent.swift in Sources */,
+				780522B0261433A700079A01 /* ServerConnection.swift in Sources */,
+				780523B4261433A800079A01 /* Player.swift in Sources */,
+				78052379261433A800079A01 /* ItemStack.swift in Sources */,
+				78052329261433A800079A01 /* UpdateHealthPacket.swift in Sources */,
+				780523B3261433A800079A01 /* DominantHand.swift in Sources */,
+				78052304261433A800079A01 /* EntityProperties.swift in Sources */,
+				78052393261433A800079A01 /* Server.swift in Sources */,
+				780522F9261433A700079A01 /* StatisticsPacket.swift in Sources */,
+				78052364261433A800079A01 /* CampfireCookingRecipe.swift in Sources */,
+				7805233E261433A800079A01 /* PluginMessagePacket.swift in Sources */,
+				7805232E261433A800079A01 /* BossBarPacket.swift in Sources */,
+				78052337261433A800079A01 /* TeamsPacket.swift in Sources */,
+				7805234B261433A800079A01 /* ConfigManager.swift in Sources */,
+				780522D1261433A700079A01 /* WindowConfirmationServerboundPacket.swift in Sources */,
+				7805234E261433A800079A01 /* CraftingShaped.swift in Sources */,
+				780522BD261433A700079A01 /* ClickWindowPacket.swift in Sources */,
+				7805230F261433A800079A01 /* EntityEffectPacket.swift in Sources */,
+				78052305261433A800079A01 /* EntitySoundEffectPacket.swift in Sources */,
+				780523BD261433A800079A01 /* GameRenderView.swift in Sources */,
+				7805232A261433A800079A01 /* EntityAnimationPacket.swift in Sources */,
+				780522C4261433A700079A01 /* UpdateCommandBlockPacket.swift in Sources */,
+				780523B0261433A800079A01 /* PlayerEntityAction.swift in Sources */,
+				780522B9261433A700079A01 /* ClickWindowButtonPacket.swift in Sources */,
+				7805235C261433A800079A01 /* MapExtendingRecipe.swift in Sources */,
+				78052357261433A800079A01 /* ArmorDyeRecipe.swift in Sources */,
+				7805238D261433A800079A01 /* WorldConfig.swift in Sources */,
+				78052334261433A800079A01 /* CombatEventPacket.swift in Sources */,
+				78052358261433A800079A01 /* SuspiciousStewRecipe.swift in Sources */,
+				780522C2261433A700079A01 /* PluginMessageServerboundPacket.swift in Sources */,
+				7805236C261433A800079A01 /* ChatScoreComponent.swift in Sources */,
+				78052370261433A800079A01 /* EventManager.swift in Sources */,
+				780522BB261433A700079A01 /* UpdateSignPacket.swift in Sources */,
+				7805236D261433A800079A01 /* ChatStyle.swift in Sources */,
+				7805230B261433A800079A01 /* SpawnPositionPacket.swift in Sources */,
+				7805232F261433A800079A01 /* TabCompleteClientboundPacket.swift in Sources */,
+				780522F5261433A700079A01 /* PlayerListHeaderAndFooterPacket.swift in Sources */,
+				780522CB261433A700079A01 /* ClientSettingsPacket.swift in Sources */,
+				7805234D261433A800079A01 /* CraftingShapeless.swift in Sources */,
+				780522EC261433A700079A01 /* EntityHeadLookPacket.swift in Sources */,
+				780522E8261433A700079A01 /* UpdateViewDistancePacket.swift in Sources */,
+				7805231A261433A800079A01 /* SetPassengersPacket.swift in Sources */,
+				78052309261433A800079A01 /* UnlockRecipesPacket.swift in Sources */,
+				78052316261433A800079A01 /* RespawnPacket.swift in Sources */,
+				78052326261433A800079A01 /* SpawnPlayerPacket.swift in Sources */,
+				780522F1261433A700079A01 /* UpdateViewPositionPacket.swift in Sources */,
+				780522CC261433A700079A01 /* UseItemPacket.swift in Sources */,
+				780522F4261433A700079A01 /* OpenBookPacket.swift in Sources */,
+				7805233B261433A800079A01 /* DestroyEntitiesPacket.swift in Sources */,
+				78052302261433A800079A01 /* DeclareRecipesPacket.swift in Sources */,
+				780523A4261433A800079A01 /* TextureManager.swift in Sources */,
+				78052335261433A800079A01 /* SetExperiencePacket.swift in Sources */,
+				7805230E261433A800079A01 /* KeepAliveClientboundPacket.swift in Sources */,
+				780523B7261433A800079A01 /* AppView.swift in Sources */,
+				780522D4261433A700079A01 /* PlayerAbilitiesServerboundPacket.swift in Sources */,
+				78052389261433A800079A01 /* BlockEntity.swift in Sources */,
+				7805234F261433A800079A01 /* Item.swift in Sources */,
+				780522B2261433A700079A01 /* ServerboundPacket.swift in Sources */,
+				78052387261433A800079A01 /* EntityPosition.swift in Sources */,
+				78052366261433A800079A01 /* HeatRecipe.swift in Sources */,
+				78052310261433A800079A01 /* SpawnEntityPacket.swift in Sources */,
+				78052308261433A800079A01 /* EntityPositionPacket.swift in Sources */,
+				780522FE261433A800079A01 /* SpawnExperienceOrbPacket.swift in Sources */,
+				780523A6261433A800079A01 /* Managers.swift in Sources */,
+				780522F3261433A700079A01 /* RemoveEntityEffectPacket.swift in Sources */,
+				780522DE261433A700079A01 /* SelectTradePacket.swift in Sources */,
+				780522CE261433A700079A01 /* PickItemPacket.swift in Sources */,
+				78052301261433A800079A01 /* EntityPositionAndRotationPacket.swift in Sources */,
+				780522E5261433A700079A01 /* TradeListPacket.swift in Sources */,
+				780523A0261433A800079A01 /* Renderer.swift in Sources */,
+				780522D3261433A700079A01 /* EntityActionPacket.swift in Sources */,
+				7805233D261433A800079A01 /* PlayDisconnectPacket.swift in Sources */,
+				78052352261433A800079A01 /* SmokingRecipe.swift in Sources */,
+				78052354261433A800079A01 /* BannerAddPatternRecipe.swift in Sources */,
+				78052381261433A800079A01 /* Direction.swift in Sources */,
+				78052398261433A800079A01 /* Mesh.swift in Sources */,
+				78052346261433A800079A01 /* PacketHandlingThread.swift in Sources */,
+				7805238B261433A800079A01 /* ChunkPosition.swift in Sources */,
+				78052374261433A800079A01 /* LauncherProfile.swift in Sources */,
+				7805230D261433A800079A01 /* TimeUpdatePacket.swift in Sources */,
+				780523B6261433A800079A01 /* DeltaClient.swift in Sources */,
+				7805236F261433A800079A01 /* ChatComponentUtil.swift in Sources */,
+				780523B9261433A800079A01 /* ServerDetailView.swift in Sources */,
+				7805233A261433A800079A01 /* UpdateScorePacket.swift in Sources */,
+				78052391261433A800079A01 /* ServerList.swift in Sources */,
+				78052382261433A800079A01 /* Profiler.swift in Sources */,
+				780523A5261433A800079A01 /* MinecraftLocale.swift in Sources */,
+				78052363261433A800079A01 /* SmithingRecipe.swift in Sources */,
+				780522B1261433A700079A01 /* ConnectionState.swift in Sources */,
+				780522DC261433A700079A01 /* PlayerRotationPacket.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		784194C5258204D10070DE78 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7892880E261438A000F17DBB /* DeltaClientTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		784194D0258204D10070DE78 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				78928812261438A500F17DBB /* DeltaClientUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		784194D6258204D10070DE78 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 784194B6258204CD0070DE78 /* DeltaClient */;
+			targetProxy = 784194D5258204D10070DE78 /* PBXContainerItemProxy */;
+		};
+		789288332614396300F17DBB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 784194B6258204CD0070DE78 /* DeltaClient */;
+			targetProxy = 789288322614396300F17DBB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		784194DB258204D10070DE78 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = DeltaClient/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = DeltaClient;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		784194DC258204D10070DE78 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = DeltaClient/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = DeltaClient;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		784194DE258204D10070DE78 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = DeltaClient/DeltaClient.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"DeltaClient/Preview Content\"";
+				DEVELOPMENT_TEAM = 2LMZ445376;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = DeltaClient/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stackotter.delta-client";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "DeltaClient/DeltaClient/Util/C/bridging-header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		784194DF258204D10070DE78 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = DeltaClient/DeltaClient.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"DeltaClient/Preview Content\"";
+				DEVELOPMENT_TEAM = 2LMZ445376;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				INFOPLIST_FILE = DeltaClient/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stackotter.delta-client";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "DeltaClient/DeltaClient/Util/C/bridging-header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		784194E1258204D10070DE78 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 2LMZ445376;
+				INFOPLIST_FILE = DeltaClientTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rohanarievk.DeltaClientTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DeltaClient.app/Contents/MacOS/DeltaClient";
+			};
+			name = Debug;
+		};
+		784194E2258204D10070DE78 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 2LMZ445376;
+				INFOPLIST_FILE = DeltaClientTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rohanarievk.DeltaClientTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DeltaClient.app/Contents/MacOS/DeltaClient";
+			};
+			name = Release;
+		};
+		784194E4258204D10070DE78 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 2LMZ445376;
+				INFOPLIST_FILE = DeltaClientUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.rohanarievk.DeltaClientUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = DeltaClient;
+			};
+			name = Debug;
+		};
+		784194E5258204D10070DE78 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 2LMZ445376;
+				INFOPLIST_FILE = DeltaClientUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.rohanarievk.DeltaClientUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = DeltaClient;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		784194B2258204CD0070DE78 /* Build configuration list for PBXProject "DeltaClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				784194DB258204D10070DE78 /* Debug */,
+				784194DC258204D10070DE78 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		784194DD258204D10070DE78 /* Build configuration list for PBXNativeTarget "DeltaClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				784194DE258204D10070DE78 /* Debug */,
+				784194DF258204D10070DE78 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		784194E0258204D10070DE78 /* Build configuration list for PBXNativeTarget "DeltaClientTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				784194E1258204D10070DE78 /* Debug */,
+				784194E2258204D10070DE78 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		784194E3258204D10070DE78 /* Build configuration list for PBXNativeTarget "DeltaClientUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				784194E4258204D10070DE78 /* Debug */,
+				784194E5258204D10070DE78 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7802C1AD261097F00068E8A1 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.15.0;
+			};
+		};
+		78B6A1E925FC588000CFE493 /* XCRemoteSwiftPackageReference "Zip" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marmelroy/Zip";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7802C1AE261097F00068E8A1 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7802C1AD261097F00068E8A1 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		78B6A1EA25FC588000CFE493 /* Zip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 78B6A1E925FC588000CFE493 /* XCRemoteSwiftPackageReference "Zip" */;
+			productName = Zip;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 784194AF258204CD0070DE78 /* Project object */;
+}
