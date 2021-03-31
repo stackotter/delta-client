@@ -1,5 +1,5 @@
 //
-//  Slot.swift
+//  ItemStack.swift
 //  DeltaClient
 //
 //  Created by Rohan van Klinken on 29/12/20.

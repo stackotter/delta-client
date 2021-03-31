@@ -1,5 +1,5 @@
 //
-//  MeshObject.swift
+//  Mesh.swift
 //  DeltaClient
 //
 //  Created by Rohan van Klinken on 6/3/21.

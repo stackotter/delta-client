@@ -7,6 +7,12 @@
 // For information on using the generated types, please see the documentation:
 //   https://github.com/apple/swift-protobuf/
 
+//
+//  BlockModel.proto
+//  DeltaClient
+//
+//  Created by Rohan van Klinken on 28/3/21.
+
 import Foundation
 import SwiftProtobuf
 

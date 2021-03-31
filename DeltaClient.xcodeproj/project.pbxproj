@@ -105,7 +105,6 @@
 		780523A7261433A800079A01 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805228C261433A700079A01 /* AssetManager.swift */; };
 		780523A8261433A800079A01 /* BlockPaletteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805228D261433A700079A01 /* BlockPaletteManager.swift */; };
 		780523A9261433A800079A01 /* BlockModel.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805228F261433A700079A01 /* BlockModel.pb.swift */; };
-		780523AC261433A800079A01 /* test.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052292261433A700079A01 /* test.pb.swift */; };
 		780523AD261433A800079A01 /* TabList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052293261433A700079A01 /* TabList.swift */; };
 		780523AE261433A800079A01 /* PlayerProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052294261433A700079A01 /* PlayerProperty.swift */; };
 		780523AF261433A800079A01 /* Hand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052296261433A700079A01 /* Hand.swift */; };
@@ -403,8 +402,6 @@
 		7805228D261433A700079A01 /* BlockPaletteManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockPaletteManager.swift; sourceTree = "<group>"; };
 		7805228F261433A700079A01 /* BlockModel.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockModel.pb.swift; sourceTree = "<group>"; };
 		78052290261433A700079A01 /* BlockModel.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = BlockModel.proto; sourceTree = "<group>"; };
-		78052291261433A700079A01 /* test.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = test.proto; sourceTree = "<group>"; };
-		78052292261433A700079A01 /* test.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = test.pb.swift; sourceTree = "<group>"; };
 		78052293261433A700079A01 /* TabList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabList.swift; sourceTree = "<group>"; };
 		78052294261433A700079A01 /* PlayerProperty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerProperty.swift; sourceTree = "<group>"; };
 		78052296261433A700079A01 /* Hand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hand.swift; sourceTree = "<group>"; };
@@ -850,10 +847,8 @@
 		7805228E261433A700079A01 /* Protobuf */ = {
 			isa = PBXGroup;
 			children = (
-				7805228F261433A700079A01 /* BlockModel.pb.swift */,
 				78052290261433A700079A01 /* BlockModel.proto */,
-				78052291261433A700079A01 /* test.proto */,
-				78052292261433A700079A01 /* test.pb.swift */,
+				7805228F261433A700079A01 /* BlockModel.pb.swift */,
 			);
 			path = Protobuf;
 			sourceTree = "<group>";
@@ -1458,7 +1453,6 @@
 				782F0CB226143BB1008AE67B /* BlockActionPacket.swift in Sources */,
 				782F0C6926143BB1008AE67B /* PacketWriter.swift in Sources */,
 				782F0C7C26143BB1008AE67B /* PluginMessageServerboundPacket.swift in Sources */,
-				780523AC261433A800079A01 /* test.pb.swift in Sources */,
 				7805239F261433A800079A01 /* ChunkMesh.swift in Sources */,
 				782F0CDB26143BB1008AE67B /* ChatMessageClientboundPacket.swift in Sources */,
 				782F0CB826143BB1008AE67B /* SpawnExperienceOrbPacket.swift in Sources */,
