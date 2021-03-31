@@ -198,7 +198,6 @@ class BlockPaletteManager {
   }
   
   func cacheGlobalPalette() throws {
-    // TODO: make state UInt32
     var cache = CacheBlockModelPalette()
     for (state, blockModel) in blockModelPalette {
       let cacheBlockModel = blockModel.toCache()

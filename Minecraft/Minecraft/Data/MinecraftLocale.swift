@@ -12,14 +12,18 @@ enum MinecraftLocaleError: LocalizedError {
   case unableToParseLocale
 }
 
-// TODO: clean up Locale stuff
 struct MinecraftLocale {
   var translations: [String: String]
   var currentLocaleFile: URL?
   
+  init() {
+    self.translations = [:]
+    self.currentLocaleFile = nil
+  }
+  
   init(localeFile: URL) throws {
     do {
-      let data = try Data(contentsOf: localeFile) // relies on the caller checking that file exists
+      let data = try Data(contentsOf: localeFile)
       if let dict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
         self.translations = dict
         self.currentLocaleFile = localeFile
@@ -32,42 +36,37 @@ struct MinecraftLocale {
     throw MinecraftLocaleError.unableToParseLocale
   }
   
-  init() {
-    self.translations = [:]
-    self.currentLocaleFile = nil
+  func getTranslation(for key: String, with content: [String]) -> String {
+    let template = getTemplate(for: key)
+    return format(template: template, strings: content)
   }
   
-  func getTranslation(for key: String) -> String {
-    if let translation = translations[key] {
-      return translation
+  func getTemplate(for key: String) -> String {
+    if let template = translations[key] {
+      return template
     } else {
       return key
     }
   }
   
-  // TODO: just use string.format instead of this regex stuff because otherwise %1$s doesn't work and stuff
-  func getTranslation(for key: String, with content: [String]) -> String {
-    let template = getTranslation(for: key)
-    let regex = try! NSRegularExpression(pattern: "(^%s)|([^%](%s))") // i know this regex won't fail to load because it's static, that's why i use try!
-    let matches = regex.matches(in: template, range: NSRange(location: 0, length: template.count))
-    
-    let ranges: [Range<String.Index>] = matches.map {
-      var range = $0.range
-      if range.length == 3 {
-        range.location += 1
-        range.length -= 1
+  // the locales use %s formats but swift doesn't like that so here's a bunch of unsafe pointers and cstrings for you
+  
+  func format(template: String, strings: [String]) -> String {
+    var cStrings: [UnsafePointer<Int8>] = []
+    return format(template: template, strings: strings, currentIndex: 0, cStrings: &cStrings)
+  }
+  
+  private func format(template: String, strings: [String], currentIndex: Int, cStrings: inout [UnsafePointer<Int8>]) -> String {
+    if strings.count != currentIndex {
+      let string = strings[currentIndex]
+      let out: String = string.withCString {
+        cStrings.append($0)
+        let out = format(template: template, strings: strings, currentIndex: currentIndex+1, cStrings: &cStrings)
+        return out
       }
-      return Range(range, in: template)!
+      return out
+    } else {
+      return String(format: template, arguments: cStrings)
     }
-    
-    if ranges.count != content.count {
-      return "failed to use translation template: \(template). incorrect number of arguments"
-    }
-    
-    var output = template
-    for i in (0..<ranges.count).reversed() {
-      output.replaceSubrange(ranges[i], with: content[i])
-    }
-    return output
   }
 }
