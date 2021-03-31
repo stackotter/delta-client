@@ -19,7 +19,7 @@ struct AppView: View {
   init(managers: Managers) {
     self.managers = managers
     
-    let serverList = self.managers.configManager.getServerList()
+    let serverList = self.managers.configManager.getServerList(managers: self.managers)
     serverList.refresh()
     self.state = ViewState(initialState: .serverList(serverList: serverList))
   }

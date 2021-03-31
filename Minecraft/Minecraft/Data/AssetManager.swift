@@ -10,122 +10,77 @@ import os
 import Zip
 
 enum AssetError: LocalizedError {
-  case failedToDownload
-  case failedToCreateFolder
-  case pixlyzerDownloadFailed
+  case assetsDownloadFailed(Error)
+  case pixlyzerDownloadFailed(Error)
+  case manifestDownloadFailed(Error)
+  case failedToParseManifest
+  case failedToWriteVersionURLs
+  case noURLForVersion(String)
+  case invalidMetadataURL(version: String, url: String)
+  case invalidVersionMetadata
+  case invalidClientJarURL(url: String)
+  case failedToDownloadClientJar(Error)
+  case failedToExtractClientJar(Error)
+  case invalidLocale(String)
+  case noModelsFolder
+  case noBlockTexturesFolder
 }
 
 class AssetManager {
   var storageManager: StorageManager
   var assetsFolder: URL
+  var pixlyzerFolder: URL
   
-  init(storageManager: StorageManager) {
+  init(storageManager: StorageManager) throws {
     self.storageManager = storageManager
-    self.assetsFolder = self.storageManager.getAssetsFolder()
-  }
-  
-  func checkAssetsExist() -> Bool {
-    return storageManager.exists(assetsFolder)
-  }
-  
-  func checkPixlyzerDataExists() -> Bool {
-    return storageManager.exists(storageManager.storageURL.appendingPathComponent("pixlyzer-data"))
-  }
-  
-  func downloadPixlyzerData() throws {
-    let pixlyzerDataFolder = storageManager.storageURL.appendingPathComponent("pixlyzer-data")
-    if !storageManager.exists(pixlyzerDataFolder) {
-      do {
-        try storageManager.fileManager.createDirectory(at: pixlyzerDataFolder, withIntermediateDirectories: true, attributes: nil)
-      } catch {
-        Logger.error("failed to create pixlyzer data folder: \(error)")
-        throw AssetError.failedToCreateFolder
-      }
-    }
-    let blockPaletteFile = pixlyzerDataFolder.appendingPathComponent("blocks.json")
-    let blockPaletteURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(VERSION_STRING)/blocks.json")!
-    let blockPaletteJSON = try Data(contentsOf: blockPaletteURL)
-    guard (try? blockPaletteJSON.write(to: blockPaletteFile)) != nil else {
-      Logger.error("failed to download pixlyzer block palette")
-      throw AssetError.pixlyzerDownloadFailed
-    }
-  }
-  
-  // TODO: make download assets a throwing function
-  func downloadAssets() -> Bool {
-    guard let versionURLsFile = storageManager.getAbsoluteFromRelative("version_urls.json") else {
-      return false
+    self.assetsFolder = self.storageManager.absoluteFromRelative("assets")
+    self.pixlyzerFolder = self.storageManager.absoluteFromRelative("pixlyzer-data")
+    
+    if !self.storageManager.folderExists(at: self.assetsFolder) {
+      try downloadAssets()
     }
     
-    // if version_urls.json doesn't exist download the contents from mojang
-    if !storageManager.exists(versionURLsFile) {
-      Logger.debug("downloading version manifest")
-      let versionManifestURL = URL(string: "https://launchermeta.mojang.com/mc/game/version_manifest.json")!
-      guard let versionManifestJson = try? JSON.fromURL(versionManifestURL) else {
-        Logger.error("failed to download version manifest")
-        return false
-      }
-      guard let versionsArray = versionManifestJson.getArray(forKey: "versions") as? [[String: Any]] else {
-        Logger.error("failed to parse version manifest")
-        return false
-      }
-      var downloadURLs: [String: String] = [:] // maps versions to download urls
-      for versionDict in versionsArray {
-        let versionJson = JSON(dict: versionDict)
-        guard let version = versionJson.getString(forKey: "id") else {
-          Logger.error("failed to parse version manifest")
-          return false
-        }
-        guard let downloadURL = versionJson.getString(forKey: "url") else {
-          Logger.error("failed to parse version manifest")
-          return false
-        }
-        downloadURLs[version] = downloadURL
-      }
-      let outputJson = JSON(dict: downloadURLs)
-      if !outputJson.writeTo(versionURLsFile) {
-        return false
-      }
-      Logger.debug("downloaded and processed version manifest")
+    if !self.storageManager.folderExists(at: self.pixlyzerFolder) {
+      try downloadPixlyzerData()
     }
+  }
+  
+  func downloadAssets() throws {
+    // if version_urls.json doesn't exist download the contents from mojang
+    let versionURLsFile = storageManager.absoluteFromRelative("version_urls.json")
+    if !storageManager.fileExists(at: versionURLsFile) {
+      Logger.log("downloading versions manifest")
+      try downloadVersionURLs()
+      Logger.log("downloaded versions manifest")
+    }
+    let downloadURLs = try JSON.fromURL(versionURLsFile)
     
     // download version metadata
-    guard let downloadURLs = try? JSON.fromURL(versionURLsFile) else {
-      Logger.error("failed to read json from version_urls.json")
-      return false
-    }
-    Logger.debug("downloading client jar metadata")
+    Logger.log("downloading client jar metadata")
     guard let downloadURLString = downloadURLs.getString(forKey: VERSION_STRING) else {
       Logger.error("failed to find download url for version \(VERSION_STRING) metadata json")
-      return false
+      throw AssetError.noURLForVersion(VERSION_STRING)
     }
     guard let downloadURL = URL(string: downloadURLString) else {
       Logger.error("invalid client metadata download url for version \(VERSION_STRING) in version_urls.json")
-      return false
+      throw AssetError.invalidMetadataURL(version: VERSION_STRING, url: downloadURLString)
     }
-    guard let clientVersionMetadata = try? JSON.fromURL(downloadURL) else {
-      Logger.error("failed to download \(VERSION_STRING) metadata")
-      return false
-    }
+    let clientVersionMetadata = try JSON.fromURL(downloadURL)
     
-    // download client jar
+    // get client jar download url
     guard let clientJarURLString = clientVersionMetadata.getJSON(forKey: "downloads")?.getJSON(forKey: "client")?.getString(forKey: "url") else {
       Logger.error("invalid version json for \(VERSION_STRING)")
-      return false
+      throw AssetError.invalidVersionMetadata
     }
     guard let clientJarURL = URL(string: clientJarURLString) else {
       Logger.error("invalid client jar download url")
-      return false
+      throw AssetError.invalidClientJarURL(url: clientJarURLString)
     }
     
-    let clientJar = FileManager.default.temporaryDirectory.appendingPathComponent("\(VERSION_STRING)-client.jar")
-    let clientJarExtracted = FileManager.default.temporaryDirectory.appendingPathComponent("\(VERSION_STRING)-client", isDirectory: true)
-    do {
-      try FileManager.default.createDirectory(at: clientJarExtracted, withIntermediateDirectories: true, attributes: nil)
-    } catch {
-      Logger.error("failed to create output directory for extracting client jar")
-      return false
-    }
+    // download and extract the client jar
+    let clientJar = FileManager.default.temporaryDirectory.appendingPathComponent("client.jar")
+    let clientJarExtracted = FileManager.default.temporaryDirectory.appendingPathComponent("client", isDirectory: true)
+    try FileManager.default.createDirectory(at: clientJarExtracted, withIntermediateDirectories: true, attributes: nil)
     do {
       print(clientJarURL)
       Logger.debug("downloading client jar..")
@@ -133,72 +88,99 @@ class AssetManager {
       try clientJarData.write(to: clientJar)
     } catch {
       Logger.error("failed to download client jar")
-      return false
+      throw AssetError.failedToDownloadClientJar(error)
     }
-    Logger.debug("extracting client jar")
+    Logger.log("extracting client jar")
     do {
       Zip.addCustomFileExtension("jar")
       try Zip.unzipFile(clientJar, destination: clientJarExtracted, overwrite: true, password: nil)
     } catch {
       Logger.error("failed to extract client jar with error: \(error)")
-      return false
+      throw AssetError.failedToExtractClientJar(error)
     }
     Logger.debug("extracted client jar")
     
-    do {
-      try FileManager.default.copyItem(at: clientJarExtracted.appendingPathComponent("assets"), to: assetsFolder)
-    } catch {
-      Logger.error("failed to copy assets to application support")
-      return false
-    }
+    // copy assets from extracted jar to application support
+    try FileManager.default.copyItem(at: clientJarExtracted.appendingPathComponent("assets"), to: assetsFolder)
+  }
+  
+  func downloadPixlyzerData() throws {
+    try storageManager.createFolder(pixlyzerFolder)
+    let blockPaletteFile = pixlyzerFolder.appendingPathComponent("blocks.json")
     
-    return true
+    let blockPaletteURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(VERSION_STRING)/blocks.json")!
+    let blockPaletteJSON = try Data(contentsOf: blockPaletteURL)
+    
+    do {
+      try blockPaletteJSON.write(to: blockPaletteFile)
+    } catch {
+      Logger.error("failed to download pixlyzer block palette")
+      throw AssetError.pixlyzerDownloadFailed(error)
+    }
   }
   
-  func getLocaleURL(withName localeName: String) -> URL? {
+  func downloadVersionURLs() throws {
+    let versionURLsFile = storageManager.absoluteFromRelative("version_urls.json")
+    let versionManifestURL = URL(string: "https://launchermeta.mojang.com/mc/game/version_manifest.json")!
+    do {
+      let versionManifestJson = try JSON.fromURL(versionManifestURL)
+      guard let versionsArray = versionManifestJson.getArray(forKey: "versions") as? [[String: Any]] else {
+        Logger.error("failed to parse version manifest")
+        throw AssetError.failedToParseManifest
+      }
+      var downloadURLs: [String: String] = [:] // maps versions to download urls
+      for versionDict in versionsArray {
+        let versionJson = JSON(dict: versionDict)
+        
+        guard let version = versionJson.getString(forKey: "id"),
+              let downloadURL = versionJson.getString(forKey: "url") else {
+          Logger.error("failed to parse version manifest")
+          throw AssetError.failedToParseManifest
+        }
+        downloadURLs[version] = downloadURL
+        
+        let outputJson = JSON(dict: downloadURLs)
+        if !outputJson.writeTo(versionURLsFile) {
+          throw AssetError.failedToWriteVersionURLs
+        }
+      }
+    } catch {
+      Logger.error("failed to download/process version manifest: error")
+      throw AssetError.manifestDownloadFailed(error)
+    }
+  }
+  
+  func getLocaleURL(withName localeName: String) throws -> URL {
     let localeURL = assetsFolder.appendingPathComponent("minecraft/lang/\(localeName).json")
-    if storageManager.exists(localeURL) {
-      return localeURL
+    guard storageManager.fileExists(at: localeURL) else {
+      throw AssetError.invalidLocale(localeName)
     }
-    return nil
+    return localeURL
   }
   
-  // TODO: make the below functions throwing
-  func getBlockModelFolder() -> URL? {
-    let blockModelFolder = assetsFolder.appendingPathComponent("minecraft/models/block")
-    if storageManager.exists(blockModelFolder) {
-      return blockModelFolder
+  func getModelsFolder() throws -> URL {
+    let modelsFolder = assetsFolder.appendingPathComponent("minecraft/models")
+    guard storageManager.folderExists(at: modelsFolder) else {
+      throw AssetError.noModelsFolder
     }
-    return nil
+    return modelsFolder
   }
   
-  func getBlockModelJSON(for identifier: Identifier) throws -> JSON {
-    let fileName = "\(identifier.name.split(separator: "/")[1]).json"
-    let url = getBlockModelFolder()!.appendingPathComponent(fileName)
+  func getModelJSON(for identifier: Identifier) throws -> JSON {
+    let fileName = "\(identifier.name).json"
+    let url = try getModelsFolder().appendingPathComponent(fileName)
     return try JSON.fromURL(url)
   }
   
-  func getBlockStatesFolder() -> URL? {
-    let blockStatesFolder = assetsFolder.appendingPathComponent("minecraft/blockstates")
-    if storageManager.exists(blockStatesFolder) {
-      return blockStatesFolder
-    }
-    return nil
-  }
-  
-  func getBlockTexturesFolder() -> URL? {
+  func getBlockTexturesFolder() throws -> URL {
     let blockTexturesFolder = assetsFolder.appendingPathComponent("minecraft/textures/block")
-    if storageManager.exists(blockTexturesFolder) {
-      return blockTexturesFolder
+    guard storageManager.folderExists(at: blockTexturesFolder) else {
+      throw AssetError.noBlockTexturesFolder
     }
-    return nil
+    return blockTexturesFolder
   }
   
-  func getPixlyzerFolder() -> URL? {
-    let pixlyzerFolder = storageManager.storageURL.appendingPathComponent("pixlyzer-data")
-    if storageManager.exists(pixlyzerFolder) {
-      return pixlyzerFolder
-    }
-    return nil
+  func getPixlyzerFolder() -> URL {
+    return pixlyzerFolder
   }
 }

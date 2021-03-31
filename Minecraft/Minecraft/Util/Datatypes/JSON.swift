@@ -28,6 +28,14 @@ struct JSON {
     case failedToGetAny
   }
   
+  init() {
+    self.dict = [:]
+  }
+  
+  init(dict: [String: Any]) {
+    self.dict = dict
+  }
+  
   static func fromURL(_ url: URL) throws -> JSON {
     let data: Data
     do {

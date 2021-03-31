@@ -17,8 +17,8 @@ class ServerPinger: Hashable, ObservableObject {
   
   @Published var pingInfo: PingInfo? = nil
   
-  init(_ serverInfo: ServerInfo) {
-    self.managers = Managers()
+  init(_ serverInfo: ServerInfo, managers: Managers) {
+    self.managers = managers
     self.info = serverInfo
     self.connection = ServerConnection(host: serverInfo.host, port: serverInfo.port, managers: self.managers)
     self.packetRegistry = PacketRegistry.createDefault()

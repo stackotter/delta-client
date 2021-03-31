@@ -14,8 +14,11 @@ enum LocaleError: LocalizedError {
 }
 
 class LocaleManager {
-  private var locales: [String: MinecraftLocale]
-  var currentLocaleName: String?
+  var assetManager: AssetManager
+  
+  private var locales: [String: MinecraftLocale] = [:]
+  
+  var currentLocaleName: String? = nil
   var currentLocale: MinecraftLocale {
     if let name = currentLocaleName {
       return locales[name] ?? MinecraftLocale()
@@ -23,9 +26,8 @@ class LocaleManager {
     return MinecraftLocale()
   }
   
-  init() {
-    self.locales = [:]
-    self.currentLocaleName = nil
+  init(assetManager: AssetManager) {
+    self.assetManager = assetManager
   }
   
   func addLocale(fromFile file: URL, withName name: String) throws {
@@ -37,10 +39,10 @@ class LocaleManager {
   }
   
   func setLocale(to localeName: String) throws {
-    if locales.keys.contains(localeName) {
-      currentLocaleName = localeName
-    } else {
+    guard let localeFile = try? assetManager.getLocaleURL(withName: localeName) else {
       throw LocaleError.invalidLocale
     }
+    try addLocale(fromFile: localeFile, withName: localeName)
+    currentLocaleName = localeName
   }
 }

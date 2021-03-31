@@ -166,29 +166,32 @@ extension matrix_float4x4 {
 class BlockModelManager {
   var assetManager: AssetManager
   var textureManager: TextureManager
+  var cacheManager: CacheManager
   
   var intermediateCache: [Identifier: IntermediateBlockModel] = [:]
   var blockModelPalette: [UInt16: BlockModel] = [:]
   
-  init(assetManager: AssetManager, textureManager: TextureManager) {
+  init(assetManager: AssetManager, textureManager: TextureManager, cacheManager: CacheManager) throws {
     self.assetManager = assetManager
     self.textureManager = textureManager
-  }
-  
-  func loadGlobalPalette() throws {
-    if let cache = assetManager.storageManager.getCacheFile(name: "block-palette.bin") {
-      Logger.debug("loading from cache")
-      try loadGlobalPaletteCache(url: cache)
-      return
-    }
+    self.cacheManager = cacheManager
     
-    try generateGlobalPalette()
-    try cacheGlobalPalette()
+    if cacheManager.cacheExists(name: "block-palette") {
+      Logger.log("loading cached global palette")
+      try loadGlobalPaletteCache()
+      Logger.log("loaded cached global palette")
+    } else {
+      Logger.log("generating global palette")
+      try generateGlobalPalette()
+      Logger.log("caching global palette")
+      try cacheGlobalPalette()
+      Logger.log("cached global palette")
+    }
   }
   
-  func loadGlobalPaletteCache(url: URL) throws {
-    let data = try Data(contentsOf: url)
-    let cacheGlobalPalette = try CacheBlockModelPalette(serializedData: data)
+  func loadGlobalPaletteCache() throws {
+    let cacheGlobalPalette: CacheBlockModelPalette = try cacheManager.readCache(name: "block-palette")
+    
     blockModelPalette = [:]
     for (state, cacheBlockModel) in cacheGlobalPalette.blockModelPalette {
       blockModelPalette[UInt16(state)] = BlockModel(fromCache: cacheBlockModel)
@@ -196,21 +199,17 @@ class BlockModelManager {
   }
   
   func cacheGlobalPalette() throws {
-    _ = assetManager.storageManager.createFolder(atRelativePath: "cache")
-    let url = assetManager.storageManager.getAbsoluteFromRelative("cache/block-palette.bin")!
-    
     // TODO: make state UInt32
     var cache = CacheBlockModelPalette()
     for (state, blockModel) in blockModelPalette {
       let cacheBlockModel = blockModel.toCache()
       cache.blockModelPalette[UInt32(state)] = cacheBlockModel
     }
-    let data = try cache.serializedData()
-    try data.write(to: url)
+    try cacheManager.writeCache(cache, name: "block-palette")
   }
   
   func generateGlobalPalette() throws {
-    let pixlyzerDataFile = assetManager.getPixlyzerFolder()!.appendingPathComponent("blocks.json")
+    let pixlyzerDataFile = assetManager.getPixlyzerFolder().appendingPathComponent("blocks.json")
     guard let pixlyzerJSON = try? JSON.fromURL(pixlyzerDataFile).dict as? [String: [String: Any]] else {
       Logger.error("failed to parse pixlyzer block palette")
       throw BlockModelError.invalidPixlyzerData
@@ -393,7 +392,7 @@ class BlockModelManager {
       return blockModel
     }
     
-    let blockModelJSON = try assetManager.getBlockModelJSON(for: identifier)
+    let blockModelJSON = try assetManager.getModelJSON(for: identifier)
     var parent: IntermediateBlockModel? = nil
     if let parentName = blockModelJSON.getString(forKey: "parent") {
       parent = try loadIntermediateBlockModel(for: try Identifier(parentName))

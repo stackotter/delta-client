@@ -21,12 +21,14 @@ class TextureManager {
   var images: [(Identifier, CGImage)] = []
   var identifierToBlockTextureIndex: [Identifier: UInt16] = [:]
   
-  init(assetManager: AssetManager) {
+  init(assetManager: AssetManager) throws {
     self.assetManager = assetManager
+    
+    try loadBlockTextures()
   }
   
   func loadBlockTextures() throws {
-    guard let texturesFolder = assetManager.getBlockTexturesFolder() else {
+    guard let texturesFolder = try? assetManager.getBlockTexturesFolder() else {
       throw TextureError.failedToGetBlockTexturesFolder
     }
     

@@ -9,98 +9,102 @@ import Foundation
 import os
 import Zip
 
+enum StorageError: LocalizedError {
+  case applicationSupportMissing
+  case failedToCreateDirectory(Error)
+  case failedToCreateBackup(Error)
+}
+
 class StorageManager {
-  var fileManager = FileManager.default
-  var storageURL: URL
+  var fileManager: FileManager
+  var storageDir: URL
+  var isFirstLaunch: Bool
   
-  init() {
-    storageURL = StorageManager.getStorageURL()! // TODO: figure out what to do if get storage url fails
-  }
-  
-  static func getStorageURL() -> URL? {
-    let fileManager = FileManager.default
+  init() throws {
+    self.fileManager = FileManager.default
     
-    var applicationSupportDirectory = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-    applicationSupportDirectory.appendPathComponent("MinecraftSwiftEdition")
-    
-    var isDirectory: ObjCBool = false
-    let folderExists = fileManager.fileExists(atPath: applicationSupportDirectory.path, isDirectory: &isDirectory)
-    if !isDirectory.boolValue || !folderExists {
-      do {
-        try fileManager.createDirectory(at: applicationSupportDirectory, withIntermediateDirectories: true, attributes: nil)
-      } catch {
-        Logger.error("failed to create application support directory")
-        return nil
+    if let applicationSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+      self.storageDir = applicationSupport.appendingPathComponent("MinecraftSwiftEdition")
+      
+      // attempt to create an application support directory for the client if it doesn't exist
+      var isDirectory: ObjCBool = false
+      let fileExists = fileManager.fileExists(atPath: self.storageDir.path, isDirectory: &isDirectory)
+      if !fileExists || !isDirectory.boolValue {
+        Logger.log("creating application support directory")
+        do {
+          try fileManager.createDirectory(at: self.storageDir, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+          throw StorageError.failedToCreateDirectory(error)
+        }
       }
+      
+      // check if this is the first launch
+      let launchMarker = self.storageDir.appendingPathComponent(".haslaunched")
+      self.isFirstLaunch = !self.fileManager.fileExists(atPath: launchMarker.path)
+      if self.isFirstLaunch {
+        if try! fileManager.contentsOfDirectory(at: self.storageDir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).count != 0 {
+          try self.createBackup()
+        }
+        
+        self.fileManager.createFile(
+          atPath: launchMarker.path,
+          contents: "delete this file to reset the client. a backup of this folder is made automatically when resetting.".data(using: .utf8),
+          attributes: nil
+        )
+      }
+    } else {
+      throw StorageError.applicationSupportMissing
     }
-    
-    return applicationSupportDirectory
   }
   
-  func getAssetsFolder() -> URL {
-    let assetsFolderPath = getAbsoluteFromRelative("assets")!
-    return assetsFolderPath
+  func absoluteFromRelative(_ path: String) -> URL {
+    let absoluteURL = storageDir.appendingPathComponent(path)
+    return absoluteURL
   }
   
-  func getCacheFile(name: String) -> URL? {
-    let cacheFolder = getAbsoluteFromRelative("cache")!
-    let file = cacheFolder.appendingPathComponent(name)
-    if exists(file) {
-      return file
-    }
-    return nil
-  }
-  
-  func exists(_ url: URL) -> Bool {
+  func fileExists(at url: URL) -> Bool {
     return fileManager.fileExists(atPath: url.path)
   }
   
-  func getFile(atRelativePath path: String) -> URL? {
-    guard let absoluteURL = getAbsoluteFromRelative(path) else {
-      return nil
-    }
-    let fileExists = fileManager.fileExists(atPath: absoluteURL.path)
-    return fileExists ? absoluteURL : nil
-  }
-  
-  func getFolder(atRelativePath path: String) -> URL? {
-    guard let absoluteURL = getAbsoluteFromRelative(path) else {
-      return nil
-    }
+  func folderExists(at url: URL) -> Bool {
     var isDirectory: ObjCBool = false
-    let folderExists = fileManager.fileExists(atPath: absoluteURL.path, isDirectory: &isDirectory)
-    
-    if !isDirectory.boolValue || !folderExists {
-      return nil
-    }
-    
-    return absoluteURL
+    let fileExists = fileManager.fileExists(atPath: url.path, isDirectory: &isDirectory)
+    return fileExists && isDirectory.boolValue
   }
   
-  func createFolder(atRelativePath path: String) -> Bool {
-    guard let absoluteURL = getAbsoluteFromRelative(path) else {
-      return false
-    }
+  func createFolder(atRelativePath path: String) throws {
+    let absoluteURL = absoluteFromRelative(path)
+    try createFolder(absoluteURL)
+  }
+  
+  func createFolder(_ url: URL) throws {
     do {
-      try fileManager.createDirectory(at: absoluteURL, withIntermediateDirectories: true, attributes: nil)
+      try fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
     } catch {
-      Logger.error("failed to create directory at relative path `\(path)`")
-      return false
+      Logger.error("failed to create directory '\(url)'")
+      throw StorageError.failedToCreateDirectory(error)
     }
-    return true
   }
   
-  func getBundledResourceByName(_ name: String, fileExtension: String) -> URL? {
-    guard let url = Bundle.main.url(forResource: name, withExtension: fileExtension) else {
-      Logger.debug("failed to find bundled resource with '\(name).\(fileExtension)'")
-      return nil
+  func createBackup() throws {
+    let date = Date()
+    let formatter = DateFormatter()
+    formatter.dateFormat = "dd-MM-yyyy HH-mm-ss"
+    
+    let backupName = "backup \(formatter.string(from: date))"
+    
+    do {
+      let destination = try Zip.quickZipFiles(
+        [storageDir],
+        fileName: backupName
+      )
+      for item in try fileManager.contentsOfDirectory(at: storageDir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) {
+        try fileManager.removeItem(at: item)
+      }
+      try fileManager.copyItem(at: destination, to: storageDir.appendingPathComponent("\(backupName.zip)")
+    } catch {
+      throw StorageError.failedToCreateBackup(error)
     }
-    return url
-  }
-  
-  func getAbsoluteFromRelative(_ path: String) -> URL? {
-    let absoluteURL = storageURL.appendingPathComponent(path)
-    return absoluteURL
   }
   
   func getMinecraftFolder() -> URL? {

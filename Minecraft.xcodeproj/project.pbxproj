@@ -270,6 +270,7 @@
 		78E919F325D7FD2900667C75 /* VehicleMoveClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919F225D7FD2900667C75 /* VehicleMoveClientboundPacket.swift */; };
 		78E919F825D7FD9E00667C75 /* OpenBookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919F725D7FD9E00667C75 /* OpenBookPacket.swift */; };
 		78E919FD25D7FE0700667C75 /* OpenWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919FC25D7FE0700667C75 /* OpenWindowPacket.swift */; };
+		78EC27572613E8160055E97D /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EC27562613E8150055E97D /* CacheManager.swift */; };
 		78EF27B725F39381007F788A /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EF27B625F39381007F788A /* Stopwatch.swift */; };
 		78F29B1E25AE769B00D85CCB /* CompactedLongArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */; };
 		78F29B2425AE818700D85CCB /* Chunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B2325AE818700D85CCB /* Chunk.swift */; };
@@ -572,6 +573,7 @@
 		78E919F225D7FD2900667C75 /* VehicleMoveClientboundPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMoveClientboundPacket.swift; sourceTree = "<group>"; };
 		78E919F725D7FD9E00667C75 /* OpenBookPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenBookPacket.swift; sourceTree = "<group>"; };
 		78E919FC25D7FE0700667C75 /* OpenWindowPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWindowPacket.swift; sourceTree = "<group>"; };
+		78EC27562613E8150055E97D /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
 		78EF27B625F39381007F788A /* Stopwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
 		78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactedLongArray.swift; sourceTree = "<group>"; };
 		78F29B2325AE818700D85CCB /* Chunk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chunk.swift; sourceTree = "<group>"; };
@@ -876,6 +878,7 @@
 				78B8C97025FC7D850024846F /* Managers.swift */,
 				78B6A1DE25FC301200CFE493 /* StorageManager.swift */,
 				78B6A1F525FC5FCC00CFE493 /* AssetManager.swift */,
+				78EC27562613E8150055E97D /* CacheManager.swift */,
 				780D8FB025FDE10200C4C440 /* TextureManager.swift */,
 				78B6A20025FC673D00CFE493 /* LocaleManager.swift */,
 				787FBB6825FCC5B900A29552 /* BlockModelManager.swift */,
@@ -1567,6 +1570,7 @@
 				7843EB7225E2283B00AD42A7 /* GenerateStructurePacket.swift in Sources */,
 				7843EBC325E22E3900AD42A7 /* SteerVehiclePacket.swift in Sources */,
 				7843EB7725E2288300AD42A7 /* LockDifficultyPacket.swift in Sources */,
+				78EC27572613E8160055E97D /* CacheManager.swift in Sources */,
 				7809941025E2200500DFDC9F /* SetDifficultyPacket.swift in Sources */,
 				784B395F25A1BCA400556E3E /* HeldItemChangePacket.swift in Sources */,
 				784CCAD525AD3417004B3182 /* ArmorDyeRecipe.swift in Sources */,

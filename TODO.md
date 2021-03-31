@@ -17,11 +17,12 @@
 
 - [x] optimise creation of global palette
 - [x] cache global palette
-- [ ] make managers throw in initialiser to avoid optional and throwing functions elsewhere
-  - [ ] storage manager
-  - [ ] asset manager
-  - [ ] texture manager
-  - [ ] block model manager (rename this too)
+- [x] make managers throw in initialiser to avoid optional and throwing functions elsewhere
+  - [x] storage manager
+  - [x] asset manager
+  - [x] texture manager
+  - [x] block model manager
+- [ ] rename block model manager
 
 ## Rendering
 
@@ -44,6 +45,8 @@
 - [ ] multiple models for one block
 - [x] implied uv coordinates
 - [ ] fix stair sides not being detected as full faces (because they're made of two elements)
+- [ ] fix uvlock again
+- [x] fix cauldrons again
 
 ### Chunk preparing
 

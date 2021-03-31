@@ -8,18 +8,6 @@
 import Foundation
 import os
 
-enum StartupError: LocalizedError {
-  case failedToDownloadAssets
-  case missingLocale
-  case failedToDownloadPixlyzerData(AssetError?)
-  case failedToLoadLocale(LocaleError?)
-  case failedToLoadBlockModels(BlockModelError?)
-  case failedToLoadGlobalBlockPalette(BlockModelError?)
-  case failedToLoadBlockTextures(TextureError?)
-}
-
-// TODO: make the managers' inits throw so less optionals are needed for things and errors are picked up early. use hashes to check whether assets need to be re-verified or anything
-// TODO: make a verify function and a repair function for storage and asset manager and things like that
 class StartupSequence {
   var eventManager: EventManager
   
@@ -28,64 +16,32 @@ class StartupSequence {
   }
   
   func run() throws {
-    // initialise managers
-    eventManager.triggerEvent(.loadingScreenMessage("initialising managers"))
-    let managers = Managers(eventManager: eventManager)
+    var managers = Managers(eventManager: eventManager)
     
-    // download assets if neccessary
-    if !managers.assetManager.checkAssetsExist() {
-      eventManager.triggerEvent(.loadingScreenMessage("downloading and extracting assets (this only happens once, it shouldn't take too long, only 18mb)"))
-      let success = managers.assetManager.downloadAssets()
-      if !success {
-        throw StartupError.failedToDownloadAssets
-      }
-      Logger.log("successfully downloaded assets")
-    } else {
-      Logger.log("assets exist")
-    }
+    displayProgress("initialising storage")
+    managers.storageManager = try StorageManager()
+    managers.cacheManager = try CacheManager(storageManager: managers.storageManager)
     
-    // download pixlyzer data
-    if !managers.assetManager.checkPixlyzerDataExists() {
-      eventManager.triggerEvent(.loadingScreenMessage("downloading pixlyzer data (this only happens once, it shouldn't take too long, only 12mb"))
-      do {
-        try managers.assetManager.downloadPixlyzerData()
-      } catch {
-        throw StartupError.failedToDownloadPixlyzerData(error as? AssetError)
-      }
-      Logger.log("downloaded pixlyzer data")
-    }
+    displayProgress("reading config")
+    managers.configManager = ConfigManager(storageManager: managers.storageManager)
     
-    // load block textures
-    eventManager.triggerEvent(.loadingScreenMessage("loading block textures"))
-    do {
-      try managers.textureManager.loadBlockTextures()
-    } catch {
-      throw StartupError.failedToLoadBlockTextures(error as? TextureError)
-    }
-    Logger.log("successfully loaded block textures")
+    displayProgress(managers.storageManager.isFirstLaunch ? "downloading assets (first launch only)" : "loading assets")
+    managers.assetManager = try AssetManager(storageManager: managers.storageManager)
     
-    // load global palette
-    eventManager.triggerEvent(.loadingScreenMessage("loading global palette"))
-    do {
-      try managers.blockModelManager.loadGlobalPalette()
-    } catch {
-      throw StartupError.failedToLoadGlobalBlockPalette(error as? BlockModelError)
-    }
-    Logger.log("successfully loaded global palette")
+    displayProgress("loading textures")
+    managers.textureManager = try TextureManager(assetManager: managers.assetManager)
     
-    // load locale
-    eventManager.triggerEvent(.loadingScreenMessage("loading locale 'en_us'.."))
-    guard let localeURL = managers.assetManager.getLocaleURL(withName: "en_us") else {
-      throw StartupError.missingLocale
-    }
-    do {
-      try managers.localeManager.addLocale(fromFile: localeURL, withName: "en_us")
-      try managers.localeManager.setLocale(to: "en_us")
-    } catch {
-      throw StartupError.failedToLoadLocale(error as? LocaleError)
-    }
-    Logger.log("successfully loaded locale")
+    displayProgress(managers.storageManager.isFirstLaunch ? "generating global palette (first launch only)" : "loading global palette from cache")
+    managers.blockModelManager = try BlockModelManager(assetManager: managers.assetManager, textureManager: managers.textureManager, cacheManager: managers.cacheManager)
+    
+    displayProgress("loading locale \(LOCALE)")
+    managers.localeManager = LocaleManager(assetManager: managers.assetManager)
+    try managers.localeManager.setLocale(to: LOCALE)
     
     eventManager.triggerEvent(.loadingComplete(managers))
+  }
+  
+  func displayProgress(_ message: String) {
+    eventManager.triggerEvent(.loadingScreenMessage(message))
   }
 }

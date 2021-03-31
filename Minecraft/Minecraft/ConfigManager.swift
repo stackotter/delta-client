@@ -15,6 +15,7 @@ class ConfigManager {
   enum ConfigError: LocalizedError {
     case invalidServerListNBT
     case invalidLauncherProfilesJSON
+    case failedToLoadLauncherProfile
   }
   
   init(storageManager: StorageManager) {
@@ -23,12 +24,12 @@ class ConfigManager {
     self.minecraftFolder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("minecraft")
   }
   
-  func getServerList() -> ServerList {
+  func getServerList(managers: Managers) -> ServerList {
     let serversDatURL = minecraftFolder.appendingPathComponent("servers.dat")
     do {
       let serversNBT = try NBTCompound(fromURL: serversDatURL)
       let serverNBTList: [NBTCompound] = try serversNBT.getList("servers")
-      let serverList = ServerList()
+      let serverList = ServerList(managers: managers)
       for serverNBT in serverNBTList {
         let ip: String = try serverNBT.get("ip")
         let name: String = try serverNBT.get("name")
@@ -44,11 +45,11 @@ class ConfigManager {
       return serverList
     } catch {
       Logger.warning("failed to load server list from servers.dat")
-      return ServerList()
+      return ServerList(managers: managers)
     }
   }
   
-  func getLauncherProfile() -> LauncherProfile? {
+  func getLauncherProfile() throws -> LauncherProfile {
     let launcherProfilesURL = minecraftFolder.appendingPathComponent("launcher_profiles.json")
     do {
       let json = try JSON.fromURL(launcherProfilesURL)
@@ -60,8 +61,8 @@ class ConfigManager {
       let profile = LauncherProfile(accountUUID: accountUUID, profileUUID: profileUUID)
       return profile
     } catch {
-      Logger.warning("failed to load launcher profile from launcher_profiles.json")
-      return nil
+      Logger.error("failed to load launcher profile from launcher_profiles.json")
+      throw ConfigError.failedToLoadLauncherProfile
     }
   }
 }
