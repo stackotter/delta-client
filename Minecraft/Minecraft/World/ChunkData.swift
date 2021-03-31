@@ -18,7 +18,7 @@ struct ChunkData {
   // chunkX and chunkZ have already been read
   var buf: Buffer
   
-  func unpack(blockModelManager: BlockModelManager) throws -> Chunk {
+  func unpack(blockPaletteManager: BlockPaletteManager) throws -> Chunk {
     do {
       let start = CFAbsoluteTimeGetCurrent()
       var packetReader = PacketReader(buffer: buf)
@@ -62,7 +62,7 @@ struct ChunkData {
       let elapsed = CFAbsoluteTimeGetCurrent() - start
       Logger.log(String(format: "completed chunk in %.2fms", elapsed*1000))
       
-      let chunk = Chunk(position: position, heightMaps: heightMaps, ignoreOldData: ignoreOldData, biomes: biomes, sections: sections, blockEntities: blockEntities, blockModelManager: blockModelManager)
+      let chunk = Chunk(position: position, heightMaps: heightMaps, ignoreOldData: ignoreOldData, biomes: biomes, sections: sections, blockEntities: blockEntities, blockPaletteManager: blockPaletteManager)
       return chunk
     } catch {
       Logger.log("failed to unpack chunk: \(error.localizedDescription)")

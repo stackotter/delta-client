@@ -79,7 +79,7 @@ class World {
     if unpack {
       chunkThread.async {
         do {
-          let chunk = try chunkData.unpack(blockModelManager: self.managers.blockModelManager)
+          let chunk = try chunkData.unpack(blockPaletteManager: self.managers.blockPaletteManager)
           self.addChunk(chunk)
           self.packedChunks.removeValue(forKey: chunk.position)
           if self.packedChunks.count == 0 {

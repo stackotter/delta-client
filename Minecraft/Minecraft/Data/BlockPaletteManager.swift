@@ -1,5 +1,5 @@
 //
-//  BlockModelManager.swift
+//  BlockPaletteManager.swift
 //  Minecraft
 //
 //  Created by Rohan van Klinken on 13/3/21.
@@ -162,8 +162,7 @@ extension matrix_float4x4 {
   }
 }
 
-// TODO: think of a better name for BlockModelManager
-class BlockModelManager {
+class BlockPaletteManager {
   var assetManager: AssetManager
   var textureManager: TextureManager
   var cacheManager: CacheManager

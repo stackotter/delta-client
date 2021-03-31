@@ -14,7 +14,7 @@ struct Managers {
   var configManager: ConfigManager!
   var assetManager: AssetManager!
   var textureManager: TextureManager!
-  var blockModelManager: BlockModelManager!
+  var blockPaletteManager: BlockPaletteManager!
   var localeManager: LocaleManager!
   
   init() {

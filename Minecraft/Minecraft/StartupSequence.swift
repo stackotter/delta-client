@@ -32,7 +32,7 @@ class StartupSequence {
     managers.textureManager = try TextureManager(assetManager: managers.assetManager)
     
     displayProgress(managers.storageManager.isFirstLaunch ? "generating global palette (first launch only)" : "loading global palette from cache")
-    managers.blockModelManager = try BlockModelManager(assetManager: managers.assetManager, textureManager: managers.textureManager, cacheManager: managers.cacheManager)
+    managers.blockPaletteManager = try BlockPaletteManager(assetManager: managers.assetManager, textureManager: managers.textureManager, cacheManager: managers.cacheManager)
     
     displayProgress("loading locale \(LOCALE)")
     managers.localeManager = LocaleManager(assetManager: managers.assetManager)

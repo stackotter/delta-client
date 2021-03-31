@@ -12,7 +12,7 @@ import os
 class ChunkMesh: Mesh {
   var chunk: Chunk
   
-  private var blockModelManager: BlockModelManager
+  private var blockPaletteManager: BlockPaletteManager
   
   // vertex data
   private let quadWinding: [UInt32] = [0, 1, 2, 2, 3, 0]
@@ -45,8 +45,8 @@ class ChunkMesh: Mesh {
     simd_float3([1,  1,  1]),
   ]
   
-  init(blockModelManager: BlockModelManager, chunk: Chunk) {
-    self.blockModelManager = blockModelManager
+  init(blockPaletteManager: BlockPaletteManager, chunk: Chunk) {
+    self.blockPaletteManager = blockPaletteManager
     self.chunk = chunk
     self.profiler = Profiler(name: "chunk mesh")
     
@@ -125,7 +125,7 @@ class ChunkMesh: Mesh {
     let cullFaces = chunk.getCullingNeighbours(forIndex: index)
 //    stopwatch.stopMeasurement("getCullingNeighbours")
     
-    if let blockModel = blockModelManager.blockModelPalette[state] {
+    if let blockModel = blockPaletteManager.blockModelPalette[state] {
       var quadIndices: [Int] = []
       
       let modelToWorld = MatrixUtil.translationMatrix(simd_float3(Float(x), Float(y), Float(z)))

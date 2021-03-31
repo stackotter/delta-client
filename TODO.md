@@ -22,7 +22,7 @@
   - [x] asset manager
   - [x] texture manager
   - [x] block model manager
-- [ ] rename block model manager
+- [x] rename block model manager
 
 ## Rendering
 

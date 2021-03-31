@@ -23,13 +23,13 @@ class Chunk {
   
   var neighbours: [CardinalDirection: Chunk] = [:]
   
-  var blockModelManager: BlockModelManager
+  var blockPaletteManager: BlockPaletteManager
   var mesh: ChunkMesh!
   
   // private because it shouldn't be used directly cause of its weird storage format
   private var biomes: [UInt8]
   
-  init(position: ChunkPosition, heightMaps: NBTCompound, ignoreOldData: Bool, biomes: [UInt8], sections: [ChunkSection], blockEntities: [BlockEntity], blockModelManager: BlockModelManager) {
+  init(position: ChunkPosition, heightMaps: NBTCompound, ignoreOldData: Bool, biomes: [UInt8], sections: [ChunkSection], blockEntities: [BlockEntity], blockPaletteManager: BlockPaletteManager) {
     self.position = position
     self.heightMaps = heightMaps
     self.ignoreOldData = ignoreOldData
@@ -37,15 +37,15 @@ class Chunk {
     self.sections = sections
     self.blockEntities = blockEntities
     
-    self.blockModelManager = blockModelManager
-    self.mesh = ChunkMesh(blockModelManager: blockModelManager, chunk: self)
+    self.blockPaletteManager = blockPaletteManager
+    self.mesh = ChunkMesh(blockPaletteManager: blockPaletteManager, chunk: self)
   }
   
   func setNeighbour(to chunk: Chunk, direction: CardinalDirection) {
     neighbours[direction] = chunk
   }
   
-  func generateMesh(with blockModelManager: BlockModelManager) {
+  func generateMesh() {
     self.mesh.ingestChunk()
   }
   
@@ -162,7 +162,7 @@ class Chunk {
     for (direction, (chunk, index)) in presentNeighbours {
       let state = chunk.getBlock(atIndex: index)
       if state != 0 {
-        if let blockModel = blockModelManager.blockModelPalette[state] {
+        if let blockModel = blockPaletteManager.blockModelPalette[state] {
           if blockModel.fullFaces.contains(direction.opposite) {
             cullingNeighbours.append(direction)
           }
