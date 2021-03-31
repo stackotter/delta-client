@@ -101,7 +101,7 @@ class StorageManager {
       for item in try fileManager.contentsOfDirectory(at: storageDir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) {
         try fileManager.removeItem(at: item)
       }
-      try fileManager.copyItem(at: destination, to: storageDir.appendingPathComponent("\(backupName.zip)")
+      try fileManager.copyItem(at: destination, to: storageDir.appendingPathComponent("\(backupName).zip"))
     } catch {
       throw StorageError.failedToCreateBackup(error)
     }
