@@ -35,7 +35,7 @@
 - [ ] multipart
 - [ ] multiple models for one block
 - [ ] fix stair sides not being detected as full faces (because they're made of two elements)
-- [ ] separate out block model structs into separate files
+- [x] separate out block model structs into separate files
 - [ ] investigate campfires
 - [ ] identify translucent blocks
 
@@ -54,5 +54,5 @@
 ## Other
 
 - [ ] add os_signpost support to the stopwatch
-- [ ] rename project to not include word minecraft
+- [x] rename project to not include word minecraft
 - [ ] remove reliance on minecraft folder

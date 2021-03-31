@@ -104,7 +104,6 @@
 		780523A6261433A800079A01 /* Managers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805228B261433A700079A01 /* Managers.swift */; };
 		780523A7261433A800079A01 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805228C261433A700079A01 /* AssetManager.swift */; };
 		780523A8261433A800079A01 /* BlockPaletteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805228D261433A700079A01 /* BlockPaletteManager.swift */; };
-		780523A9261433A800079A01 /* BlockModel.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805228F261433A700079A01 /* BlockModel.pb.swift */; };
 		780523AD261433A800079A01 /* TabList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052293261433A700079A01 /* TabList.swift */; };
 		780523AE261433A800079A01 /* PlayerProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052294261433A700079A01 /* PlayerProperty.swift */; };
 		780523AF261433A800079A01 /* Hand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052296261433A700079A01 /* Hand.swift */; };
@@ -277,9 +276,25 @@
 		782F0CFE26143BB1008AE67B /* PacketReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C6426143BB1008AE67B /* PacketReader.swift */; };
 		782F0CFF26143BB1008AE67B /* PacketState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C6526143BB1008AE67B /* PacketState.swift */; };
 		782F0D0026143BB1008AE67B /* PacketHandlingThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C6626143BB1008AE67B /* PacketHandlingThread.swift */; };
+		782F0D2126144189008AE67B /* BlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0D2026144189008AE67B /* BlockModel.swift */; };
+		782F0D29261441BD008AE67B /* BlockModelElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0D28261441BD008AE67B /* BlockModelElement.swift */; };
+		782F0D2E26144208008AE67B /* BlockModelElementFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0D2D26144208008AE67B /* BlockModelElementFace.swift */; };
+		782F0D3326144254008AE67B /* IntermediateBlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0D3226144254008AE67B /* IntermediateBlockModel.swift */; };
+		782F0D3826144292008AE67B /* IntermediateBlockModelElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0D3726144292008AE67B /* IntermediateBlockModelElement.swift */; };
+		782F0D3D261442AE008AE67B /* IntermediateBlockModelElementFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0D3C261442AE008AE67B /* IntermediateBlockModelElementFace.swift */; };
 		7892880E261438A000F17DBB /* DeltaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A9261433A700079A01 /* DeltaClientTests.swift */; };
 		78928812261438A500F17DBB /* DeltaClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052170261433A600079A01 /* DeltaClientUITests.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
+		78FD1F642614484300B74024 /* CacheFaceDirection.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5A2614484300B74024 /* CacheFaceDirection.pb.swift */; };
+		78FD1F652614484300B74024 /* CacheFaceDirection.proto in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5B2614484300B74024 /* CacheFaceDirection.proto */; };
+		78FD1F662614484300B74024 /* CacheBlockModelElementFace.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5C2614484300B74024 /* CacheBlockModelElementFace.pb.swift */; };
+		78FD1F672614484300B74024 /* CacheBlockModelPalette.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5D2614484300B74024 /* CacheBlockModelPalette.pb.swift */; };
+		78FD1F682614484300B74024 /* CacheBlockModelElement.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5E2614484300B74024 /* CacheBlockModelElement.pb.swift */; };
+		78FD1F692614484300B74024 /* CacheBlockModel.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5F2614484300B74024 /* CacheBlockModel.pb.swift */; };
+		78FD1F6A2614484300B74024 /* CacheBlockModelPalette.proto in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F602614484300B74024 /* CacheBlockModelPalette.proto */; };
+		78FD1F6B2614484300B74024 /* CacheBlockModelElementFace.proto in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F612614484300B74024 /* CacheBlockModelElementFace.proto */; };
+		78FD1F6C2614484300B74024 /* CacheBlockModel.proto in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F622614484300B74024 /* CacheBlockModel.proto */; };
+		78FD1F6D2614484300B74024 /* CacheBlockModelElement.proto in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F632614484300B74024 /* CacheBlockModelElement.proto */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -400,8 +415,6 @@
 		7805228B261433A700079A01 /* Managers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Managers.swift; sourceTree = "<group>"; };
 		7805228C261433A700079A01 /* AssetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
 		7805228D261433A700079A01 /* BlockPaletteManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockPaletteManager.swift; sourceTree = "<group>"; };
-		7805228F261433A700079A01 /* BlockModel.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockModel.pb.swift; sourceTree = "<group>"; };
-		78052290261433A700079A01 /* BlockModel.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = BlockModel.proto; sourceTree = "<group>"; };
 		78052293261433A700079A01 /* TabList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabList.swift; sourceTree = "<group>"; };
 		78052294261433A700079A01 /* PlayerProperty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerProperty.swift; sourceTree = "<group>"; };
 		78052296261433A700079A01 /* Hand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hand.swift; sourceTree = "<group>"; };
@@ -578,9 +591,25 @@
 		782F0C6426143BB1008AE67B /* PacketReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketReader.swift; sourceTree = "<group>"; };
 		782F0C6526143BB1008AE67B /* PacketState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketState.swift; sourceTree = "<group>"; };
 		782F0C6626143BB1008AE67B /* PacketHandlingThread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketHandlingThread.swift; sourceTree = "<group>"; };
+		782F0D2026144189008AE67B /* BlockModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModel.swift; sourceTree = "<group>"; };
+		782F0D28261441BD008AE67B /* BlockModelElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModelElement.swift; sourceTree = "<group>"; };
+		782F0D2D26144208008AE67B /* BlockModelElementFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModelElementFace.swift; sourceTree = "<group>"; };
+		782F0D3226144254008AE67B /* IntermediateBlockModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntermediateBlockModel.swift; sourceTree = "<group>"; };
+		782F0D3726144292008AE67B /* IntermediateBlockModelElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntermediateBlockModelElement.swift; sourceTree = "<group>"; };
+		782F0D3C261442AE008AE67B /* IntermediateBlockModelElementFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntermediateBlockModelElementFace.swift; sourceTree = "<group>"; };
 		784194B7258204CD0070DE78 /* DeltaClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194C9258204D10070DE78 /* DeltaClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D4258204D10070DE78 /* DeltaClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		78FD1F5A2614484300B74024 /* CacheFaceDirection.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheFaceDirection.pb.swift; sourceTree = "<group>"; };
+		78FD1F5B2614484300B74024 /* CacheFaceDirection.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheFaceDirection.proto; sourceTree = "<group>"; };
+		78FD1F5C2614484300B74024 /* CacheBlockModelElementFace.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelElementFace.pb.swift; sourceTree = "<group>"; };
+		78FD1F5D2614484300B74024 /* CacheBlockModelPalette.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelPalette.pb.swift; sourceTree = "<group>"; };
+		78FD1F5E2614484300B74024 /* CacheBlockModelElement.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelElement.pb.swift; sourceTree = "<group>"; };
+		78FD1F5F2614484300B74024 /* CacheBlockModel.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModel.pb.swift; sourceTree = "<group>"; };
+		78FD1F602614484300B74024 /* CacheBlockModelPalette.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheBlockModelPalette.proto; sourceTree = "<group>"; };
+		78FD1F612614484300B74024 /* CacheBlockModelElementFace.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheBlockModelElementFace.proto; sourceTree = "<group>"; };
+		78FD1F622614484300B74024 /* CacheBlockModel.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheBlockModel.proto; sourceTree = "<group>"; };
+		78FD1F632614484300B74024 /* CacheBlockModelElement.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheBlockModelElement.proto; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -805,13 +834,12 @@
 		7805227A261433A700079A01 /* Render */ = {
 			isa = PBXGroup;
 			children = (
+				782F0D1F2614417A008AE67B /* BlockModel */,
 				7805227B261433A700079A01 /* Mesh */,
-				7805227F261433A700079A01 /* FaceDirection.swift */,
-				78052280261433A700079A01 /* RenderCoordinator.swift */,
 				78052281261433A700079A01 /* MetalView.swift */,
-				78052282261433A700079A01 /* shaders.metal */,
-				78052283261433A700079A01 /* ChunkMesh.swift */,
+				78052280261433A700079A01 /* RenderCoordinator.swift */,
 				78052284261433A700079A01 /* Renderer.swift */,
+				78052282261433A700079A01 /* shaders.metal */,
 			);
 			path = Render;
 			sourceTree = "<group>";
@@ -819,6 +847,7 @@
 		7805227B261433A700079A01 /* Mesh */ = {
 			isa = PBXGroup;
 			children = (
+				78052283261433A700079A01 /* ChunkMesh.swift */,
 				7805227C261433A700079A01 /* Mesh.swift */,
 				7805227D261433A700079A01 /* CubeFaces.swift */,
 				7805227E261433A700079A01 /* Vertex.swift */,
@@ -829,28 +858,19 @@
 		78052285261433A700079A01 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				7805228E261433A700079A01 /* Protobuf */,
+				78FD1F592614484300B74024 /* Protobuf */,
 				7805228B261433A700079A01 /* Managers.swift */,
 				7805224B261433A700079A01 /* EventManager.swift */,
 				78052286261433A700079A01 /* StorageManager.swift */,
 				78052287261433A700079A01 /* CacheManager.swift */,
+				7805228D261433A700079A01 /* BlockPaletteManager.swift */,
 				78052221261433A700079A01 /* ConfigManager.swift */,
 				7805228C261433A700079A01 /* AssetManager.swift */,
 				78052288261433A700079A01 /* LocaleManager.swift */,
 				78052289261433A700079A01 /* TextureManager.swift */,
 				7805228A261433A700079A01 /* MinecraftLocale.swift */,
-				7805228D261433A700079A01 /* BlockPaletteManager.swift */,
 			);
 			path = Data;
-			sourceTree = "<group>";
-		};
-		7805228E261433A700079A01 /* Protobuf */ = {
-			isa = PBXGroup;
-			children = (
-				78052290261433A700079A01 /* BlockModel.proto */,
-				7805228F261433A700079A01 /* BlockModel.pb.swift */,
-			);
-			path = Protobuf;
 			sourceTree = "<group>";
 		};
 		78052295261433A700079A01 /* Player */ = {
@@ -1157,6 +1177,20 @@
 			path = Clientbound;
 			sourceTree = "<group>";
 		};
+		782F0D1F2614417A008AE67B /* BlockModel */ = {
+			isa = PBXGroup;
+			children = (
+				782F0D2026144189008AE67B /* BlockModel.swift */,
+				782F0D28261441BD008AE67B /* BlockModelElement.swift */,
+				782F0D2D26144208008AE67B /* BlockModelElementFace.swift */,
+				782F0D3226144254008AE67B /* IntermediateBlockModel.swift */,
+				782F0D3726144292008AE67B /* IntermediateBlockModelElement.swift */,
+				782F0D3C261442AE008AE67B /* IntermediateBlockModelElementFace.swift */,
+				7805227F261433A700079A01 /* FaceDirection.swift */,
+			);
+			path = BlockModel;
+			sourceTree = "<group>";
+		};
 		784194AE258204CD0070DE78 = {
 			isa = PBXGroup;
 			children = (
@@ -1175,6 +1209,31 @@
 				784194D4258204D10070DE78 /* DeltaClientUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		78FD1F592614484300B74024 /* Protobuf */ = {
+			isa = PBXGroup;
+			children = (
+				78FD1F712614485A00B74024 /* Definitions */,
+				78FD1F5D2614484300B74024 /* CacheBlockModelPalette.pb.swift */,
+				78FD1F5F2614484300B74024 /* CacheBlockModel.pb.swift */,
+				78FD1F5E2614484300B74024 /* CacheBlockModelElement.pb.swift */,
+				78FD1F5C2614484300B74024 /* CacheBlockModelElementFace.pb.swift */,
+				78FD1F5A2614484300B74024 /* CacheFaceDirection.pb.swift */,
+			);
+			path = Protobuf;
+			sourceTree = "<group>";
+		};
+		78FD1F712614485A00B74024 /* Definitions */ = {
+			isa = PBXGroup;
+			children = (
+				78FD1F602614484300B74024 /* CacheBlockModelPalette.proto */,
+				78FD1F622614484300B74024 /* CacheBlockModel.proto */,
+				78FD1F632614484300B74024 /* CacheBlockModelElement.proto */,
+				78FD1F612614484300B74024 /* CacheBlockModelElementFace.proto */,
+				78FD1F5B2614484300B74024 /* CacheFaceDirection.proto */,
+			);
+			path = Definitions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1358,6 +1417,7 @@
 				782F0C6D26143BB1008AE67B /* StatusRequestPacket.swift in Sources */,
 				78052395261433A800079A01 /* ServerInfo.swift in Sources */,
 				78052368261433A800079A01 /* ChatStringComponent.swift in Sources */,
+				78FD1F692614484300B74024 /* CacheBlockModel.pb.swift in Sources */,
 				78052383261433A800079A01 /* Stopwatch.swift in Sources */,
 				782F0C9826143BB1008AE67B /* SelectTradePacket.swift in Sources */,
 				782F0C9A26143BB1008AE67B /* HeldItemChangeServerboundPacket.swift in Sources */,
@@ -1372,7 +1432,9 @@
 				782F0CE826143BB1008AE67B /* BossBarPacket.swift in Sources */,
 				7805238F261433A800079A01 /* ChunkData.swift in Sources */,
 				7805237E261433A800079A01 /* Position.swift in Sources */,
+				782F0D2E26144208008AE67B /* BlockModelElementFace.swift in Sources */,
 				782F0C9E26143BB1008AE67B /* UpdateStructureBlockPacket.swift in Sources */,
+				78FD1F6D2614484300B74024 /* CacheBlockModelElement.proto in Sources */,
 				782F0CBC26143BB1008AE67B /* DeclareRecipesPacket.swift in Sources */,
 				782F0CF626143BB1008AE67B /* CloseWindowClientboundPacket.swift in Sources */,
 				7805238A261433A800079A01 /* ChunkSection.swift in Sources */,
@@ -1421,7 +1483,6 @@
 				78052355261433A800079A01 /* MapCloningRecipe.swift in Sources */,
 				782F0CEE26143BB1008AE67B /* CombatEventPacket.swift in Sources */,
 				782F0C7026143BB1008AE67B /* NameItemPacket.swift in Sources */,
-				780523A9261433A800079A01 /* BlockModel.pb.swift in Sources */,
 				782F0C7526143BB1008AE67B /* UpdateSignPacket.swift in Sources */,
 				782F0C9226143BB1008AE67B /* PlayerBlockPlacementPacket.swift in Sources */,
 				78052396261433A800079A01 /* StartupSequence.swift in Sources */,
@@ -1458,6 +1519,8 @@
 				782F0CB826143BB1008AE67B /* SpawnExperienceOrbPacket.swift in Sources */,
 				78052388261433A800079A01 /* EntityRotation.swift in Sources */,
 				782F0CEB26143BB1008AE67B /* BlockEntityDataPacket.swift in Sources */,
+				782F0D3D261442AE008AE67B /* IntermediateBlockModelElementFace.swift in Sources */,
+				78FD1F662614484300B74024 /* CacheBlockModelElementFace.pb.swift in Sources */,
 				782F0CA526143BB1008AE67B /* EntityVelocityPacket.swift in Sources */,
 				78052373261433A800079A01 /* Equipment.swift in Sources */,
 				78052360261433A800079A01 /* RepairItemRecipe.swift in Sources */,
@@ -1472,6 +1535,7 @@
 				780523A8261433A800079A01 /* BlockPaletteManager.swift in Sources */,
 				782F0C7F26143BB1008AE67B /* TabCompleteServerboundPacket.swift in Sources */,
 				78052359261433A800079A01 /* FireworkRocketRecipe.swift in Sources */,
+				78FD1F672614484300B74024 /* CacheBlockModelPalette.pb.swift in Sources */,
 				782F0C8D26143BB1008AE67B /* EntityActionPacket.swift in Sources */,
 				780523BA261433A800079A01 /* ServerListView.swift in Sources */,
 				7805236E261433A800079A01 /* ChatKeybindComponent.swift in Sources */,
@@ -1495,13 +1559,16 @@
 				780523AD261433A800079A01 /* TabList.swift in Sources */,
 				782F0CD726143BB1008AE67B /* AcknowledgePlayerDiggingPacket.swift in Sources */,
 				782F0C7426143BB1008AE67B /* ChatMessageServerboundPacket.swift in Sources */,
+				782F0D3326144254008AE67B /* IntermediateBlockModel.swift in Sources */,
 				782F0CFC26143BB1008AE67B /* LoginSuccessPacket.swift in Sources */,
+				782F0D2126144189008AE67B /* BlockModel.swift in Sources */,
 				782F0C8426143BB1008AE67B /* VehicleMoveServerboundPacket.swift in Sources */,
 				782F0CE726143BB1008AE67B /* ChangeGameStatePacket.swift in Sources */,
 				782F0CFE26143BB1008AE67B /* PacketReader.swift in Sources */,
 				782F0C8926143BB1008AE67B /* SetDifficultyPacket.swift in Sources */,
 				78052380261433A800079A01 /* Identifier.swift in Sources */,
 				782F0C8B26143BB1008AE67B /* WindowConfirmationServerboundPacket.swift in Sources */,
+				78FD1F652614484300B74024 /* CacheFaceDirection.proto in Sources */,
 				782F0C7726143BB1008AE67B /* ClickWindowPacket.swift in Sources */,
 				782F0CD226143BB1008AE67B /* CraftRecipeResponsePacket.swift in Sources */,
 				7805237A261433A800079A01 /* UUID.swift in Sources */,
@@ -1539,6 +1606,7 @@
 				782F0CFB26143BB1008AE67B /* LoginStartPacket.swift in Sources */,
 				78052370261433A800079A01 /* EventManager.swift in Sources */,
 				782F0CAC26143BB1008AE67B /* NBTQueryResponse.swift in Sources */,
+				78FD1F642614484300B74024 /* CacheFaceDirection.pb.swift in Sources */,
 				7805236D261433A800079A01 /* ChatStyle.swift in Sources */,
 				7805234D261433A800079A01 /* CraftingShapeless.swift in Sources */,
 				782F0CF226143BB1008AE67B /* PlayerPositionAndLookClientboundPacket.swift in Sources */,
@@ -1549,6 +1617,7 @@
 				782F0CF826143BB1008AE67B /* PluginMessagePacket.swift in Sources */,
 				78052389261433A800079A01 /* BlockEntity.swift in Sources */,
 				782F0CD426143BB1008AE67B /* SetPassengersPacket.swift in Sources */,
+				782F0D3826144292008AE67B /* IntermediateBlockModelElement.swift in Sources */,
 				782F0CA226143BB1008AE67B /* UpdateViewDistancePacket.swift in Sources */,
 				782F0CC426143BB1008AE67B /* ExplosionPacket.swift in Sources */,
 				782F0CB526143BB1008AE67B /* ChunkDataPacket.swift in Sources */,
@@ -1568,6 +1637,7 @@
 				782F0C9C26143BB1008AE67B /* KeepAliveServerboundPacket.swift in Sources */,
 				782F0C8626143BB1008AE67B /* UseItemPacket.swift in Sources */,
 				78052366261433A800079A01 /* HeatRecipe.swift in Sources */,
+				78FD1F682614484300B74024 /* CacheBlockModelElement.pb.swift in Sources */,
 				780523A6261433A800079A01 /* Managers.swift in Sources */,
 				780523A0261433A800079A01 /* Renderer.swift in Sources */,
 				78052352261433A800079A01 /* SmokingRecipe.swift in Sources */,
@@ -1585,6 +1655,7 @@
 				782F0CE226143BB1008AE67B /* OpenHorseWindowPacket.swift in Sources */,
 				782F0CBD26143BB1008AE67B /* CameraPacket.swift in Sources */,
 				782F0C6B26143BB1008AE67B /* ConnectionState.swift in Sources */,
+				78FD1F6A2614484300B74024 /* CacheBlockModelPalette.proto in Sources */,
 				782F0CE326143BB1008AE67B /* UpdateHealthPacket.swift in Sources */,
 				78052381261433A800079A01 /* Direction.swift in Sources */,
 				78052398261433A800079A01 /* Mesh.swift in Sources */,
@@ -1596,10 +1667,13 @@
 				782F0C9926143BB1008AE67B /* InteractEntityPacket.swift in Sources */,
 				780523B9261433A800079A01 /* ServerDetailView.swift in Sources */,
 				78052391261433A800079A01 /* ServerList.swift in Sources */,
+				78FD1F6B2614484300B74024 /* CacheBlockModelElementFace.proto in Sources */,
 				78052382261433A800079A01 /* Profiler.swift in Sources */,
 				782F0C7226143BB1008AE67B /* TeleportConfirmPacket.swift in Sources */,
 				782F0CAF26143BB1008AE67B /* PlayerListHeaderAndFooterPacket.swift in Sources */,
+				78FD1F6C2614484300B74024 /* CacheBlockModel.proto in Sources */,
 				780523A5261433A800079A01 /* MinecraftLocale.swift in Sources */,
+				782F0D29261441BD008AE67B /* BlockModelElement.swift in Sources */,
 				782F0CE026143BB1008AE67B /* SpawnPlayerPacket.swift in Sources */,
 				782F0CBB26143BB1008AE67B /* EntityPositionAndRotationPacket.swift in Sources */,
 				78052363261433A800079A01 /* SmithingRecipe.swift in Sources */,

@@ -1,0 +1,17 @@
+//
+//  CacheBlockModelElementFace.proto
+//  DeltaClient
+//
+//  Created by Rohan van Klinken on 31/3/21.
+//
+
+syntax = "proto3";
+
+import "CacheFaceDirection.proto";
+
+message CacheBlockModelElementFace {
+  repeated float uvs = 1;
+  uint32 textureIndex = 2;
+  optional CacheFaceDirection cullFace = 4;
+  sint32 tintIndex = 5;
+}

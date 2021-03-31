@@ -1,0 +1,14 @@
+//
+//  CacheBlockModelPalette.proto
+//  DeltaClient
+//
+//  Created by Rohan van Klinken on 31/3/21.
+//
+
+syntax = "proto3";
+
+import "CacheBlockModel.proto";
+
+message CacheBlockModelPalette {
+  map<uint32, CacheBlockModel> blockModelPalette = 1;
+}

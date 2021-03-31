@@ -1,0 +1,17 @@
+//
+//  CacheFaceDirection.proto
+//  DeltaClient
+//
+//  Created by Rohan van Klinken on 28/3/21.
+//
+
+syntax = "proto3";
+
+enum CacheFaceDirection {
+  UP = 0;
+  DOWN = 1;
+  NORTH = 2;
+  SOUTH = 3;
+  EAST = 4;
+  WEST = 5;
+}

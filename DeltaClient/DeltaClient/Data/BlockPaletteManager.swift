@@ -9,157 +9,8 @@ import Foundation
 import simd
 import os
 
-enum BlockModelError: LocalizedError {
+enum BlockPaletteError: LocalizedError {
   case invalidPixlyzerData
-}
-
-// an intermediate block model used before global palette is loaded
-struct IntermediateBlockModelElementFace {
-  var uv: (simd_float2, simd_float2)
-  var textureVariable: String
-  var cullface: FaceDirection?
-  var rotation: Int
-  var tintIndex: Int?
-}
-
-struct IntermediateBlockModelElement {
-  var modelMatrix: simd_float4x4
-  var faces: [FaceDirection: IntermediateBlockModelElementFace]
-}
-
-struct IntermediateBlockModel {
-  var elements: [IntermediateBlockModelElement]
-}
-
-// the actual block model structure used for rendering
-struct BlockModelElementFace {
-  var uvs: [simd_float2]
-  var textureIndex: UInt16 // the index of the texture to use in the block texture buffer
-  var cullface: FaceDirection?
-  var tintIndex: Int8
-  
-  init(uvs: [simd_float2], textureIndex: UInt16, cullface: FaceDirection?, tintIndex: Int8) {
-    self.uvs = uvs
-    self.textureIndex = textureIndex
-    self.cullface = cullface
-    self.tintIndex = tintIndex
-  }
-  
-  init(fromCache cache: CacheBlockModelElementFace) {
-    uvs = []
-    for i in 0..<(cache.uvs.count / 2) {
-      uvs.append(simd_float2(cache.uvs[i * 2], cache.uvs[i * 2 + 1]))
-    }
-    textureIndex = UInt16(cache.textureIndex)
-    cullface = FaceDirection(fromCache: cache.cullFace)
-    tintIndex = Int8(cache.tintIndex)
-  }
-  
-  func toCache() -> CacheBlockModelElementFace {
-    var cacheFace = CacheBlockModelElementFace()
-    var uvFloats: [Float] = []
-    for uv in uvs {
-      uvFloats.append(uv.x)
-      uvFloats.append(uv.y)
-    }
-    cacheFace.uvs = uvFloats
-    cacheFace.textureIndex = UInt32(textureIndex)
-    if let cacheCullface = cullface?.toCache() {
-      cacheFace.cullFace = cacheCullface
-    }
-    cacheFace.tintIndex = Int32(tintIndex)
-    return cacheFace
-  }
-}
-
-struct BlockModelElement {
-  var modelMatrix: simd_float4x4
-  var faces: [FaceDirection: BlockModelElementFace]
-  
-  init(modelMatrix: simd_float4x4, faces: [FaceDirection: BlockModelElementFace]) {
-    self.modelMatrix = modelMatrix
-    self.faces = faces
-  }
-  
-  init(fromCache cache: CacheBlockModelElement) {
-    modelMatrix = matrix_float4x4.fromData(cache.modelMatrix)
-    faces = [:]
-    for (cacheDirectionRaw, cacheFace) in cache.faces {
-      let direction = FaceDirection(rawValue: cacheDirectionRaw)!
-      let face = BlockModelElementFace(fromCache: cacheFace)
-      faces[direction] = face
-    }
-  }
-  
-  func toCache() -> CacheBlockModelElement {
-    let cacheModelMatrix = modelMatrix.toData()
-    var cacheFaces: [Int32: CacheBlockModelElementFace] = [:]
-    for (direction, face) in faces {
-      let cacheDirection = direction.toCache()
-      let cacheFace = face.toCache()
-      let cacheDirectionRaw = Int32(cacheDirection.rawValue)
-      cacheFaces[cacheDirectionRaw] = cacheFace
-    }
-    
-    var cacheElement = CacheBlockModelElement()
-    cacheElement.modelMatrix = cacheModelMatrix
-    cacheElement.faces = cacheFaces
-    
-    return cacheElement
-  }
-}
-
-struct BlockModel {
-  var fullFaces: Set<FaceDirection>
-  var elements: [BlockModelElement]
-  
-  init(fullFaces: Set<FaceDirection>, elements: [BlockModelElement]) {
-    self.fullFaces = fullFaces
-    self.elements = elements
-  }
-  
-  init(fromCache cache: CacheBlockModel) {
-    fullFaces = Set<FaceDirection>()
-    for cacheFullFace in cache.fullFaces {
-      fullFaces.insert(FaceDirection(fromCache: cacheFullFace)!)
-    }
-    elements = []
-    for cacheElement in cache.elements {
-      elements.append(BlockModelElement(fromCache: cacheElement))
-    }
-  }
-  
-  func toCache() -> CacheBlockModel {
-    let cacheFullFaces = fullFaces.map {
-      return $0.toCache()
-    }
-    
-    let cacheElements = elements.map {
-      return $0.toCache()
-    }
-    
-    var cacheBlockModel = CacheBlockModel()
-    cacheBlockModel.fullFaces = cacheFullFaces
-    cacheBlockModel.elements = cacheElements
-    
-    return cacheBlockModel
-  }
-}
-
-extension matrix_float4x4 {
-  func toData() -> Data {
-    var mutableSelf = self
-    let data = Data(bytes: &mutableSelf, count: MemoryLayout<matrix_float4x4>.size)
-    return data
-  }
-  
-  static func fromData(_ data: Data) -> matrix_float4x4 {
-    var matrix = matrix_float4x4()
-    _ = withUnsafeMutableBytes(of: &matrix.columns) {
-      data.copyBytes(to: $0)
-    }
-    return matrix
-  }
 }
 
 class BlockPaletteManager {
@@ -210,7 +61,7 @@ class BlockPaletteManager {
     let pixlyzerDataFile = assetManager.getPixlyzerFolder().appendingPathComponent("blocks.json")
     guard let pixlyzerJSON = try? JSON.fromURL(pixlyzerDataFile).dict as? [String: [String: Any]] else {
       Logger.error("failed to parse pixlyzer block palette")
-      throw BlockModelError.invalidPixlyzerData
+      throw BlockPaletteError.invalidPixlyzerData
     }
     for (blockName, block) in pixlyzerJSON {
       let blockJSON = JSON(dict: block)
@@ -221,7 +72,7 @@ class BlockPaletteManager {
       
       guard let states = blockJSON.getJSON(forKey: "states")?.dict as? [String: [String: Any]] else {
         Logger.error("invalid pixlyzer json format")
-        throw BlockModelError.invalidPixlyzerData
+        throw BlockPaletteError.invalidPixlyzerData
       }
       
       for (stateIdString, state) in states {
