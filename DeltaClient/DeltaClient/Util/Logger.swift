@@ -1,6 +1,6 @@
 //
 //  Logger.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 24/12/20.
 //

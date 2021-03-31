@@ -1,6 +1,6 @@
 //
-//  LocaleManager.swift
-//  Minecraft
+//  MinecraftLocale.swift
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 20/2/21.
 //

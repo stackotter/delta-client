@@ -1,6 +1,6 @@
 //
 //  BlockPaletteManager.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 13/3/21.
 //
@@ -253,10 +253,6 @@ class BlockPaletteManager {
             do {
               let modelIdentifier = try Identifier(modelIdentifierString!)
               let blockModel = try loadBlockModel(for: modelIdentifier, xRot: xRot, yRot: yRot, zRot: zRot, uvlock: uvlock)
-              
-              if stateId == 2014 {
-                Logger.debug("oak_stairs 2014: \(blockModel)")
-              }
               
               blockModelPalette[UInt16(stateId)] = blockModel
             } catch {

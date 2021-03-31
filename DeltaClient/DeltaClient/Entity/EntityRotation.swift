@@ -1,6 +1,6 @@
 //
 //  EntityRotation.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 8/2/21.
 //

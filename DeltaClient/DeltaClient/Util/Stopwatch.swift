@@ -1,6 +1,6 @@
 //
 //  Stopwatch.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 6/3/21.
 //

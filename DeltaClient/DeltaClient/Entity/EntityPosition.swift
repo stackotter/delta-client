@@ -1,6 +1,6 @@
 //
 //  EntityPosition.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 15/1/21.
 //

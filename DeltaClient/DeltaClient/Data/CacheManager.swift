@@ -1,6 +1,6 @@
 //
 //  CacheManager.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 31/3/21.
 //

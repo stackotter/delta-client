@@ -1,6 +1,6 @@
 //
 //  Constants.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 30/1/21.
 //

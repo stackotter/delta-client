@@ -1,6 +1,6 @@
 //
 //  Profiler.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 27/3/21.
 //

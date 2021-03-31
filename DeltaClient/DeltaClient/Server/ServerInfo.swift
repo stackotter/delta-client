@@ -1,6 +1,6 @@
 //
 //  ServerInfo.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 20/1/21.
 //

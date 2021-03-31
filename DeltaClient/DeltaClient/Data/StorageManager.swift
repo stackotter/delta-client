@@ -1,6 +1,6 @@
 //
 //  StorageManager.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 13/3/21.
 //
@@ -24,7 +24,7 @@ class StorageManager {
     self.fileManager = FileManager.default
     
     if let applicationSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-      self.storageDir = applicationSupport.appendingPathComponent("MinecraftSwiftEdition")
+      self.storageDir = applicationSupport.appendingPathComponent("DeltaClient")
       
       // attempt to create an application support directory for the client if it doesn't exist
       var isDirectory: ObjCBool = false
@@ -107,7 +107,7 @@ class StorageManager {
     }
   }
   
-  func getMinecraftFolder() -> URL? {
+  func getMinecraftFolder() -> URL {
     let applicationSupportDirectory = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
     let minecraftFolder = applicationSupportDirectory.appendingPathComponent("minecraft")
     return minecraftFolder

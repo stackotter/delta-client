@@ -1,6 +1,6 @@
 //
 //  ChatTranslateComponent.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 17/2/21.
 //

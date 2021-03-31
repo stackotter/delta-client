@@ -1,6 +1,6 @@
 //
 //  ChunkSection.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 13/1/21.
 //

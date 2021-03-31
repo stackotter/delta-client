@@ -1,6 +1,6 @@
 //
 //  ChatStyle.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 16/2/21.
 //

@@ -1,6 +1,6 @@
 //
 //  WorldConfig.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 18/1/21.
 //

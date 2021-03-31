@@ -1,4 +1,9 @@
-# TODOS
+# Version 1.0.0 Alpha TODOs
+
+- [ ] Refactor networking and add compression and encryption support
+- [ ] remove need for minecraft to be already installed
+
+# General TODOs
 
 ## Networking
 
@@ -25,7 +30,7 @@
 - [ ] animated textures
 - [ ] multipart structures
 
-### Block models
+## Block models
 
 - [ ] multipart
 - [ ] multiple models for one block
@@ -34,7 +39,7 @@
 - [ ] investigate campfires
 - [ ] identify translucent blocks
 
-### Chunk preparing
+## Chunk preparing
 
 - [ ] fix glass block xray. detect when full faces are not culling full faces (when they are transparent)
 - [ ] optimise new parts
@@ -50,3 +55,4 @@
 
 - [ ] add os_signpost support to the stopwatch
 - [ ] rename project to not include word minecraft
+- [ ] remove reliance on minecraft folder

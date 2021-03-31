@@ -8,161 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		7802C1AF261097F00068E8A1 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 7802C1AE261097F00068E8A1 /* SwiftProtobuf */; };
-		780522AD261433A700079A01 /* PacketRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052174261433A600079A01 /* PacketRegistry.swift */; };
-		780522AE261433A700079A01 /* ClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052175261433A600079A01 /* ClientboundPacket.swift */; };
-		780522AF261433A700079A01 /* PacketWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052176261433A600079A01 /* PacketWriter.swift */; };
-		780522B0261433A700079A01 /* ServerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052177261433A600079A01 /* ServerConnection.swift */; };
-		780522B1261433A700079A01 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052178261433A600079A01 /* ConnectionState.swift */; };
-		780522B2261433A700079A01 /* ServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052179261433A600079A01 /* ServerboundPacket.swift */; };
-		780522B3261433A700079A01 /* StatusRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805217D261433A600079A01 /* StatusRequestPacket.swift */; };
-		780522B4261433A700079A01 /* StatusResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805217F261433A600079A01 /* StatusResponsePacket.swift */; };
-		780522B5261433A700079A01 /* HandshakePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052182261433A600079A01 /* HandshakePacket.swift */; };
-		780522B6261433A700079A01 /* NameItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052185261433A600079A01 /* NameItemPacket.swift */; };
-		780522B7261433A700079A01 /* UpdateJigsawBlockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052186261433A600079A01 /* UpdateJigsawBlockPacket.swift */; };
-		780522B8261433A700079A01 /* TeleportConfirmPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052187261433A600079A01 /* TeleportConfirmPacket.swift */; };
-		780522B9261433A700079A01 /* ClickWindowButtonPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052188261433A600079A01 /* ClickWindowButtonPacket.swift */; };
-		780522BA261433A700079A01 /* ChatMessageServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052189261433A600079A01 /* ChatMessageServerboundPacket.swift */; };
-		780522BB261433A700079A01 /* UpdateSignPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805218A261433A600079A01 /* UpdateSignPacket.swift */; };
-		780522BC261433A700079A01 /* QueryEntityNBTPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805218B261433A600079A01 /* QueryEntityNBTPacket.swift */; };
-		780522BD261433A700079A01 /* ClickWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805218C261433A600079A01 /* ClickWindowPacket.swift */; };
-		780522BE261433A700079A01 /* PlayerDiggingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805218D261433A600079A01 /* PlayerDiggingPacket.swift */; };
-		780522BF261433A700079A01 /* AnimationServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805218E261433A600079A01 /* AnimationServerboundPacket.swift */; };
-		780522C0261433A700079A01 /* SteerVehiclePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805218F261433A600079A01 /* SteerVehiclePacket.swift */; };
-		780522C1261433A700079A01 /* LockDifficultyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052190261433A600079A01 /* LockDifficultyPacket.swift */; };
-		780522C2261433A700079A01 /* PluginMessageServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052191261433A600079A01 /* PluginMessageServerboundPacket.swift */; };
-		780522C3261433A700079A01 /* SpectatePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052192261433A600079A01 /* SpectatePacket.swift */; };
-		780522C4261433A700079A01 /* UpdateCommandBlockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052193261433A600079A01 /* UpdateCommandBlockPacket.swift */; };
-		780522C5261433A700079A01 /* TabCompleteServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052194261433A600079A01 /* TabCompleteServerboundPacket.swift */; };
-		780522C6261433A700079A01 /* UpdateCommandBlockMinecartPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052195261433A600079A01 /* UpdateCommandBlockMinecartPacket.swift */; };
-		780522C7261433A700079A01 /* QueryBlockNBTPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052196261433A600079A01 /* QueryBlockNBTPacket.swift */; };
-		780522C8261433A700079A01 /* ResourcePackStatusPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052197261433A600079A01 /* ResourcePackStatusPacket.swift */; };
-		780522C9261433A700079A01 /* SteerBoatPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052198261433A600079A01 /* SteerBoatPacket.swift */; };
-		780522CA261433A700079A01 /* VehicleMoveServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052199261433A600079A01 /* VehicleMoveServerboundPacket.swift */; };
-		780522CB261433A700079A01 /* ClientSettingsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805219A261433A600079A01 /* ClientSettingsPacket.swift */; };
-		780522CC261433A700079A01 /* UseItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805219B261433A600079A01 /* UseItemPacket.swift */; };
-		780522CD261433A700079A01 /* CloseWindowServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805219C261433A600079A01 /* CloseWindowServerboundPacket.swift */; };
-		780522CE261433A700079A01 /* PickItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805219D261433A600079A01 /* PickItemPacket.swift */; };
-		780522CF261433A700079A01 /* SetDifficultyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805219E261433A600079A01 /* SetDifficultyPacket.swift */; };
-		780522D0261433A700079A01 /* CreativeInventoryActionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805219F261433A600079A01 /* CreativeInventoryActionPacket.swift */; };
-		780522D1261433A700079A01 /* WindowConfirmationServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A0261433A600079A01 /* WindowConfirmationServerboundPacket.swift */; };
-		780522D2261433A700079A01 /* AdvancementTabPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A1261433A600079A01 /* AdvancementTabPacket.swift */; };
-		780522D3261433A700079A01 /* EntityActionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A2261433A600079A01 /* EntityActionPacket.swift */; };
-		780522D4261433A700079A01 /* PlayerAbilitiesServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A3261433A600079A01 /* PlayerAbilitiesServerboundPacket.swift */; };
-		780522D5261433A700079A01 /* PlayerMovementPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A4261433A600079A01 /* PlayerMovementPacket.swift */; };
-		780522D6261433A700079A01 /* RecipeBookDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A5261433A600079A01 /* RecipeBookDataPacket.swift */; };
-		780522D7261433A700079A01 /* GenerateStructurePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A6261433A600079A01 /* GenerateStructurePacket.swift */; };
-		780522D8261433A700079A01 /* PlayerBlockPlacementPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A7261433A600079A01 /* PlayerBlockPlacementPacket.swift */; };
-		780522D9261433A700079A01 /* ClientStatusPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A8261433A600079A01 /* ClientStatusPacket.swift */; };
-		780522DA261433A700079A01 /* PlayerPositionAndRotationServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521A9261433A600079A01 /* PlayerPositionAndRotationServerboundPacket.swift */; };
-		780522DB261433A700079A01 /* EditBookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521AA261433A600079A01 /* EditBookPacket.swift */; };
-		780522DC261433A700079A01 /* PlayerRotationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521AB261433A600079A01 /* PlayerRotationPacket.swift */; };
-		780522DD261433A700079A01 /* PlayerPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521AC261433A600079A01 /* PlayerPositionPacket.swift */; };
-		780522DE261433A700079A01 /* SelectTradePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521AD261433A600079A01 /* SelectTradePacket.swift */; };
-		780522DF261433A700079A01 /* InteractEntityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521AE261433A600079A01 /* InteractEntityPacket.swift */; };
-		780522E0261433A700079A01 /* HeldItemChangeServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521AF261433A600079A01 /* HeldItemChangeServerboundPacket.swift */; };
-		780522E1261433A700079A01 /* SetBeaconEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B0261433A600079A01 /* SetBeaconEffectPacket.swift */; };
-		780522E2261433A700079A01 /* KeepAliveServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B1261433A600079A01 /* KeepAliveServerboundPacket.swift */; };
-		780522E3261433A700079A01 /* CraftRecipeRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B2261433A600079A01 /* CraftRecipeRequestPacket.swift */; };
-		780522E4261433A700079A01 /* UpdateStructureBlockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B3261433A600079A01 /* UpdateStructureBlockPacket.swift */; };
-		780522E5261433A700079A01 /* TradeListPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B5261433A600079A01 /* TradeListPacket.swift */; };
-		780522E6261433A700079A01 /* TagsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B6261433A600079A01 /* TagsPacket.swift */; };
-		780522E7261433A700079A01 /* WindowConfirmationClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B7261433A600079A01 /* WindowConfirmationClientboundPacket.swift */; };
-		780522E8261433A700079A01 /* UpdateViewDistancePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B8261433A600079A01 /* UpdateViewDistancePacket.swift */; };
-		780522E9261433A700079A01 /* MultiBlockChangePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521B9261433A600079A01 /* MultiBlockChangePacket.swift */; };
-		780522EA261433A700079A01 /* SpawnLivingEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521BA261433A600079A01 /* SpawnLivingEntity.swift */; };
-		780522EB261433A700079A01 /* EntityVelocityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521BB261433A600079A01 /* EntityVelocityPacket.swift */; };
-		780522EC261433A700079A01 /* EntityHeadLookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521BC261433A600079A01 /* EntityHeadLookPacket.swift */; };
-		780522ED261433A700079A01 /* CollectItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521BD261433A600079A01 /* CollectItemPacket.swift */; };
-		780522EE261433A700079A01 /* OpenWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521BE261433A600079A01 /* OpenWindowPacket.swift */; };
-		780522EF261433A700079A01 /* PlayerAbilitiesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521BF261433A600079A01 /* PlayerAbilitiesPacket.swift */; };
-		780522F0261433A700079A01 /* EntityMovementPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C0261433A600079A01 /* EntityMovementPacket.swift */; };
-		780522F1261433A700079A01 /* UpdateViewPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C1261433A600079A01 /* UpdateViewPositionPacket.swift */; };
-		780522F2261433A700079A01 /* NBTQueryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C2261433A600079A01 /* NBTQueryResponse.swift */; };
-		780522F3261433A700079A01 /* RemoveEntityEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C3261433A600079A01 /* RemoveEntityEffectPacket.swift */; };
-		780522F4261433A700079A01 /* OpenBookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C4261433A600079A01 /* OpenBookPacket.swift */; };
-		780522F5261433A700079A01 /* PlayerListHeaderAndFooterPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C5261433A600079A01 /* PlayerListHeaderAndFooterPacket.swift */; };
-		780522F6261433A700079A01 /* EntityMetadataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C6261433A600079A01 /* EntityMetadataPacket.swift */; };
-		780522F7261433A700079A01 /* BlockBreakAnimationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C7261433A600079A01 /* BlockBreakAnimationPacket.swift */; };
-		780522F8261433A700079A01 /* BlockActionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C8261433A600079A01 /* BlockActionPacket.swift */; };
-		780522F9261433A700079A01 /* StatisticsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521C9261433A600079A01 /* StatisticsPacket.swift */; };
-		780522FA261433A800079A01 /* WindowItemsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521CA261433A600079A01 /* WindowItemsPacket.swift */; };
-		780522FB261433A800079A01 /* ChunkDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521CB261433A600079A01 /* ChunkDataPacket.swift */; };
-		780522FC261433A800079A01 /* UnloadChunkPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521CC261433A600079A01 /* UnloadChunkPacket.swift */; };
-		780522FD261433A800079A01 /* EffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521CD261433A600079A01 /* EffectPacket.swift */; };
-		780522FE261433A800079A01 /* SpawnExperienceOrbPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521CE261433A600079A01 /* SpawnExperienceOrbPacket.swift */; };
-		780522FF261433A800079A01 /* WindowPropertyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521CF261433A600079A01 /* WindowPropertyPacket.swift */; };
-		78052300261433A800079A01 /* MapDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D0261433A600079A01 /* MapDataPacket.swift */; };
-		78052301261433A800079A01 /* EntityPositionAndRotationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D1261433A600079A01 /* EntityPositionAndRotationPacket.swift */; };
-		78052302261433A800079A01 /* DeclareRecipesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D2261433A600079A01 /* DeclareRecipesPacket.swift */; };
-		78052303261433A800079A01 /* CameraPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D3261433A600079A01 /* CameraPacket.swift */; };
-		78052304261433A800079A01 /* EntityProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D4261433A600079A01 /* EntityProperties.swift */; };
-		78052305261433A800079A01 /* EntitySoundEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D5261433A600079A01 /* EntitySoundEffectPacket.swift */; };
-		78052306261433A800079A01 /* ServerDifficultyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D6261433A600079A01 /* ServerDifficultyPacket.swift */; };
-		78052307261433A800079A01 /* AttachEntityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D7261433A600079A01 /* AttachEntityPacket.swift */; };
-		78052308261433A800079A01 /* EntityPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D8261433A600079A01 /* EntityPositionPacket.swift */; };
-		78052309261433A800079A01 /* UnlockRecipesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521D9261433A600079A01 /* UnlockRecipesPacket.swift */; };
-		7805230A261433A800079A01 /* ExplosionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521DA261433A600079A01 /* ExplosionPacket.swift */; };
-		7805230B261433A800079A01 /* SpawnPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521DB261433A600079A01 /* SpawnPositionPacket.swift */; };
-		7805230C261433A800079A01 /* EntityEquipmentPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521DC261433A600079A01 /* EntityEquipmentPacket.swift */; };
-		7805230D261433A800079A01 /* TimeUpdatePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521DD261433A600079A01 /* TimeUpdatePacket.swift */; };
-		7805230E261433A800079A01 /* KeepAliveClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521DE261433A600079A01 /* KeepAliveClientboundPacket.swift */; };
-		7805230F261433A800079A01 /* EntityEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521DF261433A600079A01 /* EntityEffectPacket.swift */; };
-		78052310261433A800079A01 /* SpawnEntityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E0261433A600079A01 /* SpawnEntityPacket.swift */; };
-		78052311261433A800079A01 /* OpenSignEditorPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E1261433A600079A01 /* OpenSignEditorPacket.swift */; };
-		78052312261433A800079A01 /* EntityRotationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E2261433A600079A01 /* EntityRotationPacket.swift */; };
-		78052313261433A800079A01 /* DisplayScoreboardPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E3261433A600079A01 /* DisplayScoreboardPacket.swift */; };
-		78052314261433A800079A01 /* AdvancementsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E4261433A600079A01 /* AdvancementsPacket.swift */; };
-		78052315261433A800079A01 /* EntityStatusPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E5261433A600079A01 /* EntityStatusPacket.swift */; };
-		78052316261433A800079A01 /* RespawnPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E6261433A600079A01 /* RespawnPacket.swift */; };
-		78052317261433A800079A01 /* BlockChangePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E7261433A600079A01 /* BlockChangePacket.swift */; };
-		78052318261433A800079A01 /* CraftRecipeResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E8261433A600079A01 /* CraftRecipeResponsePacket.swift */; };
-		78052319261433A800079A01 /* TitlePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521E9261433A600079A01 /* TitlePacket.swift */; };
-		7805231A261433A800079A01 /* SetPassengersPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521EA261433A600079A01 /* SetPassengersPacket.swift */; };
-		7805231B261433A800079A01 /* DeclareCommandsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521EB261433A600079A01 /* DeclareCommandsPacket.swift */; };
-		7805231C261433A800079A01 /* JoinGamePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521EC261433A600079A01 /* JoinGamePacket.swift */; };
-		7805231D261433A800079A01 /* AcknowledgePlayerDiggingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521ED261433A600079A01 /* AcknowledgePlayerDiggingPacket.swift */; };
-		7805231E261433A800079A01 /* SetSlotPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521EE261433A600079A01 /* SetSlotPacket.swift */; };
-		7805231F261433A800079A01 /* NamedSoundEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521EF261433A600079A01 /* NamedSoundEffectPacket.swift */; };
-		78052320261433A800079A01 /* SpawnPaintingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F0261433A600079A01 /* SpawnPaintingPacket.swift */; };
-		78052321261433A800079A01 /* ChatMessageClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F1261433A600079A01 /* ChatMessageClientboundPacket.swift */; };
-		78052322261433A800079A01 /* PlayerInfoPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F2261433A600079A01 /* PlayerInfoPacket.swift */; };
-		78052323261433A800079A01 /* EntityTeleportPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F3261433A600079A01 /* EntityTeleportPacket.swift */; };
-		78052324261433A800079A01 /* WorldBorderPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F4261433A600079A01 /* WorldBorderPacket.swift */; };
-		78052325261433A800079A01 /* SetCooldownPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F5261433A600079A01 /* SetCooldownPacket.swift */; };
-		78052326261433A800079A01 /* SpawnPlayerPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F6261433A600079A01 /* SpawnPlayerPacket.swift */; };
-		78052327261433A800079A01 /* ScoreboardObjectivePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F7261433A600079A01 /* ScoreboardObjectivePacket.swift */; };
-		78052328261433A800079A01 /* OpenHorseWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F8261433A600079A01 /* OpenHorseWindowPacket.swift */; };
-		78052329261433A800079A01 /* UpdateHealthPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521F9261433A600079A01 /* UpdateHealthPacket.swift */; };
-		7805232A261433A800079A01 /* EntityAnimationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521FA261433A600079A01 /* EntityAnimationPacket.swift */; };
-		7805232B261433A800079A01 /* ResourcePackSendPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521FB261433A600079A01 /* ResourcePackSendPacket.swift */; };
-		7805232C261433A800079A01 /* FacePlayerPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521FC261433A600079A01 /* FacePlayerPacket.swift */; };
-		7805232D261433A800079A01 /* ChangeGameStatePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521FD261433A600079A01 /* ChangeGameStatePacket.swift */; };
-		7805232E261433A800079A01 /* BossBarPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521FE261433A600079A01 /* BossBarPacket.swift */; };
-		7805232F261433A800079A01 /* TabCompleteClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780521FF261433A600079A01 /* TabCompleteClientboundPacket.swift */; };
-		78052330261433A800079A01 /* UpdateLightPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052200261433A600079A01 /* UpdateLightPacket.swift */; };
-		78052331261433A800079A01 /* BlockEntityDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052201261433A600079A01 /* BlockEntityDataPacket.swift */; };
-		78052332261433A800079A01 /* SoundEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052202261433A600079A01 /* SoundEffectPacket.swift */; };
-		78052333261433A800079A01 /* SelectAdvancementTabPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052203261433A600079A01 /* SelectAdvancementTabPacket.swift */; };
-		78052334261433A800079A01 /* CombatEventPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052204261433A600079A01 /* CombatEventPacket.swift */; };
-		78052335261433A800079A01 /* SetExperiencePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052205261433A600079A01 /* SetExperiencePacket.swift */; };
-		78052336261433A800079A01 /* ParticlePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052206261433A600079A01 /* ParticlePacket.swift */; };
-		78052337261433A800079A01 /* TeamsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052207261433A600079A01 /* TeamsPacket.swift */; };
-		78052338261433A800079A01 /* PlayerPositionAndLookClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052208261433A600079A01 /* PlayerPositionAndLookClientboundPacket.swift */; };
-		78052339261433A800079A01 /* VehicleMoveClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052209261433A700079A01 /* VehicleMoveClientboundPacket.swift */; };
-		7805233A261433A800079A01 /* UpdateScorePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805220A261433A700079A01 /* UpdateScorePacket.swift */; };
-		7805233B261433A800079A01 /* DestroyEntitiesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805220B261433A700079A01 /* DestroyEntitiesPacket.swift */; };
-		7805233C261433A800079A01 /* CloseWindowClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805220C261433A700079A01 /* CloseWindowClientboundPacket.swift */; };
-		7805233D261433A800079A01 /* PlayDisconnectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805220D261433A700079A01 /* PlayDisconnectPacket.swift */; };
-		7805233E261433A800079A01 /* PluginMessagePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805220E261433A700079A01 /* PluginMessagePacket.swift */; };
-		7805233F261433A800079A01 /* StopSoundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805220F261433A700079A01 /* StopSoundPacket.swift */; };
-		78052340261433A800079A01 /* HeldItemChangePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052210261433A700079A01 /* HeldItemChangePacket.swift */; };
-		78052341261433A800079A01 /* LoginStartPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052213261433A700079A01 /* LoginStartPacket.swift */; };
-		78052342261433A800079A01 /* LoginSuccessPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052215261433A700079A01 /* LoginSuccessPacket.swift */; };
-		78052343261433A800079A01 /* LoginDisconnectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052216261433A700079A01 /* LoginDisconnectPacket.swift */; };
-		78052344261433A800079A01 /* PacketReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052217261433A700079A01 /* PacketReader.swift */; };
-		78052345261433A800079A01 /* PacketState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052218261433A700079A01 /* PacketState.swift */; };
-		78052346261433A800079A01 /* PacketHandlingThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052219261433A700079A01 /* PacketHandlingThread.swift */; };
-		78052347261433A800079A01 /* blocks.json in Resources */ = {isa = PBXBuildFile; fileRef = 7805221B261433A700079A01 /* blocks.json */; };
 		78052348261433A800079A01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7805221C261433A700079A01 /* Assets.xcassets */; };
 		7805234A261433A800079A01 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052220261433A700079A01 /* Constants.swift */; };
 		7805234B261433A800079A01 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052221261433A700079A01 /* ConfigManager.swift */; };
@@ -270,7 +115,7 @@
 		780523B3261433A800079A01 /* DominantHand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229A261433A700079A01 /* DominantHand.swift */; };
 		780523B4261433A800079A01 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229B261433A700079A01 /* Player.swift */; };
 		780523B5261433A800079A01 /* PlayerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229C261433A700079A01 /* PlayerInfo.swift */; };
-		780523B6261433A800079A01 /* DeltaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229D261433A700079A01 /* DeltaClient.swift */; };
+		780523B6261433A800079A01 /* DeltaClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229D261433A700079A01 /* DeltaClientApp.swift */; };
 		780523B7261433A800079A01 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A0261433A700079A01 /* AppView.swift */; };
 		780523B8261433A800079A01 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A1261433A700079A01 /* ViewState.swift */; };
 		780523B9261433A800079A01 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A2261433A700079A01 /* ServerDetailView.swift */; };
@@ -279,6 +124,160 @@
 		780523BC261433A800079A01 /* GameCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A5261433A700079A01 /* GameCommandView.swift */; };
 		780523BD261433A800079A01 /* GameRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A6261433A700079A01 /* GameRenderView.swift */; };
 		780523CF2614349200079A01 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 780523CE2614349200079A01 /* Preview Assets.xcassets */; };
+		782F0C6726143BB1008AE67B /* PacketRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC126143BB0008AE67B /* PacketRegistry.swift */; };
+		782F0C6826143BB1008AE67B /* ClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC226143BB0008AE67B /* ClientboundPacket.swift */; };
+		782F0C6926143BB1008AE67B /* PacketWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC326143BB0008AE67B /* PacketWriter.swift */; };
+		782F0C6A26143BB1008AE67B /* ServerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC426143BB0008AE67B /* ServerConnection.swift */; };
+		782F0C6B26143BB1008AE67B /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC526143BB0008AE67B /* ConnectionState.swift */; };
+		782F0C6C26143BB1008AE67B /* ServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC626143BB0008AE67B /* ServerboundPacket.swift */; };
+		782F0C6D26143BB1008AE67B /* StatusRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BCA26143BB0008AE67B /* StatusRequestPacket.swift */; };
+		782F0C6E26143BB1008AE67B /* StatusResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BCC26143BB0008AE67B /* StatusResponsePacket.swift */; };
+		782F0C6F26143BB1008AE67B /* HandshakePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BCF26143BB0008AE67B /* HandshakePacket.swift */; };
+		782F0C7026143BB1008AE67B /* NameItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BD226143BB0008AE67B /* NameItemPacket.swift */; };
+		782F0C7126143BB1008AE67B /* UpdateJigsawBlockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BD326143BB0008AE67B /* UpdateJigsawBlockPacket.swift */; };
+		782F0C7226143BB1008AE67B /* TeleportConfirmPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BD426143BB0008AE67B /* TeleportConfirmPacket.swift */; };
+		782F0C7326143BB1008AE67B /* ClickWindowButtonPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BD526143BB0008AE67B /* ClickWindowButtonPacket.swift */; };
+		782F0C7426143BB1008AE67B /* ChatMessageServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BD626143BB0008AE67B /* ChatMessageServerboundPacket.swift */; };
+		782F0C7526143BB1008AE67B /* UpdateSignPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BD726143BB0008AE67B /* UpdateSignPacket.swift */; };
+		782F0C7626143BB1008AE67B /* QueryEntityNBTPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BD826143BB0008AE67B /* QueryEntityNBTPacket.swift */; };
+		782F0C7726143BB1008AE67B /* ClickWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BD926143BB0008AE67B /* ClickWindowPacket.swift */; };
+		782F0C7826143BB1008AE67B /* PlayerDiggingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BDA26143BB0008AE67B /* PlayerDiggingPacket.swift */; };
+		782F0C7926143BB1008AE67B /* AnimationServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BDB26143BB0008AE67B /* AnimationServerboundPacket.swift */; };
+		782F0C7A26143BB1008AE67B /* SteerVehiclePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BDC26143BB0008AE67B /* SteerVehiclePacket.swift */; };
+		782F0C7B26143BB1008AE67B /* LockDifficultyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BDD26143BB0008AE67B /* LockDifficultyPacket.swift */; };
+		782F0C7C26143BB1008AE67B /* PluginMessageServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BDE26143BB0008AE67B /* PluginMessageServerboundPacket.swift */; };
+		782F0C7D26143BB1008AE67B /* SpectatePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BDF26143BB0008AE67B /* SpectatePacket.swift */; };
+		782F0C7E26143BB1008AE67B /* UpdateCommandBlockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BE026143BB0008AE67B /* UpdateCommandBlockPacket.swift */; };
+		782F0C7F26143BB1008AE67B /* TabCompleteServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BE126143BB0008AE67B /* TabCompleteServerboundPacket.swift */; };
+		782F0C8026143BB1008AE67B /* UpdateCommandBlockMinecartPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BE226143BB0008AE67B /* UpdateCommandBlockMinecartPacket.swift */; };
+		782F0C8126143BB1008AE67B /* QueryBlockNBTPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BE326143BB0008AE67B /* QueryBlockNBTPacket.swift */; };
+		782F0C8226143BB1008AE67B /* ResourcePackStatusPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BE426143BB0008AE67B /* ResourcePackStatusPacket.swift */; };
+		782F0C8326143BB1008AE67B /* SteerBoatPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BE526143BB0008AE67B /* SteerBoatPacket.swift */; };
+		782F0C8426143BB1008AE67B /* VehicleMoveServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BE626143BB0008AE67B /* VehicleMoveServerboundPacket.swift */; };
+		782F0C8526143BB1008AE67B /* ClientSettingsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BE726143BB0008AE67B /* ClientSettingsPacket.swift */; };
+		782F0C8626143BB1008AE67B /* UseItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BE826143BB0008AE67B /* UseItemPacket.swift */; };
+		782F0C8726143BB1008AE67B /* CloseWindowServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BE926143BB0008AE67B /* CloseWindowServerboundPacket.swift */; };
+		782F0C8826143BB1008AE67B /* PickItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BEA26143BB0008AE67B /* PickItemPacket.swift */; };
+		782F0C8926143BB1008AE67B /* SetDifficultyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BEB26143BB0008AE67B /* SetDifficultyPacket.swift */; };
+		782F0C8A26143BB1008AE67B /* CreativeInventoryActionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BEC26143BB0008AE67B /* CreativeInventoryActionPacket.swift */; };
+		782F0C8B26143BB1008AE67B /* WindowConfirmationServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BED26143BB0008AE67B /* WindowConfirmationServerboundPacket.swift */; };
+		782F0C8C26143BB1008AE67B /* AdvancementTabPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BEE26143BB0008AE67B /* AdvancementTabPacket.swift */; };
+		782F0C8D26143BB1008AE67B /* EntityActionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BEF26143BB0008AE67B /* EntityActionPacket.swift */; };
+		782F0C8E26143BB1008AE67B /* PlayerAbilitiesServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BF026143BB0008AE67B /* PlayerAbilitiesServerboundPacket.swift */; };
+		782F0C8F26143BB1008AE67B /* PlayerMovementPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BF126143BB0008AE67B /* PlayerMovementPacket.swift */; };
+		782F0C9026143BB1008AE67B /* RecipeBookDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BF226143BB0008AE67B /* RecipeBookDataPacket.swift */; };
+		782F0C9126143BB1008AE67B /* GenerateStructurePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BF326143BB0008AE67B /* GenerateStructurePacket.swift */; };
+		782F0C9226143BB1008AE67B /* PlayerBlockPlacementPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BF426143BB0008AE67B /* PlayerBlockPlacementPacket.swift */; };
+		782F0C9326143BB1008AE67B /* ClientStatusPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BF526143BB0008AE67B /* ClientStatusPacket.swift */; };
+		782F0C9426143BB1008AE67B /* PlayerPositionAndRotationServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BF626143BB0008AE67B /* PlayerPositionAndRotationServerboundPacket.swift */; };
+		782F0C9526143BB1008AE67B /* EditBookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BF726143BB0008AE67B /* EditBookPacket.swift */; };
+		782F0C9626143BB1008AE67B /* PlayerRotationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BF826143BB0008AE67B /* PlayerRotationPacket.swift */; };
+		782F0C9726143BB1008AE67B /* PlayerPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BF926143BB0008AE67B /* PlayerPositionPacket.swift */; };
+		782F0C9826143BB1008AE67B /* SelectTradePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BFA26143BB0008AE67B /* SelectTradePacket.swift */; };
+		782F0C9926143BB1008AE67B /* InteractEntityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BFB26143BB0008AE67B /* InteractEntityPacket.swift */; };
+		782F0C9A26143BB1008AE67B /* HeldItemChangeServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BFC26143BB0008AE67B /* HeldItemChangeServerboundPacket.swift */; };
+		782F0C9B26143BB1008AE67B /* SetBeaconEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BFD26143BB0008AE67B /* SetBeaconEffectPacket.swift */; };
+		782F0C9C26143BB1008AE67B /* KeepAliveServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BFE26143BB0008AE67B /* KeepAliveServerboundPacket.swift */; };
+		782F0C9D26143BB1008AE67B /* CraftRecipeRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BFF26143BB0008AE67B /* CraftRecipeRequestPacket.swift */; };
+		782F0C9E26143BB1008AE67B /* UpdateStructureBlockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0026143BB0008AE67B /* UpdateStructureBlockPacket.swift */; };
+		782F0C9F26143BB1008AE67B /* TradeListPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0226143BB0008AE67B /* TradeListPacket.swift */; };
+		782F0CA026143BB1008AE67B /* TagsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0326143BB0008AE67B /* TagsPacket.swift */; };
+		782F0CA126143BB1008AE67B /* WindowConfirmationClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0426143BB0008AE67B /* WindowConfirmationClientboundPacket.swift */; };
+		782F0CA226143BB1008AE67B /* UpdateViewDistancePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0526143BB0008AE67B /* UpdateViewDistancePacket.swift */; };
+		782F0CA326143BB1008AE67B /* MultiBlockChangePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0626143BB0008AE67B /* MultiBlockChangePacket.swift */; };
+		782F0CA426143BB1008AE67B /* SpawnLivingEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0726143BB0008AE67B /* SpawnLivingEntity.swift */; };
+		782F0CA526143BB1008AE67B /* EntityVelocityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0826143BB0008AE67B /* EntityVelocityPacket.swift */; };
+		782F0CA626143BB1008AE67B /* EntityHeadLookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0926143BB0008AE67B /* EntityHeadLookPacket.swift */; };
+		782F0CA726143BB1008AE67B /* CollectItemPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0A26143BB0008AE67B /* CollectItemPacket.swift */; };
+		782F0CA826143BB1008AE67B /* OpenWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0B26143BB0008AE67B /* OpenWindowPacket.swift */; };
+		782F0CA926143BB1008AE67B /* PlayerAbilitiesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0C26143BB0008AE67B /* PlayerAbilitiesPacket.swift */; };
+		782F0CAA26143BB1008AE67B /* EntityMovementPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0D26143BB0008AE67B /* EntityMovementPacket.swift */; };
+		782F0CAB26143BB1008AE67B /* UpdateViewPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0E26143BB0008AE67B /* UpdateViewPositionPacket.swift */; };
+		782F0CAC26143BB1008AE67B /* NBTQueryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C0F26143BB0008AE67B /* NBTQueryResponse.swift */; };
+		782F0CAD26143BB1008AE67B /* RemoveEntityEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1026143BB0008AE67B /* RemoveEntityEffectPacket.swift */; };
+		782F0CAE26143BB1008AE67B /* OpenBookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1126143BB0008AE67B /* OpenBookPacket.swift */; };
+		782F0CAF26143BB1008AE67B /* PlayerListHeaderAndFooterPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1226143BB0008AE67B /* PlayerListHeaderAndFooterPacket.swift */; };
+		782F0CB026143BB1008AE67B /* EntityMetadataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1326143BB0008AE67B /* EntityMetadataPacket.swift */; };
+		782F0CB126143BB1008AE67B /* BlockBreakAnimationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1426143BB0008AE67B /* BlockBreakAnimationPacket.swift */; };
+		782F0CB226143BB1008AE67B /* BlockActionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1526143BB0008AE67B /* BlockActionPacket.swift */; };
+		782F0CB326143BB1008AE67B /* StatisticsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1626143BB0008AE67B /* StatisticsPacket.swift */; };
+		782F0CB426143BB1008AE67B /* WindowItemsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1726143BB0008AE67B /* WindowItemsPacket.swift */; };
+		782F0CB526143BB1008AE67B /* ChunkDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1826143BB0008AE67B /* ChunkDataPacket.swift */; };
+		782F0CB626143BB1008AE67B /* UnloadChunkPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1926143BB0008AE67B /* UnloadChunkPacket.swift */; };
+		782F0CB726143BB1008AE67B /* EffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1A26143BB0008AE67B /* EffectPacket.swift */; };
+		782F0CB826143BB1008AE67B /* SpawnExperienceOrbPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1B26143BB0008AE67B /* SpawnExperienceOrbPacket.swift */; };
+		782F0CB926143BB1008AE67B /* WindowPropertyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1C26143BB0008AE67B /* WindowPropertyPacket.swift */; };
+		782F0CBA26143BB1008AE67B /* MapDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1D26143BB0008AE67B /* MapDataPacket.swift */; };
+		782F0CBB26143BB1008AE67B /* EntityPositionAndRotationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1E26143BB0008AE67B /* EntityPositionAndRotationPacket.swift */; };
+		782F0CBC26143BB1008AE67B /* DeclareRecipesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C1F26143BB0008AE67B /* DeclareRecipesPacket.swift */; };
+		782F0CBD26143BB1008AE67B /* CameraPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2026143BB0008AE67B /* CameraPacket.swift */; };
+		782F0CBE26143BB1008AE67B /* EntityProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2126143BB0008AE67B /* EntityProperties.swift */; };
+		782F0CBF26143BB1008AE67B /* EntitySoundEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2226143BB0008AE67B /* EntitySoundEffectPacket.swift */; };
+		782F0CC026143BB1008AE67B /* ServerDifficultyPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2326143BB0008AE67B /* ServerDifficultyPacket.swift */; };
+		782F0CC126143BB1008AE67B /* AttachEntityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2426143BB0008AE67B /* AttachEntityPacket.swift */; };
+		782F0CC226143BB1008AE67B /* EntityPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2526143BB0008AE67B /* EntityPositionPacket.swift */; };
+		782F0CC326143BB1008AE67B /* UnlockRecipesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2626143BB0008AE67B /* UnlockRecipesPacket.swift */; };
+		782F0CC426143BB1008AE67B /* ExplosionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2726143BB0008AE67B /* ExplosionPacket.swift */; };
+		782F0CC526143BB1008AE67B /* SpawnPositionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2826143BB0008AE67B /* SpawnPositionPacket.swift */; };
+		782F0CC626143BB1008AE67B /* EntityEquipmentPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2926143BB0008AE67B /* EntityEquipmentPacket.swift */; };
+		782F0CC726143BB1008AE67B /* TimeUpdatePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2A26143BB0008AE67B /* TimeUpdatePacket.swift */; };
+		782F0CC826143BB1008AE67B /* KeepAliveClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2B26143BB0008AE67B /* KeepAliveClientboundPacket.swift */; };
+		782F0CC926143BB1008AE67B /* EntityEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2C26143BB0008AE67B /* EntityEffectPacket.swift */; };
+		782F0CCA26143BB1008AE67B /* SpawnEntityPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2D26143BB0008AE67B /* SpawnEntityPacket.swift */; };
+		782F0CCB26143BB1008AE67B /* OpenSignEditorPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2E26143BB0008AE67B /* OpenSignEditorPacket.swift */; };
+		782F0CCC26143BB1008AE67B /* EntityRotationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C2F26143BB0008AE67B /* EntityRotationPacket.swift */; };
+		782F0CCD26143BB1008AE67B /* DisplayScoreboardPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3026143BB0008AE67B /* DisplayScoreboardPacket.swift */; };
+		782F0CCE26143BB1008AE67B /* AdvancementsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3126143BB0008AE67B /* AdvancementsPacket.swift */; };
+		782F0CCF26143BB1008AE67B /* EntityStatusPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3226143BB0008AE67B /* EntityStatusPacket.swift */; };
+		782F0CD026143BB1008AE67B /* RespawnPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3326143BB0008AE67B /* RespawnPacket.swift */; };
+		782F0CD126143BB1008AE67B /* BlockChangePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3426143BB1008AE67B /* BlockChangePacket.swift */; };
+		782F0CD226143BB1008AE67B /* CraftRecipeResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3526143BB1008AE67B /* CraftRecipeResponsePacket.swift */; };
+		782F0CD326143BB1008AE67B /* TitlePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3626143BB1008AE67B /* TitlePacket.swift */; };
+		782F0CD426143BB1008AE67B /* SetPassengersPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3726143BB1008AE67B /* SetPassengersPacket.swift */; };
+		782F0CD526143BB1008AE67B /* DeclareCommandsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3826143BB1008AE67B /* DeclareCommandsPacket.swift */; };
+		782F0CD626143BB1008AE67B /* JoinGamePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3926143BB1008AE67B /* JoinGamePacket.swift */; };
+		782F0CD726143BB1008AE67B /* AcknowledgePlayerDiggingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3A26143BB1008AE67B /* AcknowledgePlayerDiggingPacket.swift */; };
+		782F0CD826143BB1008AE67B /* SetSlotPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3B26143BB1008AE67B /* SetSlotPacket.swift */; };
+		782F0CD926143BB1008AE67B /* NamedSoundEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3C26143BB1008AE67B /* NamedSoundEffectPacket.swift */; };
+		782F0CDA26143BB1008AE67B /* SpawnPaintingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3D26143BB1008AE67B /* SpawnPaintingPacket.swift */; };
+		782F0CDB26143BB1008AE67B /* ChatMessageClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3E26143BB1008AE67B /* ChatMessageClientboundPacket.swift */; };
+		782F0CDC26143BB1008AE67B /* PlayerInfoPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C3F26143BB1008AE67B /* PlayerInfoPacket.swift */; };
+		782F0CDD26143BB1008AE67B /* EntityTeleportPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4026143BB1008AE67B /* EntityTeleportPacket.swift */; };
+		782F0CDE26143BB1008AE67B /* WorldBorderPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4126143BB1008AE67B /* WorldBorderPacket.swift */; };
+		782F0CDF26143BB1008AE67B /* SetCooldownPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4226143BB1008AE67B /* SetCooldownPacket.swift */; };
+		782F0CE026143BB1008AE67B /* SpawnPlayerPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4326143BB1008AE67B /* SpawnPlayerPacket.swift */; };
+		782F0CE126143BB1008AE67B /* ScoreboardObjectivePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4426143BB1008AE67B /* ScoreboardObjectivePacket.swift */; };
+		782F0CE226143BB1008AE67B /* OpenHorseWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4526143BB1008AE67B /* OpenHorseWindowPacket.swift */; };
+		782F0CE326143BB1008AE67B /* UpdateHealthPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4626143BB1008AE67B /* UpdateHealthPacket.swift */; };
+		782F0CE426143BB1008AE67B /* EntityAnimationPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4726143BB1008AE67B /* EntityAnimationPacket.swift */; };
+		782F0CE526143BB1008AE67B /* ResourcePackSendPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4826143BB1008AE67B /* ResourcePackSendPacket.swift */; };
+		782F0CE626143BB1008AE67B /* FacePlayerPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4926143BB1008AE67B /* FacePlayerPacket.swift */; };
+		782F0CE726143BB1008AE67B /* ChangeGameStatePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4A26143BB1008AE67B /* ChangeGameStatePacket.swift */; };
+		782F0CE826143BB1008AE67B /* BossBarPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4B26143BB1008AE67B /* BossBarPacket.swift */; };
+		782F0CE926143BB1008AE67B /* TabCompleteClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4C26143BB1008AE67B /* TabCompleteClientboundPacket.swift */; };
+		782F0CEA26143BB1008AE67B /* UpdateLightPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4D26143BB1008AE67B /* UpdateLightPacket.swift */; };
+		782F0CEB26143BB1008AE67B /* BlockEntityDataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4E26143BB1008AE67B /* BlockEntityDataPacket.swift */; };
+		782F0CEC26143BB1008AE67B /* SoundEffectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C4F26143BB1008AE67B /* SoundEffectPacket.swift */; };
+		782F0CED26143BB1008AE67B /* SelectAdvancementTabPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5026143BB1008AE67B /* SelectAdvancementTabPacket.swift */; };
+		782F0CEE26143BB1008AE67B /* CombatEventPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5126143BB1008AE67B /* CombatEventPacket.swift */; };
+		782F0CEF26143BB1008AE67B /* SetExperiencePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5226143BB1008AE67B /* SetExperiencePacket.swift */; };
+		782F0CF026143BB1008AE67B /* ParticlePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5326143BB1008AE67B /* ParticlePacket.swift */; };
+		782F0CF126143BB1008AE67B /* TeamsPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5426143BB1008AE67B /* TeamsPacket.swift */; };
+		782F0CF226143BB1008AE67B /* PlayerPositionAndLookClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5526143BB1008AE67B /* PlayerPositionAndLookClientboundPacket.swift */; };
+		782F0CF326143BB1008AE67B /* VehicleMoveClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5626143BB1008AE67B /* VehicleMoveClientboundPacket.swift */; };
+		782F0CF426143BB1008AE67B /* UpdateScorePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5726143BB1008AE67B /* UpdateScorePacket.swift */; };
+		782F0CF526143BB1008AE67B /* DestroyEntitiesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5826143BB1008AE67B /* DestroyEntitiesPacket.swift */; };
+		782F0CF626143BB1008AE67B /* CloseWindowClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5926143BB1008AE67B /* CloseWindowClientboundPacket.swift */; };
+		782F0CF726143BB1008AE67B /* PlayDisconnectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5A26143BB1008AE67B /* PlayDisconnectPacket.swift */; };
+		782F0CF826143BB1008AE67B /* PluginMessagePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5B26143BB1008AE67B /* PluginMessagePacket.swift */; };
+		782F0CF926143BB1008AE67B /* StopSoundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5C26143BB1008AE67B /* StopSoundPacket.swift */; };
+		782F0CFA26143BB1008AE67B /* HeldItemChangePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C5D26143BB1008AE67B /* HeldItemChangePacket.swift */; };
+		782F0CFB26143BB1008AE67B /* LoginStartPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C6026143BB1008AE67B /* LoginStartPacket.swift */; };
+		782F0CFC26143BB1008AE67B /* LoginSuccessPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C6226143BB1008AE67B /* LoginSuccessPacket.swift */; };
+		782F0CFD26143BB1008AE67B /* LoginDisconnectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C6326143BB1008AE67B /* LoginDisconnectPacket.swift */; };
+		782F0CFE26143BB1008AE67B /* PacketReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C6426143BB1008AE67B /* PacketReader.swift */; };
+		782F0CFF26143BB1008AE67B /* PacketState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C6526143BB1008AE67B /* PacketState.swift */; };
+		782F0D0026143BB1008AE67B /* PacketHandlingThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C6626143BB1008AE67B /* PacketHandlingThread.swift */; };
 		7892880E261438A000F17DBB /* DeltaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A9261433A700079A01 /* DeltaClientTests.swift */; };
 		78928812261438A500F17DBB /* DeltaClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052170261433A600079A01 /* DeltaClientUITests.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
@@ -304,161 +303,6 @@
 /* Begin PBXFileReference section */
 		78052170261433A600079A01 /* DeltaClientUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeltaClientUITests.swift; sourceTree = "<group>"; };
 		78052171261433A600079A01 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		78052174261433A600079A01 /* PacketRegistry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketRegistry.swift; sourceTree = "<group>"; };
-		78052175261433A600079A01 /* ClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientboundPacket.swift; sourceTree = "<group>"; };
-		78052176261433A600079A01 /* PacketWriter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketWriter.swift; sourceTree = "<group>"; };
-		78052177261433A600079A01 /* ServerConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerConnection.swift; sourceTree = "<group>"; };
-		78052178261433A600079A01 /* ConnectionState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
-		78052179261433A600079A01 /* ServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerboundPacket.swift; sourceTree = "<group>"; };
-		7805217D261433A600079A01 /* StatusRequestPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusRequestPacket.swift; sourceTree = "<group>"; };
-		7805217F261433A600079A01 /* StatusResponsePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusResponsePacket.swift; sourceTree = "<group>"; };
-		78052182261433A600079A01 /* HandshakePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandshakePacket.swift; sourceTree = "<group>"; };
-		78052185261433A600079A01 /* NameItemPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameItemPacket.swift; sourceTree = "<group>"; };
-		78052186261433A600079A01 /* UpdateJigsawBlockPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateJigsawBlockPacket.swift; sourceTree = "<group>"; };
-		78052187261433A600079A01 /* TeleportConfirmPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeleportConfirmPacket.swift; sourceTree = "<group>"; };
-		78052188261433A600079A01 /* ClickWindowButtonPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClickWindowButtonPacket.swift; sourceTree = "<group>"; };
-		78052189261433A600079A01 /* ChatMessageServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageServerboundPacket.swift; sourceTree = "<group>"; };
-		7805218A261433A600079A01 /* UpdateSignPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateSignPacket.swift; sourceTree = "<group>"; };
-		7805218B261433A600079A01 /* QueryEntityNBTPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryEntityNBTPacket.swift; sourceTree = "<group>"; };
-		7805218C261433A600079A01 /* ClickWindowPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClickWindowPacket.swift; sourceTree = "<group>"; };
-		7805218D261433A600079A01 /* PlayerDiggingPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerDiggingPacket.swift; sourceTree = "<group>"; };
-		7805218E261433A600079A01 /* AnimationServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationServerboundPacket.swift; sourceTree = "<group>"; };
-		7805218F261433A600079A01 /* SteerVehiclePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteerVehiclePacket.swift; sourceTree = "<group>"; };
-		78052190261433A600079A01 /* LockDifficultyPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockDifficultyPacket.swift; sourceTree = "<group>"; };
-		78052191261433A600079A01 /* PluginMessageServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PluginMessageServerboundPacket.swift; sourceTree = "<group>"; };
-		78052192261433A600079A01 /* SpectatePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpectatePacket.swift; sourceTree = "<group>"; };
-		78052193261433A600079A01 /* UpdateCommandBlockPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateCommandBlockPacket.swift; sourceTree = "<group>"; };
-		78052194261433A600079A01 /* TabCompleteServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabCompleteServerboundPacket.swift; sourceTree = "<group>"; };
-		78052195261433A600079A01 /* UpdateCommandBlockMinecartPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateCommandBlockMinecartPacket.swift; sourceTree = "<group>"; };
-		78052196261433A600079A01 /* QueryBlockNBTPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryBlockNBTPacket.swift; sourceTree = "<group>"; };
-		78052197261433A600079A01 /* ResourcePackStatusPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourcePackStatusPacket.swift; sourceTree = "<group>"; };
-		78052198261433A600079A01 /* SteerBoatPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteerBoatPacket.swift; sourceTree = "<group>"; };
-		78052199261433A600079A01 /* VehicleMoveServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VehicleMoveServerboundPacket.swift; sourceTree = "<group>"; };
-		7805219A261433A600079A01 /* ClientSettingsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientSettingsPacket.swift; sourceTree = "<group>"; };
-		7805219B261433A600079A01 /* UseItemPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UseItemPacket.swift; sourceTree = "<group>"; };
-		7805219C261433A600079A01 /* CloseWindowServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloseWindowServerboundPacket.swift; sourceTree = "<group>"; };
-		7805219D261433A600079A01 /* PickItemPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickItemPacket.swift; sourceTree = "<group>"; };
-		7805219E261433A600079A01 /* SetDifficultyPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetDifficultyPacket.swift; sourceTree = "<group>"; };
-		7805219F261433A600079A01 /* CreativeInventoryActionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreativeInventoryActionPacket.swift; sourceTree = "<group>"; };
-		780521A0261433A600079A01 /* WindowConfirmationServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowConfirmationServerboundPacket.swift; sourceTree = "<group>"; };
-		780521A1261433A600079A01 /* AdvancementTabPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdvancementTabPacket.swift; sourceTree = "<group>"; };
-		780521A2261433A600079A01 /* EntityActionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityActionPacket.swift; sourceTree = "<group>"; };
-		780521A3261433A600079A01 /* PlayerAbilitiesServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerAbilitiesServerboundPacket.swift; sourceTree = "<group>"; };
-		780521A4261433A600079A01 /* PlayerMovementPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerMovementPacket.swift; sourceTree = "<group>"; };
-		780521A5261433A600079A01 /* RecipeBookDataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecipeBookDataPacket.swift; sourceTree = "<group>"; };
-		780521A6261433A600079A01 /* GenerateStructurePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenerateStructurePacket.swift; sourceTree = "<group>"; };
-		780521A7261433A600079A01 /* PlayerBlockPlacementPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerBlockPlacementPacket.swift; sourceTree = "<group>"; };
-		780521A8261433A600079A01 /* ClientStatusPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientStatusPacket.swift; sourceTree = "<group>"; };
-		780521A9261433A600079A01 /* PlayerPositionAndRotationServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerPositionAndRotationServerboundPacket.swift; sourceTree = "<group>"; };
-		780521AA261433A600079A01 /* EditBookPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditBookPacket.swift; sourceTree = "<group>"; };
-		780521AB261433A600079A01 /* PlayerRotationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerRotationPacket.swift; sourceTree = "<group>"; };
-		780521AC261433A600079A01 /* PlayerPositionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerPositionPacket.swift; sourceTree = "<group>"; };
-		780521AD261433A600079A01 /* SelectTradePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectTradePacket.swift; sourceTree = "<group>"; };
-		780521AE261433A600079A01 /* InteractEntityPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InteractEntityPacket.swift; sourceTree = "<group>"; };
-		780521AF261433A600079A01 /* HeldItemChangeServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeldItemChangeServerboundPacket.swift; sourceTree = "<group>"; };
-		780521B0261433A600079A01 /* SetBeaconEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetBeaconEffectPacket.swift; sourceTree = "<group>"; };
-		780521B1261433A600079A01 /* KeepAliveServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeepAliveServerboundPacket.swift; sourceTree = "<group>"; };
-		780521B2261433A600079A01 /* CraftRecipeRequestPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftRecipeRequestPacket.swift; sourceTree = "<group>"; };
-		780521B3261433A600079A01 /* UpdateStructureBlockPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateStructureBlockPacket.swift; sourceTree = "<group>"; };
-		780521B5261433A600079A01 /* TradeListPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TradeListPacket.swift; sourceTree = "<group>"; };
-		780521B6261433A600079A01 /* TagsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsPacket.swift; sourceTree = "<group>"; };
-		780521B7261433A600079A01 /* WindowConfirmationClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowConfirmationClientboundPacket.swift; sourceTree = "<group>"; };
-		780521B8261433A600079A01 /* UpdateViewDistancePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateViewDistancePacket.swift; sourceTree = "<group>"; };
-		780521B9261433A600079A01 /* MultiBlockChangePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiBlockChangePacket.swift; sourceTree = "<group>"; };
-		780521BA261433A600079A01 /* SpawnLivingEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnLivingEntity.swift; sourceTree = "<group>"; };
-		780521BB261433A600079A01 /* EntityVelocityPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityVelocityPacket.swift; sourceTree = "<group>"; };
-		780521BC261433A600079A01 /* EntityHeadLookPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityHeadLookPacket.swift; sourceTree = "<group>"; };
-		780521BD261433A600079A01 /* CollectItemPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectItemPacket.swift; sourceTree = "<group>"; };
-		780521BE261433A600079A01 /* OpenWindowPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenWindowPacket.swift; sourceTree = "<group>"; };
-		780521BF261433A600079A01 /* PlayerAbilitiesPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerAbilitiesPacket.swift; sourceTree = "<group>"; };
-		780521C0261433A600079A01 /* EntityMovementPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityMovementPacket.swift; sourceTree = "<group>"; };
-		780521C1261433A600079A01 /* UpdateViewPositionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateViewPositionPacket.swift; sourceTree = "<group>"; };
-		780521C2261433A600079A01 /* NBTQueryResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBTQueryResponse.swift; sourceTree = "<group>"; };
-		780521C3261433A600079A01 /* RemoveEntityEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoveEntityEffectPacket.swift; sourceTree = "<group>"; };
-		780521C4261433A600079A01 /* OpenBookPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenBookPacket.swift; sourceTree = "<group>"; };
-		780521C5261433A600079A01 /* PlayerListHeaderAndFooterPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerListHeaderAndFooterPacket.swift; sourceTree = "<group>"; };
-		780521C6261433A600079A01 /* EntityMetadataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityMetadataPacket.swift; sourceTree = "<group>"; };
-		780521C7261433A600079A01 /* BlockBreakAnimationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockBreakAnimationPacket.swift; sourceTree = "<group>"; };
-		780521C8261433A600079A01 /* BlockActionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockActionPacket.swift; sourceTree = "<group>"; };
-		780521C9261433A600079A01 /* StatisticsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsPacket.swift; sourceTree = "<group>"; };
-		780521CA261433A600079A01 /* WindowItemsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowItemsPacket.swift; sourceTree = "<group>"; };
-		780521CB261433A600079A01 /* ChunkDataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkDataPacket.swift; sourceTree = "<group>"; };
-		780521CC261433A600079A01 /* UnloadChunkPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnloadChunkPacket.swift; sourceTree = "<group>"; };
-		780521CD261433A600079A01 /* EffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EffectPacket.swift; sourceTree = "<group>"; };
-		780521CE261433A600079A01 /* SpawnExperienceOrbPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnExperienceOrbPacket.swift; sourceTree = "<group>"; };
-		780521CF261433A600079A01 /* WindowPropertyPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowPropertyPacket.swift; sourceTree = "<group>"; };
-		780521D0261433A600079A01 /* MapDataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapDataPacket.swift; sourceTree = "<group>"; };
-		780521D1261433A600079A01 /* EntityPositionAndRotationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityPositionAndRotationPacket.swift; sourceTree = "<group>"; };
-		780521D2261433A600079A01 /* DeclareRecipesPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeclareRecipesPacket.swift; sourceTree = "<group>"; };
-		780521D3261433A600079A01 /* CameraPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraPacket.swift; sourceTree = "<group>"; };
-		780521D4261433A600079A01 /* EntityProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityProperties.swift; sourceTree = "<group>"; };
-		780521D5261433A600079A01 /* EntitySoundEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntitySoundEffectPacket.swift; sourceTree = "<group>"; };
-		780521D6261433A600079A01 /* ServerDifficultyPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDifficultyPacket.swift; sourceTree = "<group>"; };
-		780521D7261433A600079A01 /* AttachEntityPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachEntityPacket.swift; sourceTree = "<group>"; };
-		780521D8261433A600079A01 /* EntityPositionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityPositionPacket.swift; sourceTree = "<group>"; };
-		780521D9261433A600079A01 /* UnlockRecipesPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnlockRecipesPacket.swift; sourceTree = "<group>"; };
-		780521DA261433A600079A01 /* ExplosionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExplosionPacket.swift; sourceTree = "<group>"; };
-		780521DB261433A600079A01 /* SpawnPositionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnPositionPacket.swift; sourceTree = "<group>"; };
-		780521DC261433A600079A01 /* EntityEquipmentPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityEquipmentPacket.swift; sourceTree = "<group>"; };
-		780521DD261433A600079A01 /* TimeUpdatePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeUpdatePacket.swift; sourceTree = "<group>"; };
-		780521DE261433A600079A01 /* KeepAliveClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeepAliveClientboundPacket.swift; sourceTree = "<group>"; };
-		780521DF261433A600079A01 /* EntityEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityEffectPacket.swift; sourceTree = "<group>"; };
-		780521E0261433A600079A01 /* SpawnEntityPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnEntityPacket.swift; sourceTree = "<group>"; };
-		780521E1261433A600079A01 /* OpenSignEditorPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSignEditorPacket.swift; sourceTree = "<group>"; };
-		780521E2261433A600079A01 /* EntityRotationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityRotationPacket.swift; sourceTree = "<group>"; };
-		780521E3261433A600079A01 /* DisplayScoreboardPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayScoreboardPacket.swift; sourceTree = "<group>"; };
-		780521E4261433A600079A01 /* AdvancementsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdvancementsPacket.swift; sourceTree = "<group>"; };
-		780521E5261433A600079A01 /* EntityStatusPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityStatusPacket.swift; sourceTree = "<group>"; };
-		780521E6261433A600079A01 /* RespawnPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RespawnPacket.swift; sourceTree = "<group>"; };
-		780521E7261433A600079A01 /* BlockChangePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockChangePacket.swift; sourceTree = "<group>"; };
-		780521E8261433A600079A01 /* CraftRecipeResponsePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftRecipeResponsePacket.swift; sourceTree = "<group>"; };
-		780521E9261433A600079A01 /* TitlePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitlePacket.swift; sourceTree = "<group>"; };
-		780521EA261433A600079A01 /* SetPassengersPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetPassengersPacket.swift; sourceTree = "<group>"; };
-		780521EB261433A600079A01 /* DeclareCommandsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeclareCommandsPacket.swift; sourceTree = "<group>"; };
-		780521EC261433A600079A01 /* JoinGamePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JoinGamePacket.swift; sourceTree = "<group>"; };
-		780521ED261433A600079A01 /* AcknowledgePlayerDiggingPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AcknowledgePlayerDiggingPacket.swift; sourceTree = "<group>"; };
-		780521EE261433A600079A01 /* SetSlotPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetSlotPacket.swift; sourceTree = "<group>"; };
-		780521EF261433A600079A01 /* NamedSoundEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamedSoundEffectPacket.swift; sourceTree = "<group>"; };
-		780521F0261433A600079A01 /* SpawnPaintingPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnPaintingPacket.swift; sourceTree = "<group>"; };
-		780521F1261433A600079A01 /* ChatMessageClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageClientboundPacket.swift; sourceTree = "<group>"; };
-		780521F2261433A600079A01 /* PlayerInfoPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerInfoPacket.swift; sourceTree = "<group>"; };
-		780521F3261433A600079A01 /* EntityTeleportPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityTeleportPacket.swift; sourceTree = "<group>"; };
-		780521F4261433A600079A01 /* WorldBorderPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorldBorderPacket.swift; sourceTree = "<group>"; };
-		780521F5261433A600079A01 /* SetCooldownPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetCooldownPacket.swift; sourceTree = "<group>"; };
-		780521F6261433A600079A01 /* SpawnPlayerPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnPlayerPacket.swift; sourceTree = "<group>"; };
-		780521F7261433A600079A01 /* ScoreboardObjectivePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreboardObjectivePacket.swift; sourceTree = "<group>"; };
-		780521F8261433A600079A01 /* OpenHorseWindowPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenHorseWindowPacket.swift; sourceTree = "<group>"; };
-		780521F9261433A600079A01 /* UpdateHealthPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateHealthPacket.swift; sourceTree = "<group>"; };
-		780521FA261433A600079A01 /* EntityAnimationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityAnimationPacket.swift; sourceTree = "<group>"; };
-		780521FB261433A600079A01 /* ResourcePackSendPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourcePackSendPacket.swift; sourceTree = "<group>"; };
-		780521FC261433A600079A01 /* FacePlayerPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacePlayerPacket.swift; sourceTree = "<group>"; };
-		780521FD261433A600079A01 /* ChangeGameStatePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeGameStatePacket.swift; sourceTree = "<group>"; };
-		780521FE261433A600079A01 /* BossBarPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BossBarPacket.swift; sourceTree = "<group>"; };
-		780521FF261433A600079A01 /* TabCompleteClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabCompleteClientboundPacket.swift; sourceTree = "<group>"; };
-		78052200261433A600079A01 /* UpdateLightPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateLightPacket.swift; sourceTree = "<group>"; };
-		78052201261433A600079A01 /* BlockEntityDataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockEntityDataPacket.swift; sourceTree = "<group>"; };
-		78052202261433A600079A01 /* SoundEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundEffectPacket.swift; sourceTree = "<group>"; };
-		78052203261433A600079A01 /* SelectAdvancementTabPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectAdvancementTabPacket.swift; sourceTree = "<group>"; };
-		78052204261433A600079A01 /* CombatEventPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CombatEventPacket.swift; sourceTree = "<group>"; };
-		78052205261433A600079A01 /* SetExperiencePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetExperiencePacket.swift; sourceTree = "<group>"; };
-		78052206261433A600079A01 /* ParticlePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticlePacket.swift; sourceTree = "<group>"; };
-		78052207261433A600079A01 /* TeamsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamsPacket.swift; sourceTree = "<group>"; };
-		78052208261433A600079A01 /* PlayerPositionAndLookClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerPositionAndLookClientboundPacket.swift; sourceTree = "<group>"; };
-		78052209261433A700079A01 /* VehicleMoveClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VehicleMoveClientboundPacket.swift; sourceTree = "<group>"; };
-		7805220A261433A700079A01 /* UpdateScorePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateScorePacket.swift; sourceTree = "<group>"; };
-		7805220B261433A700079A01 /* DestroyEntitiesPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DestroyEntitiesPacket.swift; sourceTree = "<group>"; };
-		7805220C261433A700079A01 /* CloseWindowClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloseWindowClientboundPacket.swift; sourceTree = "<group>"; };
-		7805220D261433A700079A01 /* PlayDisconnectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayDisconnectPacket.swift; sourceTree = "<group>"; };
-		7805220E261433A700079A01 /* PluginMessagePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PluginMessagePacket.swift; sourceTree = "<group>"; };
-		7805220F261433A700079A01 /* StopSoundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StopSoundPacket.swift; sourceTree = "<group>"; };
-		78052210261433A700079A01 /* HeldItemChangePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeldItemChangePacket.swift; sourceTree = "<group>"; };
-		78052213261433A700079A01 /* LoginStartPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginStartPacket.swift; sourceTree = "<group>"; };
-		78052215261433A700079A01 /* LoginSuccessPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginSuccessPacket.swift; sourceTree = "<group>"; };
-		78052216261433A700079A01 /* LoginDisconnectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginDisconnectPacket.swift; sourceTree = "<group>"; };
-		78052217261433A700079A01 /* PacketReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketReader.swift; sourceTree = "<group>"; };
-		78052218261433A700079A01 /* PacketState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketState.swift; sourceTree = "<group>"; };
-		78052219261433A700079A01 /* PacketHandlingThread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketHandlingThread.swift; sourceTree = "<group>"; };
-		7805221B261433A700079A01 /* blocks.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = blocks.json; sourceTree = "<group>"; };
 		7805221C261433A700079A01 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		78052220261433A700079A01 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		78052221261433A700079A01 /* ConfigManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
@@ -570,7 +414,7 @@
 		7805229A261433A700079A01 /* DominantHand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DominantHand.swift; sourceTree = "<group>"; };
 		7805229B261433A700079A01 /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		7805229C261433A700079A01 /* PlayerInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerInfo.swift; sourceTree = "<group>"; };
-		7805229D261433A700079A01 /* DeltaClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeltaClient.swift; sourceTree = "<group>"; };
+		7805229D261433A700079A01 /* DeltaClientApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeltaClientApp.swift; sourceTree = "<group>"; };
 		7805229E261433A700079A01 /* DeltaClient.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = DeltaClient.entitlements; sourceTree = "<group>"; };
 		780522A0261433A700079A01 /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		780522A1261433A700079A01 /* ViewState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
@@ -583,6 +427,160 @@
 		780522A9261433A700079A01 /* DeltaClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeltaClientTests.swift; sourceTree = "<group>"; };
 		780522AA261433A700079A01 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		780523CE2614349200079A01 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		782F0BC126143BB0008AE67B /* PacketRegistry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketRegistry.swift; sourceTree = "<group>"; };
+		782F0BC226143BB0008AE67B /* ClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientboundPacket.swift; sourceTree = "<group>"; };
+		782F0BC326143BB0008AE67B /* PacketWriter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketWriter.swift; sourceTree = "<group>"; };
+		782F0BC426143BB0008AE67B /* ServerConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerConnection.swift; sourceTree = "<group>"; };
+		782F0BC526143BB0008AE67B /* ConnectionState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
+		782F0BC626143BB0008AE67B /* ServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerboundPacket.swift; sourceTree = "<group>"; };
+		782F0BCA26143BB0008AE67B /* StatusRequestPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusRequestPacket.swift; sourceTree = "<group>"; };
+		782F0BCC26143BB0008AE67B /* StatusResponsePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusResponsePacket.swift; sourceTree = "<group>"; };
+		782F0BCF26143BB0008AE67B /* HandshakePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandshakePacket.swift; sourceTree = "<group>"; };
+		782F0BD226143BB0008AE67B /* NameItemPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameItemPacket.swift; sourceTree = "<group>"; };
+		782F0BD326143BB0008AE67B /* UpdateJigsawBlockPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateJigsawBlockPacket.swift; sourceTree = "<group>"; };
+		782F0BD426143BB0008AE67B /* TeleportConfirmPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeleportConfirmPacket.swift; sourceTree = "<group>"; };
+		782F0BD526143BB0008AE67B /* ClickWindowButtonPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClickWindowButtonPacket.swift; sourceTree = "<group>"; };
+		782F0BD626143BB0008AE67B /* ChatMessageServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageServerboundPacket.swift; sourceTree = "<group>"; };
+		782F0BD726143BB0008AE67B /* UpdateSignPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateSignPacket.swift; sourceTree = "<group>"; };
+		782F0BD826143BB0008AE67B /* QueryEntityNBTPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryEntityNBTPacket.swift; sourceTree = "<group>"; };
+		782F0BD926143BB0008AE67B /* ClickWindowPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClickWindowPacket.swift; sourceTree = "<group>"; };
+		782F0BDA26143BB0008AE67B /* PlayerDiggingPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerDiggingPacket.swift; sourceTree = "<group>"; };
+		782F0BDB26143BB0008AE67B /* AnimationServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationServerboundPacket.swift; sourceTree = "<group>"; };
+		782F0BDC26143BB0008AE67B /* SteerVehiclePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteerVehiclePacket.swift; sourceTree = "<group>"; };
+		782F0BDD26143BB0008AE67B /* LockDifficultyPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockDifficultyPacket.swift; sourceTree = "<group>"; };
+		782F0BDE26143BB0008AE67B /* PluginMessageServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PluginMessageServerboundPacket.swift; sourceTree = "<group>"; };
+		782F0BDF26143BB0008AE67B /* SpectatePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpectatePacket.swift; sourceTree = "<group>"; };
+		782F0BE026143BB0008AE67B /* UpdateCommandBlockPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateCommandBlockPacket.swift; sourceTree = "<group>"; };
+		782F0BE126143BB0008AE67B /* TabCompleteServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabCompleteServerboundPacket.swift; sourceTree = "<group>"; };
+		782F0BE226143BB0008AE67B /* UpdateCommandBlockMinecartPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateCommandBlockMinecartPacket.swift; sourceTree = "<group>"; };
+		782F0BE326143BB0008AE67B /* QueryBlockNBTPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryBlockNBTPacket.swift; sourceTree = "<group>"; };
+		782F0BE426143BB0008AE67B /* ResourcePackStatusPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourcePackStatusPacket.swift; sourceTree = "<group>"; };
+		782F0BE526143BB0008AE67B /* SteerBoatPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteerBoatPacket.swift; sourceTree = "<group>"; };
+		782F0BE626143BB0008AE67B /* VehicleMoveServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VehicleMoveServerboundPacket.swift; sourceTree = "<group>"; };
+		782F0BE726143BB0008AE67B /* ClientSettingsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientSettingsPacket.swift; sourceTree = "<group>"; };
+		782F0BE826143BB0008AE67B /* UseItemPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UseItemPacket.swift; sourceTree = "<group>"; };
+		782F0BE926143BB0008AE67B /* CloseWindowServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloseWindowServerboundPacket.swift; sourceTree = "<group>"; };
+		782F0BEA26143BB0008AE67B /* PickItemPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickItemPacket.swift; sourceTree = "<group>"; };
+		782F0BEB26143BB0008AE67B /* SetDifficultyPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetDifficultyPacket.swift; sourceTree = "<group>"; };
+		782F0BEC26143BB0008AE67B /* CreativeInventoryActionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreativeInventoryActionPacket.swift; sourceTree = "<group>"; };
+		782F0BED26143BB0008AE67B /* WindowConfirmationServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowConfirmationServerboundPacket.swift; sourceTree = "<group>"; };
+		782F0BEE26143BB0008AE67B /* AdvancementTabPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdvancementTabPacket.swift; sourceTree = "<group>"; };
+		782F0BEF26143BB0008AE67B /* EntityActionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityActionPacket.swift; sourceTree = "<group>"; };
+		782F0BF026143BB0008AE67B /* PlayerAbilitiesServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerAbilitiesServerboundPacket.swift; sourceTree = "<group>"; };
+		782F0BF126143BB0008AE67B /* PlayerMovementPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerMovementPacket.swift; sourceTree = "<group>"; };
+		782F0BF226143BB0008AE67B /* RecipeBookDataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecipeBookDataPacket.swift; sourceTree = "<group>"; };
+		782F0BF326143BB0008AE67B /* GenerateStructurePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenerateStructurePacket.swift; sourceTree = "<group>"; };
+		782F0BF426143BB0008AE67B /* PlayerBlockPlacementPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerBlockPlacementPacket.swift; sourceTree = "<group>"; };
+		782F0BF526143BB0008AE67B /* ClientStatusPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientStatusPacket.swift; sourceTree = "<group>"; };
+		782F0BF626143BB0008AE67B /* PlayerPositionAndRotationServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerPositionAndRotationServerboundPacket.swift; sourceTree = "<group>"; };
+		782F0BF726143BB0008AE67B /* EditBookPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditBookPacket.swift; sourceTree = "<group>"; };
+		782F0BF826143BB0008AE67B /* PlayerRotationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerRotationPacket.swift; sourceTree = "<group>"; };
+		782F0BF926143BB0008AE67B /* PlayerPositionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerPositionPacket.swift; sourceTree = "<group>"; };
+		782F0BFA26143BB0008AE67B /* SelectTradePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectTradePacket.swift; sourceTree = "<group>"; };
+		782F0BFB26143BB0008AE67B /* InteractEntityPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InteractEntityPacket.swift; sourceTree = "<group>"; };
+		782F0BFC26143BB0008AE67B /* HeldItemChangeServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeldItemChangeServerboundPacket.swift; sourceTree = "<group>"; };
+		782F0BFD26143BB0008AE67B /* SetBeaconEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetBeaconEffectPacket.swift; sourceTree = "<group>"; };
+		782F0BFE26143BB0008AE67B /* KeepAliveServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeepAliveServerboundPacket.swift; sourceTree = "<group>"; };
+		782F0BFF26143BB0008AE67B /* CraftRecipeRequestPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftRecipeRequestPacket.swift; sourceTree = "<group>"; };
+		782F0C0026143BB0008AE67B /* UpdateStructureBlockPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateStructureBlockPacket.swift; sourceTree = "<group>"; };
+		782F0C0226143BB0008AE67B /* TradeListPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TradeListPacket.swift; sourceTree = "<group>"; };
+		782F0C0326143BB0008AE67B /* TagsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsPacket.swift; sourceTree = "<group>"; };
+		782F0C0426143BB0008AE67B /* WindowConfirmationClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowConfirmationClientboundPacket.swift; sourceTree = "<group>"; };
+		782F0C0526143BB0008AE67B /* UpdateViewDistancePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateViewDistancePacket.swift; sourceTree = "<group>"; };
+		782F0C0626143BB0008AE67B /* MultiBlockChangePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiBlockChangePacket.swift; sourceTree = "<group>"; };
+		782F0C0726143BB0008AE67B /* SpawnLivingEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnLivingEntity.swift; sourceTree = "<group>"; };
+		782F0C0826143BB0008AE67B /* EntityVelocityPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityVelocityPacket.swift; sourceTree = "<group>"; };
+		782F0C0926143BB0008AE67B /* EntityHeadLookPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityHeadLookPacket.swift; sourceTree = "<group>"; };
+		782F0C0A26143BB0008AE67B /* CollectItemPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectItemPacket.swift; sourceTree = "<group>"; };
+		782F0C0B26143BB0008AE67B /* OpenWindowPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenWindowPacket.swift; sourceTree = "<group>"; };
+		782F0C0C26143BB0008AE67B /* PlayerAbilitiesPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerAbilitiesPacket.swift; sourceTree = "<group>"; };
+		782F0C0D26143BB0008AE67B /* EntityMovementPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityMovementPacket.swift; sourceTree = "<group>"; };
+		782F0C0E26143BB0008AE67B /* UpdateViewPositionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateViewPositionPacket.swift; sourceTree = "<group>"; };
+		782F0C0F26143BB0008AE67B /* NBTQueryResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBTQueryResponse.swift; sourceTree = "<group>"; };
+		782F0C1026143BB0008AE67B /* RemoveEntityEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoveEntityEffectPacket.swift; sourceTree = "<group>"; };
+		782F0C1126143BB0008AE67B /* OpenBookPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenBookPacket.swift; sourceTree = "<group>"; };
+		782F0C1226143BB0008AE67B /* PlayerListHeaderAndFooterPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerListHeaderAndFooterPacket.swift; sourceTree = "<group>"; };
+		782F0C1326143BB0008AE67B /* EntityMetadataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityMetadataPacket.swift; sourceTree = "<group>"; };
+		782F0C1426143BB0008AE67B /* BlockBreakAnimationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockBreakAnimationPacket.swift; sourceTree = "<group>"; };
+		782F0C1526143BB0008AE67B /* BlockActionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockActionPacket.swift; sourceTree = "<group>"; };
+		782F0C1626143BB0008AE67B /* StatisticsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsPacket.swift; sourceTree = "<group>"; };
+		782F0C1726143BB0008AE67B /* WindowItemsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowItemsPacket.swift; sourceTree = "<group>"; };
+		782F0C1826143BB0008AE67B /* ChunkDataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkDataPacket.swift; sourceTree = "<group>"; };
+		782F0C1926143BB0008AE67B /* UnloadChunkPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnloadChunkPacket.swift; sourceTree = "<group>"; };
+		782F0C1A26143BB0008AE67B /* EffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EffectPacket.swift; sourceTree = "<group>"; };
+		782F0C1B26143BB0008AE67B /* SpawnExperienceOrbPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnExperienceOrbPacket.swift; sourceTree = "<group>"; };
+		782F0C1C26143BB0008AE67B /* WindowPropertyPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowPropertyPacket.swift; sourceTree = "<group>"; };
+		782F0C1D26143BB0008AE67B /* MapDataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapDataPacket.swift; sourceTree = "<group>"; };
+		782F0C1E26143BB0008AE67B /* EntityPositionAndRotationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityPositionAndRotationPacket.swift; sourceTree = "<group>"; };
+		782F0C1F26143BB0008AE67B /* DeclareRecipesPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeclareRecipesPacket.swift; sourceTree = "<group>"; };
+		782F0C2026143BB0008AE67B /* CameraPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraPacket.swift; sourceTree = "<group>"; };
+		782F0C2126143BB0008AE67B /* EntityProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityProperties.swift; sourceTree = "<group>"; };
+		782F0C2226143BB0008AE67B /* EntitySoundEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntitySoundEffectPacket.swift; sourceTree = "<group>"; };
+		782F0C2326143BB0008AE67B /* ServerDifficultyPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDifficultyPacket.swift; sourceTree = "<group>"; };
+		782F0C2426143BB0008AE67B /* AttachEntityPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachEntityPacket.swift; sourceTree = "<group>"; };
+		782F0C2526143BB0008AE67B /* EntityPositionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityPositionPacket.swift; sourceTree = "<group>"; };
+		782F0C2626143BB0008AE67B /* UnlockRecipesPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnlockRecipesPacket.swift; sourceTree = "<group>"; };
+		782F0C2726143BB0008AE67B /* ExplosionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExplosionPacket.swift; sourceTree = "<group>"; };
+		782F0C2826143BB0008AE67B /* SpawnPositionPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnPositionPacket.swift; sourceTree = "<group>"; };
+		782F0C2926143BB0008AE67B /* EntityEquipmentPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityEquipmentPacket.swift; sourceTree = "<group>"; };
+		782F0C2A26143BB0008AE67B /* TimeUpdatePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeUpdatePacket.swift; sourceTree = "<group>"; };
+		782F0C2B26143BB0008AE67B /* KeepAliveClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeepAliveClientboundPacket.swift; sourceTree = "<group>"; };
+		782F0C2C26143BB0008AE67B /* EntityEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityEffectPacket.swift; sourceTree = "<group>"; };
+		782F0C2D26143BB0008AE67B /* SpawnEntityPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnEntityPacket.swift; sourceTree = "<group>"; };
+		782F0C2E26143BB0008AE67B /* OpenSignEditorPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSignEditorPacket.swift; sourceTree = "<group>"; };
+		782F0C2F26143BB0008AE67B /* EntityRotationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityRotationPacket.swift; sourceTree = "<group>"; };
+		782F0C3026143BB0008AE67B /* DisplayScoreboardPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayScoreboardPacket.swift; sourceTree = "<group>"; };
+		782F0C3126143BB0008AE67B /* AdvancementsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdvancementsPacket.swift; sourceTree = "<group>"; };
+		782F0C3226143BB0008AE67B /* EntityStatusPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityStatusPacket.swift; sourceTree = "<group>"; };
+		782F0C3326143BB0008AE67B /* RespawnPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RespawnPacket.swift; sourceTree = "<group>"; };
+		782F0C3426143BB1008AE67B /* BlockChangePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockChangePacket.swift; sourceTree = "<group>"; };
+		782F0C3526143BB1008AE67B /* CraftRecipeResponsePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftRecipeResponsePacket.swift; sourceTree = "<group>"; };
+		782F0C3626143BB1008AE67B /* TitlePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitlePacket.swift; sourceTree = "<group>"; };
+		782F0C3726143BB1008AE67B /* SetPassengersPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetPassengersPacket.swift; sourceTree = "<group>"; };
+		782F0C3826143BB1008AE67B /* DeclareCommandsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeclareCommandsPacket.swift; sourceTree = "<group>"; };
+		782F0C3926143BB1008AE67B /* JoinGamePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JoinGamePacket.swift; sourceTree = "<group>"; };
+		782F0C3A26143BB1008AE67B /* AcknowledgePlayerDiggingPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AcknowledgePlayerDiggingPacket.swift; sourceTree = "<group>"; };
+		782F0C3B26143BB1008AE67B /* SetSlotPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetSlotPacket.swift; sourceTree = "<group>"; };
+		782F0C3C26143BB1008AE67B /* NamedSoundEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamedSoundEffectPacket.swift; sourceTree = "<group>"; };
+		782F0C3D26143BB1008AE67B /* SpawnPaintingPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnPaintingPacket.swift; sourceTree = "<group>"; };
+		782F0C3E26143BB1008AE67B /* ChatMessageClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageClientboundPacket.swift; sourceTree = "<group>"; };
+		782F0C3F26143BB1008AE67B /* PlayerInfoPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerInfoPacket.swift; sourceTree = "<group>"; };
+		782F0C4026143BB1008AE67B /* EntityTeleportPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityTeleportPacket.swift; sourceTree = "<group>"; };
+		782F0C4126143BB1008AE67B /* WorldBorderPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorldBorderPacket.swift; sourceTree = "<group>"; };
+		782F0C4226143BB1008AE67B /* SetCooldownPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetCooldownPacket.swift; sourceTree = "<group>"; };
+		782F0C4326143BB1008AE67B /* SpawnPlayerPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnPlayerPacket.swift; sourceTree = "<group>"; };
+		782F0C4426143BB1008AE67B /* ScoreboardObjectivePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreboardObjectivePacket.swift; sourceTree = "<group>"; };
+		782F0C4526143BB1008AE67B /* OpenHorseWindowPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenHorseWindowPacket.swift; sourceTree = "<group>"; };
+		782F0C4626143BB1008AE67B /* UpdateHealthPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateHealthPacket.swift; sourceTree = "<group>"; };
+		782F0C4726143BB1008AE67B /* EntityAnimationPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityAnimationPacket.swift; sourceTree = "<group>"; };
+		782F0C4826143BB1008AE67B /* ResourcePackSendPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourcePackSendPacket.swift; sourceTree = "<group>"; };
+		782F0C4926143BB1008AE67B /* FacePlayerPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacePlayerPacket.swift; sourceTree = "<group>"; };
+		782F0C4A26143BB1008AE67B /* ChangeGameStatePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeGameStatePacket.swift; sourceTree = "<group>"; };
+		782F0C4B26143BB1008AE67B /* BossBarPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BossBarPacket.swift; sourceTree = "<group>"; };
+		782F0C4C26143BB1008AE67B /* TabCompleteClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabCompleteClientboundPacket.swift; sourceTree = "<group>"; };
+		782F0C4D26143BB1008AE67B /* UpdateLightPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateLightPacket.swift; sourceTree = "<group>"; };
+		782F0C4E26143BB1008AE67B /* BlockEntityDataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockEntityDataPacket.swift; sourceTree = "<group>"; };
+		782F0C4F26143BB1008AE67B /* SoundEffectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundEffectPacket.swift; sourceTree = "<group>"; };
+		782F0C5026143BB1008AE67B /* SelectAdvancementTabPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectAdvancementTabPacket.swift; sourceTree = "<group>"; };
+		782F0C5126143BB1008AE67B /* CombatEventPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CombatEventPacket.swift; sourceTree = "<group>"; };
+		782F0C5226143BB1008AE67B /* SetExperiencePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetExperiencePacket.swift; sourceTree = "<group>"; };
+		782F0C5326143BB1008AE67B /* ParticlePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticlePacket.swift; sourceTree = "<group>"; };
+		782F0C5426143BB1008AE67B /* TeamsPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamsPacket.swift; sourceTree = "<group>"; };
+		782F0C5526143BB1008AE67B /* PlayerPositionAndLookClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerPositionAndLookClientboundPacket.swift; sourceTree = "<group>"; };
+		782F0C5626143BB1008AE67B /* VehicleMoveClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VehicleMoveClientboundPacket.swift; sourceTree = "<group>"; };
+		782F0C5726143BB1008AE67B /* UpdateScorePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateScorePacket.swift; sourceTree = "<group>"; };
+		782F0C5826143BB1008AE67B /* DestroyEntitiesPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DestroyEntitiesPacket.swift; sourceTree = "<group>"; };
+		782F0C5926143BB1008AE67B /* CloseWindowClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloseWindowClientboundPacket.swift; sourceTree = "<group>"; };
+		782F0C5A26143BB1008AE67B /* PlayDisconnectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayDisconnectPacket.swift; sourceTree = "<group>"; };
+		782F0C5B26143BB1008AE67B /* PluginMessagePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PluginMessagePacket.swift; sourceTree = "<group>"; };
+		782F0C5C26143BB1008AE67B /* StopSoundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StopSoundPacket.swift; sourceTree = "<group>"; };
+		782F0C5D26143BB1008AE67B /* HeldItemChangePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeldItemChangePacket.swift; sourceTree = "<group>"; };
+		782F0C6026143BB1008AE67B /* LoginStartPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginStartPacket.swift; sourceTree = "<group>"; };
+		782F0C6226143BB1008AE67B /* LoginSuccessPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginSuccessPacket.swift; sourceTree = "<group>"; };
+		782F0C6326143BB1008AE67B /* LoginDisconnectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginDisconnectPacket.swift; sourceTree = "<group>"; };
+		782F0C6426143BB1008AE67B /* PacketReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketReader.swift; sourceTree = "<group>"; };
+		782F0C6526143BB1008AE67B /* PacketState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketState.swift; sourceTree = "<group>"; };
+		782F0C6626143BB1008AE67B /* PacketHandlingThread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketHandlingThread.swift; sourceTree = "<group>"; };
 		784194B7258204CD0070DE78 /* DeltaClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194C9258204D10070DE78 /* DeltaClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D4258204D10070DE78 /* DeltaClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -627,11 +625,9 @@
 		78052172261433A600079A01 /* DeltaClient */ = {
 			isa = PBXGroup;
 			children = (
-				7805229D261433A700079A01 /* DeltaClient.swift */,
+				7805229D261433A700079A01 /* DeltaClientApp.swift */,
 				7805229F261433A700079A01 /* Views */,
 				7805221F261433A700079A01 /* DeltaClient */,
-				78052173261433A600079A01 /* Networking */,
-				7805221A261433A700079A01 /* Resources */,
 				780523CD2614349200079A01 /* Preview Content */,
 				780522A7261433A700079A01 /* Info.plist */,
 				7805221C261433A700079A01 /* Assets.xcassets */,
@@ -640,290 +636,22 @@
 			path = DeltaClient;
 			sourceTree = "<group>";
 		};
-		78052173261433A600079A01 /* Networking */ = {
-			isa = PBXGroup;
-			children = (
-				7805217A261433A600079A01 /* Packets */,
-				78052177261433A600079A01 /* ServerConnection.swift */,
-				78052178261433A600079A01 /* ConnectionState.swift */,
-				78052218261433A700079A01 /* PacketState.swift */,
-				78052217261433A700079A01 /* PacketReader.swift */,
-				78052176261433A600079A01 /* PacketWriter.swift */,
-				78052175261433A600079A01 /* ClientboundPacket.swift */,
-				78052179261433A600079A01 /* ServerboundPacket.swift */,
-				78052219261433A700079A01 /* PacketHandlingThread.swift */,
-				78052174261433A600079A01 /* PacketRegistry.swift */,
-			);
-			path = Networking;
-			sourceTree = "<group>";
-		};
-		7805217A261433A600079A01 /* Packets */ = {
-			isa = PBXGroup;
-			children = (
-				78052180261433A600079A01 /* Handshaking */,
-				7805217B261433A600079A01 /* Status */,
-				78052211261433A700079A01 /* Login */,
-				78052183261433A600079A01 /* Play */,
-			);
-			path = Packets;
-			sourceTree = "<group>";
-		};
-		7805217B261433A600079A01 /* Status */ = {
-			isa = PBXGroup;
-			children = (
-				7805217E261433A600079A01 /* Clientbound */,
-				7805217C261433A600079A01 /* Serverbound */,
-			);
-			path = Status;
-			sourceTree = "<group>";
-		};
-		7805217C261433A600079A01 /* Serverbound */ = {
-			isa = PBXGroup;
-			children = (
-				7805217D261433A600079A01 /* StatusRequestPacket.swift */,
-			);
-			path = Serverbound;
-			sourceTree = "<group>";
-		};
-		7805217E261433A600079A01 /* Clientbound */ = {
-			isa = PBXGroup;
-			children = (
-				7805217F261433A600079A01 /* StatusResponsePacket.swift */,
-			);
-			path = Clientbound;
-			sourceTree = "<group>";
-		};
-		78052180261433A600079A01 /* Handshaking */ = {
-			isa = PBXGroup;
-			children = (
-				78052181261433A600079A01 /* Serverbound */,
-			);
-			path = Handshaking;
-			sourceTree = "<group>";
-		};
-		78052181261433A600079A01 /* Serverbound */ = {
-			isa = PBXGroup;
-			children = (
-				78052182261433A600079A01 /* HandshakePacket.swift */,
-			);
-			path = Serverbound;
-			sourceTree = "<group>";
-		};
-		78052183261433A600079A01 /* Play */ = {
-			isa = PBXGroup;
-			children = (
-				780521B4261433A600079A01 /* Clientbound */,
-				78052184261433A600079A01 /* Serverbound */,
-			);
-			path = Play;
-			sourceTree = "<group>";
-		};
-		78052184261433A600079A01 /* Serverbound */ = {
-			isa = PBXGroup;
-			children = (
-				78052185261433A600079A01 /* NameItemPacket.swift */,
-				78052186261433A600079A01 /* UpdateJigsawBlockPacket.swift */,
-				78052187261433A600079A01 /* TeleportConfirmPacket.swift */,
-				78052188261433A600079A01 /* ClickWindowButtonPacket.swift */,
-				78052189261433A600079A01 /* ChatMessageServerboundPacket.swift */,
-				7805218A261433A600079A01 /* UpdateSignPacket.swift */,
-				7805218B261433A600079A01 /* QueryEntityNBTPacket.swift */,
-				7805218C261433A600079A01 /* ClickWindowPacket.swift */,
-				7805218D261433A600079A01 /* PlayerDiggingPacket.swift */,
-				7805218E261433A600079A01 /* AnimationServerboundPacket.swift */,
-				7805218F261433A600079A01 /* SteerVehiclePacket.swift */,
-				78052190261433A600079A01 /* LockDifficultyPacket.swift */,
-				78052191261433A600079A01 /* PluginMessageServerboundPacket.swift */,
-				78052192261433A600079A01 /* SpectatePacket.swift */,
-				78052193261433A600079A01 /* UpdateCommandBlockPacket.swift */,
-				78052194261433A600079A01 /* TabCompleteServerboundPacket.swift */,
-				78052195261433A600079A01 /* UpdateCommandBlockMinecartPacket.swift */,
-				78052196261433A600079A01 /* QueryBlockNBTPacket.swift */,
-				78052197261433A600079A01 /* ResourcePackStatusPacket.swift */,
-				78052198261433A600079A01 /* SteerBoatPacket.swift */,
-				78052199261433A600079A01 /* VehicleMoveServerboundPacket.swift */,
-				7805219A261433A600079A01 /* ClientSettingsPacket.swift */,
-				7805219B261433A600079A01 /* UseItemPacket.swift */,
-				7805219C261433A600079A01 /* CloseWindowServerboundPacket.swift */,
-				7805219D261433A600079A01 /* PickItemPacket.swift */,
-				7805219E261433A600079A01 /* SetDifficultyPacket.swift */,
-				7805219F261433A600079A01 /* CreativeInventoryActionPacket.swift */,
-				780521A0261433A600079A01 /* WindowConfirmationServerboundPacket.swift */,
-				780521A1261433A600079A01 /* AdvancementTabPacket.swift */,
-				780521A2261433A600079A01 /* EntityActionPacket.swift */,
-				780521A3261433A600079A01 /* PlayerAbilitiesServerboundPacket.swift */,
-				780521A4261433A600079A01 /* PlayerMovementPacket.swift */,
-				780521A5261433A600079A01 /* RecipeBookDataPacket.swift */,
-				780521A6261433A600079A01 /* GenerateStructurePacket.swift */,
-				780521A7261433A600079A01 /* PlayerBlockPlacementPacket.swift */,
-				780521A8261433A600079A01 /* ClientStatusPacket.swift */,
-				780521A9261433A600079A01 /* PlayerPositionAndRotationServerboundPacket.swift */,
-				780521AA261433A600079A01 /* EditBookPacket.swift */,
-				780521AB261433A600079A01 /* PlayerRotationPacket.swift */,
-				780521AC261433A600079A01 /* PlayerPositionPacket.swift */,
-				780521AD261433A600079A01 /* SelectTradePacket.swift */,
-				780521AE261433A600079A01 /* InteractEntityPacket.swift */,
-				780521AF261433A600079A01 /* HeldItemChangeServerboundPacket.swift */,
-				780521B0261433A600079A01 /* SetBeaconEffectPacket.swift */,
-				780521B1261433A600079A01 /* KeepAliveServerboundPacket.swift */,
-				780521B2261433A600079A01 /* CraftRecipeRequestPacket.swift */,
-				780521B3261433A600079A01 /* UpdateStructureBlockPacket.swift */,
-			);
-			path = Serverbound;
-			sourceTree = "<group>";
-		};
-		780521B4261433A600079A01 /* Clientbound */ = {
-			isa = PBXGroup;
-			children = (
-				780521B5261433A600079A01 /* TradeListPacket.swift */,
-				780521B6261433A600079A01 /* TagsPacket.swift */,
-				780521B7261433A600079A01 /* WindowConfirmationClientboundPacket.swift */,
-				780521B8261433A600079A01 /* UpdateViewDistancePacket.swift */,
-				780521B9261433A600079A01 /* MultiBlockChangePacket.swift */,
-				780521BA261433A600079A01 /* SpawnLivingEntity.swift */,
-				780521BB261433A600079A01 /* EntityVelocityPacket.swift */,
-				780521BC261433A600079A01 /* EntityHeadLookPacket.swift */,
-				780521BD261433A600079A01 /* CollectItemPacket.swift */,
-				780521BE261433A600079A01 /* OpenWindowPacket.swift */,
-				780521BF261433A600079A01 /* PlayerAbilitiesPacket.swift */,
-				780521C0261433A600079A01 /* EntityMovementPacket.swift */,
-				780521C1261433A600079A01 /* UpdateViewPositionPacket.swift */,
-				780521C2261433A600079A01 /* NBTQueryResponse.swift */,
-				780521C3261433A600079A01 /* RemoveEntityEffectPacket.swift */,
-				780521C4261433A600079A01 /* OpenBookPacket.swift */,
-				780521C5261433A600079A01 /* PlayerListHeaderAndFooterPacket.swift */,
-				780521C6261433A600079A01 /* EntityMetadataPacket.swift */,
-				780521C7261433A600079A01 /* BlockBreakAnimationPacket.swift */,
-				780521C8261433A600079A01 /* BlockActionPacket.swift */,
-				780521C9261433A600079A01 /* StatisticsPacket.swift */,
-				780521CA261433A600079A01 /* WindowItemsPacket.swift */,
-				780521CB261433A600079A01 /* ChunkDataPacket.swift */,
-				780521CC261433A600079A01 /* UnloadChunkPacket.swift */,
-				780521CD261433A600079A01 /* EffectPacket.swift */,
-				780521CE261433A600079A01 /* SpawnExperienceOrbPacket.swift */,
-				780521CF261433A600079A01 /* WindowPropertyPacket.swift */,
-				780521D0261433A600079A01 /* MapDataPacket.swift */,
-				780521D1261433A600079A01 /* EntityPositionAndRotationPacket.swift */,
-				780521D2261433A600079A01 /* DeclareRecipesPacket.swift */,
-				780521D3261433A600079A01 /* CameraPacket.swift */,
-				780521D4261433A600079A01 /* EntityProperties.swift */,
-				780521D5261433A600079A01 /* EntitySoundEffectPacket.swift */,
-				780521D6261433A600079A01 /* ServerDifficultyPacket.swift */,
-				780521D7261433A600079A01 /* AttachEntityPacket.swift */,
-				780521D8261433A600079A01 /* EntityPositionPacket.swift */,
-				780521D9261433A600079A01 /* UnlockRecipesPacket.swift */,
-				780521DA261433A600079A01 /* ExplosionPacket.swift */,
-				780521DB261433A600079A01 /* SpawnPositionPacket.swift */,
-				780521DC261433A600079A01 /* EntityEquipmentPacket.swift */,
-				780521DD261433A600079A01 /* TimeUpdatePacket.swift */,
-				780521DE261433A600079A01 /* KeepAliveClientboundPacket.swift */,
-				780521DF261433A600079A01 /* EntityEffectPacket.swift */,
-				780521E0261433A600079A01 /* SpawnEntityPacket.swift */,
-				780521E1261433A600079A01 /* OpenSignEditorPacket.swift */,
-				780521E2261433A600079A01 /* EntityRotationPacket.swift */,
-				780521E3261433A600079A01 /* DisplayScoreboardPacket.swift */,
-				780521E4261433A600079A01 /* AdvancementsPacket.swift */,
-				780521E5261433A600079A01 /* EntityStatusPacket.swift */,
-				780521E6261433A600079A01 /* RespawnPacket.swift */,
-				780521E7261433A600079A01 /* BlockChangePacket.swift */,
-				780521E8261433A600079A01 /* CraftRecipeResponsePacket.swift */,
-				780521E9261433A600079A01 /* TitlePacket.swift */,
-				780521EA261433A600079A01 /* SetPassengersPacket.swift */,
-				780521EB261433A600079A01 /* DeclareCommandsPacket.swift */,
-				780521EC261433A600079A01 /* JoinGamePacket.swift */,
-				780521ED261433A600079A01 /* AcknowledgePlayerDiggingPacket.swift */,
-				780521EE261433A600079A01 /* SetSlotPacket.swift */,
-				780521EF261433A600079A01 /* NamedSoundEffectPacket.swift */,
-				780521F0261433A600079A01 /* SpawnPaintingPacket.swift */,
-				780521F1261433A600079A01 /* ChatMessageClientboundPacket.swift */,
-				780521F2261433A600079A01 /* PlayerInfoPacket.swift */,
-				780521F3261433A600079A01 /* EntityTeleportPacket.swift */,
-				780521F4261433A600079A01 /* WorldBorderPacket.swift */,
-				780521F5261433A600079A01 /* SetCooldownPacket.swift */,
-				780521F6261433A600079A01 /* SpawnPlayerPacket.swift */,
-				780521F7261433A600079A01 /* ScoreboardObjectivePacket.swift */,
-				780521F8261433A600079A01 /* OpenHorseWindowPacket.swift */,
-				780521F9261433A600079A01 /* UpdateHealthPacket.swift */,
-				780521FA261433A600079A01 /* EntityAnimationPacket.swift */,
-				780521FB261433A600079A01 /* ResourcePackSendPacket.swift */,
-				780521FC261433A600079A01 /* FacePlayerPacket.swift */,
-				780521FD261433A600079A01 /* ChangeGameStatePacket.swift */,
-				780521FE261433A600079A01 /* BossBarPacket.swift */,
-				780521FF261433A600079A01 /* TabCompleteClientboundPacket.swift */,
-				78052200261433A600079A01 /* UpdateLightPacket.swift */,
-				78052201261433A600079A01 /* BlockEntityDataPacket.swift */,
-				78052202261433A600079A01 /* SoundEffectPacket.swift */,
-				78052203261433A600079A01 /* SelectAdvancementTabPacket.swift */,
-				78052204261433A600079A01 /* CombatEventPacket.swift */,
-				78052205261433A600079A01 /* SetExperiencePacket.swift */,
-				78052206261433A600079A01 /* ParticlePacket.swift */,
-				78052207261433A600079A01 /* TeamsPacket.swift */,
-				78052208261433A600079A01 /* PlayerPositionAndLookClientboundPacket.swift */,
-				78052209261433A700079A01 /* VehicleMoveClientboundPacket.swift */,
-				7805220A261433A700079A01 /* UpdateScorePacket.swift */,
-				7805220B261433A700079A01 /* DestroyEntitiesPacket.swift */,
-				7805220C261433A700079A01 /* CloseWindowClientboundPacket.swift */,
-				7805220D261433A700079A01 /* PlayDisconnectPacket.swift */,
-				7805220E261433A700079A01 /* PluginMessagePacket.swift */,
-				7805220F261433A700079A01 /* StopSoundPacket.swift */,
-				78052210261433A700079A01 /* HeldItemChangePacket.swift */,
-			);
-			path = Clientbound;
-			sourceTree = "<group>";
-		};
-		78052211261433A700079A01 /* Login */ = {
-			isa = PBXGroup;
-			children = (
-				78052212261433A700079A01 /* Serverbound */,
-				78052214261433A700079A01 /* Clientbound */,
-			);
-			path = Login;
-			sourceTree = "<group>";
-		};
-		78052212261433A700079A01 /* Serverbound */ = {
-			isa = PBXGroup;
-			children = (
-				78052213261433A700079A01 /* LoginStartPacket.swift */,
-			);
-			path = Serverbound;
-			sourceTree = "<group>";
-		};
-		78052214261433A700079A01 /* Clientbound */ = {
-			isa = PBXGroup;
-			children = (
-				78052215261433A700079A01 /* LoginSuccessPacket.swift */,
-				78052216261433A700079A01 /* LoginDisconnectPacket.swift */,
-			);
-			path = Clientbound;
-			sourceTree = "<group>";
-		};
-		7805221A261433A700079A01 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				7805221B261433A700079A01 /* blocks.json */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		7805221F261433A700079A01 /* DeltaClient */ = {
 			isa = PBXGroup;
 			children = (
+				782F0BC026143BB0008AE67B /* Protocol */,
 				78052271261433A700079A01 /* Server */,
 				7805226A261433A700079A01 /* World */,
 				78052265261433A700079A01 /* Entity */,
-				78052295261433A700079A01 /* Player */,
-				7805227A261433A700079A01 /* Rendering */,
+				7805227A261433A700079A01 /* Render */,
 				78052285261433A700079A01 /* Data */,
 				78052241261433A700079A01 /* Chat */,
 				78052222261433A700079A01 /* Registries */,
+				7805224E261433A700079A01 /* Datatypes */,
 				7805224A261433A700079A01 /* Util */,
-				78052220261433A700079A01 /* Constants.swift */,
-				78052221261433A700079A01 /* ConfigManager.swift */,
-				78052278261433A700079A01 /* StartupSequence.swift */,
 				78052279261433A700079A01 /* Client.swift */,
-				78052293261433A700079A01 /* TabList.swift */,
-				78052294261433A700079A01 /* PlayerProperty.swift */,
-				7805229C261433A700079A01 /* PlayerInfo.swift */,
+				78052278261433A700079A01 /* StartupSequence.swift */,
+				78052220261433A700079A01 /* Constants.swift */,
 			);
 			path = DeltaClient;
 			sourceTree = "<group>";
@@ -997,14 +725,11 @@
 		7805224A261433A700079A01 /* Util */ = {
 			isa = PBXGroup;
 			children = (
-				7805224B261433A700079A01 /* EventManager.swift */,
-				7805224C261433A700079A01 /* Buffer.swift */,
+				78052261261433A700079A01 /* C */,
 				7805224D261433A700079A01 /* Logger.swift */,
-				7805224E261433A700079A01 /* Datatypes */,
 				7805225E261433A700079A01 /* Profiler.swift */,
 				7805225F261433A700079A01 /* Stopwatch.swift */,
 				78052260261433A700079A01 /* MatrixUtil.swift */,
-				78052261261433A700079A01 /* C */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -1044,6 +769,7 @@
 		78052265261433A700079A01 /* Entity */ = {
 			isa = PBXGroup;
 			children = (
+				78052295261433A700079A01 /* Player */,
 				78052266261433A700079A01 /* EntityVelocity.swift */,
 				78052267261433A700079A01 /* EntityPosition.swift */,
 				78052268261433A700079A01 /* EntityRotation.swift */,
@@ -1068,17 +794,18 @@
 		78052271261433A700079A01 /* Server */ = {
 			isa = PBXGroup;
 			children = (
-				78052272261433A700079A01 /* PingInfo.swift */,
+				78052275261433A700079A01 /* Server.swift */,
+				78052277261433A700079A01 /* ServerInfo.swift */,
+				78052276261433A700079A01 /* ServerConfig.swift */,
+				78052293261433A700079A01 /* TabList.swift */,
 				78052273261433A700079A01 /* ServerList.swift */,
 				78052274261433A700079A01 /* ServerPinger.swift */,
-				78052275261433A700079A01 /* Server.swift */,
-				78052276261433A700079A01 /* ServerConfig.swift */,
-				78052277261433A700079A01 /* ServerInfo.swift */,
+				78052272261433A700079A01 /* PingInfo.swift */,
 			);
 			path = Server;
 			sourceTree = "<group>";
 		};
-		7805227A261433A700079A01 /* Rendering */ = {
+		7805227A261433A700079A01 /* Render */ = {
 			isa = PBXGroup;
 			children = (
 				7805227B261433A700079A01 /* Mesh */,
@@ -1089,7 +816,7 @@
 				78052283261433A700079A01 /* ChunkMesh.swift */,
 				78052284261433A700079A01 /* Renderer.swift */,
 			);
-			path = Rendering;
+			path = Render;
 			sourceTree = "<group>";
 		};
 		7805227B261433A700079A01 /* Mesh */ = {
@@ -1105,15 +832,17 @@
 		78052285261433A700079A01 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				7805228E261433A700079A01 /* Protobuf */,
+				7805228B261433A700079A01 /* Managers.swift */,
+				7805224B261433A700079A01 /* EventManager.swift */,
 				78052286261433A700079A01 /* StorageManager.swift */,
 				78052287261433A700079A01 /* CacheManager.swift */,
+				78052221261433A700079A01 /* ConfigManager.swift */,
+				7805228C261433A700079A01 /* AssetManager.swift */,
 				78052288261433A700079A01 /* LocaleManager.swift */,
 				78052289261433A700079A01 /* TextureManager.swift */,
 				7805228A261433A700079A01 /* MinecraftLocale.swift */,
-				7805228B261433A700079A01 /* Managers.swift */,
-				7805228C261433A700079A01 /* AssetManager.swift */,
 				7805228D261433A700079A01 /* BlockPaletteManager.swift */,
-				7805228E261433A700079A01 /* Protobuf */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -1138,6 +867,8 @@
 				78052299261433A700079A01 /* PlayerAbilities.swift */,
 				7805229A261433A700079A01 /* DominantHand.swift */,
 				7805229B261433A700079A01 /* Player.swift */,
+				78052294261433A700079A01 /* PlayerProperty.swift */,
+				7805229C261433A700079A01 /* PlayerInfo.swift */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -1171,6 +902,264 @@
 				780523CE2614349200079A01 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		782F0BC026143BB0008AE67B /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				782F0BC726143BB0008AE67B /* Packets */,
+				782F0BC426143BB0008AE67B /* ServerConnection.swift */,
+				782F0BC526143BB0008AE67B /* ConnectionState.swift */,
+				782F0C6626143BB1008AE67B /* PacketHandlingThread.swift */,
+				782F0BC126143BB0008AE67B /* PacketRegistry.swift */,
+				782F0C6526143BB1008AE67B /* PacketState.swift */,
+				7805224C261433A700079A01 /* Buffer.swift */,
+			);
+			path = Protocol;
+			sourceTree = "<group>";
+		};
+		782F0BC726143BB0008AE67B /* Packets */ = {
+			isa = PBXGroup;
+			children = (
+				782F0BC826143BB0008AE67B /* Status */,
+				782F0BCD26143BB0008AE67B /* Handshaking */,
+				782F0BD026143BB0008AE67B /* Play */,
+				782F0C5E26143BB1008AE67B /* Login */,
+				782F0C6426143BB1008AE67B /* PacketReader.swift */,
+				782F0BC326143BB0008AE67B /* PacketWriter.swift */,
+				782F0BC226143BB0008AE67B /* ClientboundPacket.swift */,
+				782F0BC626143BB0008AE67B /* ServerboundPacket.swift */,
+			);
+			path = Packets;
+			sourceTree = "<group>";
+		};
+		782F0BC826143BB0008AE67B /* Status */ = {
+			isa = PBXGroup;
+			children = (
+				782F0BC926143BB0008AE67B /* Serverbound */,
+				782F0BCB26143BB0008AE67B /* Clientbound */,
+			);
+			path = Status;
+			sourceTree = "<group>";
+		};
+		782F0BC926143BB0008AE67B /* Serverbound */ = {
+			isa = PBXGroup;
+			children = (
+				782F0BCA26143BB0008AE67B /* StatusRequestPacket.swift */,
+			);
+			path = Serverbound;
+			sourceTree = "<group>";
+		};
+		782F0BCB26143BB0008AE67B /* Clientbound */ = {
+			isa = PBXGroup;
+			children = (
+				782F0BCC26143BB0008AE67B /* StatusResponsePacket.swift */,
+			);
+			path = Clientbound;
+			sourceTree = "<group>";
+		};
+		782F0BCD26143BB0008AE67B /* Handshaking */ = {
+			isa = PBXGroup;
+			children = (
+				782F0BCE26143BB0008AE67B /* Serverbound */,
+			);
+			path = Handshaking;
+			sourceTree = "<group>";
+		};
+		782F0BCE26143BB0008AE67B /* Serverbound */ = {
+			isa = PBXGroup;
+			children = (
+				782F0BCF26143BB0008AE67B /* HandshakePacket.swift */,
+			);
+			path = Serverbound;
+			sourceTree = "<group>";
+		};
+		782F0BD026143BB0008AE67B /* Play */ = {
+			isa = PBXGroup;
+			children = (
+				782F0BD126143BB0008AE67B /* Serverbound */,
+				782F0C0126143BB0008AE67B /* Clientbound */,
+			);
+			path = Play;
+			sourceTree = "<group>";
+		};
+		782F0BD126143BB0008AE67B /* Serverbound */ = {
+			isa = PBXGroup;
+			children = (
+				782F0BD226143BB0008AE67B /* NameItemPacket.swift */,
+				782F0BD326143BB0008AE67B /* UpdateJigsawBlockPacket.swift */,
+				782F0BD426143BB0008AE67B /* TeleportConfirmPacket.swift */,
+				782F0BD526143BB0008AE67B /* ClickWindowButtonPacket.swift */,
+				782F0BD626143BB0008AE67B /* ChatMessageServerboundPacket.swift */,
+				782F0BD726143BB0008AE67B /* UpdateSignPacket.swift */,
+				782F0BD826143BB0008AE67B /* QueryEntityNBTPacket.swift */,
+				782F0BD926143BB0008AE67B /* ClickWindowPacket.swift */,
+				782F0BDA26143BB0008AE67B /* PlayerDiggingPacket.swift */,
+				782F0BDB26143BB0008AE67B /* AnimationServerboundPacket.swift */,
+				782F0BDC26143BB0008AE67B /* SteerVehiclePacket.swift */,
+				782F0BDD26143BB0008AE67B /* LockDifficultyPacket.swift */,
+				782F0BDE26143BB0008AE67B /* PluginMessageServerboundPacket.swift */,
+				782F0BDF26143BB0008AE67B /* SpectatePacket.swift */,
+				782F0BE026143BB0008AE67B /* UpdateCommandBlockPacket.swift */,
+				782F0BE126143BB0008AE67B /* TabCompleteServerboundPacket.swift */,
+				782F0BE226143BB0008AE67B /* UpdateCommandBlockMinecartPacket.swift */,
+				782F0BE326143BB0008AE67B /* QueryBlockNBTPacket.swift */,
+				782F0BE426143BB0008AE67B /* ResourcePackStatusPacket.swift */,
+				782F0BE526143BB0008AE67B /* SteerBoatPacket.swift */,
+				782F0BE626143BB0008AE67B /* VehicleMoveServerboundPacket.swift */,
+				782F0BE726143BB0008AE67B /* ClientSettingsPacket.swift */,
+				782F0BE826143BB0008AE67B /* UseItemPacket.swift */,
+				782F0BE926143BB0008AE67B /* CloseWindowServerboundPacket.swift */,
+				782F0BEA26143BB0008AE67B /* PickItemPacket.swift */,
+				782F0BEB26143BB0008AE67B /* SetDifficultyPacket.swift */,
+				782F0BEC26143BB0008AE67B /* CreativeInventoryActionPacket.swift */,
+				782F0BED26143BB0008AE67B /* WindowConfirmationServerboundPacket.swift */,
+				782F0BEE26143BB0008AE67B /* AdvancementTabPacket.swift */,
+				782F0BEF26143BB0008AE67B /* EntityActionPacket.swift */,
+				782F0BF026143BB0008AE67B /* PlayerAbilitiesServerboundPacket.swift */,
+				782F0BF126143BB0008AE67B /* PlayerMovementPacket.swift */,
+				782F0BF226143BB0008AE67B /* RecipeBookDataPacket.swift */,
+				782F0BF326143BB0008AE67B /* GenerateStructurePacket.swift */,
+				782F0BF426143BB0008AE67B /* PlayerBlockPlacementPacket.swift */,
+				782F0BF526143BB0008AE67B /* ClientStatusPacket.swift */,
+				782F0BF626143BB0008AE67B /* PlayerPositionAndRotationServerboundPacket.swift */,
+				782F0BF726143BB0008AE67B /* EditBookPacket.swift */,
+				782F0BF826143BB0008AE67B /* PlayerRotationPacket.swift */,
+				782F0BF926143BB0008AE67B /* PlayerPositionPacket.swift */,
+				782F0BFA26143BB0008AE67B /* SelectTradePacket.swift */,
+				782F0BFB26143BB0008AE67B /* InteractEntityPacket.swift */,
+				782F0BFC26143BB0008AE67B /* HeldItemChangeServerboundPacket.swift */,
+				782F0BFD26143BB0008AE67B /* SetBeaconEffectPacket.swift */,
+				782F0BFE26143BB0008AE67B /* KeepAliveServerboundPacket.swift */,
+				782F0BFF26143BB0008AE67B /* CraftRecipeRequestPacket.swift */,
+				782F0C0026143BB0008AE67B /* UpdateStructureBlockPacket.swift */,
+			);
+			path = Serverbound;
+			sourceTree = "<group>";
+		};
+		782F0C0126143BB0008AE67B /* Clientbound */ = {
+			isa = PBXGroup;
+			children = (
+				782F0C0226143BB0008AE67B /* TradeListPacket.swift */,
+				782F0C0326143BB0008AE67B /* TagsPacket.swift */,
+				782F0C0426143BB0008AE67B /* WindowConfirmationClientboundPacket.swift */,
+				782F0C0526143BB0008AE67B /* UpdateViewDistancePacket.swift */,
+				782F0C0626143BB0008AE67B /* MultiBlockChangePacket.swift */,
+				782F0C0726143BB0008AE67B /* SpawnLivingEntity.swift */,
+				782F0C0826143BB0008AE67B /* EntityVelocityPacket.swift */,
+				782F0C0926143BB0008AE67B /* EntityHeadLookPacket.swift */,
+				782F0C0A26143BB0008AE67B /* CollectItemPacket.swift */,
+				782F0C0B26143BB0008AE67B /* OpenWindowPacket.swift */,
+				782F0C0C26143BB0008AE67B /* PlayerAbilitiesPacket.swift */,
+				782F0C0D26143BB0008AE67B /* EntityMovementPacket.swift */,
+				782F0C0E26143BB0008AE67B /* UpdateViewPositionPacket.swift */,
+				782F0C0F26143BB0008AE67B /* NBTQueryResponse.swift */,
+				782F0C1026143BB0008AE67B /* RemoveEntityEffectPacket.swift */,
+				782F0C1126143BB0008AE67B /* OpenBookPacket.swift */,
+				782F0C1226143BB0008AE67B /* PlayerListHeaderAndFooterPacket.swift */,
+				782F0C1326143BB0008AE67B /* EntityMetadataPacket.swift */,
+				782F0C1426143BB0008AE67B /* BlockBreakAnimationPacket.swift */,
+				782F0C1526143BB0008AE67B /* BlockActionPacket.swift */,
+				782F0C1626143BB0008AE67B /* StatisticsPacket.swift */,
+				782F0C1726143BB0008AE67B /* WindowItemsPacket.swift */,
+				782F0C1826143BB0008AE67B /* ChunkDataPacket.swift */,
+				782F0C1926143BB0008AE67B /* UnloadChunkPacket.swift */,
+				782F0C1A26143BB0008AE67B /* EffectPacket.swift */,
+				782F0C1B26143BB0008AE67B /* SpawnExperienceOrbPacket.swift */,
+				782F0C1C26143BB0008AE67B /* WindowPropertyPacket.swift */,
+				782F0C1D26143BB0008AE67B /* MapDataPacket.swift */,
+				782F0C1E26143BB0008AE67B /* EntityPositionAndRotationPacket.swift */,
+				782F0C1F26143BB0008AE67B /* DeclareRecipesPacket.swift */,
+				782F0C2026143BB0008AE67B /* CameraPacket.swift */,
+				782F0C2126143BB0008AE67B /* EntityProperties.swift */,
+				782F0C2226143BB0008AE67B /* EntitySoundEffectPacket.swift */,
+				782F0C2326143BB0008AE67B /* ServerDifficultyPacket.swift */,
+				782F0C2426143BB0008AE67B /* AttachEntityPacket.swift */,
+				782F0C2526143BB0008AE67B /* EntityPositionPacket.swift */,
+				782F0C2626143BB0008AE67B /* UnlockRecipesPacket.swift */,
+				782F0C2726143BB0008AE67B /* ExplosionPacket.swift */,
+				782F0C2826143BB0008AE67B /* SpawnPositionPacket.swift */,
+				782F0C2926143BB0008AE67B /* EntityEquipmentPacket.swift */,
+				782F0C2A26143BB0008AE67B /* TimeUpdatePacket.swift */,
+				782F0C2B26143BB0008AE67B /* KeepAliveClientboundPacket.swift */,
+				782F0C2C26143BB0008AE67B /* EntityEffectPacket.swift */,
+				782F0C2D26143BB0008AE67B /* SpawnEntityPacket.swift */,
+				782F0C2E26143BB0008AE67B /* OpenSignEditorPacket.swift */,
+				782F0C2F26143BB0008AE67B /* EntityRotationPacket.swift */,
+				782F0C3026143BB0008AE67B /* DisplayScoreboardPacket.swift */,
+				782F0C3126143BB0008AE67B /* AdvancementsPacket.swift */,
+				782F0C3226143BB0008AE67B /* EntityStatusPacket.swift */,
+				782F0C3326143BB0008AE67B /* RespawnPacket.swift */,
+				782F0C3426143BB1008AE67B /* BlockChangePacket.swift */,
+				782F0C3526143BB1008AE67B /* CraftRecipeResponsePacket.swift */,
+				782F0C3626143BB1008AE67B /* TitlePacket.swift */,
+				782F0C3726143BB1008AE67B /* SetPassengersPacket.swift */,
+				782F0C3826143BB1008AE67B /* DeclareCommandsPacket.swift */,
+				782F0C3926143BB1008AE67B /* JoinGamePacket.swift */,
+				782F0C3A26143BB1008AE67B /* AcknowledgePlayerDiggingPacket.swift */,
+				782F0C3B26143BB1008AE67B /* SetSlotPacket.swift */,
+				782F0C3C26143BB1008AE67B /* NamedSoundEffectPacket.swift */,
+				782F0C3D26143BB1008AE67B /* SpawnPaintingPacket.swift */,
+				782F0C3E26143BB1008AE67B /* ChatMessageClientboundPacket.swift */,
+				782F0C3F26143BB1008AE67B /* PlayerInfoPacket.swift */,
+				782F0C4026143BB1008AE67B /* EntityTeleportPacket.swift */,
+				782F0C4126143BB1008AE67B /* WorldBorderPacket.swift */,
+				782F0C4226143BB1008AE67B /* SetCooldownPacket.swift */,
+				782F0C4326143BB1008AE67B /* SpawnPlayerPacket.swift */,
+				782F0C4426143BB1008AE67B /* ScoreboardObjectivePacket.swift */,
+				782F0C4526143BB1008AE67B /* OpenHorseWindowPacket.swift */,
+				782F0C4626143BB1008AE67B /* UpdateHealthPacket.swift */,
+				782F0C4726143BB1008AE67B /* EntityAnimationPacket.swift */,
+				782F0C4826143BB1008AE67B /* ResourcePackSendPacket.swift */,
+				782F0C4926143BB1008AE67B /* FacePlayerPacket.swift */,
+				782F0C4A26143BB1008AE67B /* ChangeGameStatePacket.swift */,
+				782F0C4B26143BB1008AE67B /* BossBarPacket.swift */,
+				782F0C4C26143BB1008AE67B /* TabCompleteClientboundPacket.swift */,
+				782F0C4D26143BB1008AE67B /* UpdateLightPacket.swift */,
+				782F0C4E26143BB1008AE67B /* BlockEntityDataPacket.swift */,
+				782F0C4F26143BB1008AE67B /* SoundEffectPacket.swift */,
+				782F0C5026143BB1008AE67B /* SelectAdvancementTabPacket.swift */,
+				782F0C5126143BB1008AE67B /* CombatEventPacket.swift */,
+				782F0C5226143BB1008AE67B /* SetExperiencePacket.swift */,
+				782F0C5326143BB1008AE67B /* ParticlePacket.swift */,
+				782F0C5426143BB1008AE67B /* TeamsPacket.swift */,
+				782F0C5526143BB1008AE67B /* PlayerPositionAndLookClientboundPacket.swift */,
+				782F0C5626143BB1008AE67B /* VehicleMoveClientboundPacket.swift */,
+				782F0C5726143BB1008AE67B /* UpdateScorePacket.swift */,
+				782F0C5826143BB1008AE67B /* DestroyEntitiesPacket.swift */,
+				782F0C5926143BB1008AE67B /* CloseWindowClientboundPacket.swift */,
+				782F0C5A26143BB1008AE67B /* PlayDisconnectPacket.swift */,
+				782F0C5B26143BB1008AE67B /* PluginMessagePacket.swift */,
+				782F0C5C26143BB1008AE67B /* StopSoundPacket.swift */,
+				782F0C5D26143BB1008AE67B /* HeldItemChangePacket.swift */,
+			);
+			path = Clientbound;
+			sourceTree = "<group>";
+		};
+		782F0C5E26143BB1008AE67B /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				782F0C5F26143BB1008AE67B /* Serverbound */,
+				782F0C6126143BB1008AE67B /* Clientbound */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		782F0C5F26143BB1008AE67B /* Serverbound */ = {
+			isa = PBXGroup;
+			children = (
+				782F0C6026143BB1008AE67B /* LoginStartPacket.swift */,
+			);
+			path = Serverbound;
+			sourceTree = "<group>";
+		};
+		782F0C6126143BB1008AE67B /* Clientbound */ = {
+			isa = PBXGroup;
+			children = (
+				782F0C6226143BB1008AE67B /* LoginSuccessPacket.swift */,
+				782F0C6326143BB1008AE67B /* LoginDisconnectPacket.swift */,
+			);
+			path = Clientbound;
 			sourceTree = "<group>";
 		};
 		784194AE258204CD0070DE78 = {
@@ -1308,7 +1297,6 @@
 			files = (
 				78052348261433A800079A01 /* Assets.xcassets in Resources */,
 				780523CF2614349200079A01 /* Preview Assets.xcassets in Resources */,
-				78052347261433A800079A01 /* blocks.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1354,274 +1342,274 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7805233C261433A800079A01 /* CloseWindowClientboundPacket.swift in Sources */,
 				7805237D261433A800079A01 /* CompactedLongArray.swift in Sources */,
-				78052322261433A800079A01 /* PlayerInfoPacket.swift in Sources */,
-				780522E2261433A700079A01 /* KeepAliveServerboundPacket.swift in Sources */,
-				780522EF261433A700079A01 /* PlayerAbilitiesPacket.swift in Sources */,
-				780522F7261433A700079A01 /* BlockBreakAnimationPacket.swift in Sources */,
+				782F0C7126143BB1008AE67B /* UpdateJigsawBlockPacket.swift in Sources */,
+				782F0C8C26143BB1008AE67B /* AdvancementTabPacket.swift in Sources */,
 				7805239C261433A800079A01 /* RenderCoordinator.swift in Sources */,
-				780522C3261433A700079A01 /* SpectatePacket.swift in Sources */,
 				780523B8261433A800079A01 /* ViewState.swift in Sources */,
-				78052318261433A800079A01 /* CraftRecipeResponsePacket.swift in Sources */,
-				78052315261433A800079A01 /* EntityStatusPacket.swift in Sources */,
 				78052376261433A800079A01 /* Gamemode.swift in Sources */,
+				782F0C9F26143BB1008AE67B /* TradeListPacket.swift in Sources */,
+				782F0CA826143BB1008AE67B /* OpenWindowPacket.swift in Sources */,
 				78052371261433A800079A01 /* Buffer.swift in Sources */,
-				780522AD261433A700079A01 /* PacketRegistry.swift in Sources */,
-				780522B4261433A700079A01 /* StatusResponsePacket.swift in Sources */,
-				780522DA261433A700079A01 /* PlayerPositionAndRotationServerboundPacket.swift in Sources */,
 				780523B2261433A800079A01 /* PlayerAbilities.swift in Sources */,
-				780522B3261433A700079A01 /* StatusRequestPacket.swift in Sources */,
-				7805231F261433A800079A01 /* NamedSoundEffectPacket.swift in Sources */,
-				780522C1261433A700079A01 /* LockDifficultyPacket.swift in Sources */,
-				780522B7261433A700079A01 /* UpdateJigsawBlockPacket.swift in Sources */,
-				780522F0261433A700079A01 /* EntityMovementPacket.swift in Sources */,
 				78052386261433A800079A01 /* EntityVelocity.swift in Sources */,
 				780523A1261433A800079A01 /* StorageManager.swift in Sources */,
-				78052306261433A800079A01 /* ServerDifficultyPacket.swift in Sources */,
-				780522E7261433A700079A01 /* WindowConfirmationClientboundPacket.swift in Sources */,
-				78052338261433A800079A01 /* PlayerPositionAndLookClientboundPacket.swift in Sources */,
-				780522F2261433A700079A01 /* NBTQueryResponse.swift in Sources */,
+				782F0CF526143BB1008AE67B /* DestroyEntitiesPacket.swift in Sources */,
 				780523BC261433A800079A01 /* GameCommandView.swift in Sources */,
-				780522BF261433A700079A01 /* AnimationServerboundPacket.swift in Sources */,
-				780522DB261433A700079A01 /* EditBookPacket.swift in Sources */,
-				78052340261433A800079A01 /* HeldItemChangePacket.swift in Sources */,
 				7805236B261433A800079A01 /* ChatComponent.swift in Sources */,
 				7805234C261433A800079A01 /* CraftingRecipe.swift in Sources */,
-				780522E9261433A700079A01 /* MultiBlockChangePacket.swift in Sources */,
-				780522E3261433A700079A01 /* CraftRecipeRequestPacket.swift in Sources */,
-				780522DD261433A700079A01 /* PlayerPositionPacket.swift in Sources */,
-				780522C6261433A700079A01 /* UpdateCommandBlockMinecartPacket.swift in Sources */,
-				78052339261433A800079A01 /* VehicleMoveClientboundPacket.swift in Sources */,
-				780522C8261433A700079A01 /* ResourcePackStatusPacket.swift in Sources */,
+				782F0C7626143BB1008AE67B /* QueryEntityNBTPacket.swift in Sources */,
+				782F0CFA26143BB1008AE67B /* HeldItemChangePacket.swift in Sources */,
+				782F0C6D26143BB1008AE67B /* StatusRequestPacket.swift in Sources */,
 				78052395261433A800079A01 /* ServerInfo.swift in Sources */,
 				78052368261433A800079A01 /* ChatStringComponent.swift in Sources */,
-				78052325261433A800079A01 /* SetCooldownPacket.swift in Sources */,
-				780522B6261433A700079A01 /* NameItemPacket.swift in Sources */,
-				7805231E261433A800079A01 /* SetSlotPacket.swift in Sources */,
-				7805232C261433A800079A01 /* FacePlayerPacket.swift in Sources */,
-				78052343261433A800079A01 /* LoginDisconnectPacket.swift in Sources */,
 				78052383261433A800079A01 /* Stopwatch.swift in Sources */,
+				782F0C9826143BB1008AE67B /* SelectTradePacket.swift in Sources */,
+				782F0C9A26143BB1008AE67B /* HeldItemChangeServerboundPacket.swift in Sources */,
 				78052375261433A800079A01 /* NBTCompound.swift in Sources */,
+				782F0CBE26143BB1008AE67B /* EntityProperties.swift in Sources */,
+				782F0C9B26143BB1008AE67B /* SetBeaconEffectPacket.swift in Sources */,
 				78052390261433A800079A01 /* PingInfo.swift in Sources */,
 				78052377261433A800079A01 /* CardinalDirection.swift in Sources */,
+				782F0CA626143BB1008AE67B /* EntityHeadLookPacket.swift in Sources */,
 				7805235F261433A800079A01 /* TippedArrowRecipe.swift in Sources */,
-				780522C7261433A700079A01 /* QueryBlockNBTPacket.swift in Sources */,
+				782F0C9626143BB1008AE67B /* PlayerRotationPacket.swift in Sources */,
+				782F0CE826143BB1008AE67B /* BossBarPacket.swift in Sources */,
 				7805238F261433A800079A01 /* ChunkData.swift in Sources */,
-				780522F8261433A700079A01 /* BlockActionPacket.swift in Sources */,
-				780522C5261433A700079A01 /* TabCompleteServerboundPacket.swift in Sources */,
 				7805237E261433A800079A01 /* Position.swift in Sources */,
-				780522D9261433A700079A01 /* ClientStatusPacket.swift in Sources */,
-				7805232B261433A800079A01 /* ResourcePackSendPacket.swift in Sources */,
+				782F0C9E26143BB1008AE67B /* UpdateStructureBlockPacket.swift in Sources */,
+				782F0CBC26143BB1008AE67B /* DeclareRecipesPacket.swift in Sources */,
+				782F0CF626143BB1008AE67B /* CloseWindowClientboundPacket.swift in Sources */,
 				7805238A261433A800079A01 /* ChunkSection.swift in Sources */,
 				7805239E261433A800079A01 /* shaders.metal in Sources */,
+				782F0C8826143BB1008AE67B /* PickItemPacket.swift in Sources */,
 				780523B1261433A800079A01 /* PlayerRotation.swift in Sources */,
+				782F0C8F26143BB1008AE67B /* PlayerMovementPacket.swift in Sources */,
+				782F0C8A26143BB1008AE67B /* CreativeInventoryActionPacket.swift in Sources */,
+				782F0CF426143BB1008AE67B /* UpdateScorePacket.swift in Sources */,
 				78052353261433A800079A01 /* BannerDuplicateRecipe.swift in Sources */,
-				78052320261433A800079A01 /* SpawnPaintingPacket.swift in Sources */,
-				780522F6261433A700079A01 /* EntityMetadataPacket.swift in Sources */,
 				780523A7261433A800079A01 /* AssetManager.swift in Sources */,
 				78052392261433A800079A01 /* ServerPinger.swift in Sources */,
-				78052323261433A800079A01 /* EntityTeleportPacket.swift in Sources */,
 				78052367261433A800079A01 /* RecipeRegistry.swift in Sources */,
+				782F0CED26143BB1008AE67B /* SelectAdvancementTabPacket.swift in Sources */,
 				780523AE261433A800079A01 /* PlayerProperty.swift in Sources */,
 				780523BB261433A800079A01 /* ServerListEntryView.swift in Sources */,
+				782F0CF326143BB1008AE67B /* VehicleMoveClientboundPacket.swift in Sources */,
+				782F0CA126143BB1008AE67B /* WindowConfirmationClientboundPacket.swift in Sources */,
+				782F0CFF26143BB1008AE67B /* PacketState.swift in Sources */,
 				7805237C261433A800079A01 /* Statistic.swift in Sources */,
 				78052385261433A800079A01 /* chunkunpack.c in Sources */,
+				782F0C8E26143BB1008AE67B /* PlayerAbilitiesServerboundPacket.swift in Sources */,
+				782F0C8326143BB1008AE67B /* SteerBoatPacket.swift in Sources */,
 				78052351261433A800079A01 /* StonecuttingRecipe.swift in Sources */,
+				782F0CD926143BB1008AE67B /* NamedSoundEffectPacket.swift in Sources */,
+				782F0C9D26143BB1008AE67B /* CraftRecipeRequestPacket.swift in Sources */,
+				782F0CD626143BB1008AE67B /* JoinGamePacket.swift in Sources */,
 				7805238C261433A800079A01 /* World.swift in Sources */,
-				780522FD261433A800079A01 /* EffectPacket.swift in Sources */,
-				78052324261433A800079A01 /* WorldBorderPacket.swift in Sources */,
+				782F0CCA26143BB1008AE67B /* SpawnEntityPacket.swift in Sources */,
 				7805238E261433A800079A01 /* Chunk.swift in Sources */,
-				7805230A261433A800079A01 /* ExplosionPacket.swift in Sources */,
-				78052331261433A800079A01 /* BlockEntityDataPacket.swift in Sources */,
-				78052300261433A800079A01 /* MapDataPacket.swift in Sources */,
+				782F0CB326143BB1008AE67B /* StatisticsPacket.swift in Sources */,
+				782F0CAA26143BB1008AE67B /* EntityMovementPacket.swift in Sources */,
+				782F0CC226143BB1008AE67B /* EntityPositionPacket.swift in Sources */,
 				78052378261433A800079A01 /* Axis.swift in Sources */,
-				78052344261433A800079A01 /* PacketReader.swift in Sources */,
-				780522E0261433A700079A01 /* HeldItemChangeServerboundPacket.swift in Sources */,
-				78052330261433A800079A01 /* UpdateLightPacket.swift in Sources */,
-				780522ED261433A700079A01 /* CollectItemPacket.swift in Sources */,
-				780522B5261433A700079A01 /* HandshakePacket.swift in Sources */,
-				7805230C261433A800079A01 /* EntityEquipmentPacket.swift in Sources */,
-				78052321261433A800079A01 /* ChatMessageClientboundPacket.swift in Sources */,
-				78052317261433A800079A01 /* BlockChangePacket.swift in Sources */,
-				780522E4261433A700079A01 /* UpdateStructureBlockPacket.swift in Sources */,
-				780522D0261433A700079A01 /* CreativeInventoryActionPacket.swift in Sources */,
-				780522BE261433A700079A01 /* PlayerDiggingPacket.swift in Sources */,
 				78052361261433A800079A01 /* ShieldDecorationRecipe.swift in Sources */,
-				780522EB261433A700079A01 /* EntityVelocityPacket.swift in Sources */,
 				7805234A261433A800079A01 /* Constants.swift in Sources */,
+				782F0CC626143BB1008AE67B /* EntityEquipmentPacket.swift in Sources */,
+				782F0C6826143BB1008AE67B /* ClientboundPacket.swift in Sources */,
+				782F0CA926143BB1008AE67B /* PlayerAbilitiesPacket.swift in Sources */,
+				782F0CD326143BB1008AE67B /* TitlePacket.swift in Sources */,
+				782F0CAB26143BB1008AE67B /* UpdateViewPositionPacket.swift in Sources */,
 				7805235B261433A800079A01 /* FireworkStarRecipe.swift in Sources */,
+				782F0CB926143BB1008AE67B /* WindowPropertyPacket.swift in Sources */,
 				7805235A261433A800079A01 /* BookCloningRecipe.swift in Sources */,
 				7805236A261433A800079A01 /* File.swift in Sources */,
-				7805232D261433A800079A01 /* ChangeGameStatePacket.swift in Sources */,
-				780522AE261433A700079A01 /* ClientboundPacket.swift in Sources */,
 				78052355261433A800079A01 /* MapCloningRecipe.swift in Sources */,
-				780522FC261433A800079A01 /* UnloadChunkPacket.swift in Sources */,
-				780522D7261433A700079A01 /* GenerateStructurePacket.swift in Sources */,
-				780522CF261433A700079A01 /* SetDifficultyPacket.swift in Sources */,
-				78052313261433A800079A01 /* DisplayScoreboardPacket.swift in Sources */,
-				780522FF261433A800079A01 /* WindowPropertyPacket.swift in Sources */,
-				7805231D261433A800079A01 /* AcknowledgePlayerDiggingPacket.swift in Sources */,
+				782F0CEE26143BB1008AE67B /* CombatEventPacket.swift in Sources */,
+				782F0C7026143BB1008AE67B /* NameItemPacket.swift in Sources */,
 				780523A9261433A800079A01 /* BlockModel.pb.swift in Sources */,
-				78052311261433A800079A01 /* OpenSignEditorPacket.swift in Sources */,
-				7805231B261433A800079A01 /* DeclareCommandsPacket.swift in Sources */,
+				782F0C7526143BB1008AE67B /* UpdateSignPacket.swift in Sources */,
+				782F0C9226143BB1008AE67B /* PlayerBlockPlacementPacket.swift in Sources */,
 				78052396261433A800079A01 /* StartupSequence.swift in Sources */,
+				782F0C8026143BB1008AE67B /* UpdateCommandBlockMinecartPacket.swift in Sources */,
+				782F0CB126143BB1008AE67B /* BlockBreakAnimationPacket.swift in Sources */,
+				782F0CDA26143BB1008AE67B /* SpawnPaintingPacket.swift in Sources */,
+				782F0C8226143BB1008AE67B /* ResourcePackStatusPacket.swift in Sources */,
 				78052356261433A800079A01 /* FireworkStarFadeRecipe.swift in Sources */,
-				78052345261433A800079A01 /* PacketState.swift in Sources */,
+				782F0CDE26143BB1008AE67B /* WorldBorderPacket.swift in Sources */,
 				780523A3261433A800079A01 /* LocaleManager.swift in Sources */,
 				7805237F261433A800079A01 /* Difficulty.swift in Sources */,
-				780522EE261433A700079A01 /* OpenWindowPacket.swift in Sources */,
+				782F0CEC26143BB1008AE67B /* SoundEffectPacket.swift in Sources */,
+				782F0CE526143BB1008AE67B /* ResourcePackSendPacket.swift in Sources */,
+				782F0C7D26143BB1008AE67B /* SpectatePacket.swift in Sources */,
+				782F0CC126143BB1008AE67B /* AttachEntityPacket.swift in Sources */,
+				782F0CC526143BB1008AE67B /* SpawnPositionPacket.swift in Sources */,
+				782F0CE626143BB1008AE67B /* FacePlayerPacket.swift in Sources */,
 				7805239A261433A800079A01 /* Vertex.swift in Sources */,
-				78052333261433A800079A01 /* SelectAdvancementTabPacket.swift in Sources */,
+				782F0CA026143BB1008AE67B /* TagsPacket.swift in Sources */,
 				7805239B261433A800079A01 /* FaceDirection.swift in Sources */,
+				782F0CCF26143BB1008AE67B /* EntityStatusPacket.swift in Sources */,
+				782F0D0026143BB1008AE67B /* PacketHandlingThread.swift in Sources */,
+				782F0C6E26143BB1008AE67B /* StatusResponsePacket.swift in Sources */,
 				7805237B261433A800079A01 /* JSON.swift in Sources */,
-				78052342261433A800079A01 /* LoginSuccessPacket.swift in Sources */,
-				780522D8261433A700079A01 /* PlayerBlockPlacementPacket.swift in Sources */,
-				78052332261433A800079A01 /* SoundEffectPacket.swift in Sources */,
+				782F0CEA26143BB1008AE67B /* UpdateLightPacket.swift in Sources */,
+				782F0C9326143BB1008AE67B /* ClientStatusPacket.swift in Sources */,
 				78052399261433A800079A01 /* CubeFaces.swift in Sources */,
-				780522C0261433A700079A01 /* SteerVehiclePacket.swift in Sources */,
+				782F0CE126143BB1008AE67B /* ScoreboardObjectivePacket.swift in Sources */,
+				782F0CB226143BB1008AE67B /* BlockActionPacket.swift in Sources */,
+				782F0C6926143BB1008AE67B /* PacketWriter.swift in Sources */,
+				782F0C7C26143BB1008AE67B /* PluginMessageServerboundPacket.swift in Sources */,
 				780523AC261433A800079A01 /* test.pb.swift in Sources */,
 				7805239F261433A800079A01 /* ChunkMesh.swift in Sources */,
-				780522B8261433A700079A01 /* TeleportConfirmPacket.swift in Sources */,
+				782F0CDB26143BB1008AE67B /* ChatMessageClientboundPacket.swift in Sources */,
+				782F0CB826143BB1008AE67B /* SpawnExperienceOrbPacket.swift in Sources */,
 				78052388261433A800079A01 /* EntityRotation.swift in Sources */,
-				7805231C261433A800079A01 /* JoinGamePacket.swift in Sources */,
-				780522CA261433A700079A01 /* VehicleMoveServerboundPacket.swift in Sources */,
-				78052328261433A800079A01 /* OpenHorseWindowPacket.swift in Sources */,
+				782F0CEB26143BB1008AE67B /* BlockEntityDataPacket.swift in Sources */,
+				782F0CA526143BB1008AE67B /* EntityVelocityPacket.swift in Sources */,
 				78052373261433A800079A01 /* Equipment.swift in Sources */,
 				78052360261433A800079A01 /* RepairItemRecipe.swift in Sources */,
-				780522AF261433A700079A01 /* PacketWriter.swift in Sources */,
+				782F0CC026143BB1008AE67B /* ServerDifficultyPacket.swift in Sources */,
 				78052362261433A800079A01 /* Ingredient.swift in Sources */,
-				780522BA261433A700079A01 /* ChatMessageServerboundPacket.swift in Sources */,
 				78052397261433A800079A01 /* Client.swift in Sources */,
+				782F0CCD26143BB1008AE67B /* DisplayScoreboardPacket.swift in Sources */,
+				782F0C9726143BB1008AE67B /* PlayerPositionPacket.swift in Sources */,
+				782F0CAD26143BB1008AE67B /* RemoveEntityEffectPacket.swift in Sources */,
+				782F0CEF26143BB1008AE67B /* SetExperiencePacket.swift in Sources */,
 				78052365261433A800079A01 /* BlastingRecipe.swift in Sources */,
-				780522FB261433A800079A01 /* ChunkDataPacket.swift in Sources */,
-				780522E6261433A700079A01 /* TagsPacket.swift in Sources */,
-				7805233F261433A800079A01 /* StopSoundPacket.swift in Sources */,
-				780522C9261433A700079A01 /* SteerBoatPacket.swift in Sources */,
-				78052327261433A800079A01 /* ScoreboardObjectivePacket.swift in Sources */,
-				780522BC261433A700079A01 /* QueryEntityNBTPacket.swift in Sources */,
-				780522D2261433A700079A01 /* AdvancementTabPacket.swift in Sources */,
 				780523A8261433A800079A01 /* BlockPaletteManager.swift in Sources */,
-				78052307261433A800079A01 /* AttachEntityPacket.swift in Sources */,
-				780522D5261433A700079A01 /* PlayerMovementPacket.swift in Sources */,
+				782F0C7F26143BB1008AE67B /* TabCompleteServerboundPacket.swift in Sources */,
 				78052359261433A800079A01 /* FireworkRocketRecipe.swift in Sources */,
+				782F0C8D26143BB1008AE67B /* EntityActionPacket.swift in Sources */,
 				780523BA261433A800079A01 /* ServerListView.swift in Sources */,
-				78052312261433A800079A01 /* EntityRotationPacket.swift in Sources */,
 				7805236E261433A800079A01 /* ChatKeybindComponent.swift in Sources */,
-				780522FA261433A800079A01 /* WindowItemsPacket.swift in Sources */,
-				78052319261433A800079A01 /* TitlePacket.swift in Sources */,
+				782F0CB626143BB1008AE67B /* UnloadChunkPacket.swift in Sources */,
+				782F0CDC26143BB1008AE67B /* PlayerInfoPacket.swift in Sources */,
+				782F0C9026143BB1008AE67B /* RecipeBookDataPacket.swift in Sources */,
+				782F0CD026143BB1008AE67B /* RespawnPacket.swift in Sources */,
+				782F0C7926143BB1008AE67B /* AnimationServerboundPacket.swift in Sources */,
 				7805235E261433A800079A01 /* SpecialRecipe.swift in Sources */,
-				78052303261433A800079A01 /* CameraPacket.swift in Sources */,
-				780522EA261433A700079A01 /* SpawnLivingEntity.swift in Sources */,
-				780522E1261433A700079A01 /* SetBeaconEffectPacket.swift in Sources */,
-				78052314261433A800079A01 /* AdvancementsPacket.swift in Sources */,
-				78052336261433A800079A01 /* ParticlePacket.swift in Sources */,
-				780522DF261433A700079A01 /* InteractEntityPacket.swift in Sources */,
+				782F0C9426143BB1008AE67B /* PlayerPositionAndRotationServerboundPacket.swift in Sources */,
 				780523AF261433A800079A01 /* Hand.swift in Sources */,
 				78052350261433A800079A01 /* SmeltingRecipe.swift in Sources */,
+				782F0CC826143BB1008AE67B /* KeepAliveClientboundPacket.swift in Sources */,
 				780523A2261433A800079A01 /* CacheManager.swift in Sources */,
 				7805235D261433A800079A01 /* ShulkerBoxColouringRecipe.swift in Sources */,
+				782F0C9526143BB1008AE67B /* EditBookPacket.swift in Sources */,
 				78052384261433A800079A01 /* MatrixUtil.swift in Sources */,
 				78052372261433A800079A01 /* Logger.swift in Sources */,
-				780522CD261433A700079A01 /* CloseWindowServerboundPacket.swift in Sources */,
+				782F0CAE26143BB1008AE67B /* OpenBookPacket.swift in Sources */,
 				7805239D261433A800079A01 /* MetalView.swift in Sources */,
-				780522D6261433A700079A01 /* RecipeBookDataPacket.swift in Sources */,
 				780523AD261433A800079A01 /* TabList.swift in Sources */,
+				782F0CD726143BB1008AE67B /* AcknowledgePlayerDiggingPacket.swift in Sources */,
+				782F0C7426143BB1008AE67B /* ChatMessageServerboundPacket.swift in Sources */,
+				782F0CFC26143BB1008AE67B /* LoginSuccessPacket.swift in Sources */,
+				782F0C8426143BB1008AE67B /* VehicleMoveServerboundPacket.swift in Sources */,
+				782F0CE726143BB1008AE67B /* ChangeGameStatePacket.swift in Sources */,
+				782F0CFE26143BB1008AE67B /* PacketReader.swift in Sources */,
+				782F0C8926143BB1008AE67B /* SetDifficultyPacket.swift in Sources */,
 				78052380261433A800079A01 /* Identifier.swift in Sources */,
-				78052341261433A800079A01 /* LoginStartPacket.swift in Sources */,
+				782F0C8B26143BB1008AE67B /* WindowConfirmationServerboundPacket.swift in Sources */,
+				782F0C7726143BB1008AE67B /* ClickWindowPacket.swift in Sources */,
+				782F0CD226143BB1008AE67B /* CraftRecipeResponsePacket.swift in Sources */,
 				7805237A261433A800079A01 /* UUID.swift in Sources */,
 				780523B5261433A800079A01 /* PlayerInfo.swift in Sources */,
+				782F0CC326143BB1008AE67B /* UnlockRecipesPacket.swift in Sources */,
 				78052394261433A800079A01 /* ServerConfig.swift in Sources */,
 				78052369261433A800079A01 /* ChatTranslateComponent.swift in Sources */,
-				780522B0261433A700079A01 /* ServerConnection.swift in Sources */,
+				782F0CCE26143BB1008AE67B /* AdvancementsPacket.swift in Sources */,
+				782F0CA726143BB1008AE67B /* CollectItemPacket.swift in Sources */,
+				782F0CF726143BB1008AE67B /* PlayDisconnectPacket.swift in Sources */,
+				782F0C7826143BB1008AE67B /* PlayerDiggingPacket.swift in Sources */,
 				780523B4261433A800079A01 /* Player.swift in Sources */,
 				78052379261433A800079A01 /* ItemStack.swift in Sources */,
-				78052329261433A800079A01 /* UpdateHealthPacket.swift in Sources */,
+				782F0CB426143BB1008AE67B /* WindowItemsPacket.swift in Sources */,
+				782F0C6A26143BB1008AE67B /* ServerConnection.swift in Sources */,
 				780523B3261433A800079A01 /* DominantHand.swift in Sources */,
-				78052304261433A800079A01 /* EntityProperties.swift in Sources */,
+				782F0C7E26143BB1008AE67B /* UpdateCommandBlockPacket.swift in Sources */,
 				78052393261433A800079A01 /* Server.swift in Sources */,
-				780522F9261433A700079A01 /* StatisticsPacket.swift in Sources */,
 				78052364261433A800079A01 /* CampfireCookingRecipe.swift in Sources */,
-				7805233E261433A800079A01 /* PluginMessagePacket.swift in Sources */,
-				7805232E261433A800079A01 /* BossBarPacket.swift in Sources */,
-				78052337261433A800079A01 /* TeamsPacket.swift in Sources */,
+				782F0CF026143BB1008AE67B /* ParticlePacket.swift in Sources */,
 				7805234B261433A800079A01 /* ConfigManager.swift in Sources */,
-				780522D1261433A700079A01 /* WindowConfirmationServerboundPacket.swift in Sources */,
+				782F0C8526143BB1008AE67B /* ClientSettingsPacket.swift in Sources */,
 				7805234E261433A800079A01 /* CraftingShaped.swift in Sources */,
-				780522BD261433A700079A01 /* ClickWindowPacket.swift in Sources */,
-				7805230F261433A800079A01 /* EntityEffectPacket.swift in Sources */,
-				78052305261433A800079A01 /* EntitySoundEffectPacket.swift in Sources */,
 				780523BD261433A800079A01 /* GameRenderView.swift in Sources */,
-				7805232A261433A800079A01 /* EntityAnimationPacket.swift in Sources */,
-				780522C4261433A700079A01 /* UpdateCommandBlockPacket.swift in Sources */,
 				780523B0261433A800079A01 /* PlayerEntityAction.swift in Sources */,
-				780522B9261433A700079A01 /* ClickWindowButtonPacket.swift in Sources */,
+				782F0CD826143BB1008AE67B /* SetSlotPacket.swift in Sources */,
 				7805235C261433A800079A01 /* MapExtendingRecipe.swift in Sources */,
+				782F0C6C26143BB1008AE67B /* ServerboundPacket.swift in Sources */,
 				78052357261433A800079A01 /* ArmorDyeRecipe.swift in Sources */,
+				782F0C7326143BB1008AE67B /* ClickWindowButtonPacket.swift in Sources */,
 				7805238D261433A800079A01 /* WorldConfig.swift in Sources */,
-				78052334261433A800079A01 /* CombatEventPacket.swift in Sources */,
 				78052358261433A800079A01 /* SuspiciousStewRecipe.swift in Sources */,
-				780522C2261433A700079A01 /* PluginMessageServerboundPacket.swift in Sources */,
 				7805236C261433A800079A01 /* ChatScoreComponent.swift in Sources */,
+				782F0C6F26143BB1008AE67B /* HandshakePacket.swift in Sources */,
+				782F0CFB26143BB1008AE67B /* LoginStartPacket.swift in Sources */,
 				78052370261433A800079A01 /* EventManager.swift in Sources */,
-				780522BB261433A700079A01 /* UpdateSignPacket.swift in Sources */,
+				782F0CAC26143BB1008AE67B /* NBTQueryResponse.swift in Sources */,
 				7805236D261433A800079A01 /* ChatStyle.swift in Sources */,
-				7805230B261433A800079A01 /* SpawnPositionPacket.swift in Sources */,
-				7805232F261433A800079A01 /* TabCompleteClientboundPacket.swift in Sources */,
-				780522F5261433A700079A01 /* PlayerListHeaderAndFooterPacket.swift in Sources */,
-				780522CB261433A700079A01 /* ClientSettingsPacket.swift in Sources */,
 				7805234D261433A800079A01 /* CraftingShapeless.swift in Sources */,
-				780522EC261433A700079A01 /* EntityHeadLookPacket.swift in Sources */,
-				780522E8261433A700079A01 /* UpdateViewDistancePacket.swift in Sources */,
-				7805231A261433A800079A01 /* SetPassengersPacket.swift in Sources */,
-				78052309261433A800079A01 /* UnlockRecipesPacket.swift in Sources */,
-				78052316261433A800079A01 /* RespawnPacket.swift in Sources */,
-				78052326261433A800079A01 /* SpawnPlayerPacket.swift in Sources */,
-				780522F1261433A700079A01 /* UpdateViewPositionPacket.swift in Sources */,
-				780522CC261433A700079A01 /* UseItemPacket.swift in Sources */,
-				780522F4261433A700079A01 /* OpenBookPacket.swift in Sources */,
-				7805233B261433A800079A01 /* DestroyEntitiesPacket.swift in Sources */,
-				78052302261433A800079A01 /* DeclareRecipesPacket.swift in Sources */,
+				782F0CF226143BB1008AE67B /* PlayerPositionAndLookClientboundPacket.swift in Sources */,
+				782F0CBF26143BB1008AE67B /* EntitySoundEffectPacket.swift in Sources */,
 				780523A4261433A800079A01 /* TextureManager.swift in Sources */,
-				78052335261433A800079A01 /* SetExperiencePacket.swift in Sources */,
-				7805230E261433A800079A01 /* KeepAliveClientboundPacket.swift in Sources */,
 				780523B7261433A800079A01 /* AppView.swift in Sources */,
-				780522D4261433A700079A01 /* PlayerAbilitiesServerboundPacket.swift in Sources */,
+				782F0CC926143BB1008AE67B /* EntityEffectPacket.swift in Sources */,
+				782F0CF826143BB1008AE67B /* PluginMessagePacket.swift in Sources */,
 				78052389261433A800079A01 /* BlockEntity.swift in Sources */,
+				782F0CD426143BB1008AE67B /* SetPassengersPacket.swift in Sources */,
+				782F0CA226143BB1008AE67B /* UpdateViewDistancePacket.swift in Sources */,
+				782F0CC426143BB1008AE67B /* ExplosionPacket.swift in Sources */,
+				782F0CB526143BB1008AE67B /* ChunkDataPacket.swift in Sources */,
 				7805234F261433A800079A01 /* Item.swift in Sources */,
-				780522B2261433A700079A01 /* ServerboundPacket.swift in Sources */,
+				782F0CA326143BB1008AE67B /* MultiBlockChangePacket.swift in Sources */,
+				782F0CCC26143BB1008AE67B /* EntityRotationPacket.swift in Sources */,
 				78052387261433A800079A01 /* EntityPosition.swift in Sources */,
+				782F0CB726143BB1008AE67B /* EffectPacket.swift in Sources */,
+				782F0C7B26143BB1008AE67B /* LockDifficultyPacket.swift in Sources */,
+				782F0CC726143BB1008AE67B /* TimeUpdatePacket.swift in Sources */,
+				782F0CDF26143BB1008AE67B /* SetCooldownPacket.swift in Sources */,
+				782F0C6726143BB1008AE67B /* PacketRegistry.swift in Sources */,
+				782F0CCB26143BB1008AE67B /* OpenSignEditorPacket.swift in Sources */,
+				782F0C8126143BB1008AE67B /* QueryBlockNBTPacket.swift in Sources */,
+				782F0CE426143BB1008AE67B /* EntityAnimationPacket.swift in Sources */,
+				782F0CF926143BB1008AE67B /* StopSoundPacket.swift in Sources */,
+				782F0C9C26143BB1008AE67B /* KeepAliveServerboundPacket.swift in Sources */,
+				782F0C8626143BB1008AE67B /* UseItemPacket.swift in Sources */,
 				78052366261433A800079A01 /* HeatRecipe.swift in Sources */,
-				78052310261433A800079A01 /* SpawnEntityPacket.swift in Sources */,
-				78052308261433A800079A01 /* EntityPositionPacket.swift in Sources */,
-				780522FE261433A800079A01 /* SpawnExperienceOrbPacket.swift in Sources */,
 				780523A6261433A800079A01 /* Managers.swift in Sources */,
-				780522F3261433A700079A01 /* RemoveEntityEffectPacket.swift in Sources */,
-				780522DE261433A700079A01 /* SelectTradePacket.swift in Sources */,
-				780522CE261433A700079A01 /* PickItemPacket.swift in Sources */,
-				78052301261433A800079A01 /* EntityPositionAndRotationPacket.swift in Sources */,
-				780522E5261433A700079A01 /* TradeListPacket.swift in Sources */,
 				780523A0261433A800079A01 /* Renderer.swift in Sources */,
-				780522D3261433A700079A01 /* EntityActionPacket.swift in Sources */,
-				7805233D261433A800079A01 /* PlayDisconnectPacket.swift in Sources */,
 				78052352261433A800079A01 /* SmokingRecipe.swift in Sources */,
+				782F0CE926143BB1008AE67B /* TabCompleteClientboundPacket.swift in Sources */,
 				78052354261433A800079A01 /* BannerAddPatternRecipe.swift in Sources */,
+				782F0CF126143BB1008AE67B /* TeamsPacket.swift in Sources */,
+				782F0C8726143BB1008AE67B /* CloseWindowServerboundPacket.swift in Sources */,
+				782F0CD126143BB1008AE67B /* BlockChangePacket.swift in Sources */,
+				782F0CBA26143BB1008AE67B /* MapDataPacket.swift in Sources */,
+				782F0CFD26143BB1008AE67B /* LoginDisconnectPacket.swift in Sources */,
+				782F0CD526143BB1008AE67B /* DeclareCommandsPacket.swift in Sources */,
+				782F0C9126143BB1008AE67B /* GenerateStructurePacket.swift in Sources */,
+				782F0C7A26143BB1008AE67B /* SteerVehiclePacket.swift in Sources */,
+				782F0CA426143BB1008AE67B /* SpawnLivingEntity.swift in Sources */,
+				782F0CE226143BB1008AE67B /* OpenHorseWindowPacket.swift in Sources */,
+				782F0CBD26143BB1008AE67B /* CameraPacket.swift in Sources */,
+				782F0C6B26143BB1008AE67B /* ConnectionState.swift in Sources */,
+				782F0CE326143BB1008AE67B /* UpdateHealthPacket.swift in Sources */,
 				78052381261433A800079A01 /* Direction.swift in Sources */,
 				78052398261433A800079A01 /* Mesh.swift in Sources */,
-				78052346261433A800079A01 /* PacketHandlingThread.swift in Sources */,
 				7805238B261433A800079A01 /* ChunkPosition.swift in Sources */,
+				782F0CDD26143BB1008AE67B /* EntityTeleportPacket.swift in Sources */,
 				78052374261433A800079A01 /* LauncherProfile.swift in Sources */,
-				7805230D261433A800079A01 /* TimeUpdatePacket.swift in Sources */,
-				780523B6261433A800079A01 /* DeltaClient.swift in Sources */,
+				780523B6261433A800079A01 /* DeltaClientApp.swift in Sources */,
 				7805236F261433A800079A01 /* ChatComponentUtil.swift in Sources */,
+				782F0C9926143BB1008AE67B /* InteractEntityPacket.swift in Sources */,
 				780523B9261433A800079A01 /* ServerDetailView.swift in Sources */,
-				7805233A261433A800079A01 /* UpdateScorePacket.swift in Sources */,
 				78052391261433A800079A01 /* ServerList.swift in Sources */,
 				78052382261433A800079A01 /* Profiler.swift in Sources */,
+				782F0C7226143BB1008AE67B /* TeleportConfirmPacket.swift in Sources */,
+				782F0CAF26143BB1008AE67B /* PlayerListHeaderAndFooterPacket.swift in Sources */,
 				780523A5261433A800079A01 /* MinecraftLocale.swift in Sources */,
+				782F0CE026143BB1008AE67B /* SpawnPlayerPacket.swift in Sources */,
+				782F0CBB26143BB1008AE67B /* EntityPositionAndRotationPacket.swift in Sources */,
 				78052363261433A800079A01 /* SmithingRecipe.swift in Sources */,
-				780522B1261433A700079A01 /* ConnectionState.swift in Sources */,
-				780522DC261433A700079A01 /* PlayerRotationPacket.swift in Sources */,
+				782F0CB026143BB1008AE67B /* EntityMetadataPacket.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

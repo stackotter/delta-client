@@ -1,6 +1,6 @@
 //
 //  AssetManager.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 13/3/21.
 //

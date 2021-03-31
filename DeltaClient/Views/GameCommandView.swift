@@ -1,6 +1,6 @@
 //
 //  GameCommandView.swift
-//  Minecraft
+//  DeltaClient
 //
 //  Created by Rohan van Klinken on 11/12/20.
 //
