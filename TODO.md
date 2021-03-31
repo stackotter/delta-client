@@ -6,7 +6,6 @@
   - [ ] Initial refactor
   - [ ] Compression layer
   - [ ] Encryption layer
-- [x] Optimise chunk data decoding
 
 ## Config
 
@@ -15,68 +14,36 @@
 
 ## Startup
 
-- [x] optimise creation of global palette
-- [x] cache global palette
-- [x] make managers throw in initialiser to avoid optional and throwing functions elsewhere
-  - [x] storage manager
-  - [x] asset manager
-  - [x] texture manager
-  - [x] block model manager
-- [x] rename block model manager
+- [ ] fix message for block palette manager being incorrect when generating palette and not first launch
 
 ## Rendering
 
-- [x] transparency
-- [x] fix near clipping plane
-- [x] sky colour
 - [ ] basic shading
-- [ ] translucency
+- [ ] multiple chunks first test
 - [ ] look into keeping vertices in gpu mem when they are unchanged between frames?
+- [ ] split translucent blocks into separate file
 - [ ] animated textures
 - [ ] multipart structures
-- [x] render looking the correct direction (use player look from position and look)
-- [x] uvlock
-- [x] get terracotta rotations working
-- [x] fix upside-down stairs (the uvlock doesn't work for the side textures)
 
 ### Block models
 
 - [ ] multipart
 - [ ] multiple models for one block
-- [x] implied uv coordinates
 - [ ] fix stair sides not being detected as full faces (because they're made of two elements)
-- [x] fix uvlock again
-- [x] fix cauldrons again
-- [ ] separate out block model files
+- [ ] separate out block model structs into separate files
 - [ ] investigate campfires
+- [ ] identify translucent blocks
 
 ### Chunk preparing
 
-- [x] speed up chunk preparing
-  - [x] flatten the for loops used
-  - [x] for checking neighbours use math on the indices instead of looking up block at x, y, z etc.
-- [x] reimplement block changes
-- [x] improve block culling under new block model rendering
-- [x] implement looking in neighbouring chunks for edge block cull faces
-- [x] make chunk mesh thread safe
-- [x] fix plants (based on the cross block model) (probably something to do with rotation and rescale)
-- [x] fix stairs
-- [x] block rotations
-- [x] fix x-ray from partial blocks
-  - [x] generate list of full faces for each block from block models
+- [ ] fix glass block xray. detect when full faces are not culling full faces (when they are transparent)
 - [ ] optimise new parts
 - [ ] optimise by replacing the slowest parts with c probably lol
 - [ ] fix grass block overlay render order (possibly just bodge and make the underneath element slightly smaller)
 
-## Other chunk stuff
-
-- [x] multi block changes
-- [ ] multiple chunks first test
-
 ## General clean up
 
 - [ ] improve error handling in networking
-- [x] use normal int and uint types instead of specifying 32 or 64. avoids annoying conversions
 - [ ] use swifts fancy json instead of mine
 
 ## Other
