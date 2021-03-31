@@ -309,7 +309,8 @@ class BlockPaletteManager {
                     rotation += 180
                   }
                 case .y:
-                  rotation += yRot
+                  // y rotates the other way in my code for some reason
+                  rotation -= yRot
                 case .z:
                   rotation += zRot
                   

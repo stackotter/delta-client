@@ -45,8 +45,10 @@
 - [ ] multiple models for one block
 - [x] implied uv coordinates
 - [ ] fix stair sides not being detected as full faces (because they're made of two elements)
-- [ ] fix uvlock again
+- [x] fix uvlock again
 - [x] fix cauldrons again
+- [ ] separate out block model files
+- [ ] investigate campfires
 
 ### Chunk preparing
 
