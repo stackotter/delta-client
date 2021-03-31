@@ -37,6 +37,8 @@
 - [ ] fix stair sides not being detected as full faces (because they're made of two elements)
 - [x] separate out block model structs into separate files
 - [ ] investigate campfires
+- [ ] investigate levers (point the opposite way compared to vanilla. probably an order of rotations thing?)
+- [ ] investigate falsely culled path block top face (under haybale)
 - [ ] identify translucent blocks
 
 ## Chunk preparing

@@ -1,8 +1,22 @@
-# Minecraft Swift Edition
+# Minecraft Delta Client - Change the meaning of speed
 
 ## Overview
 
-Minecraft Swift Edition is an open source rewrite of Minecraft Java Edition written in Swift. It is only a rewrite of the part that allows playing on servers.
+Delta Client is an open source rewrite of Minecraft Java Edition written in Swift (and a bit of C for performance).
+
+Eventually the project may be ported to iOS and iPadOS and maybe AppleTV to allow playing on Java Edition on platforms normally limited to Bedrock Edition 
+
+## Metrics
+
+Here's a list of the client's current numbers when run on my Dual-core Intel MacBook Air;
+
+- launch time: 0.85s avg
+  - vanilla Minecraft takes around 40s to launch on my laptop on average (47x slower)
+- ram usage on home screen: 40mb avg
+  - about the same as Vanilla Minecraft currently
+- time taken to join server and have rendering: 1s
+  - vanilla Minecraft is pretty random on this so it's hard to compare
+  - and Delta Client currently only renders one chunk so it's a pretty unfair comparison anyway
 
 ## Roadmap
 
@@ -13,15 +27,7 @@ Minecraft Swift Edition is an open source rewrite of Minecraft Java Edition writ
     - [ ] Mojang accounts
     - [ ] Microsoft accounts
   - [ ] LAN servers
-- [ ] First Launch
-  - [x] Download assets
-  - [ ] Generate default config
-- [ ] Mojang Data
-  - [x] Load block models and global block palette
-  - [ ] Item data
-  - [ ] Entity data
-  - [ ] Sound data
-- [ ] Basic config interface
+- [ ] Basic config system
 - [ ] Command-based interface
   - [x] Basic structure
   - [x] Chat command
@@ -33,7 +39,7 @@ Minecraft Swift Edition is an open source rewrite of Minecraft Java Edition writ
     - [x] Basic block rendering
     - [x] Basic chunk rendering
     - [x] Block culling
-    - [ ] Block models
+    - [x] Block models
     - [ ] Multiple chunks
     - [ ] Animated textures
     - [ ] Block entities
@@ -44,42 +50,36 @@ Minecraft Swift Edition is an open source rewrite of Minecraft Java Edition writ
     - [ ] F3-style stuff
     - [ ] Bossbars
     - [ ] Scoreboard
-    - [ ] Health
-    - [ ] Hunger
-    - [ ] Experience
-    - [ ] HUD for each gamemode
+    - [ ] Health, hunger and experience
   - [ ] Items
   - [ ] Entities
-    - [ ] Basic entity rendering (maybe just a coloured cube)
+    - [ ] Basic entity rendering (just coloured cubes)
     - [ ] Render entity models
     - [ ] Entity animations
 - [ ] GUI
   - [ ] Hotbar
   - [ ] Inventory
     - [ ] Basic inventory
-    - [ ] Basic inventory actions
     - [ ] Basic crafting
-    - [ ] Drag actions
+    - [ ] Inventory actions
     - [ ] Using recipe blocks (like crafting tables and stuff)
     - [ ] Creative inventory
 - [ ] Sound
-  - [ ] Basic sounds
-  - [ ] Sound settings??
+  - [ ] Basic sounds system
 - [ ] Particles
-  - [ ] Basic particles
+  - [ ] Basic particle system
   - [ ] Block break particles
-  - [ ] Walk on block particles
   - [ ] Ambient particles
   - [ ] Hit particles
-  - [ ] Other particles
+  - [ ] Particles from server
 
 ## Command Interface
 
-At the moment when the client is connected to a server it gives you a text field for entering commands.
+Currently the client gives you the option to join a world in commands mode.
 
-These are NOT commands in the traditional minecraft sense (e.g. ```/kill``` and ```/time set day```). They are commands that I have made that let you interact with the server.
+These are NOT commands in the traditional minecraft sense (e.g. ```/kill``` and ```/time set day```). They are basic commands that let you interact with the server.
 
-As I implement more of the backend code -- and before I work on rendering -- I will be making more commands to reflect the current capabilities of the client. In future I will most likely also make a command for running commands on the server (this is starting to get confusing).
+More commands will probably be added later.
 
 #### Current Commands
 
@@ -104,10 +104,10 @@ As I implement more of the backend code -- and before I work on rendering -- I w
 
 #### Current rendering
 
-The biggest problems with rendering at the moment are biome tints and transparency.
+Rendering multiple chunks is coming next.
 
-![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/progress-3.png?raw=true)
+![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/progress-5.png?raw=true)
 
 #### The same place but in vanilla Minecraft
 
-![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/progress-3-vanilla.png?raw=true)
+![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/progress-5-vanilla.png?raw=true)
