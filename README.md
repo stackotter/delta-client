@@ -8,7 +8,7 @@ Eventually the project may be ported to iOS and iPadOS and maybe AppleTV to allo
 
 ## Metrics
 
-Here's a list of the client's current numbers when run on my Dual-core Intel MacBook Air;
+Here's a list of the client's current numbers when run on my 2020 dual-core Intel i5 MacBook Air with 8gb of ram;
 
 - launch time: 0.85s avg
   - vanilla Minecraft takes around 40s to launch on my laptop on average (47x slower)
