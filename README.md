@@ -56,22 +56,22 @@ Here's a list of the client's current numbers when run on my 2020 dual-core Inte
     - [ ] Basic entity rendering (just coloured cubes)
     - [ ] Render entity models
     - [ ] Entity animations
-- [ ] GUI
-  - [ ] Hotbar
-  - [ ] Inventory
-    - [ ] Basic inventory
-    - [ ] Basic crafting
-    - [ ] Inventory actions
-    - [ ] Using recipe blocks (like crafting tables and stuff)
-    - [ ] Creative inventory
+  - [ ] Particles
+    - [ ] Basic particle system
+    - [ ] Block break particles
+    - [ ] Ambient particles
+    - [ ] Hit particles
+    - [ ] Particles from server
+  - [ ] GUI
+    - [ ] Hotbar
+    - [ ] Inventory
+      - [ ] Basic inventory
+      - [ ] Basic crafting
+      - [ ] Inventory actions
+      - [ ] Using recipe blocks (like crafting tables and stuff)
+      - [ ] Creative inventory
 - [ ] Sound
   - [ ] Basic sounds system
-- [ ] Particles
-  - [ ] Basic particle system
-  - [ ] Block break particles
-  - [ ] Ambient particles
-  - [ ] Hit particles
-  - [ ] Particles from server
 
 ## Command Interface
 
