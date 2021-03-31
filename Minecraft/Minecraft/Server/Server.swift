@@ -26,7 +26,6 @@ class Server: Hashable {
     return nil
   }
   
-  // TODO: maybe use a Registry object that stores all registries for neater code
   var recipeRegistry: RecipeRegistry = RecipeRegistry()
   var packetRegistry: PacketRegistry
   

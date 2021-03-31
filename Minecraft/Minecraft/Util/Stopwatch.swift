@@ -63,6 +63,5 @@ struct Stopwatch {
   
   private func log(category: String, message: String) {
     Logger.log("\(name != nil ? "\(name!), " : "")\(category): \(message)")
-    // TODO: logging to terminal
   }
 }

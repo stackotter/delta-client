@@ -20,7 +20,6 @@ struct StopSoundPacket: ClientboundPacket {
       source = packetReader.readVarInt()
     }
     if flags & 0x2 == 0x2 {
-      // TODO: read identifier shouldn't throw just use a default
       sound = try packetReader.readIdentifier()
     }
   }

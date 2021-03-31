@@ -233,12 +233,12 @@ class BlockPaletteManager {
           var zRot: Int = 0
           var uvlock: Bool = false
           
-          // TODO: handling multiple states for one state id
           var modelJSON: JSON? = nil
           if let render = stateJSON.getJSON(forKey: "render") {
             modelJSON = render
           } else if let render = stateJSON.getArray(forKey: "render") as? [[String: Any]] {
             modelJSON = JSON(dict: render[0])
+            // TODO: handling multiple states for one state id
           }
           
           if let json = modelJSON {

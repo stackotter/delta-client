@@ -17,7 +17,6 @@ struct RecipeBookDataPacket: ServerboundPacket {
     case recipeBookStates(state: RecipeBookState)
   }
   
-  // TODO: move recipebookstate to its own file
   struct RecipeBookState {
     var craftingRecipeBookOpen: Bool
     var craftingRecipeFilterActive: Bool
