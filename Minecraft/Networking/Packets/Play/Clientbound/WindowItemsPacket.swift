@@ -11,7 +11,7 @@ struct WindowItemsPacket: ClientboundPacket {
   static let id: Int = 0x14
   
   var windowId: UInt8
-  var slotData: [Slot]
+  var slotData: [ItemStack]
   
   init(from packetReader: inout PacketReader) throws {
     windowId = packetReader.readUnsignedByte()
@@ -19,7 +19,7 @@ struct WindowItemsPacket: ClientboundPacket {
     slotData = []
     let count = packetReader.readShort()
     for _ in 0..<count {
-      let slot = try packetReader.readSlot()
+      let slot = try packetReader.readItemStack()
       slotData.append(slot)
     }
   }

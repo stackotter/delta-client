@@ -82,12 +82,13 @@ struct PacketWriter {
   
   // IMPLEMENT: Entity Metadata, Position, Angle
   
-  mutating func writeSlot(_ slot: Slot) {
-    writeBool(slot.present)
-    if slot.present {
-      writeVarInt(Int32(slot.itemId!))
-      writeByte(Int8(slot.itemCount!))
-      writeNBT(slot.nbt!)
+  mutating func writeItemStack(_ itemStack: ItemStack) {
+    writeBool(itemStack.isEmpty)
+    if itemStack.isEmpty {
+      let item = itemStack.item!
+      writeVarInt(Int32(item.id))
+      writeByte(Int8(itemStack.count))
+      writeNBT(item.nbt ?? NBTCompound())
     }
   }
   

@@ -12,11 +12,11 @@ struct SetSlotPacket: ClientboundPacket {
   
   var windowId: Int8
   var slot: Int16
-  var slotData: Slot
+  var slotData: ItemStack
   
   init(from packetReader: inout PacketReader) throws {
     windowId = packetReader.readByte()
     slot = packetReader.readShort()
-    slotData = try packetReader.readSlot()
+    slotData = try packetReader.readItemStack()
   }
 }

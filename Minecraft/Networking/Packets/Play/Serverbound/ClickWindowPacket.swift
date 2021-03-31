@@ -15,7 +15,7 @@ struct ClickWindowPacket: ServerboundPacket {
   var button: Int8
   var actionNumber: Int16
   var mode: Int32
-  var clickedItem: Slot
+  var clickedItem: ItemStack
   
   func writePayload(to writer: inout PacketWriter) {
     writer.writeUnsignedByte(windowId)
@@ -23,6 +23,6 @@ struct ClickWindowPacket: ServerboundPacket {
     writer.writeByte(button)
     writer.writeShort(actionNumber)
     writer.writeVarInt(mode)
-    writer.writeSlot(clickedItem)
+    writer.writeItemStack(clickedItem)
   }
 }

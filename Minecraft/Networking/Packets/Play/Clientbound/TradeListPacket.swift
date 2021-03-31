@@ -18,9 +18,9 @@ struct TradeListPacket: ClientboundPacket {
   var canRestock: Bool
   
   struct Trade {
-    var firstInputItem: Slot
-    var outputItem: Slot
-    var secondInputItem: Slot?
+    var firstInputItem: ItemStack
+    var outputItem: ItemStack
+    var secondInputItem: ItemStack?
     var tradeDisabled: Bool
     var numUses: Int // number of uses so far
     var maxUses: Int // maximum number of uses before disabled
@@ -36,12 +36,12 @@ struct TradeListPacket: ClientboundPacket {
     trades = []
     let count = packetReader.readUnsignedByte()
     for _ in 0..<count {
-      let firstInputItem = try packetReader.readSlot()
-      let outputItem = try packetReader.readSlot()
+      let firstInputItem = try packetReader.readItemStack()
+      let outputItem = try packetReader.readItemStack()
       let hasSecondInputItem = packetReader.readBool()
-      var secondInputItem: Slot? = nil
+      var secondInputItem: ItemStack? = nil
       if hasSecondInputItem {
-        secondInputItem = try packetReader.readSlot()
+        secondInputItem = try packetReader.readItemStack()
       }
       let tradeDisabled = packetReader.readBool()
       let numUses = packetReader.readInt()

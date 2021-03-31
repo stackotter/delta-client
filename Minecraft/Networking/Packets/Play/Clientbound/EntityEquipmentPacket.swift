@@ -12,12 +12,6 @@ struct EntityEquipmentPacket: ClientboundPacket {
   
   var entityId: Int
   var equipments: [Equipment]
-  
-  // TODO: could probably give this it's own file
-  struct Equipment {
-    var slot: UInt8
-    var item: Slot
-  }
 
   init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
@@ -29,7 +23,7 @@ struct EntityEquipmentPacket: ClientboundPacket {
         isLastEquipment = true
       }
       slot = slot & 0x7f
-      let item = try packetReader.readSlot()
+      let item = try packetReader.readItemStack()
       let equipment = Equipment(slot: slot, item: item)
       equipments.append(equipment)
     }

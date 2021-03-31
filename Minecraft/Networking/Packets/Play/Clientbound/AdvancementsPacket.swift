@@ -27,7 +27,7 @@ struct AdvancementsPacket: ClientboundPacket {
   struct AdvancementDisplay {
     var title: ChatComponent
     var description: ChatComponent
-    var icon: Slot
+    var icon: ItemStack
     var frameType: Int
     var flags: Int
     var backgroundTexture: Identifier?
@@ -60,7 +60,7 @@ struct AdvancementsPacket: ClientboundPacket {
       if hasDisplay {
         let title = packetReader.readChat()
         let description = packetReader.readChat()
-        let icon = try packetReader.readSlot()
+        let icon = try packetReader.readItemStack()
         let frameType = packetReader.readVarInt()
         let flags = packetReader.readInt() // 0x1: has background texture, 0x2: show toast, 0x4: hidden
         let backgroundTexture = flags & 0x1 == 0x1 ? try packetReader.readIdentifier() : nil

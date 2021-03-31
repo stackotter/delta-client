@@ -45,7 +45,6 @@ struct MultiBlockChangePacket: ClientboundPacket {
   func handle(for server: Server) throws {
     if let chunk = server.currentWorld?.chunks[chunkPosition] {
       for record in records {
-        // TODO: don't use uint16 for block id
         chunk.setBlock(
           at: Position(
             x: Int(record.x),

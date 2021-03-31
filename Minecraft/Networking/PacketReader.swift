@@ -134,23 +134,23 @@ struct PacketReader {
   
   // TODO_LATER: implement readEntityMetadata
   
-  mutating func readSlot() throws -> Slot {
+  mutating func readItemStack() throws -> ItemStack {
     let present = readBool()
-    let slot: Slot
+    let itemStack: ItemStack
     switch present {
       case true:
         let itemId = Int(readVarInt())
         let itemCount = Int(readByte())
         do {
           let nbt = try readNBTTag()
-          slot = Slot(present: present, itemId: itemId, itemCount: itemCount, nbt: nbt)
+          itemStack = ItemStack(itemId: itemId, itemCount: itemCount, nbt: nbt)
         } catch {
           throw PacketReadError.failedToReadSlotNBT
         }
       case false:
-        slot = Slot(present: present, itemId: nil, itemCount: nil, nbt: nil)
+        itemStack = ItemStack()
     }
-    return slot
+    return itemStack
   }
   
   // in java edition nbt always contains a root compound

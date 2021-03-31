@@ -11,10 +11,10 @@ struct CreativeInventoryActionPacket: ServerboundPacket {
   static let id: Int = 0x27
   
   var slot: Int16
-  var clickedItem: Slot
+  var clickedItem: ItemStack
   
   func writePayload(to writer: inout PacketWriter) {
     writer.writeShort(slot)
-    writer.writeSlot(clickedItem)
+    writer.writeItemStack(clickedItem)
   }
 }

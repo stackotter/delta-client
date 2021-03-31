@@ -103,12 +103,11 @@
 		784B395F25A1BCA400556E3E /* HeldItemChangePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B395E25A1BCA400556E3E /* HeldItemChangePacket.swift */; };
 		784B396425A1C19800556E3E /* DeclareRecipesPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784B396325A1C19800556E3E /* DeclareRecipesPacket.swift */; };
 		784CAE24259AB654003E5F87 /* UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CAE23259AB654003E5F87 /* UUID.swift */; };
-		784CAE29259ACA74003E5F87 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CAE28259ACA74003E5F87 /* Slot.swift */; };
+		784CAE29259ACA74003E5F87 /* ItemStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CAE28259ACA74003E5F87 /* ItemStack.swift */; };
 		784CCA8C25AD2E40004B3182 /* CraftingShapeless.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCA8B25AD2E40004B3182 /* CraftingShapeless.swift */; };
 		784CCA9125AD2E86004B3182 /* CraftingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCA9025AD2E86004B3182 /* CraftingRecipe.swift */; };
 		784CCA9625AD2F3D004B3182 /* CraftingShaped.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCA9525AD2F3D004B3182 /* CraftingShaped.swift */; };
 		784CCA9B25AD2F99004B3182 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCA9A25AD2F99004B3182 /* Ingredient.swift */; };
-		784CCAA025AD300B004B3182 /* ItemStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCA9F25AD300A004B3182 /* ItemStack.swift */; };
 		784CCAA825AD30BB004B3182 /* HeatRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAA725AD30BB004B3182 /* HeatRecipe.swift */; };
 		784CCAB025AD312B004B3182 /* SmeltingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAAF25AD312B004B3182 /* SmeltingRecipe.swift */; };
 		784CCAB525AD3165004B3182 /* BlastingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784CCAB425AD3165004B3182 /* BlastingRecipe.swift */; };
@@ -271,6 +270,7 @@
 		78E919F825D7FD9E00667C75 /* OpenBookPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919F725D7FD9E00667C75 /* OpenBookPacket.swift */; };
 		78E919FD25D7FE0700667C75 /* OpenWindowPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E919FC25D7FE0700667C75 /* OpenWindowPacket.swift */; };
 		78EC27572613E8160055E97D /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EC27562613E8150055E97D /* CacheManager.swift */; };
+		78EC2762261410550055E97D /* Equipment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EC2761261410550055E97D /* Equipment.swift */; };
 		78EF27B725F39381007F788A /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EF27B625F39381007F788A /* Stopwatch.swift */; };
 		78F29B1E25AE769B00D85CCB /* CompactedLongArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */; };
 		78F29B2425AE818700D85CCB /* Chunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F29B2325AE818700D85CCB /* Chunk.swift */; };
@@ -405,12 +405,11 @@
 		784B395E25A1BCA400556E3E /* HeldItemChangePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeldItemChangePacket.swift; sourceTree = "<group>"; };
 		784B396325A1C19800556E3E /* DeclareRecipesPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeclareRecipesPacket.swift; sourceTree = "<group>"; };
 		784CAE23259AB654003E5F87 /* UUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUID.swift; sourceTree = "<group>"; };
-		784CAE28259ACA74003E5F87 /* Slot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
+		784CAE28259ACA74003E5F87 /* ItemStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemStack.swift; sourceTree = "<group>"; };
 		784CCA8B25AD2E40004B3182 /* CraftingShapeless.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftingShapeless.swift; sourceTree = "<group>"; };
 		784CCA9025AD2E86004B3182 /* CraftingRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftingRecipe.swift; sourceTree = "<group>"; };
 		784CCA9525AD2F3D004B3182 /* CraftingShaped.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftingShaped.swift; sourceTree = "<group>"; };
 		784CCA9A25AD2F99004B3182 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
-		784CCA9F25AD300A004B3182 /* ItemStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemStack.swift; sourceTree = "<group>"; };
 		784CCAA725AD30BB004B3182 /* HeatRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatRecipe.swift; sourceTree = "<group>"; };
 		784CCAAF25AD312B004B3182 /* SmeltingRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmeltingRecipe.swift; sourceTree = "<group>"; };
 		784CCAB425AD3165004B3182 /* BlastingRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlastingRecipe.swift; sourceTree = "<group>"; };
@@ -574,6 +573,7 @@
 		78E919F725D7FD9E00667C75 /* OpenBookPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenBookPacket.swift; sourceTree = "<group>"; };
 		78E919FC25D7FE0700667C75 /* OpenWindowPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWindowPacket.swift; sourceTree = "<group>"; };
 		78EC27562613E8150055E97D /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
+		78EC2761261410550055E97D /* Equipment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Equipment.swift; sourceTree = "<group>"; };
 		78EF27B625F39381007F788A /* Stopwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
 		78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactedLongArray.swift; sourceTree = "<group>"; };
 		78F29B2325AE818700D85CCB /* Chunk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chunk.swift; sourceTree = "<group>"; };
@@ -721,7 +721,6 @@
 			isa = PBXGroup;
 			children = (
 				784CCAD325AD3403004B3182 /* SpecialCrafting */,
-				784CCA9F25AD300A004B3182 /* ItemStack.swift */,
 				78764DEA25AD7F2700AE8716 /* Item.swift */,
 				784CCA9A25AD2F99004B3182 /* Ingredient.swift */,
 				784CCA9025AD2E86004B3182 /* CraftingRecipe.swift */,
@@ -1149,6 +1148,7 @@
 			isa = PBXGroup;
 			children = (
 				784CAE23259AB654003E5F87 /* UUID.swift */,
+				78EC2761261410550055E97D /* Equipment.swift */,
 				78965087258861FE0079C5CF /* NBTCompound.swift */,
 				78E23E032606A91D00E58395 /* CardinalDirection.swift */,
 				78826211260EC8640004C259 /* Axis.swift */,
@@ -1158,7 +1158,7 @@
 				784B394A25A19CCC00556E3E /* Gamemode.swift */,
 				784B395425A19E3900556E3E /* Difficulty.swift */,
 				780D9BA82596CF5900144D45 /* LauncherProfile.swift */,
-				784CAE28259ACA74003E5F87 /* Slot.swift */,
+				784CAE28259ACA74003E5F87 /* ItemStack.swift */,
 				78F29B3925AE84CE00D85CCB /* Position.swift */,
 				78F29B1D25AE769B00D85CCB /* CompactedLongArray.swift */,
 				78CC6E5525D2639600CA3DFF /* Statistic.swift */,
@@ -1355,7 +1355,6 @@
 				78E919C325D75C9E00667C75 /* KeepAliveServerboundPacket.swift in Sources */,
 				78F29B4725AF136A00D85CCB /* World.swift in Sources */,
 				789CA747260F168E008F0F1A /* Profiler.swift in Sources */,
-				784CCAA025AD300B004B3182 /* ItemStack.swift in Sources */,
 				784CCB0825AD3515004B3182 /* BannerDuplicateRecipe.swift in Sources */,
 				7843EB9825E22A4400AD42A7 /* VehicleMoveServerboundPacket.swift in Sources */,
 				787D900725848726007E6441 /* PacketWriter.swift in Sources */,
@@ -1467,7 +1466,7 @@
 				78DB24D525C4F5A700F7D70B /* PlayerAbilities.swift in Sources */,
 				7873055225D92F75001259EB /* DestroyEntitiesPacket.swift in Sources */,
 				78F29B1E25AE769B00D85CCB /* CompactedLongArray.swift in Sources */,
-				784CAE29259ACA74003E5F87 /* Slot.swift in Sources */,
+				784CAE29259ACA74003E5F87 /* ItemStack.swift in Sources */,
 				784B394B25A19CCC00556E3E /* Gamemode.swift in Sources */,
 				7894523925D2782E00B86423 /* KeepAliveClientboundPacket.swift in Sources */,
 				78C2D5852585949800883DF5 /* StatusRequestPacket.swift in Sources */,
@@ -1505,6 +1504,7 @@
 				784CCB1D25AD35EB004B3182 /* RecipeRegistry.swift in Sources */,
 				7843EC1625E2378000AD42A7 /* PlayerBlockPlacementPacket.swift in Sources */,
 				78CC6E7C25D266D100CA3DFF /* BossBarPacket.swift in Sources */,
+				78EC2762261410550055E97D /* Equipment.swift in Sources */,
 				7843EBE625E2317100AD42A7 /* HeldItemChangeServerboundPacket.swift in Sources */,
 				78E919E425D7FBE200667C75 /* EntityPositionAndRotationPacket.swift in Sources */,
 				784CCAB025AD312B004B3182 /* SmeltingRecipe.swift in Sources */,
