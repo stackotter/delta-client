@@ -10,6 +10,8 @@ import os
 
 // TODO: this could do with some refactoring
 class PacketLayer: NetworkLayer {
+  var inboundSuccessor: InboundNetworkLayer?
+  var outboundSuccessor: OutboundNetworkLayer?
   var receiveState: ReceiveState
   
   struct ReceiveState {
@@ -18,11 +20,11 @@ class PacketLayer: NetworkLayer {
     var packet: [UInt8]
   }
   
-  override init() {
+  init() {
     self.receiveState = ReceiveState(lengthBytes: [], length: 0, packet: [])
   }
   
-  override func handleInbound(_ inBuffer: Buffer) {
+  func handleInbound(_ inBuffer: Buffer) {
     var buffer = inBuffer // mutable copy
     while true {
       if (receiveState.length == -1) {
@@ -56,7 +58,7 @@ class PacketLayer: NetworkLayer {
           receiveState.packet.append(byte)
           
           if (receiveState.packet.count == receiveState.length) {
-            super.handleInbound(Buffer(receiveState.packet))
+            inboundSuccessor?.handleInbound(Buffer(receiveState.packet))
             receiveState.packet = []
             receiveState.length = -1
             receiveState.lengthBytes = []
@@ -71,10 +73,10 @@ class PacketLayer: NetworkLayer {
     }
   }
   
-  override func handleOutbound(_ buffer: Buffer) {
+  func handleOutbound(_ buffer: Buffer) {
     var packed = Buffer()
     packed.writeVarInt(Int32(buffer.length))
     packed.writeBytes(buffer.bytes)
-    super.handleOutbound(packed)
+    outboundSuccessor?.handleOutbound(packed)
   }
 }

@@ -71,6 +71,12 @@ class ServerConnection {
     networkStack.reconnect()
   }
   
+  // Network layers
+  
+  func setCompression(threshold: Int) {
+    networkStack.compressionLayer.compressionThreshold = threshold
+  }
+  
   // Packet
   
   func setPacketHandler(_ handler: @escaping (PacketReader) -> Void) {

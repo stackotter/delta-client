@@ -24,10 +24,7 @@ struct Buffer {
     }
   }
   
-  enum Endian {
-    case little
-    case big
-  }
+  // Init
   
   init() {
     self.bytes = []
@@ -37,7 +34,7 @@ struct Buffer {
     self.bytes = bytes
   }
   
-  // [ Read Functions ]
+  // Read Functions
   
   mutating func skip(nBytes n: Int) {
     index += n
@@ -86,6 +83,12 @@ struct Buffer {
       signedBytes[i] = Int8(bitPattern: unsignedBytes[i])
     }
     return signedBytes
+  }
+  
+  mutating func readRemainingBytes() -> [UInt8] {
+    let remainingBytes = Array(bytes[index...])
+    index = length
+    return remainingBytes
   }
   
   mutating func readShort(endian: Endian) -> UInt16 {
@@ -165,7 +168,7 @@ struct Buffer {
   }
   
   
-  // Write Functions:
+  // Write Functions
   // these require specific int types for int and long still
   // as these functions aren't used much and it improves semantics
   

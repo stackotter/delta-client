@@ -15,4 +15,8 @@ struct SetCompressionPacket: ClientboundPacket {
   init(from packetReader: inout PacketReader) throws {
     threshold = packetReader.readVarInt()
   }
+  
+  func handle(for server: Server) throws {
+    server.connection.setCompression(threshold: threshold)
+  }
 }

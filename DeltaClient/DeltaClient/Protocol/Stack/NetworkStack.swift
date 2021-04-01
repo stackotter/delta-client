@@ -14,8 +14,11 @@ class NetworkStack {
   var host: String
   var port: UInt16
   
-  var ioLayer: SocketLayer
-  var innerMostLayer: ProtocolLayer
+  // network layers
+  var socketLayer: SocketLayer
+  var packetLayer: PacketLayer
+  var compressionLayer: CompressionLayer
+  var protocolLayer: ProtocolLayer
   
   // Init
   
@@ -26,39 +29,42 @@ class NetworkStack {
     self.eventManager = eventManager
     self.thread = DispatchQueue(label: "networkingStack")
     
-    let socketLayer = SocketLayer(host, port, thread: self.thread, eventManager: self.eventManager)
-    let packetLayer = PacketLayer()
-    let protocolLayer = ProtocolLayer(thread: self.thread)
+    // create layers
+    socketLayer = SocketLayer(host, port, thread: self.thread, eventManager: self.eventManager)
+    packetLayer = PacketLayer()
+    compressionLayer = CompressionLayer()
+    protocolLayer = ProtocolLayer(thread: self.thread)
     
+    // setup inbound flow
     socketLayer.inboundSuccessor = packetLayer
-    packetLayer.inboundSuccessor = protocolLayer
+    packetLayer.inboundSuccessor = compressionLayer
+    compressionLayer.inboundSuccessor = protocolLayer
     
-    protocolLayer.outboundSuccessor = packetLayer
+    // setup outbound flow
+    protocolLayer.outboundSuccessor = compressionLayer
+    compressionLayer.outboundSuccessor = packetLayer
     packetLayer.outboundSuccessor = socketLayer
-    
-    self.ioLayer = socketLayer
-    self.innerMostLayer = protocolLayer
   }
   
   // Lifecycle
   
   func connect() {
-    ioLayer.connect()
+    socketLayer.connect()
   }
   
   func disconnect() {
-    ioLayer.disconnect()
+    socketLayer.disconnect()
   }
   
   func reconnect() {
     disconnect()
     
     // remake socket layer
-    let ioLayerSuccessor = ioLayer.inboundSuccessor
-    ioLayer = SocketLayer(host, port, thread: thread, eventManager: eventManager)
-    ioLayer.inboundSuccessor = ioLayerSuccessor
-    if var outboundPredecessor = ioLayer.inboundSuccessor as? OutboundNetworkLayer {
-      outboundPredecessor.outboundSuccessor = ioLayer
+    let socketLayerSuccessor = socketLayer.inboundSuccessor
+    socketLayer = SocketLayer(host, port, thread: thread, eventManager: eventManager)
+    socketLayer.inboundSuccessor = socketLayerSuccessor
+    if var outboundPredecessor = socketLayer.inboundSuccessor as? OutboundNetworkLayer {
+      outboundPredecessor.outboundSuccessor = socketLayer
     }
     
     connect()
@@ -67,10 +73,10 @@ class NetworkStack {
   // Packet
   
   func setPacketHandler(_ handler: @escaping (ProtocolLayer.Output) -> Void) {
-    innerMostLayer.handler = handler
+    protocolLayer.handler = handler
   }
   
   func sendPacket(_ packet: ServerboundPacket) {
-    innerMostLayer.send(packet)
+    protocolLayer.send(packet)
   }
 }

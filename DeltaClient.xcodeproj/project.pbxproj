@@ -300,6 +300,8 @@
 		789EB85626156EAC00D8CFBB /* LoginPluginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB85526156EAC00D8CFBB /* LoginPluginResponse.swift */; };
 		789EB85B26156F5F00D8CFBB /* PongPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB85A26156F5F00D8CFBB /* PongPacket.swift */; };
 		789EB86326156F9500D8CFBB /* PingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB86226156F9500D8CFBB /* PingPacket.swift */; };
+		789EB8682615A9CB00D8CFBB /* Endian.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB8672615A9CB00D8CFBB /* Endian.swift */; };
+		789EB86D2615BD7400D8CFBB /* CompressionUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB86C2615BD7400D8CFBB /* CompressionUtil.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
 		78FD1F642614484300B74024 /* CacheFaceDirection.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5A2614484300B74024 /* CacheFaceDirection.pb.swift */; };
 		78FD1F662614484300B74024 /* CacheBlockModelElementFace.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5C2614484300B74024 /* CacheBlockModelElementFace.pb.swift */; };
@@ -627,6 +629,8 @@
 		789EB85526156EAC00D8CFBB /* LoginPluginResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPluginResponse.swift; sourceTree = "<group>"; };
 		789EB85A26156F5F00D8CFBB /* PongPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PongPacket.swift; sourceTree = "<group>"; };
 		789EB86226156F9500D8CFBB /* PingPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPacket.swift; sourceTree = "<group>"; };
+		789EB8672615A9CB00D8CFBB /* Endian.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endian.swift; sourceTree = "<group>"; };
+		789EB86C2615BD7400D8CFBB /* CompressionUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionUtil.swift; sourceTree = "<group>"; };
 		78FD1F5A2614484300B74024 /* CacheFaceDirection.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheFaceDirection.pb.swift; sourceTree = "<group>"; };
 		78FD1F5B2614484300B74024 /* CacheFaceDirection.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheFaceDirection.proto; sourceTree = "<group>"; };
 		78FD1F5C2614484300B74024 /* CacheBlockModelElementFace.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelElementFace.pb.swift; sourceTree = "<group>"; };
@@ -783,6 +787,7 @@
 				7805225E261433A700079A01 /* Profiler.swift */,
 				7805225F261433A700079A01 /* Stopwatch.swift */,
 				78052260261433A700079A01 /* MatrixUtil.swift */,
+				789EB86C2615BD7400D8CFBB /* CompressionUtil.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -805,6 +810,7 @@
 				7805225B261433A700079A01 /* Difficulty.swift */,
 				7805225C261433A700079A01 /* Identifier.swift */,
 				7805225D261433A700079A01 /* Direction.swift */,
+				789EB8672615A9CB00D8CFBB /* Endian.swift */,
 			);
 			path = Datatypes;
 			sourceTree = "<group>";
@@ -1719,6 +1725,7 @@
 				782F0CF126143BB1008AE67B /* TeamsPacket.swift in Sources */,
 				7803E43C26148E5900A200E2 /* ProtocolLayer.swift in Sources */,
 				782F0C8726143BB1008AE67B /* CloseWindowServerboundPacket.swift in Sources */,
+				789EB86D2615BD7400D8CFBB /* CompressionUtil.swift in Sources */,
 				782F0CD126143BB1008AE67B /* BlockChangePacket.swift in Sources */,
 				782F0CBA26143BB1008AE67B /* MapDataPacket.swift in Sources */,
 				782F0CFD26143BB1008AE67B /* LoginDisconnectPacket.swift in Sources */,
@@ -1733,6 +1740,7 @@
 				78052398261433A800079A01 /* Mesh.swift in Sources */,
 				7805238B261433A800079A01 /* ChunkPosition.swift in Sources */,
 				782F0CDD26143BB1008AE67B /* EntityTeleportPacket.swift in Sources */,
+				789EB8682615A9CB00D8CFBB /* Endian.swift in Sources */,
 				78052374261433A800079A01 /* LauncherProfile.swift in Sources */,
 				780523B6261433A800079A01 /* DeltaClientApp.swift in Sources */,
 				7805236F261433A800079A01 /* ChatComponentUtil.swift in Sources */,

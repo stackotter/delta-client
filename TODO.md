@@ -9,7 +9,7 @@
 
 - [x] Refactor networking into a network stack
   - [x] Initial refactor
-  - [ ] Compression layer
+  - [x] Compression layer
   - [ ] Encryption layer
 
 ## Config

@@ -7,19 +7,16 @@
 
 import Foundation
 
-class NetworkLayer: InboundNetworkLayer, OutboundNetworkLayer {
-  var inboundSuccessor: InboundNetworkLayer?
-  var outboundSuccessor: OutboundNetworkLayer?
+protocol NetworkLayer: InboundNetworkLayer, OutboundNetworkLayer {
   
+}
+
+extension NetworkLayer {
   func handleInbound(_ buffer: Buffer) {
-    if let next = inboundSuccessor {
-      next.handleInbound(buffer)
-    }
+    inboundSuccessor?.handleInbound(buffer)
   }
   
   func handleOutbound(_ buffer: Buffer) {
-    if let next = outboundSuccessor {
-      next.handleOutbound(buffer)
-    }
+    outboundSuccessor?.handleOutbound(buffer)
   }
 }

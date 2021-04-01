@@ -20,12 +20,16 @@ class PacketRegistry {
     let registry = PacketRegistry()
     
     registry.addClientboundPackets([
-      StatusResponsePacket.self
+      StatusResponsePacket.self,
+      PongPacket.self
     ], toState: .status)
     
     registry.addClientboundPackets([
       LoginDisconnectPacket.self,
-      LoginSuccessPacket.self
+      EncryptionRequestPacket.self,
+      LoginSuccessPacket.self,
+      SetCompressionPacket.self,
+      LoginPluginRequest.self
     ], toState: .login)
     
     registry.addClientboundPackets([
