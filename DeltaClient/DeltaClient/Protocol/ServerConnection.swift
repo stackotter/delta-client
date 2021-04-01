@@ -12,22 +12,38 @@ import os
 class ServerConnection {
   var host: String
   var port: UInt16
-  var networkStack: NetworkStack
-  
-  var packetHandlingThread: PacketHandlingThread
   
   var managers: Managers
   var packetRegistry: PacketRegistry
+  var networkStack: NetworkStack
   
-  var connectionState: ConnectionState = .idle
-  var state: PacketState = .handshaking
+  var state: ConnectionState
   
-  // used in the packet receiving loop because of chunking
-  struct ReceiveState {
-    var lengthBytes: [UInt8]
-    var length: Int
-    var packet: [UInt8]
+  enum ConnectionState {
+    case idle
+    case handshaking
+    case status
+    case login
+    case play
+    case disconnected
+    
+    func toPacketState() -> PacketState? {
+      switch self {
+        case .handshaking:
+          return .handshaking
+        case .status:
+          return .status
+        case .login:
+          return .login
+        case .play:
+          return .play
+        default:
+          return nil
+      }
+    }
   }
+  
+  // Init
   
   init(host: String, port: UInt16, managers: Managers) {
     self.managers = managers
@@ -36,46 +52,50 @@ class ServerConnection {
     self.port = port
     
     self.packetRegistry = PacketRegistry.createDefault()
-    
     self.networkStack = NetworkStack(host, port, eventManager: self.managers.eventManager)
     
-    self.packetHandlingThread = PacketHandlingThread(managers: managers, packetRegistry: self.packetRegistry)
+    self.state = .idle
   }
   
-  func setHandler(_ handler: @escaping (PacketReader) -> Void) {
-    self.networkStack.setPacketHandler(handler)
+  // Lifecycle
+  
+  func start() {
+    networkStack.connect()
+  }
+  
+  func stop() {
+    networkStack.disconnect()
   }
   
   func restart() {
-//    networkStack.restart()
-    networkStack.connect()
+    networkStack.reconnect()
+  }
+  
+  // Packet
+  
+  func setPacketHandler(_ handler: @escaping (PacketReader) -> Void) {
+    networkStack.setPacketHandler(handler)
   }
   
   func sendPacket(_ packet: ServerboundPacket) {
-    Logger.log("send packet")
     networkStack.sendPacket(packet)
   }
   
-  func start() {
-    connectionState = .connecting
-    networkStack.connect()
-    connectionState = .ready
-    Logger.log("start network stack")
-  }
+  // Abstracted Operations
   
-  func close() {
-    connectionState = .disconnected
-    networkStack.disconnect()
-    managers.eventManager.triggerEvent(.connectionClosed)
-  }
-  
-  func handshake(nextState: HandshakePacket.NextState, callback: @escaping () -> Void = {}) {
-    state = .handshaking
-    // move protocol version to config or constants file of some sort
+  func handshake(nextState: HandshakePacket.NextState) {
     let handshake = HandshakePacket(protocolVersion: PROTOCOL_VERSION, serverAddr: host, serverPort: Int(port), nextState: nextState)
-
     self.sendPacket(handshake)
     self.state = (nextState == .login) ? .login : .status
-    callback()
+  }
+  
+  func login(username: String) {
+    managers.eventManager.registerOneTimeEventHandler({ event in
+      self.handshake(nextState: .login)
+      
+      let loginStart = LoginStartPacket(username: username)
+      self.sendPacket(loginStart)
+    }, eventName: "connectionReady")
+    restart()
   }
 }

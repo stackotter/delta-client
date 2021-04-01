@@ -33,10 +33,10 @@ class ConfigManager {
         let ip: String = try serverNBT.get("ip")
         let name: String = try serverNBT.get("name")
         
-        let serverInfo = ServerInfo(name: name, ip: ip)
+        let serverDescriptor = ServerDescriptor(name: name, ip: ip)
         
-        if serverInfo != nil {
-          serverList.addServer(serverInfo!)
+        if let descriptor = serverDescriptor {
+          serverList.addServer(descriptor)
         } else {
           Logger.debug("invalid server ip")
         }

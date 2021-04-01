@@ -10,7 +10,7 @@ import Foundation
 // INFO: the way the handlers dict is created is a bit dodge but swift might not have a better way at the moment.
 //   the associated values make it difficult to compare cases cause enums can't have both associated values and raw values
 
-// NOTE: might not be threadsafe
+// TODO: might not be threadsafe
 
 // packet handling will be better without this probably
 // handlers can be registered for events and anyone who needs data from an event can just easily register a handler
@@ -25,6 +25,8 @@ class EventManager: Equatable {
   var oneTimeEventHandlers: [String: [EventHandler]] = [:]
   
   var forwardTargets: [EventManager] = []
+  
+  var eventThread: DispatchQueue = DispatchQueue(label: "events")
   
   enum Event {
     case error(_ message: String)
@@ -77,29 +79,31 @@ class EventManager: Equatable {
   
   // passes an event to all relevant handlers
   func triggerEvent(_ event: Event, from: EventManager? = nil) {
-    for forwardTarget in forwardTargets {
-      if forwardTarget != from {
-        forwardTarget.triggerEvent(event, from: self)
+    eventThread.async {
+      for forwardTarget in self.forwardTargets {
+        if forwardTarget != from {
+          forwardTarget.triggerEvent(event, from: self)
+        }
       }
-    }
-    
-    for handler in eventHandlers {
-      handler(event)
-    }
-    
-    let specificHandlers = specificEventHandlers[event.name]
-    if specificHandlers != nil {
-      for handler in specificHandlers! {
+      
+      for handler in self.eventHandlers {
         handler(event)
       }
-    }
-    
-    let oneTimeHandlers = oneTimeEventHandlers[event.name]
-    if oneTimeHandlers != nil {
-      for handler in oneTimeHandlers! {
-        handler(event)
+      
+      let specificHandlers = self.specificEventHandlers[event.name]
+      if specificHandlers != nil {
+        for handler in specificHandlers! {
+          handler(event)
+        }
       }
-      oneTimeEventHandlers[event.name] = nil
+      
+      let oneTimeHandlers = self.oneTimeEventHandlers[event.name]
+      if oneTimeHandlers != nil {
+        for handler in oneTimeHandlers! {
+          handler(event)
+        }
+        self.oneTimeEventHandlers[event.name] = nil
+      }
     }
   }
   

@@ -17,6 +17,8 @@ class NetworkStack {
   var ioLayer: SocketLayer
   var innerMostLayer: ProtocolLayer
   
+  // Init
+  
   init(_ host: String, _ port: UInt16, eventManager: EventManager) {
     self.host = host
     self.port = port
@@ -38,9 +40,7 @@ class NetworkStack {
     self.innerMostLayer = protocolLayer
   }
   
-  func setPacketHandler(_ handler: @escaping (ProtocolLayer.Output) -> Void) {
-    innerMostLayer.handler = handler
-  }
+  // Lifecycle
   
   func connect() {
     ioLayer.connect()
@@ -50,14 +50,24 @@ class NetworkStack {
     ioLayer.disconnect()
   }
   
-  func restart() {
+  func reconnect() {
     disconnect()
     
+    // remake socket layer
     let ioLayerSuccessor = ioLayer.inboundSuccessor
     ioLayer = SocketLayer(host, port, thread: thread, eventManager: eventManager)
     ioLayer.inboundSuccessor = ioLayerSuccessor
+    if var outboundPredecessor = ioLayer.inboundSuccessor as? OutboundNetworkLayer {
+      outboundPredecessor.outboundSuccessor = ioLayer
+    }
     
     connect()
+  }
+  
+  // Packet
+  
+  func setPacketHandler(_ handler: @escaping (ProtocolLayer.Output) -> Void) {
+    innerMostLayer.handler = handler
   }
   
   func sendPacket(_ packet: ServerboundPacket) {

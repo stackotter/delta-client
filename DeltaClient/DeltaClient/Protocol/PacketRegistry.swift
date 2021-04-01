@@ -124,6 +124,8 @@ class PacketRegistry {
     return registry
   }
   
+  // Handy functions
+  
   func addClientboundPackets(_ packets: [ClientboundPacket.Type], toState state: PacketState) {
     for packet in packets {
       addClientboundPacket(packet, toState: state)
@@ -137,25 +139,5 @@ class PacketRegistry {
   
   func getClientboundPacketType(withId id: Int, andState state: PacketState) -> ClientboundPacket.Type? {
     return clientboundPackets[state]?[id]
-  }
-  
-  func handlePacket(_ reader: inout PacketReader, forServerPinger serverPinger: ServerPinger, inState state: PacketState) throws {
-    guard let packetType = getClientboundPacketType(withId: reader.packetId, andState: state) else {
-      Logger.debug("non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
-      return
-    }
-    
-    let packet = try packetType.init(from: &reader)
-    try packet.handle(for: serverPinger)
-  }
-  
-  func handlePacket(_ reader: inout PacketReader, forServer server: Server, inState state: PacketState) throws {
-    guard let packetType = getClientboundPacketType(withId: reader.packetId, andState: state) else {
-      Logger.debug("non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
-      return
-    }
-    
-    let packet = try packetType.init(from: &reader)
-    try packet.handle(for: server)
   }
 }

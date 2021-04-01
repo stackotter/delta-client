@@ -12,9 +12,8 @@ struct GameCommandView: View {
   
   var client: Client
   
-  init(serverInfo: ServerInfo, managers: Managers) {
-    self.client = Client(managers: managers, serverInfo: serverInfo)
-    
+  init(serverDescriptor: ServerDescriptor, managers: Managers) {
+    self.client = Client(managers: managers, serverDescriptor: serverDescriptor)
     self.client.play()
   }
   

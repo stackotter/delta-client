@@ -96,9 +96,10 @@ class SocketLayer: OutermostNetworkLayer {
       case .waiting(let error):
         handleNWError(error)
       case .failed(let error):
-        print(error)
         state = .disconnected
         handleNWError(error)
+      case .cancelled:
+        state = .disconnected
       default:
         break
     }

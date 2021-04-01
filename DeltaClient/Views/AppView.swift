@@ -8,7 +8,7 @@
 import SwiftUI
 
 enum AppViewStateEnum {
-  case playing(withRendering: Bool, serverInfo: ServerInfo)
+  case playing(withRendering: Bool, serverDescriptor: ServerDescriptor)
   case serverList(serverList: ServerList)
 }
 
@@ -26,11 +26,11 @@ struct AppView: View {
   
   var body: some View {
     switch state.state {
-      case .playing(let withRendering, let serverInfo):
+      case .playing(let withRendering, let serverDescriptor):
         if withRendering {
-          GameRenderView(serverInfo: serverInfo, managers: managers)
+          GameRenderView(serverDescriptor: serverDescriptor, managers: managers)
         } else {
-          GameCommandView(serverInfo: serverInfo, managers: managers)
+          GameCommandView(serverDescriptor: serverDescriptor, managers: managers)
         }
       case .serverList(let serverList):
         ServerListView(viewState: state, serverList: serverList)

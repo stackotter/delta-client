@@ -15,8 +15,8 @@ class ServerList: ObservableObject {
     self.managers = managers
   }
   
-  func addServer(_ serverInfo: ServerInfo) {
-    let server = ServerPinger(serverInfo, managers: managers)
+  func addServer(_ serverDescriptor: ServerDescriptor) {
+    let server = ServerPinger(serverDescriptor, managers: managers)
     servers.append(server)
   }
   

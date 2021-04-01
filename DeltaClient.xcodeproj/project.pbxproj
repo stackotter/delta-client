@@ -91,7 +91,7 @@
 		78052392261433A800079A01 /* ServerPinger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052274261433A700079A01 /* ServerPinger.swift */; };
 		78052393261433A800079A01 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052275261433A700079A01 /* Server.swift */; };
 		78052394261433A800079A01 /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052276261433A700079A01 /* ServerConfig.swift */; };
-		78052395261433A800079A01 /* ServerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052277261433A700079A01 /* ServerInfo.swift */; };
+		78052395261433A800079A01 /* ServerDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052277261433A700079A01 /* ServerDescriptor.swift */; };
 		78052396261433A800079A01 /* StartupSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052278261433A700079A01 /* StartupSequence.swift */; };
 		78052397261433A800079A01 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052279261433A700079A01 /* Client.swift */; };
 		78052398261433A800079A01 /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805227C261433A700079A01 /* Mesh.swift */; };
@@ -133,7 +133,6 @@
 		782F0C6826143BB1008AE67B /* ClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC226143BB0008AE67B /* ClientboundPacket.swift */; };
 		782F0C6926143BB1008AE67B /* PacketWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC326143BB0008AE67B /* PacketWriter.swift */; };
 		782F0C6A26143BB1008AE67B /* ServerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC426143BB0008AE67B /* ServerConnection.swift */; };
-		782F0C6B26143BB1008AE67B /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC526143BB0008AE67B /* ConnectionState.swift */; };
 		782F0C6C26143BB1008AE67B /* ServerboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC626143BB0008AE67B /* ServerboundPacket.swift */; };
 		782F0C6D26143BB1008AE67B /* StatusRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BCA26143BB0008AE67B /* StatusRequestPacket.swift */; };
 		782F0C6E26143BB1008AE67B /* StatusResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BCC26143BB0008AE67B /* StatusResponsePacket.swift */; };
@@ -282,7 +281,6 @@
 		782F0CFD26143BB1008AE67B /* LoginDisconnectPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C6326143BB1008AE67B /* LoginDisconnectPacket.swift */; };
 		782F0CFE26143BB1008AE67B /* PacketReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C6426143BB1008AE67B /* PacketReader.swift */; };
 		782F0CFF26143BB1008AE67B /* PacketState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C6526143BB1008AE67B /* PacketState.swift */; };
-		782F0D0026143BB1008AE67B /* PacketHandlingThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0C6626143BB1008AE67B /* PacketHandlingThread.swift */; };
 		782F0D2126144189008AE67B /* BlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0D2026144189008AE67B /* BlockModel.swift */; };
 		782F0D29261441BD008AE67B /* BlockModelElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0D28261441BD008AE67B /* BlockModelElement.swift */; };
 		782F0D2E26144208008AE67B /* BlockModelElementFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0D2D26144208008AE67B /* BlockModelElementFace.swift */; };
@@ -408,7 +406,7 @@
 		78052274261433A700079A01 /* ServerPinger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerPinger.swift; sourceTree = "<group>"; };
 		78052275261433A700079A01 /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		78052276261433A700079A01 /* ServerConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerConfig.swift; sourceTree = "<group>"; };
-		78052277261433A700079A01 /* ServerInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerInfo.swift; sourceTree = "<group>"; };
+		78052277261433A700079A01 /* ServerDescriptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDescriptor.swift; sourceTree = "<group>"; };
 		78052278261433A700079A01 /* StartupSequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupSequence.swift; sourceTree = "<group>"; };
 		78052279261433A700079A01 /* Client.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		7805227C261433A700079A01 /* Mesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mesh.swift; sourceTree = "<group>"; };
@@ -454,7 +452,6 @@
 		782F0BC226143BB0008AE67B /* ClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientboundPacket.swift; sourceTree = "<group>"; };
 		782F0BC326143BB0008AE67B /* PacketWriter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketWriter.swift; sourceTree = "<group>"; };
 		782F0BC426143BB0008AE67B /* ServerConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerConnection.swift; sourceTree = "<group>"; };
-		782F0BC526143BB0008AE67B /* ConnectionState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
 		782F0BC626143BB0008AE67B /* ServerboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerboundPacket.swift; sourceTree = "<group>"; };
 		782F0BCA26143BB0008AE67B /* StatusRequestPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusRequestPacket.swift; sourceTree = "<group>"; };
 		782F0BCC26143BB0008AE67B /* StatusResponsePacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusResponsePacket.swift; sourceTree = "<group>"; };
@@ -603,7 +600,6 @@
 		782F0C6326143BB1008AE67B /* LoginDisconnectPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginDisconnectPacket.swift; sourceTree = "<group>"; };
 		782F0C6426143BB1008AE67B /* PacketReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketReader.swift; sourceTree = "<group>"; };
 		782F0C6526143BB1008AE67B /* PacketState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketState.swift; sourceTree = "<group>"; };
-		782F0C6626143BB1008AE67B /* PacketHandlingThread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketHandlingThread.swift; sourceTree = "<group>"; };
 		782F0D2026144189008AE67B /* BlockModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModel.swift; sourceTree = "<group>"; };
 		782F0D28261441BD008AE67B /* BlockModelElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModelElement.swift; sourceTree = "<group>"; };
 		782F0D2D26144208008AE67B /* BlockModelElementFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModelElementFace.swift; sourceTree = "<group>"; };
@@ -838,7 +834,7 @@
 			isa = PBXGroup;
 			children = (
 				78052275261433A700079A01 /* Server.swift */,
-				78052277261433A700079A01 /* ServerInfo.swift */,
+				78052277261433A700079A01 /* ServerDescriptor.swift */,
 				78052276261433A700079A01 /* ServerConfig.swift */,
 				78052293261433A700079A01 /* TabList.swift */,
 				78052273261433A700079A01 /* ServerList.swift */,
@@ -942,10 +938,8 @@
 				782F0BC726143BB0008AE67B /* Packets */,
 				7875207326152D5400782575 /* Stack */,
 				782F0BC426143BB0008AE67B /* ServerConnection.swift */,
-				782F0BC526143BB0008AE67B /* ConnectionState.swift */,
-				782F0C6526143BB1008AE67B /* PacketState.swift */,
-				782F0C6626143BB1008AE67B /* PacketHandlingThread.swift */,
 				782F0BC126143BB0008AE67B /* PacketRegistry.swift */,
+				782F0C6526143BB1008AE67B /* PacketState.swift */,
 				7805224C261433A700079A01 /* Buffer.swift */,
 			);
 			path = Protocol;
@@ -1459,7 +1453,7 @@
 				782F0C7626143BB1008AE67B /* QueryEntityNBTPacket.swift in Sources */,
 				782F0CFA26143BB1008AE67B /* HeldItemChangePacket.swift in Sources */,
 				782F0C6D26143BB1008AE67B /* StatusRequestPacket.swift in Sources */,
-				78052395261433A800079A01 /* ServerInfo.swift in Sources */,
+				78052395261433A800079A01 /* ServerDescriptor.swift in Sources */,
 				78052368261433A800079A01 /* ChatStringComponent.swift in Sources */,
 				78752063261524CA00782575 /* InnermostNetworkLayer.swift in Sources */,
 				78FD1F692614484300B74024 /* CacheBlockModel.pb.swift in Sources */,
@@ -1555,7 +1549,6 @@
 				782F0CA026143BB1008AE67B /* TagsPacket.swift in Sources */,
 				7805239B261433A800079A01 /* FaceDirection.swift in Sources */,
 				782F0CCF26143BB1008AE67B /* EntityStatusPacket.swift in Sources */,
-				782F0D0026143BB1008AE67B /* PacketHandlingThread.swift in Sources */,
 				782F0C6E26143BB1008AE67B /* StatusResponsePacket.swift in Sources */,
 				7805237B261433A800079A01 /* JSON.swift in Sources */,
 				782F0CEA26143BB1008AE67B /* UpdateLightPacket.swift in Sources */,
@@ -1707,7 +1700,6 @@
 				782F0CA426143BB1008AE67B /* SpawnLivingEntity.swift in Sources */,
 				782F0CE226143BB1008AE67B /* OpenHorseWindowPacket.swift in Sources */,
 				782F0CBD26143BB1008AE67B /* CameraPacket.swift in Sources */,
-				782F0C6B26143BB1008AE67B /* ConnectionState.swift in Sources */,
 				782F0CE326143BB1008AE67B /* UpdateHealthPacket.swift in Sources */,
 				78052381261433A800079A01 /* Direction.swift in Sources */,
 				78052398261433A800079A01 /* Mesh.swift in Sources */,

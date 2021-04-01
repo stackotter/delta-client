@@ -18,8 +18,8 @@ struct GameRenderView: View {
   
   let client: Client
   
-  init(serverInfo: ServerInfo, managers: Managers) {
-    self.client = Client(managers: managers, serverInfo: serverInfo)
+  init(serverDescriptor: ServerDescriptor, managers: Managers) {
+    self.client = Client(managers: managers, serverDescriptor: serverDescriptor)
     
     managers.eventManager.registerEventHandler(handleEvent, eventName: "downloadedTerrain")
     self.client.play()

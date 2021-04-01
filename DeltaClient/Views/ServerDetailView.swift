@@ -16,10 +16,10 @@ struct ServerDetailView: View {
     
     VStack(alignment: .leading, spacing: 16) {
       VStack(alignment: .leading) {
-        Text(server.info.name)
+        Text(server.descriptor.name)
           .font(.title)
           .bold()
-        Text("\(server.info.host):\(String(server.info.port))")
+        Text("\(server.descriptor.host):\(String(server.descriptor.port))")
           .font(.title2)
       }
       
@@ -35,13 +35,13 @@ struct ServerDetailView: View {
       
       HStack {
         Button(action: {
-          viewState.update(to: .playing(withRendering: false, serverInfo: server.info))
+          viewState.update(to: .playing(withRendering: false, serverDescriptor: server.descriptor))
         }) {
           Text("Play Commands")
         }
         
         Button(action: {
-          viewState.update(to: .playing(withRendering: true, serverInfo: server.info))
+          viewState.update(to: .playing(withRendering: true, serverDescriptor: server.descriptor))
         }) {
           Text("Play Render")
         }

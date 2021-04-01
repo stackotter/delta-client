@@ -10,12 +10,24 @@ import os
 
 class Server: Hashable {
   var managers: Managers
-  
   var connection: ServerConnection
-  var info: ServerInfo
+  var descriptor: ServerDescriptor
+  var config: ServerConfig
+  var tabList: TabList = TabList()
+  
+  var recipeRegistry: RecipeRegistry = RecipeRegistry()
+  var packetRegistry: PacketRegistry
   
   var currentWorldName: Identifier?
   var worlds: [Identifier: World] = [:]
+  
+  var timeOfDay: Int = -1
+  var difficulty: Difficulty = .normal
+  var isDifficultyLocked: Bool = true
+  var player: Player
+  
+  // Getter: current world
+  
   var currentWorld: World? {
     if let worldName = currentWorldName {
       if let world = worlds[worldName] {
@@ -26,42 +38,19 @@ class Server: Hashable {
     return nil
   }
   
-  var recipeRegistry: RecipeRegistry = RecipeRegistry()
-  var packetRegistry: PacketRegistry
+  // Init
   
-  var player: Player
-  
-  var config: ServerConfig = ServerConfig.createDefault()
-  var state: ServerState = .idle
-  
-  var difficulty: Difficulty = .normal
-  var isDifficultyLocked: Bool = true
-  
-  var timeOfDay: Int = -1
-  
-  var tabList: TabList = TabList()
-  
-  enum ServerState {
-    case idle
-    case connecting
-    case status
-    case login
-    case play
-    case disconnected
-  }
-  
-  init(withInfo serverInfo: ServerInfo, managers: Managers) {
-    self.info = serverInfo
+  init(descriptor: ServerDescriptor, managers: Managers) {
+    self.descriptor = descriptor
     self.managers = managers
     
-    self.connection = ServerConnection(host: info.host, port: info.port, managers: self.managers)
-    self.packetRegistry = PacketRegistry.createDefault()
-    
-    // TODO_LATER: fix this once config is cleaned up
+    // TODO_LATER: use actual player name
     self.player = Player(username: "stampy876")
     
-    self.managers.eventManager.registerEventHandler(handleEvents)
-    self.connection.setHandler(handlePacket)
+    self.config = ServerConfig.createDefault()
+    self.packetRegistry = PacketRegistry.createDefault()
+    self.connection = ServerConnection(host: descriptor.host, port: descriptor.port, managers: self.managers)
+    self.connection.setPacketHandler(handlePacket)
   }
   
   // World
@@ -77,49 +66,39 @@ class Server: Hashable {
   
   // Networking
   
-  func handlePacket(_ packetReader: PacketReader) {
-    var reader = packetReader
-    do {
-      try packetRegistry.handlePacket(&reader, forServer: self, inState: connection.state)
-    } catch {
-      Logger.debug("failed to handle status packet")
-    }
-  }
-  
-  func handleEvents(_ event: EventManager.Event) {
-    switch event {
-      case .connectionClosed:
-        state = .disconnected
-      default:
-        break
-    }
+  func login() {
+    connection.login(username: player.username)
   }
   
   func sendPacket(_ packet: ServerboundPacket) {
     connection.sendPacket(packet)
   }
   
-  func login() {
-    connection.restart()
-    managers.eventManager.registerOneTimeEventHandler({
-      (event) in
-      self.connection.handshake(nextState: .login) {
-        let loginStart = LoginStartPacket(username: self.player.username)
-        self.connection.sendPacket(loginStart)
+  func handlePacket(_ packetReader: PacketReader) {
+    do {
+      if let packetState = connection.state.toPacketState() {
+        var reader = packetReader
+        guard let packetType = packetRegistry.getClientboundPacketType(withId: reader.packetId, andState: packetState) else {
+          Logger.error("non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
+          return
+        }
+        let packet = try packetType.init(from: &reader)
+        try packet.handle(for: self)
       }
-    }, eventName: "connectionReady")
-    connection.start()
+    } catch {
+      Logger.error("failed to handle packet: \(error)")
+    }
   }
   
-  // Things so that SwiftUI ForEach loop works
+  // Conformance: Hashable
   
   static func == (lhs: Server, rhs: Server) -> Bool {
-    return (lhs.info.name == rhs.info.name && lhs.info.host == rhs.info.host && lhs.info.port == rhs.info.port)
+    return (lhs.descriptor.name == rhs.descriptor.name && lhs.descriptor.host == rhs.descriptor.host && lhs.descriptor.port == rhs.descriptor.port)
   }
   
   func hash(into hasher: inout Hasher) {
-    hasher.combine(info.name)
-    hasher.combine(info.host)
-    hasher.combine(info.port)
+    hasher.combine(descriptor.name)
+    hasher.combine(descriptor.host)
+    hasher.combine(descriptor.port)
   }
 }

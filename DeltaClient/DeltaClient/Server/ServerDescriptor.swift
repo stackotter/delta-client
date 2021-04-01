@@ -1,5 +1,5 @@
 //
-//  ServerInfo.swift
+//  ServerDescriptor.swift
 //  DeltaClient
 //
 //  Created by Rohan van Klinken on 20/1/21.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ServerInfo: Equatable, Hashable {
+struct ServerDescriptor: Equatable, Hashable {
   var name: String
   var host: String
   var port: UInt16

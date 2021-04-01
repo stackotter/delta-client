@@ -8,30 +8,24 @@
 import Foundation
 import os
 
-// pretty much the backend class for the whole game
 class Client {
-  var state: ClientState = .idle
   var server: Server
-  
   var managers: Managers
   
-  enum ClientState {
-    case idle
-    case initialising
-    case connecting
-    case play
-  }
+  // Init
   
-  init(managers: Managers, serverInfo: ServerInfo) {
+  init(managers: Managers, serverDescriptor: ServerDescriptor) {
     self.managers = managers
-    
-    self.server = Server(withInfo: serverInfo, managers: managers)
+    self.server = Server(descriptor: serverDescriptor, managers: managers)
   }
   
-  // TEMP
+  // Server interaction
+  
   func play() {
     server.login()
   }
+  
+  // Commands interface
   
   func runCommand(_ command: String) {
     let logger = Logger(subsystem: "Minecraft", category: "commands")

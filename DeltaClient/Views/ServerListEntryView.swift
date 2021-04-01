@@ -12,7 +12,7 @@ struct ServerListEntryView: View {
   
   var body: some View {
     HStack {
-      Text(server.info.name)
+      Text(server.descriptor.name)
       Spacer()
       Circle()
         .foregroundColor((server.pingInfo == nil) ? .red : ((server.pingInfo?.protocolVersion == PROTOCOL_VERSION) ? .green : .yellow))
