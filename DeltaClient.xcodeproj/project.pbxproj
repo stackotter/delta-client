@@ -293,6 +293,13 @@
 		78752063261524CA00782575 /* InnermostNetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78752062261524CA00782575 /* InnermostNetworkLayer.swift */; };
 		7892880E261438A000F17DBB /* DeltaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A9261433A700079A01 /* DeltaClientTests.swift */; };
 		78928812261438A500F17DBB /* DeltaClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052170261433A600079A01 /* DeltaClientUITests.swift */; };
+		789EB84226156C8700D8CFBB /* SetCompressionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB84126156C8700D8CFBB /* SetCompressionPacket.swift */; };
+		789EB84726156CCC00D8CFBB /* EncryptionRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB84626156CCC00D8CFBB /* EncryptionRequestPacket.swift */; };
+		789EB84C26156D4D00D8CFBB /* LoginPluginRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB84B26156D4D00D8CFBB /* LoginPluginRequest.swift */; };
+		789EB85126156DB500D8CFBB /* EncryptionResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB85026156DB500D8CFBB /* EncryptionResponse.swift */; };
+		789EB85626156EAC00D8CFBB /* LoginPluginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB85526156EAC00D8CFBB /* LoginPluginResponse.swift */; };
+		789EB85B26156F5F00D8CFBB /* PongPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB85A26156F5F00D8CFBB /* PongPacket.swift */; };
+		789EB86326156F9500D8CFBB /* PingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB86226156F9500D8CFBB /* PingPacket.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
 		78FD1F642614484300B74024 /* CacheFaceDirection.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5A2614484300B74024 /* CacheFaceDirection.pb.swift */; };
 		78FD1F662614484300B74024 /* CacheBlockModelElementFace.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5C2614484300B74024 /* CacheBlockModelElementFace.pb.swift */; };
@@ -613,6 +620,13 @@
 		7875205826151CA900782575 /* OutboundNetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutboundNetworkLayer.swift; sourceTree = "<group>"; };
 		7875205D26151CE000782575 /* InboundNetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboundNetworkLayer.swift; sourceTree = "<group>"; };
 		78752062261524CA00782575 /* InnermostNetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnermostNetworkLayer.swift; sourceTree = "<group>"; };
+		789EB84126156C8700D8CFBB /* SetCompressionPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetCompressionPacket.swift; sourceTree = "<group>"; };
+		789EB84626156CCC00D8CFBB /* EncryptionRequestPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionRequestPacket.swift; sourceTree = "<group>"; };
+		789EB84B26156D4D00D8CFBB /* LoginPluginRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPluginRequest.swift; sourceTree = "<group>"; };
+		789EB85026156DB500D8CFBB /* EncryptionResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionResponse.swift; sourceTree = "<group>"; };
+		789EB85526156EAC00D8CFBB /* LoginPluginResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPluginResponse.swift; sourceTree = "<group>"; };
+		789EB85A26156F5F00D8CFBB /* PongPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PongPacket.swift; sourceTree = "<group>"; };
+		789EB86226156F9500D8CFBB /* PingPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPacket.swift; sourceTree = "<group>"; };
 		78FD1F5A2614484300B74024 /* CacheFaceDirection.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheFaceDirection.pb.swift; sourceTree = "<group>"; };
 		78FD1F5B2614484300B74024 /* CacheFaceDirection.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheFaceDirection.proto; sourceTree = "<group>"; };
 		78FD1F5C2614484300B74024 /* CacheBlockModelElementFace.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelElementFace.pb.swift; sourceTree = "<group>"; };
@@ -948,10 +962,10 @@
 		782F0BC726143BB0008AE67B /* Packets */ = {
 			isa = PBXGroup;
 			children = (
-				782F0BC826143BB0008AE67B /* Status */,
 				782F0BCD26143BB0008AE67B /* Handshaking */,
-				782F0BD026143BB0008AE67B /* Play */,
+				782F0BC826143BB0008AE67B /* Status */,
 				782F0C5E26143BB1008AE67B /* Login */,
+				782F0BD026143BB0008AE67B /* Play */,
 				782F0C6426143BB1008AE67B /* PacketReader.swift */,
 				782F0BC326143BB0008AE67B /* PacketWriter.swift */,
 				782F0BC226143BB0008AE67B /* ClientboundPacket.swift */,
@@ -963,8 +977,8 @@
 		782F0BC826143BB0008AE67B /* Status */ = {
 			isa = PBXGroup;
 			children = (
-				782F0BC926143BB0008AE67B /* Serverbound */,
 				782F0BCB26143BB0008AE67B /* Clientbound */,
+				782F0BC926143BB0008AE67B /* Serverbound */,
 			);
 			path = Status;
 			sourceTree = "<group>";
@@ -973,6 +987,7 @@
 			isa = PBXGroup;
 			children = (
 				782F0BCA26143BB0008AE67B /* StatusRequestPacket.swift */,
+				789EB86226156F9500D8CFBB /* PingPacket.swift */,
 			);
 			path = Serverbound;
 			sourceTree = "<group>";
@@ -981,6 +996,7 @@
 			isa = PBXGroup;
 			children = (
 				782F0BCC26143BB0008AE67B /* StatusResponsePacket.swift */,
+				789EB85A26156F5F00D8CFBB /* PongPacket.swift */,
 			);
 			path = Clientbound;
 			sourceTree = "<group>";
@@ -1004,8 +1020,8 @@
 		782F0BD026143BB0008AE67B /* Play */ = {
 			isa = PBXGroup;
 			children = (
-				782F0BD126143BB0008AE67B /* Serverbound */,
 				782F0C0126143BB0008AE67B /* Clientbound */,
+				782F0BD126143BB0008AE67B /* Serverbound */,
 			);
 			path = Play;
 			sourceTree = "<group>";
@@ -1166,8 +1182,8 @@
 		782F0C5E26143BB1008AE67B /* Login */ = {
 			isa = PBXGroup;
 			children = (
-				782F0C5F26143BB1008AE67B /* Serverbound */,
 				782F0C6126143BB1008AE67B /* Clientbound */,
+				782F0C5F26143BB1008AE67B /* Serverbound */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -1176,6 +1192,8 @@
 			isa = PBXGroup;
 			children = (
 				782F0C6026143BB1008AE67B /* LoginStartPacket.swift */,
+				789EB85026156DB500D8CFBB /* EncryptionResponse.swift */,
+				789EB85526156EAC00D8CFBB /* LoginPluginResponse.swift */,
 			);
 			path = Serverbound;
 			sourceTree = "<group>";
@@ -1183,8 +1201,11 @@
 		782F0C6126143BB1008AE67B /* Clientbound */ = {
 			isa = PBXGroup;
 			children = (
-				782F0C6226143BB1008AE67B /* LoginSuccessPacket.swift */,
 				782F0C6326143BB1008AE67B /* LoginDisconnectPacket.swift */,
+				789EB84626156CCC00D8CFBB /* EncryptionRequestPacket.swift */,
+				782F0C6226143BB1008AE67B /* LoginSuccessPacket.swift */,
+				789EB84126156C8700D8CFBB /* SetCompressionPacket.swift */,
+				789EB84B26156D4D00D8CFBB /* LoginPluginRequest.swift */,
 			);
 			path = Clientbound;
 			sourceTree = "<group>";
@@ -1443,6 +1464,7 @@
 				782F0C9F26143BB1008AE67B /* TradeListPacket.swift in Sources */,
 				782F0CA826143BB1008AE67B /* OpenWindowPacket.swift in Sources */,
 				78052371261433A800079A01 /* Buffer.swift in Sources */,
+				789EB85126156DB500D8CFBB /* EncryptionResponse.swift in Sources */,
 				780523B2261433A800079A01 /* PlayerAbilities.swift in Sources */,
 				78052386261433A800079A01 /* EntityVelocity.swift in Sources */,
 				780523A1261433A800079A01 /* StorageManager.swift in Sources */,
@@ -1529,6 +1551,7 @@
 				782F0C7026143BB1008AE67B /* NameItemPacket.swift in Sources */,
 				782F0C7526143BB1008AE67B /* UpdateSignPacket.swift in Sources */,
 				782F0C9226143BB1008AE67B /* PlayerBlockPlacementPacket.swift in Sources */,
+				789EB84C26156D4D00D8CFBB /* LoginPluginRequest.swift in Sources */,
 				78052396261433A800079A01 /* StartupSequence.swift in Sources */,
 				782F0C8026143BB1008AE67B /* UpdateCommandBlockMinecartPacket.swift in Sources */,
 				782F0CB126143BB1008AE67B /* BlockBreakAnimationPacket.swift in Sources */,
@@ -1541,10 +1564,12 @@
 				7805237F261433A800079A01 /* Difficulty.swift in Sources */,
 				782F0CEC26143BB1008AE67B /* SoundEffectPacket.swift in Sources */,
 				782F0CE526143BB1008AE67B /* ResourcePackSendPacket.swift in Sources */,
+				789EB85626156EAC00D8CFBB /* LoginPluginResponse.swift in Sources */,
 				782F0C7D26143BB1008AE67B /* SpectatePacket.swift in Sources */,
 				782F0CC126143BB1008AE67B /* AttachEntityPacket.swift in Sources */,
 				782F0CC526143BB1008AE67B /* SpawnPositionPacket.swift in Sources */,
 				782F0CE626143BB1008AE67B /* FacePlayerPacket.swift in Sources */,
+				789EB84226156C8700D8CFBB /* SetCompressionPacket.swift in Sources */,
 				7805239A261433A800079A01 /* Vertex.swift in Sources */,
 				782F0CA026143BB1008AE67B /* TagsPacket.swift in Sources */,
 				7805239B261433A800079A01 /* FaceDirection.swift in Sources */,
@@ -1585,6 +1610,7 @@
 				780523BA261433A800079A01 /* ServerListView.swift in Sources */,
 				7805236E261433A800079A01 /* ChatKeybindComponent.swift in Sources */,
 				782F0CB626143BB1008AE67B /* UnloadChunkPacket.swift in Sources */,
+				789EB85B26156F5F00D8CFBB /* PongPacket.swift in Sources */,
 				782F0CDC26143BB1008AE67B /* PlayerInfoPacket.swift in Sources */,
 				782F0C9026143BB1008AE67B /* RecipeBookDataPacket.swift in Sources */,
 				782F0CD026143BB1008AE67B /* RespawnPacket.swift in Sources */,
@@ -1629,6 +1655,7 @@
 				78052379261433A800079A01 /* ItemStack.swift in Sources */,
 				782F0CB426143BB1008AE67B /* WindowItemsPacket.swift in Sources */,
 				782F0C6A26143BB1008AE67B /* ServerConnection.swift in Sources */,
+				789EB84726156CCC00D8CFBB /* EncryptionRequestPacket.swift in Sources */,
 				780523B3261433A800079A01 /* DominantHand.swift in Sources */,
 				782F0C7E26143BB1008AE67B /* UpdateCommandBlockPacket.swift in Sources */,
 				78052393261433A800079A01 /* Server.swift in Sources */,
@@ -1648,6 +1675,7 @@
 				78052358261433A800079A01 /* SuspiciousStewRecipe.swift in Sources */,
 				7805236C261433A800079A01 /* ChatScoreComponent.swift in Sources */,
 				782F0C6F26143BB1008AE67B /* HandshakePacket.swift in Sources */,
+				789EB86326156F9500D8CFBB /* PingPacket.swift in Sources */,
 				782F0CFB26143BB1008AE67B /* LoginStartPacket.swift in Sources */,
 				78052370261433A800079A01 /* EventManager.swift in Sources */,
 				782F0CAC26143BB1008AE67B /* NBTQueryResponse.swift in Sources */,

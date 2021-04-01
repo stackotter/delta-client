@@ -10,6 +10,8 @@ import Foundation
 struct PacketWriter {
   var buffer: Buffer = Buffer([])
   
+  // Basic datatypes
+  
   mutating func writeBool(_ bool: Bool) {
     let byte: UInt8 = bool ? 1 : 0
     writeUnsignedByte(byte)
@@ -21,6 +23,10 @@ struct PacketWriter {
   
   mutating func writeUnsignedByte(_ unsignedByte: UInt8) {
     buffer.writeByte(unsignedByte)
+  }
+  
+  mutating func writeByteArray(_ byteArray: [UInt8]) {
+    buffer.writeBytes(byteArray)
   }
   
   mutating func writeShort(_ short: Int16) {
@@ -55,10 +61,6 @@ struct PacketWriter {
     buffer.writeString(string)
   }
   
-  mutating func writeIdentifier(_ identifier: Identifier) {
-    writeString(identifier.toString())
-  }
-  
   mutating func writeVarInt(_ varInt: Int32) {
     buffer.writeVarInt(varInt)
   }
@@ -67,7 +69,12 @@ struct PacketWriter {
     buffer.writeVarLong(varLong)
   }
   
-  // IMPLEMENT: Entity Metadata, Position, Angle
+  mutating func writeIdentifier(_ identifier: Identifier) {
+    writeString(identifier.toString())
+  }
+  
+  // Complex datatypes
+  // IMPLEMENT: Entity Metadata, Angle
   
   mutating func writeItemStack(_ itemStack: ItemStack) {
     writeBool(itemStack.isEmpty)
@@ -87,10 +94,6 @@ struct PacketWriter {
   mutating func writeUUID(_ uuid: UUID) {
     let bytes = uuid.toBytes()
     buffer.writeBytes(bytes)
-  }
-  
-  mutating func writeByteArray(_ byteArray: [UInt8]) {
-    buffer.writeBytes(byteArray)
   }
   
   mutating func writePosition(_ position: Position) {

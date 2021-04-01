@@ -97,7 +97,16 @@ struct PacketReader {
     return string
   }
   
-  // TODO_LATER: make a Chat datatype to use instead of String
+  mutating func readVarInt() -> Int {
+    return buffer.readVarInt()
+  }
+  
+  mutating func readVarLong() -> Int {
+    return buffer.readVarLong()
+  }
+  
+  // Complex datatypes
+  
   mutating func readChat() -> ChatComponent {
     let string = readString()
     if string.count > 32767 {
@@ -123,14 +132,6 @@ struct PacketReader {
     } catch {
       throw PacketReaderError.invalidIdentifier
     }
-  }
-  
-  mutating func readVarInt() -> Int {
-    return buffer.readVarInt()
-  }
-  
-  mutating func readVarLong() -> Int {
-    return buffer.readVarLong()
   }
   
   mutating func readItemStack() throws -> ItemStack {
