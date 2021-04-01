@@ -17,7 +17,7 @@ struct ChunkDataPacket: ClientboundPacket {
     let chunkX = Int(packetReader.readInt())
     let chunkZ = Int(packetReader.readInt())
     let position = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
-    chunkData = ChunkData(position: position, buf: packetReader.buf)
+    chunkData = ChunkData(position: position, reader: packetReader)
   }
   
   // TODO: clean up how downloading terrain is triggered to end

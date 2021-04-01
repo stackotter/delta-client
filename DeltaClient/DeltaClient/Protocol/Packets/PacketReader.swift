@@ -35,7 +35,7 @@ struct PacketReader {
   
   init(bytes: [UInt8], locale: MinecraftLocale) {
     self.buf = Buffer(bytes)
-    self.packetId = Int(buf.readVarInt())
+    self.packetId = buf.readVarInt()
     self.locale = locale
   }
   
@@ -46,10 +46,7 @@ struct PacketReader {
   init(buffer: Buffer, locale: MinecraftLocale) {
     self.buf = buffer
     self.locale = locale
-    let index = buf.index
-    buf.index = 0
-    self.packetId = Int(buf.readVarInt())
-    buf.index = index
+    self.packetId = buf.readVarInt()
   }
   
   mutating func readBool() -> Bool {

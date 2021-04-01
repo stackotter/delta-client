@@ -105,12 +105,7 @@ class Server: Hashable {
       (event) in
       self.connection.handshake(nextState: .login) {
         let loginStart = LoginStartPacket(username: self.player.username)
-        self.connection.sendPacket(loginStart, callback: .contentProcessed({
-          (error) in
-          if error != nil {
-            Logger.error("error sending login start: \(String(describing: error))")
-          }
-        }))
+        self.connection.sendPacket(loginStart)
       }
     }, eventName: "connectionReady")
     connection.start()

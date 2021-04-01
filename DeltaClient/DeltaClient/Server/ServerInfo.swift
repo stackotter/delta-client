@@ -10,7 +10,7 @@ import Foundation
 struct ServerInfo: Equatable, Hashable {
   var name: String
   var host: String
-  var port: Int
+  var port: UInt16
   
   init?(name: String, ip: String) {
     self.name = name
@@ -19,7 +19,7 @@ struct ServerInfo: Equatable, Hashable {
       if let host = url.host {
         self.host = host
         if let port = url.port {
-          self.port = port
+          self.port = UInt16(port)
         } else {
           self.port = 25565
         }
@@ -31,7 +31,7 @@ struct ServerInfo: Equatable, Hashable {
     }
   }
   
-  init(name: String, host: String, port: Int) {
+  init(name: String, host: String, port: UInt16) {
     self.name = name
     self.host = host
     self.port = port

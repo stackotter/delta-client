@@ -8,20 +8,7 @@
 import Foundation
 
 struct PacketWriter {
-  var buf: Buffer = Buffer([])
-  
-  init() {
-    
-  }
-  
-  mutating func pack() -> [UInt8] {
-    let temp = buf
-    let length = buf.length
-    buf = Buffer()
-    writeVarInt(Int32(length))
-    buf.writeBytes(temp.byteBuf)
-    return buf.byteBuf
-  }
+  var buffer: Buffer = Buffer([])
   
   mutating func writeBool(_ bool: Bool) {
     let byte: UInt8 = bool ? 1 : 0
@@ -29,35 +16,35 @@ struct PacketWriter {
   }
   
   mutating func writeByte(_ byte: Int8) {
-    buf.writeSignedByte(byte)
+    buffer.writeSignedByte(byte)
   }
   
   mutating func writeUnsignedByte(_ unsignedByte: UInt8) {
-    buf.writeByte(unsignedByte)
+    buffer.writeByte(unsignedByte)
   }
   
   mutating func writeShort(_ short: Int16) {
-    buf.writeSignedShort(short, endian: .big)
+    buffer.writeSignedShort(short, endian: .big)
   }
   
   mutating func writeUnsignedShort(_ unsignedShort: UInt16) {
-    buf.writeShort(unsignedShort, endian: .big)
+    buffer.writeShort(unsignedShort, endian: .big)
   }
   
   mutating func writeInt(_ int: Int32) {
-    buf.writeSignedInt(int, endian: .big)
+    buffer.writeSignedInt(int, endian: .big)
   }
   
   mutating func writeLong(_ long: Int64) {
-    buf.writeSignedLong(long, endian: .big)
+    buffer.writeSignedLong(long, endian: .big)
   }
   
   mutating func writeFloat(_ float: Float) {
-    buf.writeFloat(float, endian: .big)
+    buffer.writeFloat(float, endian: .big)
   }
   
   mutating func writeDouble(_ double: Double) {
-    buf.writeDouble(double, endian: .big)
+    buffer.writeDouble(double, endian: .big)
   }
   
   mutating func writeString(_ string: String) {
@@ -65,7 +52,7 @@ struct PacketWriter {
     precondition(length < 32767, "string too long to write")
     
     writeVarInt(Int32(length))
-    buf.writeString(string)
+    buffer.writeString(string)
   }
   
   mutating func writeIdentifier(_ identifier: Identifier) {
@@ -73,11 +60,11 @@ struct PacketWriter {
   }
   
   mutating func writeVarInt(_ varInt: Int32) {
-    buf.writeVarInt(varInt)
+    buffer.writeVarInt(varInt)
   }
   
   mutating func writeVarLong(_ varLong: Int64) {
-    buf.writeVarLong(varLong)
+    buffer.writeVarLong(varLong)
   }
   
   // IMPLEMENT: Entity Metadata, Position, Angle
@@ -94,23 +81,23 @@ struct PacketWriter {
   
   mutating func writeNBT(_ nbtCompound: NBTCompound) {
     var compound = nbtCompound
-    buf.writeBytes(compound.pack())
+    buffer.writeBytes(compound.pack())
   }
   
   mutating func writeUUID(_ uuid: UUID) {
     let bytes = uuid.toBytes()
-    buf.writeBytes(bytes)
+    buffer.writeBytes(bytes)
   }
   
   mutating func writeByteArray(_ byteArray: [UInt8]) {
-    buf.writeBytes(byteArray)
+    buffer.writeBytes(byteArray)
   }
   
   mutating func writePosition(_ position: Position) {
     var val: UInt64 = (UInt64(position.x) & 0x3FFFFFF) << 38
     val |= (UInt64(position.z) & 0x3FFFFFF) << 12
     val |= UInt64(position.y) & 0xFFF
-    buf.writeLong(val, endian: .big)
+    buffer.writeLong(val, endian: .big)
   }
   
   mutating func writeEntityPosition(_ entityPosition: EntityPosition) {

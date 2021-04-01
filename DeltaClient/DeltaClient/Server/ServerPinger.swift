@@ -27,10 +27,11 @@ class ServerPinger: Hashable, ObservableObject {
   
   func handlePacket(_ packetReader: PacketReader) {
     var reader = packetReader
+    print(reader.buf.bytes)
     do {
       try packetRegistry.handlePacket(&reader, forServerPinger: self, inState: connection.state)
     } catch {
-      Logger.debug("failed to handle status packet")
+      Logger.debug("failed to handle status packet: \(error)")
     }
   }
   

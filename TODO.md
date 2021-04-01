@@ -39,6 +39,7 @@
 - [ ] investigate campfires
 - [ ] investigate levers (point the opposite way compared to vanilla. probably an order of rotations thing?)
 - [ ] investigate falsely culled path block top face (under haybale)
+- [ ] investigate cauldron water not showing
 - [ ] identify translucent blocks
 
 ## Chunk preparing

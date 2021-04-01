@@ -9,12 +9,12 @@ import Foundation
 
 struct Buffer {
   // all functions read unsigned unless otherwise specified
-  var byteBuf: [UInt8]
+  var bytes: [UInt8]
   var index = 0
   
   var length: Int {
     get {
-      return self.byteBuf.count
+      return self.bytes.count
     }
   }
   
@@ -30,11 +30,11 @@ struct Buffer {
   }
   
   init() {
-    self.byteBuf = []
+    self.bytes = []
   }
   
   init(_ bytes: [UInt8]) {
-    self.byteBuf = bytes
+    self.bytes = bytes
   }
   
   // [ Read Functions ]
@@ -44,15 +44,15 @@ struct Buffer {
   }
   
   mutating func readBitPattern(n: Int, endian: Endian) -> UInt {
-    var bytes = readBytes(n: n)
-    if bytes.count < 8 {
-      let padLength = 8 - bytes.count
-      bytes = [UInt8](repeating: 0, count: padLength) + bytes
+    var patternBytes = readBytes(n: n)
+    if patternBytes.count < 8 {
+      let padLength = 8 - patternBytes.count
+      patternBytes = [UInt8](repeating: 0, count: padLength) + patternBytes
     }
     // using uint will cause problems on 32 bit platforms
     // apple only releases 64 bit now tho anyway
     var bitPattern: UInt = 0
-    bytes.withUnsafeBytes {
+    patternBytes.withUnsafeBytes {
       bitPattern = $0.load(as: UInt.self)
     }
     
@@ -63,7 +63,7 @@ struct Buffer {
   }
   
   mutating func readByte() -> UInt8 {
-    let byte = byteBuf[index]
+    let byte = bytes[index]
     index += 1
     return byte
   }
@@ -74,16 +74,16 @@ struct Buffer {
   }
   
   mutating func readBytes(n: Int) -> [UInt8] {
-    let bytes = Array(byteBuf[index..<index+n])
+    let byteArray = Array(bytes[index..<index+n])
     index += n
-    return bytes
+    return byteArray
   }
   
   mutating func readSignedBytes(n: Int) -> [Int8] {
-    let bytes = readBytes(n: n)
+    let unsignedBytes = readBytes(n: n)
     var signedBytes: [Int8] = []
-    for i in 0..<bytes.count {
-      signedBytes[i] = Int8(bitPattern: bytes[0])
+    for i in 0..<unsignedBytes.count {
+      signedBytes[i] = Int8(bitPattern: unsignedBytes[i])
     }
     return signedBytes
   }
@@ -159,8 +159,8 @@ struct Buffer {
   }
   
   mutating func readString(length: Int) -> String {
-    let bytes = readBytes(n: length)
-    let string = String(bytes: bytes, encoding: .utf8)!
+    let stringBytes = readBytes(n: length)
+    let string = String(bytes: stringBytes, encoding: .utf8)!
     return string
   }
   
@@ -170,20 +170,20 @@ struct Buffer {
   // as these functions aren't used much and it improves semantics
   
   mutating func writeByte(_ byte: UInt8) {
-    byteBuf.append(byte)
+    bytes.append(byte)
   }
   
   mutating func writeSignedByte(_ signedByte: Int8) {
     writeByte(UInt8(bitPattern: signedByte))
   }
   
-  mutating func writeBytes(_ bytes: [UInt8]) {
-    byteBuf.append(contentsOf: bytes)
+  mutating func writeBytes(_ byteArray: [UInt8]) {
+    bytes.append(contentsOf: byteArray)
   }
   
   mutating func writeSignedBytes(_ signedBytes: [Int8]) {
     for signedByte in signedBytes {
-      byteBuf.append(UInt8(bitPattern: signedByte))
+      bytes.append(UInt8(bitPattern: signedByte))
     }
   }
   
@@ -257,8 +257,8 @@ struct Buffer {
   }
   
   mutating func writeString(_ string: String) {
-    let bytes = [UInt8](string.utf8)
-    writeBytes(bytes)
+    let stringBytes = [UInt8](string.utf8)
+    writeBytes(stringBytes)
   }
 }
 

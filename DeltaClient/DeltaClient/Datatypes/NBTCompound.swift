@@ -254,7 +254,7 @@ struct NBTCompound: CustomStringConvertible {
     }
     writeTag(NBTTag(id: 0, type: .end, value: nil))
     
-    return buffer.byteBuf
+    return buffer.bytes
   }
   
   mutating func writeName(_ name: String) {

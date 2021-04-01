@@ -16,10 +16,6 @@ class PacketRegistry {
     .play: [:]
   ]
   
-//  var serverboundPackets: [PacketState: [Int: ServerBoundPacket]]
-  
-  
-  
   static func createDefault() -> PacketRegistry {
     let registry = PacketRegistry()
     

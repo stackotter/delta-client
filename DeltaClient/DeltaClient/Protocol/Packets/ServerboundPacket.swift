@@ -18,4 +18,11 @@ extension ServerboundPacket {
   var id: Int {
     type(of: self).id
   }
+  
+  func toBuffer() -> Buffer {
+    var writer = PacketWriter()
+    writer.writeVarInt(Int32(id))
+    writePayload(to: &writer)
+    return writer.buffer
+  }
 }

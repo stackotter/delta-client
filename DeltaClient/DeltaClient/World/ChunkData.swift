@@ -16,12 +16,12 @@ struct ChunkData {
   
   // this packet reader contains a packet as described by https://wiki.vg/Protocol#Chunk_Data
   // chunkX and chunkZ have already been read
-  var buf: Buffer
+  var reader: PacketReader
   
   func unpack(blockPaletteManager: BlockPaletteManager) throws -> Chunk {
     do {
       let start = CFAbsoluteTimeGetCurrent()
-      var packetReader = PacketReader(buffer: buf)
+      var packetReader = reader // mutable copy
       
       // this first bit isn't too slow (cause it all only happens once
       let fullChunk = packetReader.readBool()
