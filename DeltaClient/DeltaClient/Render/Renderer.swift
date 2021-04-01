@@ -62,7 +62,7 @@ class Renderer {
   }
   
   func createWorldToClipSpaceMatrix(aspect: Float) -> MTLBuffer {
-    let chunkPosition = client.server.player.chunkPosition
+    let chunkPosition = client.server.player.position.chunkPosition
     var playerRelativePosition = client.server.player.position
     playerRelativePosition.x -= Double(chunkPosition.chunkX*16)
     playerRelativePosition.z -= Double(chunkPosition.chunkZ*16)
@@ -87,7 +87,7 @@ class Renderer {
     var stopwatch = Stopwatch(mode: .verbose, name: "chunk mesh")
     
     // render player's current chunk
-    if let chunk = client.server.currentWorld?.chunks[client.server.player.chunkPosition] {
+    if let chunk = client.server.currentWorld?.chunks[client.server.player.position.chunkPosition] {
       if chunk.mesh.isEmpty {
         stopwatch.startMeasurement("generate chunk mesh")
         chunk.generateMesh()
