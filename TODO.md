@@ -7,8 +7,8 @@
 
 ## Networking
 
-- [ ] Refactor networking into a network stack
-  - [ ] Initial refactor
+- [x] Refactor networking into a network stack
+  - [x] Initial refactor
   - [ ] Compression layer
   - [ ] Encryption layer
 
@@ -51,7 +51,7 @@
 
 ## General clean up
 
-- [ ] improve error handling in networking
+- [x] improve error handling in networking
 - [ ] use swifts fancy json instead of mine
 
 ## Other

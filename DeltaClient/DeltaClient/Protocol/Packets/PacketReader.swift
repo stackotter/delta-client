@@ -9,11 +9,11 @@ import Foundation
 import os
 
 struct PacketReader {
-  var packetId: Int = -1
-  var buf: Buffer
+  var packetId: Int
+  var buffer: Buffer
   var locale: MinecraftLocale
   
-  enum PacketReadError: LocalizedError {
+  enum PacketReaderError: LocalizedError {
     case invalidNBT
     case failedToReadSlotNBT
     case invalidJSON
@@ -25,17 +25,19 @@ struct PacketReader {
   
   var remaining: Int {
     get {
-      return buf.remaining
+      return buffer.remaining
     }
   }
+  
+  // Init
   
   init(bytes: [UInt8]) {
     self.init(bytes: bytes, locale: MinecraftLocale())
   }
   
   init(bytes: [UInt8], locale: MinecraftLocale) {
-    self.buf = Buffer(bytes)
-    self.packetId = buf.readVarInt()
+    self.buffer = Buffer(bytes)
+    self.packetId = buffer.readVarInt()
     self.locale = locale
   }
   
@@ -44,52 +46,54 @@ struct PacketReader {
   }
   
   init(buffer: Buffer, locale: MinecraftLocale) {
-    self.buf = buffer
+    self.buffer = buffer
     self.locale = locale
-    self.packetId = buf.readVarInt()
+    self.packetId = self.buffer.readVarInt()
   }
   
+  // Basic datatypes
+  
   mutating func readBool() -> Bool {
-    let byte = buf.readByte()
+    let byte = buffer.readByte()
     let bool = byte == 1
     return bool
   }
   
   mutating func readByte() -> Int8 {
-    return buf.readSignedByte()
+    return buffer.readSignedByte()
   }
   
   mutating func readUnsignedByte() -> UInt8 {
-    return buf.readByte()
+    return buffer.readByte()
   }
   
   mutating func readShort() -> Int16 {
-    return buf.readSignedShort(endian: .big)
+    return buffer.readSignedShort(endian: .big)
   }
   
   mutating func readUnsignedShort() -> UInt16 {
-    return buf.readShort(endian: .big)
+    return buffer.readShort(endian: .big)
   }
   
   mutating func readInt() -> Int {
-    return buf.readSignedInt(endian: .big)
+    return buffer.readSignedInt(endian: .big)
   }
   
   mutating func readLong() -> Int {
-    return buf.readSignedLong(endian: .big)
+    return buffer.readSignedLong(endian: .big)
   }
   
   mutating func readFloat() -> Float {
-    return buf.readFloat(endian: .big)
+    return buffer.readFloat(endian: .big)
   }
   
   mutating func readDouble() -> Double {
-    return buf.readDouble(endian: .big)
+    return buffer.readDouble(endian: .big)
   }
   
   mutating func readString() -> String {
-    let length = Int(buf.readVarInt())
-    let string = buf.readString(length: length)
+    let length = Int(buffer.readVarInt())
+    let string = buffer.readString(length: length)
     return string
   }
   
@@ -111,25 +115,23 @@ struct PacketReader {
   mutating func readIdentifier() throws -> Identifier {
     let string = readString()
     if string.count > 32767 {
-      throw PacketReadError.identifierTooLong
+      throw PacketReaderError.identifierTooLong
     }
     do {
       let identifier = try Identifier(string)
       return identifier
     } catch {
-      throw PacketReadError.invalidIdentifier
+      throw PacketReaderError.invalidIdentifier
     }
   }
   
   mutating func readVarInt() -> Int {
-    return buf.readVarInt()
+    return buffer.readVarInt()
   }
   
   mutating func readVarLong() -> Int {
-    return buf.readVarLong()
+    return buffer.readVarLong()
   }
-  
-  // TODO_LATER: implement readEntityMetadata
   
   mutating func readItemStack() throws -> ItemStack {
     let present = readBool()
@@ -142,7 +144,7 @@ struct PacketReader {
           let nbt = try readNBTTag()
           itemStack = ItemStack(itemId: itemId, itemCount: itemCount, nbt: nbt)
         } catch {
-          throw PacketReadError.failedToReadSlotNBT
+          throw PacketReaderError.failedToReadSlotNBT
         }
       case false:
         itemStack = ItemStack()
@@ -150,14 +152,13 @@ struct PacketReader {
     return itemStack
   }
   
-  // in java edition nbt always contains a root compound
   mutating func readNBTTag() throws -> NBTCompound {
     do {
-      let compound = try NBTCompound(fromBuffer: buf)
-      buf.skip(nBytes: compound.numBytes)
+      let compound = try NBTCompound(fromBuffer: buffer)
+      buffer.skip(nBytes: compound.numBytes)
       return compound
     } catch {
-      throw PacketReadError.invalidNBT
+      throw PacketReaderError.invalidNBT
     }
   }
   
@@ -168,7 +169,7 @@ struct PacketReader {
   }
   
   mutating func readUUID() -> UUID {
-    let bytes = buf.readBytes(n: 16)
+    let bytes = buffer.readBytes(n: 16)
     var string = ""
     for byte in bytes {
       string += String(format: "%02X", byte)
@@ -177,19 +178,19 @@ struct PacketReader {
   }
   
   mutating func readByteArray(length: Int) -> [UInt8] {
-    return buf.readBytes(n: length)
+    return buffer.readBytes(n: length)
   }
   
   mutating func readJSON() throws -> JSON {
     let jsonString = readString()
     guard let json = try? JSON.fromString(jsonString) else {
-      throw PacketReadError.invalidJSON
+      throw PacketReaderError.invalidJSON
     }
     return json
   }
   
   mutating func readPosition() -> Position {
-    let val = buf.readLong(endian: .big)
+    let val = buffer.readLong(endian: .big)
     let x = Int(val >> 38)
     let y = Int(val & 0xfff)
     let z = Int((val << 26) >> 38)
@@ -221,4 +222,6 @@ struct PacketReader {
     let z = readShort()
     return EntityVelocity(x: x, y: y, z: z)
   }
+  
+  // TODO_LATER: implement readEntityMetadata
 }

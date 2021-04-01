@@ -88,7 +88,7 @@ struct ChunkData {
         let dataArrayLength = packetReader.readVarInt()
         var dataArray: [UInt64] = []
         for _ in 0..<dataArrayLength {
-          dataArray.append(UInt64(packetReader.buf.readLong(endian: .big)))
+          dataArray.append(UInt64(packetReader.buffer.readLong(endian: .big)))
         }
         
         var blocks: [UInt16] = [UInt16](repeating: 0, count: 4096)

@@ -78,10 +78,13 @@ class Server: Hashable {
     do {
       if let packetState = connection.state.toPacketState() {
         var reader = packetReader
+        reader.locale = managers.localeManager.currentLocale
+        
         guard let packetType = packetRegistry.getClientboundPacketType(withId: reader.packetId, andState: packetState) else {
           Logger.error("non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
           return
         }
+        
         let packet = try packetType.init(from: &reader)
         try packet.handle(for: self)
       }

@@ -63,7 +63,7 @@ class ServerConnection {
     networkStack.connect()
   }
   
-  func stop() {
+  func close() {
     networkStack.disconnect()
   }
   
