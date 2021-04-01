@@ -9,6 +9,7 @@
 - fast subsequent startups
 - rendering player's current chunk
   - can be moved around using ```tp``` commands from another player
+- possibly iOS support depending on how feasible that turns out being
 
 ### Todo
 
@@ -19,6 +20,7 @@
 - [ ] sign in screen on first launch
 - [ ] config screen for changing account details
 - [ ] remove need for minecraft to be already installed
+- [ ] investigate iOS support
 
 ## Demo 2
 
