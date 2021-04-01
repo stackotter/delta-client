@@ -12,11 +12,17 @@ Here's a list of the client's current numbers when run on my 2020 dual-core Inte
 
 - launch time: 0.7s avg
   - vanilla Minecraft takes around 40s to launch on my laptop on average (47x slower)
+- first launch time: 35s avg
+  - most of this time is downloading the assets from mojang. which means this time could vary significantly depending on how good your internet is (mine's bad)
+  - the rest of this time is mostly processing block model json files (the processed block models are cached for subsequent launches so this only needs to be done once)
 - ram usage on home screen: 40mb avg
   - about the same as Vanilla Minecraft currently
 - time taken to join server and have rendering: 1s
   - vanilla Minecraft is pretty random on this so it's hard to compare
   - and Delta Client currently only renders one chunk so it's a pretty unfair comparison anyway
+- app size: 12mb
+  - i currently only use two external libraries; Zip (for extracting assets from the client jar) and SwiftProtobuf (for caching)
+  - i may make my own fork of Zip to only include what i need but in comparison to SwiftProtobuf (which is pretty small anyway) it's tiny so it's probably not that worth it
 
 ## Features
 
