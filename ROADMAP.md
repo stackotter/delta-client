@@ -20,7 +20,6 @@
 - [ ] sign in screen on first launch
 - [ ] config screen for changing account details
 - [ ] remove need for minecraft to be already installed
-- [ ] investigate iOS support
 
 ## Demo 2
 
@@ -41,3 +40,15 @@
 - [ ] refactor chunk mesh preparation
 - [ ] optimise chunk mesh preparation (using c most likely)
 - [ ] basic multichunk rendering
+
+## Demo 3
+
+### Features
+
+- working iOS builds
+
+### Todo
+
+- [ ] add iOS build support to project
+- [ ] provide iOS specific code for NSViewRepresentable and stuff
+- [ ] fix any iOS specific bugs
