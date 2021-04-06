@@ -7,29 +7,10 @@
 
 import Foundation
 
-struct ServerDescriptor: Equatable, Hashable {
+struct ServerDescriptor: Equatable, Hashable, Codable {
   var name: String
   var host: String
   var port: UInt16
-  
-  init?(name: String, ip: String) {
-    self.name = name
-    
-    if let url = URL.init(string: "minecraft://\(ip)") {
-      if let host = url.host {
-        self.host = host
-        if let port = url.port {
-          self.port = UInt16(port)
-        } else {
-          self.port = 25565
-        }
-      } else {
-        return nil
-      }
-    } else {
-      return nil
-    }
-  }
   
   init(name: String, host: String, port: UInt16) {
     self.name = name

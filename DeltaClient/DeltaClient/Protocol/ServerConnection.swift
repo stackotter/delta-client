@@ -13,7 +13,7 @@ class ServerConnection {
   var host: String
   var port: UInt16
   
-  var managers: Managers
+  var eventManager: EventManager
   var packetRegistry: PacketRegistry
   var networkStack: NetworkStack
   
@@ -45,14 +45,14 @@ class ServerConnection {
   
   // Init
   
-  init(host: String, port: UInt16, managers: Managers) {
-    self.managers = managers
+  init(host: String, port: UInt16, eventManager: EventManager) {
+    self.eventManager = eventManager
     
     self.host = host
     self.port = port
     
     self.packetRegistry = PacketRegistry.createDefault()
-    self.networkStack = NetworkStack(host, port, eventManager: self.managers.eventManager)
+    self.networkStack = NetworkStack(host, port, eventManager: self.eventManager)
     
     self.state = .idle
   }
@@ -96,7 +96,7 @@ class ServerConnection {
   }
   
   func login(username: String) {
-    managers.eventManager.registerOneTimeEventHandler({ event in
+    eventManager.registerOneTimeEventHandler({ event in
       self.handshake(nextState: .login)
       
       let loginStart = LoginStartPacket(username: username)

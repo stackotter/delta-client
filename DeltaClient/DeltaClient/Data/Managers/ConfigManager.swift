@@ -1,0 +1,98 @@
+//
+//  ConfigManager.swift
+//  DeltaClient
+//
+//  Created by Rohan van Klinken on 14/12/20.
+//
+
+import Foundation
+import os
+
+enum ConfigError: LocalizedError {
+  case failedToWriteConfig(Error)
+}
+
+class ConfigManager {
+  var storageManager: StorageManager
+  var configFile: URL
+  var config: Config
+  
+  init(storageManager: StorageManager) throws {
+    self.storageManager = storageManager
+    self.configFile = self.storageManager.absoluteFromRelative("config.json")
+    if self.storageManager.fileExists(at: self.configFile) {
+      do {
+        let configJSON = try Data(contentsOf: self.configFile)
+        let decoder = JSONDecoder()
+        self.config = try decoder.decode(Config.self, from: configJSON)
+        return
+      } catch {
+        Logger.warning("failed to load existing config: \(error)")
+      }
+    }
+    
+    // fall through means that default config must be created
+    Logger.log("resetting config file to defaults")
+    try? storageManager.removeFile(configFile)
+    self.config = Config.createDefault()
+    
+    writeConfig()
+  }
+  
+  func writeConfig() {
+    do {
+      let encoder = JSONEncoder()
+      let data = try encoder.encode(config)
+      try data.write(to: configFile)
+    } catch {
+      Logger.error("failed to write config: \(error)")
+    }
+  }
+  
+  // Get
+  
+  func getHasLoggedIn() -> Bool {
+    return config.hasLoggedIn
+  }
+  
+  func getServerList() -> ServerList {
+    return ServerList(config.servers)
+  }
+  
+  func getSelectedProfile() -> MojangProfile? {
+    if let uuid = config.selectedProfile {
+      return config.profiles[uuid]
+    }
+    return nil
+  }
+  
+  func getSelectedAccount() -> MojangUser? {
+    return config.account
+  }
+  
+  func getClientToken() -> String {
+    return config.clientToken
+  }
+  
+  // Set
+  
+  func setUser(account: MojangUser, profiles: [MojangProfile], selectedProfile: String) {
+    config.account = account
+    for profile in profiles {
+      config.profiles[profile.id] = profile
+    }
+    config.selectedProfile = selectedProfile
+    config.hasLoggedIn = true
+    writeConfig()
+  }
+  
+  func setSelectedProfile(_ uuid: String) {
+    config.selectedProfile = uuid
+    writeConfig()
+  }
+  
+  func addServer(_ descriptor: ServerDescriptor) {
+    config.servers.append(descriptor)
+    writeConfig()
+  }
+}

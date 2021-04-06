@@ -10,7 +10,7 @@ import os
 
 class AccountManager {
   func test() {
-    MojangAPI.login("username", "password") { response in
+    MojangAPI.login(email: "test", password: "test", clientToken: "test") { response in
       Logger.log("successfully authenticated: \(response)")
     }
   }

@@ -86,7 +86,7 @@
 		7805238D261433A800079A01 /* WorldConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805226E261433A700079A01 /* WorldConfig.swift */; };
 		7805238E261433A800079A01 /* Chunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805226F261433A700079A01 /* Chunk.swift */; };
 		7805238F261433A800079A01 /* ChunkData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052270261433A700079A01 /* ChunkData.swift */; };
-		78052390261433A800079A01 /* PingInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052272261433A700079A01 /* PingInfo.swift */; };
+		78052390261433A800079A01 /* PingResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052272261433A700079A01 /* PingResult.swift */; };
 		78052391261433A800079A01 /* ServerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052273261433A700079A01 /* ServerList.swift */; };
 		78052392261433A800079A01 /* ServerPinger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052274261433A700079A01 /* ServerPinger.swift */; };
 		78052393261433A800079A01 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052275261433A700079A01 /* Server.swift */; };
@@ -313,7 +313,9 @@
 		789EB86326156F9500D8CFBB /* PingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB86226156F9500D8CFBB /* PingPacket.swift */; };
 		789EB8682615A9CB00D8CFBB /* Endian.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB8672615A9CB00D8CFBB /* Endian.swift */; };
 		789EB86D2615BD7400D8CFBB /* CompressionUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB86C2615BD7400D8CFBB /* CompressionUtil.swift */; };
+		78A11E47261CFFD70065FFDB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A11E46261CFFD70065FFDB /* LoginView.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
+		78F321AC261C877C00ED5FC5 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F321AB261C877C00ED5FC5 /* Config.swift */; };
 		78FD1F642614484300B74024 /* CacheFaceDirection.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5A2614484300B74024 /* CacheFaceDirection.pb.swift */; };
 		78FD1F662614484300B74024 /* CacheBlockModelElementFace.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5C2614484300B74024 /* CacheBlockModelElementFace.pb.swift */; };
 		78FD1F672614484300B74024 /* CacheBlockModelPalette.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5D2614484300B74024 /* CacheBlockModelPalette.pb.swift */; };
@@ -421,7 +423,7 @@
 		7805226E261433A700079A01 /* WorldConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorldConfig.swift; sourceTree = "<group>"; };
 		7805226F261433A700079A01 /* Chunk.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chunk.swift; sourceTree = "<group>"; };
 		78052270261433A700079A01 /* ChunkData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkData.swift; sourceTree = "<group>"; };
-		78052272261433A700079A01 /* PingInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PingInfo.swift; sourceTree = "<group>"; };
+		78052272261433A700079A01 /* PingResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PingResult.swift; sourceTree = "<group>"; };
 		78052273261433A700079A01 /* ServerList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerList.swift; sourceTree = "<group>"; };
 		78052274261433A700079A01 /* ServerPinger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerPinger.swift; sourceTree = "<group>"; };
 		78052275261433A700079A01 /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
@@ -653,6 +655,8 @@
 		789EB86226156F9500D8CFBB /* PingPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPacket.swift; sourceTree = "<group>"; };
 		789EB8672615A9CB00D8CFBB /* Endian.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endian.swift; sourceTree = "<group>"; };
 		789EB86C2615BD7400D8CFBB /* CompressionUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionUtil.swift; sourceTree = "<group>"; };
+		78A11E46261CFFD70065FFDB /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		78F321AB261C877C00ED5FC5 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		78FD1F5A2614484300B74024 /* CacheFaceDirection.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheFaceDirection.pb.swift; sourceTree = "<group>"; };
 		78FD1F5B2614484300B74024 /* CacheFaceDirection.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheFaceDirection.proto; sourceTree = "<group>"; };
 		78FD1F5C2614484300B74024 /* CacheBlockModelElementFace.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelElementFace.pb.swift; sourceTree = "<group>"; };
@@ -726,7 +730,6 @@
 				78052285261433A700079A01 /* Data */,
 				78052241261433A700079A01 /* Chat */,
 				78052222261433A700079A01 /* Registries */,
-				7805224E261433A700079A01 /* Datatypes */,
 				7805224A261433A700079A01 /* Util */,
 				78052279261433A700079A01 /* Client.swift */,
 				78052278261433A700079A01 /* StartupSequence.swift */,
@@ -884,7 +887,7 @@
 				78052293261433A700079A01 /* TabList.swift */,
 				78052273261433A700079A01 /* ServerList.swift */,
 				78052274261433A700079A01 /* ServerPinger.swift */,
-				78052272261433A700079A01 /* PingInfo.swift */,
+				78052272261433A700079A01 /* PingResult.swift */,
 			);
 			path = Server;
 			sourceTree = "<group>";
@@ -916,18 +919,12 @@
 		78052285261433A700079A01 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				78FD1F592614484300B74024 /* Protobuf */,
+				78F321A6261C873B00ED5FC5 /* Managers */,
+				7805224E261433A700079A01 /* Datatypes */,
+				78F321AA261C876400ED5FC5 /* Cache */,
 				7805228B261433A700079A01 /* Managers.swift */,
-				7805224B261433A700079A01 /* EventManager.swift */,
-				78052286261433A700079A01 /* StorageManager.swift */,
-				7810FA9E261C73A2002228E1 /* AccountManager.swift */,
-				78052287261433A700079A01 /* CacheManager.swift */,
-				7805228D261433A700079A01 /* BlockPaletteManager.swift */,
-				78052221261433A700079A01 /* ConfigManager.swift */,
-				7805228C261433A700079A01 /* AssetManager.swift */,
-				78052288261433A700079A01 /* LocaleManager.swift */,
-				78052289261433A700079A01 /* TextureManager.swift */,
 				7805228A261433A700079A01 /* MinecraftLocale.swift */,
+				78F321AB261C877C00ED5FC5 /* Config.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -952,6 +949,7 @@
 			children = (
 				780522A0261433A700079A01 /* AppView.swift */,
 				780522A1261433A700079A01 /* ViewState.swift */,
+				78A11E46261CFFD70065FFDB /* LoginView.swift */,
 				780522A2261433A700079A01 /* ServerDetailView.swift */,
 				780522A3261433A700079A01 /* ServerListView.swift */,
 				780522A4261433A700079A01 /* ServerListEntryView.swift */,
@@ -1325,6 +1323,30 @@
 			path = Layers;
 			sourceTree = "<group>";
 		};
+		78F321A6261C873B00ED5FC5 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				7805224B261433A700079A01 /* EventManager.swift */,
+				78052286261433A700079A01 /* StorageManager.swift */,
+				7810FA9E261C73A2002228E1 /* AccountManager.swift */,
+				78052287261433A700079A01 /* CacheManager.swift */,
+				7805228D261433A700079A01 /* BlockPaletteManager.swift */,
+				78052221261433A700079A01 /* ConfigManager.swift */,
+				7805228C261433A700079A01 /* AssetManager.swift */,
+				78052288261433A700079A01 /* LocaleManager.swift */,
+				78052289261433A700079A01 /* TextureManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		78F321AA261C876400ED5FC5 /* Cache */ = {
+			isa = PBXGroup;
+			children = (
+				78FD1F592614484300B74024 /* Protobuf */,
+			);
+			path = Cache;
+			sourceTree = "<group>";
+		};
 		78FD1F592614484300B74024 /* Protobuf */ = {
 			isa = PBXGroup;
 			children = (
@@ -1543,7 +1565,7 @@
 				78052375261433A800079A01 /* NBTCompound.swift in Sources */,
 				782F0CBE26143BB1008AE67B /* EntityProperties.swift in Sources */,
 				782F0C9B26143BB1008AE67B /* SetBeaconEffectPacket.swift in Sources */,
-				78052390261433A800079A01 /* PingInfo.swift in Sources */,
+				78052390261433A800079A01 /* PingResult.swift in Sources */,
 				78052377261433A800079A01 /* CardinalDirection.swift in Sources */,
 				782F0CA626143BB1008AE67B /* EntityHeadLookPacket.swift in Sources */,
 				7805235F261433A800079A01 /* TippedArrowRecipe.swift in Sources */,
@@ -1672,6 +1694,7 @@
 				7805236E261433A800079A01 /* ChatKeybindComponent.swift in Sources */,
 				782F0CB626143BB1008AE67B /* UnloadChunkPacket.swift in Sources */,
 				789EB85B26156F5F00D8CFBB /* PongPacket.swift in Sources */,
+				78A11E47261CFFD70065FFDB /* LoginView.swift in Sources */,
 				782F0CDC26143BB1008AE67B /* PlayerInfoPacket.swift in Sources */,
 				782F0C9026143BB1008AE67B /* RecipeBookDataPacket.swift in Sources */,
 				782F0CD026143BB1008AE67B /* RespawnPacket.swift in Sources */,
@@ -1752,6 +1775,7 @@
 				780523B7261433A800079A01 /* AppView.swift in Sources */,
 				782F0CC926143BB1008AE67B /* EntityEffectPacket.swift in Sources */,
 				782F0CF826143BB1008AE67B /* PluginMessagePacket.swift in Sources */,
+				78F321AC261C877C00ED5FC5 /* Config.swift in Sources */,
 				78052389261433A800079A01 /* BlockEntity.swift in Sources */,
 				782F0CD426143BB1008AE67B /* SetPassengersPacket.swift in Sources */,
 				782F0D3826144292008AE67B /* IntermediateBlockModelElement.swift in Sources */,

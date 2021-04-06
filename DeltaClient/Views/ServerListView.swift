@@ -17,10 +17,10 @@ struct ServerListView: View {
         Text("Servers")
           .font(.title)
         
-        let servers = serverList.servers
-        ForEach(servers, id:\.self) { server in
-          NavigationLink(destination: ServerDetailView(viewState: viewState, server: server)) {
-            ServerListEntryView(server: server)
+        let pingers = serverList.pingers
+        ForEach(pingers, id:\.self) { pinger in
+          NavigationLink(destination: ServerDetailView(viewState: viewState, pinger: pinger)) {
+            ServerListEntryView(pinger: pinger)
           }
         }
         

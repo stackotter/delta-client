@@ -107,9 +107,7 @@ class StorageManager {
     }
   }
   
-  func getMinecraftFolder() -> URL {
-    let applicationSupportDirectory = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-    let minecraftFolder = applicationSupportDirectory.appendingPathComponent("minecraft")
-    return minecraftFolder
+  func removeFile(_ url: URL) throws {
+    try fileManager.removeItem(at: url)
   }
 }

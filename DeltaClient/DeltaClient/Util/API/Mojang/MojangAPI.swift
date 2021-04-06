@@ -8,15 +8,14 @@
 import Foundation
 import os
 
-// TODO: load client token from config
 // TODO: handle errors in api response using status code (403)
 struct MojangAPI {
-  static func login(_ username: String, _ password: String, completion: @escaping (MojangAuthenticationResponse) -> ()){
+  static func login(email: String, password: String, clientToken: String, completion: @escaping (MojangAuthenticationResponse) -> ()){
     let requestObject = MojangAuthenticationRequest(
       agent: MojangAgent(),
-      username: username,
+      username: email,
       password: password,
-      clientToken: UUID().uuidString,
+      clientToken: clientToken,
       requestUser: true
     )
     
@@ -31,7 +30,7 @@ struct MojangAPI {
     
     RequestUtil.post(MojangAPIDefinition.AUTHENTICATION_URL, requestBody) { data, error in
       if error != nil {
-        Logger.error("failed to authenticate mojang account '\(username)', \(error!)")
+        Logger.error("failed to authenticate mojang account '\(email)', \(error!)")
       } else if let jsonData = data {
         do {
           let response = try JSONDecoder().decode(MojangAuthenticationResponse.self, from: jsonData)
@@ -40,7 +39,7 @@ struct MojangAPI {
           Logger.error("failed to parse mojang authentication response, \(error)")
         }
       } else {
-        Logger.error("failed to authenticate mojang account '\(username)', no response body")
+        Logger.error("failed to authenticate mojang account '\(email)', no response body")
       }
     }
   }

@@ -23,7 +23,7 @@ class StartupSequence {
     managers.cacheManager = try CacheManager(storageManager: managers.storageManager)
     
     displayProgress("reading config")
-    managers.configManager = ConfigManager(storageManager: managers.storageManager)
+    managers.configManager = try ConfigManager(storageManager: managers.storageManager)
     
     displayProgress(managers.storageManager.isFirstLaunch ? "downloading assets (first launch only)" : "loading assets")
     managers.assetManager = try AssetManager(storageManager: managers.storageManager)
@@ -37,8 +37,6 @@ class StartupSequence {
     displayProgress("loading locale \(LOCALE)")
     managers.localeManager = LocaleManager(assetManager: managers.assetManager)
     try managers.localeManager.setLocale(to: LOCALE)
-    
-    AccountManager().test()
     
     eventManager.triggerEvent(.loadingComplete(managers))
   }

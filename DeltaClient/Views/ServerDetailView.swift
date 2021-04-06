@@ -9,25 +9,25 @@ import SwiftUI
 
 struct ServerDetailView: View {
   @ObservedObject var viewState: ViewState<AppViewStateEnum>
-  @ObservedObject var server: ServerPinger
+  @ObservedObject var pinger: ServerPinger
   
   var body: some View {
     Spacer()
     
     VStack(alignment: .leading, spacing: 16) {
       VStack(alignment: .leading) {
-        Text(server.descriptor.name)
+        Text(pinger.descriptor.name)
           .font(.title)
           .bold()
-        Text("\(server.descriptor.host):\(String(server.descriptor.port))")
+        Text("\(pinger.descriptor.host):\(String(pinger.descriptor.port))")
           .font(.title2)
       }
       
       VStack(alignment: .leading) {
-        if (server.pingInfo != nil) {
-          let pingInfo = server.pingInfo!
-          Text("\(pingInfo.numPlayers)/\(pingInfo.maxPlayers) players")
-          Text("version: \(pingInfo.versionName)")
+        if (pinger.pingResult != nil) {
+          let pingResult = pinger.pingResult!
+          Text("\(pingResult.numPlayers)/\(pingResult.maxPlayers) players")
+          Text("version: \(pingResult.versionName)")
         } else {
           Text("Pinging..")
         }
@@ -35,20 +35,20 @@ struct ServerDetailView: View {
       
       HStack {
         Button(action: {
-          viewState.update(to: .playing(withRendering: false, serverDescriptor: server.descriptor))
+          viewState.update(to: .playing(withRendering: false, serverDescriptor: pinger.descriptor))
         }) {
           Text("Play Commands")
         }
         
         Button(action: {
-          viewState.update(to: .playing(withRendering: true, serverDescriptor: server.descriptor))
+          viewState.update(to: .playing(withRendering: true, serverDescriptor: pinger.descriptor))
         }) {
           Text("Play Render")
         }
       }
     }
     
-    if (server.pingInfo?.protocolVersion != PROTOCOL_VERSION) {
+    if (pinger.pingResult?.protocolVersion != PROTOCOL_VERSION) {
       VStack(alignment: .center)  {
         Text("warning: this server uses a different protocol to this client version")
       }

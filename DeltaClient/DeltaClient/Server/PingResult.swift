@@ -1,5 +1,5 @@
 //
-//  PingInfo.swift
+//  PingResult.swift
 //  DeltaClient
 //
 //  Created by Rohan van Klinken on 13/12/20.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PingInfo: Hashable {
+struct PingResult: Hashable {
   var versionName: String
   var protocolVersion: Int
   var maxPlayers: Int

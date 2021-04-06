@@ -9,28 +9,28 @@ import Foundation
 import os
 
 class ServerPinger: Hashable, ObservableObject {
-  @Published var pingInfo: PingInfo? = nil
+  @Published var pingResult: PingResult? = nil
   
-  var managers: Managers
+  var eventManager: EventManager
   var descriptor: ServerDescriptor
   var connection: ServerConnection
   var packetRegistry: PacketRegistry
   
   // Init
   
-  init(_ descriptor: ServerDescriptor, managers: Managers) {
-    self.managers = managers
+  init(_ descriptor: ServerDescriptor) {
+    self.eventManager = EventManager()
     self.descriptor = descriptor
     self.packetRegistry = PacketRegistry.createDefault()
-    self.connection = ServerConnection(host: descriptor.host, port: descriptor.port, managers: self.managers)
+    self.connection = ServerConnection(host: descriptor.host, port: descriptor.port, eventManager: self.eventManager)
     self.connection.setPacketHandler(handlePacket)
   }
   
   // Networking
   
   func ping() {
-    pingInfo = nil
-    managers.eventManager.registerOneTimeEventHandler({ event in
+    pingResult = nil
+    eventManager.registerOneTimeEventHandler({ event in
       self.connection.handshake(nextState: .status)
       
       let statusRequest = StatusRequestPacket()

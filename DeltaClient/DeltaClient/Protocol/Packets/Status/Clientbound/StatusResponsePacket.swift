@@ -30,11 +30,11 @@ struct StatusResponsePacket: ClientboundPacket {
       return
     }
     
-    let pingInfo = PingInfo(versionName: versionName, protocolVersion: protocolVersion, maxPlayers: maxPlayers, numPlayers: numPlayers, description: "Ping Complete", modInfo: "")
+    let pingResult = PingResult(versionName: versionName, protocolVersion: protocolVersion, maxPlayers: maxPlayers, numPlayers: numPlayers, description: "Ping Complete", modInfo: "")
     
     serverPinger.connection.close()
     DispatchQueue.main.sync {
-      serverPinger.pingInfo = pingInfo
+      serverPinger.pingResult = pingResult
     }
   }
 }

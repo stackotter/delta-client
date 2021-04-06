@@ -7,10 +7,9 @@
 
 import Foundation
 
-struct MojangAccount {
+struct MojangAccount: Codable {
   var id: String
-  var username: String
-  var accessToken: String
-  var uuid: String
   var email: String
+  var password: String
+  var accessToken: String
 }

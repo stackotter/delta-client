@@ -45,11 +45,12 @@ class Server: Hashable {
     self.managers = managers
     
     // TODO_LATER: use actual player name
-    self.player = Player(username: "stampy876")
+    let username = self.managers.configManager.getSelectedProfile()!.name
+    self.player = Player(username: username)
     
     self.config = ServerConfig.createDefault()
     self.packetRegistry = PacketRegistry.createDefault()
-    self.connection = ServerConnection(host: descriptor.host, port: descriptor.port, managers: self.managers)
+    self.connection = ServerConnection(host: descriptor.host, port: descriptor.port, eventManager: self.managers.eventManager)
     self.connection.setPacketHandler(handlePacket)
   }
   

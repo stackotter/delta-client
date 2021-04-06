@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MojangUser: Decodable {
+struct MojangUser: Codable {
   var id: String
   var username: String
 }
