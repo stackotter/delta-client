@@ -38,6 +38,8 @@ class StartupSequence {
     managers.localeManager = LocaleManager(assetManager: managers.assetManager)
     try managers.localeManager.setLocale(to: LOCALE)
     
+    AccountManager().test()
+    
     eventManager.triggerEvent(.loadingComplete(managers))
   }
   

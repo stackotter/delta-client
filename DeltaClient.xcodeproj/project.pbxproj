@@ -129,6 +129,16 @@
 		780523BC261433A800079A01 /* GameCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A5261433A700079A01 /* GameCommandView.swift */; };
 		780523BD261433A800079A01 /* GameRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A6261433A700079A01 /* GameRenderView.swift */; };
 		780523CF2614349200079A01 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 780523CE2614349200079A01 /* Preview Assets.xcassets */; };
+		7810FA72261C64BA002228E1 /* MojangAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA71261C64BA002228E1 /* MojangAccount.swift */; };
+		7810FA77261C6689002228E1 /* MojangAuthenticationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA76261C6689002228E1 /* MojangAuthenticationRequest.swift */; };
+		7810FA7C261C6807002228E1 /* MojangAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA7B261C6807002228E1 /* MojangAgent.swift */; };
+		7810FA81261C6967002228E1 /* RequestUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA80261C6967002228E1 /* RequestUtil.swift */; };
+		7810FA86261C6D5A002228E1 /* RequestMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA85261C6D5A002228E1 /* RequestMethod.swift */; };
+		7810FA8B261C6E92002228E1 /* MojangAPIDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA8A261C6E92002228E1 /* MojangAPIDefinition.swift */; };
+		7810FA90261C6FFB002228E1 /* MojangAuthenticationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA8F261C6FFB002228E1 /* MojangAuthenticationResponse.swift */; };
+		7810FA95261C71AC002228E1 /* MojangUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA94261C71AC002228E1 /* MojangUser.swift */; };
+		7810FA9A261C71FF002228E1 /* MojangProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA99261C71FF002228E1 /* MojangProfile.swift */; };
+		7810FA9F261C73A2002228E1 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA9E261C73A2002228E1 /* AccountManager.swift */; };
 		782F0C6726143BB1008AE67B /* PacketRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC126143BB0008AE67B /* PacketRegistry.swift */; };
 		782F0C6826143BB1008AE67B /* ClientboundPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC226143BB0008AE67B /* ClientboundPacket.swift */; };
 		782F0C6926143BB1008AE67B /* PacketWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0BC326143BB0008AE67B /* PacketWriter.swift */; };
@@ -287,6 +297,7 @@
 		782F0D3326144254008AE67B /* IntermediateBlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0D3226144254008AE67B /* IntermediateBlockModel.swift */; };
 		782F0D3826144292008AE67B /* IntermediateBlockModelElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0D3726144292008AE67B /* IntermediateBlockModelElement.swift */; };
 		782F0D3D261442AE008AE67B /* IntermediateBlockModelElementFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F0D3C261442AE008AE67B /* IntermediateBlockModelElementFace.swift */; };
+		785F3129261C5A88001631F0 /* MojangAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785F3128261C5A88001631F0 /* MojangAPI.swift */; };
 		7875204E261499B000782575 /* OutermostNetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7875204D261499B000782575 /* OutermostNetworkLayer.swift */; };
 		7875205926151CA900782575 /* OutboundNetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7875205826151CA900782575 /* OutboundNetworkLayer.swift */; };
 		7875205E26151CE000782575 /* InboundNetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7875205D26151CE000782575 /* InboundNetworkLayer.swift */; };
@@ -457,6 +468,16 @@
 		780522A9261433A700079A01 /* DeltaClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeltaClientTests.swift; sourceTree = "<group>"; };
 		780522AA261433A700079A01 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		780523CE2614349200079A01 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		7810FA71261C64BA002228E1 /* MojangAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangAccount.swift; sourceTree = "<group>"; };
+		7810FA76261C6689002228E1 /* MojangAuthenticationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangAuthenticationRequest.swift; sourceTree = "<group>"; };
+		7810FA7B261C6807002228E1 /* MojangAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangAgent.swift; sourceTree = "<group>"; };
+		7810FA80261C6967002228E1 /* RequestUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestUtil.swift; sourceTree = "<group>"; };
+		7810FA85261C6D5A002228E1 /* RequestMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestMethod.swift; sourceTree = "<group>"; };
+		7810FA8A261C6E92002228E1 /* MojangAPIDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangAPIDefinition.swift; sourceTree = "<group>"; };
+		7810FA8F261C6FFB002228E1 /* MojangAuthenticationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangAuthenticationResponse.swift; sourceTree = "<group>"; };
+		7810FA94261C71AC002228E1 /* MojangUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangUser.swift; sourceTree = "<group>"; };
+		7810FA99261C71FF002228E1 /* MojangProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangProfile.swift; sourceTree = "<group>"; };
+		7810FA9E261C73A2002228E1 /* AccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManager.swift; sourceTree = "<group>"; };
 		782F0BC126143BB0008AE67B /* PacketRegistry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketRegistry.swift; sourceTree = "<group>"; };
 		782F0BC226143BB0008AE67B /* ClientboundPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientboundPacket.swift; sourceTree = "<group>"; };
 		782F0BC326143BB0008AE67B /* PacketWriter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PacketWriter.swift; sourceTree = "<group>"; };
@@ -618,6 +639,7 @@
 		784194B7258204CD0070DE78 /* DeltaClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194C9258204D10070DE78 /* DeltaClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D4258204D10070DE78 /* DeltaClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		785F3128261C5A88001631F0 /* MojangAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangAPI.swift; sourceTree = "<group>"; };
 		7875204D261499B000782575 /* OutermostNetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutermostNetworkLayer.swift; sourceTree = "<group>"; };
 		7875205826151CA900782575 /* OutboundNetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutboundNetworkLayer.swift; sourceTree = "<group>"; };
 		7875205D26151CE000782575 /* InboundNetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboundNetworkLayer.swift; sourceTree = "<group>"; };
@@ -782,12 +804,15 @@
 		7805224A261433A700079A01 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				785F3126261C5A1E001631F0 /* API */,
 				78052261261433A700079A01 /* C */,
 				7805224D261433A700079A01 /* Logger.swift */,
 				7805225E261433A700079A01 /* Profiler.swift */,
 				7805225F261433A700079A01 /* Stopwatch.swift */,
 				78052260261433A700079A01 /* MatrixUtil.swift */,
 				789EB86C2615BD7400D8CFBB /* CompressionUtil.swift */,
+				7810FA80261C6967002228E1 /* RequestUtil.swift */,
+				7810FA85261C6D5A002228E1 /* RequestMethod.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -895,6 +920,7 @@
 				7805228B261433A700079A01 /* Managers.swift */,
 				7805224B261433A700079A01 /* EventManager.swift */,
 				78052286261433A700079A01 /* StorageManager.swift */,
+				7810FA9E261C73A2002228E1 /* AccountManager.swift */,
 				78052287261433A700079A01 /* CacheManager.swift */,
 				7805228D261433A700079A01 /* BlockPaletteManager.swift */,
 				78052221261433A700079A01 /* ConfigManager.swift */,
@@ -1250,6 +1276,29 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		785F3126261C5A1E001631F0 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				785F3127261C5A4B001631F0 /* Mojang */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		785F3127261C5A4B001631F0 /* Mojang */ = {
+			isa = PBXGroup;
+			children = (
+				785F3128261C5A88001631F0 /* MojangAPI.swift */,
+				7810FA8A261C6E92002228E1 /* MojangAPIDefinition.swift */,
+				7810FA71261C64BA002228E1 /* MojangAccount.swift */,
+				7810FA76261C6689002228E1 /* MojangAuthenticationRequest.swift */,
+				7810FA8F261C6FFB002228E1 /* MojangAuthenticationResponse.swift */,
+				7810FA99261C71FF002228E1 /* MojangProfile.swift */,
+				7810FA94261C71AC002228E1 /* MojangUser.swift */,
+				7810FA7B261C6807002228E1 /* MojangAgent.swift */,
+			);
+			path = Mojang;
+			sourceTree = "<group>";
+		};
 		7875207326152D5400782575 /* Stack */ = {
 			isa = PBXGroup;
 			children = (
@@ -1465,11 +1514,14 @@
 				782F0C7126143BB1008AE67B /* UpdateJigsawBlockPacket.swift in Sources */,
 				782F0C8C26143BB1008AE67B /* AdvancementTabPacket.swift in Sources */,
 				7805239C261433A800079A01 /* RenderCoordinator.swift in Sources */,
+				7810FA86261C6D5A002228E1 /* RequestMethod.swift in Sources */,
 				780523B8261433A800079A01 /* ViewState.swift in Sources */,
 				78052376261433A800079A01 /* Gamemode.swift in Sources */,
 				782F0C9F26143BB1008AE67B /* TradeListPacket.swift in Sources */,
+				7810FA81261C6967002228E1 /* RequestUtil.swift in Sources */,
 				782F0CA826143BB1008AE67B /* OpenWindowPacket.swift in Sources */,
 				78052371261433A800079A01 /* Buffer.swift in Sources */,
+				785F3129261C5A88001631F0 /* MojangAPI.swift in Sources */,
 				789EB85126156DB500D8CFBB /* EncryptionResponse.swift in Sources */,
 				780523B2261433A800079A01 /* PlayerAbilities.swift in Sources */,
 				78052386261433A800079A01 /* EntityVelocity.swift in Sources */,
@@ -1507,6 +1559,7 @@
 				7805239E261433A800079A01 /* shaders.metal in Sources */,
 				782F0C8826143BB1008AE67B /* PickItemPacket.swift in Sources */,
 				780523B1261433A800079A01 /* PlayerRotation.swift in Sources */,
+				7810FA72261C64BA002228E1 /* MojangAccount.swift in Sources */,
 				782F0C8F26143BB1008AE67B /* PlayerMovementPacket.swift in Sources */,
 				782F0C8A26143BB1008AE67B /* CreativeInventoryActionPacket.swift in Sources */,
 				782F0CF426143BB1008AE67B /* UpdateScorePacket.swift in Sources */,
@@ -1547,11 +1600,13 @@
 				782F0CA926143BB1008AE67B /* PlayerAbilitiesPacket.swift in Sources */,
 				782F0CD326143BB1008AE67B /* TitlePacket.swift in Sources */,
 				7803E44126148EDA00A200E2 /* PacketLayer.swift in Sources */,
+				7810FA9A261C71FF002228E1 /* MojangProfile.swift in Sources */,
 				782F0CAB26143BB1008AE67B /* UpdateViewPositionPacket.swift in Sources */,
 				7805235B261433A800079A01 /* FireworkStarRecipe.swift in Sources */,
 				782F0CB926143BB1008AE67B /* WindowPropertyPacket.swift in Sources */,
 				7805235A261433A800079A01 /* BookCloningRecipe.swift in Sources */,
 				7805236A261433A800079A01 /* File.swift in Sources */,
+				7810FA7C261C6807002228E1 /* MojangAgent.swift in Sources */,
 				78052355261433A800079A01 /* MapCloningRecipe.swift in Sources */,
 				782F0CEE26143BB1008AE67B /* CombatEventPacket.swift in Sources */,
 				782F0C7026143BB1008AE67B /* NameItemPacket.swift in Sources */,
@@ -1622,6 +1677,7 @@
 				782F0CD026143BB1008AE67B /* RespawnPacket.swift in Sources */,
 				782F0C7926143BB1008AE67B /* AnimationServerboundPacket.swift in Sources */,
 				7805235E261433A800079A01 /* SpecialRecipe.swift in Sources */,
+				7810FA9F261C73A2002228E1 /* AccountManager.swift in Sources */,
 				782F0C9426143BB1008AE67B /* PlayerPositionAndRotationServerboundPacket.swift in Sources */,
 				780523AF261433A800079A01 /* Hand.swift in Sources */,
 				78052350261433A800079A01 /* SmeltingRecipe.swift in Sources */,
@@ -1643,6 +1699,7 @@
 				782F0C8426143BB1008AE67B /* VehicleMoveServerboundPacket.swift in Sources */,
 				782F0CE726143BB1008AE67B /* ChangeGameStatePacket.swift in Sources */,
 				782F0CFE26143BB1008AE67B /* PacketReader.swift in Sources */,
+				7810FA8B261C6E92002228E1 /* MojangAPIDefinition.swift in Sources */,
 				782F0C8926143BB1008AE67B /* SetDifficultyPacket.swift in Sources */,
 				78052380261433A800079A01 /* Identifier.swift in Sources */,
 				782F0C8B26143BB1008AE67B /* WindowConfirmationServerboundPacket.swift in Sources */,
@@ -1685,6 +1742,7 @@
 				782F0CFB26143BB1008AE67B /* LoginStartPacket.swift in Sources */,
 				78052370261433A800079A01 /* EventManager.swift in Sources */,
 				782F0CAC26143BB1008AE67B /* NBTQueryResponse.swift in Sources */,
+				7810FA95261C71AC002228E1 /* MojangUser.swift in Sources */,
 				78FD1F642614484300B74024 /* CacheFaceDirection.pb.swift in Sources */,
 				7805236D261433A800079A01 /* ChatStyle.swift in Sources */,
 				7805234D261433A800079A01 /* CraftingShapeless.swift in Sources */,
@@ -1703,6 +1761,7 @@
 				7805234F261433A800079A01 /* Item.swift in Sources */,
 				782F0CA326143BB1008AE67B /* MultiBlockChangePacket.swift in Sources */,
 				782F0CCC26143BB1008AE67B /* EntityRotationPacket.swift in Sources */,
+				7810FA90261C6FFB002228E1 /* MojangAuthenticationResponse.swift in Sources */,
 				78052387261433A800079A01 /* EntityPosition.swift in Sources */,
 				782F0CB726143BB1008AE67B /* EffectPacket.swift in Sources */,
 				782F0C7B26143BB1008AE67B /* LockDifficultyPacket.swift in Sources */,
@@ -1711,6 +1770,7 @@
 				782F0C6726143BB1008AE67B /* PacketRegistry.swift in Sources */,
 				782F0CCB26143BB1008AE67B /* OpenSignEditorPacket.swift in Sources */,
 				782F0C8126143BB1008AE67B /* QueryBlockNBTPacket.swift in Sources */,
+				7810FA77261C6689002228E1 /* MojangAuthenticationRequest.swift in Sources */,
 				782F0CE426143BB1008AE67B /* EntityAnimationPacket.swift in Sources */,
 				782F0CF926143BB1008AE67B /* StopSoundPacket.swift in Sources */,
 				782F0C9C26143BB1008AE67B /* KeepAliveServerboundPacket.swift in Sources */,

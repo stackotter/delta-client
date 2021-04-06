@@ -4,6 +4,8 @@
   - [x] Initial refactor
   - [x] Compression layer
   - [ ] Encryption layer
+- [ ] mojang api
+- [ ] create protocol definition file
 
 ## Config
 
@@ -44,8 +46,10 @@
 - [ ] split translucent blocks into separate file
 - [ ] split transparent and translucent blocks into separate meshes
 
-## Generalß
+## General
 
 - [x] improve error handling in networking
 - [ ] use swifts fancy json instead of mine
+- [ ] clean up json
 - [x] rename project to not include word minecraft
+- [ ] fix folder structure a little (not just delta-client/DeltaClient/DeltaClient to get to any code)
