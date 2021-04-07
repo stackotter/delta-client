@@ -12,10 +12,10 @@ enum ConfigError: LocalizedError {
   case failedToWriteConfig(Error)
 }
 
-class ConfigManager {
+class ConfigManager: ObservableObject {
   var storageManager: StorageManager
   var configFile: URL
-  var config: Config
+  @Published var config: Config
   
   init(storageManager: StorageManager) throws {
     self.storageManager = storageManager
@@ -59,6 +59,14 @@ class ConfigManager {
     return ServerList(config.servers)
   }
   
+  func getServers() -> [ServerDescriptor] {
+    return config.servers
+  }
+  
+  func getServer(at index: Int) -> ServerDescriptor {
+    return config.servers[index]
+  }
+  
   func getSelectedProfile() -> MojangProfile? {
     if let uuid = config.selectedProfile {
       return config.profiles[uuid]
@@ -93,6 +101,11 @@ class ConfigManager {
   
   func addServer(_ descriptor: ServerDescriptor) {
     config.servers.append(descriptor)
+    writeConfig()
+  }
+  
+  func removeServer(at index: Int) {
+    config.servers.remove(at: index)
     writeConfig()
   }
 }

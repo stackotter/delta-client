@@ -8,12 +8,10 @@
 import SwiftUI
 
 struct ServerDetailView: View {
-  @ObservedObject var viewState: ViewState<AppViewStateEnum>
+  var viewState: ViewState<AppViewState>
   @ObservedObject var pinger: ServerPinger
   
   var body: some View {
-    Spacer()
-    
     VStack(alignment: .leading, spacing: 16) {
       VStack(alignment: .leading) {
         Text(pinger.descriptor.name)
@@ -23,37 +21,30 @@ struct ServerDetailView: View {
           .font(.title2)
       }
       
-      VStack(alignment: .leading) {
-        if (pinger.pingResult != nil) {
-          let pingResult = pinger.pingResult!
+      if let pingResult = pinger.pingResult {
+        VStack(alignment: .leading) {
           Text("\(pingResult.numPlayers)/\(pingResult.maxPlayers) players")
           Text("version: \(pingResult.versionName)")
-        } else {
-          Text("Pinging..")
-        }
-      }
-      
-      HStack {
-        Button(action: {
-          viewState.update(to: .playing(withRendering: false, serverDescriptor: pinger.descriptor))
-        }) {
-          Text("Play Commands")
         }
         
-        Button(action: {
-          viewState.update(to: .playing(withRendering: true, serverDescriptor: pinger.descriptor))
-        }) {
-          Text("Play Render")
+        if (pingResult.protocolVersion != PROTOCOL_VERSION) {
+          VStack(alignment: .center)  {
+            Text("unsupported protocol version")
+          }
         }
+        
+        HStack {
+          Button("play commands") {
+            viewState.update(to: .playing(withRendering: false, serverDescriptor: pinger.descriptor))
+          }
+          Button("play render") {
+            viewState.update(to: .playing(withRendering: true, serverDescriptor: pinger.descriptor))
+          }
+        }
+      } else {
+        Text("pinging..")
       }
     }
-    
-    if (pinger.pingResult?.protocolVersion != PROTOCOL_VERSION) {
-      VStack(alignment: .center)  {
-        Text("warning: this server uses a different protocol to this client version")
-      }
-    }
-    
-    Spacer()
+    .frame(width: 200)
   }
 }

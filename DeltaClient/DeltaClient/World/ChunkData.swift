@@ -78,7 +78,7 @@ struct ChunkData {
         let bitsPerBlock = packetReader.readUnsignedByte()
         
         var palette: [UInt16] = []
-        if bitsPerBlock <= 8 { // use indirect packet (otherwise indirect packet)
+        if bitsPerBlock <= 8 { // use indirect palette (otherwise direct palette)
           let paletteLength = packetReader.readVarInt()
           for _ in 0..<paletteLength {
             palette.append(UInt16(packetReader.readVarInt()))

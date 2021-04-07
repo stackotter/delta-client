@@ -8,18 +8,36 @@
 import SwiftUI
 
 struct LoginView: View {
-  var callback: (_ email: String, _ password: String) -> ()
+  var configManager: ConfigManager
+  var viewState: ViewState<AppViewState>
   
   @State var email: String = ""
   @State var password: String = ""
   
+  func login() {
+    let clientToken = configManager.getClientToken()
+    MojangAPI.login(email: email, password: password, clientToken: clientToken, completion: { response in
+      configManager.setUser(
+        account: response.user,
+        profiles: response.availableProfiles,
+        selectedProfile: response.selectedProfile.id
+      )
+      viewState.update(to: .serverList)
+    })
+  }
+  
   var body: some View {
-    VStack(alignment: .center, spacing: 16) {
+    VStack(alignment: .leading, spacing: 16) {
       TextField("email", text: $email)
       SecureField("password", text: $password)
       Button("login") {
-        callback(email, password)
+        login()
       }
-    }.frame(width: 300, height: nil, alignment: .center)
+    }
+    .frame(width: 200)
+    .navigationTitle("Login")
+    .toolbar {
+      Text("")
+    }
   }
 }

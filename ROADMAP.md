@@ -16,10 +16,10 @@
 - [x] refactor networking
 - [x] add compression support
 - [ ] add encryption support
-- [ ] basic config system
-- [ ] sign in screen on first launch
+- [x] basic config system
+- [x] sign in screen on first launch
 - [ ] config screen for changing account details
-- [ ] remove need for minecraft to be already installed
+- [x] remove need for minecraft to be already installed
 
 ## Demo 2
 

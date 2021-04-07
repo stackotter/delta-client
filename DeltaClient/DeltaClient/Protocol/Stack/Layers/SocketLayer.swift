@@ -109,7 +109,7 @@ class SocketLayer: OutermostNetworkLayer {
     if error == NWError.posix(.ECONNREFUSED) {
       Logger.error("connection refused: '\(self.host):\(self.port)'")
     } else if error == NWError.dns(-65554) {
-      Logger.error("server at '\(self.host):\(self.port)' is not yet supported as it uses SRV records")
+      Logger.error("server at '\(self.host):\(self.port)' possibly uses SRV records (unsupported)")
     }
   }
 }

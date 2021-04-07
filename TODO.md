@@ -1,3 +1,7 @@
+## UI
+
+- [ ] fix refresh button looking like it's disabled after clicking
+
 ## Networking
 
 - [x] Refactor networking into a network stack
@@ -9,8 +13,9 @@
 
 ## Config
 
-- [ ] Basic config system
-- [ ] Remove dependence on vanilla minecraft installation being present
+- [x] Basic config system
+- [x] Remove dependence on vanilla minecraft installation being present
+- [ ] prettify config json
 
 ## Startup
 

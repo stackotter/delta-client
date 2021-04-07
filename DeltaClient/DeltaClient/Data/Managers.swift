@@ -10,8 +10,8 @@ import Foundation
 struct Managers {
   var eventManager: EventManager
   var storageManager: StorageManager!
-  var cacheManager: CacheManager!
   var configManager: ConfigManager!
+  var cacheManager: CacheManager!
   var assetManager: AssetManager!
   var textureManager: TextureManager!
   var blockPaletteManager: BlockPaletteManager!

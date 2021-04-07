@@ -22,9 +22,7 @@ struct Config: Codable {
       account: nil,
       selectedProfile: nil,
       profiles: [:],
-      servers: [
-        ServerDescriptor(name: "hypixel", host: "play.hypixel.net", port: 25565)
-      ]
+      servers: []
     )
   }
 }

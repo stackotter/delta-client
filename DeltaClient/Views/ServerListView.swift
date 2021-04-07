@@ -8,33 +8,44 @@
 import SwiftUI
 
 struct ServerListView: View {
-  @ObservedObject var viewState: ViewState<AppViewStateEnum>
-  @ObservedObject var serverList: ServerList
+  @ObservedObject var configManager: ConfigManager
+  var viewState: ViewState<AppViewState>
   
   var body: some View {
+    let serverList = configManager.getServerList()
     NavigationView {
       List {
-        Text("Servers")
-          .font(.title)
-        
         let pingers = serverList.pingers
-        ForEach(pingers, id:\.self) { pinger in
-          NavigationLink(destination: ServerDetailView(viewState: viewState, pinger: pinger)) {
-            ServerListEntryView(pinger: pinger)
+        if pingers.count != 0 {
+          ForEach(pingers, id:\.self) { pinger in
+            NavigationLink(
+              destination: ServerDetailView(
+                viewState: viewState,
+                pinger: pinger
+              )
+            ) {
+              ServerListEntryView(pinger: pinger)
+            }
           }
-        }
-        
-        Spacer()
-        Button(action: {
-          serverList.refresh()
-        }) {
-          Text("Refresh")
+        } else {
+          Text("no servers")
+            .italic()
         }
       }
       .listStyle(SidebarListStyle())
     }
     .navigationViewStyle(DoubleColumnNavigationViewStyle())
+    .navigationTitle("Server List")
+    .toolbar(content: {
+      Button("edit") {
+        viewState.update(to: .editServerList)
+      }
+      Button("add") {
+        viewState.update(to: .addServer(previousState: .serverList))
+      }
+      Button("refresh") {
+        serverList.refresh()
+      }
+    })
   }
 }
-
-

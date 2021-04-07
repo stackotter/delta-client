@@ -7,14 +7,17 @@
 
 import SwiftUI
 
-enum AppViewStateEnum {
-  case playing(withRendering: Bool, serverDescriptor: ServerDescriptor)
-  case serverList(serverList: ServerList)
+enum AppViewState {
   case login
+  case serverList
+  case editServerList
+  case addServer(previousState: AddServerPreviousState)
+  case editServer(_ index: Int)
+  case playing(withRendering: Bool, serverDescriptor: ServerDescriptor)
 }
 
 struct AppView: View {
-  @ObservedObject var state: ViewState<AppViewStateEnum>
+  @ObservedObject var state: ViewState<AppViewState>
   var managers: Managers
   
   init(managers: Managers) {
@@ -23,38 +26,30 @@ struct AppView: View {
     let serverList = self.managers.configManager.getServerList()
     serverList.refresh()
     if self.managers.configManager.getHasLoggedIn() {
-      self.state = ViewState(initialState: .serverList(serverList: serverList))
+      self.state = ViewState(initialState: .serverList)
     } else {
       self.state = ViewState(initialState: .login)
     }
   }
   
-  func login(_ email: String, _ password: String) {
-    let clientToken = managers.configManager.getClientToken()
-    MojangAPI.login(email: email, password: password, clientToken: clientToken, completion: { response in
-      managers.configManager.setUser(
-        account: response.user,
-        profiles: response.availableProfiles,
-        selectedProfile: response.selectedProfile.id
-      )
-      DispatchQueue.main.sync {
-        self.state.update(to: .serverList(serverList: managers.configManager.getServerList()))
-      }
-    })
-  }
-  
   var body: some View {
     switch state.state {
       case .login:
-        LoginView(callback: login)
+        LoginView(configManager: managers.configManager, viewState: state)
+      case .serverList:
+        ServerListView(configManager: managers.configManager, viewState: state)
+      case .editServerList:
+        EditServerListView(configManager: managers.configManager, viewState: state)
+      case .addServer(let previousState):
+        AddServerView(configManager: managers.configManager, viewState: state, previousState: previousState)
+      case .editServer(let index):
+        EditServerView(configManager: managers.configManager, viewState: state, serverIndex: index)
       case .playing(let withRendering, let serverDescriptor):
         if withRendering {
           GameRenderView(serverDescriptor: serverDescriptor, managers: managers)
         } else {
           GameCommandView(serverDescriptor: serverDescriptor, managers: managers)
         }
-      case .serverList(let serverList):
-        ServerListView(viewState: state, serverList: serverList)
     }
   }
 }
