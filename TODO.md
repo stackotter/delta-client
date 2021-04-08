@@ -62,6 +62,7 @@
 
 - [x] improve error handling in networking
 - [ ] use swifts fancy json instead of mine
-- [ ] clean up json
+- [ ] clean up json reader/writer
 - [x] rename project to not include word minecraft
 - [ ] fix folder structure a little (not just delta-client/DeltaClient/DeltaClient to get to any code)
+- [ ] fix leave server's ram issue

@@ -4,23 +4,25 @@
 
 Delta Client is an open source rewrite of Minecraft Java Edition written in Swift (and a bit of C for performance).
 
-Eventually the project may be ported to iOS and iPadOS and maybe AppleTV to allow playing on Java Edition on platforms normally limited to Bedrock Edition 
+In the future the project will support iOS and iPadOS and maybe AppleTV to allow playing on Java Edition on platforms normally limited to Bedrock Edition.
+
+The focus of this project is to provide a significantly more performant Minecraft Java Edition compatible client for macOS (and one at all for iOS).
 
 ## Metrics
 
 Here's a list of the client's current numbers when run on my 2020 dual-core Intel i5 MacBook Air with 8gb of ram;
 
-- launch time: 0.7s avg
-  - vanilla Minecraft takes around 40s to launch on my laptop on average (47x slower)
+- launch time: 0.85s avg
+  - vanilla minecraft: 40s (47x slower)
 - first launch time: 35s avg
-  - most of this time is downloading the assets from mojang. which means this time could vary significantly depending on how good your internet is (mine's bad)
-  - the rest of this time is mostly processing block model json files (the processed block models are cached for subsequent launches so this only needs to be done once)
+  - highly dependent on internet speed
 - ram usage on home screen: 40mb avg
-  - about the same as Vanilla Minecraft currently
-- time taken to join server and have rendering: 1s
-  - vanilla Minecraft is pretty random on this so it's hard to compare
-  - and Delta Client currently only renders one chunk so it's a pretty unfair comparison anyway
-- app size: 12mb
+  - about the same as vanilla minecraft
+- ram usage in game: just under 100mb
+- time taken to join server: 1s
+  - vanilla minecraft takes around 2-3s
+  - Delta Client currently only renders one chunk so it's a pretty unfair comparison anyway
+- app size: 14.5mb
   - i currently only use two external libraries; Zip (for extracting assets from the client jar) and SwiftProtobuf (for caching)
   - i may make my own fork of Zip to only include what i need but in comparison to SwiftProtobuf (which is pretty small anyway) it's tiny so it's probably not that worth it
 
@@ -29,11 +31,11 @@ Here's a list of the client's current numbers when run on my 2020 dual-core Inte
 - [ ] Networking
   - [x] Basic networking
   - [x] Server list ping
-  - [ ] Encryption (for non-offline mode servers)
-    - [ ] Mojang accounts
+  - [x] Encryption (for non-offline mode servers)
+    - [x] Mojang accounts
     - [ ] Microsoft accounts
   - [ ] LAN servers
-- [ ] Basic config system
+- [x] Basic config system
 - [ ] Command-based interface
   - [x] Basic structure
   - [x] Chat command
@@ -87,6 +89,8 @@ These are NOT commands in the traditional minecraft sense (e.g. ```/kill``` and 
 
 More commands will probably be added later.
 
+Actually, I might just disable these soon, they're pretty useless.
+
 #### Current Commands
 
 - ```say [message]```
@@ -102,11 +106,11 @@ More commands will probably be added later.
 
 #### Server list
 
-![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/hypixel.png?raw=true)
+![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/server-list.png?raw=true)
 
-#### Playing server with commands
+#### Edit Server List
 
-![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/play-screen.png?raw=true)
+![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/edit-server-list.png?raw=true)
 
 #### Current rendering
 

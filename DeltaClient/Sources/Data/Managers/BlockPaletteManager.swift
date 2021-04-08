@@ -71,7 +71,7 @@ class BlockPaletteManager {
       }
       
       guard let states = blockJSON.getJSON(forKey: "states")?.dict as? [String: [String: Any]] else {
-        Logger.error("invalid pixlyzer json format")
+        Logger.error("invalid pixlyzer json format for \(blockName)")
         throw BlockPaletteError.invalidPixlyzerData
       }
       
@@ -110,7 +110,8 @@ class BlockPaletteManager {
               Logger.error("failed to load model for \(modelIdentifierString!): \(error)")
             }
           } else {
-            Logger.error("failed to find model identifier for state \(stateId) on block \(blockName)")
+            // TODO: multipart structures
+//            Logger.error("failed to find model identifier for state \(stateId) on block \(blockName)")
           }
         } else {
           Logger.error("invalid state id: \(stateIdString)")
