@@ -45,8 +45,7 @@ class Server: Hashable {
     self.managers = managers
     
     // TODO_LATER: use actual player name
-    var username = self.managers.configManager.getSelectedProfile()!.name
-    username = "stampy876"
+    let username = self.managers.configManager.getSelectedProfile()!.name
     self.player = Player(username: username)
     
     self.config = ServerConfig.createDefault()
