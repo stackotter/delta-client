@@ -8,6 +8,8 @@ In the future the project will support iOS and iPadOS and maybe AppleTV to allow
 
 The focus of this project is to provide a significantly more performant Minecraft Java Edition compatible client for macOS (and one at all for iOS).
 
+NOTE: I am NOT responsible for anti-cheat bans, the client has not been thoroughly tested yet and is still deep in development.
+
 ## Metrics
 
 Here's a list of the client's current numbers when run on my 2020 dual-core Intel i5 MacBook Air with 8gb of ram;
