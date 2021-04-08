@@ -10,6 +10,11 @@ The focus of this project is to provide a significantly more performant Minecraf
 
 NOTE: I am NOT responsible for anti-cheat bans, the client has not been thoroughly tested yet and is still deep in development.
 
+## Minecraft version support
+
+- [ ] 1.8.9 (will come once 1.16.1 is pretty polished)
+- [x] 1.16.1
+
 ## Metrics
 
 Here's a list of the client's current numbers when run on my 2020 dual-core Intel i5 MacBook Air with 8gb of ram;
