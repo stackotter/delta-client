@@ -2,6 +2,24 @@
   "object": {
     "pins": [
       {
+        "package": "ASN1Decoder",
+        "repositoryURL": "https://github.com/filom/ASN1Decoder",
+        "state": {
+          "branch": null,
+          "revision": "3d472cf1b906bd3478378a10959f11751d9bbb99",
+          "version": "1.7.1"
+        }
+      },
+      {
+        "package": "CryptoSwift",
+        "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift",
+        "state": {
+          "branch": null,
+          "revision": "085709b6a4e33b60fa0b4a4629655fdd1ba5644e",
+          "version": null
+        }
+      },
+      {
         "package": "SwiftProtobuf",
         "repositoryURL": "https://github.com/apple/swift-protobuf",
         "state": {

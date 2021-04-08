@@ -17,8 +17,13 @@ struct LoginView: View {
   func login() {
     let clientToken = configManager.getClientToken()
     MojangAPI.login(email: email, password: password, clientToken: clientToken, completion: { response in
+      let account = MojangAccount(
+        id: response.user.id,
+        email: response.user.username,
+        accessToken: response.accessToken
+      )
       configManager.setUser(
-        account: response.user,
+        account: account,
         profiles: response.availableProfiles,
         selectedProfile: response.selectedProfile.id
       )
@@ -38,6 +43,7 @@ struct LoginView: View {
     .navigationTitle("Login")
     .toolbar {
       Text("")
+        .frame(width: 10)
     }
   }
 }

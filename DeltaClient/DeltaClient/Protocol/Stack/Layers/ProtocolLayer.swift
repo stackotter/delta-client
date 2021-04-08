@@ -16,23 +16,27 @@ class ProtocolLayer: InnermostNetworkLayer {
   var outboundSuccessor: OutboundNetworkLayer?
   
   var handler: ((PacketReader) -> Void)?
-  var thread: DispatchQueue
+  var outboundThread: DispatchQueue
   
-  init(thread: DispatchQueue) {
-    self.thread = thread
+  init(outboundThread: DispatchQueue) {
+    self.outboundThread = outboundThread
   }
   
   func handleInbound(_ buffer: Buffer) {
     let packetReader = PacketReader(buffer: buffer)
+    Logger.debug("receive packet id: \(String(format: "0x%02x", packetReader.packetId))")
     if let callback = handler {
       callback(packetReader)
     }
   }
   
   func send(_ packet: ServerboundPacket) {
-    if let nextLayer = outboundSuccessor {
-      let buffer = packet.toBuffer()
-      nextLayer.handleOutbound(buffer)
+    Logger.debug("send packet id: \(String(format: "0x%02x", packet.id))")
+    outboundThread.sync {
+      if let nextLayer = self.outboundSuccessor {
+        let buffer = packet.toBuffer()
+        nextLayer.handleOutbound(buffer)
+      }
     }
   }
 }

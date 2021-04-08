@@ -9,7 +9,9 @@
   - [x] Compression layer
   - [ ] Encryption layer
 - [ ] mojang api
+  - [ ] refresh access token
 - [ ] create protocol definition file
+- [ ] fix initial ping being weird (a packet is being sent when it shouldn't be)
 
 ## Config
 

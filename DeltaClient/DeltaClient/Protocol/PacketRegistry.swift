@@ -29,7 +29,7 @@ class PacketRegistry {
       EncryptionRequestPacket.self,
       LoginSuccessPacket.self,
       SetCompressionPacket.self,
-      LoginPluginRequest.self
+      LoginPluginRequestPacket.self
     ], toState: .login)
     
     registry.addClientboundPackets([

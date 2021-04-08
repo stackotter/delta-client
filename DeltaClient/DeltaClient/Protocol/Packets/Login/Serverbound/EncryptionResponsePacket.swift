@@ -1,5 +1,5 @@
 //
-//  EncryptionResponse.swift
+//  EncryptionResponsePacket.swift
 //  DeltaClient
 //
 //  Created by Rohan van Klinken on 1/4/21.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct EncryptionResponse: ServerboundPacket {
+struct EncryptionResponsePacket: ServerboundPacket {
   static let id: Int = 0x01
   
   var sharedSecret: [UInt8]

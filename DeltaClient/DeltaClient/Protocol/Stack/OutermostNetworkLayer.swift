@@ -9,7 +9,8 @@ import Foundation
 
 protocol OutermostNetworkLayer: OutboundNetworkLayer {
   var inboundSuccessor: InboundNetworkLayer? { get set }
-  var thread: DispatchQueue { get set }
+  var inboundThread: DispatchQueue { get set }
+  var ioThread: DispatchQueue { get set }
   
   func connect()
   

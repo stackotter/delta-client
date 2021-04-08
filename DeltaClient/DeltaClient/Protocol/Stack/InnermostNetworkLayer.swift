@@ -12,7 +12,7 @@ protocol InnermostNetworkLayer: InboundNetworkLayer {
   associatedtype Output
   
   var outboundSuccessor: OutboundNetworkLayer? { get set }
-  var thread: DispatchQueue { get set }
+  var outboundThread: DispatchQueue { get set }
   var handler: ((Output) -> Void)? { get set }
   
   func send(_ packet: Packet)

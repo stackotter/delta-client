@@ -77,6 +77,10 @@ class ServerConnection {
     networkStack.compressionLayer.compressionThreshold = threshold
   }
   
+  func enableEncryption(sharedSecret: [UInt8]) throws {
+    try networkStack.encryptionLayer.enableEncryption(sharedSecret: sharedSecret)
+  }
+  
   // Packet
   
   func setPacketHandler(_ handler: @escaping (PacketReader) -> Void) {

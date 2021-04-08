@@ -1,5 +1,5 @@
 //
-//  LoginPluginRequest.swift
+//  LoginPluginRequestPacket.swift
 //  DeltaClient
 //
 //  Created by Rohan van Klinken on 1/4/21.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LoginPluginRequest: ClientboundPacket {
+struct LoginPluginRequestPacket: ClientboundPacket {
   static let id: Int = 0x04
   
   var messageId: Int

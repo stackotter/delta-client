@@ -10,6 +10,5 @@ import Foundation
 struct MojangAccount: Codable {
   var id: String
   var email: String
-  var password: String
   var accessToken: String
 }

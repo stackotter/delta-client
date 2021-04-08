@@ -8,14 +8,18 @@
 import Foundation
 
 class NetworkStack {
-  var thread: DispatchQueue
   var eventManager: EventManager
+  
+  var ioThread: DispatchQueue
+  var inboundThread: DispatchQueue
+  var outboundThread: DispatchQueue
   
   var host: String
   var port: UInt16
   
   // network layers
   var socketLayer: SocketLayer
+  var encryptionLayer: EncryptionLayer
   var packetLayer: PacketLayer
   var compressionLayer: CompressionLayer
   var protocolLayer: ProtocolLayer
@@ -27,23 +31,28 @@ class NetworkStack {
     self.port = port
     
     self.eventManager = eventManager
-    self.thread = DispatchQueue(label: "networkingStack")
+    self.ioThread = DispatchQueue(label: "networkIO")
+    self.inboundThread = DispatchQueue(label: "networkHandlingInbound")
+    self.outboundThread = DispatchQueue(label: "networkHandlingOutbound")
     
     // create layers
-    socketLayer = SocketLayer(host, port, thread: self.thread, eventManager: self.eventManager)
+    socketLayer = SocketLayer(host, port, inboundThread: self.inboundThread, ioThread: self.ioThread, eventManager: self.eventManager)
+    encryptionLayer = EncryptionLayer()
     packetLayer = PacketLayer()
     compressionLayer = CompressionLayer()
-    protocolLayer = ProtocolLayer(thread: self.thread)
+    protocolLayer = ProtocolLayer(outboundThread: self.outboundThread)
     
     // setup inbound flow
-    socketLayer.inboundSuccessor = packetLayer
+    socketLayer.inboundSuccessor = encryptionLayer
+    encryptionLayer.inboundSuccessor = packetLayer
     packetLayer.inboundSuccessor = compressionLayer
     compressionLayer.inboundSuccessor = protocolLayer
     
     // setup outbound flow
     protocolLayer.outboundSuccessor = compressionLayer
     compressionLayer.outboundSuccessor = packetLayer
-    packetLayer.outboundSuccessor = socketLayer
+    packetLayer.outboundSuccessor = encryptionLayer
+    encryptionLayer.outboundSuccessor = socketLayer
   }
   
   // Lifecycle
@@ -61,7 +70,7 @@ class NetworkStack {
     
     // remake socket layer
     let socketLayerSuccessor = socketLayer.inboundSuccessor
-    socketLayer = SocketLayer(host, port, thread: thread, eventManager: eventManager)
+    socketLayer = SocketLayer(host, port, inboundThread: inboundThread, ioThread: ioThread, eventManager: eventManager)
     socketLayer.inboundSuccessor = socketLayerSuccessor
     if var outboundPredecessor = socketLayer.inboundSuccessor as? OutboundNetworkLayer {
       outboundPredecessor.outboundSuccessor = socketLayer

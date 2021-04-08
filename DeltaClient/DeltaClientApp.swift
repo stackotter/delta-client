@@ -61,6 +61,7 @@ struct DeltaClientApp: App {
               .navigationTitle("Delta Client")
               .toolbar {
                 Text("")
+                  .frame(width: 10)
               }
           case .loaded(let managers):
             AppView(managers: managers)

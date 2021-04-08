@@ -22,7 +22,10 @@ class CompressionLayer: NetworkLayer {
         inboundSuccessor?.handleInbound(buffer)
       } else { // compressed packet
         if dataLength < compressionThreshold {
-          Logger.error("illegal compressed packet received (below compression threshold)")
+          Logger.error("illegal compressed packet received (below compression threshold), threshold: \(compressionThreshold), length: \(dataLength)")
+          let compressedBytes = buffer.readRemainingBytes()
+          let decompressed = CompressionUtil.decompress(compressedBytes, decompressedLength: dataLength)
+          inboundSuccessor?.handleInbound(Buffer(decompressed))
         } else {
           let compressedBytes = buffer.readRemainingBytes()
           let decompressed = CompressionUtil.decompress(compressedBytes, decompressedLength: dataLength)

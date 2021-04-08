@@ -10,7 +10,7 @@ import Foundation
 struct Config: Codable {
   var hasLoggedIn: Bool
   var clientToken: String
-  var account: MojangUser?
+  var account: MojangAccount?
   var selectedProfile: String?
   var profiles: [String: MojangProfile]
   var servers: [ServerDescriptor]

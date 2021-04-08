@@ -25,6 +25,14 @@ class ConfigManager: ObservableObject {
         let configJSON = try Data(contentsOf: self.configFile)
         let decoder = JSONDecoder()
         self.config = try decoder.decode(Config.self, from: configJSON)
+        if getHasLoggedIn() {
+          try MojangAPI.refresh(accessToken: self.config.account!.accessToken, clientToken: self.config.clientToken, completion: { newAccessToken in
+            self.config.account!.accessToken = newAccessToken
+            self.writeConfig()
+          }, failure: {
+            self.logOut()
+          })
+        }
         return
       } catch {
         Logger.warning("failed to load existing config: \(error)")
@@ -74,7 +82,7 @@ class ConfigManager: ObservableObject {
     return nil
   }
   
-  func getSelectedAccount() -> MojangUser? {
+  func getSelectedAccount() -> MojangAccount? {
     return config.account
   }
   
@@ -84,28 +92,46 @@ class ConfigManager: ObservableObject {
   
   // Set
   
-  func setUser(account: MojangUser, profiles: [MojangProfile], selectedProfile: String) {
-    config.account = account
-    for profile in profiles {
-      config.profiles[profile.id] = profile
+  func setUser(account: MojangAccount, profiles: [MojangProfile], selectedProfile: String) {
+    ThreadUtil.runInMain {
+      config.account = account
+      for profile in profiles {
+        config.profiles[profile.id] = profile
+      }
+      config.selectedProfile = selectedProfile
+      config.hasLoggedIn = true
+      writeConfig()
     }
-    config.selectedProfile = selectedProfile
-    config.hasLoggedIn = true
-    writeConfig()
   }
   
   func setSelectedProfile(_ uuid: String) {
-    config.selectedProfile = uuid
-    writeConfig()
+    ThreadUtil.runInMain {
+      config.selectedProfile = uuid
+      writeConfig()
+    }
+  }
+  
+  func logOut() {
+    ThreadUtil.runInMain {
+      config.account = nil
+      config.profiles = [:]
+      config.selectedProfile = nil
+      config.hasLoggedIn = false
+      writeConfig()
+    }
   }
   
   func addServer(_ descriptor: ServerDescriptor) {
-    config.servers.append(descriptor)
-    writeConfig()
+    ThreadUtil.runInMain {
+      config.servers.append(descriptor)
+      writeConfig()
+    }
   }
   
   func removeServer(at index: Int) {
-    config.servers.remove(at: index)
-    writeConfig()
+    ThreadUtil.runInMain {
+      config.servers.remove(at: index)
+      writeConfig()
+    }
   }
 }

@@ -12,7 +12,8 @@ import os
 class SocketLayer: OutermostNetworkLayer {
   var outboundSuccessor: OutboundNetworkLayer?
   var inboundSuccessor: InboundNetworkLayer?
-  var thread: DispatchQueue
+  var inboundThread: DispatchQueue
+  var ioThread: DispatchQueue
   var eventManager: EventManager
   
   var connection: NWConnection
@@ -28,17 +29,19 @@ class SocketLayer: OutermostNetworkLayer {
     case disconnected
   }
   
-  init(_ host: String, _ port: UInt16, thread: DispatchQueue, eventManager: EventManager) {
+  init(_ host: String, _ port: UInt16, inboundThread: DispatchQueue, ioThread: DispatchQueue, eventManager: EventManager) {
     self.host = host
     self.port = port
     
     self.eventManager = eventManager
-    self.thread = thread
+    self.inboundThread = inboundThread
+    self.ioThread = ioThread
     
     self.connection = NWConnection(
       host: NWEndpoint.Host(host),
       port: NWEndpoint.Port(rawValue: port)!,
-      using: .tcp)
+      using: .tcp
+    )
     
     self.connection.stateUpdateHandler = stateUpdateHandler
   }
@@ -47,7 +50,7 @@ class SocketLayer: OutermostNetworkLayer {
   
   func connect() {
     state = .connecting
-    connection.start(queue: thread)
+    connection.start(queue: ioThread)
   }
   
   func disconnect() {
@@ -70,7 +73,10 @@ class SocketLayer: OutermostNetworkLayer {
       let bytes = [UInt8](data!)
       let buffer = Buffer(bytes)
       
-      self.inboundSuccessor?.handleInbound(buffer)
+      self.inboundThread.async {
+        let bufferCopy = buffer
+        self.inboundSuccessor?.handleInbound(bufferCopy)
+      }
       
       if self.state != .disconnected {
         self.receive()

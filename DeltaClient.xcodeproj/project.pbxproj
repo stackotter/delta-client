@@ -129,6 +129,8 @@
 		780523BC261433A800079A01 /* GameCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A5261433A700079A01 /* GameCommandView.swift */; };
 		780523BD261433A800079A01 /* GameRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A6261433A700079A01 /* GameRenderView.swift */; };
 		780523CF2614349200079A01 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 780523CE2614349200079A01 /* Preview Assets.xcassets */; };
+		780C22B6261DBDD4003F8F76 /* ThreadUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780C22B5261DBDD4003F8F76 /* ThreadUtil.swift */; };
+		780C22BE261DDFFC003F8F76 /* AESCFB8StreamCryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780C22BD261DDFFC003F8F76 /* AESCFB8StreamCryptor.swift */; };
 		7810FA72261C64BA002228E1 /* MojangAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA71261C64BA002228E1 /* MojangAccount.swift */; };
 		7810FA77261C6689002228E1 /* MojangAuthenticationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA76261C6689002228E1 /* MojangAuthenticationRequest.swift */; };
 		7810FA7C261C6807002228E1 /* MojangAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA7B261C6807002228E1 /* MojangAgent.swift */; };
@@ -307,8 +309,8 @@
 		78928812261438A500F17DBB /* DeltaClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052170261433A600079A01 /* DeltaClientUITests.swift */; };
 		789EB84226156C8700D8CFBB /* SetCompressionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB84126156C8700D8CFBB /* SetCompressionPacket.swift */; };
 		789EB84726156CCC00D8CFBB /* EncryptionRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB84626156CCC00D8CFBB /* EncryptionRequestPacket.swift */; };
-		789EB84C26156D4D00D8CFBB /* LoginPluginRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB84B26156D4D00D8CFBB /* LoginPluginRequest.swift */; };
-		789EB85126156DB500D8CFBB /* EncryptionResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB85026156DB500D8CFBB /* EncryptionResponse.swift */; };
+		789EB84C26156D4D00D8CFBB /* LoginPluginRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB84B26156D4D00D8CFBB /* LoginPluginRequestPacket.swift */; };
+		789EB85126156DB500D8CFBB /* EncryptionResponsePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB85026156DB500D8CFBB /* EncryptionResponsePacket.swift */; };
 		789EB85626156EAC00D8CFBB /* LoginPluginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB85526156EAC00D8CFBB /* LoginPluginResponse.swift */; };
 		789EB85B26156F5F00D8CFBB /* PongPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB85A26156F5F00D8CFBB /* PongPacket.swift */; };
 		789EB86326156F9500D8CFBB /* PingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB86226156F9500D8CFBB /* PingPacket.swift */; };
@@ -317,6 +319,10 @@
 		78A11E47261CFFD70065FFDB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A11E46261CFFD70065FFDB /* LoginView.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
 		78DFE50B261D39C10044C75E /* EditServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DFE50A261D39C10044C75E /* EditServerView.swift */; };
+		78DFE510261D446C0044C75E /* CryptoUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DFE50F261D446C0044C75E /* CryptoUtil.swift */; };
+		78DFE518261D52130044C75E /* MojangJoinRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DFE517261D52130044C75E /* MojangJoinRequest.swift */; };
+		78DFE51E261D64770044C75E /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 78DFE51D261D64770044C75E /* CryptoSwift */; };
+		78DFE524261D877C0044C75E /* ASN1Decoder in Frameworks */ = {isa = PBXBuildFile; productRef = 78DFE523261D877C0044C75E /* ASN1Decoder */; };
 		78F321AC261C877C00ED5FC5 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F321AB261C877C00ED5FC5 /* Config.swift */; };
 		78F8CC05261D1204004D621F /* EditServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F8CC04261D1204004D621F /* EditServerListView.swift */; };
 		78FD1F642614484300B74024 /* CacheFaceDirection.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5A2614484300B74024 /* CacheFaceDirection.pb.swift */; };
@@ -473,6 +479,8 @@
 		780522A9261433A700079A01 /* DeltaClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeltaClientTests.swift; sourceTree = "<group>"; };
 		780522AA261433A700079A01 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		780523CE2614349200079A01 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		780C22B5261DBDD4003F8F76 /* ThreadUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadUtil.swift; sourceTree = "<group>"; };
+		780C22BD261DDFFC003F8F76 /* AESCFB8StreamCryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AESCFB8StreamCryptor.swift; sourceTree = "<group>"; };
 		7810FA71261C64BA002228E1 /* MojangAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangAccount.swift; sourceTree = "<group>"; };
 		7810FA76261C6689002228E1 /* MojangAuthenticationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangAuthenticationRequest.swift; sourceTree = "<group>"; };
 		7810FA7B261C6807002228E1 /* MojangAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangAgent.swift; sourceTree = "<group>"; };
@@ -652,8 +660,8 @@
 		78752062261524CA00782575 /* InnermostNetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnermostNetworkLayer.swift; sourceTree = "<group>"; };
 		789EB84126156C8700D8CFBB /* SetCompressionPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetCompressionPacket.swift; sourceTree = "<group>"; };
 		789EB84626156CCC00D8CFBB /* EncryptionRequestPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionRequestPacket.swift; sourceTree = "<group>"; };
-		789EB84B26156D4D00D8CFBB /* LoginPluginRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPluginRequest.swift; sourceTree = "<group>"; };
-		789EB85026156DB500D8CFBB /* EncryptionResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionResponse.swift; sourceTree = "<group>"; };
+		789EB84B26156D4D00D8CFBB /* LoginPluginRequestPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPluginRequestPacket.swift; sourceTree = "<group>"; };
+		789EB85026156DB500D8CFBB /* EncryptionResponsePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionResponsePacket.swift; sourceTree = "<group>"; };
 		789EB85526156EAC00D8CFBB /* LoginPluginResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPluginResponse.swift; sourceTree = "<group>"; };
 		789EB85A26156F5F00D8CFBB /* PongPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PongPacket.swift; sourceTree = "<group>"; };
 		789EB86226156F9500D8CFBB /* PingPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPacket.swift; sourceTree = "<group>"; };
@@ -661,6 +669,8 @@
 		789EB86C2615BD7400D8CFBB /* CompressionUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionUtil.swift; sourceTree = "<group>"; };
 		78A11E46261CFFD70065FFDB /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		78DFE50A261D39C10044C75E /* EditServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditServerView.swift; sourceTree = "<group>"; };
+		78DFE50F261D446C0044C75E /* CryptoUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoUtil.swift; sourceTree = "<group>"; };
+		78DFE517261D52130044C75E /* MojangJoinRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangJoinRequest.swift; sourceTree = "<group>"; };
 		78F321AB261C877C00ED5FC5 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		78F8CC04261D1204004D621F /* EditServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditServerListView.swift; sourceTree = "<group>"; };
 		78FD1F5A2614484300B74024 /* CacheFaceDirection.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheFaceDirection.pb.swift; sourceTree = "<group>"; };
@@ -680,8 +690,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78DFE524261D877C0044C75E /* ASN1Decoder in Frameworks */,
 				78B6A1EB25FC588000CFE493 /* Zip in Frameworks */,
 				7802C1AF261097F00068E8A1 /* SwiftProtobuf in Frameworks */,
+				78DFE51E261D64770044C75E /* CryptoSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -820,8 +832,11 @@
 				7805225F261433A700079A01 /* Stopwatch.swift */,
 				78052260261433A700079A01 /* MatrixUtil.swift */,
 				789EB86C2615BD7400D8CFBB /* CompressionUtil.swift */,
+				78DFE50F261D446C0044C75E /* CryptoUtil.swift */,
 				7810FA80261C6967002228E1 /* RequestUtil.swift */,
+				780C22BD261DDFFC003F8F76 /* AESCFB8StreamCryptor.swift */,
 				7810FA85261C6D5A002228E1 /* RequestMethod.swift */,
+				780C22B5261DBDD4003F8F76 /* ThreadUtil.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -1231,7 +1246,7 @@
 			isa = PBXGroup;
 			children = (
 				782F0C6026143BB1008AE67B /* LoginStartPacket.swift */,
-				789EB85026156DB500D8CFBB /* EncryptionResponse.swift */,
+				789EB85026156DB500D8CFBB /* EncryptionResponsePacket.swift */,
 				789EB85526156EAC00D8CFBB /* LoginPluginResponse.swift */,
 			);
 			path = Serverbound;
@@ -1244,7 +1259,7 @@
 				789EB84626156CCC00D8CFBB /* EncryptionRequestPacket.swift */,
 				782F0C6226143BB1008AE67B /* LoginSuccessPacket.swift */,
 				789EB84126156C8700D8CFBB /* SetCompressionPacket.swift */,
-				789EB84B26156D4D00D8CFBB /* LoginPluginRequest.swift */,
+				789EB84B26156D4D00D8CFBB /* LoginPluginRequestPacket.swift */,
 			);
 			path = Clientbound;
 			sourceTree = "<group>";
@@ -1295,6 +1310,7 @@
 			isa = PBXGroup;
 			children = (
 				785F3128261C5A88001631F0 /* MojangAPI.swift */,
+				78DFE517261D52130044C75E /* MojangJoinRequest.swift */,
 				7810FA8A261C6E92002228E1 /* MojangAPIDefinition.swift */,
 				7810FA71261C64BA002228E1 /* MojangAccount.swift */,
 				7810FA76261C6689002228E1 /* MojangAuthenticationRequest.swift */,
@@ -1401,6 +1417,8 @@
 			packageProductDependencies = (
 				78B6A1EA25FC588000CFE493 /* Zip */,
 				7802C1AE261097F00068E8A1 /* SwiftProtobuf */,
+				78DFE51D261D64770044C75E /* CryptoSwift */,
+				78DFE523261D877C0044C75E /* ASN1Decoder */,
 			);
 			productName = Minecraft;
 			productReference = 784194B7258204CD0070DE78 /* DeltaClient.app */;
@@ -1477,6 +1495,8 @@
 			packageReferences = (
 				78B6A1E925FC588000CFE493 /* XCRemoteSwiftPackageReference "Zip" */,
 				7802C1AD261097F00068E8A1 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
+				78DFE51C261D64770044C75E /* XCRemoteSwiftPackageReference "CryptoSwift" */,
+				78DFE522261D877C0044C75E /* XCRemoteSwiftPackageReference "ASN1Decoder" */,
 			);
 			productRefGroup = 784194B8258204CD0070DE78 /* Products */;
 			projectDirPath = "";
@@ -1553,7 +1573,7 @@
 				782F0CA826143BB1008AE67B /* OpenWindowPacket.swift in Sources */,
 				78052371261433A800079A01 /* Buffer.swift in Sources */,
 				785F3129261C5A88001631F0 /* MojangAPI.swift in Sources */,
-				789EB85126156DB500D8CFBB /* EncryptionResponse.swift in Sources */,
+				789EB85126156DB500D8CFBB /* EncryptionResponsePacket.swift in Sources */,
 				780523B2261433A800079A01 /* PlayerAbilities.swift in Sources */,
 				78052386261433A800079A01 /* EntityVelocity.swift in Sources */,
 				780523A1261433A800079A01 /* StorageManager.swift in Sources */,
@@ -1626,6 +1646,7 @@
 				7875204E261499B000782575 /* OutermostNetworkLayer.swift in Sources */,
 				78052378261433A800079A01 /* Axis.swift in Sources */,
 				78052361261433A800079A01 /* ShieldDecorationRecipe.swift in Sources */,
+				780C22BE261DDFFC003F8F76 /* AESCFB8StreamCryptor.swift in Sources */,
 				7805234A261433A800079A01 /* Constants.swift in Sources */,
 				782F0CC626143BB1008AE67B /* EntityEquipmentPacket.swift in Sources */,
 				782F0C6826143BB1008AE67B /* ClientboundPacket.swift in Sources */,
@@ -1645,7 +1666,7 @@
 				782F0C7026143BB1008AE67B /* NameItemPacket.swift in Sources */,
 				782F0C7526143BB1008AE67B /* UpdateSignPacket.swift in Sources */,
 				782F0C9226143BB1008AE67B /* PlayerBlockPlacementPacket.swift in Sources */,
-				789EB84C26156D4D00D8CFBB /* LoginPluginRequest.swift in Sources */,
+				789EB84C26156D4D00D8CFBB /* LoginPluginRequestPacket.swift in Sources */,
 				78052396261433A800079A01 /* StartupSequence.swift in Sources */,
 				782F0C8026143BB1008AE67B /* UpdateCommandBlockMinecartPacket.swift in Sources */,
 				782F0CB126143BB1008AE67B /* BlockBreakAnimationPacket.swift in Sources */,
@@ -1692,6 +1713,7 @@
 				78052362261433A800079A01 /* Ingredient.swift in Sources */,
 				78052397261433A800079A01 /* Client.swift in Sources */,
 				782F0CCD26143BB1008AE67B /* DisplayScoreboardPacket.swift in Sources */,
+				780C22B6261DBDD4003F8F76 /* ThreadUtil.swift in Sources */,
 				782F0C9726143BB1008AE67B /* PlayerPositionPacket.swift in Sources */,
 				782F0CAD26143BB1008AE67B /* RemoveEntityEffectPacket.swift in Sources */,
 				782F0CEF26143BB1008AE67B /* SetExperiencePacket.swift in Sources */,
@@ -1759,6 +1781,7 @@
 				78052364261433A800079A01 /* CampfireCookingRecipe.swift in Sources */,
 				78DFE50B261D39C10044C75E /* EditServerView.swift in Sources */,
 				782F0CF026143BB1008AE67B /* ParticlePacket.swift in Sources */,
+				78DFE510261D446C0044C75E /* CryptoUtil.swift in Sources */,
 				7805234B261433A800079A01 /* ConfigManager.swift in Sources */,
 				782F0C8526143BB1008AE67B /* ClientSettingsPacket.swift in Sources */,
 				7805234E261433A800079A01 /* CraftingShaped.swift in Sources */,
@@ -1849,6 +1872,7 @@
 				780523A5261433A800079A01 /* MinecraftLocale.swift in Sources */,
 				782F0D29261441BD008AE67B /* BlockModelElement.swift in Sources */,
 				782F0CE026143BB1008AE67B /* SpawnPlayerPacket.swift in Sources */,
+				78DFE518261D52130044C75E /* MojangJoinRequest.swift in Sources */,
 				782F0CBB26143BB1008AE67B /* EntityPositionAndRotationPacket.swift in Sources */,
 				78052363261433A800079A01 /* SmithingRecipe.swift in Sources */,
 				782F0CB026143BB1008AE67B /* EntityMetadataPacket.swift in Sources */,
@@ -2206,6 +2230,22 @@
 				minimumVersion = 2.1.1;
 			};
 		};
+		78DFE51C261D64770044C75E /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift";
+			requirement = {
+				kind = revision;
+				revision = 085709b6a4e33b60fa0b4a4629655fdd1ba5644e;
+			};
+		};
+		78DFE522261D877C0044C75E /* XCRemoteSwiftPackageReference "ASN1Decoder" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/filom/ASN1Decoder";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.7.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -2218,6 +2258,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 78B6A1E925FC588000CFE493 /* XCRemoteSwiftPackageReference "Zip" */;
 			productName = Zip;
+		};
+		78DFE51D261D64770044C75E /* CryptoSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 78DFE51C261D64770044C75E /* XCRemoteSwiftPackageReference "CryptoSwift" */;
+			productName = CryptoSwift;
+		};
+		78DFE523261D877C0044C75E /* ASN1Decoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 78DFE522261D877C0044C75E /* XCRemoteSwiftPackageReference "ASN1Decoder" */;
+			productName = ASN1Decoder;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
