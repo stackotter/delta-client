@@ -56,6 +56,17 @@ struct DeltaClientApp: App {
         switch state.state {
           case .error(let message):
             Text(message)
+              .navigationTitle("Error")
+              .toolbar(content: {
+                switch state.previous {
+                  case .loaded(let managers):
+                    Button("dismiss") {
+                      state.update(to: .loaded(managers: managers))
+                    }
+                  default:
+                    Text("")
+                }
+              })
           case .loading(let message):
             Text(message)
               .navigationTitle("Delta Client")

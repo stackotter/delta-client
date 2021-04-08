@@ -20,7 +20,7 @@
 - [x] sign in screen on first launch
 - [ ] config screen for changing account details
 - [x] remove need for minecraft to be already installed
-- [ ] add basic way to exit game and get back to server list
+- [x] add basic way to exit game and get back to server list
 
 ## Demo 2
 

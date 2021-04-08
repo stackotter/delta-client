@@ -9,18 +9,17 @@ import Foundation
 
 class ViewState<T>: ObservableObject {
   @Published var state: T
+  var previous: T
   
   init(initialState: T) {
-    state = initialState
+    self.state = initialState
+    self.previous = initialState
   }
   
   func update(to newState: T) {
-    if Thread.isMainThread {
+    ThreadUtil.runInMain {
+      self.previous = self.state
       self.state = newState
-    } else {
-      DispatchQueue.main.sync {
-        self.state = newState
-      }
     }
   }
 }
