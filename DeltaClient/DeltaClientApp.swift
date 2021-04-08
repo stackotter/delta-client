@@ -53,7 +53,7 @@ struct DeltaClientApp: App {
   var body: some Scene {
     WindowGroup {
       Group {
-        switch state.state {
+        switch state.value {
           case .error(let message):
             Text(message)
               .navigationTitle("Error")

@@ -9,7 +9,7 @@
 - fast subsequent startups
 - rendering player's current chunk
   - can be moved around using ```tp``` commands from another player
-- basic config
+- basic config screens (account settings and server settings)
 
 ### Todo
 
@@ -22,6 +22,7 @@
 - [x] remove need for minecraft to be already installed
 - [x] add basic way to exit game and get back to server list
 - [x] prettyprint config json
+- [ ] way to re-order servers
 
 ## Demo 2 - Better Rendering
 

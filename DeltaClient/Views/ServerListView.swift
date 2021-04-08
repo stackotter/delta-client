@@ -37,6 +37,10 @@ struct ServerListView: View {
     .navigationViewStyle(DoubleColumnNavigationViewStyle())
     .navigationTitle("Server List")
     .toolbar(content: {
+      Button("logout") {
+        configManager.logout()
+        viewState.update(to: .login)
+      }
       Button("edit") {
         viewState.update(to: .editServerList)
       }

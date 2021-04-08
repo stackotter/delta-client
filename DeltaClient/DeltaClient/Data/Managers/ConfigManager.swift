@@ -30,7 +30,7 @@ class ConfigManager: ObservableObject {
             self.config.account!.accessToken = newAccessToken
             self.writeConfig()
           }, failure: {
-            self.logOut()
+            self.logout()
           })
         }
         return
@@ -112,7 +112,7 @@ class ConfigManager: ObservableObject {
     }
   }
   
-  func logOut() {
+  func logout() {
     ThreadUtil.runInMain {
       config.account = nil
       config.profiles = [:]

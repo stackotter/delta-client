@@ -39,7 +39,7 @@ struct GameRenderView: View {
   
   var body: some View {
     Group {
-      switch state.state {
+      switch state.value {
         case .downloadingTerrain:
           Text("downloading terrain")
         case .playing:

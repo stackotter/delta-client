@@ -44,7 +44,7 @@ struct AppView: View {
   }
   
   var body: some View {
-    switch state.state {
+    switch state.value {
       case .login:
         LoginView(configManager: managers.configManager, viewState: state)
       case .serverList:

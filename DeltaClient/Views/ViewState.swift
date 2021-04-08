@@ -8,18 +8,18 @@
 import Foundation
 
 class ViewState<T>: ObservableObject {
-  @Published var state: T
+  @Published var value: T
   var previous: T
   
   init(initialState: T) {
-    self.state = initialState
+    self.value = initialState
     self.previous = initialState
   }
   
   func update(to newState: T) {
     ThreadUtil.runInMain {
-      self.previous = self.state
-      self.state = newState
+      self.previous = self.value
+      self.value = newState
     }
   }
 }

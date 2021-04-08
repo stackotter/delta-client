@@ -3,6 +3,7 @@
 - [ ] fix refresh button looking like it's disabled after clicking
 - [ ] add more useful messages instead of just 'downloading terrain' when joining games
 - [ ] rework to use event manager instead of passing around a reference to the view state
+- [ ] rename serverlistview to homeview or something and appview to rootview or something
 
 ## Networking
 
