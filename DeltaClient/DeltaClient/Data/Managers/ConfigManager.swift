@@ -50,6 +50,7 @@ class ConfigManager: ObservableObject {
   func writeConfig() {
     do {
       let encoder = JSONEncoder()
+      encoder.outputFormatting = .prettyPrinted
       let data = try encoder.encode(config)
       try data.write(to: configFile)
     } catch {
