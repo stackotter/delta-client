@@ -77,8 +77,8 @@ class ServerConnection {
     networkStack.compressionLayer.compressionThreshold = threshold
   }
   
-  func enableEncryption(sharedSecret: [UInt8]) throws {
-    try networkStack.encryptionLayer.enableEncryption(sharedSecret: sharedSecret)
+  func enableEncryption(sharedSecret: [UInt8]) {
+    networkStack.encryptionLayer.enableEncryption(sharedSecret: sharedSecret)
   }
   
   // Packet

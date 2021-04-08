@@ -24,14 +24,12 @@ class ProtocolLayer: InnermostNetworkLayer {
   
   func handleInbound(_ buffer: Buffer) {
     let packetReader = PacketReader(buffer: buffer)
-    Logger.debug("receive packet id: \(String(format: "0x%02x", packetReader.packetId))")
     if let callback = handler {
       callback(packetReader)
     }
   }
   
   func send(_ packet: ServerboundPacket) {
-    Logger.debug("send packet id: \(String(format: "0x%02x", packet.id))")
     outboundThread.sync {
       if let nextLayer = self.outboundSuccessor {
         let buffer = packet.toBuffer()

@@ -15,7 +15,7 @@
 
 - [x] refactor networking
 - [x] add compression support
-- [ ] add encryption support
+- [x] add encryption support
 - [x] basic config system
 - [x] sign in screen on first launch
 - [ ] config screen for changing account details

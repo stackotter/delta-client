@@ -130,7 +130,6 @@
 		780523BD261433A800079A01 /* GameRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A6261433A700079A01 /* GameRenderView.swift */; };
 		780523CF2614349200079A01 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 780523CE2614349200079A01 /* Preview Assets.xcassets */; };
 		780C22B6261DBDD4003F8F76 /* ThreadUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780C22B5261DBDD4003F8F76 /* ThreadUtil.swift */; };
-		780C22BE261DDFFC003F8F76 /* AESCFB8StreamCryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780C22BD261DDFFC003F8F76 /* AESCFB8StreamCryptor.swift */; };
 		7810FA72261C64BA002228E1 /* MojangAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA71261C64BA002228E1 /* MojangAccount.swift */; };
 		7810FA77261C6689002228E1 /* MojangAuthenticationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA76261C6689002228E1 /* MojangAuthenticationRequest.swift */; };
 		7810FA7C261C6807002228E1 /* MojangAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810FA7B261C6807002228E1 /* MojangAgent.swift */; };
@@ -318,11 +317,10 @@
 		789EB86D2615BD7400D8CFBB /* CompressionUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789EB86C2615BD7400D8CFBB /* CompressionUtil.swift */; };
 		78A11E47261CFFD70065FFDB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A11E46261CFFD70065FFDB /* LoginView.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
+		78D917E4261F08E400A4782F /* IDZSwiftCommonCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 78D917E3261F08E400A4782F /* IDZSwiftCommonCrypto */; };
 		78DFE50B261D39C10044C75E /* EditServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DFE50A261D39C10044C75E /* EditServerView.swift */; };
 		78DFE510261D446C0044C75E /* CryptoUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DFE50F261D446C0044C75E /* CryptoUtil.swift */; };
 		78DFE518261D52130044C75E /* MojangJoinRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78DFE517261D52130044C75E /* MojangJoinRequest.swift */; };
-		78DFE51E261D64770044C75E /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 78DFE51D261D64770044C75E /* CryptoSwift */; };
-		78DFE524261D877C0044C75E /* ASN1Decoder in Frameworks */ = {isa = PBXBuildFile; productRef = 78DFE523261D877C0044C75E /* ASN1Decoder */; };
 		78F321AC261C877C00ED5FC5 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F321AB261C877C00ED5FC5 /* Config.swift */; };
 		78F8CC05261D1204004D621F /* EditServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F8CC04261D1204004D621F /* EditServerListView.swift */; };
 		78FD1F642614484300B74024 /* CacheFaceDirection.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FD1F5A2614484300B74024 /* CacheFaceDirection.pb.swift */; };
@@ -480,7 +478,6 @@
 		780522AA261433A700079A01 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		780523CE2614349200079A01 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		780C22B5261DBDD4003F8F76 /* ThreadUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadUtil.swift; sourceTree = "<group>"; };
-		780C22BD261DDFFC003F8F76 /* AESCFB8StreamCryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AESCFB8StreamCryptor.swift; sourceTree = "<group>"; };
 		7810FA71261C64BA002228E1 /* MojangAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangAccount.swift; sourceTree = "<group>"; };
 		7810FA76261C6689002228E1 /* MojangAuthenticationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangAuthenticationRequest.swift; sourceTree = "<group>"; };
 		7810FA7B261C6807002228E1 /* MojangAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangAgent.swift; sourceTree = "<group>"; };
@@ -690,10 +687,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				78DFE524261D877C0044C75E /* ASN1Decoder in Frameworks */,
 				78B6A1EB25FC588000CFE493 /* Zip in Frameworks */,
 				7802C1AF261097F00068E8A1 /* SwiftProtobuf in Frameworks */,
-				78DFE51E261D64770044C75E /* CryptoSwift in Frameworks */,
+				78D917E4261F08E400A4782F /* IDZSwiftCommonCrypto in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -834,7 +830,6 @@
 				789EB86C2615BD7400D8CFBB /* CompressionUtil.swift */,
 				78DFE50F261D446C0044C75E /* CryptoUtil.swift */,
 				7810FA80261C6967002228E1 /* RequestUtil.swift */,
-				780C22BD261DDFFC003F8F76 /* AESCFB8StreamCryptor.swift */,
 				7810FA85261C6D5A002228E1 /* RequestMethod.swift */,
 				780C22B5261DBDD4003F8F76 /* ThreadUtil.swift */,
 			);
@@ -1417,8 +1412,7 @@
 			packageProductDependencies = (
 				78B6A1EA25FC588000CFE493 /* Zip */,
 				7802C1AE261097F00068E8A1 /* SwiftProtobuf */,
-				78DFE51D261D64770044C75E /* CryptoSwift */,
-				78DFE523261D877C0044C75E /* ASN1Decoder */,
+				78D917E3261F08E400A4782F /* IDZSwiftCommonCrypto */,
 			);
 			productName = Minecraft;
 			productReference = 784194B7258204CD0070DE78 /* DeltaClient.app */;
@@ -1495,8 +1489,7 @@
 			packageReferences = (
 				78B6A1E925FC588000CFE493 /* XCRemoteSwiftPackageReference "Zip" */,
 				7802C1AD261097F00068E8A1 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
-				78DFE51C261D64770044C75E /* XCRemoteSwiftPackageReference "CryptoSwift" */,
-				78DFE522261D877C0044C75E /* XCRemoteSwiftPackageReference "ASN1Decoder" */,
+				78D917E2261F08E400A4782F /* XCRemoteSwiftPackageReference "IDZSwiftCommonCrypto" */,
 			);
 			productRefGroup = 784194B8258204CD0070DE78 /* Products */;
 			projectDirPath = "";
@@ -1646,7 +1639,6 @@
 				7875204E261499B000782575 /* OutermostNetworkLayer.swift in Sources */,
 				78052378261433A800079A01 /* Axis.swift in Sources */,
 				78052361261433A800079A01 /* ShieldDecorationRecipe.swift in Sources */,
-				780C22BE261DDFFC003F8F76 /* AESCFB8StreamCryptor.swift in Sources */,
 				7805234A261433A800079A01 /* Constants.swift in Sources */,
 				782F0CC626143BB1008AE67B /* EntityEquipmentPacket.swift in Sources */,
 				782F0C6826143BB1008AE67B /* ClientboundPacket.swift in Sources */,
@@ -2230,20 +2222,12 @@
 				minimumVersion = 2.1.1;
 			};
 		};
-		78DFE51C261D64770044C75E /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
+		78D917E2261F08E400A4782F /* XCRemoteSwiftPackageReference "IDZSwiftCommonCrypto" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift";
-			requirement = {
-				kind = revision;
-				revision = 085709b6a4e33b60fa0b4a4629655fdd1ba5644e;
-			};
-		};
-		78DFE522261D877C0044C75E /* XCRemoteSwiftPackageReference "ASN1Decoder" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/filom/ASN1Decoder";
+			repositoryURL = "https://github.com/iosdevzone/IDZSwiftCommonCrypto";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.7.1;
+				minimumVersion = 0.13.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -2259,15 +2243,10 @@
 			package = 78B6A1E925FC588000CFE493 /* XCRemoteSwiftPackageReference "Zip" */;
 			productName = Zip;
 		};
-		78DFE51D261D64770044C75E /* CryptoSwift */ = {
+		78D917E3261F08E400A4782F /* IDZSwiftCommonCrypto */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 78DFE51C261D64770044C75E /* XCRemoteSwiftPackageReference "CryptoSwift" */;
-			productName = CryptoSwift;
-		};
-		78DFE523261D877C0044C75E /* ASN1Decoder */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 78DFE522261D877C0044C75E /* XCRemoteSwiftPackageReference "ASN1Decoder" */;
-			productName = ASN1Decoder;
+			package = 78D917E2261F08E400A4782F /* XCRemoteSwiftPackageReference "IDZSwiftCommonCrypto" */;
+			productName = IDZSwiftCommonCrypto;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

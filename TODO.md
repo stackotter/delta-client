@@ -1,17 +1,20 @@
 ## UI
 
 - [ ] fix refresh button looking like it's disabled after clicking
+- [ ] add more useful messages instead of just 'downloading terrain' when joining games
 
 ## Networking
 
 - [x] Refactor networking into a network stack
   - [x] Initial refactor
   - [x] Compression layer
-  - [ ] Encryption layer
-- [ ] mojang api
-  - [ ] refresh access token
+  - [x] Encryption layer
+- [x] mojang api
+  - [x] refresh access token
 - [ ] create protocol definition file
 - [ ] fix initial ping being weird (a packet is being sent when it shouldn't be)
+- [ ] investgate empty packets
+- [ ] fix error handling for mojang api (probably with event manager) (at the moment the errors are silent)
 
 ## Config
 

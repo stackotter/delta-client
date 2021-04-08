@@ -54,8 +54,8 @@ struct EncryptionRequestPacket: ClientboundPacket {
             server.sendPacket(encryptionResponse)
             
             // wait for packet to send then enable encryption
-            try server.connection.networkStack.outboundThread.sync {
-              try server.connection.enableEncryption(sharedSecret: sharedSecret)
+            server.connection.networkStack.outboundThread.sync {
+              server.connection.enableEncryption(sharedSecret: sharedSecret)
             }
           } catch {
             Logger.error("failed to enable encryption: \(error)")

@@ -2,21 +2,12 @@
   "object": {
     "pins": [
       {
-        "package": "ASN1Decoder",
-        "repositoryURL": "https://github.com/filom/ASN1Decoder",
+        "package": "IDZSwiftCommonCrypto",
+        "repositoryURL": "https://github.com/iosdevzone/IDZSwiftCommonCrypto",
         "state": {
           "branch": null,
-          "revision": "3d472cf1b906bd3478378a10959f11751d9bbb99",
-          "version": "1.7.1"
-        }
-      },
-      {
-        "package": "CryptoSwift",
-        "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift",
-        "state": {
-          "branch": null,
-          "revision": "085709b6a4e33b60fa0b4a4629655fdd1ba5644e",
-          "version": null
+          "revision": "d824371e670bd57eb456bbc41139b4997f7207b8",
+          "version": "0.13.1"
         }
       },
       {
