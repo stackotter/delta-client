@@ -1,6 +1,6 @@
 # Roadmap
 
-## Demo 1
+## Demo 1 - Basic Demo
 
 ### Features
 
@@ -9,7 +9,6 @@
 - fast subsequent startups
 - rendering player's current chunk
   - can be moved around using ```tp``` commands from another player
-- possibly iOS support depending on how feasible that turns out being
 
 ### Todo
 
@@ -22,7 +21,7 @@
 - [x] remove need for minecraft to be already installed
 - [x] add basic way to exit game and get back to server list
 
-## Demo 2
+## Demo 2 - Better Rendering
 
 ### Features
 
@@ -42,14 +41,34 @@
 - [ ] optimise chunk mesh preparation (using c most likely)
 - [ ] basic multichunk rendering
 
-## Demo 3
+## Demo 3 - Cleaner UI + General Code Cleanup
+
+### Features
+
+- cleaner code
+- improved ui
+- improved error handling and displaying
+- offline account support
+
+### Todo
+
+- rework ui code
+- rework mojang api and login flow
+- find and remove redundant code
+- maybe remove commands mode
+- improve error handling and displaying
+
+## Demo 4 - iOS/iPadOS
 
 ### Features
 
 - working iOS builds
+- working iPadOS builds
 
 ### Todo
 
-- [ ] add iOS build support to project
+- [ ] add iOS build target
+- [ ] add iPadOS build target
 - [ ] provide iOS specific code for NSViewRepresentable and stuff
 - [ ] fix any iOS specific bugs
+- [ ] tweak ui for iPad
