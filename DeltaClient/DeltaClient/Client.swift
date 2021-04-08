@@ -25,6 +25,10 @@ class Client {
     server.login()
   }
   
+  func quit() {
+    server.connection.close()
+  }
+  
   // Commands interface
   
   func runCommand(_ command: String) {

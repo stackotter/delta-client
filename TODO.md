@@ -2,6 +2,7 @@
 
 - [ ] fix refresh button looking like it's disabled after clicking
 - [ ] add more useful messages instead of just 'downloading terrain' when joining games
+- [ ] rework to use event manager instead of passing around a reference to the view state
 
 ## Networking
 
@@ -13,7 +14,7 @@
   - [x] refresh access token
 - [ ] create protocol definition file
 - [ ] fix initial ping being weird (a packet is being sent when it shouldn't be)
-- [ ] investgate empty packets
+- [ ] investigate empty packets
 - [ ] fix error handling for mojang api (probably with event manager) (at the moment the errors are silent)
 
 ## Config

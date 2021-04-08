@@ -17,9 +17,11 @@ struct GameRenderView: View {
   @ObservedObject var state = ViewState<GameViewStateEnum>(initialState: .downloadingTerrain)
   
   let client: Client
+  let eventManager: EventManager
   
   init(serverDescriptor: ServerDescriptor, managers: Managers) {
     self.client = Client(managers: managers, serverDescriptor: serverDescriptor)
+    self.eventManager = managers.eventManager
     
     managers.eventManager.registerEventHandler(handleEvent, eventName: "downloadedTerrain")
     self.client.play()
@@ -36,11 +38,20 @@ struct GameRenderView: View {
   }
   
   var body: some View {
-    switch state.state {
-      case .downloadingTerrain:
-        Text("downloading terrain")
-      case .playing:
-        MetalView(client: client)
+    Group {
+      switch state.state {
+        case .downloadingTerrain:
+          Text("downloading terrain")
+        case .playing:
+          MetalView(client: client)
+      }
     }
+    .navigationTitle("Delta Client")
+    .toolbar(content: {
+      Button("leave") {
+        client.quit()
+        eventManager.triggerEvent(.leaveServer)
+      }
+    })
   }
 }

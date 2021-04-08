@@ -30,6 +30,17 @@ struct AppView: View {
     } else {
       self.state = ViewState(initialState: .login)
     }
+    
+    self.managers.eventManager.registerEventHandler(handleEvent)
+  }
+  
+  func handleEvent(_ event: EventManager.Event) {
+    switch event {
+      case .leaveServer:
+        state.update(to: .serverList)
+      default:
+        break
+    }
   }
   
   var body: some View {

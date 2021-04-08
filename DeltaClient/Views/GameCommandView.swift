@@ -11,8 +11,10 @@ struct GameCommandView: View {
   @State var command: String = ""
   
   var client: Client
+  var eventManager: EventManager
   
   init(serverDescriptor: ServerDescriptor, managers: Managers) {
+    self.eventManager = managers.eventManager
     self.client = Client(managers: managers, serverDescriptor: serverDescriptor)
     self.client.play()
   }
@@ -26,5 +28,12 @@ struct GameCommandView: View {
         self.client.runCommand(command)
       }
     }
+    .navigationTitle("Delta Client")
+    .toolbar(content: {
+      Button("leave") {
+        client.quit()
+        eventManager.triggerEvent(.leaveServer)
+      }
+    })
   }
 }
