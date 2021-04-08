@@ -129,6 +129,13 @@ class ConfigManager: ObservableObject {
     }
   }
   
+  func addServer(_ descriptor: ServerDescriptor, at index: Int) {
+    ThreadUtil.runInMain {
+      config.servers.insert(descriptor, at: index)
+      writeConfig()
+    }
+  }
+  
   func removeServer(at index: Int) {
     ThreadUtil.runInMain {
       config.servers.remove(at: index)

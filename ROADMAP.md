@@ -18,11 +18,12 @@
 - [x] add encryption support
 - [x] basic config system
 - [x] sign in screen on first launch
-- [ ] config screen for changing account details
+- [x] config screen for changing account details (used a logout button for now instead)
 - [x] remove need for minecraft to be already installed
 - [x] add basic way to exit game and get back to server list
 - [x] prettyprint config json
-- [ ] way to re-order servers
+- [x] way to re-order servers
+- [ ] move some things to menu bar instead of tool bar (like account stuff)
 
 ## Demo 2 - Better Rendering
 
@@ -52,14 +53,19 @@
 - improved ui
 - improved error handling and displaying
 - offline account support
+- microsoft accounts
+- multi-accounting
 
 ### Todo
 
-- rework ui code
-- rework mojang api and login flow
-- find and remove redundant code
-- maybe remove commands mode
-- improve error handling and displaying
+- [ ] rework ui code
+- [ ] rework mojang api and login flow
+- [ ] find and remove redundant code
+- [ ] maybe remove commands mode
+- [ ] improve error handling and displaying
+- [ ] add offline account support
+- [ ] add multi accounting
+- [ ] add microsoft account support
 
 ## Demo 4 - iOS/iPadOS
 

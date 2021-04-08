@@ -33,9 +33,27 @@ struct EditServerListView: View {
               Button("remove") {
                 configManager.removeServer(at: index)
               }
+              
               Button("edit") {
                 viewState.update(to: .editServer(index))
               }
+            }
+            VStack(alignment: .trailing, spacing: 4) {
+              Button(action: {
+                configManager.removeServer(at: index)
+                configManager.addServer(descriptor, at: index - 1)
+              }, label: {
+                Image(systemName: "chevron.up")
+              })
+              .disabled(index == 0)
+              
+              Button(action: {
+                configManager.removeServer(at: index)
+                configManager.addServer(descriptor, at: index + 1)
+              }, label: {
+                Image(systemName: "chevron.down")
+              })
+              .disabled(index == servers.count - 1)
             }
           }
           .padding(4)
