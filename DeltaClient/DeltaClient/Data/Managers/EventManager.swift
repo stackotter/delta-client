@@ -37,6 +37,7 @@ class EventManager: Equatable {
     case downloadedTerrain
     
     case leaveServer
+    case shouldLogout
     
     case loadingScreenMessage(_ message: String)
     case loadingComplete(_ managers: Managers)

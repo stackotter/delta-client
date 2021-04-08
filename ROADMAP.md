@@ -23,7 +23,7 @@
 - [x] add basic way to exit game and get back to server list
 - [x] prettyprint config json
 - [x] way to re-order servers
-- [ ] move some things to menu bar instead of tool bar (like account stuff)
+- [x] move some things to menu bar instead of tool bar (like account stuff)
 
 ## Demo 2 - Better Rendering
 

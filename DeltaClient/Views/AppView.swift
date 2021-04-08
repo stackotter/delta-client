@@ -38,6 +38,9 @@ struct AppView: View {
     switch event {
       case .leaveServer:
         state.update(to: .serverList)
+      case .shouldLogout:
+        managers.configManager.logout()
+        state.update(to: .login)
       default:
         break
     }

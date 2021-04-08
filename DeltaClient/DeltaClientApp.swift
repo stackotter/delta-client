@@ -80,5 +80,12 @@ struct DeltaClientApp: App {
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+    .commands {
+      CommandMenu("Account", content: {
+        Button("logout") {
+          eventManager.triggerEvent(.shouldLogout)
+        }
+      })
+    }
   }
 }
