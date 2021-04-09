@@ -12,13 +12,13 @@ struct TagsPacket: ClientboundPacket {
   static let id: Int = 0x5b
   
   init(from packetReader: inout PacketReader) {
-    for _ in 1...4 {
+    for _ in 0..<4 {
       let length = packetReader.readVarInt()
-      for _ in 1...length {
+      for _ in 0..<length {
         let tagName = packetReader.readString()
         _ = tagName
         let count = packetReader.readVarInt()
-        for _ in 1...count {
+        for _ in 0..<count {
           let entry = packetReader.readVarInt()
           _ = entry
         }

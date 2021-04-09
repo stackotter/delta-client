@@ -204,7 +204,7 @@ struct NBTCompound: CustomStringConvertible {
           
           var list = NBTList(type: listType)
           if length != 0 {
-            for _ in 1...length {
+            for _ in 0..<length {
               let elem = try readTag(ofType: listType)
               list.append(elem.value!)
             }
