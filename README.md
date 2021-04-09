@@ -2,13 +2,11 @@
 
 ## Overview
 
-Delta Client is an open source rewrite of Minecraft Java Edition written in Swift (and a bit of C for performance).
+Delta Client is an open source rewrite of Minecraft Java Edition written in Swift (Apple's modern programming language). The main focus of this project is to create a highly efficient Java Edition compatible client for macOS.
 
-In the future the project will support iOS and iPadOS and maybe AppleTV to allow playing on Java Edition on platforms normally limited to Bedrock Edition.
+In the future the project will also hopefully support iOS, iPadOS and maybe tvOS. This would allow playing on Java Edition servers, on platforms normally limited to Bedrock Edition.
 
-The focus of this project is to provide a significantly more performant Minecraft Java Edition compatible client for macOS (and one at all for iOS).
-
-NOTE: I am NOT responsible for anti-cheat bans, the client has not been thoroughly tested yet and is still deep in development.
+**I am NOT responsible for anti-cheat bans, the client has not been thoroughly tested yet and is still deep in development.**
 
 ## Minecraft version support
 
@@ -17,7 +15,7 @@ NOTE: I am NOT responsible for anti-cheat bans, the client has not been thorough
 
 ## Metrics
 
-Here's a list of the client's current numbers when run on my 2020 dual-core Intel i5 MacBook Air with 8gb of ram;
+Here's how the client currently perfomrs when run on my 2020 dual-core Intel i5 MacBook Air with 8gb of ram;
 
 - launch time: 0.85s avg
   - vanilla minecraft: 40s (47x slower)
@@ -26,12 +24,10 @@ Here's a list of the client's current numbers when run on my 2020 dual-core Inte
 - ram usage on home screen: 40mb avg
   - about the same as vanilla minecraft
 - ram usage in game: just under 100mb
-- time taken to join server: 1s
+- time taken to join server: 0.4s on a regular survival world
   - vanilla minecraft takes around 2-3s
-  - Delta Client currently only renders one chunk so it's a pretty unfair comparison anyway
-- app size: 14.5mb
-  - i currently only use two external libraries; Zip (for extracting assets from the client jar) and SwiftProtobuf (for caching)
-  - i may make my own fork of Zip to only include what i need but in comparison to SwiftProtobuf (which is pretty small anyway) it's tiny so it's probably not that worth it
+  - Delta Client currently only renders one chunk so it's a pretty unfair comparison
+- app size: 5.2mb
 
 ## Features
 
@@ -119,9 +115,7 @@ Actually, I might just disable these soon, they're pretty useless.
 
 ![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/edit-server-list.png?raw=true)
 
-#### Current rendering
-
-Rendering multiple chunks is coming next.
+#### Current rendering (only one chunk)
 
 ![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/progress-5.png?raw=true)
 

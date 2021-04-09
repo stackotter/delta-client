@@ -1,6 +1,6 @@
 # Roadmap
 
-## Demo 1 - Basic Demo
+## Demo 1 - Basic Demo (Completed)
 
 ### Features
 
@@ -25,7 +25,7 @@
 - [x] way to re-order servers
 - [x] move some things to menu bar instead of tool bar (like account stuff)
 
-## Demo 2 - Better Rendering
+## Demo 2 - Better Rendering (Current target)
 
 ### Features
 
@@ -37,13 +37,14 @@
 
 ### Todo
 
-- [ ] create basic input system
-- [ ] create basic physics system (for movement, no gravity)
+- [ ] basic shading
 - [ ] multipart structure parsing
 - [ ] multipart structure rendering
 - [ ] refactor chunk mesh preparation
 - [ ] optimise chunk mesh preparation (using c most likely)
 - [ ] basic multichunk rendering
+- [ ] create basic input system
+- [ ] create basic physics system (for movement, no gravity)
 
 ## Demo 3 - Cleaner UI + General Code Cleanup
 
