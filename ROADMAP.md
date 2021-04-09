@@ -25,7 +25,14 @@
 - [x] way to re-order servers
 - [x] move some things to menu bar instead of tool bar (like account stuff)
 
-## Demo 2 - Better Rendering (Current target)
+## Demo 2 - Bug fixes for basic features
+
+### Todo
+
+- [x] refresh access token before each server join
+- [ ] fix first time server join
+
+## Demo 3 - Better Rendering (Current target)
 
 ### Features
 
@@ -46,7 +53,7 @@
 - [ ] create basic input system
 - [ ] create basic physics system (for movement, no gravity)
 
-## Demo 3 - Cleaner UI + General Code Cleanup
+## Demo 4 - Cleaner UI + General Code Cleanup
 
 ### Features
 
@@ -67,8 +74,9 @@
 - [ ] add offline account support
 - [ ] add multi accounting
 - [ ] add microsoft account support
+- [ ] use count up down latch thingo like minosoft for startup sequence
 
-## Demo 4 - iOS/iPadOS
+## Demo 5 - iOS/iPadOS
 
 ### Features
 

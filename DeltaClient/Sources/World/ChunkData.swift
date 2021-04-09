@@ -51,8 +51,9 @@ struct ChunkData {
           let y: Int = try blockEntityNBT.get("y")
           let z: Int = try blockEntityNBT.get("z")
           let position = Position(x: x, y: y, z: z)
-          let identifierString: String = try! blockEntityNBT.get("id")
-          let identifier = try! Identifier(identifierString)
+          // make identifier not throwing, make it just return the placeholder
+          let identifierString: String = (try? blockEntityNBT.get("id")) ?? "deltaclient:placeholder"
+          let identifier = (try? Identifier(identifierString)) ?? Identifier(namespace: "deltaclient", name: "placeholder")
           let blockEntity = BlockEntity(position: position, identifier: identifier, nbt: blockEntityNBT)
           blockEntities.append(blockEntity)
         } catch {

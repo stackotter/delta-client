@@ -73,31 +73,37 @@ struct MojangAPI {
     }
   }
   
-  static func refresh(accessToken: String, clientToken: String, completion: @escaping (_ accessToken: String) -> (), failure: @escaping () -> ()) throws {
+  static func refresh(accessToken: String, clientToken: String, completion: @escaping (_ accessToken: String) -> (), failure: @escaping () -> ()) {
     let requestObject = [
       "accessToken": accessToken,
       "clientToken": clientToken
     ]
     
-    let requestBody = try JSONSerialization.data(withJSONObject: requestObject, options: [])
-    
-    RequestUtil.post(MojangAPIDefinition.REFRESH_URL, requestBody) { data, error in
-      if error != nil {
-        Logger.error("mojang token refresh failed: \(error!)")
-        // TODO: trigger re-login?
-      } else {
-        do {
-          let response = try JSONSerialization.jsonObject(with: data!, options: []) as! [String: Any]
-          if let newAccessToken = response["accessToken"] as? String {
-            completion(newAccessToken)
-          } else {
-            Logger.error("failed to refresh access token: \(response["errorMessage"] ?? "no error message provided")")
+    do {
+      let requestBody = try JSONSerialization.data(withJSONObject: requestObject, options: [])
+      
+      RequestUtil.post(MojangAPIDefinition.REFRESH_URL, requestBody) { data, error in
+        if error != nil {
+          Logger.error("mojang token refresh failed: \(error!)")
+          failure()
+        } else {
+          do {
+            let response = try JSONSerialization.jsonObject(with: data!, options: []) as! [String: Any]
+            if let newAccessToken = response["accessToken"] as? String {
+              completion(newAccessToken)
+            } else {
+              Logger.error("failed to refresh access token: \(response["errorMessage"] ?? "no error message provided")")
+              failure()
+            }
+          } catch {
+            Logger.error("invalid response from server")
             failure()
           }
-        } catch {
-          Logger.error("invalid response from server")
         }
       }
+    } catch {
+      Logger.error("failed to refresh access token: \(error)")
+      failure()
     }
   }
 }

@@ -12,7 +12,6 @@ struct Player {
   
   var position: EntityPosition = EntityPosition(x: 0, y: 0, z: 0)
   var look: PlayerRotation = PlayerRotation(yaw: 0, pitch: 0)
-  var chunkPosition: ChunkPosition = ChunkPosition(chunkX: 0, chunkZ: 0)
   
   var experienceBar: Float = -1
   var totalExperience: Int = -1

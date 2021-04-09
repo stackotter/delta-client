@@ -26,12 +26,7 @@ class ConfigManager: ObservableObject {
         let decoder = JSONDecoder()
         self.config = try decoder.decode(Config.self, from: configJSON)
         if getHasLoggedIn() {
-          try MojangAPI.refresh(accessToken: self.config.account!.accessToken, clientToken: self.config.clientToken, completion: { newAccessToken in
-            self.config.account!.accessToken = newAccessToken
-            self.writeConfig()
-          }, failure: {
-            self.logout()
-          })
+          refreshAccessToken(success: {})
         }
         return
       } catch {
@@ -141,5 +136,17 @@ class ConfigManager: ObservableObject {
       config.servers.remove(at: index)
       writeConfig()
     }
+  }
+  
+  // Util
+  
+  func refreshAccessToken(success: @escaping () -> ()) {
+    MojangAPI.refresh(accessToken: self.config.account!.accessToken, clientToken: self.config.clientToken, completion: { newAccessToken in
+      self.config.account!.accessToken = newAccessToken
+      self.writeConfig()
+      success()
+    }, failure: {
+      self.logout()
+    })
   }
 }

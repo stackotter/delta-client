@@ -22,7 +22,9 @@ class Client {
   // Server interaction
   
   func play() {
-    server.login()
+    self.managers.configManager.refreshAccessToken(success: {
+      self.server.login()
+    })
   }
   
   func quit() {

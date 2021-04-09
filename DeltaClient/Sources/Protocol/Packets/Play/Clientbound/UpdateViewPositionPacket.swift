@@ -19,7 +19,6 @@ struct UpdateViewPositionPacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    server.player.chunkPosition = chunkPosition
-    // TODO_LATER: trigger world to recalculate which chunks should be rendered (if a circle is decided on for chunk rendering)
+    // TODO: trigger world to recalculate which chunks should be rendered (if a circle is decided on for chunk rendering)
   }
 }
