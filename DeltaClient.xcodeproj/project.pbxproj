@@ -2023,6 +2023,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = "v0.1.0-demo.2";
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2LMZ445376;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -2034,6 +2035,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = "demo 2";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.stackotter.delta-client";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "DeltaClient/Sources/Util/C/bridging-header.h";
@@ -2052,6 +2054,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = "v0.1.0-demo.2";
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2LMZ445376;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -2063,6 +2066,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = "demo 2";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.stackotter.delta-client";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "DeltaClient/Sources/Util/C/bridging-header.h";

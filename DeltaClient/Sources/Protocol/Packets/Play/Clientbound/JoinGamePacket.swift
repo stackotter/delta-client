@@ -60,10 +60,6 @@ struct JoinGamePacket: ClientboundPacket {
     let world = World(config: worldConfig, managers: server.managers)
     server.worlds[worldName] = world
     server.currentWorldName = worldName
-    
-    // TODO: this could lead to anti cheat bans if player is actually in air
-    let positionPacket = PlayerMovementPacket(onGround: true)
-    server.sendPacket(positionPacket)
   }
 }
 
