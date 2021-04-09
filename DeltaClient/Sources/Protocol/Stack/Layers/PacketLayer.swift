@@ -50,7 +50,7 @@ class PacketLayer: NetworkLayer {
       
       if (receiveState.length == 0) {
         // TODO: investigate empty packets
-        Logger.info("received empty packet")
+        Logger.debug("received empty packet")
         receiveState.length = -1
         receiveState.lengthBytes = []
       } else if (receiveState.length != -1 && buffer.remaining != 0) {

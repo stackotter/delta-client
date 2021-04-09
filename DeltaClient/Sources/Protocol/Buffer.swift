@@ -102,13 +102,13 @@ struct Buffer {
   }
   
   mutating func readInt(endian: Endian) -> UInt {
-    let int = UInt(readBitPattern(n: 4, endian: endian))
-    return int
+    let int = UInt32(readBitPattern(n: 4, endian: endian))
+    return UInt(int)
   }
   
   mutating func readSignedInt(endian: Endian) -> Int {
-    let signedInt = Int(bitPattern: readInt(endian: endian))
-    return signedInt
+    let signedInt = Int32(bitPattern: UInt32(readBitPattern(n: 4, endian: endian)))
+    return Int(signedInt)
   }
   
   mutating func readLong(endian: Endian) -> UInt {

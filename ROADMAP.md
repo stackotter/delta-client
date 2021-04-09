@@ -30,7 +30,7 @@
 ### Todo
 
 - [x] refresh access token before each server join
-- [ ] fix first time server join
+- [x] fix first time server join
 
 ## Demo 3 - Better Rendering (Current target)
 

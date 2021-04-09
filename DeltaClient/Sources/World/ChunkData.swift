@@ -61,7 +61,7 @@ struct ChunkData {
         }
       }
       let elapsed = CFAbsoluteTimeGetCurrent() - start
-      Logger.log(String(format: "completed chunk in %.2fms", elapsed*1000))
+      Logger.log(String(format: "completed chunk at \(position) in %.2fms", elapsed*1000))
       
       let chunk = Chunk(position: position, heightMaps: heightMaps, ignoreOldData: ignoreOldData, biomes: biomes, sections: sections, blockEntities: blockEntities, blockPaletteManager: blockPaletteManager)
       return chunk
