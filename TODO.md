@@ -68,3 +68,4 @@
 - [ ] fix folder structure a little (not just delta-client/DeltaClient/DeltaClient to get to any code)
 - [ ] fix leave server's ram issue
 - [ ] separate protocol in protocol and network
+- [ ] make mesh a protocol and extension, not a class

@@ -77,19 +77,23 @@ class Chunk {
   }
   
   func setBlock(at position: Position, to newState: UInt16) {
-    let blockIndex = blockIndexFrom(position)
-    
-    let currentState = getBlock(atIndex: blockIndex)
-    if currentState == newState {
-      Logger.debug("doing nothing, state not changing")
-      return
+    if position.y >= 0 && position.y < 256 {
+      let blockIndex = blockIndexFrom(position)
+      
+      let currentState = getBlock(atIndex: blockIndex)
+      if currentState == newState {
+        Logger.debug("doing nothing, state not changing")
+        return
+      }
+      
+      let sectionNum = Int(position.y / ChunkSection.HEIGHT)
+      let sectionIndex = blockIndex - sectionNum * ChunkSection.NUM_BLOCKS
+      sections[sectionNum].blocks[sectionIndex] = newState
+      
+      mesh.replaceBlock(at: blockIndex, newState: newState)
+    } else {
+      Logger.warning("block change at y=\(position.y) (ignored)")
     }
-    
-    let sectionNum = Int(position.y / ChunkSection.HEIGHT)
-    let sectionIndex = blockIndex - sectionNum * ChunkSection.NUM_BLOCKS
-    sections[sectionNum].blocks[sectionIndex] = newState
-    
-    mesh.replaceBlock(at: blockIndex, newState: newState)
   }
   
   func getNeighbouringBlocks(forIndex index: Int) -> [FaceDirection: (Chunk, Int)] {

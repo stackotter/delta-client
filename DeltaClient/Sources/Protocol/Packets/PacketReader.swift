@@ -190,12 +190,37 @@ struct PacketReader {
     return json
   }
   
+  // reads x, y and z from a packed integer (each is signed)
   mutating func readPosition() -> Position {
     let val = buffer.readLong(endian: .big)
-    let x = Int(val >> 38)
-    let y = Int(val & 0xfff)
-    let z = Int((val << 26) >> 38)
-    return Position(x: x, y: y, z: z)
+    
+    // extract the bit patterns (it goes x, then z, then y)
+    var x = UInt32(val >> 38) // x is 26 bit
+    var z = UInt32((val << 26) >> 38) // z is 26 bit
+    var y = UInt32(val & 0xfff) // y is 12 bit
+    
+    // x and z are 26-bit signed integers, y is a 12-bit signed integer
+    let xSignBit = (x & (1 << 25)) >> 25
+    let ySignBit = (y & (1 << 11)) >> 11
+    let zSignBit = (z & (1 << 25)) >> 25
+    
+    // convert to 32 bit signed bit patterns
+    if xSignBit == 1 {
+      x |= 0b111111 << 26
+    }
+    if ySignBit == 1 {
+      y |= 0b11111111111111111111 << 12
+    }
+    if zSignBit == 1 {
+      z |= 0b111111 << 26
+    }
+    
+    // read and return the bit patterns
+    return Position(
+      x: Int(Int32(bitPattern: x)),
+      y: Int(Int32(bitPattern: y)),
+      z: Int(Int32(bitPattern: z))
+    )
   }
   
   mutating func readEntityRotation(pitchFirst: Bool = false) -> EntityRotation {

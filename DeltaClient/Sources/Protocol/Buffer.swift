@@ -152,8 +152,8 @@ struct Buffer {
   }
   
   mutating func readVarInt() -> Int {
-    let bitPattern = UInt(readVarBitPattern(maxBytes: 5))
-    return Int(bitPattern: bitPattern)
+    let bitPattern = UInt32(readVarBitPattern(maxBytes: 5))
+    return Int(Int32(bitPattern: bitPattern))
   }
   
   mutating func readVarLong() -> Int {

@@ -21,7 +21,6 @@ class ChunkMesh: Mesh {
   private var blockIndexToQuads: [Int: [Int]] = [:]
   private var quadToBlockIndex: [Int: Int] = [:]
   
-  private var profiler: Profiler
   private var stopwatch = Stopwatch(mode: .summary, name: "chunk mesh")
   
   // cube geometry constants
@@ -48,7 +47,6 @@ class ChunkMesh: Mesh {
   init(blockPaletteManager: BlockPaletteManager, chunk: Chunk) {
     self.blockPaletteManager = blockPaletteManager
     self.chunk = chunk
-    self.profiler = Profiler(name: "chunk mesh")
     
     super.init()
   }
@@ -66,49 +64,29 @@ class ChunkMesh: Mesh {
       var y = 0
       var z = 0
       
-      stopwatch.startMeasurement("ingestChunk")
       for (sectionIndex, section) in chunk.sections.enumerated() {
         if section.blockCount != 0 { // section isn't empty
           let offset = sectionIndex * ChunkSection.NUM_BLOCKS
           for i in 0..<ChunkSection.NUM_BLOCKS {
-            stopwatch.startMeasurement("ingestChunk: chunk section block")
             // get block state and add block to mesh if not air
-            stopwatch.startMeasurement("ingestChunk: add block")
             let state = section.blocks[i]
             if state != 0 { // block isn't air
               let blockIndex = offset + i // block index in chunk
               
               addBlock(x, y, z, index: blockIndex, state: state)
             }
-            stopwatch.stopMeasurement("ingestChunk: add block")
             
             // move xyz to next block with speedy magic
-            stopwatch.startMeasurement("ingestChunk: update indices")
             x += 1
             z += (x == ChunkSection.WIDTH) ? 1 : 0
             y += (z == ChunkSection.DEPTH) ? 1 : 0
             x = x & 0xf
             z = z & 0xf
-            stopwatch.stopMeasurement("ingestChunk: update indices")
-            stopwatch.stopMeasurement("ingestChunk: chunk section block")
           }
         }
       }
-      stopwatch.stopMeasurement("ingestChunk")
     }
     
-    stopwatch.summary()
-  }
-  
-  func replaceBlock(at index: Int, newState: UInt16) {
-    queue.sync {
-      removeBlock(atIndex: index)
-      if newState != 0 {
-        addBlock(at: index, with: newState)
-      }
-    }
-    
-    updateNeighbours(of: index)
   }
   
   // mesh building functions
@@ -121,9 +99,7 @@ class ChunkMesh: Mesh {
   }
   
   private func addBlock(_ x: Int, _ y: Int, _ z: Int, index: Int, state: UInt16) {
-    stopwatch.startMeasurement("getCullingNeighbours")
     let cullFaces = chunk.getCullingNeighbours(forIndex: index)
-    stopwatch.stopMeasurement("getCullingNeighbours")
     
     if let blockModel = blockPaletteManager.blockModelPalette[state] {
       var quadIndices: [Int] = []
@@ -138,9 +114,7 @@ class ChunkMesh: Mesh {
               continue // face doesn't need to be rendered
             }
           }
-          stopwatch.startMeasurement("addQuad")
           let quadIndex = addQuad(x, y, z, direction: faceDirection, matrix: vertexToWorld, face: face)
-          stopwatch.stopMeasurement("addQuad")
           quadIndices.append(quadIndex)
           quadToBlockIndex[quadIndex] = index
         }
@@ -156,15 +130,12 @@ class ChunkMesh: Mesh {
   
   private func addQuad(_ x: Int, _ y: Int, _ z: Int, direction: FaceDirection, matrix: matrix_float4x4, face: BlockModelElementFace) -> Int {
     // add windings
-    stopwatch.startMeasurement("addQuad: add windings")
     let offset = UInt32(vertices.count) // the index of the first vertex of the quad
     for index in quadWinding {
       indices.append(index + offset)
     }
-    stopwatch.stopMeasurement("addQuad: add windings")
     
     // add vertices
-    stopwatch.startMeasurement("addQuad: add vertices")
     let vertexIndices = faceVertexIndices[direction]!
     for (uvIndex, vertexIndex) in vertexIndices.enumerated() {
       let position = simd_float4(cubeVertexPositions[vertexIndex], 1) * matrix
@@ -172,16 +143,24 @@ class ChunkMesh: Mesh {
         Vertex(position: simd_make_float3(position), uv: face.uvs[uvIndex], textureIndex: face.textureIndex, tintIndex: face.tintIndex)
       )
     }
-    stopwatch.stopMeasurement("addQuad: add vertices")
     
     // get and return the quad's index
     let index = vertices.count / 4 - 1
     return index
   }
   
-  
-  
   // Mesh Editing Functions
+  
+  func replaceBlock(at index: Int, newState: UInt16) {
+    queue.sync {
+      removeBlock(atIndex: index)
+      if newState != 0 {
+        addBlock(at: index, with: newState)
+      }
+    }
+    
+    updateNeighbours(of: index)
+  }
   
   private func removeBlock(atIndex index: Int) {
     // multiply each quadIndex by 4 to get the start index of each of the block's rendered faces

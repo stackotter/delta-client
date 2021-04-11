@@ -1,6 +1,8 @@
-# Roadmap
+# Demo Versions
 
-## Demo 1 - Basic Demo (Completed)
+The demo versions are just milestones that work towards the first Alpha release
+
+## Demo 1 - Efficient Launch, Basic Rendering & All Networking *(Released)*
 
 ### Features
 
@@ -8,7 +10,7 @@
 - login flow for mojang accounts
 - fast subsequent startups
 - rendering player's current chunk
-  - can be moved around using ```tp``` commands from another player
+  - the view can be moved around using ```tp``` commands from another player
 - basic config screens (account settings and server settings)
 
 ### Todo
@@ -25,44 +27,62 @@
 - [x] way to re-order servers
 - [x] move some things to menu bar instead of tool bar (like account stuff)
 
-## Demo 2 - Bug fixes for basic features
+## Demo 2 - Critical Bug Fixes for Demo 1 *(Released)*
+
+### New Features
+
+- none, just fixes some critical bugs from demo 1
 
 ### Todo
 
 - [x] refresh access token before each server join
 - [x] fix first time server join
 
-## Demo 3 - Better Rendering (Current target)
+## Demo 3 - Improved Rendering *(WIP)*
 
-### Features
+### New Features
 
-- basic input system (basically spectator mode)
-  - won't be hypixel-safe lol
 - basic shading
-- multichunk rendering
 - multipart structures
+- multichunk rendering
 
 ### Todo
 
-- [ ] basic shading
-- [ ] multipart structure parsing
+- [ ] multipart structure reading (from pixlyzer)
 - [ ] multipart structure rendering
-- [ ] refactor chunk mesh preparation
-- [ ] optimise chunk mesh preparation (using c most likely)
+- [ ] basic shading
+- [ ] rework & optimise chunk mesh preparation
 - [ ] basic multichunk rendering
-- [ ] create basic input system
-- [ ] create basic physics system (for movement, no gravity)
+- [ ] fix grass block sides
 
-## Demo 4 - Cleaner UI + General Code Cleanup
+## Demo 4 - Movement
 
-### Features
+### New Features
+
+- basic controls
+  - position
+  - look
+- basic physics loop (without gravity)
+
+### Todo
+
+- [ ] create an input system
+  - [ ] keyboard
+  - [ ] mouse
+- [ ] create a physics loop
+  - [ ] make a loop that runs at a consistent interval
+  - [ ] add basic physics simulation
+- [ ] hook up input system to send packets to server
+- [ ] add input settings (mouse sensitivity and keymappings)
+
+## Demo 5 - Code & UI Improvements
+
+### New Features
 
 - cleaner code
 - improved ui
 - improved error handling and displaying
-- offline account support
-- microsoft accounts
-- multi-accounting
+- improved startup verbosity
 
 ### Todo
 
@@ -71,22 +91,68 @@
 - [ ] find and remove redundant code
 - [ ] maybe remove commands mode
 - [ ] improve error handling and displaying
-- [ ] add offline account support
-- [ ] add multi accounting
-- [ ] add microsoft account support
 - [ ] use count up down latch thingo like minosoft for startup sequence
 
-## Demo 5 - iOS/iPadOS
+## Demo 6 - Multi-accounting
 
 ### Features
 
-- working iOS builds
-- working iPadOS builds
+- offline account support
+- microsoft accounts
+- multi-accounting
 
 ### Todo
 
-- [ ] add iOS build target
-- [ ] add iPadOS build target
-- [ ] provide iOS specific code for NSViewRepresentable and stuff
-- [ ] fix any iOS specific bugs
-- [ ] tweak ui for iPad
+- [ ] add basis for multi-accounting
+  - [ ] config
+  - [ ] login code
+- [ ] add offline account support
+- [ ] add microsoft account support
+- [ ] ui for switching accounts
+
+## Demo 7 - Collisions and Proper Physics
+
+### New Features
+
+- collision system
+- auto-jump
+- gravity (for noobs)
+
+### Todo
+
+- [ ] load hitboxes
+- [ ] wireframe hitboxes
+- [ ] detect player-block collisions
+- [ ] handle collisions
+- [ ] auto-jump
+- [ ] add gravity to physics
+
+# Alpha Versions
+
+The alpha versions will still be far from useable but a majority of the groundwork will be there.
+
+These versions will also start looking a lot more like the real thing.
+
+## Alpha 1 - Basic Survival Mode
+
+### New Features - Basic HUD & Inventory
+
+- f3
+- hotbar
+- health
+- xp bar
+- bubbles (the indicator for drowning stuff)
+- basic inventory view
+
+### Todo
+
+- [ ] font rendering
+- [ ] modular hud system
+- [ ] bars
+  - [ ] health
+  - [ ] hunger
+  - [ ] xp
+  - [ ] bubbles
+- [ ] item rendering
+- [ ] hotbar
+- [ ] basic inventory (just for viewing)
