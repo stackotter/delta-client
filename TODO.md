@@ -39,7 +39,7 @@
 
 ## Block models
 
-- [ ] multipart
+- [x] multipart
 - [ ] multiple models for one block
 - [ ] fix stair sides not being detected as full faces (because they're made of two elements)
 - [x] separate out block model structs into separate files

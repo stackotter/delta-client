@@ -78,41 +78,53 @@ class BlockPaletteManager {
       for (stateIdString, state) in states {
         if let stateId = Int(stateIdString) {
           let stateJSON = JSON(dict: state)
-          var modelIdentifierString: String? = nil
-          var xRot: Int = 0
-          var yRot: Int = 0
-          var zRot: Int = 0
-          var uvlock: Bool = false
           
-          var modelJSON: JSON? = nil
+          // read information about the block models from pixlyzer's data
+          var modelJSONs: [JSON] = []
           if let render = stateJSON.getJSON(forKey: "render") {
-            modelJSON = render
+            modelJSONs = [render]
           } else if let render = stateJSON.getArray(forKey: "render") as? [[String: Any]] {
-            modelJSON = JSON(dict: render[0])
-            // TODO: handling multiple states for one state id
-          }
-          
-          if let json = modelJSON {
-            modelIdentifierString = json.getString(forKey: "model")
-            xRot = json.getInt(forKey: "x") ?? 0
-            yRot = json.getInt(forKey: "y") ?? 0
-            zRot = json.getInt(forKey: "z") ?? 0
-            uvlock = json.getBool(forKey: "uvlock") ?? false
-          }
-          
-          if modelIdentifierString != nil {
-            do {
-              let modelIdentifier = try Identifier(modelIdentifierString!)
-              let blockModel = try loadBlockModel(for: modelIdentifier, xRot: xRot, yRot: yRot, zRot: zRot, uvlock: uvlock)
-              
-              blockModelPalette[UInt16(stateId)] = blockModel
-            } catch {
-              Logger.error("failed to load model for \(modelIdentifierString!): \(error)")
+            modelJSONs = [JSON(dict: render[0])]
+            // TODO: handle multiple states for one state id
+          } else if let render = stateJSON.getArray(forKey: "render") as? [[[String: Any]]] { // multipart structure
+            for modelJSON in render[0] {
+              modelJSONs.append(JSON(dict: modelJSON))
             }
-          } else {
-            // TODO: multipart structures
-//            Logger.error("failed to find model identifier for state \(stateId) on block \(blockName)")
+            // TODO: handle multiple states for one state id
           }
+          
+          // process relevant block models
+          var blockModels: [BlockModel] = []
+          for modelJSON in modelJSONs {
+            let modelIdentifierString = modelJSON.getString(forKey: "model")
+            let xRot = modelJSON.getInt(forKey: "x") ?? 0
+            let yRot = modelJSON.getInt(forKey: "y") ?? 0
+            let zRot = modelJSON.getInt(forKey: "z") ?? 0
+            let uvlock = modelJSON.getBool(forKey: "uvlock") ?? false
+            
+            if modelIdentifierString != nil {
+              do {
+                let modelIdentifier = try Identifier(modelIdentifierString!)
+                let blockModel = try loadBlockModel(for: modelIdentifier, xRot: xRot, yRot: yRot, zRot: zRot, uvlock: uvlock)
+                blockModels.append(blockModel)
+              } catch {
+                Logger.error("failed to load model for \(modelIdentifierString!): \(error)")
+              }
+            } else {
+              // TODO: multipart structures
+              Logger.error("failed to find model identifier for state \(stateId) on block \(blockName)")
+            }
+          }
+          
+          // combine the block models into one (for multipart structures)
+          var combinedBlockModel = BlockModel(fullFaces: Set<FaceDirection>(), elements: [])
+          for blockModel in blockModels {
+            combinedBlockModel.elements.append(contentsOf: blockModel.elements)
+            combinedBlockModel.fullFaces.formUnion(blockModel.fullFaces)
+          }
+          
+          // add to palette
+          blockModelPalette[UInt16(stateId)] = combinedBlockModel
         } else {
           Logger.error("invalid state id: \(stateIdString)")
         }
@@ -373,7 +385,7 @@ class BlockPaletteManager {
           modelMatrix *= MatrixUtil.scalingMatrix(scale.x, scale.y, scale.z)
           modelMatrix *= MatrixUtil.translationMatrix(origin)
           
-          // IMPLEMENT: rescale
+          // TODO: rescale
 //          if rescale {
 //            modelMatrix *= MatrixUtil.scalingMatrix(1.414, 1, 1.414)
 //          }

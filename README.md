@@ -61,14 +61,16 @@ Here's how the client currently perfomrs when run on my 2020 dual-core Intel i5 
   - [ ] Action commands
   - [ ] Movement commands
 - [ ] Rendering
-  - [ ] Chunks
+  - [ ] World
     - [x] Basic block rendering
     - [x] Basic chunk rendering
     - [x] Block culling
     - [x] Block models
+    - [x] Multipart structures (e.g. fences)
     - [ ] Multiple chunks
-    - [ ] Animated textures
-    - [ ] Block entities
+    - [ ] Animated textures (e.g. lava)
+    - [ ] Fluids (lava and water)
+    - [ ] Block entities (e.g. chests)
     - [ ] Chunk culling
   - [ ] HUD
     - [ ] Basic text

@@ -45,15 +45,17 @@ The demo versions are just milestones that work towards the first Alpha release
 - basic shading
 - multipart structures
 - multichunk rendering
+- other rendering fixes
 
 ### Todo
 
-- [ ] multipart structure reading (from pixlyzer)
-- [ ] multipart structure rendering
+- [x] multipart structure reading (from pixlyzer)
+- [x] multipart structure rendering
 - [ ] basic shading
 - [ ] rework & optimise chunk mesh preparation
 - [ ] basic multichunk rendering
 - [ ] fix grass block sides
+- [ ] implement rescale
 
 ## Demo 4 - Movement
 
