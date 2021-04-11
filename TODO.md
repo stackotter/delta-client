@@ -61,6 +61,7 @@
 
 ## General
 
+- [ ] add version to block model and config to add semi-backwards compatibility
 - [x] improve error handling in networking
 - [ ] clean up json reader/writer
   - [ ] use swifts fancy json instead of mine

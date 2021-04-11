@@ -13,6 +13,21 @@ In the future the project will also hopefully support iOS, iPadOS and maybe tvOS
 - [ ] 1.8.9 (will come once 1.16.1 is pretty polished)
 - [x] 1.16.1
 
+## Installation
+
+1. Download the latest release from the releases page
+2. Unzip the download and open the application inside
+3. You will get a security alert, click ok
+4. Open System Preferences and navigate to 'Security & Privacy', and then to the 'General' tab
+5. There should be a thing saying '"DeltaClient" was blocked from use...', click 'Open Anyway'
+6. You should get another pop-up, click 'Open'
+7. Wait for it to download and process the requirec assets (this only has to happen once and should take around 40s with a mediocre internet speed)
+8. You can move DeltaClient to your Applications folder for ease of use if you want
+
+## Troubleshooting
+
+As DeltaClient is still in development it is expected that you will probably run into some errors. As a quick fix open Finder then press ```cmd-shift-l```. Navigate to the folder named 'Application Support' and delete the folder named 'DeltaClient'. This will completely reset the app and it will go through the first launch sequence again. I appreciate it if you can also create an issue for the error, especially if it persists because it may also be affecting other users. All issues are appreciated no matter how minor.
+
 ## Metrics
 
 Here's how the client currently perfomrs when run on my 2020 dual-core Intel i5 MacBook Air with 8gb of ram;

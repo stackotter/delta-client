@@ -17,6 +17,8 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error
 
+Did deleting the ```DeltaClient``` folder in ```~/Library/Application Support``` fix the issue? (see readme for instructions)
+
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
