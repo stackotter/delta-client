@@ -127,6 +127,11 @@ enum FaceDirection: Int32 {
     return .up
   }
   
+  func rotated(_ rotationMatrix: matrix_float4x4) -> FaceDirection {
+    let vector = simd_float4(self.toVector(), 1) * rotationMatrix
+    return FaceDirection.fromVector(vector: simd_make_float3(vector))
+  }
+  
   func toCache() -> CacheFaceDirection {
     switch self {
       case .down:

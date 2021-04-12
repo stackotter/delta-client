@@ -18,6 +18,8 @@
 - [ ] fix initial ping being weird (a packet is being sent when it shouldn't be)
 - [ ] investigate empty packets
 - [ ] fix error handling for mojang api (probably with event manager) (at the moment the errors are silent)
+- [ ] shutdown networking properly when leaving server
+  - [ ] teardown server and client objects properly
 
 ## Config
 
@@ -52,6 +54,7 @@
 - [ ] fix path block xray
 - [ ] rename protobuf cache message thingos to be Cached instead of Cache
 - [ ] stop using a dictionary for the block palette, just use an array
+- [ ] respect weighting for block variants
 
 ## Chunk preparing
 
@@ -72,3 +75,7 @@
 - [ ] fix leave server's ram issue
 - [ ] separate protocol in protocol and network
 - [ ] make mesh a protocol and extension, not a class
+
+## Optimisation
+
+- [ ] fix ram usage and find why ram usage is so high after first launch

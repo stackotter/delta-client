@@ -95,10 +95,6 @@ class BlockPaletteManager {
     }
     for (blockName, block) in pixlyzerJSON {
       let blockJSON = JSON(dict: block)
-      if blockJSON.containsKey("render") {
-        // IMPLEMENT: multipart
-        continue
-      }
       
       guard let states = blockJSON.getJSON(forKey: "states")?.dict as? [String: [String: Any]] else {
         Logger.error("invalid pixlyzer json format for \(blockName)")
@@ -193,8 +189,7 @@ class BlockPaletteManager {
           if let textureIndex = textureManager.identifierToBlockTextureIndex[textureIdentifier] {
             var cullface = intermediateFace.cullface
             if cullface != nil {
-              let vector = simd_float4(cullface!.toVector(), 1) * rotationMatrix
-              cullface = FaceDirection.fromVector(vector: simd_make_float3(vector))
+              cullface = cullface!.rotated(rotationMatrix)
             }
             
             var rotation = intermediateFace.rotation
@@ -223,12 +218,13 @@ class BlockPaletteManager {
             let minUV = intermediateFace.uv.0
             let maxUV = intermediateFace.uv.1
             let uvs = textureCoordsFrom(minUV, maxUV, rotation: -rotation) // minecraft does rotation the other way
+            let tintIndex = Int8(intermediateFace.tintIndex ?? -1)
             
             let face = BlockModelElementFace(
               uvs: uvs,
               textureIndex: textureIndex,
               cullface: cullface,
-              tintIndex: Int8(intermediateFace.tintIndex ?? -1)
+              tintIndex: tintIndex
             )
             faces[direction] = face
           } else {
@@ -243,38 +239,51 @@ class BlockPaletteManager {
       elements.append(element)
       
       // check if block has any full faces
-      
       let point1 = simd_make_float3(simd_float4(0, 0, 0, 1) * modelMatrix)
       let point2 = simd_make_float3(simd_float4(1, 1, 1, 1) * modelMatrix)
       
+      // floating point precision was leading to faces not being identified
+      let margin: Float = 0.00001
+      
       for direction in FaceDirection.directions {
         // 0 if the direction is a negative direction, otherwise 1
-        let value = (simd_dot(direction.toVector(), simd_float3(repeating: 1)) + 1) / 2.0
+        let directionVector = direction.toVector()
+        let value = (directionVector.x + directionVector.y + directionVector.z + 1) / 2.0
         
         let maxPoint: simd_float2
         let minPoint: simd_float2
         switch direction.axis {
           case .x:
-            if point1.x != value && point2.x != value {
+            if (!MathUtil.checkFloatEquality(point1.x, value, absoluteTolerance: margin) &&
+                !MathUtil.checkFloatEquality(point2.x, value, absoluteTolerance: margin)) {
               continue
             }
             maxPoint = simd_float2(max(point1.y, point2.y), max(point1.z, point2.z))
             minPoint = simd_float2(min(point1.y, point2.y), min(point1.z, point2.z))
           case .y:
-            if point1.y != value && point2.y != value {
+            if (!MathUtil.checkFloatEquality(point1.y, value, absoluteTolerance: margin) &&
+                !MathUtil.checkFloatEquality(point2.y, value, absoluteTolerance: margin)) {
               continue
             }
             maxPoint = simd_float2(max(point1.x, point2.x), max(point1.z, point2.z))
             minPoint = simd_float2(min(point1.x, point2.x), min(point1.z, point2.z))
           case .z:
-            if point1.z != value && point2.z != value {
+            if (!MathUtil.checkFloatEquality(point1.z, value, absoluteTolerance: margin) &&
+                !MathUtil.checkFloatEquality(point2.z, value, absoluteTolerance: margin)) {
               continue
             }
             maxPoint = simd_float2(max(point1.x, point2.x), max(point1.y, point2.y))
             minPoint = simd_float2(min(point1.x, point2.x), min(point1.y, point2.y))
         }
         
-        if minPoint.x <= 0 && minPoint.y <= 0 && maxPoint.x >= 1 && maxPoint.y >= 1 {
+        if identifier.name == "block/magenta_glazed_terracotta" && yRot == 90 {
+          print("break")
+        }
+        
+        if (MathUtil.checkFloatLessThan(value: minPoint.x, compareTo: 0, absoluteTolerance: margin) &&
+            MathUtil.checkFloatLessThan(value: minPoint.y, compareTo: 0, absoluteTolerance: margin) &&
+            MathUtil.checkFloatGreaterThan(value: maxPoint.x, compareTo: 1, absoluteTolerance: margin) &&
+            MathUtil.checkFloatGreaterThan(value: maxPoint.y, compareTo: 1, absoluteTolerance: margin)) {
           fullFaces.insert(direction)
         }
       }

@@ -12,6 +12,8 @@
 		780523B6261433A800079A01 /* DeltaClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229D261433A700079A01 /* DeltaClientApp.swift */; };
 		7868885526239C3000BD3F03 /* Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7868885426239C3000BD3F03 /* Random.swift */; };
 		786888672623D77A00BD3F03 /* CacheBlockModelContainer.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786888472623952000BD3F03 /* CacheBlockModelContainer.pb.swift */; };
+		7868886D2623F67D00BD3F03 /* get_neighbouring_blocks.c in Sources */ = {isa = PBXBuildFile; fileRef = 7868886C2623F67D00BD3F03 /* get_neighbouring_blocks.c */; };
+		7868887526243D9F00BD3F03 /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7868887426243D9E00BD3F03 /* MathUtil.swift */; };
 		7892880E261438A000F17DBB /* DeltaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A9261433A700079A01 /* DeltaClientTests.swift */; };
 		78928812261438A500F17DBB /* DeltaClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052170261433A600079A01 /* DeltaClientUITests.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
@@ -363,6 +365,9 @@
 		786888472623952000BD3F03 /* CacheBlockModelContainer.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelContainer.pb.swift; sourceTree = "<group>"; };
 		7868884C2623952900BD3F03 /* CacheBlockModelContainer.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheBlockModelContainer.proto; sourceTree = "<group>"; };
 		7868885426239C3000BD3F03 /* Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Random.swift; sourceTree = "<group>"; };
+		7868886B2623F67D00BD3F03 /* get_neighbouring_blocks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = get_neighbouring_blocks.h; sourceTree = "<group>"; };
+		7868886C2623F67D00BD3F03 /* get_neighbouring_blocks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = get_neighbouring_blocks.c; sourceTree = "<group>"; };
+		7868887426243D9E00BD3F03 /* MathUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathUtil.swift; sourceTree = "<group>"; };
 		78D917FA261FB4CC00A4782F /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		78D917FD261FB4CC00A4782F /* CraftingRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftingRecipe.swift; sourceTree = "<group>"; };
 		78D917FE261FB4CC00A4782F /* CraftingShapeless.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftingShapeless.swift; sourceTree = "<group>"; };
@@ -859,12 +864,12 @@
 				78D91826261FB4CC00A4782F /* Logger.swift */,
 				78D91827261FB4CC00A4782F /* CompressionUtil.swift */,
 				78D91828261FB4CC00A4782F /* Profiler.swift */,
-				78D91829261FB4CC00A4782F /* RequestMethod.swift */,
 				78D9182A261FB4CC00A4782F /* Stopwatch.swift */,
-				78D9182B261FB4CC00A4782F /* API */,
 				78D91836261FB4CC00A4782F /* MatrixUtil.swift */,
-				78D91837261FB4CC00A4782F /* C */,
 				78D9183B261FB4CC00A4782F /* CryptoUtil.swift */,
+				7868887426243D9E00BD3F03 /* MathUtil.swift */,
+				78D9182B261FB4CC00A4782F /* API */,
+				78D91837261FB4CC00A4782F /* C */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -872,6 +877,7 @@
 		78D9182B261FB4CC00A4782F /* API */ = {
 			isa = PBXGroup;
 			children = (
+				78D91829261FB4CC00A4782F /* RequestMethod.swift */,
 				78D9182C261FB4CC00A4782F /* Mojang */,
 			);
 			path = API;
@@ -896,9 +902,11 @@
 		78D91837261FB4CC00A4782F /* C */ = {
 			isa = PBXGroup;
 			children = (
-				78D91838261FB4CC00A4782F /* chunkunpack.c */,
-				78D91839261FB4CC00A4782F /* chunkunpack.h */,
 				78D9183A261FB4CC00A4782F /* bridging-header.h */,
+				78D91839261FB4CC00A4782F /* chunkunpack.h */,
+				78D91838261FB4CC00A4782F /* chunkunpack.c */,
+				7868886B2623F67D00BD3F03 /* get_neighbouring_blocks.h */,
+				7868886C2623F67D00BD3F03 /* get_neighbouring_blocks.c */,
 			);
 			path = C;
 			sourceTree = "<group>";
@@ -1639,6 +1647,7 @@
 				78D91A2E261FB4CD00A4782F /* WorldBorderPacket.swift in Sources */,
 				78D91A7A261FB4CE00A4782F /* Identifier.swift in Sources */,
 				78D91997261FB4CD00A4782F /* PlayerInfo.swift in Sources */,
+				7868886D2623F67D00BD3F03 /* get_neighbouring_blocks.c in Sources */,
 				78D919BF261FB4CD00A4782F /* PacketReader.swift in Sources */,
 				78D91A40261FB4CD00A4782F /* ParticlePacket.swift in Sources */,
 				78D919AE261FB4CD00A4782F /* ServerList.swift in Sources */,
@@ -1742,6 +1751,7 @@
 				78D91963261FB4CD00A4782F /* BookCloningRecipe.swift in Sources */,
 				78D91975261FB4CD00A4782F /* ChatScoreComponent.swift in Sources */,
 				78D919B0261FB4CD00A4782F /* ServerPinger.swift in Sources */,
+				7868887526243D9F00BD3F03 /* MathUtil.swift in Sources */,
 				78D91A22261FB4CD00A4782F /* CraftRecipeResponsePacket.swift in Sources */,
 				78D91A08261FB4CD00A4782F /* SpawnExperienceOrbPacket.swift in Sources */,
 				78D919FC261FB4CD00A4782F /* NBTQueryResponse.swift in Sources */,

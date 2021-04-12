@@ -60,10 +60,22 @@ class ChunkMesh: Mesh {
       quadToBlockIndex = [:]
       blockIndexToQuads = [:]
       
-      var x = 0
-      var y = 0
-      var z = 0
+      // cache if needed but i have a feeling swift does this cleverly for us anyway
+      stopwatch.startMeasurement("generate indexToCoordinates")
+      var indexToCoordinates: [Int: Position] = [:]
+      var index = 0
+      for y in 0..<16 {
+        for z in 0..<16 {
+          for x in 0..<16 {
+            let position = Position(x: x, y: y, z: z)
+            indexToCoordinates[index] = position
+            index += 1
+          }
+        }
+      }
+      stopwatch.stopMeasurement("generate indexToCoordinates")
       
+      stopwatch.startMeasurement("generate mesh")
       for (sectionIndex, section) in chunk.sections.enumerated() {
         if section.blockCount != 0 { // section isn't empty
           let offset = sectionIndex * ChunkSection.NUM_BLOCKS
@@ -72,21 +84,18 @@ class ChunkMesh: Mesh {
             let state = section.blocks[i]
             if state != 0 { // block isn't air
               let blockIndex = offset + i // block index in chunk
+              var position = indexToCoordinates[i]!
+              position.y += sectionIndex*16
               
-              addBlock(x, y, z, index: blockIndex, state: state)
+              addBlock(position.x, position.y, position.z, index: blockIndex, state: state)
             }
-            
-            // move xyz to next block with speedy magic
-            x += 1
-            z += (x == ChunkSection.WIDTH) ? 1 : 0
-            y += (z == ChunkSection.DEPTH) ? 1 : 0
-            x = x & 0xf
-            z = z & 0xf
           }
         }
       }
+      stopwatch.stopMeasurement("generate mesh")
+      
+      stopwatch.summary()
     }
-    
   }
   
   // mesh building functions
@@ -102,19 +111,21 @@ class ChunkMesh: Mesh {
     let cullFaces = chunk.getCullingNeighbours(forIndex: index, x: x, y: y, z: z)
     
     if let blockModel = blockPaletteManager.getVariant(for: state, x: x, y: y, z: z) {
-      var quadIndices: [Int] = []
-      
       let modelToWorld = MatrixUtil.translationMatrix(simd_float3(Float(x), Float(y), Float(z)))
+      
+      var quadIndices: [Int] = []
       for element in blockModel.elements {
         let vertexToWorld = element.modelMatrix * modelToWorld
         
         for (faceDirection, face) in element.faces {
           if let cullFace = face.cullface {
             if cullFaces.contains(cullFace) {
-              continue // face doesn't need to be rendered
+              // don't render face
+              continue
             }
           }
           let quadIndex = addQuad(x, y, z, direction: faceDirection, matrix: vertexToWorld, face: face)
+          
           quadIndices.append(quadIndex)
           quadToBlockIndex[quadIndex] = index
         }

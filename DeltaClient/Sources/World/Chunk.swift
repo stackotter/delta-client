@@ -99,50 +99,24 @@ class Chunk {
   func getNeighbouringBlocks(forIndex index: Int) -> [FaceDirection: (Chunk, Int)] {
     var neighbouringBlocks: [FaceDirection: (Chunk, Int)] = [:]
     
-    let currentRow = index / Chunk.WIDTH
-    let currentLayer = index / Chunk.BLOCKS_PER_LAYER
-    
-    let westBlockIndex = index - 1
-    let eastBlockIndex = index + 1
-    
-    let northBlockIndex = index - (Chunk.WIDTH)
-    let southBlockIndex = index + (Chunk.WIDTH)
-    
-    let downBlockIndex = index - Chunk.BLOCKS_PER_LAYER
-    let upBlockIndex = index + Chunk.BLOCKS_PER_LAYER
-    
-    if westBlockIndex >= currentRow * Chunk.WIDTH {
-      neighbouringBlocks[.west] = (self, westBlockIndex)
-    } else if let westChunk = neighbours[.west] {
-      neighbouringBlocks[.west] = (westChunk, index + (Chunk.WIDTH - 1))
+    // using c to generate the relevant indices (saved about 25ms out of 100ms when implemented)
+    var resultTuple = get_neighbouring_blocks(Int32(index)).neighbours
+
+    // convert the tuple returned ito an array. the count is known to be 6 (a cube has 6 faces)
+    let result = withUnsafePointer(to: &resultTuple.0) {
+      return [NeighbouringBlock](UnsafeBufferPointer(start: $0, count: 6))
     }
     
-    if eastBlockIndex <= (currentRow + 1) * Chunk.WIDTH {
-      neighbouringBlocks[.east] = (self, eastBlockIndex)
-    } else if let eastChunk = neighbours[.west] {
-      neighbouringBlocks[.east] = (eastChunk, index - (Chunk.WIDTH - 1))
+    // convert the c function's return value into a more useful format
+    let chunks = [self, neighbours[.north], neighbours[.east], neighbours[.south], neighbours[.west]]
+    for (index, neighbour) in result.enumerated() {
+      if neighbour.chunk_num != -1 {
+        if let neighbourChunk = chunks[Int(neighbour.chunk_num)] {
+          neighbouringBlocks[FaceDirection(rawValue: Int32(index))!] = (neighbourChunk, Int(neighbour.index))
+        }
+      }
     }
-    
-    if northBlockIndex >= currentLayer * Chunk.BLOCKS_PER_LAYER {
-      neighbouringBlocks[.north] = (self, northBlockIndex)
-    } else if let northChunk = neighbours[.north] {
-      neighbouringBlocks[.north] = (northChunk, index + ((Chunk.DEPTH - 1) * Chunk.WIDTH))
-    }
-    
-    if southBlockIndex < (currentLayer+1) * Chunk.BLOCKS_PER_LAYER {
-      neighbouringBlocks[.south] = (self, southBlockIndex)
-    } else if let southChunk = neighbours[.south] {
-      neighbouringBlocks[.south] = (southChunk, index - ((Chunk.DEPTH - 1) * Chunk.WIDTH))
-    }
-    
-    if downBlockIndex >= 0 {
-      neighbouringBlocks[.down] = (self, downBlockIndex)
-    }
-    
-    if upBlockIndex < Chunk.NUM_BLOCKS {
-      neighbouringBlocks[.up] = (self, upBlockIndex)
-    }
-    
+      
     return neighbouringBlocks
   }
   
@@ -160,10 +134,10 @@ class Chunk {
   }
   
   func getCullingNeighbours(forIndex index: Int, x: Int, y: Int, z: Int) -> [FaceDirection] {
-    let presentNeighbours = getNeighbouringBlocks(forIndex: index)
-    var cullingNeighbours: [FaceDirection] = []
+    let neighbouringBlocks = getNeighbouringBlocks(forIndex: index)
     
-    for (direction, (chunk, index)) in presentNeighbours {
+    var cullingNeighbours: [FaceDirection] = []
+    for (direction, (chunk, index)) in neighbouringBlocks {
       let state = chunk.getBlock(atIndex: index)
       if state != 0 {
         if let blockModel = blockPaletteManager.getVariant(for: state, x: x, y: y, z: z) {

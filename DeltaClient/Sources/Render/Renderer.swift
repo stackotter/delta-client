@@ -76,7 +76,7 @@ class Renderer {
     let cameraPosition = simd_float3([Float(-playerRelativePosition.x), Float(-(playerRelativePosition.y+1.625)), Float(-playerRelativePosition.z)])
     
     let worldToCamera = MatrixUtil.translationMatrix(cameraPosition) * MatrixUtil.rotationMatrix(y: -(Float.pi + yRot)) * MatrixUtil.rotationMatrix(x: -xRot)
-    let cameraToClip = MatrixUtil.projectionMatrix(near: 0.0001, far: 1000, aspect: aspect, fieldOfViewY: fov)
+    let cameraToClip = MatrixUtil.projectionMatrix(near: 0.1, far: 1000, aspect: aspect, fieldOfViewY: fov)
     var modelToClipSpace = worldToCamera * cameraToClip
     
     let matrixBuffer = metalDevice.makeBuffer(bytes: &modelToClipSpace, length: MemoryLayout<matrix_float4x4>.stride, options: [])!
@@ -89,9 +89,13 @@ class Renderer {
     // render player's current chunk
     if let chunk = client.server.currentWorld?.chunks[client.server.player.position.chunkPosition] {
       if chunk.mesh.isEmpty {
-        stopwatch.startMeasurement("generate chunk mesh")
-        chunk.generateMesh()
-        stopwatch.stopMeasurement("generate chunk mesh")
+        stopwatch.startMeasurement("generate chunk mesh (x10)")
+        for _ in 0..<10 {
+          chunk.mesh.vertices = []
+          chunk.mesh.indices = []
+          chunk.generateMesh()
+        }
+        stopwatch.stopMeasurement("generate chunk mesh (x10)")
       }
       if !chunk.mesh.isEmpty {
         // create uniforms
