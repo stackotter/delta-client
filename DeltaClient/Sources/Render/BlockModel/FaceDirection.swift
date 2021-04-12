@@ -9,7 +9,7 @@ import Foundation
 import simd
 import os
 
-enum FaceDirection: Int32 {
+enum FaceDirection: Int {
   case up = 0
   case down = 1
   case north = 2

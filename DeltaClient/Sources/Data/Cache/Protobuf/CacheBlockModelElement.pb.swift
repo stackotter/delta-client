@@ -33,7 +33,7 @@ struct CacheBlockModelElement {
 
   var modelMatrix: Data = Data()
 
-  var faces: Dictionary<Int32,CacheBlockModelElementFace> = [:]
+  var faces: Dictionary<Int64,CacheBlockModelElementFace> = [:]
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -56,7 +56,7 @@ extension CacheBlockModelElement: SwiftProtobuf.Message, SwiftProtobuf._MessageI
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularBytesField(value: &self.modelMatrix) }()
-      case 2: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,CacheBlockModelElementFace>.self, value: &self.faces) }()
+      case 2: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt64,CacheBlockModelElementFace>.self, value: &self.faces) }()
       default: break
       }
     }
@@ -67,7 +67,7 @@ extension CacheBlockModelElement: SwiftProtobuf.Message, SwiftProtobuf._MessageI
       try visitor.visitSingularBytesField(value: self.modelMatrix, fieldNumber: 1)
     }
     if !self.faces.isEmpty {
-      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt32,CacheBlockModelElementFace>.self, value: self.faces, fieldNumber: 2)
+      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufInt64,CacheBlockModelElementFace>.self, value: self.faces, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }

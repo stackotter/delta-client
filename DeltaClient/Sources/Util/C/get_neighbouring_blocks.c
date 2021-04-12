@@ -17,18 +17,18 @@ const int CHUNK_HEIGHT = 256;
 const int BLOCKS_PER_LAYER = CHUNK_WIDTH * CHUNK_DEPTH;
 const int BLOCKS_PER_CHUNK = BLOCKS_PER_LAYER * CHUNK_HEIGHT;
 
-struct NeighbouringBlocks get_neighbouring_blocks(int index) {
-  int current_row = index / CHUNK_WIDTH;
-  int current_layer = index / BLOCKS_PER_LAYER;
+struct NeighbouringBlocks get_neighbouring_blocks(long index) {
+  long current_row = index / CHUNK_WIDTH;
+  long current_layer = index / BLOCKS_PER_LAYER;
   
-  int west_block_index = index - 1;
-  int east_block_index = index + 1;
+  long west_block_index = index - 1;
+  long east_block_index = index + 1;
   
-  int north_block_index = index - CHUNK_WIDTH;
-  int south_block_index = index + CHUNK_WIDTH;
+  long north_block_index = index - CHUNK_WIDTH;
+  long south_block_index = index + CHUNK_WIDTH;
   
-  int down_block_index = index - BLOCKS_PER_LAYER;
-  int up_block_index = index + BLOCKS_PER_LAYER;
+  long down_block_index = index - BLOCKS_PER_LAYER;
+  long up_block_index = index + BLOCKS_PER_LAYER;
   
   struct NeighbouringBlocks neighbouring_blocks;
   

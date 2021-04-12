@@ -11,14 +11,14 @@
 struct NeighbouringBlocks;
 
 struct NeighbouringBlock {
-  int chunk_num;
-  int index;
+  long chunk_num;
+  long index;
 };
 
 struct NeighbouringBlocks {
   struct NeighbouringBlock neighbours[6];
 };
 
-struct NeighbouringBlocks get_neighbouring_blocks(int index);
+struct NeighbouringBlocks get_neighbouring_blocks(long index);
 
 #endif /* get_neighbouring_blocks_h */

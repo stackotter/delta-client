@@ -87,15 +87,19 @@ class Renderer {
     var stopwatch = Stopwatch(mode: .verbose, name: "chunk mesh")
     
     // render player's current chunk
+//    let meshArray: [ChunkMesh] = []
+//    for (position, chunk) in client.server.currentWorld?.chunks ?? [:] {
+//      if chunk.mesh.isEmpty {
+//        chunk.generateMesh()
+//      }
+//      meshArray.append(chunk.mesh)
+//    }
     if let chunk = client.server.currentWorld?.chunks[client.server.player.position.chunkPosition] {
       if chunk.mesh.isEmpty {
-        stopwatch.startMeasurement("generate chunk mesh (x10)")
-        for _ in 0..<10 {
-          chunk.mesh.vertices = []
-          chunk.mesh.indices = []
-          chunk.generateMesh()
-        }
-        stopwatch.stopMeasurement("generate chunk mesh (x10)")
+        stopwatch.startMeasurement("generate chunk mesh")
+        chunk.generateMesh()
+        chunk.stopwatch.summary()
+        stopwatch.stopMeasurement("generate chunk mesh")
       }
       if !chunk.mesh.isEmpty {
         // create uniforms

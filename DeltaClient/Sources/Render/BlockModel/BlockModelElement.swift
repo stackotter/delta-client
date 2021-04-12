@@ -21,7 +21,7 @@ struct BlockModelElement {
     modelMatrix = matrix_float4x4.fromData(cache.modelMatrix)
     faces = [:]
     for (cacheDirectionRaw, cacheFace) in cache.faces {
-      let direction = FaceDirection(rawValue: cacheDirectionRaw)!
+      let direction = FaceDirection(rawValue: Int(cacheDirectionRaw))!
       let face = BlockModelElementFace(fromCache: cacheFace)
       faces[direction] = face
     }
@@ -29,11 +29,11 @@ struct BlockModelElement {
   
   func toCache() -> CacheBlockModelElement {
     let cacheModelMatrix = modelMatrix.toData()
-    var cacheFaces: [Int32: CacheBlockModelElementFace] = [:]
+    var cacheFaces: [Int64: CacheBlockModelElementFace] = [:]
     for (direction, face) in faces {
       let cacheDirection = direction.toCache()
       let cacheFace = face.toCache()
-      let cacheDirectionRaw = Int32(cacheDirection.rawValue)
+      let cacheDirectionRaw = Int64(cacheDirection.rawValue)
       cacheFaces[cacheDirectionRaw] = cacheFace
     }
     

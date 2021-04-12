@@ -52,7 +52,7 @@ The demo versions are just milestones that work towards the first Alpha release
 
 - [x] multipart structure reading (from pixlyzer)
 - [x] multipart structure rendering
-- [x] random block rotations
+- [ ] random variants
 - [ ] proper random block rotations (that match vanilla)
 - [ ] basic shading
 - [ ] rework & optimise chunk mesh preparation

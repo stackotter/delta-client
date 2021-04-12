@@ -26,6 +26,8 @@ class Chunk {
   var blockPaletteManager: BlockPaletteManager
   var mesh: ChunkMesh!
   
+  var stopwatch = Stopwatch(mode: .summary, name: "chunk")
+  
   // private because it shouldn't be used directly cause of its weird storage format
   private var biomes: [UInt8]
   
@@ -100,20 +102,24 @@ class Chunk {
     var neighbouringBlocks: [FaceDirection: (Chunk, Int)] = [:]
     
     // using c to generate the relevant indices (saved about 25ms out of 100ms when implemented)
-    var resultTuple = get_neighbouring_blocks(Int32(index)).neighbours
-
-    // convert the tuple returned ito an array. the count is known to be 6 (a cube has 6 faces)
-    let result = withUnsafePointer(to: &resultTuple.0) {
-      return [NeighbouringBlock](UnsafeBufferPointer(start: $0, count: 6))
-    }
+    let resultTuple = get_neighbouring_blocks(index).neighbours
+    
+    // convert the tuple returned into an array
+    let result = [
+      resultTuple.0,
+      resultTuple.1,
+      resultTuple.2,
+      resultTuple.3,
+      resultTuple.4,
+      resultTuple.5
+    ]
     
     // convert the c function's return value into a more useful format
     let chunks = [self, neighbours[.north], neighbours[.east], neighbours[.south], neighbours[.west]]
     for (index, neighbour) in result.enumerated() {
-      if neighbour.chunk_num != -1 {
-        if let neighbourChunk = chunks[Int(neighbour.chunk_num)] {
-          neighbouringBlocks[FaceDirection(rawValue: Int32(index))!] = (neighbourChunk, Int(neighbour.index))
-        }
+      if neighbour.chunk_num != -1, let neighbourChunk = chunks[neighbour.chunk_num] {
+        let direction = FaceDirection(rawValue: index)!
+        neighbouringBlocks[direction] = (neighbourChunk, neighbour.index)
       }
     }
       

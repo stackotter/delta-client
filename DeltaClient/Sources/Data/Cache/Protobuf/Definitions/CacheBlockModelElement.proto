@@ -11,5 +11,5 @@ import "CacheBlockModelElementFace.proto";
 
 message CacheBlockModelElement {
   bytes modelMatrix = 1;
-  map<int32, CacheBlockModelElementFace> faces = 2;
+  map<int64, CacheBlockModelElementFace> faces = 2;
 }

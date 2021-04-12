@@ -23,7 +23,7 @@ struct ChunkData {
       let start = CFAbsoluteTimeGetCurrent()
       var packetReader = reader // mutable copy
       
-      // this first bit isn't too slow (cause it all only happens once
+      // this first bit isn't too slow (cause it all only happens once)
       let fullChunk = packetReader.readBool()
       let ignoreOldData = packetReader.readBool()
       let primaryBitMask = packetReader.readVarInt()
@@ -51,7 +51,7 @@ struct ChunkData {
           let y: Int = try blockEntityNBT.get("y")
           let z: Int = try blockEntityNBT.get("z")
           let position = Position(x: x, y: y, z: z)
-          // make identifier not throwing, make it just return the placeholder
+          // TODO: make identifier not throwing, make it just return the placeholder
           let identifierString: String = (try? blockEntityNBT.get("id")) ?? "deltaclient:placeholder"
           let identifier = (try? Identifier(identifierString)) ?? Identifier(namespace: "deltaclient", name: "placeholder")
           let blockEntity = BlockEntity(position: position, identifier: identifier, nbt: blockEntityNBT)

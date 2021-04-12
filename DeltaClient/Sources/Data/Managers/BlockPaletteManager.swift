@@ -42,16 +42,21 @@ class BlockPaletteManager {
   // Getters
   
   func getVariant(for state: UInt16, x: Int, y: Int, z: Int) -> BlockModel? {
+    // TODO: write random generation in c to get same output as vanilla (and for speed)
+//    if let variants = blockModelPalette[state] {
+//      if variants.count == 1 {
+//        return variants[0]
+//      } else if variants.count > 1 {
+//        var seed: UInt64 = (UInt64(x) * 3129871) ^ (UInt64(z) * 1161291781) ^ UInt64(y)
+//        seed = seed.multipliedReportingOverflow(by: seed).partialValue.multipliedReportingOverflow(by: seed).partialValue.multipliedReportingOverflow(by: 42317861).partialValue.addingReportingOverflow(seed.multipliedReportingOverflow(by: 11).partialValue).partialValue
+//        let rand = Random(seed >> 16)
+//        let type = Int(abs(rand.nextLong())) % variants.count
+//        return variants[type]
+//      }
+//    }
+//    return nil
     if let variants = blockModelPalette[state] {
-      if variants.count == 1 {
-        return variants[0]
-      } else if variants.count > 1 {
-        var seed: UInt64 = (UInt64(x) * 3129871) ^ (UInt64(z) * 1161291781) ^ UInt64(y)
-        seed = seed.multipliedReportingOverflow(by: seed).partialValue.multipliedReportingOverflow(by: seed).partialValue.multipliedReportingOverflow(by: 42317861).partialValue.addingReportingOverflow(seed.multipliedReportingOverflow(by: 11).partialValue).partialValue
-        let rand = Random(seed >> 16)
-        let type = Int(abs(rand.nextLong())) % variants.count
-        return variants[type]
-      }
+      return variants[0]
     }
     return nil
   }
@@ -274,10 +279,6 @@ class BlockPaletteManager {
             }
             maxPoint = simd_float2(max(point1.x, point2.x), max(point1.y, point2.y))
             minPoint = simd_float2(min(point1.x, point2.x), min(point1.y, point2.y))
-        }
-        
-        if identifier.name == "block/magenta_glazed_terracotta" && yRot == 90 {
-          print("break")
         }
         
         if (MathUtil.checkFloatLessThan(value: minPoint.x, compareTo: 0, absoluteTolerance: margin) &&
