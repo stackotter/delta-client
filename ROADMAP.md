@@ -44,6 +44,7 @@ The demo versions are just milestones that work towards the first Alpha release
 
 - basic shading
 - multipart structures
+- random block rotations
 - multichunk rendering
 - other rendering fixes
 
@@ -51,9 +52,12 @@ The demo versions are just milestones that work towards the first Alpha release
 
 - [x] multipart structure reading (from pixlyzer)
 - [x] multipart structure rendering
+- [x] random block rotations
+- [ ] proper random block rotations (that match vanilla)
 - [ ] basic shading
 - [ ] rework & optimise chunk mesh preparation
 - [ ] basic multichunk rendering
+- [ ] fix hypixel chunk loading
 - [ ] fix grass block sides
 - [ ] implement rescale
 
@@ -89,6 +93,7 @@ The demo versions are just milestones that work towards the first Alpha release
 ### Todo
 
 - [ ] rework ui code
+- [ ] rewrite ui code like the fruta example
 - [ ] rework mojang api and login flow
 - [ ] find and remove redundant code
 - [ ] maybe remove commands mode

@@ -159,14 +159,14 @@ class Chunk {
     return presentNeighbours
   }
   
-  func getCullingNeighbours(forIndex index: Int) -> [FaceDirection] {
+  func getCullingNeighbours(forIndex index: Int, x: Int, y: Int, z: Int) -> [FaceDirection] {
     let presentNeighbours = getNeighbouringBlocks(forIndex: index)
     var cullingNeighbours: [FaceDirection] = []
     
     for (direction, (chunk, index)) in presentNeighbours {
       let state = chunk.getBlock(atIndex: index)
       if state != 0 {
-        if let blockModel = blockPaletteManager.blockModelPalette[state] {
+        if let blockModel = blockPaletteManager.getVariant(for: state, x: x, y: y, z: z) {
           if blockModel.fullFaces.contains(direction.opposite) {
             cullingNeighbours.append(direction)
           }

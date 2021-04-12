@@ -50,6 +50,8 @@
 - [ ] identify translucent blocks
 - [ ] detect when full faces are not culling full faces (when they are transparent)
 - [ ] fix path block xray
+- [ ] rename protobuf cache message thingos to be Cached instead of Cache
+- [ ] stop using a dictionary for the block palette, just use an array
 
 ## Chunk preparing
 

@@ -19,7 +19,7 @@ class BlockPaletteManager {
   var cacheManager: CacheManager
   
   var intermediateCache: [Identifier: IntermediateBlockModel] = [:]
-  var blockModelPalette: [UInt16: BlockModel] = [:]
+  var blockModelPalette: [UInt16: [BlockModel]] = [:] // state id to variants
   
   init(assetManager: AssetManager, textureManager: TextureManager, cacheManager: CacheManager) throws {
     self.assetManager = assetManager
@@ -39,23 +39,53 @@ class BlockPaletteManager {
     }
   }
   
+  // Getters
+  
+  func getVariant(for state: UInt16, x: Int, y: Int, z: Int) -> BlockModel? {
+    if let variants = blockModelPalette[state] {
+      if variants.count == 1 {
+        return variants[0]
+      } else if variants.count > 1 {
+        var seed: UInt64 = (UInt64(x) * 3129871) ^ (UInt64(z) * 1161291781) ^ UInt64(y)
+        seed = seed.multipliedReportingOverflow(by: seed).partialValue.multipliedReportingOverflow(by: seed).partialValue.multipliedReportingOverflow(by: 42317861).partialValue.addingReportingOverflow(seed.multipliedReportingOverflow(by: 11).partialValue).partialValue
+        let rand = Random(seed >> 16)
+        let type = Int(abs(rand.nextLong())) % variants.count
+        return variants[type]
+      }
+    }
+    return nil
+  }
+  
+  // Palette Caching
+  
   func loadGlobalPaletteCache() throws {
-    let cacheGlobalPalette: CacheBlockModelPalette = try cacheManager.readCache(name: "block-palette")
+    let cachedGlobalPalette: CacheBlockModelPalette = try cacheManager.readCache(name: "block-palette")
     
     blockModelPalette = [:]
-    for (state, cacheBlockModel) in cacheGlobalPalette.blockModelPalette {
-      blockModelPalette[UInt16(state)] = BlockModel(fromCache: cacheBlockModel)
+    for (state, blockModelContainer) in cachedGlobalPalette.blockModelPalette {
+      var variants: [BlockModel] = []
+      for cachedBlockModel in blockModelContainer.variants {
+        variants.append(BlockModel(fromCache: cachedBlockModel))
+      }
+      blockModelPalette[UInt16(state)] = variants
     }
   }
   
   func cacheGlobalPalette() throws {
-    var cache = CacheBlockModelPalette()
-    for (state, blockModel) in blockModelPalette {
-      let cacheBlockModel = blockModel.toCache()
-      cache.blockModelPalette[UInt32(state)] = cacheBlockModel
+    var cachedGlobalPalette = CacheBlockModelPalette()
+    for (state, variants) in blockModelPalette {
+      var cachedVariants: [CacheBlockModel] = []
+      for blockModel in variants {
+        cachedVariants.append(blockModel.toCache())
+      }
+      var container = CacheBlockModelContainer()
+      container.variants = cachedVariants
+      cachedGlobalPalette.blockModelPalette[UInt32(state)] = container
     }
-    try cacheManager.writeCache(cache, name: "block-palette")
+    try cacheManager.writeCache(cachedGlobalPalette, name: "block-palette")
   }
+  
+  // Palette Generation
   
   func generateGlobalPalette() throws {
     let pixlyzerDataFile = assetManager.getPixlyzerFolder().appendingPathComponent("blocks.json")
@@ -80,51 +110,59 @@ class BlockPaletteManager {
           let stateJSON = JSON(dict: state)
           
           // read information about the block models from pixlyzer's data
-          var modelJSONs: [JSON] = []
-          if let render = stateJSON.getJSON(forKey: "render") {
-            modelJSONs = [render]
-          } else if let render = stateJSON.getArray(forKey: "render") as? [[String: Any]] {
-            modelJSONs = [JSON(dict: render[0])]
-            // TODO: handle multiple states for one state id
-          } else if let render = stateJSON.getArray(forKey: "render") as? [[[String: Any]]] { // multipart structure
-            for modelJSON in render[0] {
-              modelJSONs.append(JSON(dict: modelJSON))
+          var variantDescriptors: [[JSON]] = [] // each variant is stored as an array of block models (to handle multiparts)
+          if let render = stateJSON.getJSON(forKey: "render") { // only one variant
+            variantDescriptors = [[render]]
+          } else if let variantJSONs = stateJSON.getArray(forKey: "render") as? [[String: Any]] { // multiple variants
+            for variantJSON in variantJSONs {
+              variantDescriptors.append([JSON(dict: variantJSON)])
             }
-            // TODO: handle multiple states for one state id
+          } else if let variantJSONs = stateJSON.getArray(forKey: "render") as? [[[String: Any]]] { // multipart structure
+            for variantJSON in variantJSONs {
+              var variant: [JSON] = []
+              for modelJSON in variantJSON {
+                variant.append(JSON(dict: modelJSON))
+              }
+              variantDescriptors.append(variant)
+            }
           }
           
           // process relevant block models
-          var blockModels: [BlockModel] = []
-          for modelJSON in modelJSONs {
-            let modelIdentifierString = modelJSON.getString(forKey: "model")
-            let xRot = modelJSON.getInt(forKey: "x") ?? 0
-            let yRot = modelJSON.getInt(forKey: "y") ?? 0
-            let zRot = modelJSON.getInt(forKey: "z") ?? 0
-            let uvlock = modelJSON.getBool(forKey: "uvlock") ?? false
-            
-            if modelIdentifierString != nil {
-              do {
-                let modelIdentifier = try Identifier(modelIdentifierString!)
-                let blockModel = try loadBlockModel(for: modelIdentifier, xRot: xRot, yRot: yRot, zRot: zRot, uvlock: uvlock)
-                blockModels.append(blockModel)
-              } catch {
-                Logger.error("failed to load model for \(modelIdentifierString!): \(error)")
+          var variants: [BlockModel] = []
+          for variantDescriptor in variantDescriptors {
+            var blockModels: [BlockModel] = []
+            for modelJSON in variantDescriptor {
+              if let modelIdentifierString = modelJSON.getString(forKey: "model") {
+                do {
+                  let modelIdentifier = try Identifier(modelIdentifierString)
+                  
+                  // read model properties
+                  let xRot = modelJSON.getInt(forKey: "x") ?? 0
+                  let yRot = modelJSON.getInt(forKey: "y") ?? 0
+                  let zRot = modelJSON.getInt(forKey: "z") ?? 0
+                  let uvlock = modelJSON.getBool(forKey: "uvlock") ?? false
+                  
+                  // load block model
+                  let blockModel = try loadBlockModel(for: modelIdentifier, xRot: xRot, yRot: yRot, zRot: zRot, uvlock: uvlock)
+                  blockModels.append(blockModel)
+                } catch {
+                  Logger.error("failed to load model for \(modelIdentifierString): \(error)")
+                }
               }
-            } else {
-              // TODO: multipart structures
-              Logger.error("failed to find model identifier for state \(stateId) on block \(blockName)")
             }
-          }
-          
-          // combine the block models into one (for multipart structures)
-          var combinedBlockModel = BlockModel(fullFaces: Set<FaceDirection>(), elements: [])
-          for blockModel in blockModels {
-            combinedBlockModel.elements.append(contentsOf: blockModel.elements)
-            combinedBlockModel.fullFaces.formUnion(blockModel.fullFaces)
+            
+            // combine the block models into one (there will only be multiple if it's a multipart structure)
+            var combinedBlockModel = BlockModel(fullFaces: Set<FaceDirection>(), elements: [])
+            for blockModel in blockModels {
+              combinedBlockModel.elements.append(contentsOf: blockModel.elements)
+              combinedBlockModel.fullFaces.formUnion(blockModel.fullFaces)
+            }
+            
+            variants.append(combinedBlockModel)
           }
           
           // add to palette
-          blockModelPalette[UInt16(stateId)] = combinedBlockModel
+          blockModelPalette[UInt16(stateId)] = variants
         } else {
           Logger.error("invalid state id: \(stateIdString)")
         }

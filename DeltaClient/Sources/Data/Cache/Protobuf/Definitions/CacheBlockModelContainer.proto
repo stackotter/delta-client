@@ -1,0 +1,14 @@
+//
+//  CacheBlockModelContainer.proto
+//  DeltaClient
+//
+//  Created by Rohan van Klinken on 12/4/21.
+//
+
+syntax = "proto3";
+
+import "CacheBlockModel.proto";
+
+message CacheBlockModelContainer {
+  repeated CacheBlockModel variants = 1;
+}

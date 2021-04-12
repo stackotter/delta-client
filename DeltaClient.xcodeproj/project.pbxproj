@@ -10,6 +10,8 @@
 		7802C1AF261097F00068E8A1 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 7802C1AE261097F00068E8A1 /* SwiftProtobuf */; };
 		78052348261433A800079A01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7805221C261433A700079A01 /* Assets.xcassets */; };
 		780523B6261433A800079A01 /* DeltaClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229D261433A700079A01 /* DeltaClientApp.swift */; };
+		7868885526239C3000BD3F03 /* Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7868885426239C3000BD3F03 /* Random.swift */; };
+		786888672623D77A00BD3F03 /* CacheBlockModelContainer.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786888472623952000BD3F03 /* CacheBlockModelContainer.pb.swift */; };
 		7892880E261438A000F17DBB /* DeltaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A9261433A700079A01 /* DeltaClientTests.swift */; };
 		78928812261438A500F17DBB /* DeltaClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052170261433A600079A01 /* DeltaClientUITests.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
@@ -358,6 +360,9 @@
 		784194B7258204CD0070DE78 /* DeltaClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194C9258204D10070DE78 /* DeltaClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D4258204D10070DE78 /* DeltaClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		786888472623952000BD3F03 /* CacheBlockModelContainer.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelContainer.pb.swift; sourceTree = "<group>"; };
+		7868884C2623952900BD3F03 /* CacheBlockModelContainer.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheBlockModelContainer.proto; sourceTree = "<group>"; };
+		7868885426239C3000BD3F03 /* Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Random.swift; sourceTree = "<group>"; };
 		78D917FA261FB4CC00A4782F /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		78D917FD261FB4CC00A4782F /* CraftingRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftingRecipe.swift; sourceTree = "<group>"; };
 		78D917FE261FB4CC00A4782F /* CraftingShapeless.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftingShapeless.swift; sourceTree = "<group>"; };
@@ -850,6 +855,7 @@
 			children = (
 				78D91824261FB4CC00A4782F /* ThreadUtil.swift */,
 				78D91825261FB4CC00A4782F /* RequestUtil.swift */,
+				7868885426239C3000BD3F03 /* Random.swift */,
 				78D91826261FB4CC00A4782F /* Logger.swift */,
 				78D91827261FB4CC00A4782F /* CompressionUtil.swift */,
 				78D91828261FB4CC00A4782F /* Profiler.swift */,
@@ -1306,6 +1312,7 @@
 				78D9192A261FB4CD00A4782F /* CacheFaceDirection.pb.swift */,
 				78D9192B261FB4CD00A4782F /* CacheBlockModelElementFace.pb.swift */,
 				78D9192C261FB4CD00A4782F /* CacheBlockModelPalette.pb.swift */,
+				786888472623952000BD3F03 /* CacheBlockModelContainer.pb.swift */,
 				78D9192D261FB4CD00A4782F /* CacheBlockModelElement.pb.swift */,
 				78D9192E261FB4CD00A4782F /* CacheBlockModel.pb.swift */,
 				78D9192F261FB4CD00A4782F /* Definitions */,
@@ -1316,6 +1323,7 @@
 		78D9192F261FB4CD00A4782F /* Definitions */ = {
 			isa = PBXGroup;
 			children = (
+				7868884C2623952900BD3F03 /* CacheBlockModelContainer.proto */,
 				78D91930261FB4CD00A4782F /* CacheFaceDirection.proto */,
 				78D91931261FB4CD00A4782F /* compile-proto.sh */,
 				78D91932261FB4CD00A4782F /* CacheBlockModelPalette.proto */,
@@ -1597,6 +1605,7 @@
 				78D91A45261FB4CD00A4782F /* DestroyEntitiesPacket.swift in Sources */,
 				78D9198F261FB4CD00A4782F /* BlockEntity.swift in Sources */,
 				78D919C9261FB4CD00A4782F /* AnimationServerboundPacket.swift in Sources */,
+				786888672623D77A00BD3F03 /* CacheBlockModelContainer.pb.swift in Sources */,
 				78D9199E261FB4CD00A4782F /* FaceDirection.swift in Sources */,
 				78D919DB261FB4CD00A4782F /* WindowConfirmationServerboundPacket.swift in Sources */,
 				78D91980261FB4CD00A4782F /* MojangAPI.swift in Sources */,
@@ -1648,6 +1657,7 @@
 				78D91981261FB4CD00A4782F /* MojangAgent.swift in Sources */,
 				78D91AA2261FB4E100A4782F /* GameCommandView.swift in Sources */,
 				78D919C7261FB4CD00A4782F /* ClickWindowPacket.swift in Sources */,
+				7868885526239C3000BD3F03 /* Random.swift in Sources */,
 				78D9195D261FB4CD00A4782F /* BannerAddPatternRecipe.swift in Sources */,
 				78D919AA261FB4CD00A4782F /* WorldConfig.swift in Sources */,
 				78D91957261FB4CD00A4782F /* CraftingShaped.swift in Sources */,

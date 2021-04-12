@@ -99,9 +99,9 @@ class ChunkMesh: Mesh {
   }
   
   private func addBlock(_ x: Int, _ y: Int, _ z: Int, index: Int, state: UInt16) {
-    let cullFaces = chunk.getCullingNeighbours(forIndex: index)
+    let cullFaces = chunk.getCullingNeighbours(forIndex: index, x: x, y: y, z: z)
     
-    if let blockModel = blockPaletteManager.blockModelPalette[state] {
+    if let blockModel = blockPaletteManager.getVariant(for: state, x: x, y: y, z: z) {
       var quadIndices: [Int] = []
       
       let modelToWorld = MatrixUtil.translationMatrix(simd_float3(Float(x), Float(y), Float(z)))
