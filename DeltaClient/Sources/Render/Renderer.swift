@@ -62,10 +62,7 @@ class Renderer {
   }
   
   func createWorldToClipSpaceMatrix(aspect: Float) -> MTLBuffer {
-    let chunkPosition = client.server.player.position.chunkPosition
-    var playerRelativePosition = client.server.player.position
-    playerRelativePosition.x -= Double(chunkPosition.chunkX*16)
-    playerRelativePosition.z -= Double(chunkPosition.chunkZ*16)
+    let playerPosition = client.server.player.position
     
     let look = client.server.player.look
     let xRot = look.pitch / 180 * Float.pi
@@ -73,7 +70,7 @@ class Renderer {
     
     let fov = 90 / 180 * Float.pi
     
-    let cameraPosition = simd_float3([Float(-playerRelativePosition.x), Float(-(playerRelativePosition.y+1.625)), Float(-playerRelativePosition.z)])
+    let cameraPosition = simd_float3([Float(-playerPosition.x), Float(-(playerPosition.y+1.625)), Float(-playerPosition.z)])
     
     let worldToCamera = MatrixUtil.translationMatrix(cameraPosition) * MatrixUtil.rotationMatrix(y: -(Float.pi + yRot)) * MatrixUtil.rotationMatrix(x: -xRot)
     let cameraToClip = MatrixUtil.projectionMatrix(near: 0.1, far: 1000, aspect: aspect, fieldOfViewY: fov)
@@ -84,59 +81,54 @@ class Renderer {
   }
   
   func draw(view: MTKView, drawable: CAMetalDrawable) {
-    var stopwatch = Stopwatch(mode: .verbose, name: "chunk mesh")
     
-    // render player's current chunk
-//    let meshArray: [ChunkMesh] = []
-//    for (position, chunk) in client.server.currentWorld?.chunks ?? [:] {
-//      if chunk.mesh.isEmpty {
-//        chunk.generateMesh()
-//      }
-//      meshArray.append(chunk.mesh)
-//    }
-    if let chunk = client.server.currentWorld?.chunks[client.server.player.position.chunkPosition] {
+    // render all chunks currently
+    var meshArray: [ChunkMesh] = []
+    for (position, chunk) in client.server.currentWorld?.chunks ?? [:] {
       if chunk.mesh.isEmpty {
-        stopwatch.startMeasurement("generate chunk mesh")
         chunk.generateMesh()
-        chunk.stopwatch.summary()
-        stopwatch.stopMeasurement("generate chunk mesh")
       }
-      if !chunk.mesh.isEmpty {
-        // create uniforms
-        let aspect = Float(view.drawableSize.width/view.drawableSize.height)
-        let matrixBuffer = createWorldToClipSpaceMatrix(aspect: aspect)
+      meshArray.append(chunk.mesh)
+    }
+    
+    if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
+      if let renderPassDescriptor = view.currentRenderPassDescriptor {
+        renderPassDescriptor.colorAttachments[0].clearColor = skyColor
+        renderPassDescriptor.colorAttachments[0].loadAction = .clear
+        renderPassDescriptor.colorAttachments[0].storeAction = .store
         
-        // move mesh data to gpu
-        chunk.mesh.createBuffers(device: metalDevice)
-        
-        if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
-          if let renderPassDescriptor = view.currentRenderPassDescriptor {
-            renderPassDescriptor.colorAttachments[0].clearColor = skyColor
-            renderPassDescriptor.colorAttachments[0].loadAction = .clear
-            renderPassDescriptor.colorAttachments[0].storeAction = .store
-            
-            if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
-              renderEncoder.setRenderPipelineState(pipelineState)
-              renderEncoder.setDepthStencilState(depthState)
-              
-              renderEncoder.setFrontFacing(.clockwise)
-              renderEncoder.setCullMode(.back)
-              
-              // uncomment the lines below to enable wireframe
-              // renderEncoder.setTriangleFillMode(.lines)
-              // renderEncoder.setCullMode(.none)
-              
-              renderEncoder.setFragmentTexture(arrayTexture, index: 0)
-              
-              renderEncoder.setVertexBuffer(chunk.mesh.vertexBuffer, offset: 0, index: 0)
-              renderEncoder.setVertexBuffer(matrixBuffer, offset: 0, index: 1)
-              renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: chunk.mesh.indexBuffer.length/4, indexType: .uint32, indexBuffer: chunk.mesh.indexBuffer, indexBufferOffset: 0)
-              renderEncoder.endEncoding()
-              
-              commandBuffer.present(drawable)
-              commandBuffer.commit()
+        if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
+          renderEncoder.setRenderPipelineState(pipelineState)
+          renderEncoder.setDepthStencilState(depthState)
+          
+          renderEncoder.setFrontFacing(.clockwise)
+          renderEncoder.setCullMode(.back)
+          
+          // uncomment the lines below to enable wireframe
+          // renderEncoder.setTriangleFillMode(.lines)
+          // renderEncoder.setCullMode(.none)
+          
+          renderEncoder.setFragmentTexture(arrayTexture, index: 0)
+          
+          // create uniforms
+          let aspect = Float(view.drawableSize.width/view.drawableSize.height)
+          let matrixBuffer = createWorldToClipSpaceMatrix(aspect: aspect)
+          
+          renderEncoder.setVertexBuffer(matrixBuffer, offset: 0, index: 1)
+          
+          for mesh in meshArray {
+            if !mesh.isEmpty {
+              // move mesh data to gpu
+              let buffers = mesh.createBuffers(device: metalDevice)
+          
+              renderEncoder.setVertexBuffer(buffers.vertexBuffer, offset: 0, index: 0)
+              renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: buffers.indexBuffer.length/4, indexType: .uint32, indexBuffer: buffers.indexBuffer, indexBufferOffset: 0)
             }
           }
+          renderEncoder.endEncoding()
+          
+          commandBuffer.present(drawable)
+          commandBuffer.commit()
         }
       }
     }

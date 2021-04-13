@@ -55,12 +55,13 @@ class ChunkMesh: Mesh {
   
   func ingestChunk() {
     queue.sync {
+      hasChanged = true
       vertices = []
       indices = []
       quadToBlockIndex = [:]
       blockIndexToQuads = [:]
       
-      // cache if needed but i have a feeling swift does this cleverly for us anyway
+      // TODO: cache this
       stopwatch.startMeasurement("generate indexToCoordinates")
       var indexToCoordinates: [Int: Position] = [:]
       var index = 0
@@ -85,7 +86,9 @@ class ChunkMesh: Mesh {
             if state != 0 { // block isn't air
               let blockIndex = offset + i // block index in chunk
               var position = indexToCoordinates[i]!
+              position.x += chunk.position.chunkX * 16
               position.y += sectionIndex*16
+              position.z += chunk.position.chunkZ * 16
               
               addBlock(position.x, position.y, position.z, index: blockIndex, state: state)
             }
@@ -164,6 +167,7 @@ class ChunkMesh: Mesh {
   
   func replaceBlock(at index: Int, newState: UInt16) {
     queue.sync {
+      hasChanged = true
       removeBlock(atIndex: index)
       if newState != 0 {
         addBlock(at: index, with: newState)

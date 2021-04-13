@@ -60,6 +60,9 @@ The demo versions are just milestones that work towards the first Alpha release
 - [ ] fix hypixel chunk loading
 - [ ] fix grass block sides
 - [ ] implement rescale
+- [ ] possibly use section based rendering instead of chunk based
+- [ ] parallelise generating chunk meshes
+- [ ] order chunks based on distance from player when generating meshes
 
 ## Demo 4 - Movement
 
