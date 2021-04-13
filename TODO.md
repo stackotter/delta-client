@@ -20,6 +20,7 @@
 - [ ] fix error handling for mojang api (probably with event manager) (at the moment the errors are silent)
 - [ ] shutdown networking properly when leaving server
   - [ ] teardown server and client objects properly
+- [ ] get new chunks receiving when player is moved
 
 ## Config
 
@@ -38,6 +39,7 @@
 - [ ] look into keeping vertices in gpu mem when they are unchanged between frames?
 - [ ] animated textures
 - [ ] multipart structures
+- [ ] fix block changes having incorrect culling
 
 ## Block models
 

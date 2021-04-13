@@ -24,6 +24,12 @@ In the future the project will also hopefully support iOS, iPadOS and maybe tvOS
 7. Wait for it to download and process the requirec assets (this only has to happen once and should take around 40s with a mediocre internet speed)
 8. You can move DeltaClient to your Applications folder for ease of use if you want
 
+## Usage
+
+To try out the client follow the installation instructions and then add any server's you want to connect to. The servers must be 1.16.1 as this is the only version supported right now.
+
+The client currently has a known bug that means the render distance of the server must be less than 10. This will be fixed in the next release but for now just make sure your server's render distance is set to something less than 10.
+
 ## Troubleshooting
 
 As DeltaClient is still in development it is expected that you will probably run into some errors. As a quick fix open Finder then press ```cmd-shift-l```. Navigate to the folder named 'Application Support' and delete the folder named 'DeltaClient'. This will completely reset the app and it will go through the first launch sequence again. I appreciate it if you can also create an issue for the error, especially if it persists because it may also be affecting other users. All issues are appreciated no matter how minor.

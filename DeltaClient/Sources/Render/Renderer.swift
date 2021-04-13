@@ -34,8 +34,8 @@ class Renderer {
     
     Logger.debug("loading shaders")
     let defaultLibrary = metalDevice.makeDefaultLibrary()
-    let vertex = defaultLibrary!.makeFunction(name: "vertexShader")
-    let fragment = defaultLibrary!.makeFunction(name: "fragmentShader")
+    let vertex = defaultLibrary!.makeFunction(name: "chunkVertexShader")
+    let fragment = defaultLibrary!.makeFunction(name: "chunkFragmentShader")
     
     Logger.debug("creating pipeline descriptor")
     let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
@@ -61,7 +61,7 @@ class Renderer {
     self.logger = Logger(for: type(of: self))
   }
   
-  func createWorldToClipSpaceMatrix(aspect: Float) -> MTLBuffer {
+  func createUniformBuffer(aspect: Float) -> MTLBuffer {
     let playerPosition = client.server.player.position
     
     let look = client.server.player.look
@@ -74,23 +74,26 @@ class Renderer {
     
     let worldToCamera = MatrixUtil.translationMatrix(cameraPosition) * MatrixUtil.rotationMatrix(y: -(Float.pi + yRot)) * MatrixUtil.rotationMatrix(x: -xRot)
     let cameraToClip = MatrixUtil.projectionMatrix(near: 0.1, far: 1000, aspect: aspect, fieldOfViewY: fov)
-    var modelToClipSpace = worldToCamera * cameraToClip
+    let worldToClipSpace = worldToCamera * cameraToClip
     
-    let matrixBuffer = metalDevice.makeBuffer(bytes: &modelToClipSpace, length: MemoryLayout<matrix_float4x4>.stride, options: [])!
-    return matrixBuffer
+    var uniforms = WorldUniforms(worldToClipSpace: worldToClipSpace)
+    let uniformBuffer = metalDevice.makeBuffer(bytes: &uniforms, length: MemoryLayout<WorldUniforms>.stride, options: [])!
+    uniformBuffer.label = "worldUniformBuffer"
+    return uniformBuffer
   }
   
   func draw(view: MTKView, drawable: CAMetalDrawable) {
-    
-    // render all chunks currently
-    var meshArray: [ChunkMesh] = []
-    for (position, chunk) in client.server.currentWorld?.chunks ?? [:] {
+    // TODO: use chunk position to order chunk generation
+    // generate chunk meshes if necessary
+    var chunks: [Chunk] = []
+    for (_, chunk) in client.server.currentWorld?.chunks ?? [:] {
       if chunk.mesh.isEmpty {
         chunk.generateMesh()
       }
-      meshArray.append(chunk.mesh)
+      chunks.append(chunk)
     }
     
+    // encode and send draw instructions
     if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
       if let renderPassDescriptor = view.currentRenderPassDescriptor {
         renderPassDescriptor.colorAttachments[0].clearColor = skyColor
@@ -112,19 +115,19 @@ class Renderer {
           
           // create uniforms
           let aspect = Float(view.drawableSize.width/view.drawableSize.height)
-          let matrixBuffer = createWorldToClipSpaceMatrix(aspect: aspect)
+          let uniformBuffer = createUniformBuffer(aspect: aspect)
+          renderEncoder.setVertexBuffer(uniformBuffer, offset: 0, index: 1)
           
-          renderEncoder.setVertexBuffer(matrixBuffer, offset: 0, index: 1)
-          
-          for mesh in meshArray {
-            if !mesh.isEmpty {
-              // move mesh data to gpu
-              let buffers = mesh.createBuffers(device: metalDevice)
-          
-              renderEncoder.setVertexBuffer(buffers.vertexBuffer, offset: 0, index: 0)
+          for chunk in chunks {
+            if !chunk.mesh.isEmpty {
+              let buffers = chunk.mesh.createBuffers(device: metalDevice)
+              
+              renderEncoder.setVertexBuffer(buffers.vertexBuffer, offset: 0, index: 0) // set vertices
+              renderEncoder.setVertexBuffer(buffers.uniformBuffer, offset: 0, index: 2) // set chunk specific uniforms
               renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: buffers.indexBuffer.length/4, indexType: .uint32, indexBuffer: buffers.indexBuffer, indexBufferOffset: 0)
             }
           }
+          
           renderEncoder.endEncoding()
           
           commandBuffer.present(drawable)

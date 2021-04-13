@@ -10,24 +10,30 @@ import MetalKit
 import simd
 import os
 
-class Mesh {
-  var hasChanged = false
-  var vertices: [Vertex] = []
-  var indices: [UInt32] = []
-  var queue: DispatchQueue
+protocol Mesh {
+  associatedtype Uniforms
   
-  var vertexBuffer: MTLBuffer!
-  var indexBuffer: MTLBuffer!
+  var queue: DispatchQueue { get set }
   
+  var vertices: [Vertex] { get set }
+  var indices: [UInt32] { get set }
+  var uniforms: Uniforms! { get set }
+
+  var vertexBuffer: MTLBuffer! { get set }
+  var indexBuffer: MTLBuffer! { get set }
+  var uniformBuffer: MTLBuffer! { get set }
+  
+  var hasChanged: Bool { get set }
+}
+
+extension Mesh {
   var isEmpty: Bool {
-    return vertices.count == 0
+    queue.sync {
+      return vertices.count == 0
+    }
   }
   
-  init() {
-    self.queue = DispatchQueue(label: "mesh")
-  }
-  
-  func createBuffers(device: MTLDevice) -> (vertexBuffer: MTLBuffer, indexBuffer: MTLBuffer) {
+  mutating func createBuffers(device: MTLDevice) -> (vertexBuffer: MTLBuffer, indexBuffer: MTLBuffer, uniformBuffer: MTLBuffer) {
     queue.sync {
       if hasChanged { // only remake the buffers if something has been changed
         Logger.debug("regenerating chunk mesh buffers")
@@ -40,9 +46,19 @@ class Mesh {
         indexBuffer = device.makeBuffer(bytes: indices, length: indexBufferSize, options: [])!
         indexBuffer.label = "indexBuffer"
         
+        // TODO: have separate hasChanged for uniforms (they change a lot less often for chunks)
+        let uniformBufferSize = MemoryLayout<Uniforms>.stride
+        uniformBuffer = device.makeBuffer(bytes: &uniforms, length: uniformBufferSize, options: [])!
+        uniformBuffer.label = "uniformBuffer"
+        
         hasChanged = false
       }
     }
-    return (vertexBuffer: vertexBuffer, indexBuffer: indexBuffer)
+    
+    return (
+      vertexBuffer: vertexBuffer,
+      indexBuffer: indexBuffer,
+      uniformBuffer: uniformBuffer
+    )
   }
 }

@@ -99,6 +99,7 @@ The demo versions are just milestones that work towards the first Alpha release
 - [ ] rewrite ui code like the fruta example
 - [ ] rework mojang api and login flow
 - [ ] find and remove redundant code
+- [ ] get rid of all node cycles identified by xcode memory graph (to fix ram usage)
 - [ ] maybe remove commands mode
 - [ ] improve error handling and displaying
 - [ ] use count up down latch thingo like minosoft for startup sequence

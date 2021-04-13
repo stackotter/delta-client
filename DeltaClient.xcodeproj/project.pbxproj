@@ -17,6 +17,8 @@
 		7892880E261438A000F17DBB /* DeltaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A9261433A700079A01 /* DeltaClientTests.swift */; };
 		78928812261438A500F17DBB /* DeltaClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052170261433A600079A01 /* DeltaClientUITests.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
+		78C64CC826251D2700375CBB /* WorldUniforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C64CC726251D2700375CBB /* WorldUniforms.swift */; };
+		78C64CD526251D4D00375CBB /* ChunkUniforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C64CD426251D4D00375CBB /* ChunkUniforms.swift */; };
 		78D917E4261F08E400A4782F /* IDZSwiftCommonCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 78D917E3261F08E400A4782F /* IDZSwiftCommonCrypto */; };
 		78D91954261FB4CD00A4782F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D917FA261FB4CC00A4782F /* Constants.swift */; };
 		78D91955261FB4CD00A4782F /* CraftingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D917FD261FB4CC00A4782F /* CraftingRecipe.swift */; };
@@ -368,6 +370,8 @@
 		7868886B2623F67D00BD3F03 /* get_neighbouring_blocks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = get_neighbouring_blocks.h; sourceTree = "<group>"; };
 		7868886C2623F67D00BD3F03 /* get_neighbouring_blocks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = get_neighbouring_blocks.c; sourceTree = "<group>"; };
 		7868887426243D9E00BD3F03 /* MathUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathUtil.swift; sourceTree = "<group>"; };
+		78C64CC726251D2700375CBB /* WorldUniforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldUniforms.swift; sourceTree = "<group>"; };
+		78C64CD426251D4D00375CBB /* ChunkUniforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkUniforms.swift; sourceTree = "<group>"; };
 		78D917FA261FB4CC00A4782F /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		78D917FD261FB4CC00A4782F /* CraftingRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftingRecipe.swift; sourceTree = "<group>"; };
 		78D917FE261FB4CC00A4782F /* CraftingShapeless.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftingShapeless.swift; sourceTree = "<group>"; };
@@ -947,6 +951,8 @@
 				78D91859261FB4CC00A4782F /* MetalView.swift */,
 				78D9185A261FB4CC00A4782F /* shaders.metal */,
 				78D9185B261FB4CC00A4782F /* Renderer.swift */,
+				78C64CC726251D2700375CBB /* WorldUniforms.swift */,
+				78C64CD426251D4D00375CBB /* ChunkUniforms.swift */,
 			);
 			path = Render;
 			sourceTree = "<group>";
@@ -1618,6 +1624,7 @@
 				78D919DB261FB4CD00A4782F /* WindowConfirmationServerboundPacket.swift in Sources */,
 				78D91980261FB4CD00A4782F /* MojangAPI.swift in Sources */,
 				78D919F8261FB4CD00A4782F /* OpenWindowPacket.swift in Sources */,
+				78C64CD526251D4D00375CBB /* ChunkUniforms.swift in Sources */,
 				78D91A2F261FB4CD00A4782F /* SetCooldownPacket.swift in Sources */,
 				78D919F5261FB4CD00A4782F /* EntityVelocityPacket.swift in Sources */,
 				78D919CE261FB4CD00A4782F /* UpdateCommandBlockPacket.swift in Sources */,
@@ -1800,6 +1807,7 @@
 				78D91A72261FB4CE00A4782F /* ItemStack.swift in Sources */,
 				78D91A11261FB4CD00A4782F /* AttachEntityPacket.swift in Sources */,
 				78D9197D261FB4CD00A4782F /* Profiler.swift in Sources */,
+				78C64CC826251D2700375CBB /* WorldUniforms.swift in Sources */,
 				78D91A07261FB4CD00A4782F /* EffectPacket.swift in Sources */,
 				78D919FA261FB4CD00A4782F /* EntityMovementPacket.swift in Sources */,
 				78D919C5261FB4CD00A4782F /* UpdateSignPacket.swift in Sources */,

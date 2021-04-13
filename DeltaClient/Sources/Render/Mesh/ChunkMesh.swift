@@ -6,24 +6,37 @@
 //
 
 import Foundation
+import MetalKit
 import simd
 import os
 
 class ChunkMesh: Mesh {
+  typealias Uniforms = ChunkUniforms
+  
   var chunk: Chunk
+  var queue: DispatchQueue
+  
+  var vertices: [Vertex] = []
+  var indices: [UInt32] = []
+  var uniforms: ChunkUniforms!
+  
+  var vertexBuffer: MTLBuffer!
+  var indexBuffer: MTLBuffer!
+  var uniformBuffer: MTLBuffer!
+  
+  var hasChanged: Bool = false
   
   private var blockPaletteManager: BlockPaletteManager
-  
-  // vertex data
-  private let quadWinding: [UInt32] = [0, 1, 2, 2, 3, 0]
   
   // maps block index to where its quads are in the vertex data
   private var blockIndexToQuads: [Int: [Int]] = [:]
   private var quadToBlockIndex: [Int: Int] = [:]
   
-  private var stopwatch = Stopwatch(mode: .summary, name: "chunk mesh")
+  private var stopwatch = Stopwatch(mode: .summary, name: "ChunkMesh")
   
   // cube geometry constants
+  private let quadWinding: [UInt32] = [0, 1, 2, 2, 3, 0]
+  
   private let faceVertexIndices: [FaceDirection: [Int]] = [
     .up: [3, 7, 4, 0],
     .down: [6, 2, 1, 5],
@@ -47,8 +60,7 @@ class ChunkMesh: Mesh {
   init(blockPaletteManager: BlockPaletteManager, chunk: Chunk) {
     self.blockPaletteManager = blockPaletteManager
     self.chunk = chunk
-    
-    super.init()
+    self.queue = DispatchQueue(label: "chunkMesh")
   }
   
   // public interface functions
@@ -86,9 +98,7 @@ class ChunkMesh: Mesh {
             if state != 0 { // block isn't air
               let blockIndex = offset + i // block index in chunk
               var position = indexToCoordinates[i]!
-              position.x += chunk.position.chunkX * 16
               position.y += sectionIndex*16
-              position.z += chunk.position.chunkZ * 16
               
               addBlock(position.x, position.y, position.z, index: blockIndex, state: state)
             }
@@ -98,6 +108,12 @@ class ChunkMesh: Mesh {
       stopwatch.stopMeasurement("generate mesh")
       
       stopwatch.summary()
+      
+      let xOffset = chunk.position.chunkX*16
+      let zOffset = chunk.position.chunkZ*16
+      let modelToWorldMatrix = MatrixUtil.translationMatrix([Float(xOffset), 0.0, Float(zOffset)])
+      
+      uniforms = ChunkUniforms(modelToWorld: modelToWorldMatrix)
     }
   }
   
@@ -170,6 +186,7 @@ class ChunkMesh: Mesh {
       hasChanged = true
       removeBlock(atIndex: index)
       if newState != 0 {
+        Logger.debug("add new block")
         addBlock(at: index, with: newState)
       }
     }

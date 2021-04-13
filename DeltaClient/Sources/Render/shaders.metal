@@ -24,18 +24,31 @@ struct RasteriserData
   int8_t tintIndex;
 };
 
-constexpr sampler textureSampler (mag_filter::nearest,
-                                  min_filter::nearest);
+struct WorldUniforms
+{
+  float4x4 worldToClipSpace;
+};
 
-vertex RasteriserData vertexShader(uint vertexId [[vertex_id]], constant Vertex *vertices [[buffer(0)]], constant float4x4 &modelToClipSpace [[buffer(1)]]) {
+struct ChunkUniforms
+{
+  float4x4 modelToWorld;
+};
+
+constexpr sampler textureSampler (mag_filter::nearest, min_filter::nearest);
+
+vertex RasteriserData chunkVertexShader(uint vertexId [[vertex_id]], constant Vertex *vertices [[buffer(0)]],
+                                        constant WorldUniforms &worldUniforms [[buffer(1)]],
+                                        constant ChunkUniforms &chunkUniforms [[buffer(2)]]) {
+  // get vertex data
   Vertex in = vertices[vertexId];
-  
   RasteriserData out;
-  
   out.position = float4(0.0, 0.0, 0.0, 1.0);
   out.position.xyz = in.position;
-  out.position = out.position * modelToClipSpace;
   
+  // apply matrices
+  out.position = out.position * chunkUniforms.modelToWorld * worldUniforms.worldToClipSpace;
+  
+  // pass texture information through to fragment shader untouched
   out.uv = in.uv;
   out.textureIndex = in.textureIndex;
   out.tintIndex = in.tintIndex;
@@ -43,13 +56,20 @@ vertex RasteriserData vertexShader(uint vertexId [[vertex_id]], constant Vertex 
   return out;
 }
 
-fragment float4 fragmentShader(RasteriserData in [[stage_in]], texture2d_array<float, access::sample> textureArray [[texture(0)]]) {
+fragment float4 chunkFragmentShader(RasteriserData in [[stage_in]],
+                                    texture2d_array<float, access::sample> textureArray [[texture(0)]]) {
+  // sample the relevant texture slice
   float4 color = textureArray.sample(textureSampler, in.uv, in.textureIndex);
+  
+  // discard translucent & transparent fragments
   if (color.w != 1) {
     discard_fragment();
   }
+  
+  // tint any tinted block with a hardcoded tint for now (some kinda green grass colour)
   if (in.tintIndex != -1) {
     color = color * float4(0.53, 0.75, 0.38, 1.0);
   }
+  
   return color;
 }
