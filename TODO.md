@@ -35,8 +35,9 @@
 ## Rendering
 
 - [ ] basic shading
-- [ ] multiple chunks first test
+- [x] multiple chunks first test
 - [ ] look into keeping vertices in gpu mem when they are unchanged between frames?
+- [ ] fix buffer handling (stop gpu ram usage climb)
 - [ ] animated textures
 - [ ] multipart structures
 - [ ] fix block changes having incorrect culling
@@ -78,6 +79,7 @@
 - [ ] separate protocol in protocol and network
 - [ ] make mesh a protocol and extension, not a class
 - [ ] re-enable sandbox
+- [ ] clean up matrixutil to be a matrix_float4x4 extension possibly?
 
 ## Optimisation
 

@@ -36,10 +36,7 @@ class World {
     if let chunk = chunks[position.chunkPosition] {
       return chunk.getBlock(at: position.relativeToChunk)
     } else {
-      Logger.log("no chunk at \(position.chunkPosition)")
-      chunks.forEach {
-        print($0.key)
-      }
+      Logger.warning("failed to get block. no chunk at \(position.chunkPosition)")
       return 0 // air
     }
   }

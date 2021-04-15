@@ -110,16 +110,10 @@ class Renderer {
           chunk.generateMesh()
         }
         chunks.append(chunk)
-      } else {
-        print(chunk.position)
-      }
-      
-      if chunk.position == ChunkPosition(chunkX: 13, chunkZ: 2) {
-        print(chunk.getAABB().getVertices())
       }
     }
     
-    print(chunks.count)
+    Logger.debug("\(chunks.count) chunks rendered")
     
     // encode and send draw instructions
     if let commandBuffer = metalCommandQueue.makeCommandBuffer() {

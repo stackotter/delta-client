@@ -24,7 +24,7 @@ class StorageManager {
     self.fileManager = FileManager.default
     
     if let applicationSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-      self.storageDir = applicationSupport.appendingPathComponent("DeltaClient")
+      self.storageDir = applicationSupport
       
       // attempt to create an application support directory for the client if it doesn't exist
       var isDirectory: ObjCBool = false

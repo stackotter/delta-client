@@ -52,18 +52,20 @@ The demo versions are just milestones that work towards the first Alpha release
 
 - [x] multipart structure reading (from pixlyzer)
 - [x] multipart structure rendering
-- [ ] random variants
-- [ ] proper random block rotations (that match vanilla)
-- [ ] basic shading
-- [ ] rework & optimise chunk mesh preparation
-- [ ] basic multichunk rendering
-- [ ] fix hypixel chunk loading
-- [ ] fix grass block sides
-- [ ] implement rescale
-- [ ] possibly use section based rendering instead of chunk based
 - [ ] parallelise generating chunk meshes
 - [ ] order chunks based on distance from player when generating meshes
-- [ ] frustum culling for chunks
+- [ ] order chunks based off frustum as well
+- [ ] fix gpu ram usage (clear buffers when not being used, possibly use private mode buffers, possibly use a big default size buffer and transfer things through that)
+- [ ] fix indices (either use 6 vertices to a face or do the fancy shader thing from before (adjusting the vertex indices))
+- [ ] basic shading (face normal based) (bake light levels into block models)
+- [ ] possibly use section based rendering instead of chunk based
+- [ ] optimise chunk mesh preparation
+- [x] basic multichunk rendering
+- [x] fix hypixel chunk loading
+- [ ] fix grass block sides
+- [ ] implement rescale
+- [ ] random block variants (that match vanilla)
+- [x] frustum culling for chunks
 
 ## Demo 4 - Movement
 

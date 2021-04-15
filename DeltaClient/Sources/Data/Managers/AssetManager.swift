@@ -82,7 +82,6 @@ class AssetManager {
     let clientJarExtracted = FileManager.default.temporaryDirectory.appendingPathComponent("client", isDirectory: true)
     try FileManager.default.createDirectory(at: clientJarExtracted, withIntermediateDirectories: true, attributes: nil)
     do {
-      print(clientJarURL)
       Logger.debug("downloading client jar..")
       let clientJarData = try Data(contentsOf: clientJarURL)
       try clientJarData.write(to: clientJar)

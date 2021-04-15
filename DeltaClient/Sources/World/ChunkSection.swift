@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 struct ChunkSection {
   static let WIDTH = 16
@@ -26,7 +27,8 @@ struct ChunkSection {
     if palette.count != 0 { // indirect palette
       self.blocks = self.blocks.map {
         if $0 >= palette.count {
-          print("\($0) out of bounds for list of \(palette.count)")
+          Logger.warning("indirect palette lookup failed: \($0) out of bounds for palette of length \(palette.count)")
+          return 0
         }
         return palette[Int($0)]
       }
