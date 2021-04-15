@@ -55,6 +55,7 @@ The demo versions are just milestones that work towards the first Alpha release
 - [ ] parallelise generating chunk meshes
 - [ ] order chunks based on distance from player when generating meshes
 - [ ] order chunks based off frustum as well
+- [ ] base chunk bounding box off highest and lowest blocks
 - [ ] fix gpu ram usage (clear buffers when not being used, possibly use private mode buffers, possibly use a big default size buffer and transfer things through that)
 - [ ] fix indices (either use 6 vertices to a face or do the fancy shader thing from before (adjusting the vertex indices))
 - [ ] basic shading (face normal based) (bake light levels into block models)
@@ -95,6 +96,7 @@ The demo versions are just milestones that work towards the first Alpha release
 - improved ui
 - improved error handling and displaying
 - improved startup verbosity
+- better threading
 
 ### Todo
 
@@ -106,6 +108,7 @@ The demo versions are just milestones that work towards the first Alpha release
 - [ ] maybe remove commands mode
 - [ ] improve error handling and displaying
 - [ ] use count up down latch thingo like minosoft for startup sequence
+- [ ] thread safety of world and chunks and stuff
 
 ## Demo 6 - Multi-accounting
 

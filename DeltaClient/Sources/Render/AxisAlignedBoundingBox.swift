@@ -1,5 +1,5 @@
 //
-//  BoundingBox.swift
+//  AxisAlignedBoundingBox.swift
 //  DeltaClient
 //
 //  Created by Rohan van Klinken on 13/4/21.
@@ -32,6 +32,25 @@ struct AxisAlignedBoundingBox {
       bbr,
       tbl,
       tbr
+    ]
+  }
+}
+
+extension AxisAlignedBoundingBox {
+  init(forChunk chunk: Chunk) {
+    self.init(forChunkAt: chunk.position)
+  }
+  
+  init(forChunkAt chunkPosition: ChunkPosition) {
+    self.position = [
+      Float(chunkPosition.chunkX * Chunk.WIDTH),
+      0.0,
+      Float(chunkPosition.chunkZ * Chunk.DEPTH)
+    ]
+    self.size = [
+      Float(Chunk.WIDTH),
+      Float(Chunk.HEIGHT),
+      Float(Chunk.DEPTH)
     ]
   }
 }

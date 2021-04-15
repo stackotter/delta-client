@@ -21,6 +21,7 @@
 - [ ] shutdown networking properly when leaving server
   - [ ] teardown server and client objects properly
 - [ ] get new chunks receiving when player is moved
+- [ ] auto-respawn
 
 ## Config
 
@@ -48,14 +49,13 @@
 - [ ] multiple models for one block
 - [ ] fix stair sides not being detected as full faces (because they're made of two elements)
 - [x] separate out block model structs into separate files
-- [ ] investigate campfires
+- [ ] investigate campfires (probably animated textures?)
 - [ ] investigate levers (point the opposite way compared to vanilla. probably an order of rotations thing?)
 - [ ] investigate falsely culled path block top face (under haybale)
 - [ ] investigate cauldron water not showing
 - [ ] identify translucent blocks
 - [ ] detect when full faces are not culling full faces (when they are transparent)
 - [ ] fix path block xray
-- [ ] rename protobuf cache message thingos to be Cached instead of Cache
 - [ ] stop using a dictionary for the block palette, just use an array
 - [ ] respect weighting for block variants
 
@@ -69,17 +69,28 @@
 
 ## General
 
-- [ ] add version to block model and config to add semi-backwards compatibility
+- [ ] add version to block model cache and config to know when to remake them (as api is not stable yet)
+- [ ] rename protobuf cache message thingos to be Cached instead of Cache
 - [x] improve error handling in networking
 - [ ] clean up json reader/writer
   - [ ] use swifts fancy json instead of mine
 - [x] rename project to not include word minecraft
-- [ ] fix folder structure a little (not just delta-client/DeltaClient/DeltaClient to get to any code)
+- [x] fix folder structure a little (not just delta-client/DeltaClient/DeltaClient to get to any code)
 - [ ] fix leave server's ram issue
-- [ ] separate protocol in protocol and network
-- [ ] make mesh a protocol and extension, not a class
-- [ ] re-enable sandbox
+- [ ] separate protocol into protocol and network
+- [x] make mesh a protocol and extension, not a class
+- [x] re-enable sandbox
 - [ ] clean up matrixutil to be a matrix_float4x4 extension possibly?
+- [ ] use rethrows
+- [ ] simplify data classes (like chunk) that should just be a data source
+- [ ] use some concurrent dispatchqueues
+- [ ] have a default eventmanager (treat it as a singleton)
+- [ ] make some of the managers singletons where possible
+  - [ ] https://forums.swift.org/t/is-there-any-way-to-throw-error-from-singleton-class-init/39207, https://medium.com/@tlimaye91/thread-safe-singletons-in-swift-a4f6a977d6e6
+
+## Architecture
+
+- [ ] World should eventually be mostly structs and just contain helper methods and be used a data holder (chunks shouldn't need to update their meshes and stuff probably, that's chunk preparers job, could involve callbacks though)
 
 ## Optimisation
 

@@ -28,6 +28,8 @@ class Renderer {
   let farDistance = 1000
   var camera: Camera
   
+  var chunkPreparer: ChunkPreparer
+  
   init(device: MTLDevice, client: Client) {
     self.metalDevice = device
     self.client = client
@@ -67,6 +69,8 @@ class Renderer {
     
     Logger.debug("initialised renderer")
     
+    self.chunkPreparer = ChunkPreparer(server: client.server)
+    
     self.logger = Logger(for: type(of: self))
   }
   
@@ -94,65 +98,71 @@ class Renderer {
   }
   
   func draw(view: MTKView, drawable: CAMetalDrawable) {
-    let aspect = Float(view.drawableSize.width / view.drawableSize.height)
-    camera.aspect = aspect
-    
-    let worldToClip = createWorldToClip()
-    
-    // TODO: use chunk position to order chunk generation
-    // TODO: parallelise
-    // generate chunk meshes if necessary
-    let frustum = Frustum(worldToClip: worldToClip)
-    var chunks: [Chunk] = []
-    for (_, chunk) in client.server.currentWorld?.chunks ?? [:] {
-      if frustum.approximatelyContains(chunk.getAABB()) {
-        if chunk.mesh.isEmpty {
-          chunk.generateMesh()
-        }
-        chunks.append(chunk)
+    if let world = client.server.currentWorld {
+      // update camera parameters
+      let aspect = Float(view.drawableSize.width / view.drawableSize.height)
+      camera.aspect = aspect
+      let worldToClip = createWorldToClip()
+      let frustum = Frustum(worldToClip: worldToClip)
+      
+      // update chunk preparer
+      if chunkPreparer.frustum == nil {
+        chunkPreparer.updateChunkOrder(newPlayerPosition: client.server.player.position.vector, newFrustum: frustum)
+        chunkPreparer.prepareChunks()
       }
-    }
-    
-    Logger.debug("\(chunks.count) chunks rendered")
-    
-    // encode and send draw instructions
-    if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
-      if let renderPassDescriptor = view.currentRenderPassDescriptor {
-        renderPassDescriptor.colorAttachments[0].clearColor = skyColor
-        renderPassDescriptor.colorAttachments[0].loadAction = .clear
-        renderPassDescriptor.colorAttachments[0].storeAction = .store
-        
-        if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
-          renderEncoder.setRenderPipelineState(pipelineState)
-          renderEncoder.setDepthStencilState(depthState)
-          
-          renderEncoder.setFrontFacing(.clockwise)
-          renderEncoder.setCullMode(.back)
-          
-          // uncomment the lines below to enable wireframe
-          // renderEncoder.setTriangleFillMode(.lines)
-          // renderEncoder.setCullMode(.none)
-          
-          renderEncoder.setFragmentTexture(arrayTexture, index: 0)
-          
-          // create uniforms
-          let uniformBuffer = createUniformBuffer(worldToClip)
-          renderEncoder.setVertexBuffer(uniformBuffer, offset: 0, index: 1)
-          
-          for chunk in chunks {
-            if !chunk.mesh.isEmpty {
-              let buffers = chunk.mesh.createBuffers(device: metalDevice)
-              
-              renderEncoder.setVertexBuffer(buffers.vertexBuffer, offset: 0, index: 0) // set vertices
-              renderEncoder.setVertexBuffer(buffers.uniformBuffer, offset: 0, index: 2) // set chunk specific uniforms
-              renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: buffers.indexBuffer.length/4, indexType: .uint32, indexBuffer: buffers.indexBuffer, indexBufferOffset: 0)
-            }
+      
+      // get chunks to render
+      var chunks: [Chunk] = []
+      let chunkPositions = chunkPreparer.getChunksToRender()
+      for chunkPosition in chunkPositions {
+        if let chunk = world.chunks[chunkPosition] {
+          if !chunk.mesh.isEmpty {
+            chunks.append(chunk)
           }
+        }
+      }
+    
+      Logger.debug("\(chunks.count) chunks rendered")
+      
+      // encode and send draw instructions
+      if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
+        if let renderPassDescriptor = view.currentRenderPassDescriptor {
+          renderPassDescriptor.colorAttachments[0].clearColor = skyColor
+          renderPassDescriptor.colorAttachments[0].loadAction = .clear
+          renderPassDescriptor.colorAttachments[0].storeAction = .store
           
-          renderEncoder.endEncoding()
-          
-          commandBuffer.present(drawable)
-          commandBuffer.commit()
+          if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
+            renderEncoder.setRenderPipelineState(pipelineState)
+            renderEncoder.setDepthStencilState(depthState)
+            
+            renderEncoder.setFrontFacing(.clockwise)
+            renderEncoder.setCullMode(.back)
+            
+            // uncomment the lines below to enable wireframe
+            // renderEncoder.setTriangleFillMode(.lines)
+            // renderEncoder.setCullMode(.none)
+            
+            renderEncoder.setFragmentTexture(arrayTexture, index: 0)
+            
+            // create uniforms
+            let uniformBuffer = createUniformBuffer(worldToClip)
+            renderEncoder.setVertexBuffer(uniformBuffer, offset: 0, index: 1)
+            
+            for chunk in chunks {
+              if !chunk.mesh.isEmpty {
+                let buffers = chunk.mesh.createBuffers(device: metalDevice)
+                
+                renderEncoder.setVertexBuffer(buffers.vertexBuffer, offset: 0, index: 0) // set vertices
+                renderEncoder.setVertexBuffer(buffers.uniformBuffer, offset: 0, index: 2) // set chunk specific uniforms
+                renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: buffers.indexBuffer.length/4, indexType: .uint32, indexBuffer: buffers.indexBuffer, indexBufferOffset: 0)
+              }
+            }
+            
+            renderEncoder.endEncoding()
+            
+            commandBuffer.present(drawable)
+            commandBuffer.commit()
+          }
         }
       }
     }

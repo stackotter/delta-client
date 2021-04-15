@@ -15,12 +15,13 @@
 		786888672623D77A00BD3F03 /* CacheBlockModelContainer.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786888472623952000BD3F03 /* CacheBlockModelContainer.pb.swift */; };
 		7868886D2623F67D00BD3F03 /* get_neighbouring_blocks.c in Sources */ = {isa = PBXBuildFile; fileRef = 7868886C2623F67D00BD3F03 /* get_neighbouring_blocks.c */; };
 		7868887526243D9F00BD3F03 /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7868887426243D9E00BD3F03 /* MathUtil.swift */; };
+		786D34FF2627EB4200DB8C2F /* ChunkPreparer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786D34FE2627EB4200DB8C2F /* ChunkPreparer.swift */; };
 		7892880E261438A000F17DBB /* DeltaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A9261433A700079A01 /* DeltaClientTests.swift */; };
 		78928812261438A500F17DBB /* DeltaClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052170261433A600079A01 /* DeltaClientUITests.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
 		78C64CC826251D2700375CBB /* WorldUniforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C64CC726251D2700375CBB /* WorldUniforms.swift */; };
 		78C64CD526251D4D00375CBB /* ChunkUniforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C64CD426251D4D00375CBB /* ChunkUniforms.swift */; };
-		78C64CDD2625555C00375CBB /* BoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C64CDC2625555B00375CBB /* BoundingBox.swift */; };
+		78C64CDD2625555C00375CBB /* AxisAlignedBoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C64CDC2625555B00375CBB /* AxisAlignedBoundingBox.swift */; };
 		78D1F89D2626471900AEE7AE /* Frustum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D1F89C2626471900AEE7AE /* Frustum.swift */; };
 		78D917E4261F08E400A4782F /* IDZSwiftCommonCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 78D917E3261F08E400A4782F /* IDZSwiftCommonCrypto */; };
 		78D91954261FB4CD00A4782F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D917FA261FB4CC00A4782F /* Constants.swift */; };
@@ -374,9 +375,10 @@
 		7868886B2623F67D00BD3F03 /* get_neighbouring_blocks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = get_neighbouring_blocks.h; sourceTree = "<group>"; };
 		7868886C2623F67D00BD3F03 /* get_neighbouring_blocks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = get_neighbouring_blocks.c; sourceTree = "<group>"; };
 		7868887426243D9E00BD3F03 /* MathUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathUtil.swift; sourceTree = "<group>"; };
+		786D34FE2627EB4200DB8C2F /* ChunkPreparer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkPreparer.swift; sourceTree = "<group>"; };
 		78C64CC726251D2700375CBB /* WorldUniforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldUniforms.swift; sourceTree = "<group>"; };
 		78C64CD426251D4D00375CBB /* ChunkUniforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkUniforms.swift; sourceTree = "<group>"; };
-		78C64CDC2625555B00375CBB /* BoundingBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBox.swift; sourceTree = "<group>"; };
+		78C64CDC2625555B00375CBB /* AxisAlignedBoundingBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisAlignedBoundingBox.swift; sourceTree = "<group>"; };
 		78D1F89C2626471900AEE7AE /* Frustum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frustum.swift; sourceTree = "<group>"; };
 		78D917FA261FB4CC00A4782F /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		78D917FD261FB4CC00A4782F /* CraftingRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftingRecipe.swift; sourceTree = "<group>"; };
@@ -957,8 +959,9 @@
 				78D91859261FB4CC00A4782F /* MetalView.swift */,
 				78D9185A261FB4CC00A4782F /* shaders.metal */,
 				78D9185B261FB4CC00A4782F /* Renderer.swift */,
+				786D34FE2627EB4200DB8C2F /* ChunkPreparer.swift */,
 				78D1F89C2626471900AEE7AE /* Frustum.swift */,
-				78C64CDC2625555B00375CBB /* BoundingBox.swift */,
+				78C64CDC2625555B00375CBB /* AxisAlignedBoundingBox.swift */,
 				7851F7AD26255E0F009B59DD /* Camera.swift */,
 				78C64CC726251D2700375CBB /* WorldUniforms.swift */,
 				78C64CD426251D4D00375CBB /* ChunkUniforms.swift */,
@@ -1771,7 +1774,7 @@
 				7868887526243D9F00BD3F03 /* MathUtil.swift in Sources */,
 				78D91A22261FB4CD00A4782F /* CraftRecipeResponsePacket.swift in Sources */,
 				78D91A08261FB4CD00A4782F /* SpawnExperienceOrbPacket.swift in Sources */,
-				78C64CDD2625555C00375CBB /* BoundingBox.swift in Sources */,
+				78C64CDD2625555C00375CBB /* AxisAlignedBoundingBox.swift in Sources */,
 				78D919FC261FB4CD00A4782F /* NBTQueryResponse.swift in Sources */,
 				78D919C3261FB4CD00A4782F /* ClickWindowButtonPacket.swift in Sources */,
 				78D91A24261FB4CD00A4782F /* SetPassengersPacket.swift in Sources */,
@@ -1863,6 +1866,7 @@
 				78D91A04261FB4CD00A4782F /* WindowItemsPacket.swift in Sources */,
 				78D91A5B261FB4CE00A4782F /* OutermostNetworkLayer.swift in Sources */,
 				78D91995261FB4CD00A4782F /* Player.swift in Sources */,
+				786D34FF2627EB4200DB8C2F /* ChunkPreparer.swift in Sources */,
 				78D91A6C261FB4CE00A4782F /* Equipment.swift in Sources */,
 				78D91A56261FB4CE00A4782F /* ProtocolLayer.swift in Sources */,
 				78D91A48261FB4CD00A4782F /* PluginMessagePacket.swift in Sources */,
