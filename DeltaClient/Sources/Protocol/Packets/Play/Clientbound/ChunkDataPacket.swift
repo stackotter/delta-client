@@ -21,8 +21,6 @@ struct ChunkDataPacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    if let world = server.currentWorld {
-      world.addChunkData(chunkData)
-    }
+    server.world?.addChunkData(chunkData)
   }
 }

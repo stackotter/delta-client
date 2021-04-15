@@ -84,13 +84,15 @@
 - [ ] use rethrows
 - [ ] simplify data classes (like chunk) that should just be a data source
 - [ ] use some concurrent dispatchqueues
-- [ ] have a default eventmanager (treat it as a singleton)
-- [ ] make some of the managers singletons where possible (hopefully get rid of Managers)
+- [x] have a default eventmanager (treat it as a singleton)
+- [ ] make most of the managers singletons where possible (hopefully get rid of Managers)
   - [ ] https://forums.swift.org/t/is-there-any-way-to-throw-error-from-singleton-class-init/39207, https://medium.com/@tlimaye91/thread-safe-singletons-in-swift-a4f6a977d6e6
+- [ ] potentially move over to using Carthage instead of swift package manager
 
 ## Architecture
 
 - [ ] World should eventually be mostly structs and just contain helper methods and be used a data holder (chunks shouldn't need to update their meshes and stuff probably, that's chunk preparers job, could involve callbacks though)
+- [ ] the rest of the code shouldn't know that rendering even exists (the renderer should just observe the world)
 
 ## Optimisation
 

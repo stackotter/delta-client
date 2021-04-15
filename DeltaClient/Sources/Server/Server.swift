@@ -18,8 +18,7 @@ class Server: Hashable {
   var recipeRegistry: RecipeRegistry = RecipeRegistry()
   var packetRegistry: PacketRegistry
   
-  var currentWorldName: Identifier?
-  var worlds: [Identifier: World] = [:]
+  var world: World?
   
   var timeOfDay: Int = -1
   var difficulty: Difficulty = .normal
@@ -27,18 +26,6 @@ class Server: Hashable {
   var player: Player
   
   var eventManager: EventManager = EventManager<ServerEvent>()
-  
-  // Getter: current world
-  
-  var currentWorld: World? {
-    if let worldName = currentWorldName {
-      if let world = worlds[worldName] {
-        return world
-      }
-    }
-    Logger.warning("current world '\(currentWorldName?.toString() ?? "")' does not exist")
-    return nil
-  }
   
   // Init
   
@@ -58,13 +45,8 @@ class Server: Hashable {
   
   // World
   
-  func addWorld(config: WorldConfig) {
-    let world = World(config: config, managers: managers)
-    worlds[config.worldName] = world
-  }
-  
-  func setCurrentWorld(identifier: Identifier) {
-    currentWorldName = identifier
+  func newWorld(config: WorldConfig) {
+    world = World(config: config, managers: managers, eventManager: eventManager)
   }
   
   // Networking

@@ -337,9 +337,9 @@
 		78D91AA2261FB4E100A4782F /* GameCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91A97261FB4E100A4782F /* GameCommandView.swift */; };
 		78D91AA3261FB4E100A4782F /* GameRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91A98261FB4E100A4782F /* GameRenderView.swift */; };
 		78D91AA4261FB4E100A4782F /* EditServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91A99261FB4E100A4782F /* EditServerView.swift */; };
-		78E2324026280B7A00B08B4B /* EventProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E2323F26280B7A00B08B4B /* EventProtocol.swift */; };
 		78E2324526280B9E00B08B4B /* AppEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E2324426280B9E00B08B4B /* AppEvent.swift */; };
 		78E2324A26280C8000B08B4B /* ServerEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E2324926280C8000B08B4B /* ServerEvent.swift */; };
+		78E232522628138300B08B4B /* EventProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E232512628138300B08B4B /* EventProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -704,9 +704,9 @@
 		78D91A97261FB4E100A4782F /* GameCommandView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameCommandView.swift; sourceTree = "<group>"; };
 		78D91A98261FB4E100A4782F /* GameRenderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameRenderView.swift; sourceTree = "<group>"; };
 		78D91A99261FB4E100A4782F /* EditServerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditServerView.swift; sourceTree = "<group>"; };
-		78E2323F26280B7A00B08B4B /* EventProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventProtocol.swift; sourceTree = "<group>"; };
 		78E2324426280B9E00B08B4B /* AppEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEvent.swift; sourceTree = "<group>"; };
 		78E2324926280C8000B08B4B /* ServerEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerEvent.swift; sourceTree = "<group>"; };
+		78E232512628138300B08B4B /* EventProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1427,9 +1427,9 @@
 			isa = PBXGroup;
 			children = (
 				78D91949261FB4CD00A4782F /* EventManager.swift */,
+				78E232512628138300B08B4B /* EventProtocol.swift */,
 				78E2324426280B9E00B08B4B /* AppEvent.swift */,
 				78E2324926280C8000B08B4B /* ServerEvent.swift */,
-				78E2323F26280B7A00B08B4B /* EventProtocol.swift */,
 			);
 			path = Event;
 			sourceTree = "<group>";
@@ -1596,6 +1596,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				78D91A54261FB4CE00A4782F /* InboundNetworkLayer.swift in Sources */,
+				78E232522628138300B08B4B /* EventProtocol.swift in Sources */,
 				78D91A46261FB4CD00A4782F /* CloseWindowClientboundPacket.swift in Sources */,
 				78D91AA0261FB4E100A4782F /* ServerListView.swift in Sources */,
 				78D919EC261FB4CD00A4782F /* KeepAliveServerboundPacket.swift in Sources */,
@@ -1683,7 +1684,6 @@
 				78D91A2E261FB4CD00A4782F /* WorldBorderPacket.swift in Sources */,
 				78D91A7A261FB4CE00A4782F /* Identifier.swift in Sources */,
 				78D1F89D2626471900AEE7AE /* Frustum.swift in Sources */,
-				78E2324026280B7A00B08B4B /* EventProtocol.swift in Sources */,
 				78D91997261FB4CD00A4782F /* PlayerInfo.swift in Sources */,
 				7868886D2623F67D00BD3F03 /* get_neighbouring_blocks.c in Sources */,
 				78D919BF261FB4CD00A4782F /* PacketReader.swift in Sources */,

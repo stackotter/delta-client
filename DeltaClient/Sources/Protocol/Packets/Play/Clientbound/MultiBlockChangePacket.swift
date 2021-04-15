@@ -43,7 +43,7 @@ struct MultiBlockChangePacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    if let chunk = server.currentWorld?.chunks[chunkPosition] {
+    if let chunk = server.world?.chunks[chunkPosition] {
       for record in records {
         chunk.setBlock(
           at: Position(

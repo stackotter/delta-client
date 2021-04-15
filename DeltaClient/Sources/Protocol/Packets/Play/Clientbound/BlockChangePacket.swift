@@ -19,6 +19,6 @@ struct BlockChangePacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    server.currentWorld?.setBlock(at: location, to: UInt16(blockId))
+    server.world?.setBlock(at: location, to: UInt16(blockId))
   }
 }

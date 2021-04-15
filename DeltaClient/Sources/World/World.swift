@@ -8,7 +8,7 @@
 import Foundation
 import os
 
-// NOTE: might need to be made threadsafe?
+// TODO: make World threadsafe
 class World {
   var chunks: [ChunkPosition: Chunk] = [:]
   var config: WorldConfig
@@ -18,11 +18,15 @@ class World {
   
   var chunkThread: DispatchQueue = DispatchQueue(label: "worldChunks")
   var managers: Managers
+  var eventManager: EventManager<ServerEvent>
   
-  init(config: WorldConfig, managers: Managers) {
+  init(config: WorldConfig, managers: Managers, eventManager: EventManager<ServerEvent>) {
     self.config = config
     self.managers = managers
+    self.eventManager = eventManager
   }
+  
+  // Block
   
   func setBlock(at position: Position, to state: UInt16) {
     if let chunk = chunks[position.chunkPosition] {
@@ -39,6 +43,16 @@ class World {
       Logger.warning("failed to get block. no chunk at \(position.chunkPosition)")
       return 0 // air
     }
+  }
+  
+  // Chunk
+  
+  func finishDownloadingTerrain() {
+    // wait until last chunk is unpacked
+    chunkThread.sync {
+      downloadingTerrain = false
+    }
+    DeltaClientApp.eventManager.triggerEvent(.downloadedTerrain)
   }
   
   func addChunk(_ chunk: Chunk) {

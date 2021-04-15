@@ -98,7 +98,7 @@ class Renderer {
   }
   
   func draw(view: MTKView, drawable: CAMetalDrawable) {
-    if let world = client.server.currentWorld {
+    if let world = client.server.world {
       // update camera parameters
       let aspect = Float(view.drawableSize.width / view.drawableSize.height)
       camera.aspect = aspect
@@ -106,10 +106,10 @@ class Renderer {
       let frustum = Frustum(worldToClip: worldToClip)
       
       // update chunk preparer
-      if chunkPreparer.frustum == nil {
-        chunkPreparer.updateChunkOrder(newPlayerPosition: client.server.player.position.vector, newFrustum: frustum)
-        chunkPreparer.prepareChunks()
-      }
+      chunkPreparer.updateChunkOrder(newPlayerPosition: client.server.player.position.vector, newFrustum: frustum)
+      
+      // prepare chunks if necessary
+      chunkPreparer.prepareChunks()
       
       // get chunks to render
       var chunks: [Chunk] = []
@@ -122,7 +122,7 @@ class Renderer {
         }
       }
     
-      Logger.debug("\(chunks.count) chunks rendered")
+      Logger.debug("\(chunks.count) chunks rendered / \(world.chunks.count)")
       
       // encode and send draw instructions
       if let commandBuffer = metalCommandQueue.makeCommandBuffer() {

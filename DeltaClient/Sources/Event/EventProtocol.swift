@@ -10,12 +10,12 @@ import Foundation
 protocol EventProtocol { }
 
 extension EventProtocol {
-  var name:String {
+  var name: String {
     let mirror = Mirror(reflecting: self)
     if let name = mirror.children.first?.label {
       return name
     } else {
-      return String(describing:self)
+      return String(describing: self)
     }
   }
 }
