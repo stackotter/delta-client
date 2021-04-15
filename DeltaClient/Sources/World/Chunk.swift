@@ -156,4 +156,19 @@ class Chunk {
     
     return cullingNeighbours
   }
+  
+  func getAABB() -> AxisAlignedBoundingBox {
+    return AxisAlignedBoundingBox(
+      position: [
+        Float(position.chunkX * Chunk.WIDTH),
+        0.0,
+        Float(position.chunkZ * Chunk.DEPTH)
+      ],
+      size: [
+        Float(Chunk.WIDTH),
+        Float(Chunk.HEIGHT),
+        Float(Chunk.DEPTH)
+      ]
+    )
+  }
 }

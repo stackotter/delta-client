@@ -24,10 +24,19 @@ class Renderer {
   
   let skyColor = MTLClearColorMake(0.65, 0.8, 1, 1)
   
+  let nearDistance = 0.0001
+  let farDistance = 1000
+  var camera: Camera
+  
   init(device: MTLDevice, client: Client) {
     self.metalDevice = device
     self.client = client
     self.managers = client.managers
+    
+    let fovDegrees: Float = 90
+    let fovRadians = fovDegrees / 180 * Float.pi
+    camera = Camera()
+    camera.fovY = fovRadians
     
     Logger.debug("creating command queue")
     self.metalCommandQueue = metalDevice.makeCommandQueue()!
@@ -61,37 +70,56 @@ class Renderer {
     self.logger = Logger(for: type(of: self))
   }
   
-  func createUniformBuffer(aspect: Float) -> MTLBuffer {
+  func createWorldToClip() -> matrix_float4x4 {
     let playerPosition = client.server.player.position
     
     let look = client.server.player.look
     let xRot = look.pitch / 180 * Float.pi
     let yRot = look.yaw / 180 * Float.pi
     
-    let fov = 90 / 180 * Float.pi
-    
     let cameraPosition = simd_float3([Float(-playerPosition.x), Float(-(playerPosition.y+1.625)), Float(-playerPosition.z)])
     
     let worldToCamera = MatrixUtil.translationMatrix(cameraPosition) * MatrixUtil.rotationMatrix(y: -(Float.pi + yRot)) * MatrixUtil.rotationMatrix(x: -xRot)
-    let cameraToClip = MatrixUtil.projectionMatrix(near: 0.1, far: 1000, aspect: aspect, fieldOfViewY: fov)
-    let worldToClipSpace = worldToCamera * cameraToClip
+    let cameraToClip = MatrixUtil.projectionMatrix(near: 0.0001, far: 1000, aspect: camera.aspect, fieldOfViewY: camera.fovY)
+    let worldToClip = worldToCamera * cameraToClip
     
-    var uniforms = WorldUniforms(worldToClipSpace: worldToClipSpace)
+    return worldToClip
+  }
+  
+  func createUniformBuffer(_ worldToClip: matrix_float4x4) -> MTLBuffer! {
+    var uniforms = WorldUniforms(worldToClipSpace: worldToClip)
     let uniformBuffer = metalDevice.makeBuffer(bytes: &uniforms, length: MemoryLayout<WorldUniforms>.stride, options: [])!
     uniformBuffer.label = "worldUniformBuffer"
     return uniformBuffer
   }
   
   func draw(view: MTKView, drawable: CAMetalDrawable) {
+    let aspect = Float(view.drawableSize.width / view.drawableSize.height)
+    camera.aspect = aspect
+    
+    let worldToClip = createWorldToClip()
+    
     // TODO: use chunk position to order chunk generation
+    // TODO: parallelise
     // generate chunk meshes if necessary
+    let frustum = Frustum(worldToClip: worldToClip)
     var chunks: [Chunk] = []
     for (_, chunk) in client.server.currentWorld?.chunks ?? [:] {
-      if chunk.mesh.isEmpty {
-        chunk.generateMesh()
+      if frustum.approximatelyContains(chunk.getAABB()) {
+        if chunk.mesh.isEmpty {
+          chunk.generateMesh()
+        }
+        chunks.append(chunk)
+      } else {
+        print(chunk.position)
       }
-      chunks.append(chunk)
+      
+      if chunk.position == ChunkPosition(chunkX: 13, chunkZ: 2) {
+        print(chunk.getAABB().getVertices())
+      }
     }
+    
+    print(chunks.count)
     
     // encode and send draw instructions
     if let commandBuffer = metalCommandQueue.makeCommandBuffer() {
@@ -114,8 +142,7 @@ class Renderer {
           renderEncoder.setFragmentTexture(arrayTexture, index: 0)
           
           // create uniforms
-          let aspect = Float(view.drawableSize.width/view.drawableSize.height)
-          let uniformBuffer = createUniformBuffer(aspect: aspect)
+          let uniformBuffer = createUniformBuffer(worldToClip)
           renderEncoder.setVertexBuffer(uniformBuffer, offset: 0, index: 1)
           
           for chunk in chunks {

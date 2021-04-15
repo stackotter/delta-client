@@ -17,8 +17,8 @@ struct SpawnPositionPacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-//    server.player.position.x = Double(location.x)
-//    server.player.position.y = Double(location.y)
-//    server.player.position.z = Double(location.z)
+    server.player.spawnPosition = location
+    server.currentWorld?.downloadingTerrain = false
+    server.managers.eventManager.triggerEvent(.downloadedTerrain)
   }
 }

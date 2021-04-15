@@ -20,22 +20,9 @@ struct ChunkDataPacket: ClientboundPacket {
     chunkData = ChunkData(position: position, reader: packetReader)
   }
   
-  // TODO: clean up how downloading terrain is triggered to end
   func handle(for server: Server) throws {
     if let world = server.currentWorld {
-      world.addChunkData(chunkData, unpack: !world.downloadingTerrain)
-      if world.downloadingTerrain {
-        let viewDiameter = server.config.viewDistance * 2 + (3)
-        let targetNumChunks = viewDiameter * viewDiameter
-        if world.packedChunks.count == targetNumChunks {
-          Logger.log("unpacking chunks")
-          do {
-            try world.unpackChunks()
-          } catch {
-            Logger.error("failed to unpack chunks")
-          }
-        }
-      }
+      world.addChunkData(chunkData)
     }
   }
 }

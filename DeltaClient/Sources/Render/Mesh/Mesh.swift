@@ -39,16 +39,17 @@ extension Mesh {
         Logger.debug("regenerating chunk mesh buffers")
         
         let vertexBufferSize = MemoryLayout<Vertex>.stride * vertices.count
-        vertexBuffer = device.makeBuffer(bytes: vertices, length: vertexBufferSize, options: [])!
+        vertexBuffer = device.makeBuffer(bytes: vertices, length: vertexBufferSize, options: [.storageModeShared])!
         vertexBuffer.label = "vertexBuffer"
         
         let indexBufferSize = MemoryLayout<UInt32>.stride * indices.count
-        indexBuffer = device.makeBuffer(bytes: indices, length: indexBufferSize, options: [])!
+        indexBuffer = device.makeBuffer(bytes: indices, length: indexBufferSize, options: [.storageModeShared])!
         indexBuffer.label = "indexBuffer"
         
         // TODO: have separate hasChanged for uniforms (they change a lot less often for chunks)
+        // TODO: reuse buffer for uniforms (they have a fixed size)
         let uniformBufferSize = MemoryLayout<Uniforms>.stride
-        uniformBuffer = device.makeBuffer(bytes: &uniforms, length: uniformBufferSize, options: [])!
+        uniformBuffer = device.makeBuffer(bytes: &uniforms, length: uniformBufferSize, options: [.storageModeShared])!
         uniformBuffer.label = "uniformBuffer"
         
         hasChanged = false

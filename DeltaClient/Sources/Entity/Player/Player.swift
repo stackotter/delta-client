@@ -10,6 +10,8 @@ import Foundation
 struct Player {
   var username: String
   
+  var spawnPosition: Position = Position(x: 0, y: 0, z: 0)
+  
   var position: EntityPosition = EntityPosition(x: 0, y: 0, z: 0)
   var look: PlayerRotation = PlayerRotation(yaw: 0, pitch: 0)
   

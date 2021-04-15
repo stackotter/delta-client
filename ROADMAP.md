@@ -63,6 +63,7 @@ The demo versions are just milestones that work towards the first Alpha release
 - [ ] possibly use section based rendering instead of chunk based
 - [ ] parallelise generating chunk meshes
 - [ ] order chunks based on distance from player when generating meshes
+- [ ] frustum culling for chunks
 
 ## Demo 4 - Movement
 

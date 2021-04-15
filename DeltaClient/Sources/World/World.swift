@@ -10,7 +10,6 @@ import os
 
 // NOTE: might need to be made threadsafe?
 class World {
-  var packedChunks: [ChunkPosition: ChunkData] = [:] // chunks that haven't been unpacked yet
   var chunks: [ChunkPosition: Chunk] = [:]
   var config: WorldConfig
   var age: Int = -1
@@ -75,34 +74,18 @@ class World {
     chunks[chunk.position] = chunk
   }
   
-  func addChunkData(_ chunkData: ChunkData, unpack: Bool) {
-    if unpack {
-      chunkThread.async {
-        do {
-          let chunk = try chunkData.unpack(blockPaletteManager: self.managers.blockPaletteManager)
-          self.addChunk(chunk)
-          self.packedChunks.removeValue(forKey: chunk.position)
-          if self.packedChunks.count == 0 {
-            self.downloadingTerrain = false
-            self.managers.eventManager.triggerEvent(.downloadedTerrain)
-          }
-        } catch {
-          Logger.error("failed to unpack chunk at (\(chunkData.position.chunkX), \(chunkData.position.chunkZ))")
-        }
+  func addChunkData(_ chunkData: ChunkData) {
+    chunkThread.async {
+      do {
+        let chunk = try chunkData.unpack(blockPaletteManager: self.managers.blockPaletteManager)
+        self.addChunk(chunk)
+      } catch {
+        Logger.error("failed to unpack chunk at (\(chunkData.position.chunkX), \(chunkData.position.chunkZ))")
       }
-    } else {
-      packedChunks[chunkData.position] = chunkData
     }
   }
   
   func removeChunk(at position: ChunkPosition) {
     self.chunks.removeValue(forKey: position)
-    self.packedChunks.removeValue(forKey: position)
-  }
-  
-  func unpackChunks() throws {
-    for packedChunk in packedChunks.values {
-      addChunkData(packedChunk, unpack: true)
-    }
   }
 }

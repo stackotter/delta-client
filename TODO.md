@@ -77,6 +77,7 @@
 - [ ] fix leave server's ram issue
 - [ ] separate protocol in protocol and network
 - [ ] make mesh a protocol and extension, not a class
+- [ ] re-enable sandbox
 
 ## Optimisation
 
