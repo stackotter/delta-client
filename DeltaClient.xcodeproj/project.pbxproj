@@ -337,6 +337,9 @@
 		78D91AA2261FB4E100A4782F /* GameCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91A97261FB4E100A4782F /* GameCommandView.swift */; };
 		78D91AA3261FB4E100A4782F /* GameRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91A98261FB4E100A4782F /* GameRenderView.swift */; };
 		78D91AA4261FB4E100A4782F /* EditServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91A99261FB4E100A4782F /* EditServerView.swift */; };
+		78E2324026280B7A00B08B4B /* EventProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E2323F26280B7A00B08B4B /* EventProtocol.swift */; };
+		78E2324526280B9E00B08B4B /* AppEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E2324426280B9E00B08B4B /* AppEvent.swift */; };
+		78E2324A26280C8000B08B4B /* ServerEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E2324926280C8000B08B4B /* ServerEvent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -701,6 +704,9 @@
 		78D91A97261FB4E100A4782F /* GameCommandView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameCommandView.swift; sourceTree = "<group>"; };
 		78D91A98261FB4E100A4782F /* GameRenderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameRenderView.swift; sourceTree = "<group>"; };
 		78D91A99261FB4E100A4782F /* EditServerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditServerView.swift; sourceTree = "<group>"; };
+		78E2323F26280B7A00B08B4B /* EventProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventProtocol.swift; sourceTree = "<group>"; };
+		78E2324426280B9E00B08B4B /* AppEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEvent.swift; sourceTree = "<group>"; };
+		78E2324926280C8000B08B4B /* ServerEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerEvent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -784,6 +790,7 @@
 		78D917F9261FB4CC00A4782F /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				78E2323E26280B4D00B08B4B /* Event */,
 				78D91927261FB4CD00A4782F /* Data */,
 				78D91A8E261FB4E100A4782F /* SwiftUI */,
 				78D917FB261FB4CC00A4782F /* Registries */,
@@ -1387,7 +1394,6 @@
 			isa = PBXGroup;
 			children = (
 				78D91948261FB4CD00A4782F /* ConfigManager.swift */,
-				78D91949261FB4CD00A4782F /* EventManager.swift */,
 				78D9194A261FB4CD00A4782F /* StorageManager.swift */,
 				78D9194B261FB4CD00A4782F /* CacheManager.swift */,
 				78D9194C261FB4CD00A4782F /* LocaleManager.swift */,
@@ -1415,6 +1421,17 @@
 				78D91A99261FB4E100A4782F /* EditServerView.swift */,
 			);
 			path = SwiftUI;
+			sourceTree = "<group>";
+		};
+		78E2323E26280B4D00B08B4B /* Event */ = {
+			isa = PBXGroup;
+			children = (
+				78D91949261FB4CD00A4782F /* EventManager.swift */,
+				78E2324426280B9E00B08B4B /* AppEvent.swift */,
+				78E2324926280C8000B08B4B /* ServerEvent.swift */,
+				78E2323F26280B7A00B08B4B /* EventProtocol.swift */,
+			);
+			path = Event;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1666,6 +1683,7 @@
 				78D91A2E261FB4CD00A4782F /* WorldBorderPacket.swift in Sources */,
 				78D91A7A261FB4CE00A4782F /* Identifier.swift in Sources */,
 				78D1F89D2626471900AEE7AE /* Frustum.swift in Sources */,
+				78E2324026280B7A00B08B4B /* EventProtocol.swift in Sources */,
 				78D91997261FB4CD00A4782F /* PlayerInfo.swift in Sources */,
 				7868886D2623F67D00BD3F03 /* get_neighbouring_blocks.c in Sources */,
 				78D919BF261FB4CD00A4782F /* PacketReader.swift in Sources */,
@@ -1723,6 +1741,7 @@
 				78D91A01261FB4CD00A4782F /* BlockBreakAnimationPacket.swift in Sources */,
 				78D919CC261FB4CD00A4782F /* PluginMessageServerboundPacket.swift in Sources */,
 				78D91A60261FB4CE00A4782F /* Client.swift in Sources */,
+				78E2324526280B9E00B08B4B /* AppEvent.swift in Sources */,
 				78D91978261FB4CD00A4782F /* ChatComponentUtil.swift in Sources */,
 				78D919DA261FB4CD00A4782F /* CreativeInventoryActionPacket.swift in Sources */,
 				78D91A9B261FB4E100A4782F /* ViewState.swift in Sources */,
@@ -1777,6 +1796,7 @@
 				78C64CDD2625555C00375CBB /* AxisAlignedBoundingBox.swift in Sources */,
 				78D919FC261FB4CD00A4782F /* NBTQueryResponse.swift in Sources */,
 				78D919C3261FB4CD00A4782F /* ClickWindowButtonPacket.swift in Sources */,
+				78E2324A26280C8000B08B4B /* ServerEvent.swift in Sources */,
 				78D91A24261FB4CD00A4782F /* SetPassengersPacket.swift in Sources */,
 				78D919A3261FB4CD00A4782F /* RenderCoordinator.swift in Sources */,
 				78D919AC261FB4CD00A4782F /* ChunkData.swift in Sources */,

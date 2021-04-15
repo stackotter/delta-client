@@ -31,14 +31,14 @@ struct AppView: View {
       self.state = ViewState(initialState: .login)
     }
     
-    self.managers.eventManager.registerEventHandler(handleEvent)
+    DeltaClientApp.eventManager.registerEventHandler(handleEvent)
   }
   
-  func handleEvent(_ event: EventManager.Event) {
+  func handleEvent(_ event: AppEvent) {
     switch event {
       case .leaveServer:
         state.update(to: .serverList)
-      case .shouldLogout:
+      case .logout:
         managers.configManager.logout()
         state.update(to: .login)
       default:

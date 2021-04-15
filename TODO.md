@@ -85,7 +85,7 @@
 - [ ] simplify data classes (like chunk) that should just be a data source
 - [ ] use some concurrent dispatchqueues
 - [ ] have a default eventmanager (treat it as a singleton)
-- [ ] make some of the managers singletons where possible
+- [ ] make some of the managers singletons where possible (hopefully get rid of Managers)
   - [ ] https://forums.swift.org/t/is-there-any-way-to-throw-error-from-singleton-class-init/39207, https://medium.com/@tlimaye91/thread-safe-singletons-in-swift-a4f6a977d6e6
 
 ## Architecture

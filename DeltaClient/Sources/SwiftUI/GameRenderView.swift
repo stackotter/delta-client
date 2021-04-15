@@ -17,17 +17,15 @@ struct GameRenderView: View {
   @ObservedObject var state = ViewState<GameViewStateEnum>(initialState: .downloadingTerrain)
   
   let client: Client
-  let eventManager: EventManager
   
   init(serverDescriptor: ServerDescriptor, managers: Managers) {
     self.client = Client(managers: managers, serverDescriptor: serverDescriptor)
-    self.eventManager = managers.eventManager
     
-    managers.eventManager.registerEventHandler(handleEvent, eventName: "downloadedTerrain")
+    DeltaClientApp.eventManager.registerEventHandler(handleEvent, eventName: "downloadedTerrain")
     self.client.play()
   }
   
-  func handleEvent(_ event: EventManager.Event) {
+  func handleEvent(_ event: AppEvent) {
     switch event {
       case .downloadedTerrain:
         Logger.log("finished downloading terrain")
@@ -50,7 +48,7 @@ struct GameRenderView: View {
     .toolbar(content: {
       Button("leave") {
         client.quit()
-        eventManager.triggerEvent(.leaveServer)
+        DeltaClientApp.eventManager.triggerEvent(.leaveServer)
       }
     })
   }

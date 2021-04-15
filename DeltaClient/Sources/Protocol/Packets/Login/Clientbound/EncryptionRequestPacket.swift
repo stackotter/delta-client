@@ -64,7 +64,7 @@ struct EncryptionRequestPacket: ClientboundPacket {
       })
     } else {
       Logger.error("not logged in")
-      server.managers.eventManager.triggerError("failed to join server: not logged in")
+      DeltaClientApp.triggerError("failed to join server: not logged in")
       return
     }
   }

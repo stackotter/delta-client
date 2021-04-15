@@ -26,6 +26,8 @@ class Server: Hashable {
   var isDifficultyLocked: Bool = true
   var player: Player
   
+  var eventManager: EventManager = EventManager<ServerEvent>()
+  
   // Getter: current world
   
   var currentWorld: World? {
@@ -50,7 +52,7 @@ class Server: Hashable {
     
     self.config = ServerConfig.createDefault()
     self.packetRegistry = PacketRegistry.createDefault()
-    self.connection = ServerConnection(host: descriptor.host, port: descriptor.port, eventManager: self.managers.eventManager)
+    self.connection = ServerConnection(host: descriptor.host, port: descriptor.port, eventManager: eventManager)
     self.connection.setPacketHandler(handlePacket)
   }
   

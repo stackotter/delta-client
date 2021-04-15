@@ -9,14 +9,8 @@ import Foundation
 import os
 
 class StartupSequence {
-  var eventManager: EventManager
-  
-  init(eventManager: EventManager) {
-    self.eventManager = eventManager
-  }
-  
   func run() throws {
-    var managers = Managers(eventManager: eventManager)
+    var managers = Managers()
     
     displayProgress("initialising storage")
     managers.storageManager = try StorageManager()
@@ -38,10 +32,10 @@ class StartupSequence {
     managers.localeManager = LocaleManager(assetManager: managers.assetManager)
     try managers.localeManager.setLocale(to: LOCALE)
     
-    eventManager.triggerEvent(.loadingComplete(managers))
+    DeltaClientApp.eventManager.triggerEvent(.loadingComplete(managers))
   }
   
   func displayProgress(_ message: String) {
-    eventManager.triggerEvent(.loadingScreenMessage(message))
+    DeltaClientApp.eventManager.triggerEvent(.loadingScreenMessage(message))
   }
 }

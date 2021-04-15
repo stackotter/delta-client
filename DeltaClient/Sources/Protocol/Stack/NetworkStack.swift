@@ -8,7 +8,7 @@
 import Foundation
 
 class NetworkStack {
-  var eventManager: EventManager
+  var eventManager: EventManager<ServerEvent>
   
   var ioThread: DispatchQueue
   var inboundThread: DispatchQueue
@@ -26,7 +26,7 @@ class NetworkStack {
   
   // Init
   
-  init(_ host: String, _ port: UInt16, eventManager: EventManager) {
+  init(_ host: String, _ port: UInt16, eventManager: EventManager<ServerEvent>) {
     self.host = host
     self.port = port
     

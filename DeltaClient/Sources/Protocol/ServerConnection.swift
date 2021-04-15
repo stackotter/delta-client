@@ -13,7 +13,7 @@ class ServerConnection {
   var host: String
   var port: UInt16
   
-  var eventManager: EventManager
+  var eventManager: EventManager<ServerEvent>
   var packetRegistry: PacketRegistry
   var networkStack: NetworkStack
   
@@ -45,7 +45,7 @@ class ServerConnection {
   
   // Init
   
-  init(host: String, port: UInt16, eventManager: EventManager) {
+  init(host: String, port: UInt16, eventManager: EventManager<ServerEvent>) {
     self.eventManager = eventManager
     
     self.host = host

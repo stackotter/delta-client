@@ -10,8 +10,9 @@ import os
 
 @main
 struct DeltaClientApp: App {
+  public static var eventManager = EventManager<AppEvent>()
+  
   @ObservedObject var state = ViewState<AppStateEnum>(initialState: .loading(message: "loading game.."))
-  let eventManager = EventManager()
   
   enum AppStateEnum {
     case loading(message: String)
@@ -20,22 +21,25 @@ struct DeltaClientApp: App {
   }
   
   init() {
-    // register event handler
-    self.eventManager.registerEventHandler(handleEvent)
+    DeltaClientApp.eventManager.registerEventHandler(handleEvent)
     
     // run app startup sequence
     let thread = DispatchQueue(label: "startup")
-    let startupSequence = StartupSequence(eventManager: self.eventManager)
+    let startupSequence = StartupSequence()
     thread.async {
       do {
         try startupSequence.run()
       } catch {
-        startupSequence.eventManager.triggerError("failed to complete startup: \(error)")
+        DeltaClientApp.eventManager.triggerEvent(.error("failed to complete startup: \(error)"))
       }
     }
   }
   
-  func handleEvent(_ event: EventManager.Event) {
+  static func triggerError(_ message: String) {
+    eventManager.triggerEvent(.error(message))
+  }
+  
+  func handleEvent(_ event: AppEvent) {
     switch event {
       case .loadingScreenMessage(let message):
         Logger.log(message)
@@ -83,7 +87,7 @@ struct DeltaClientApp: App {
     .commands {
       CommandMenu("Account", content: {
         Button("logout") {
-          eventManager.triggerEvent(.shouldLogout)
+          DeltaClientApp.eventManager.triggerEvent(.logout)
         }
       })
     }

@@ -8,7 +8,6 @@
 import Foundation
 
 struct Managers {
-  var eventManager: EventManager
   var storageManager: StorageManager!
   var configManager: ConfigManager!
   var cacheManager: CacheManager!
@@ -16,12 +15,4 @@ struct Managers {
   var textureManager: TextureManager!
   var blockPaletteManager: BlockPaletteManager!
   var localeManager: LocaleManager!
-  
-  init() {
-    self.init(eventManager: EventManager())
-  }
-  
-  init(eventManager: EventManager) {
-    self.eventManager = eventManager
-  }
 }

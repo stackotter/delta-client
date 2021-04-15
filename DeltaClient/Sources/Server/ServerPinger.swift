@@ -11,7 +11,7 @@ import os
 class ServerPinger: Hashable, ObservableObject {
   @Published var pingResult: PingResult? = nil
   
-  var eventManager: EventManager
+  var eventManager: EventManager<ServerEvent>
   var descriptor: ServerDescriptor
   var connection: ServerConnection
   var packetRegistry: PacketRegistry
@@ -19,7 +19,7 @@ class ServerPinger: Hashable, ObservableObject {
   // Init
   
   init(_ descriptor: ServerDescriptor) {
-    self.eventManager = EventManager()
+    self.eventManager = EventManager<ServerEvent>()
     self.descriptor = descriptor
     self.packetRegistry = PacketRegistry.createDefault()
     self.connection = ServerConnection(host: descriptor.host, port: descriptor.port, eventManager: self.eventManager)

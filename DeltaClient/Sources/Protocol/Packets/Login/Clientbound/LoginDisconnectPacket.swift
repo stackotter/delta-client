@@ -17,6 +17,6 @@ struct LoginDisconnectPacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    server.managers.eventManager.triggerError(reason.toText())
+    DeltaClientApp.triggerError(reason.toText())
   }
 }

@@ -19,6 +19,6 @@ struct SpawnPositionPacket: ClientboundPacket {
   func handle(for server: Server) throws {
     server.player.spawnPosition = location
     server.currentWorld?.downloadingTerrain = false
-    server.managers.eventManager.triggerEvent(.downloadedTerrain)
+    DeltaClientApp.eventManager.triggerEvent(.downloadedTerrain)
   }
 }

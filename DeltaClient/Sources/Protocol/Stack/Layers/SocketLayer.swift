@@ -14,7 +14,7 @@ class SocketLayer: OutermostNetworkLayer {
   var inboundSuccessor: InboundNetworkLayer?
   var inboundThread: DispatchQueue
   var ioThread: DispatchQueue
-  var eventManager: EventManager
+  var eventManager: EventManager<ServerEvent>
   
   var connection: NWConnection
   var state: State = .idle
@@ -29,7 +29,7 @@ class SocketLayer: OutermostNetworkLayer {
     case disconnected
   }
   
-  init(_ host: String, _ port: UInt16, inboundThread: DispatchQueue, ioThread: DispatchQueue, eventManager: EventManager) {
+  init(_ host: String, _ port: UInt16, inboundThread: DispatchQueue, ioThread: DispatchQueue, eventManager: EventManager<ServerEvent>) {
     self.host = host
     self.port = port
     
