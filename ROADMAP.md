@@ -52,13 +52,15 @@ The demo versions are just milestones that work towards the first Alpha release
 
 - [x] multipart structure reading (from pixlyzer)
 - [x] multipart structure rendering
-- [ ] parallelise generating chunk meshes
-- [ ] order chunks based on distance from player when generating meshes
-- [ ] order chunks based off frustum as well
+- [x] parallelise generating chunk meshes
+- [x] order chunks based on distance from player when generating meshes
+- [x] order chunks based off frustum as well
+- [x] basic shading (face normal based) (bake light levels into block models)
+- [ ] lighting
+- [ ] animated textures
 - [ ] base chunk bounding box off highest and lowest blocks
 - [ ] fix gpu ram usage (clear buffers when not being used, possibly use private mode buffers, possibly use a big default size buffer and transfer things through that)
 - [ ] fix indices (either use 6 vertices to a face or do the fancy shader thing from before (adjusting the vertex indices))
-- [ ] basic shading (face normal based) (bake light levels into block models)
 - [ ] possibly use section based rendering instead of chunk based
 - [ ] optimise chunk mesh preparation
 - [x] basic multichunk rendering
@@ -67,6 +69,7 @@ The demo versions are just milestones that work towards the first Alpha release
 - [ ] implement rescale
 - [ ] random block variants (that match vanilla)
 - [x] frustum culling for chunks
+- [ ] profile whole draw function and optimise
 
 ## Demo 4 - Movement
 

@@ -170,7 +170,7 @@ class ChunkMesh: Mesh {
     for (uvIndex, vertexIndex) in vertexIndices.enumerated() {
       let position = simd_float4(cubeVertexPositions[vertexIndex], 1) * matrix
       vertices.append(
-        Vertex(position: simd_make_float3(position), uv: face.uvs[uvIndex], textureIndex: face.textureIndex, tintIndex: face.tintIndex)
+        Vertex(position: simd_make_float3(position), uv: face.uvs[uvIndex], light: face.light, textureIndex: face.textureIndex, tintIndex: face.tintIndex)
       )
     }
     

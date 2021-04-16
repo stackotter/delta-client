@@ -990,13 +990,13 @@
 		78D91850261FB4CC00A4782F /* BlockModel */ = {
 			isa = PBXGroup;
 			children = (
+				78D91857261FB4CC00A4782F /* BlockModel.swift */,
 				78D91851261FB4CC00A4782F /* BlockModelElement.swift */,
 				78D91852261FB4CC00A4782F /* BlockModelElementFace.swift */,
 				78D91853261FB4CC00A4782F /* FaceDirection.swift */,
 				78D91854261FB4CC00A4782F /* IntermediateBlockModelElementFace.swift */,
 				78D91855261FB4CC00A4782F /* IntermediateBlockModel.swift */,
 				78D91856261FB4CC00A4782F /* IntermediateBlockModelElement.swift */,
-				78D91857261FB4CC00A4782F /* BlockModel.swift */,
 			);
 			path = BlockModel;
 			sourceTree = "<group>";

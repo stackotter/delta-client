@@ -188,6 +188,8 @@ class BlockPaletteManager {
     var fullFaces = Set<FaceDirection>()
     var elements: [BlockModelElement] = []
     for intermediateElement in intermediate.elements {
+      let elementModelMatrix = intermediateElement.modelMatrix * modelMatrix
+      
       var faces: [FaceDirection: BlockModelElementFace] = [:]
       for (direction, intermediateFace) in intermediateElement.faces {
         if let textureIdentifier = try? Identifier(intermediateFace.textureVariable) {
@@ -225,11 +227,15 @@ class BlockPaletteManager {
             let uvs = textureCoordsFrom(minUV, maxUV, rotation: -rotation) // minecraft does rotation the other way
             let tintIndex = Int8(intermediateFace.tintIndex ?? -1)
             
+            let normalMatrix = intermediateElement.normalMatrix * MatrixUtil.matrix4x4to3x3(rotationMatrix)
+            let light = dot(normalize(abs(direction.toVector() * normalMatrix)), simd_float3(0.6, 1, 0.8))
+            
             let face = BlockModelElementFace(
               uvs: uvs,
               textureIndex: textureIndex,
               cullface: cullface,
-              tintIndex: tintIndex
+              tintIndex: tintIndex,
+              light: light
             )
             faces[direction] = face
           } else {
@@ -239,13 +245,12 @@ class BlockPaletteManager {
           Logger.error("invalid texture variable: \(intermediateFace.textureVariable) on \(identifier)")
         }
       }
-      let modelMatrix = intermediateElement.modelMatrix * modelMatrix
-      let element = BlockModelElement(modelMatrix: modelMatrix, faces: faces)
+      let element = BlockModelElement(modelMatrix: elementModelMatrix, faces: faces)
       elements.append(element)
       
       // check if block has any full faces
-      let point1 = simd_make_float3(simd_float4(0, 0, 0, 1) * modelMatrix)
-      let point2 = simd_make_float3(simd_float4(1, 1, 1, 1) * modelMatrix)
+      let point1 = simd_make_float3(simd_float4(0, 0, 0, 1) * elementModelMatrix)
+      let point2 = simd_make_float3(simd_float4(1, 1, 1, 1) * elementModelMatrix)
       
       // floating point precision was leading to faces not being identified
       let margin: Float = 0.00001
@@ -332,96 +337,6 @@ class BlockPaletteManager {
         
         _ = elementJSON.getBoolString(forKey: "shade")
         
-        var faces: [FaceDirection: IntermediateBlockModelElementFace] = [:]
-        let facesDict = (elementJSON.getJSON(forKey: "faces")?.dict as? [String: [String: Any]]) ?? [:]
-        for (faceName, faceDict) in facesDict {
-          if let direction = FaceDirection(string: faceName) {
-            let faceJSON = JSON(dict: faceDict)
-            
-            var uv: [Float] = []
-            if let uvArray = faceJSON.getArray(forKey: "uv") as? [Float] {
-              uv = uvArray
-            } else { // calculate the uv coordinates from from and to
-              switch direction {
-                case .west:
-                  uv = [
-                    from[2],
-                    16 - to[1],
-                    to[2],
-                    16 - from[1]
-                  ]
-                case .east:
-                  uv = [
-                    16 - to[2],
-                    16 - to[1],
-                    16 - from[2],
-                    16 - from[1]
-                  ]
-                case .down:
-                  uv = [
-                    from[0],
-                    16 - to[2],
-                    to[0],
-                    16 - from[2]
-                  ]
-                case .up:
-                  uv = [
-                    from[0],
-                    from[2],
-                    to[0],
-                    to[2]
-                  ]
-                case .south:
-                  uv = [
-                    from[0],
-                    16 - to[1],
-                    to[0],
-                    16 - from[1]
-                  ]
-                case .north:
-                  uv = [
-                    16 - to[0],
-                    16 - to[1],
-                    16 - from[0],
-                    16 - from[1]
-                  ]
-              }
-            }
-            let cullface = faceJSON.getString(forKey: "cullface")
-            let rotation = faceJSON.getInt(forKey: "rotation") ?? 0
-            let tintIndex = faceJSON.getInt(forKey: "tintindex")
-            
-            if let textureVariable = faceJSON.getString(forKey: "texture") {
-              var texture = textureVariable
-              if texture.starts(with: "#") {
-                let textureVariable = String(texture.dropFirst())
-                texture = textures[textureVariable] ?? texture
-              }
-              if uv.count == 4 {
-                let textureCoordinates = (
-                  simd_float2(uv[0], uv[1]) / 16.0,
-                  simd_float2(uv[2], uv[3]) / 16.0
-                )
-                let face = IntermediateBlockModelElementFace(
-                  uv: textureCoordinates,
-                  textureVariable: texture,
-                  cullface: cullface != nil ? FaceDirection(string: cullface!) : nil,
-                  rotation: rotation,
-                  tintIndex: tintIndex
-                )
-                faces[direction] = face
-              } else {
-                // IMPLEMENT: automatic uv generation
-                Logger.error("invalid uv \(uv)")
-              }
-            } else {
-              Logger.error("block model element doesn't specify texture")
-            }
-          } else {
-            Logger.error("invalid face direction: \(faceName)")
-          }
-        }
-        
         if from.count == 3 && to.count == 3 {
           // scaling and translation
           let fromVector = simd_float3(from)
@@ -434,25 +349,28 @@ class BlockPaletteManager {
           modelMatrix *= MatrixUtil.translationMatrix(origin)
           
           // TODO: rescale
-//          if rescale {
-//            modelMatrix *= MatrixUtil.scalingMatrix(1.414, 1, 1.414)
-//          }
           
-          // rotation
+          // element rotation
+          var normalMatrix = matrix_float3x3(1)
           if hasRotation {
             if rotationOrigin.count == 3 {
               let rotationOriginVector = simd_float3(rotationOrigin) / Float(16.0)
               let rotation = angle != nil ? Float(angle!) / 180 * Float.pi : 0
               modelMatrix *= MatrixUtil.translationMatrix(-rotationOriginVector)
+              var rotationMatrix: matrix_float4x4? = nil
               switch rotationAxis {
                 case "x":
-                  modelMatrix *= MatrixUtil.rotationMatrix(x: rotation)
+                  rotationMatrix = MatrixUtil.rotationMatrix(x: rotation)
                 case "y":
-                  modelMatrix *= MatrixUtil.rotationMatrix(y: rotation)
+                  rotationMatrix = MatrixUtil.rotationMatrix(y: rotation)
                 case "z":
-                  modelMatrix *= MatrixUtil.rotationMatrix(z: rotation)
+                  rotationMatrix = MatrixUtil.rotationMatrix(z: rotation)
                 default:
                   Logger.error("invalid rotation axis")
+              }
+              if let matrix = rotationMatrix {
+                modelMatrix *= matrix
+                normalMatrix = MatrixUtil.matrix4x4to3x3(matrix)
               }
               modelMatrix *= MatrixUtil.translationMatrix(rotationOriginVector)
             } else {
@@ -460,8 +378,100 @@ class BlockPaletteManager {
             }
           }
           
+          // process faces
+          var faces: [FaceDirection: IntermediateBlockModelElementFace] = [:]
+          let facesDict = (elementJSON.getJSON(forKey: "faces")?.dict as? [String: [String: Any]]) ?? [:]
+          for (faceName, faceDict) in facesDict {
+            if let direction = FaceDirection(string: faceName) {
+              let faceJSON = JSON(dict: faceDict)
+              
+              var uv: [Float] = []
+              if let uvArray = faceJSON.getArray(forKey: "uv") as? [Float] {
+                uv = uvArray
+              } else { // calculate the uv coordinates from from and to
+                switch direction {
+                  case .west:
+                    uv = [
+                      from[2],
+                      16 - to[1],
+                      to[2],
+                      16 - from[1]
+                    ]
+                  case .east:
+                    uv = [
+                      16 - to[2],
+                      16 - to[1],
+                      16 - from[2],
+                      16 - from[1]
+                    ]
+                  case .down:
+                    uv = [
+                      from[0],
+                      16 - to[2],
+                      to[0],
+                      16 - from[2]
+                    ]
+                  case .up:
+                    uv = [
+                      from[0],
+                      from[2],
+                      to[0],
+                      to[2]
+                    ]
+                  case .south:
+                    uv = [
+                      from[0],
+                      16 - to[1],
+                      to[0],
+                      16 - from[1]
+                    ]
+                  case .north:
+                    uv = [
+                      16 - to[0],
+                      16 - to[1],
+                      16 - from[0],
+                      16 - from[1]
+                    ]
+                }
+              }
+              let cullface = faceJSON.getString(forKey: "cullface")
+              let rotation = faceJSON.getInt(forKey: "rotation") ?? 0
+              let tintIndex = faceJSON.getInt(forKey: "tintindex")
+              
+              if let textureVariable = faceJSON.getString(forKey: "texture") {
+                var texture = textureVariable
+                if texture.starts(with: "#") {
+                  let textureVariable = String(texture.dropFirst())
+                  texture = textures[textureVariable] ?? texture
+                }
+                if uv.count == 4 {
+                  let textureCoordinates = (
+                    simd_float2(uv[0], uv[1]) / 16.0,
+                    simd_float2(uv[2], uv[3]) / 16.0
+                  )
+                  let face = IntermediateBlockModelElementFace(
+                    uv: textureCoordinates,
+                    textureVariable: texture,
+                    cullface: cullface != nil ? FaceDirection(string: cullface!) : nil,
+                    rotation: rotation,
+                    tintIndex: tintIndex
+                  )
+                  faces[direction] = face
+                } else {
+                  // IMPLEMENT: automatic uv generation
+                  Logger.error("invalid uv \(uv)")
+                }
+              } else {
+                Logger.error("block model element doesn't specify texture")
+              }
+            } else {
+              Logger.error("invalid face direction: \(faceName)")
+            }
+          }
+          
           let element = IntermediateBlockModelElement(
             modelMatrix: modelMatrix,
+            normalMatrix: normalMatrix,
             faces: faces
           )
           elements.append(element)

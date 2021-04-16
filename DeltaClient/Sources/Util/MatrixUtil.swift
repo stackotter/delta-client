@@ -102,4 +102,24 @@ struct MatrixUtil {
       [sin(angle),  cos(angle)]
     )
   }
+  
+  static func matrix4x4to3x3(_ matrix: matrix_float4x4) -> matrix_float3x3 {
+    return matrix_float3x3([
+      [
+        matrix.columns.0.x,
+        matrix.columns.0.y,
+        matrix.columns.0.z
+      ],
+      [
+        matrix.columns.1.x,
+        matrix.columns.1.y,
+        matrix.columns.1.z
+      ],
+      [
+        matrix.columns.2.x,
+        matrix.columns.2.y,
+        matrix.columns.2.z
+      ]
+    ])
+  }
 }

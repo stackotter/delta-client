@@ -12,6 +12,7 @@ struct Vertex
 {
   float3 position;
   float2 uv;
+  float light;
   uint16_t textureIndex;
   int8_t tintIndex;
 };
@@ -20,6 +21,7 @@ struct RasteriserData
 {
   float4 position [[position]];
   float2 uv;
+  float light;
   uint textureIndex;
   int8_t tintIndex;
 };
@@ -50,6 +52,7 @@ vertex RasteriserData chunkVertexShader(uint vertexId [[vertex_id]], constant Ve
   
   // pass texture information through to fragment shader untouched
   out.uv = in.uv;
+  out.light = in.light;
   out.textureIndex = in.textureIndex;
   out.tintIndex = in.tintIndex;
   
@@ -61,8 +64,8 @@ fragment float4 chunkFragmentShader(RasteriserData in [[stage_in]],
   // sample the relevant texture slice
   float4 color = textureArray.sample(textureSampler, in.uv, in.textureIndex);
   
-  // discard translucent & transparent fragments
-  if (color.w != 1) {
+  // discard transparent fragments
+  if (color.w == 0) {
     discard_fragment();
   }
   
@@ -70,6 +73,8 @@ fragment float4 chunkFragmentShader(RasteriserData in [[stage_in]],
   if (in.tintIndex != -1) {
     color = color * float4(0.53, 0.75, 0.38, 1.0);
   }
+  
+  color = color * in.light;
   
   return color;
 }

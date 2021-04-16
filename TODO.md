@@ -37,11 +37,14 @@
 
 - [ ] basic shading
 - [x] multiple chunks first test
-- [ ] look into keeping vertices in gpu mem when they are unchanged between frames?
-- [ ] fix buffer handling (stop gpu ram usage climb)
+- [x] look into keeping vertices in gpu mem when they are unchanged between frames?
+- [ ] look into using private storage instead of shared for vertex buffers
 - [ ] animated textures
 - [ ] multipart structures
 - [ ] fix block changes having incorrect culling
+- [ ] fix indices (either use 6 vertices to a face or do the fancy shader thing from before so that all the index buffers aren't needed anymore)
+- [ ] investigate why the initial chunks at 10 rener distance take so long to load
+- [ ] wait for neighbouring chunks
 
 ## Block models
 
@@ -58,6 +61,9 @@
 - [ ] fix path block xray
 - [ ] stop using a dictionary for the block palette, just use an array
 - [ ] respect weighting for block variants
+- [ ] fix stairs again (an upside-down stair with a block against each full face has a bunch of incorrect culling)
+- [ ] piston textures
+- [ ] levers going the wrong way
 
 ## Chunk preparing
 

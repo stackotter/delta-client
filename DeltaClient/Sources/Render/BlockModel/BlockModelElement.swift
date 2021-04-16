@@ -11,12 +11,9 @@ import simd
 struct BlockModelElement {
   var modelMatrix: simd_float4x4
   var faces: [FaceDirection: BlockModelElementFace]
-  
-  init(modelMatrix: simd_float4x4, faces: [FaceDirection: BlockModelElementFace]) {
-    self.modelMatrix = modelMatrix
-    self.faces = faces
-  }
-  
+}
+
+extension BlockModelElement {
   init(fromCache cache: CacheBlockModelElement) {
     modelMatrix = matrix_float4x4.fromData(cache.modelMatrix)
     faces = [:]

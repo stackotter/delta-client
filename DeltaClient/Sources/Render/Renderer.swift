@@ -122,7 +122,7 @@ class Renderer {
         }
       }
     
-      Logger.debug("\(chunks.count) chunks rendered / \(world.chunks.count)")
+//      Logger.debug("\(chunks.count) chunks rendered / \(world.chunks.count)")
       
       // encode and send draw instructions
       if let commandBuffer = metalCommandQueue.makeCommandBuffer() {

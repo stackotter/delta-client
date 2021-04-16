@@ -10,12 +10,9 @@ import Foundation
 struct BlockModel {
   var fullFaces: Set<FaceDirection>
   var elements: [BlockModelElement]
-  
-  init(fullFaces: Set<FaceDirection>, elements: [BlockModelElement]) {
-    self.fullFaces = fullFaces
-    self.elements = elements
-  }
-  
+}
+
+extension BlockModel {
   init(fromCache cache: CacheBlockModel) {
     fullFaces = Set<FaceDirection>()
     for cacheFullFace in cache.fullFaces {

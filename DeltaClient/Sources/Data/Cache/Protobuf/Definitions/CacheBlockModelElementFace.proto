@@ -12,6 +12,7 @@ import "CacheFaceDirection.proto";
 message CacheBlockModelElementFace {
   repeated float uvs = 1;
   uint32 textureIndex = 2;
-  optional CacheFaceDirection cullFace = 4;
-  sint32 tintIndex = 5;
+  optional CacheFaceDirection cullFace = 3;
+  sint32 tintIndex = 4;
+  float light = 5;
 }

@@ -13,14 +13,10 @@ struct BlockModelElementFace {
   var textureIndex: UInt16 // the index of the texture to use in the block texture buffer
   var cullface: FaceDirection?
   var tintIndex: Int8
-  
-  init(uvs: [simd_float2], textureIndex: UInt16, cullface: FaceDirection?, tintIndex: Int8) {
-    self.uvs = uvs
-    self.textureIndex = textureIndex
-    self.cullface = cullface
-    self.tintIndex = tintIndex
-  }
-  
+  var light: Float
+}
+
+extension BlockModelElementFace {
   init(fromCache cache: CacheBlockModelElementFace) {
     uvs = []
     for i in 0..<(cache.uvs.count / 2) {
@@ -29,6 +25,7 @@ struct BlockModelElementFace {
     textureIndex = UInt16(cache.textureIndex)
     cullface = FaceDirection(fromCache: cache.cullFace)
     tintIndex = Int8(cache.tintIndex)
+    light = cache.light
   }
   
   func toCache() -> CacheBlockModelElementFace {
@@ -44,6 +41,7 @@ struct BlockModelElementFace {
       cacheFace.cullFace = cacheCullface
     }
     cacheFace.tintIndex = Int32(tintIndex)
+    cacheFace.light = light
     return cacheFace
   }
 }

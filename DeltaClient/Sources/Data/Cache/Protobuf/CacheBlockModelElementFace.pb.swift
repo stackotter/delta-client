@@ -46,6 +46,8 @@ struct CacheBlockModelElementFace {
 
   var tintIndex: Int32 = 0
 
+  var light: Float = 0
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -60,8 +62,9 @@ extension CacheBlockModelElementFace: SwiftProtobuf.Message, SwiftProtobuf._Mess
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "uvs"),
     2: .same(proto: "textureIndex"),
-    4: .same(proto: "cullFace"),
-    5: .same(proto: "tintIndex"),
+    3: .same(proto: "cullFace"),
+    4: .same(proto: "tintIndex"),
+    5: .same(proto: "light"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -72,8 +75,9 @@ extension CacheBlockModelElementFace: SwiftProtobuf.Message, SwiftProtobuf._Mess
       switch fieldNumber {
       case 1: try { try decoder.decodeRepeatedFloatField(value: &self.uvs) }()
       case 2: try { try decoder.decodeSingularUInt32Field(value: &self.textureIndex) }()
-      case 4: try { try decoder.decodeSingularEnumField(value: &self._cullFace) }()
-      case 5: try { try decoder.decodeSingularSInt32Field(value: &self.tintIndex) }()
+      case 3: try { try decoder.decodeSingularEnumField(value: &self._cullFace) }()
+      case 4: try { try decoder.decodeSingularSInt32Field(value: &self.tintIndex) }()
+      case 5: try { try decoder.decodeSingularFloatField(value: &self.light) }()
       default: break
       }
     }
@@ -87,10 +91,13 @@ extension CacheBlockModelElementFace: SwiftProtobuf.Message, SwiftProtobuf._Mess
       try visitor.visitSingularUInt32Field(value: self.textureIndex, fieldNumber: 2)
     }
     if let v = self._cullFace {
-      try visitor.visitSingularEnumField(value: v, fieldNumber: 4)
+      try visitor.visitSingularEnumField(value: v, fieldNumber: 3)
     }
     if self.tintIndex != 0 {
-      try visitor.visitSingularSInt32Field(value: self.tintIndex, fieldNumber: 5)
+      try visitor.visitSingularSInt32Field(value: self.tintIndex, fieldNumber: 4)
+    }
+    if self.light != 0 {
+      try visitor.visitSingularFloatField(value: self.light, fieldNumber: 5)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -100,6 +107,7 @@ extension CacheBlockModelElementFace: SwiftProtobuf.Message, SwiftProtobuf._Mess
     if lhs.textureIndex != rhs.textureIndex {return false}
     if lhs._cullFace != rhs._cullFace {return false}
     if lhs.tintIndex != rhs.tintIndex {return false}
+    if lhs.light != rhs.light {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

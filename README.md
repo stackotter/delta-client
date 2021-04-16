@@ -13,6 +13,11 @@ In the future the project will also hopefully support iOS, iPadOS and maybe tvOS
 - [ ] 1.8.9 (will come once 1.16.1 is pretty polished)
 - [x] 1.16.1
 
+Once both of these versions are implemented, my plan is to add support for the following versions whenever a new one comes out;
+
+- the latest speedrunning version (currently 1.16.1 and may be for a while)
+- the latest stable version
+
 ## Installation
 
 1. Download the latest release from the releases page
@@ -58,6 +63,7 @@ Here's how the client currently perfomrs when run on my 2020 dual-core Intel i5 
     - [ ] Microsoft accounts
   - [ ] LAN servers
 - [x] Basic config system
+  - [ ] Multi-accounting
 - [ ] Command-based interface
   - [x] Basic structure
   - [x] Chat command
@@ -71,7 +77,7 @@ Here's how the client currently perfomrs when run on my 2020 dual-core Intel i5 
     - [x] Block culling
     - [x] Block models
     - [x] Multipart structures (e.g. fences)
-    - [ ] Multiple chunks
+    - [x] Multiple chunks
     - [ ] Animated textures (e.g. lava)
     - [ ] Fluids (lava and water)
     - [ ] Block entities (e.g. chests)
