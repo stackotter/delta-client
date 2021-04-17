@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 struct UpdateLightPacket: ClientboundPacket {
   static let id: Int = 0x24
@@ -49,6 +50,40 @@ struct UpdateLightPacket: ClientboundPacket {
       let length = packetReader.readVarInt()
       let bytes = packetReader.readByteArray(length: length)
       blockLightArrays.append(bytes)
+    }
+  }
+  
+  func handle(for server: Server) throws {
+    // NOTE: we just ignore the first and last sections sent for now (above and below the world)
+    var skyLightIndex = 0
+    var blockLightIndex = 0
+    if let world = server.world {
+      let chunkLighting = world.lighting[chunkPosition] ?? ChunkLighting()
+      for i in 0..<(Chunk.NUM_SECTIONS+1) {
+        let sectionNum = i - 1
+        if (skyLightMask >> i) & 0x1 == 1 {
+          if i == 0 {
+            skyLightIndex += 1
+            continue
+          }
+          chunkLighting.updateSectionSkyLight(with: skyLightArrays[skyLightIndex], for: sectionNum)
+        } else if (emptySkyLightMask >> i) & 0x1 == 1 {
+          // empty sky light section
+          chunkLighting.updateSectionSkyLight(with: [UInt8](repeating: 0, count: 2048), for: sectionNum)
+        }
+        
+        if (blockLightMask >> i) & 0x1 == 1 {
+          if i == 0 {
+            blockLightIndex += 1
+            continue
+          }
+          chunkLighting.updateSectionBlockLight(with: blockLightArrays[blockLightIndex], for: sectionNum)
+        } else if (emptyBlockLightMask >> i) & 0x1 == 1 {
+          // empty block light section
+          chunkLighting.updateSectionBlockLight(with: [UInt8](repeating: 0, count: 2048), for: sectionNum)
+        }
+      }
+      world.lighting[chunkPosition] = chunkLighting
     }
   }
 }

@@ -10,11 +10,12 @@ import os
 
 // TODO: make World threadsafe
 class World {
-  var chunks: [ChunkPosition: Chunk] = [:]
   var config: WorldConfig
   var age: Int = -1
   
   var downloadingTerrain: Bool = true
+  var chunks: [ChunkPosition: Chunk] = [:]
+  var lighting: [ChunkPosition: ChunkLighting] = [:]
   
   var chunkThread: DispatchQueue = DispatchQueue(label: "worldChunks")
   var managers: Managers
@@ -46,6 +47,10 @@ class World {
   }
   
   // Chunk
+  
+  func getIsChunkReady(_ position: ChunkPosition) -> Bool {
+    return chunks[position] != nil && lighting[position] != nil
+  }
   
   func finishDownloadingTerrain() {
     // wait until last chunk is unpacked

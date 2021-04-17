@@ -9,27 +9,34 @@ import Foundation
 import os
 
 class Chunk {
+  // constants
   static let WIDTH = 16
   static let DEPTH = 16
   static let HEIGHT = 256
   static let BLOCKS_PER_LAYER = WIDTH * DEPTH
   static let NUM_BLOCKS = HEIGHT * BLOCKS_PER_LAYER
+  static let NUM_SECTIONS = 16
   
+  // chunk data
   var position: ChunkPosition
   var heightMaps: NBTCompound
   var ignoreOldData: Bool
   var blockEntities: [BlockEntity]
   var sections: [ChunkSection]
   
+  // neighbour chunks
   var neighbours: [CardinalDirection: Chunk] = [:]
+  var hasAllNeighbours: Bool {
+    return neighbours.count == 4
+  }
   
   var blockPaletteManager: BlockPaletteManager
   var mesh: ChunkMesh!
   
   var stopwatch = Stopwatch(mode: .summary, name: "chunk")
   
-  // private because it shouldn't be used directly cause of its weird storage format
-  private var biomes: [UInt8]
+  // in the format that it is received
+  var biomes: [UInt8]
   
   init(position: ChunkPosition, heightMaps: NBTCompound, ignoreOldData: Bool, biomes: [UInt8], sections: [ChunkSection], blockEntities: [BlockEntity], blockPaletteManager: BlockPaletteManager) {
     self.position = position

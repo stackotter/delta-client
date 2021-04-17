@@ -19,8 +19,23 @@ struct Position {
   }
   
   var relativeToChunk: Position {
-    let relativeX = x - chunkPosition.chunkX*16
-    let relativeZ = z - chunkPosition.chunkZ*16
+    let relativeX = x - chunkPosition.chunkX * ChunkSection.WIDTH
+    let relativeZ = z - chunkPosition.chunkZ * ChunkSection.DEPTH
     return Position(x: relativeX, y: y, z: relativeZ)
+  }
+  
+  var relativeToChunkSection: Position {
+    let relativeX = x - chunkPosition.chunkX * ChunkSection.WIDTH
+    let relativeZ = z - chunkPosition.chunkZ * ChunkSection.DEPTH
+    let relativeY = y - sectionIndex * ChunkSection.HEIGHT
+    return Position(x: relativeX, y: relativeY, z: relativeZ)
+  }
+  
+  var index: Int {
+    return (y * Chunk.DEPTH + z) * Chunk.WIDTH + x
+  }
+  
+  var sectionIndex: Int {
+    return y / ChunkSection.HEIGHT
   }
 }

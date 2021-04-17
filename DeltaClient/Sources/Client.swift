@@ -80,6 +80,22 @@ class Client {
           } else {
             Logger.log("usage: getblock x y z")
           }
+        case "getlight":
+          if options.count == 3 {
+            guard
+              let x = Int(options[0]),
+              let y = Int(options[1]),
+              let z = Int(options[2])
+            else {
+              Logger.log("x y z must be integers")
+              return
+            }
+            let position = Position(x: x, y: y, z: z)
+            if let lighting = server.world?.lighting[position.chunkPosition] {
+              logger.debug("skyLight: \(lighting.getSkyLightLevel(at: position))")
+              logger.debug("blockLight: \(lighting.getBlockLightLevel(at: position))")
+            }
+          }
         default:
           Logger.log("invalid command")
       }

@@ -80,11 +80,11 @@ class ChunkPreparer {
         }
       }
       isPreparingChunks = true
-      if let chunks = server.world?.chunks {
+      if let world = server.world {
         preparingThread.async {
           while true {
             if let chunkPosition = self.getNextChunkToPrepare() {
-              if let chunk = chunks[chunkPosition] {
+              if world.getIsChunkReady(chunkPosition), let chunk = world.chunks[chunkPosition] {
                 self.prepareChunk(chunk)
               }
             } else {

@@ -10,6 +10,7 @@
 		7802C1AF261097F00068E8A1 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 7802C1AE261097F00068E8A1 /* SwiftProtobuf */; };
 		78052348261433A800079A01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7805221C261433A700079A01 /* Assets.xcassets */; };
 		780523B6261433A800079A01 /* DeltaClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229D261433A700079A01 /* DeltaClientApp.swift */; };
+		781829A5262A6F7E000F59B0 /* ChunkLighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781829A4262A6F7E000F59B0 /* ChunkLighting.swift */; };
 		7851F7AE26255E0F009B59DD /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7851F7AD26255E0F009B59DD /* Camera.swift */; };
 		7868885526239C3000BD3F03 /* Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7868885426239C3000BD3F03 /* Random.swift */; };
 		786888672623D77A00BD3F03 /* CacheBlockModelContainer.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786888472623952000BD3F03 /* CacheBlockModelContainer.pb.swift */; };
@@ -368,6 +369,7 @@
 		780522A7261433A700079A01 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		780522A9261433A700079A01 /* DeltaClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeltaClientTests.swift; sourceTree = "<group>"; };
 		780522AA261433A700079A01 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		781829A4262A6F7E000F59B0 /* ChunkLighting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkLighting.swift; sourceTree = "<group>"; };
 		784194B7258204CD0070DE78 /* DeltaClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194C9258204D10070DE78 /* DeltaClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D4258204D10070DE78 /* DeltaClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1004,11 +1006,12 @@
 		78D9185C261FB4CC00A4782F /* World */ = {
 			isa = PBXGroup;
 			children = (
-				78D9185D261FB4CC00A4782F /* ChunkSection.swift */,
 				78D9185E261FB4CC00A4782F /* ChunkPosition.swift */,
 				78D9185F261FB4CC00A4782F /* World.swift */,
 				78D91860261FB4CC00A4782F /* WorldConfig.swift */,
 				78D91861261FB4CC00A4782F /* Chunk.swift */,
+				78D9185D261FB4CC00A4782F /* ChunkSection.swift */,
+				781829A4262A6F7E000F59B0 /* ChunkLighting.swift */,
 				78D91862261FB4CC00A4782F /* ChunkData.swift */,
 			);
 			path = World;
@@ -1888,6 +1891,7 @@
 				78D91995261FB4CD00A4782F /* Player.swift in Sources */,
 				786D34FF2627EB4200DB8C2F /* ChunkPreparer.swift in Sources */,
 				78D91A6C261FB4CE00A4782F /* Equipment.swift in Sources */,
+				781829A5262A6F7E000F59B0 /* ChunkLighting.swift in Sources */,
 				78D91A56261FB4CE00A4782F /* ProtocolLayer.swift in Sources */,
 				78D91A48261FB4CD00A4782F /* PluginMessagePacket.swift in Sources */,
 				78D91964261FB4CD00A4782F /* FireworkStarRecipe.swift in Sources */,

@@ -45,6 +45,7 @@
 - [ ] fix indices (either use 6 vertices to a face or do the fancy shader thing from before so that all the index buffers aren't needed anymore)
 - [ ] investigate why the initial chunks at 10 rener distance take so long to load
 - [ ] wait for neighbouring chunks
+- [ ] make bottom face of block the darkest
 
 ## Block models
 
@@ -94,6 +95,9 @@
 - [ ] make most of the managers singletons where possible (hopefully get rid of Managers)
   - [ ] https://forums.swift.org/t/is-there-any-way-to-throw-error-from-singleton-class-init/39207, https://medium.com/@tlimaye91/thread-safe-singletons-in-swift-a4f6a977d6e6
 - [ ] potentially move over to using Carthage instead of swift package manager
+- [ ] use new new possition properties instead of all the spread out functions now
+- [ ] always use the position type as the argument to functions
+- [ ] initialise world to an EmptyWorld instead of optional
 
 ## Architecture
 

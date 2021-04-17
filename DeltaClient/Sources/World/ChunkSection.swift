@@ -9,9 +9,9 @@ import Foundation
 import os
 
 struct ChunkSection {
-  static let WIDTH = 16
-  static let HEIGHT = 16
-  static let DEPTH = 16
+  static let WIDTH = Chunk.WIDTH
+  static let HEIGHT = Chunk.HEIGHT / Chunk.NUM_SECTIONS
+  static let DEPTH = Chunk.DEPTH
   static let NUM_BLOCKS = WIDTH * HEIGHT * DEPTH
   
   var blocks: [UInt16]
