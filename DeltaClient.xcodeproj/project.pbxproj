@@ -107,7 +107,7 @@
 		78D919A3261FB4CD00A4782F /* RenderCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91858261FB4CC00A4782F /* RenderCoordinator.swift */; };
 		78D919A4261FB4CD00A4782F /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91859261FB4CC00A4782F /* MetalView.swift */; };
 		78D919A5261FB4CD00A4782F /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 78D9185A261FB4CC00A4782F /* shaders.metal */; };
-		78D919A6261FB4CD00A4782F /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9185B261FB4CC00A4782F /* Renderer.swift */; };
+		78D919A6261FB4CD00A4782F /* WorldRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9185B261FB4CC00A4782F /* WorldRenderer.swift */; };
 		78D919A7261FB4CD00A4782F /* ChunkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9185D261FB4CC00A4782F /* ChunkSection.swift */; };
 		78D919A8261FB4CD00A4782F /* ChunkPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9185E261FB4CC00A4782F /* ChunkPosition.swift */; };
 		78D919A9261FB4CD00A4782F /* World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9185F261FB4CC00A4782F /* World.swift */; };
@@ -469,7 +469,7 @@
 		78D91858261FB4CC00A4782F /* RenderCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenderCoordinator.swift; sourceTree = "<group>"; };
 		78D91859261FB4CC00A4782F /* MetalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
 		78D9185A261FB4CC00A4782F /* shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = shaders.metal; sourceTree = "<group>"; };
-		78D9185B261FB4CC00A4782F /* Renderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		78D9185B261FB4CC00A4782F /* WorldRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorldRenderer.swift; sourceTree = "<group>"; };
 		78D9185D261FB4CC00A4782F /* ChunkSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkSection.swift; sourceTree = "<group>"; };
 		78D9185E261FB4CC00A4782F /* ChunkPosition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkPosition.swift; sourceTree = "<group>"; };
 		78D9185F261FB4CC00A4782F /* World.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = World.swift; sourceTree = "<group>"; };
@@ -967,7 +967,7 @@
 				78D91858261FB4CC00A4782F /* RenderCoordinator.swift */,
 				78D91859261FB4CC00A4782F /* MetalView.swift */,
 				78D9185A261FB4CC00A4782F /* shaders.metal */,
-				78D9185B261FB4CC00A4782F /* Renderer.swift */,
+				78D9185B261FB4CC00A4782F /* WorldRenderer.swift */,
 				786D34FE2627EB4200DB8C2F /* ChunkPreparer.swift */,
 				78D1F89C2626471900AEE7AE /* Frustum.swift */,
 				78C64CDC2625555B00375CBB /* AxisAlignedBoundingBox.swift */,
@@ -1904,7 +1904,7 @@
 				78D91A06261FB4CD00A4782F /* UnloadChunkPacket.swift in Sources */,
 				78D91A25261FB4CD00A4782F /* DeclareCommandsPacket.swift in Sources */,
 				78D91A34261FB4CD00A4782F /* EntityAnimationPacket.swift in Sources */,
-				78D919A6261FB4CD00A4782F /* Renderer.swift in Sources */,
+				78D919A6261FB4CD00A4782F /* WorldRenderer.swift in Sources */,
 				78D91960261FB4CD00A4782F /* ArmorDyeRecipe.swift in Sources */,
 				78D919D5261FB4CD00A4782F /* ClientSettingsPacket.swift in Sources */,
 				78D91AA3261FB4E100A4782F /* GameRenderView.swift in Sources */,

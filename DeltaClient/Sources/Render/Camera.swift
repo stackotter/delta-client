@@ -18,4 +18,25 @@ struct Camera {
   
   var xRot: Float = 0
   var yRot: Float = 0
+  
+  mutating func setRotation(playerLook: PlayerRotation) {
+    xRot = playerLook.pitch / 180 * Float.pi
+    yRot = playerLook.yaw / 180 * Float.pi
+  }
+  
+  func getWorldToClipMatrix() -> matrix_float4x4 {
+    var worldToCamera = MatrixUtil.translationMatrix(-position) // translation
+    worldToCamera *= MatrixUtil.rotationMatrix(y: -(Float.pi + yRot)) // y rotation
+    worldToCamera *= MatrixUtil.rotationMatrix(x: -xRot) // x rotation
+    
+    // perspective projection
+    let cameraToClip = MatrixUtil.projectionMatrix(near: 0.0001, far: 1000, aspect: aspect, fieldOfViewY: fovY)
+    
+    return worldToCamera * cameraToClip
+  }
+  
+  func getFrustum() -> Frustum {
+    let worldToClip = getWorldToClipMatrix()
+    return Frustum(worldToClip: worldToClip)
+  }
 }

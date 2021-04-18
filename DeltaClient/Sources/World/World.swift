@@ -56,8 +56,8 @@ class World {
     // wait until last chunk is unpacked
     chunkThread.sync {
       downloadingTerrain = false
+      DeltaClientApp.eventManager.triggerEvent(.downloadedTerrain)
     }
-    DeltaClientApp.eventManager.triggerEvent(.downloadedTerrain)
   }
   
   func addChunk(_ chunk: Chunk) {

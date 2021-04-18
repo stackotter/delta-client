@@ -19,5 +19,9 @@ struct SpawnPositionPacket: ClientboundPacket {
   func handle(for server: Server) throws {
     server.player.spawnPosition = location
     server.world?.finishDownloadingTerrain()
+    
+    // notify server that we are ready to finish login
+    let clientStatus = ClientStatusPacket(action: .performRespawn)
+    server.sendPacket(clientStatus)
   }
 }

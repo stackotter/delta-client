@@ -44,5 +44,9 @@ struct RespawnPacket: ClientboundPacket {
       server.newWorld(config: worldConfig)
     }
     server.player.gamemode = gamemode
+    
+    // TODO: get auto respawn working
+    let clientStatus = ClientStatusPacket(action: .performRespawn)
+    server.sendPacket(clientStatus)
   }
 }

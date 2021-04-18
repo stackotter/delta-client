@@ -27,8 +27,6 @@ struct UpdateHealthPacket: ClientboundPacket {
     
     if health == -1 {
       // handle death
-      let clientStatus = ClientStatusPacket(action: .performRespawn)
-      server.sendPacket(clientStatus)
     }
   }
 }

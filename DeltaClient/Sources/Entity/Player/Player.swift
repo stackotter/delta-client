@@ -43,4 +43,10 @@ struct Player {
     allowFlying = flags.contains(.allowFlying)
     creativeMode = flags.contains(.creativeMode)
   }
+  
+  func getEyePositon() -> EntityPosition {
+    var eyePosition = position
+    eyePosition.y += 1.625
+    return eyePosition
+  }
 }

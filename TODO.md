@@ -46,6 +46,7 @@
 - [ ] investigate why the initial chunks at 10 rener distance take so long to load
 - [ ] wait for neighbouring chunks
 - [ ] make bottom face of block the darkest
+- [ ] fix precision errors (an issue with near and far being too different, raising near to 0.1 could probably help)
 
 ## Block models
 
@@ -95,7 +96,7 @@
 - [ ] make most of the managers singletons where possible (hopefully get rid of Managers)
   - [ ] https://forums.swift.org/t/is-there-any-way-to-throw-error-from-singleton-class-init/39207, https://medium.com/@tlimaye91/thread-safe-singletons-in-swift-a4f6a977d6e6
 - [ ] potentially move over to using Carthage instead of swift package manager
-- [ ] use new new possition properties instead of all the spread out functions now
+- [ ] use new new position properties instead of all the spread out functions now
 - [ ] always use the position type as the argument to functions
 - [ ] initialise world to an EmptyWorld instead of optional
 
@@ -107,3 +108,11 @@
 ## Optimisation
 
 - [ ] fix ram usage and find why ram usage is so high after first launch
+
+## Code Cleanup
+
+- [ ] restructure folder structure
+- [ ] always use the position type instead of separate x, y and z arguments
+- [ ] get rid of getIndexForBlock or whatever and use the calculated property of Position
+- [ ] fix SwiftLint stuff
+- [ ] meet the airbnb swift style guidelines
