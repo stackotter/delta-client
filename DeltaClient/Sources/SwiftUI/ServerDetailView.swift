@@ -27,7 +27,7 @@ struct ServerDetailView: View {
           Text("version: \(pingResult.versionName)")
         }
         
-        if (pingResult.protocolVersion != PROTOCOL_VERSION) {
+        if (pingResult.protocolVersion != Constants.protocolVersion) {
           VStack(alignment: .center)  {
             Text("unsupported protocol version")
           }

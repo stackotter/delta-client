@@ -57,19 +57,19 @@ class AssetManager {
     
     // download version metadata
     Logger.log("downloading client jar metadata")
-    guard let downloadURLString = downloadURLs.getString(forKey: VERSION_STRING) else {
-      Logger.error("failed to find download url for version \(VERSION_STRING) metadata json")
-      throw AssetError.noURLForVersion(VERSION_STRING)
+    guard let downloadURLString = downloadURLs.getString(forKey: Constants.versionString) else {
+      Logger.error("failed to find download url for version \(Constants.versionString) metadata json")
+      throw AssetError.noURLForVersion(Constants.versionString)
     }
     guard let downloadURL = URL(string: downloadURLString) else {
-      Logger.error("invalid client metadata download url for version \(VERSION_STRING) in version_urls.json")
-      throw AssetError.invalidMetadataURL(version: VERSION_STRING, url: downloadURLString)
+      Logger.error("invalid client metadata download url for version \(Constants.versionString) in version_urls.json")
+      throw AssetError.invalidMetadataURL(version: Constants.versionString, url: downloadURLString)
     }
     let clientVersionMetadata = try JSON.fromURL(downloadURL)
     
     // get client jar download url
     guard let clientJarURLString = clientVersionMetadata.getJSON(forKey: "downloads")?.getJSON(forKey: "client")?.getString(forKey: "url") else {
-      Logger.error("invalid version json for \(VERSION_STRING)")
+      Logger.error("invalid version json for \(Constants.versionString)")
       throw AssetError.invalidVersionMetadata
     }
     guard let clientJarURL = URL(string: clientJarURLString) else {
@@ -107,7 +107,7 @@ class AssetManager {
     try storageManager.createFolder(pixlyzerFolder)
     let blockPaletteFile = pixlyzerFolder.appendingPathComponent("blocks.json")
     
-    let blockPaletteURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(VERSION_STRING)/blocks.json")!
+    let blockPaletteURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(Constants.versionString)/blocks.json")!
     let blockPaletteJSON = try Data(contentsOf: blockPaletteURL)
     
     do {

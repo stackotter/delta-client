@@ -94,7 +94,7 @@ class ServerConnection {
   // Abstracted Operations
   
   func handshake(nextState: HandshakePacket.NextState) {
-    let handshake = HandshakePacket(protocolVersion: PROTOCOL_VERSION, serverAddr: host, serverPort: Int(port), nextState: nextState)
+    let handshake = HandshakePacket(protocolVersion: Constants.protocolVersion, serverAddr: host, serverPort: Int(port), nextState: nextState)
     self.sendPacket(handshake)
     self.state = (nextState == .login) ? .login : .status
   }

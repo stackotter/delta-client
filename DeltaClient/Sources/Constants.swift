@@ -7,6 +7,8 @@
 
 import Foundation
 
-let PROTOCOL_VERSION = 736
-let VERSION_STRING = "1.16.1"
-let LOCALE = "en_us"
+enum Constants {
+  static let protocolVersion = 736
+  static let versionString = "1.16.1"
+  static let locale = "en_us"
+}

@@ -15,7 +15,7 @@ struct ServerListEntryView: View {
       Text(pinger.descriptor.name)
       Spacer()
       Circle()
-        .foregroundColor((pinger.pingResult == nil) ? .red : ((pinger.pingResult?.protocolVersion == PROTOCOL_VERSION) ? .green : .yellow))
+        .foregroundColor((pinger.pingResult == nil) ? .red : ((pinger.pingResult?.protocolVersion == Constants.protocolVersion) ? .green : .yellow))
         .fixedSize()
     }
   }

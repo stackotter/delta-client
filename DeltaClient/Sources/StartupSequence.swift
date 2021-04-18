@@ -28,9 +28,9 @@ class StartupSequence {
     displayProgress(managers.storageManager.isFirstLaunch ? "generating global palette (first launch only)" : "loading global palette from cache")
     managers.blockPaletteManager = try BlockPaletteManager(assetManager: managers.assetManager, textureManager: managers.textureManager, cacheManager: managers.cacheManager)
     
-    displayProgress("loading locale \(LOCALE)")
+    displayProgress("loading locale \(Constants.locale)")
     managers.localeManager = LocaleManager(assetManager: managers.assetManager)
-    try managers.localeManager.setLocale(to: LOCALE)
+    try managers.localeManager.setLocale(to: Constants.locale)
     
     DeltaClientApp.eventManager.triggerEvent(.loadingComplete(managers))
   }

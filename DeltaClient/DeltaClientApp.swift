@@ -11,18 +11,18 @@ import os
 @main
 struct DeltaClientApp: App {
   public static var eventManager = EventManager<AppEvent>()
-  
+
   @ObservedObject var state = ViewState<AppStateEnum>(initialState: .loading(message: "loading game.."))
-  
+
   enum AppStateEnum {
     case loading(message: String)
     case error(message: String)
     case loaded(managers: Managers)
   }
-  
+
   init() {
     DeltaClientApp.eventManager.registerEventHandler(handleEvent)
-    
+
     // run app startup sequence
     let thread = DispatchQueue(label: "startup")
     let startupSequence = StartupSequence()
@@ -34,11 +34,11 @@ struct DeltaClientApp: App {
       }
     }
   }
-  
+
   static func triggerError(_ message: String) {
     eventManager.triggerEvent(.error(message))
   }
-  
+
   func handleEvent(_ event: AppEvent) {
     switch event {
       case .loadingScreenMessage(let message):
@@ -53,7 +53,7 @@ struct DeltaClientApp: App {
         break
     }
   }
-  
+
   var body: some Scene {
     WindowGroup {
       Group {
