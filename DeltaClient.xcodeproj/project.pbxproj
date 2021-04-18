@@ -12,8 +12,13 @@
 		780523B6261433A800079A01 /* DeltaClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229D261433A700079A01 /* DeltaClientApp.swift */; };
 		781829A5262A6F7E000F59B0 /* ChunkLighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781829A4262A6F7E000F59B0 /* ChunkLighting.swift */; };
 		7851F7AE26255E0F009B59DD /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7851F7AD26255E0F009B59DD /* Camera.swift */; };
+		7864084F262C545C00FE3A10 /* CacheFaceDirection.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78640848262C545C00FE3A10 /* CacheFaceDirection.pb.swift */; };
+		78640850262C545C00FE3A10 /* CacheBlockModelElementFace.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78640849262C545C00FE3A10 /* CacheBlockModelElementFace.pb.swift */; };
+		78640851262C545C00FE3A10 /* CacheBlockModelPalette.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7864084A262C545C00FE3A10 /* CacheBlockModelPalette.pb.swift */; };
+		78640852262C545C00FE3A10 /* CacheBlockModelElement.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7864084B262C545C00FE3A10 /* CacheBlockModelElement.pb.swift */; };
+		78640853262C545C00FE3A10 /* CacheBlockModel.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7864084C262C545C00FE3A10 /* CacheBlockModel.pb.swift */; };
+		78640854262C545C00FE3A10 /* CacheBlockModelContainer.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7864084D262C545C00FE3A10 /* CacheBlockModelContainer.pb.swift */; };
 		7868885526239C3000BD3F03 /* Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7868885426239C3000BD3F03 /* Random.swift */; };
-		786888672623D77A00BD3F03 /* CacheBlockModelContainer.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786888472623952000BD3F03 /* CacheBlockModelContainer.pb.swift */; };
 		7868886D2623F67D00BD3F03 /* get_neighbouring_blocks.c in Sources */ = {isa = PBXBuildFile; fileRef = 7868886C2623F67D00BD3F03 /* get_neighbouring_blocks.c */; };
 		7868887526243D9F00BD3F03 /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7868887426243D9E00BD3F03 /* MathUtil.swift */; };
 		786D34FF2627EB4200DB8C2F /* ChunkPreparer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786D34FE2627EB4200DB8C2F /* ChunkPreparer.swift */; };
@@ -294,11 +299,6 @@
 		78D91A5E261FB4CE00A4782F /* NetworkStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91924261FB4CD00A4782F /* NetworkStack.swift */; };
 		78D91A5F261FB4CE00A4782F /* StartupSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91925261FB4CD00A4782F /* StartupSequence.swift */; };
 		78D91A60261FB4CE00A4782F /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91926261FB4CD00A4782F /* Client.swift */; };
-		78D91A61261FB4CE00A4782F /* CacheFaceDirection.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9192A261FB4CD00A4782F /* CacheFaceDirection.pb.swift */; };
-		78D91A62261FB4CE00A4782F /* CacheBlockModelElementFace.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9192B261FB4CD00A4782F /* CacheBlockModelElementFace.pb.swift */; };
-		78D91A63261FB4CE00A4782F /* CacheBlockModelPalette.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9192C261FB4CD00A4782F /* CacheBlockModelPalette.pb.swift */; };
-		78D91A64261FB4CE00A4782F /* CacheBlockModelElement.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9192D261FB4CD00A4782F /* CacheBlockModelElement.pb.swift */; };
-		78D91A65261FB4CE00A4782F /* CacheBlockModel.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9192E261FB4CD00A4782F /* CacheBlockModel.pb.swift */; };
 		78D91A6C261FB4CE00A4782F /* Equipment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91937261FB4CD00A4782F /* Equipment.swift */; };
 		78D91A6D261FB4CE00A4782F /* LauncherProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91938261FB4CD00A4782F /* LauncherProfile.swift */; };
 		78D91A6E261FB4CE00A4782F /* NBTCompound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91939261FB4CD00A4782F /* NBTCompound.swift */; };
@@ -374,7 +374,13 @@
 		784194C9258204D10070DE78 /* DeltaClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D4258204D10070DE78 /* DeltaClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7851F7AD26255E0F009B59DD /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
-		786888472623952000BD3F03 /* CacheBlockModelContainer.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelContainer.pb.swift; sourceTree = "<group>"; };
+		78640846262C545C00FE3A10 /* CompileProtobuf.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = CompileProtobuf.sh; sourceTree = "<group>"; };
+		78640848262C545C00FE3A10 /* CacheFaceDirection.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheFaceDirection.pb.swift; sourceTree = "<group>"; };
+		78640849262C545C00FE3A10 /* CacheBlockModelElementFace.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelElementFace.pb.swift; sourceTree = "<group>"; };
+		7864084A262C545C00FE3A10 /* CacheBlockModelPalette.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelPalette.pb.swift; sourceTree = "<group>"; };
+		7864084B262C545C00FE3A10 /* CacheBlockModelElement.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelElement.pb.swift; sourceTree = "<group>"; };
+		7864084C262C545C00FE3A10 /* CacheBlockModel.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModel.pb.swift; sourceTree = "<group>"; };
+		7864084D262C545C00FE3A10 /* CacheBlockModelContainer.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelContainer.pb.swift; sourceTree = "<group>"; };
 		7868884C2623952900BD3F03 /* CacheBlockModelContainer.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheBlockModelContainer.proto; sourceTree = "<group>"; };
 		7868885426239C3000BD3F03 /* Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Random.swift; sourceTree = "<group>"; };
 		7868886B2623F67D00BD3F03 /* get_neighbouring_blocks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = get_neighbouring_blocks.h; sourceTree = "<group>"; };
@@ -656,13 +662,7 @@
 		78D91924261FB4CD00A4782F /* NetworkStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkStack.swift; sourceTree = "<group>"; };
 		78D91925261FB4CD00A4782F /* StartupSequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupSequence.swift; sourceTree = "<group>"; };
 		78D91926261FB4CD00A4782F /* Client.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
-		78D9192A261FB4CD00A4782F /* CacheFaceDirection.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheFaceDirection.pb.swift; sourceTree = "<group>"; };
-		78D9192B261FB4CD00A4782F /* CacheBlockModelElementFace.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelElementFace.pb.swift; sourceTree = "<group>"; };
-		78D9192C261FB4CD00A4782F /* CacheBlockModelPalette.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelPalette.pb.swift; sourceTree = "<group>"; };
-		78D9192D261FB4CD00A4782F /* CacheBlockModelElement.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModelElement.pb.swift; sourceTree = "<group>"; };
-		78D9192E261FB4CD00A4782F /* CacheBlockModel.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheBlockModel.pb.swift; sourceTree = "<group>"; };
 		78D91930261FB4CD00A4782F /* CacheFaceDirection.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheFaceDirection.proto; sourceTree = "<group>"; };
-		78D91931261FB4CD00A4782F /* compile-proto.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "compile-proto.sh"; sourceTree = "<group>"; };
 		78D91932261FB4CD00A4782F /* CacheBlockModelPalette.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheBlockModelPalette.proto; sourceTree = "<group>"; };
 		78D91933261FB4CD00A4782F /* CacheBlockModelElementFace.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheBlockModelElementFace.proto; sourceTree = "<group>"; };
 		78D91934261FB4CD00A4782F /* CacheBlockModel.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = CacheBlockModel.proto; sourceTree = "<group>"; };
@@ -787,6 +787,19 @@
 				784194D4258204D10070DE78 /* DeltaClientUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		78640847262C545C00FE3A10 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				78640848262C545C00FE3A10 /* CacheFaceDirection.pb.swift */,
+				78640849262C545C00FE3A10 /* CacheBlockModelElementFace.pb.swift */,
+				7864084A262C545C00FE3A10 /* CacheBlockModelPalette.pb.swift */,
+				7864084B262C545C00FE3A10 /* CacheBlockModelElement.pb.swift */,
+				7864084C262C545C00FE3A10 /* CacheBlockModel.pb.swift */,
+				7864084D262C545C00FE3A10 /* CacheBlockModelContainer.pb.swift */,
+			);
+			path = Generated;
 			sourceTree = "<group>";
 		};
 		78D917F9261FB4CC00A4782F /* Sources */ = {
@@ -1337,6 +1350,7 @@
 		78D91928261FB4CD00A4782F /* Cache */ = {
 			isa = PBXGroup;
 			children = (
+				78D9194B261FB4CD00A4782F /* CacheManager.swift */,
 				78D91929261FB4CD00A4782F /* Protobuf */,
 			);
 			path = Cache;
@@ -1345,12 +1359,8 @@
 		78D91929261FB4CD00A4782F /* Protobuf */ = {
 			isa = PBXGroup;
 			children = (
-				78D9192A261FB4CD00A4782F /* CacheFaceDirection.pb.swift */,
-				78D9192B261FB4CD00A4782F /* CacheBlockModelElementFace.pb.swift */,
-				78D9192C261FB4CD00A4782F /* CacheBlockModelPalette.pb.swift */,
-				786888472623952000BD3F03 /* CacheBlockModelContainer.pb.swift */,
-				78D9192D261FB4CD00A4782F /* CacheBlockModelElement.pb.swift */,
-				78D9192E261FB4CD00A4782F /* CacheBlockModel.pb.swift */,
+				78640846262C545C00FE3A10 /* CompileProtobuf.sh */,
+				78640847262C545C00FE3A10 /* Generated */,
 				78D9192F261FB4CD00A4782F /* Definitions */,
 			);
 			path = Protobuf;
@@ -1361,7 +1371,6 @@
 			children = (
 				7868884C2623952900BD3F03 /* CacheBlockModelContainer.proto */,
 				78D91930261FB4CD00A4782F /* CacheFaceDirection.proto */,
-				78D91931261FB4CD00A4782F /* compile-proto.sh */,
 				78D91932261FB4CD00A4782F /* CacheBlockModelPalette.proto */,
 				78D91933261FB4CD00A4782F /* CacheBlockModelElementFace.proto */,
 				78D91934261FB4CD00A4782F /* CacheBlockModel.proto */,
@@ -1398,7 +1407,6 @@
 			children = (
 				78D91948261FB4CD00A4782F /* ConfigManager.swift */,
 				78D9194A261FB4CD00A4782F /* StorageManager.swift */,
-				78D9194B261FB4CD00A4782F /* CacheManager.swift */,
 				78D9194C261FB4CD00A4782F /* LocaleManager.swift */,
 				78D9194D261FB4CD00A4782F /* AccountManager.swift */,
 				78D9194E261FB4CD00A4782F /* TextureManager.swift */,
@@ -1448,6 +1456,7 @@
 				784194B4258204CD0070DE78 /* Frameworks */,
 				784194B5258204CD0070DE78 /* Resources */,
 				78B4A35A25932E4700961E0F /* ShellScript */,
+				78640842262C4E8000FE3A10 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1573,6 +1582,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		78640842262C4E8000FE3A10 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
 		78B4A35A25932E4700961E0F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -1652,7 +1678,6 @@
 				78D91A45261FB4CD00A4782F /* DestroyEntitiesPacket.swift in Sources */,
 				78D9198F261FB4CD00A4782F /* BlockEntity.swift in Sources */,
 				78D919C9261FB4CD00A4782F /* AnimationServerboundPacket.swift in Sources */,
-				786888672623D77A00BD3F03 /* CacheBlockModelContainer.pb.swift in Sources */,
 				78D9199E261FB4CD00A4782F /* FaceDirection.swift in Sources */,
 				78D919DB261FB4CD00A4782F /* WindowConfirmationServerboundPacket.swift in Sources */,
 				78D91980261FB4CD00A4782F /* MojangAPI.swift in Sources */,
@@ -1666,7 +1691,6 @@
 				78D91A70261FB4CE00A4782F /* CardinalDirection.swift in Sources */,
 				78D9196D261FB4CD00A4782F /* CampfireCookingRecipe.swift in Sources */,
 				78D91A43261FB4CD00A4782F /* VehicleMoveClientboundPacket.swift in Sources */,
-				78D91A61261FB4CE00A4782F /* CacheFaceDirection.pb.swift in Sources */,
 				78D919AF261FB4CD00A4782F /* ServerDescriptor.swift in Sources */,
 				78D91A86261FB4CE00A4782F /* MinecraftLocale.swift in Sources */,
 				78D91A0C261FB4CD00A4782F /* DeclareRecipesPacket.swift in Sources */,
@@ -1700,7 +1724,6 @@
 				78D91A20261FB4CD00A4782F /* RespawnPacket.swift in Sources */,
 				78D91977261FB4CD00A4782F /* ChatKeybindComponent.swift in Sources */,
 				78D91A9E261FB4E100A4782F /* LoginView.swift in Sources */,
-				78D91A63261FB4CE00A4782F /* CacheBlockModelPalette.pb.swift in Sources */,
 				78D919D7261FB4CD00A4782F /* CloseWindowServerboundPacket.swift in Sources */,
 				78D919ED261FB4CD00A4782F /* CraftRecipeRequestPacket.swift in Sources */,
 				78D91A49261FB4CD00A4782F /* StopSoundPacket.swift in Sources */,
@@ -1729,6 +1752,7 @@
 				78D91989261FB4CD00A4782F /* MatrixUtil.swift in Sources */,
 				78D919E5261FB4CD00A4782F /* EditBookPacket.swift in Sources */,
 				78D91972261FB4CD00A4782F /* ChatTranslateComponent.swift in Sources */,
+				78640852262C545C00FE3A10 /* CacheBlockModelElement.pb.swift in Sources */,
 				78D91A87261FB4CE00A4782F /* Managers.swift in Sources */,
 				78D91A10261FB4CD00A4782F /* ServerDifficultyPacket.swift in Sources */,
 				78D919B2261FB4CD00A4782F /* ServerConfig.swift in Sources */,
@@ -1768,11 +1792,11 @@
 				78D91A7F261FB4CE00A4782F /* CacheManager.swift in Sources */,
 				78D919D2261FB4CD00A4782F /* ResourcePackStatusPacket.swift in Sources */,
 				78D91A02261FB4CD00A4782F /* BlockActionPacket.swift in Sources */,
+				78640850262C545C00FE3A10 /* CacheBlockModelElementFace.pb.swift in Sources */,
 				78D91A15261FB4CD00A4782F /* SpawnPositionPacket.swift in Sources */,
 				78D91A00261FB4CD00A4782F /* EntityMetadataPacket.swift in Sources */,
 				78D919D6261FB4CD00A4782F /* UseItemPacket.swift in Sources */,
 				78D9196A261FB4CD00A4782F /* ShieldDecorationRecipe.swift in Sources */,
-				78D91A62261FB4CE00A4782F /* CacheBlockModelElementFace.pb.swift in Sources */,
 				78D91A2C261FB4CD00A4782F /* PlayerInfoPacket.swift in Sources */,
 				78D919CB261FB4CD00A4782F /* LockDifficultyPacket.swift in Sources */,
 				78D91A4F261FB4CD00A4782F /* LoginDisconnectPacket.swift in Sources */,
@@ -1781,11 +1805,11 @@
 				78D91A2A261FB4CD00A4782F /* SpawnPaintingPacket.swift in Sources */,
 				78D919B5261FB4CD00A4782F /* PacketRegistry.swift in Sources */,
 				78D919EE261FB4CD00A4782F /* UpdateStructureBlockPacket.swift in Sources */,
+				7864084F262C545C00FE3A10 /* CacheFaceDirection.pb.swift in Sources */,
 				78D919C1261FB4CD00A4782F /* UpdateJigsawBlockPacket.swift in Sources */,
 				78D91A4B261FB4CD00A4782F /* LoginPluginResponse.swift in Sources */,
 				78D91954261FB4CD00A4782F /* Constants.swift in Sources */,
 				78D91A7E261FB4CE00A4782F /* StorageManager.swift in Sources */,
-				78D91A64261FB4CE00A4782F /* CacheBlockModelElement.pb.swift in Sources */,
 				78D919B3261FB4CD00A4782F /* TabList.swift in Sources */,
 				78D9196B261FB4CD00A4782F /* Ingredient.swift in Sources */,
 				78D91A9D261FB4E100A4782F /* EditServerListView.swift in Sources */,
@@ -1837,7 +1861,7 @@
 				78D91A75261FB4CE00A4782F /* Statistic.swift in Sources */,
 				78D91A2D261FB4CD00A4782F /* EntityTeleportPacket.swift in Sources */,
 				78D919B6261FB4CD00A4782F /* ServerConnection.swift in Sources */,
-				78D91A65261FB4CE00A4782F /* CacheBlockModel.pb.swift in Sources */,
+				78640854262C545C00FE3A10 /* CacheBlockModelContainer.pb.swift in Sources */,
 				78D91993261FB4CD00A4782F /* PlayerAbilities.swift in Sources */,
 				78D91A3E261FB4CD00A4782F /* CombatEventPacket.swift in Sources */,
 				78D91A4C261FB4CD00A4782F /* LoginStartPacket.swift in Sources */,
@@ -1875,6 +1899,7 @@
 				78D91966261FB4CD00A4782F /* ShulkerBoxColouringRecipe.swift in Sources */,
 				78D91A3D261FB4CD00A4782F /* SelectAdvancementTabPacket.swift in Sources */,
 				78D919F3261FB4CD00A4782F /* MultiBlockChangePacket.swift in Sources */,
+				78640851262C545C00FE3A10 /* CacheBlockModelPalette.pb.swift in Sources */,
 				78D919DD261FB4CD00A4782F /* EntityActionPacket.swift in Sources */,
 				78D91A9C261FB4E100A4782F /* ServerDetailView.swift in Sources */,
 				78D919CD261FB4CD00A4782F /* SpectatePacket.swift in Sources */,
@@ -1883,6 +1908,7 @@
 				78D9196C261FB4CD00A4782F /* SmithingRecipe.swift in Sources */,
 				78D91A50261FB4CD00A4782F /* SetCompressionPacket.swift in Sources */,
 				78D91991261FB4CD00A4782F /* PlayerEntityAction.swift in Sources */,
+				78640853262C545C00FE3A10 /* CacheBlockModel.pb.swift in Sources */,
 				78D9195B261FB4CD00A4782F /* SmokingRecipe.swift in Sources */,
 				78D919D4261FB4CD00A4782F /* VehicleMoveServerboundPacket.swift in Sources */,
 				78D91A53261FB4CE00A4782F /* PacketState.swift in Sources */,

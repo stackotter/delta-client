@@ -112,7 +112,9 @@
 ## Code Cleanup
 
 - [ ] restructure folder structure
+- [ ] split buffer into InBuffer and OutBuffer
 - [ ] always use the position type instead of separate x, y and z arguments
 - [ ] get rid of getIndexForBlock or whatever and use the calculated property of Position
 - [ ] fix SwiftLint stuff
 - [ ] meet the airbnb swift style guidelines
+  - [ ] use MARK

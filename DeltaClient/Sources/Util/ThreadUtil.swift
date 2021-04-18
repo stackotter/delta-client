@@ -8,7 +8,7 @@
 import Foundation
 
 struct ThreadUtil {
-  static func runInMain(_ closure: () -> ()) {
+  static func runInMain(_ closure: () -> Void) {
     if Thread.isMainThread {
       closure()
     } else {

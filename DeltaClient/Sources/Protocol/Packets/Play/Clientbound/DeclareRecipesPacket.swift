@@ -13,6 +13,8 @@ struct DeclareRecipesPacket: ClientboundPacket {
   
   var recipeRegistry: RecipeRegistry
   
+  // TODO: fix this ridiculously long function
+  // swiftlint:disable function_body_length
   init(from packetReader: inout PacketReader) throws {
     recipeRegistry = RecipeRegistry()
     let numRecipes = packetReader.readVarInt()
@@ -71,7 +73,7 @@ struct DeclareRecipesPacket: ClientboundPacket {
             let experience = packetReader.readFloat()
             let cookingTime = Int(packetReader.readVarInt())
             
-            var recipe: HeatRecipe? = nil
+            var recipe: HeatRecipe?
             switch type.name {
               case "smelting":
                 recipe = BlastingRecipe(group: group, ingredient: ingredient, result: result, experience: experience, cookingTime: cookingTime)
@@ -123,7 +125,7 @@ struct DeclareRecipesPacket: ClientboundPacket {
             recipeRegistry.smithingRecipes[recipeId] = recipe
           case let recipeType where recipeType.starts(with: "crafting_special_"):
             // special recipes
-            var recipe: SpecialRecipe? = nil
+            var recipe: SpecialRecipe?
             switch recipeType {
               case "crafting_special_armordye":
                 recipe = ArmorDyeRecipe()
@@ -166,6 +168,7 @@ struct DeclareRecipesPacket: ClientboundPacket {
       }
     }
   }
+  // swiftlint:enable function_body_length
   
   func handle(for server: Server) throws {
     server.recipeRegistry = recipeRegistry

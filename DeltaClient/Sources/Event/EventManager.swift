@@ -18,7 +18,7 @@ class EventManager<T: EventProtocol> {
   var specificEventHandlers: [String: [EventHandler]] = [:]
   var oneTimeEventHandlers: [String: [EventHandler]] = [:]
   
-  var eventThread: DispatchQueue = DispatchQueue(label: "events")
+  var eventThread = DispatchQueue(label: "events")
   
   // registers an event handler to be called for every event
   func registerEventHandler(_ handler: @escaping EventHandler) {

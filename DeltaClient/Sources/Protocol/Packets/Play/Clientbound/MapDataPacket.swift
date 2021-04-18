@@ -39,7 +39,7 @@ struct MapDataPacket: ClientboundPacket {
       let z = packetReader.readByte()
       let direction = packetReader.readByte()
       let hasDisplayName = packetReader.readBool()
-      var displayName: ChatComponent? = nil
+      var displayName: ChatComponent?
       if hasDisplayName {
         displayName = packetReader.readChat()
       }
@@ -49,9 +49,9 @@ struct MapDataPacket: ClientboundPacket {
     
     columns = packetReader.readUnsignedByte()
     if columns > 0 {
-      let _ = packetReader.readByte() // rows
-      let _ = packetReader.readByte() // x
-      let _ = packetReader.readByte() // z
+      _ = packetReader.readByte() // rows
+      _ = packetReader.readByte() // x
+      _ = packetReader.readByte() // z
       let length = packetReader.readVarInt()
       var data: [UInt8] = []
       for _ in 0..<length {

@@ -140,7 +140,7 @@ class ConfigManager: ObservableObject {
   
   // Util
   
-  func refreshAccessToken(success: @escaping () -> ()) {
+  func refreshAccessToken(success: @escaping () -> Void) {
     MojangAPI.refresh(accessToken: self.config.account!.accessToken, clientToken: self.config.clientToken, completion: { newAccessToken in
       self.config.account!.accessToken = newAccessToken
       self.writeConfig()

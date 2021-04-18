@@ -22,4 +22,3 @@ struct LoginSuccessPacket: ClientboundPacket {
     server.connection.state = .play
   }
 }
-

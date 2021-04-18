@@ -39,7 +39,7 @@ struct TradeListPacket: ClientboundPacket {
       let firstInputItem = try packetReader.readItemStack()
       let outputItem = try packetReader.readItemStack()
       let hasSecondInputItem = packetReader.readBool()
-      var secondInputItem: ItemStack? = nil
+      var secondInputItem: ItemStack?
       if hasSecondInputItem {
         secondInputItem = try packetReader.readItemStack()
       }

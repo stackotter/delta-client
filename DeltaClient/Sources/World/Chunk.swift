@@ -62,7 +62,7 @@ class Chunk {
   func getBiome(index: Int) -> UInt8 {
     // because of the efficient way they were read in chunkdata only every fourth value is a biome id
     // they get sent as int32 but they are never take up more than a byte
-    return biomes[index*4+3]
+    return biomes[index * 4 + 3]
   }
   
   // position must be relative to chunk

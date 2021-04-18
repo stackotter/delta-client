@@ -13,8 +13,8 @@ class ChunkPreparer {
   var world: World
   var camera: Camera
   
-  var thread: DispatchQueue = DispatchQueue(label: "chunkPreparerManagement")
-  var preparingThread: DispatchQueue = DispatchQueue(label: "chunkPreparing")
+  var thread = DispatchQueue(label: "chunkPreparerManagement")
+  var preparingThread = DispatchQueue(label: "chunkPreparing")
   
   var isPreparingChunks = false
   

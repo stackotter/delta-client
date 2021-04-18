@@ -71,7 +71,7 @@ struct Buffer {
   }
   
   mutating func readBytes(n: Int) -> [UInt8] {
-    let byteArray = Array(bytes[index..<index+n])
+    let byteArray = Array(bytes[index..<(index + n)])
     index += n
     return byteArray
   }
@@ -167,7 +167,6 @@ struct Buffer {
     return string
   }
   
-  
   // Write Functions
   // these require specific int types for int and long still
   // as these functions aren't used much and it improves semantics
@@ -242,7 +241,7 @@ struct Buffer {
     repeat {
       var toWrite = bitPattern & 0x7f
       bitPattern >>= 7
-      if (bitPattern != 0) {
+      if bitPattern != 0 {
         toWrite |= 0x80
       }
       writeByte(UInt8(toWrite))
@@ -264,4 +263,3 @@ struct Buffer {
     writeBytes(stringBytes)
   }
 }
-

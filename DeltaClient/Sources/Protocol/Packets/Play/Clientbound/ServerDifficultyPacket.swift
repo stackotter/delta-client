@@ -23,4 +23,3 @@ struct ServerDifficultyPacket: ClientboundPacket {
     server.isDifficultyLocked = isLocked
   }
 }
-

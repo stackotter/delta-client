@@ -9,7 +9,7 @@ import Foundation
 import os
 
 class ServerPinger: Hashable, ObservableObject {
-  @Published var pingResult: PingResult? = nil
+  @Published var pingResult: PingResult?
   
   var eventManager: EventManager<ServerEvent>
   var descriptor: ServerDescriptor
@@ -30,7 +30,7 @@ class ServerPinger: Hashable, ObservableObject {
   
   func ping() {
     pingResult = nil
-    eventManager.registerOneTimeEventHandler({ event in
+    eventManager.registerOneTimeEventHandler({ _ in
       self.connection.handshake(nextState: .status)
       
       let statusRequest = StatusRequestPacket()

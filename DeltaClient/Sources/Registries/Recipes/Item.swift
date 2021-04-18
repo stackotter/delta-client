@@ -9,5 +9,5 @@ import Foundation
 
 struct Item {
   var id: Int
-  var nbt: NBTCompound? = nil
+  var nbt: NBTCompound?
 }

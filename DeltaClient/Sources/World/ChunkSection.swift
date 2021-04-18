@@ -24,7 +24,7 @@ struct ChunkSection {
   
   init(blockIds: [UInt16], palette: [UInt16], blockCount: Int16) {
     self.blocks = blockIds
-    if palette.count != 0 { // indirect palette
+    if !palette.isEmpty { // indirect palette
       self.blocks = self.blocks.map {
         if $0 >= palette.count {
           Logger.warning("indirect palette lookup failed: \($0) out of bounds for palette of length \(palette.count)")

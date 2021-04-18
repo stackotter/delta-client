@@ -8,7 +8,7 @@
 import Foundation
 
 struct PacketWriter {
-  var buffer: Buffer = Buffer([])
+  var buffer = Buffer([])
   
   // Basic datatypes
   

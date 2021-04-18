@@ -60,4 +60,3 @@ struct JoinGamePacket: ClientboundPacket {
     server.world = World(config: worldConfig, managers: server.managers, eventManager: server.eventManager)
   }
 }
-

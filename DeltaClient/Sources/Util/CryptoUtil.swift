@@ -45,7 +45,7 @@ struct CryptoUtil {
         byte = 255 - byte
       }
       if index == 19 && isNegative { // last byte
-        byte = byte + 1
+        byte += 1
       }
       return String(format: "%02x", byte)
     }
@@ -54,7 +54,7 @@ struct CryptoUtil {
     return string
   }
   
-  static func publicKeyRSA(derData: Data) throws -> SecKey{
+  static func publicKeyRSA(derData: Data) throws -> SecKey {
     let attributes: [CFString: Any] = [
       kSecAttrKeyClass: kSecAttrKeyClassPublic,
       kSecAttrKeyType: kSecAttrKeyTypeRSA,

@@ -151,7 +151,7 @@ struct NBTCompound: CustomStringConvertible {
     var n = 0
     while true {
       let typeId = buffer.readByte()
-      if let type = NBTTagType.init(rawValue: typeId) {
+      if let type = NBTTagType(rawValue: typeId) {
         if type == .end {
           break
         }
@@ -196,7 +196,7 @@ struct NBTCompound: CustomStringConvertible {
         value = buffer.readString(length: length)
       case .list:
         let typeId = buffer.readByte()
-        if let listType = NBTTagType.init(rawValue: typeId) {
+        if let listType = NBTTagType(rawValue: typeId) {
           let length = buffer.readSignedInt(endian: .big)
           if length < 0 {
             throw NBTError.emptyList
@@ -262,6 +262,9 @@ struct NBTCompound: CustomStringConvertible {
     buffer.writeString(name)
   }
   
+  // TODO: remove force casts
+  // TODO: split into NBTWriter, NBTReader and NBTCompound
+  // swiftlint:disable force_cast
   mutating func writeTag(_ tag: NBTTag) {
     switch tag.type {
       case .end:
@@ -315,4 +318,5 @@ struct NBTCompound: CustomStringConvertible {
         }
     }
   }
+  // swiftlint:enable force_cast
 }

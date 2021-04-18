@@ -23,9 +23,11 @@ struct Identifier: Equatable, Hashable, CustomStringConvertible {
   init(_ string: String) throws {
     // a nice regex just for you
     let pattern = "^(([0-9a-z\\-_]+):)?([0-9a-z\\-_/\\.]+)$"
-    let regex = try! NSRegularExpression(pattern: pattern)
-    let result = regex.matches(in: string, range: NSMakeRange(0, string.utf8.count))
-    if result.count == 0 {
+    guard let regex = try? NSRegularExpression(pattern: pattern) else {
+      fatalError("failed to compile a static regex (hmmmm, that really shouldn't happen)")
+    }
+    let result = regex.matches(in: string, range: NSRange(location: 0, length: string.utf8.count))
+    if result.isEmpty {
       throw IdentifierError.emptyString
     }
     

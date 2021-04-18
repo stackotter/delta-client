@@ -17,7 +17,7 @@ class World {
   var chunks: [ChunkPosition: Chunk] = [:]
   var lighting: [ChunkPosition: ChunkLighting] = [:]
   
-  var chunkThread: DispatchQueue = DispatchQueue(label: "worldChunks")
+  var chunkThread = DispatchQueue(label: "worldChunks")
   var managers: Managers
   var eventManager: EventManager<ServerEvent>
   

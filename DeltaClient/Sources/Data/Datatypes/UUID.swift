@@ -17,7 +17,7 @@ extension UUID {
     } else {
       matches = string.range(of: "^[a-fA-F0-9]{32}", options: .regularExpression)
       if matches != nil {
-        let tempString: NSMutableString = NSMutableString(string: string)
+        let tempString = NSMutableString(string: string)
         tempString.insert("-", at: 20)
         tempString.insert("-", at: 16)
         tempString.insert("-", at: 12)

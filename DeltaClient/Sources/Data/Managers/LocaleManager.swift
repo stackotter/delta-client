@@ -18,7 +18,7 @@ class LocaleManager {
   
   private var locales: [String: MinecraftLocale] = [:]
   
-  var currentLocaleName: String? = nil
+  var currentLocaleName: String?
   var currentLocale: MinecraftLocale {
     if let name = currentLocaleName {
       return locales[name] ?? MinecraftLocale()

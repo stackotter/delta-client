@@ -8,11 +8,10 @@
 import Foundation
 import GameplayKit
 
-public class Random
-{
+public class Random {
   let rand: GKLinearCongruentialRandomSource
   
-  init(_ seed : UInt64) {
+  init(_ seed: UInt64) {
     self.rand = GKLinearCongruentialRandomSource(seed: seed)
   }
   

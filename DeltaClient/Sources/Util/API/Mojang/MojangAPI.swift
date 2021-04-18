@@ -12,7 +12,7 @@ import os
 // TODO: handle errors in api response using status code (403)
 // TODO: clean up api
 struct MojangAPI {
-  static func login(email: String, password: String, clientToken: String, completion: @escaping (MojangAuthenticationResponse) -> ()){
+  static func login(email: String, password: String, clientToken: String, completion: @escaping (MojangAuthenticationResponse) -> Void) {
     let requestObject = MojangAuthenticationRequest(
       agent: MojangAgent(),
       username: email,
@@ -47,7 +47,7 @@ struct MojangAPI {
   }
   
   // TODO: a lot of repeated code in these functions
-  static func join(accessToken: String, selectedProfile: String, serverHash: String, completion: @escaping () -> ()) {
+  static func join(accessToken: String, selectedProfile: String, serverHash: String, completion: @escaping () -> Void) {
     let requestObject = MojangJoinRequest(
       accessToken: accessToken,
       selectedProfile: selectedProfile,
@@ -63,7 +63,7 @@ struct MojangAPI {
       return
     }
     
-    RequestUtil.post(MojangAPIDefinition.JOIN_SERVER_URL, requestBody) { data, error in
+    RequestUtil.post(MojangAPIDefinition.JOIN_SERVER_URL, requestBody) { _, error in
       if error != nil {
         Logger.error("mojang api join request failed: \(error!)")
       } else {
@@ -73,7 +73,7 @@ struct MojangAPI {
     }
   }
   
-  static func refresh(accessToken: String, clientToken: String, completion: @escaping (_ accessToken: String) -> (), failure: @escaping () -> ()) {
+  static func refresh(accessToken: String, clientToken: String, completion: @escaping (_ accessToken: String) -> Void, failure: @escaping () -> Void) {
     let requestObject = [
       "accessToken": accessToken,
       "clientToken": clientToken
@@ -83,16 +83,20 @@ struct MojangAPI {
       let requestBody = try JSONSerialization.data(withJSONObject: requestObject, options: [])
       
       RequestUtil.post(MojangAPIDefinition.REFRESH_URL, requestBody) { data, error in
-        if error != nil {
-          Logger.error("mojang token refresh failed: \(error!)")
+        if let error = error {
+          Logger.error("mojang token refresh failed: \(error)")
           failure()
-        } else {
+        } else if let data = data {
           do {
-            let response = try JSONSerialization.jsonObject(with: data!, options: []) as! [String: Any]
-            if let newAccessToken = response["accessToken"] as? String {
-              completion(newAccessToken)
+            if let response = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+              if let newAccessToken = response["accessToken"] as? String {
+                completion(newAccessToken)
+              } else {
+                Logger.error("failed to refresh access token: \(response["errorMessage"] ?? "no error message provided")")
+                failure()
+              }
             } else {
-              Logger.error("failed to refresh access token: \(response["errorMessage"] ?? "no error message provided")")
+              Logger.error("refresh mojang account token: invalid json response")
               failure()
             }
           } catch {

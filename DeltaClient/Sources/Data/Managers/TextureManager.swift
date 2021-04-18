@@ -82,7 +82,7 @@ class TextureManager {
     for (index, (_, image)) in images.enumerated() {
       let width = image.width
       let height = image.height
-      let bytesPerRow = bytesPerPixel*16
+      let bytesPerRow = bytesPerPixel * 16
       
       let context = CGContext(
         data: nil,
@@ -110,7 +110,7 @@ class TextureManager {
         slice: index,
         withBytes: bytes,
         bytesPerRow: bytesPerRow,
-        bytesPerImage: bytesPerRow*height
+        bytesPerImage: bytesPerRow * height
       )
     }
     

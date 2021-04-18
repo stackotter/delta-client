@@ -100,7 +100,7 @@ class ServerConnection {
   }
   
   func login(username: String) {
-    eventManager.registerOneTimeEventHandler({ event in
+    eventManager.registerOneTimeEventHandler({ _ in
       self.handshake(nextState: .login)
       
       let loginStart = LoginStartPacket(username: username)

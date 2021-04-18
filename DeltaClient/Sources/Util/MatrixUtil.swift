@@ -99,7 +99,7 @@ struct MatrixUtil {
   static func rotationMatrix2d(_ angle: Float) -> matrix_float2x2 {
     return matrix_float2x2(
       [cos(angle), -sin(angle)],
-      [sin(angle),  cos(angle)]
+      [sin(angle), cos(angle)]
     )
   }
   

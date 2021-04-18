@@ -35,30 +35,28 @@ class EncryptionLayer: NetworkLayer {
   
   func handleInbound(_ buffer: Buffer) {
     if let cryptor = inputCryptor {
-      var decrypted = Array<UInt8>(repeating: 0, count: buffer.bytes.count)
+      var decrypted = [UInt8](repeating: 0, count: buffer.bytes.count)
       let (_, status) = cryptor.update(byteArrayIn: buffer.bytes, byteArrayOut: &decrypted)
       if status == .success {
         inboundSuccessor?.handleInbound(Buffer(decrypted))
       } else {
         Logger.error("failed to decrypt packet: \(status)")
       }
-    }
-    else {
+    } else {
       inboundSuccessor?.handleInbound(buffer)
     }
   }
   
   func handleOutbound(_ buffer: Buffer) {
     if let cryptor = outputCryptor {
-      var encrypted = Array<UInt8>(repeating: 0, count: buffer.bytes.count)
+      var encrypted = [UInt8](repeating: 0, count: buffer.bytes.count)
       let (_, status) = cryptor.update(byteArrayIn: buffer.bytes, byteArrayOut: &encrypted)
       if status == .success {
         outboundSuccessor?.handleOutbound(Buffer(encrypted))
       } else {
         Logger.error("failed to decrypt packet: \(status)")
       }
-    }
-    else {
+    } else {
       outboundSuccessor?.handleOutbound(buffer)
     }
   }

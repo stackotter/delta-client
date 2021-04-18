@@ -264,32 +264,32 @@ class BlockPaletteManager {
         let minPoint: simd_float2
         switch direction.axis {
           case .x:
-            if (!MathUtil.checkFloatEquality(point1.x, value, absoluteTolerance: margin) &&
-                !MathUtil.checkFloatEquality(point2.x, value, absoluteTolerance: margin)) {
+            if !MathUtil.checkFloatEquality(point1.x, value, absoluteTolerance: margin) &&
+                !MathUtil.checkFloatEquality(point2.x, value, absoluteTolerance: margin) {
               continue
             }
             maxPoint = simd_float2(max(point1.y, point2.y), max(point1.z, point2.z))
             minPoint = simd_float2(min(point1.y, point2.y), min(point1.z, point2.z))
           case .y:
-            if (!MathUtil.checkFloatEquality(point1.y, value, absoluteTolerance: margin) &&
-                !MathUtil.checkFloatEquality(point2.y, value, absoluteTolerance: margin)) {
+            if !MathUtil.checkFloatEquality(point1.y, value, absoluteTolerance: margin) &&
+                !MathUtil.checkFloatEquality(point2.y, value, absoluteTolerance: margin) {
               continue
             }
             maxPoint = simd_float2(max(point1.x, point2.x), max(point1.z, point2.z))
             minPoint = simd_float2(min(point1.x, point2.x), min(point1.z, point2.z))
           case .z:
-            if (!MathUtil.checkFloatEquality(point1.z, value, absoluteTolerance: margin) &&
-                !MathUtil.checkFloatEquality(point2.z, value, absoluteTolerance: margin)) {
+            if !MathUtil.checkFloatEquality(point1.z, value, absoluteTolerance: margin) &&
+                !MathUtil.checkFloatEquality(point2.z, value, absoluteTolerance: margin) {
               continue
             }
             maxPoint = simd_float2(max(point1.x, point2.x), max(point1.y, point2.y))
             minPoint = simd_float2(min(point1.x, point2.x), min(point1.y, point2.y))
         }
         
-        if (MathUtil.checkFloatLessThan(value: minPoint.x, compareTo: 0, absoluteTolerance: margin) &&
+        if MathUtil.checkFloatLessThan(value: minPoint.x, compareTo: 0, absoluteTolerance: margin) &&
             MathUtil.checkFloatLessThan(value: minPoint.y, compareTo: 0, absoluteTolerance: margin) &&
             MathUtil.checkFloatGreaterThan(value: maxPoint.x, compareTo: 1, absoluteTolerance: margin) &&
-            MathUtil.checkFloatGreaterThan(value: maxPoint.y, compareTo: 1, absoluteTolerance: margin)) {
+            MathUtil.checkFloatGreaterThan(value: maxPoint.y, compareTo: 1, absoluteTolerance: margin) {
           fullFaces.insert(direction)
         }
       }
@@ -299,13 +299,15 @@ class BlockPaletteManager {
     return blockModel
   }
   
+  // TODO: separate out functionality
+  // swiftlint:disable function_body_length
   func loadIntermediateBlockModel(for identifier: Identifier) throws -> IntermediateBlockModel {
     if let blockModel = intermediateCache[identifier] {
       return blockModel
     }
     
     let blockModelJSON = try assetManager.getModelJSON(for: identifier)
-    var parent: IntermediateBlockModel? = nil
+    var parent: IntermediateBlockModel?
     if let parentName = blockModelJSON.getString(forKey: "parent") {
       parent = try loadIntermediateBlockModel(for: try Identifier(parentName))
     }
@@ -357,7 +359,7 @@ class BlockPaletteManager {
               let rotationOriginVector = simd_float3(rotationOrigin) / Float(16.0)
               let rotation = angle != nil ? Float(angle!) / 180 * Float.pi : 0
               modelMatrix *= MatrixUtil.translationMatrix(-rotationOriginVector)
-              var rotationMatrix: matrix_float4x4? = nil
+              var rotationMatrix: matrix_float4x4?
               switch rotationAxis {
                 case "x":
                   rotationMatrix = MatrixUtil.rotationMatrix(x: rotation)
@@ -499,6 +501,7 @@ class BlockPaletteManager {
     intermediateCache[identifier] = blockModel // cache block model for later
     return blockModel
   }
+  // swiftlint:enable function_body_length
   
   private func textureCoordsFrom(_ minUV: simd_float2, _ maxUV: simd_float2, rotation: Int) -> [simd_float2] {
     // one uv coordinate for each corner
@@ -515,7 +518,9 @@ class BlockPaletteManager {
       let matrix = MatrixUtil.rotationMatrix2d(Float(rotation) / 180 * Float.pi)
       for (index, var uv) in uvs.enumerated() {
         uv -= textureCenter
-        uv = uv * matrix
+        // swiftlint:disable shorthand_operator
+        uv = uv * matrix // simd doesn't support *= between a vector and a matrix
+        // swiftlint:enable shorthand_operator
         uv += textureCenter
         uvs[index] = uv
       }

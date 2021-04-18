@@ -26,7 +26,7 @@ struct Stopwatch {
   }
   
   func currentMillis() -> Double {
-    return CFAbsoluteTimeGetCurrent()*1000
+    return CFAbsoluteTimeGetCurrent() * 1000
   }
   
   mutating func startMeasurement(_ category: String) {
@@ -49,7 +49,7 @@ struct Stopwatch {
   func summary() {
     for category in measurements.keys.sorted() {
       let times = measurements[category]!
-      let average = times.reduce(0.0, +)/Double(times.count)
+      let average = times.reduce(0.0, +) / Double(times.count)
       var message = times.count == 1 ? "" : "avg "
       message += String(format: "%.4fms", average)
       log(category: category, message: message)

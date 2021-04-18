@@ -27,17 +27,17 @@ class PacketLayer: NetworkLayer {
   func handleInbound(_ inBuffer: Buffer) {
     var buffer = inBuffer // mutable copy
     while true {
-      if (receiveState.length == -1) {
+      if receiveState.length == -1 {
         while buffer.remaining != 0 {
           let byte = buffer.readByte()
           receiveState.lengthBytes.append(byte)
-          if (byte & 0x80 == 0x00) {
+          if byte & 0x80 == 0x00 {
             break
           }
         }
         
-        if (receiveState.lengthBytes.count != 0) {
-          if (receiveState.lengthBytes.last! & 0x80 == 0x00) {
+        if !receiveState.lengthBytes.isEmpty {
+          if receiveState.lengthBytes.last! & 0x80 == 0x00 {
             // using standalone implementation of varint decoding to hopefully reduce networking overheads slightly?
             receiveState.length = 0
             for i in 0..<receiveState.lengthBytes.count {
@@ -48,17 +48,17 @@ class PacketLayer: NetworkLayer {
         }
       }
       
-      if (receiveState.length == 0) {
+      if receiveState.length == 0 {
         // TODO: investigate empty packets
         Logger.debug("received empty packet")
         receiveState.length = -1
         receiveState.lengthBytes = []
-      } else if (receiveState.length != -1 && buffer.remaining != 0) {
+      } else if receiveState.length != -1 && buffer.remaining != 0 {
         while buffer.remaining != 0 {
           let byte = buffer.readByte()
           receiveState.packet.append(byte)
           
-          if (receiveState.packet.count == receiveState.length) {
+          if receiveState.packet.count == receiveState.length {
             inboundSuccessor?.handleInbound(Buffer(receiveState.packet))
             receiveState.packet = []
             receiveState.length = -1
@@ -68,7 +68,7 @@ class PacketLayer: NetworkLayer {
         }
       }
       
-      if (buffer.remaining == 0) {
+      if buffer.remaining == 0 {
         break
       }
     }

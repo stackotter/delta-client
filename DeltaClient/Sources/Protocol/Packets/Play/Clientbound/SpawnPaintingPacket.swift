@@ -8,7 +8,7 @@
 import Foundation
 
 struct SpawnPaintingPacket: ClientboundPacket {
-  static let id: Int =  0x03
+  static let id: Int = 0x03
   
   var entityId: Int
   var entityUUID: UUID

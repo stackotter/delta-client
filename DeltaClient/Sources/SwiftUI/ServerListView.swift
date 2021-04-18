@@ -16,8 +16,8 @@ struct ServerListView: View {
     NavigationView {
       List {
         let pingers = serverList.pingers
-        if pingers.count != 0 {
-          ForEach(pingers, id:\.self) { pinger in
+        if !pingers.isEmpty {
+          ForEach(pingers, id: \.self) { pinger in
             NavigationLink(
               destination: ServerDetailView(
                 viewState: viewState,

@@ -20,7 +20,7 @@ struct CompactedLongArray {
   }
   
   func decompact() -> [UInt64] {
-    let nPerLong = Int((64/Float(bitsPerEntry)).rounded(.down))
+    let nPerLong = Int((64 / Float(bitsPerEntry)).rounded(.down))
     var output: [UInt64] = [UInt64](repeating: 0, count: numEntries + nPerLong)
     let mask: UInt64 = (1 << bitsPerEntry) - 1
 

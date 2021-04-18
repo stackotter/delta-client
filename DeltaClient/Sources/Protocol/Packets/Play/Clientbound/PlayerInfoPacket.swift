@@ -36,7 +36,7 @@ struct PlayerInfoPacket: ClientboundPacket {
           for _ in 0..<numProperties {
             let propertyName = packetReader.readString()
             let value = packetReader.readString()
-            var signature: String? = nil
+            var signature: String?
             if packetReader.readBool() {
               signature = packetReader.readString()
             }
@@ -45,7 +45,7 @@ struct PlayerInfoPacket: ClientboundPacket {
           }
           let gamemode = Gamemode(rawValue: Int8(packetReader.readVarInt())) ?? .none
           let ping = packetReader.readVarInt()
-          var displayName: ChatComponent? = nil
+          var displayName: ChatComponent?
           if packetReader.readBool() {
             displayName = packetReader.readChat()
           }
@@ -58,7 +58,7 @@ struct PlayerInfoPacket: ClientboundPacket {
           let ping = packetReader.readVarInt()
           playerAction = .updateLatency(ping: ping)
         case 3: // update display name
-          var displayName: ChatComponent? = nil
+          var displayName: ChatComponent?
           if packetReader.readBool() {
             displayName = packetReader.readChat()
           }

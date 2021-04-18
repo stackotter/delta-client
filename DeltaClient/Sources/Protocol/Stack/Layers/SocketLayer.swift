@@ -62,7 +62,7 @@ class SocketLayer: OutermostNetworkLayer {
   
   func receive() {
     connection.receive(minimumIncompleteLength: 0, maximumLength: 4096, completion: {
-      (data, context, isComplete, error) in
+      (data, _, _, error) in
       if data == nil {
         return
       } else if error != nil {
@@ -94,7 +94,7 @@ class SocketLayer: OutermostNetworkLayer {
   // Housekeeping
   
   private func stateUpdateHandler(newState: NWConnection.State) {
-    switch(newState) {
+    switch newState {
       case .ready:
         state = .connected
         receive()

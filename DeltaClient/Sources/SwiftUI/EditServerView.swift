@@ -30,7 +30,7 @@ struct EditServerView: View {
   }
   
   func addServer() {
-    if serverName.count == 0 {
+    if serverName.isEmpty {
       errorMessage = "please provide a display name"
     } else if let url = URL(string: "minecraft://\(ip)") {
       if let host = url.host {

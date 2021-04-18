@@ -16,7 +16,7 @@ struct LoginPluginResponse: ServerboundPacket {
   
   func writePayload(to writer: inout PacketWriter) {
     writer.writeVarInt(Int32(messageId))
-    writer.writeBool(data.count != 0 ? wasSuccess : false)
+    writer.writeBool(!data.isEmpty ? wasSuccess : false)
     writer.writeByteArray(data)
   }
 }

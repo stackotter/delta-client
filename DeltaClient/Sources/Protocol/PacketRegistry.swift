@@ -16,6 +16,8 @@ class PacketRegistry {
     .play: [:]
   ]
   
+  // TODO: make this part of a static variable definition
+  // swiftlint:disable function_body_length
   static func createDefault() -> PacketRegistry {
     let registry = PacketRegistry()
     
@@ -127,6 +129,7 @@ class PacketRegistry {
     ], toState: .play)
     return registry
   }
+  // swiftlint:enable function_body_length
   
   // Handy functions
   

@@ -15,5 +15,3 @@ protocol ChatComponent {
   
   func toText() -> String
 }
-
-

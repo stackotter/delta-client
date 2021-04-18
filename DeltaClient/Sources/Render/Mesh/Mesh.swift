@@ -29,7 +29,7 @@ protocol Mesh {
 extension Mesh {
   var isEmpty: Bool {
     queue.sync {
-      return vertices.count == 0
+      return vertices.isEmpty
     }
   }
   

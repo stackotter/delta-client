@@ -61,7 +61,11 @@ class WorldRenderer {
     depthState = metalDevice.makeDepthStencilState(descriptor: depthDescriptor)!
     
     Logger.debug("creating pipeline state")
-    pipelineState = try! metalDevice.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
+    do {
+      pipelineState = try metalDevice.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
+    } catch {
+      fatalError("failed to make render pipeline state")
+    }
     
     Logger.debug("loading textures")
     blockArrayTexture = managers.textureManager.createArrayTexture(metalDevice: metalDevice)
@@ -128,7 +132,7 @@ class WorldRenderer {
         
         renderEncoder.setVertexBuffer(buffers.vertexBuffer, offset: 0, index: 0) // set vertices
         renderEncoder.setVertexBuffer(buffers.uniformBuffer, offset: 0, index: 2) // set chunk specific uniforms
-        renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: buffers.indexBuffer.length/4, indexType: .uint32, indexBuffer: buffers.indexBuffer, indexBufferOffset: 0)
+        renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: buffers.indexBuffer.length / 4, indexType: .uint32, indexBuffer: buffers.indexBuffer, indexBufferOffset: 0)
       }
     }
   }

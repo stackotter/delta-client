@@ -33,6 +33,8 @@ class Client {
   
   // Commands interface
   
+  // TODO: create CLI class
+  // swiftlint:disable function_body_length
   func runCommand(_ command: String) {
     let logger = Logger(subsystem: "Minecraft", category: "commands")
     logger.log("running command `\(command)`")
@@ -47,7 +49,7 @@ class Client {
           let packet = ChatMessageServerboundPacket(message: message)
           server.sendPacket(packet)
         case "swing":
-          if options.count > 0 {
+          if !options.isEmpty {
             if options.first == "offhand" {
               let packet = AnimationServerboundPacket(hand: .offHand)
               server.sendPacket(packet)
@@ -101,4 +103,5 @@ class Client {
       }
     }
   }
+  // swiftlint:enable function_body_length
 }

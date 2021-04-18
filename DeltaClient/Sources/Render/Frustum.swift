@@ -40,7 +40,7 @@ struct Frustum {
     for planeVector in planeVectors {
       var boundingBoxLiesOutside = true
       for vertex in homogenousVertices {
-        if (0 < dot(vertex, planeVector)) {
+        if dot(vertex, planeVector) > 0 {
           boundingBoxLiesOutside = false
           break
         }

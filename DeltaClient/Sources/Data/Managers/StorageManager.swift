@@ -42,13 +42,20 @@ class StorageManager {
       let launchMarker = self.storageDir.appendingPathComponent(".haslaunched")
       self.isFirstLaunch = !self.fileManager.fileExists(atPath: launchMarker.path)
       if self.isFirstLaunch {
-        if try! fileManager.contentsOfDirectory(at: self.storageDir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).count != 0 {
+        guard let directoryContents = try? fileManager.contentsOfDirectory(
+                at: self.storageDir,
+                includingPropertiesForKeys: nil,
+                options: .skipsHiddenFiles
+        ) else {
+          fatalError("failed to get directory contents (in a sandbox this really shouldn't happen right?)")
+        }
+        if directoryContents.isEmpty {
           try self.createBackup()
         }
         
         self.fileManager.createFile(
           atPath: launchMarker.path,
-          contents: "delete this file to reset the client. a backup of this folder is made automatically when resetting.".data(using: .utf8),
+          contents: "".data(using: .utf8),
           attributes: nil
         )
       }

@@ -34,10 +34,10 @@ struct ChunkData {
         // HACK: this could cause issues down the line because it assumes no biome id is greater than 256
         // every fourth byte of this is a biome id (biome ids are stored as big endian ints but are actually never bigger than an int)
         // will have to write wrapper over it to access only all the fourth bytes
-        biomes = packetReader.readByteArray(length: 1024*4)
+        biomes = packetReader.readByteArray(length: 1024 * 4)
       }
       
-      let _ = packetReader.readVarInt() // data length (not used)
+      _ = packetReader.readVarInt() // data length (not used)
       
       let sections = readChunkSections(&packetReader, primaryBitMask: primaryBitMask)
       
@@ -61,7 +61,7 @@ struct ChunkData {
         }
       }
       let elapsed = CFAbsoluteTimeGetCurrent() - start
-      Logger.log(String(format: "completed chunk at \(position) in %.2fms", elapsed*1000))
+      Logger.log(String(format: "completed chunk at \(position) in %.2fms", elapsed * 1000))
       
       let chunk = Chunk(position: position, heightMaps: heightMaps, ignoreOldData: ignoreOldData, biomes: biomes, sections: sections, blockEntities: blockEntities, blockPaletteManager: blockPaletteManager)
       return chunk

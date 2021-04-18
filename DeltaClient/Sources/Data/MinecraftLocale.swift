@@ -61,7 +61,7 @@ struct MinecraftLocale {
       let string = strings[currentIndex]
       let out: String = string.withCString {
         cStrings.append($0)
-        let out = format(template: template, strings: strings, currentIndex: currentIndex+1, cStrings: &cStrings)
+        let out = format(template: template, strings: strings, currentIndex: currentIndex + 1, cStrings: &cStrings)
         return out
       }
       return out

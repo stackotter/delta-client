@@ -9,7 +9,7 @@ import Foundation
 import os
 
 struct Profiler {
-  var log : OSLog
+  var log: OSLog
   
   init(name: String) {
     log = OSLog(subsystem: "profiling", category: name)

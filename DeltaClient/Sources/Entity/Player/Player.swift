@@ -10,10 +10,10 @@ import Foundation
 struct Player {
   var username: String
   
-  var spawnPosition: Position = Position(x: 0, y: 0, z: 0)
+  var spawnPosition = Position(x: 0, y: 0, z: 0)
   
-  var position: EntityPosition = EntityPosition(x: 0, y: 0, z: 0)
-  var look: PlayerRotation = PlayerRotation(yaw: 0, pitch: 0)
+  var position = EntityPosition(x: 0, y: 0, z: 0)
+  var look = PlayerRotation(yaw: 0, pitch: 0)
   
   var experienceBar: Float = -1
   var totalExperience: Int = -1
@@ -25,7 +25,7 @@ struct Player {
   var hotbarSlot: Int8 = -1
   var flyingSpeed: Float = 0
   var fovModifier: Float = 0
-  var flags: PlayerAbilities = PlayerAbilities()
+  var flags = PlayerAbilities()
   var isInvulnerable = false
   var isFlying = false
   var allowFlying = false

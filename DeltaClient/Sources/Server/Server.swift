@@ -13,9 +13,9 @@ class Server: Hashable {
   var connection: ServerConnection
   var descriptor: ServerDescriptor
   var config: ServerConfig
-  var tabList: TabList = TabList()
+  var tabList = TabList()
   
-  var recipeRegistry: RecipeRegistry = RecipeRegistry()
+  var recipeRegistry = RecipeRegistry()
   var packetRegistry: PacketRegistry
   
   var world: World?
@@ -25,7 +25,7 @@ class Server: Hashable {
   var isDifficultyLocked: Bool = true
   var player: Player
   
-  var eventManager: EventManager = EventManager<ServerEvent>()
+  var eventManager = EventManager<ServerEvent>()
   
   // Init
   

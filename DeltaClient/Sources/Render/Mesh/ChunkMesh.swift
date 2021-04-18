@@ -47,14 +47,14 @@ class ChunkMesh: Mesh {
   ]
   
   private let cubeVertexPositions: [simd_float3] = [
-    simd_float3([0,  1,  0]),
-    simd_float3([0,  0,  0]),
-    simd_float3([1,  0,  0]),
-    simd_float3([1,  1,  0]),
-    simd_float3([0,  1,  1]),
-    simd_float3([0,  0,  1]),
-    simd_float3([1,  0,  1]),
-    simd_float3([1,  1,  1]),
+    simd_float3([0, 1, 0]),
+    simd_float3([0, 0, 0]),
+    simd_float3([1, 0, 0]),
+    simd_float3([1, 1, 0]),
+    simd_float3([0, 1, 1]),
+    simd_float3([0, 0, 1]),
+    simd_float3([1, 0, 1]),
+    simd_float3([1, 1, 1])
   ]
   
   init(blockPaletteManager: BlockPaletteManager, chunk: Chunk) {
@@ -98,7 +98,7 @@ class ChunkMesh: Mesh {
             if state != 0 { // block isn't air
               let blockIndex = offset + i // block index in chunk
               var position = indexToCoordinates[i]!
-              position.y += sectionIndex*16
+              position.y += sectionIndex * 16
               
               addBlock(position.x, position.y, position.z, index: blockIndex, state: state)
             }
@@ -109,8 +109,8 @@ class ChunkMesh: Mesh {
       
       stopwatch.summary()
       
-      let xOffset = chunk.position.chunkX*16
-      let zOffset = chunk.position.chunkZ*16
+      let xOffset = chunk.position.chunkX * 16
+      let zOffset = chunk.position.chunkZ * 16
       let modelToWorldMatrix = MatrixUtil.translationMatrix([Float(xOffset), 0.0, Float(zOffset)])
       
       uniforms = ChunkUniforms(modelToWorld: modelToWorldMatrix)

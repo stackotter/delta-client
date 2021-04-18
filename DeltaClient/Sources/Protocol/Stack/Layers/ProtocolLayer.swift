@@ -12,7 +12,7 @@ class ProtocolLayer: InnermostNetworkLayer {
   typealias Packet = ServerboundPacket
   typealias Output = PacketReader
   
-  var inboundSuccessor: InboundNetworkLayer? = nil
+  var inboundSuccessor: InboundNetworkLayer?
   var outboundSuccessor: OutboundNetworkLayer?
   
   var handler: ((PacketReader) -> Void)?
