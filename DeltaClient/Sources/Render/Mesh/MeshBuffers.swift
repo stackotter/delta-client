@@ -9,7 +9,7 @@ import Foundation
 import Metal
 
 struct MeshBuffers {
-  var indexBuffer: MTLBuffer
   var vertexBuffer: MTLBuffer
+  var indexBuffer: MTLBuffer
   var uniformBuffer: MTLBuffer
 }

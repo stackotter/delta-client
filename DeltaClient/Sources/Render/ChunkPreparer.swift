@@ -62,7 +62,7 @@ class ChunkPreparer {
   }
   
   func setCamera(_ camera: Camera) {
-    self.camera = Camera()
+    self.camera = camera
     updateChunks()
   }
   

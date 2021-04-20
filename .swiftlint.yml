@@ -54,6 +54,7 @@ excluded:
   - DeltaClient/Sources/Protocol/Stack/Layers/SocketLayer.swift
   - DeltaClient/Sources/Protocol/Stack/NetworkStack.swift
   - DeltaClient/Sources/Render/BlockModel/FaceDirection.swift
+  - DeltaClient/Sources/Render/Camera.swift
   - DeltaClient/Sources/Render/ChunkPreparer.swift
   - DeltaClient/Sources/Render/Frustum.swift
   - DeltaClient/Sources/Render/Mesh/ChunkMesh.swift
@@ -75,7 +76,7 @@ excluded:
   - DeltaClient/Sources/World/ChunkSection.swift
   - DeltaClient/Sources/World/World.swift
   - DeltaClient/Sources/World/WorldConfig.swift
-
+  
 disabled_rules:
   - trailing_whitespace
   - switch_case_alignment

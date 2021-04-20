@@ -72,7 +72,7 @@ extension Mesh {
         // TODO: have separate hasChanged for uniforms (they change a lot less often for chunks)
         // TODO: reuse buffer for uniforms (they have a fixed size)
         vertexBuffer = try createVertexBuffer(device: device)
-        indexBuffer = try createVertexBuffer(device: device)
+        indexBuffer = try createIndexBuffer(device: device)
         uniformBuffer = try createUniformBuffer(device: device)
         
         hasChanged = false
@@ -80,8 +80,8 @@ extension Mesh {
     }
     
     return MeshBuffers(
-      indexBuffer: indexBuffer,
       vertexBuffer: vertexBuffer,
+      indexBuffer: indexBuffer,
       uniformBuffer: uniformBuffer
     )
   }
