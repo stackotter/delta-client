@@ -104,6 +104,7 @@
 
 - [ ] World should eventually be mostly structs and just contain helper methods and be used a data holder (chunks shouldn't need to update their meshes and stuff probably, that's chunk preparers job, could involve callbacks though)
 - [ ] the rest of the code shouldn't know that rendering even exists (the renderer should just observe the world)
+- [ ] nbt code as encoder and decoder maybe?
 
 ## Optimisation
 
@@ -112,9 +113,11 @@
 ## Code Cleanup
 
 - [ ] restructure folder structure
+- [ ] move most things out of data folder (it's a bit ambiguous)
 - [ ] split buffer into InBuffer and OutBuffer
 - [ ] always use the position type instead of separate x, y and z arguments
 - [ ] get rid of getIndexForBlock or whatever and use the calculated property of Position
 - [ ] fix SwiftLint stuff
 - [ ] meet the airbnb swift style guidelines
   - [ ] use MARK
+- [ ] fix error handling, 
