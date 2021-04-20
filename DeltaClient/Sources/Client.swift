@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 class Client {
   var server: Server
@@ -36,8 +36,8 @@ class Client {
   // TODO: create CLI class
   // swiftlint:disable function_body_length
   func runCommand(_ command: String) {
-    let logger = Logger(subsystem: "Minecraft", category: "commands")
-    logger.log("running command `\(command)`")
+    let logger = Logger(name: "CLI")
+    logger.info("running command `\(command)`")
     let parts = command.split(separator: " ")
     if let command = parts.first {
       let options = parts.dropFirst().map {
@@ -53,19 +53,19 @@ class Client {
             if options.first == "offhand" {
               let packet = AnimationServerboundPacket(hand: .offHand)
               server.sendPacket(packet)
-              Logger.log("swung off hand")
+              Logger.info("swung off hand")
               return
             }
           }
           let packet = AnimationServerboundPacket(hand: .mainHand)
           server.sendPacket(packet)
-          Logger.log("swung main hand")
+          Logger.info("swung main hand")
         case "tablist":
-          Logger.log("-- BEGIN TABLIST --")
+          Logger.info("-- BEGIN TABLIST --")
           for playerInfo in server.tabList.players {
-            Logger.log("[\(playerInfo.value.displayName?.toText() ?? playerInfo.value.name)] ping=\(playerInfo.value.ping)ms")
+            Logger.info("[\(playerInfo.value.displayName?.toText() ?? playerInfo.value.name)] ping=\(playerInfo.value.ping)ms")
           }
-          Logger.log("-- END TABLIST --")
+          Logger.info("-- END TABLIST --")
         case "getblock":
           if options.count == 3 {
             guard
@@ -73,14 +73,14 @@ class Client {
               let y = Int(options[1]),
               let z = Int(options[2])
             else {
-              Logger.log("x y z must be integers")
+              Logger.info("x y z must be integers")
               return
             }
             let position = Position(x: x, y: y, z: z)
             let block = server.world?.getBlock(at: position) ?? 0
-            Logger.log("block has state \(block)")
+            Logger.info("block has state \(block)")
           } else {
-            Logger.log("usage: getblock x y z")
+            Logger.info("usage: getblock x y z")
           }
         case "getlight":
           if options.count == 3 {
@@ -89,17 +89,19 @@ class Client {
               let y = Int(options[1]),
               let z = Int(options[2])
             else {
-              Logger.log("x y z must be integers")
+              Logger.info("x y z must be integers")
               return
             }
             let position = Position(x: x, y: y, z: z)
             if let lighting = server.world?.lighting[position.chunkPosition] {
-              logger.debug("skyLight: \(lighting.getSkyLightLevel(at: position))")
-              logger.debug("blockLight: \(lighting.getBlockLightLevel(at: position))")
+              logger.info("skyLight: \(lighting.getSkyLightLevel(at: position))")
+              logger.info("blockLight: \(lighting.getBlockLightLevel(at: position))")
             }
+          } else {
+            Logger.info("usage: getlight x y z")
           }
         default:
-          Logger.log("invalid command")
+          Logger.warn("invalid command")
       }
     }
   }

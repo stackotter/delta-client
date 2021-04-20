@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 // TODO: this could do with some refactoring
 class PacketLayer: NetworkLayer {
@@ -36,8 +36,8 @@ class PacketLayer: NetworkLayer {
           }
         }
         
-        if !receiveState.lengthBytes.isEmpty {
-          if receiveState.lengthBytes.last! & 0x80 == 0x00 {
+        if !receiveState.lengthBytes.isEmpty, let lastLengthByte = receiveState.lengthBytes.last {
+          if lastLengthByte & 0x80 == 0x00 {
             // using standalone implementation of varint decoding to hopefully reduce networking overheads slightly?
             receiveState.length = 0
             for i in 0..<receiveState.lengthBytes.count {

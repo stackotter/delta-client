@@ -7,7 +7,7 @@
 
 import Foundation
 import IDZSwiftCommonCrypto
-import os
+
 
 class EncryptionLayer: NetworkLayer {
   var inputCryptor: StreamCryptor?

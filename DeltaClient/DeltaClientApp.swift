@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import os
+
 
 @main
 struct DeltaClientApp: App {
@@ -42,7 +42,7 @@ struct DeltaClientApp: App {
   func handleEvent(_ event: AppEvent) {
     switch event {
       case .loadingScreenMessage(let message):
-        Logger.log(message)
+        Logger.info(message)
         state.update(to: .loading(message: message))
       case .loadingComplete(let managers):
         state.update(to: .loaded(managers: managers))

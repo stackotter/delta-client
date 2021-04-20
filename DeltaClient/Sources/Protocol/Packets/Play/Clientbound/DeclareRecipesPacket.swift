@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 struct DeclareRecipesPacket: ClientboundPacket {
   static let id: Int = 0x5a
@@ -20,12 +20,12 @@ struct DeclareRecipesPacket: ClientboundPacket {
     let numRecipes = packetReader.readVarInt()
     for _ in 0..<numRecipes {
       let type = try packetReader.readIdentifier()
-      let recipeId = packetReader.readString()
+      let recipeId = try packetReader.readString()
       
       if type.namespace == "minecraft" {
         switch type.name {
           case "crafting_shapeless":
-            let group = packetReader.readString()
+            let group = try packetReader.readString()
             var ingredients: [Ingredient] = []
             let ingredientCount = packetReader.readVarInt()
             for _ in 0..<ingredientCount {
@@ -44,7 +44,7 @@ struct DeclareRecipesPacket: ClientboundPacket {
           case "crafting_shaped":
             let width = Int(packetReader.readVarInt())
             let height = Int(packetReader.readVarInt())
-            let group = packetReader.readString()
+            let group = try packetReader.readString()
             var ingredients: [Ingredient] = []
             let ingredientCount = width * height
             for _ in 0..<ingredientCount {
@@ -61,7 +61,7 @@ struct DeclareRecipesPacket: ClientboundPacket {
             let recipe = CraftingShaped(group: group, width: width, height: height, ingredients: ingredients, result: result)
             recipeRegistry.craftingRecipes[recipeId] = recipe
           case "smelting", "blasting", "smoking", "campfire_cooking":
-            let group = packetReader.readString()
+            let group = try packetReader.readString()
             var itemStacks: [ItemStack] = []
             let count = packetReader.readVarInt()
             for _ in 0..<count {
@@ -84,14 +84,14 @@ struct DeclareRecipesPacket: ClientboundPacket {
               case "campfire_cooking":
                 recipe = CampfireCookingRecipe(group: group, ingredient: ingredient, result: result, experience: experience, cookingTime: cookingTime)
               default:
-                Logger.debug("unknown heat recipe type: \(type.toString())")
+                Logger.warn("unknown heat recipe type: \(type.toString())")
                 break
             }
             if recipe != nil {
               recipeRegistry.heatRecipes[recipeId] = recipe
             }
           case "stonecutting":
-            let group = packetReader.readString()
+            let group = try packetReader.readString()
             var itemStacks: [ItemStack] = []
             let count = packetReader.readVarInt()
             for _ in 0..<count {
@@ -156,14 +156,13 @@ struct DeclareRecipesPacket: ClientboundPacket {
               case "crafting_special_suspiciousstew":
                 recipe = SuspiciousStewRecipe()
               default:
-                Logger.debug("unknown special recipe type: \(type.toString())")
-                break
+                Logger.warn("unknown special recipe type: \(type.toString())")
             }
-            if recipe != nil {
-              recipeRegistry.specialRecipes[recipeId] = recipe!
+            if let recipe = recipe {
+              recipeRegistry.specialRecipes[recipeId] = recipe
             }
           default:
-            Logger.debug("unknown recipe type")
+            Logger.warn("unknown recipe type")
         }
       }
     }

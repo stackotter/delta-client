@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 struct StatusResponsePacket: ClientboundPacket {
   static let id: Int = 0x00
@@ -26,7 +26,7 @@ struct StatusResponsePacket: ClientboundPacket {
       let maxPlayers = players.getInt(forKey: "max"),
       let numPlayers = players.getInt(forKey: "online")
     else {
-      Logger.debug("failed to parse status response json")
+      Logger.warn("failed to parse status response json")
       return
     }
     

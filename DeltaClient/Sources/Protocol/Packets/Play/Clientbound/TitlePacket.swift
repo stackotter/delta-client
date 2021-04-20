@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 struct TitlePacket: ClientboundPacket {
   static let id: Int = 0x4f
@@ -26,13 +26,13 @@ struct TitlePacket: ClientboundPacket {
     let actionId = packetReader.readVarInt()
     switch actionId {
       case 0: // set title
-        let text = packetReader.readChat()
+        let text = try packetReader.readChat()
         action = .setTitle(text: text)
       case 1: // set subtitle
-        let text = packetReader.readChat()
+        let text = try packetReader.readChat()
         action = .setSubtitle(text: text)
       case 2: // set action bar
-        let text = packetReader.readChat()
+        let text = try packetReader.readChat()
         action = .setActionBar(text: text)
       case 3: // set times and display
         let fadeIn = packetReader.readInt()

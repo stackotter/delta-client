@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 class Server: Hashable {
   var managers: Managers
@@ -33,8 +33,13 @@ class Server: Hashable {
     self.descriptor = descriptor
     self.managers = managers
     
-//    let username = self.managers.configManager.getSelectedProfile()!.name
+    
+    #if DEBUG
     let username = "epicboi"
+    #else
+    let username = self.managers.configManager.getSelectedProfile()!.name
+    #endif
+    
     self.player = Player(username: username)
     
     self.config = ServerConfig.createDefault()
@@ -66,7 +71,7 @@ class Server: Hashable {
         reader.locale = managers.localeManager.currentLocale
         
         guard let packetType = packetRegistry.getClientboundPacketType(withId: reader.packetId, andState: packetState) else {
-          Logger.error("non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
+          Logger.warn("non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
           return
         }
         
@@ -74,7 +79,7 @@ class Server: Hashable {
         try packet.handle(for: self)
       }
     } catch {
-      Logger.error("failed to handle packet: \(error)")
+      Logger.warn("failed to handle packet: \(error)")
     }
   }
   

@@ -20,7 +20,7 @@ struct SpawnLivingEntity: ClientboundPacket {
   
   init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
-    entityUUID = packetReader.readUUID()
+    entityUUID = try packetReader.readUUID()
     type = packetReader.readVarInt()
     position = packetReader.readEntityPosition()
     rotation = packetReader.readEntityRotation()

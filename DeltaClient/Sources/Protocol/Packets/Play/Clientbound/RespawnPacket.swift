@@ -23,8 +23,14 @@ struct RespawnPacket: ClientboundPacket {
     dimension = try packetReader.readIdentifier()
     worldName = try packetReader.readIdentifier()
     hashedSeed = packetReader.readLong()
-    gamemode = Gamemode(rawValue: packetReader.readByte())!
-    previousGamemode = Gamemode(rawValue: packetReader.readByte())!
+    guard
+      let gamemode = Gamemode(rawValue: packetReader.readByte()),
+      let previousGamemode = Gamemode(rawValue: packetReader.readByte())
+    else {
+      throw ClientboundPacketError.invalidGamemode
+    }
+    self.gamemode = gamemode
+    self.previousGamemode = previousGamemode
     isDebug = packetReader.readBool()
     isFlat = packetReader.readBool()
     copyMetadata = packetReader.readBool() // TODO_LATER: not used yet

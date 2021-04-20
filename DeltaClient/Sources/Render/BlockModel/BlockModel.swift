@@ -16,7 +16,9 @@ extension BlockModel {
   init(fromCache cache: CacheBlockModel) {
     fullFaces = Set<FaceDirection>()
     for cacheFullFace in cache.fullFaces {
-      fullFaces.insert(FaceDirection(fromCache: cacheFullFace)!)
+      if let fullFace = FaceDirection(fromCache: cacheFullFace) {
+        fullFaces.insert(fullFace)
+      }
     }
     elements = []
     for cacheElement in cache.elements {

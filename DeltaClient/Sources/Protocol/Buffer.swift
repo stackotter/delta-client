@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum BufferError: LocalizedError {
+  case invalidByteInUTF8String
+}
+
 struct Buffer {
   // all functions read unsigned unless otherwise specified
   var bytes: [UInt8]
@@ -161,9 +165,11 @@ struct Buffer {
     return Int(bitPattern: bitPattern)
   }
   
-  mutating func readString(length: Int) -> String {
+  mutating func readString(length: Int) throws -> String {
     let stringBytes = readBytes(n: length)
-    let string = String(bytes: stringBytes, encoding: .utf8)!
+    guard let string = String(bytes: stringBytes, encoding: .utf8) else {
+      throw BufferError.invalidByteInUTF8String
+    }
     return string
   }
   

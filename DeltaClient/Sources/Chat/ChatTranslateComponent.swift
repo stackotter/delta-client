@@ -15,22 +15,25 @@ struct ChatTranslateComponent: ChatComponent {
   var translation: String
   var content: [ChatComponent] = []
   
-  init(from json: JSON, locale: MinecraftLocale) {
-    style = ChatComponentUtil.readStyles(json)
-    siblings = ChatComponentUtil.readSiblings(json, locale: locale)
-    translateKey = json.getString(forKey: "translate")!
-    if json.containsKey("with") {
-      let withArray = json.getArray(forKey: "with")!
+  init(from json: JSON, locale: MinecraftLocale) throws {
+    guard let translateKey = json.getString(forKey: "translate") else {
+      throw ChatError.noTranslateKeyInTranslateComponent
+    }
+    self.translateKey = translateKey
+    
+    if let withArray = json.getArray(forKey: "with") {
       for elem in withArray {
-        let component = ChatComponentUtil.parseAny(elem, locale: locale)
-        if component != nil {
-          content.append(component!)
-        }
+        let component = try ChatComponentUtil.parseAny(elem, locale: locale)
+        content.append(component)
       }
     }
+    
     translation = locale.getTranslation(for: translateKey, with: content.map {
       return $0.toText()
     })
+    
+    siblings = try ChatComponentUtil.readSiblings(json, locale: locale)
+    style = ChatComponentUtil.readStyles(json)
   }
   
   func toText() -> String {

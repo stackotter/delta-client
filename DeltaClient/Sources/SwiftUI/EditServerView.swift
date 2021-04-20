@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import os
+
 
 struct EditServerView: View {
   var configManager: ConfigManager

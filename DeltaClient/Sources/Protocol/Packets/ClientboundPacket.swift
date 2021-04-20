@@ -7,6 +7,12 @@
 
 import Foundation
 
+enum ClientboundPacketError: LocalizedError {
+  case invalidDifficulty
+  case invalidGamemode
+  case invalidServerId
+}
+
 protocol ClientboundPacket {
   static var id: Int { get }
   

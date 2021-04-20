@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 struct PlayDisconnectPacket: ClientboundPacket {
   static let id: Int = 0x1a
@@ -14,11 +14,11 @@ struct PlayDisconnectPacket: ClientboundPacket {
   var reason: ChatComponent
   
   init(from packetReader: inout PacketReader) throws {
-    reason = packetReader.readChat()
+    reason = try packetReader.readChat()
   }
   
   func handle(for server: Server) throws {
-    Logger.log("disconnect reason: \(reason.toText())")
+    Logger.info("disconnected: \(reason.toText())")
     DeltaClientApp.triggerError(reason.toText())
   }
 }

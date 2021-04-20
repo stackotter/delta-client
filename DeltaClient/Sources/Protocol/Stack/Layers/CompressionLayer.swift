@@ -7,7 +7,7 @@
 
 import Foundation
 import Compression
-import os
+
 
 class CompressionLayer: NetworkLayer {
   var inboundSuccessor: InboundNetworkLayer?

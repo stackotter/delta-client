@@ -15,14 +15,22 @@ struct ChatScoreComponent: ChatComponent {
   var objective: String
   var value: String
   
-  init(from json: JSON, locale: MinecraftLocale) {
-    style = ChatComponentUtil.readStyles(json)
-    siblings = ChatComponentUtil.readSiblings(json, locale: locale)
+  init(from json: JSON, locale: MinecraftLocale) throws {
+    guard
+      let score = json.getJSON(forKey: "score"),
+      let name = score.getString(forKey: "name"),
+      let objective = score.getString(forKey: "objective"),
+      let value = score.getString(forKey: "value")
+    else {
+      throw ChatError.failedToReadScoreComponent
+    }
     
-    let score = json.getJSON(forKey: "score")!
-    name = score.getString(forKey: "name")!
-    objective = score.getString(forKey: "objective")!
-    value = score.getString(forKey: "value")!
+    self.name = name
+    self.objective = objective
+    self.value = value
+    
+    siblings = try ChatComponentUtil.readSiblings(json, locale: locale)
+    style = ChatComponentUtil.readStyles(json)
   }
   
   func toText() -> String {

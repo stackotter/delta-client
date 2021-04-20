@@ -33,12 +33,13 @@ struct UnlockRecipesPacket: ClientboundPacket {
     }
     
     if action == 0 { // init
-      initRecipeIds = []
+      var initRecipeIds = [Identifier]()
       count = packetReader.readVarInt()
       for _ in 0..<count {
         let identifier = try packetReader.readIdentifier()
-        initRecipeIds!.append(identifier)
+        initRecipeIds.append(identifier)
       }
+      self.initRecipeIds = initRecipeIds
     }
   }
 }

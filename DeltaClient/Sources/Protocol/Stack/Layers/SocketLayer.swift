@@ -7,7 +7,7 @@
 
 import Foundation
 import Network
-import os
+
 
 class SocketLayer: OutermostNetworkLayer {
   var outboundSuccessor: OutboundNetworkLayer?
@@ -29,7 +29,13 @@ class SocketLayer: OutermostNetworkLayer {
     case disconnected
   }
   
-  init(_ host: String, _ port: UInt16, inboundThread: DispatchQueue, ioThread: DispatchQueue, eventManager: EventManager<ServerEvent>) {
+  init(
+    _ host: String,
+    _ port: UInt16,
+    inboundThread: DispatchQueue,
+    ioThread: DispatchQueue,
+    eventManager: EventManager<ServerEvent>)
+  {
     self.host = host
     self.port = port
     
@@ -37,9 +43,13 @@ class SocketLayer: OutermostNetworkLayer {
     self.inboundThread = inboundThread
     self.ioThread = ioThread
     
+    guard let nwPort = NWEndpoint.Port(rawValue: port) else {
+      fatalError("failed to create port from int: \(port). this really shouldn't happen")
+    }
+    
     self.connection = NWConnection(
       host: NWEndpoint.Host(host),
-      port: NWEndpoint.Port(rawValue: port)!,
+      port: nwPort,
       using: .tcp
     )
     
@@ -61,25 +71,22 @@ class SocketLayer: OutermostNetworkLayer {
   // Receive
   
   func receive() {
-    connection.receive(minimumIncompleteLength: 0, maximumLength: 4096, completion: {
-      (data, _, _, error) in
-      if data == nil {
+    connection.receive(minimumIncompleteLength: 0, maximumLength: 4096, completion: { (data, _, _, error) in
+      if let error = error {
+        self.handleNWError(error)
         return
-      } else if error != nil {
-        self.handleNWError(error!)
-        return
-      }
-      
-      let bytes = [UInt8](data!)
-      let buffer = Buffer(bytes)
-      
-      self.inboundThread.async {
-        let bufferCopy = buffer
-        self.inboundSuccessor?.handleInbound(bufferCopy)
-      }
-      
-      if self.state != .disconnected {
-        self.receive()
+      } else if let data = data {
+        let bytes = [UInt8](data)
+        let buffer = Buffer(bytes)
+        
+        self.inboundThread.async {
+          let bufferCopy = buffer
+          self.inboundSuccessor?.handleInbound(bufferCopy)
+        }
+        
+        if self.state != .disconnected {
+          self.receive()
+        }
       }
     })
   }

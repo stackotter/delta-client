@@ -11,11 +11,11 @@ import Foundation
 struct TagsPacket: ClientboundPacket {
   static let id: Int = 0x5b
   
-  init(from packetReader: inout PacketReader) {
+  init(from packetReader: inout PacketReader) throws {
     for _ in 0..<4 {
       let length = packetReader.readVarInt()
       for _ in 0..<length {
-        let tagName = packetReader.readString()
+        let tagName = try packetReader.readString()
         _ = tagName
         let count = packetReader.readVarInt()
         for _ in 0..<count {

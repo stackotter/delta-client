@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import os
+
 
 enum GameViewStateEnum {
   case downloadingTerrain
@@ -28,7 +28,7 @@ struct GameRenderView: View {
   func handleEvent(_ event: AppEvent) {
     switch event {
       case .downloadedTerrain:
-        Logger.log("finished downloading terrain")
+        Logger.info("finished downloading terrain")
         state.update(to: .playing)
       default:
         break

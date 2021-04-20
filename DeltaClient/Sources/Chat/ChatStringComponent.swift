@@ -13,10 +13,14 @@ struct ChatStringComponent: ChatComponent {
   
   var text: String
   
-  init(from json: JSON, locale: MinecraftLocale) {
+  init(from json: JSON, locale: MinecraftLocale) throws {
+    guard let text = json.getString(forKey: "text") else {
+      throw ChatError.noTextForStringComponent
+    }
+    self.text = text
+    
+    siblings = try ChatComponentUtil.readSiblings(json, locale: locale)
     style = ChatComponentUtil.readStyles(json)
-    siblings = ChatComponentUtil.readSiblings(json, locale: locale)
-    text = json.getString(forKey: "text")!
   }
   
   init(fromString string: String) {

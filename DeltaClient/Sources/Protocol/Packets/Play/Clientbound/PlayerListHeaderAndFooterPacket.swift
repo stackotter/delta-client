@@ -14,7 +14,7 @@ struct PlayerListHeaderAndFooterPacket: ClientboundPacket {
   var footer: ChatComponent
 
   init(from packetReader: inout PacketReader) throws {
-    header = packetReader.readChat()
-    footer = packetReader.readChat()
+    header = try packetReader.readChat()
+    footer = try packetReader.readChat()
   }
 }

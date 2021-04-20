@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 class ProtocolLayer: InnermostNetworkLayer {
   typealias Packet = ServerboundPacket
@@ -24,7 +24,7 @@ class ProtocolLayer: InnermostNetworkLayer {
   
   func handleInbound(_ buffer: Buffer) {
     let packetReader = PacketReader(buffer: buffer)
-    Logger.log("packet received: 0x\(String(format: "%02x", packetReader.packetId))")
+    Logger.trace("packet received: 0x\(String(format: "%02x", packetReader.packetId))")
     if let callback = handler {
       callback(packetReader)
     }

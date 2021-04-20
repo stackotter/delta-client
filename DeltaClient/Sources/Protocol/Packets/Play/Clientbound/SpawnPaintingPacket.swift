@@ -18,7 +18,7 @@ struct SpawnPaintingPacket: ClientboundPacket {
   
   init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
-    entityUUID = packetReader.readUUID()
+    entityUUID = try packetReader.readUUID()
     motive = packetReader.readVarInt()
     location = packetReader.readPosition()
     direction = packetReader.readUnsignedByte()

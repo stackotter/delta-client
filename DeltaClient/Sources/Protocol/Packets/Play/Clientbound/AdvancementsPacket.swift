@@ -58,8 +58,8 @@ struct AdvancementsPacket: ClientboundPacket {
       let hasDisplay = packetReader.readBool()
       var displayData: AdvancementDisplay?
       if hasDisplay {
-        let title = packetReader.readChat()
-        let description = packetReader.readChat()
+        let title = try packetReader.readChat()
+        let description = try packetReader.readChat()
         let icon = try packetReader.readItemStack()
         let frameType = packetReader.readVarInt()
         let flags = packetReader.readInt() // 0x1: has background texture, 0x2: show toast, 0x4: hidden
@@ -85,7 +85,7 @@ struct AdvancementsPacket: ClientboundPacket {
         let arrayLength2 = packetReader.readVarInt()
         var requirement: [String] = []
         for _ in 0..<arrayLength2 {
-          let criterion = packetReader.readString()
+          let criterion = try packetReader.readString()
           requirement.append(criterion)
         }
         requirements.append(requirement)

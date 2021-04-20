@@ -18,13 +18,13 @@ struct SpawnEntityPacket: ClientboundPacket {
   var data: Int
   var velocity: EntityVelocity?
   
-  // TODO_LATER: figure out all the entity madness
-  init(from packetReader: inout PacketReader) {
+  init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
-    objectUUID = packetReader.readUUID()
+    objectUUID = try packetReader.readUUID()
     type = packetReader.readVarInt()
     position = packetReader.readEntityPosition()
-    rotation = packetReader.readEntityRotation(pitchFirst: true) // TODO_LATER: seems a lil sus that this is the only packet that has pitch and yaw in the other order
+    // seems a lil sus that this is the only packet that has pitch and yaw in the other order
+    rotation = packetReader.readEntityRotation(pitchFirst: true)
     data = packetReader.readInt()
     
     velocity = nil

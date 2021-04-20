@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 class Chunk {
   // constants
@@ -101,7 +101,7 @@ class Chunk {
       
       mesh.replaceBlock(at: blockIndex, newState: newState)
     } else {
-      Logger.warning("block change at y=\(position.y) (ignored)")
+      Logger.warn("block change at y=\(position.y) (ignored)")
     }
   }
   
@@ -125,8 +125,9 @@ class Chunk {
     let chunks = [self, neighbours[.north], neighbours[.east], neighbours[.south], neighbours[.west]]
     for (index, neighbour) in result.enumerated() {
       if neighbour.chunk_num != -1, let neighbourChunk = chunks[neighbour.chunk_num] {
-        let direction = FaceDirection(rawValue: index)!
-        neighbouringBlocks[direction] = (neighbourChunk, neighbour.index)
+        if let direction = FaceDirection(rawValue: index) {
+          neighbouringBlocks[direction] = (neighbourChunk, neighbour.index)
+        }
       }
     }
       

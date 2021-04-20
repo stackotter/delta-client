@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 class ServerPinger: Hashable, ObservableObject {
   @Published var pingResult: PingResult?

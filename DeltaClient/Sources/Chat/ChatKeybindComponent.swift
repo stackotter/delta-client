@@ -13,10 +13,14 @@ struct ChatKeybindComponent: ChatComponent {
   
   var keybind: String
   
-  init(from json: JSON, locale: MinecraftLocale) {
+  init(from json: JSON, locale: MinecraftLocale) throws {
+    guard let keybind = json.getString(forKey: "keybind") else {
+      throw ChatError.noKeybindInJSON
+    }
+    self.keybind = keybind
+    
+    siblings = try ChatComponentUtil.readSiblings(json, locale: locale)
     style = ChatComponentUtil.readStyles(json)
-    siblings = ChatComponentUtil.readSiblings(json, locale: locale)
-    keybind = json.getString(forKey: "keybind")!
   }
   
   func toText() -> String {

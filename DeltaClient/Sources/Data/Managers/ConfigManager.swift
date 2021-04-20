@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 enum ConfigError: LocalizedError {
   case failedToWriteConfig(Error)
@@ -30,12 +30,12 @@ class ConfigManager: ObservableObject {
         }
         return
       } catch {
-        Logger.warning("failed to load existing config: \(error)")
+        Logger.warn("failed to load existing config: \(error)")
       }
     }
     
-    // fall through means that default config must be created
-    Logger.log("resetting config file to defaults")
+    // TODO: don't rely on fall-through (a bit hard to read)
+    Logger.info("resetting config file to defaults")
     try? storageManager.removeFile(configFile)
     self.config = Config.createDefault()
     

@@ -18,9 +18,12 @@ extension BlockModelElement {
     modelMatrix = matrix_float4x4.fromData(cache.modelMatrix)
     faces = [:]
     for (cacheDirectionRaw, cacheFace) in cache.faces {
-      let direction = FaceDirection(rawValue: Int(cacheDirectionRaw))!
-      let face = BlockModelElementFace(fromCache: cacheFace)
-      faces[direction] = face
+      if let direction = FaceDirection(rawValue: Int(cacheDirectionRaw)) {
+        let face = BlockModelElementFace(fromCache: cacheFace)
+        faces[direction] = face
+      } else {
+        Logger.warn("invalid face direction in block model cache")
+      }
     }
   }
   

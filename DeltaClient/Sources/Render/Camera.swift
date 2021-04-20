@@ -30,7 +30,7 @@ struct Camera {
     worldToCamera *= MatrixUtil.rotationMatrix(x: -xRot) // x rotation
     
     // perspective projection
-    let cameraToClip = MatrixUtil.projectionMatrix(near: 0.0001, far: 1000, aspect: aspect, fieldOfViewY: fovY)
+    let cameraToClip = MatrixUtil.projectionMatrix(near: nearDistance, far: farDistance, aspect: aspect, fieldOfViewY: fovY)
     
     return worldToCamera * cameraToClip
   }

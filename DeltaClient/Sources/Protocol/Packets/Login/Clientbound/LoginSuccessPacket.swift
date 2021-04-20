@@ -13,9 +13,9 @@ struct LoginSuccessPacket: ClientboundPacket {
   var uuid: UUID
   var username: String
   
-  init(from packetReader: inout PacketReader) {
-    uuid = packetReader.readUUID()
-    username = packetReader.readString()
+  init(from packetReader: inout PacketReader) throws {
+    uuid = try packetReader.readUUID()
+    username = try packetReader.readString()
   }
   
   func handle(for server: Server) throws {

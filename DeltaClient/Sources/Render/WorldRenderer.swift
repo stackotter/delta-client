@@ -7,17 +7,19 @@
 
 import Foundation
 import MetalKit
-import os
+
+
+enum WorldRendererError: LocalizedError {
+  case failedToCreateUniformBuffer
+}
 
 class WorldRenderer {
-  var metalCommandQueue: MTLCommandQueue
   var pipelineState: MTLRenderPipelineState
   var depthState: MTLDepthStencilState
   
   var blockArrayTexture: MTLTexture
   
   var client: Client
-  var managers: Managers
   
   let nearDistance = 0.0001
   let farDistance = 1000
@@ -27,61 +29,82 @@ class WorldRenderer {
   var chunkPreparer: ChunkPreparer
   
   init(client: Client) {
+    Logger.info("initialising world renderer")
+    
+    // get metal device
     guard let metalDevice = MTLCreateSystemDefaultDevice() else {
+      Logger.error("no metal device found")
       fatalError("no metal device found")
     }
     
-    self.client = client
-    self.managers = client.managers
+    // load shaders
+    Logger.info("loading shaders")
+    guard
+      let defaultLibrary = metalDevice.makeDefaultLibrary(),
+      let vertex = defaultLibrary.makeFunction(name: "chunkVertexShader"),
+      let fragment = defaultLibrary.makeFunction(name: "chunkFragmentShader")
+    else {
+      Logger.error("failed to load shaders")
+      fatalError("failed to load world shaders")
+    }
     
+    // create pipeline descriptor
+    Logger.info("creating pipeline descriptor")
+    let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
+    pipelineStateDescriptor.label = "Triangle Pipeline"
+    pipelineStateDescriptor.vertexFunction = vertex
+    pipelineStateDescriptor.fragmentFunction = fragment
+    pipelineStateDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+    pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float
+    
+    // create pipeline state
+    Logger.info("creating pipeline state")
+    do {
+      pipelineState = try metalDevice.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
+    } catch {
+      fatalError("failed to create render pipeline state")
+    }
+    
+    // setup depth texture settings
+    let depthDescriptor = MTLDepthStencilDescriptor()
+    depthDescriptor.depthCompareFunction = .lessEqual
+    depthDescriptor.isDepthWriteEnabled = true
+    
+    guard let depthState = metalDevice.makeDepthStencilState(descriptor: depthDescriptor) else {
+      Logger.error("failed to create depth stencil state")
+      fatalError("failed to create depth stencil state")
+    }
+    self.depthState = depthState
+    
+    Logger.info("loading textures")
+    blockArrayTexture = client.managers.textureManager.createArrayTexture(metalDevice: metalDevice)
+    
+    // setup camera
     let fovDegrees: Float = 90
     let fovRadians = fovDegrees / 180 * Float.pi
     camera = Camera()
     camera.fovY = fovRadians
     
-    Logger.debug("creating command queue")
-    self.metalCommandQueue = metalDevice.makeCommandQueue()!
-    
-    Logger.debug("loading shaders")
-    let defaultLibrary = metalDevice.makeDefaultLibrary()
-    let vertex = defaultLibrary!.makeFunction(name: "chunkVertexShader")
-    let fragment = defaultLibrary!.makeFunction(name: "chunkFragmentShader")
-    
-    Logger.debug("creating pipeline descriptor")
-    let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
-    pipelineStateDescriptor.label = "Triangle Pipeline"
-    pipelineStateDescriptor.vertexFunction = vertex!
-    pipelineStateDescriptor.fragmentFunction = fragment!
-    pipelineStateDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-    pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float
-    
-    let depthDescriptor = MTLDepthStencilDescriptor()
-    depthDescriptor.depthCompareFunction = .lessEqual
-    depthDescriptor.isDepthWriteEnabled = true
-    depthState = metalDevice.makeDepthStencilState(descriptor: depthDescriptor)!
-    
-    Logger.debug("creating pipeline state")
-    do {
-      pipelineState = try metalDevice.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
-    } catch {
-      fatalError("failed to make render pipeline state")
+    // TODO: remove need for this fatal error
+    guard let world = client.server.world else {
+      fatalError("no world supplied to world renderer")
     }
+    self.chunkPreparer = ChunkPreparer(world: world, camera: camera)
     
-    Logger.debug("loading textures")
-    blockArrayTexture = managers.textureManager.createArrayTexture(metalDevice: metalDevice)
+    self.client = client
     
-    Logger.debug("initialised renderer")
-    
-    self.chunkPreparer = ChunkPreparer(world: client.server.world!, camera: camera)
+    Logger.info("initialised renderer")
   }
   
   func createWorldUniforms() -> WorldUniforms {
     return WorldUniforms(worldToClipSpace: camera.getWorldToClipMatrix())
   }
   
-  func createWorldUniformBuffer(from uniforms: WorldUniforms, for device: MTLDevice) -> MTLBuffer! {
+  func createWorldUniformBuffer(from uniforms: WorldUniforms, for device: MTLDevice) throws -> MTLBuffer! {
     var uniforms = uniforms // create mutable copy
-    let uniformBuffer = device.makeBuffer(bytes: &uniforms, length: MemoryLayout<WorldUniforms>.stride, options: [])!
+    guard let uniformBuffer = device.makeBuffer(bytes: &uniforms, length: MemoryLayout<WorldUniforms>.stride, options: []) else {
+      throw WorldRendererError.failedToCreateUniformBuffer
+    }
     uniformBuffer.label = "worldUniformBuffer"
     return uniformBuffer
   }
@@ -122,17 +145,25 @@ class WorldRenderer {
     
     // set uniforms
     let worldUniforms = createWorldUniforms()
-    let worldUniformBuffer = createWorldUniformBuffer(from: worldUniforms, for: device)
+    guard let worldUniformBuffer = try? createWorldUniformBuffer(from: worldUniforms, for: device) else {
+      Logger.error("failed to create world uniform buffer")
+      return
+    }
     renderEncoder.setVertexBuffer(worldUniformBuffer, offset: 0, index: 1)
     
     // render chunks
-    for chunk in chunks {
-      if !chunk.mesh.isEmpty {
-        let buffers = chunk.mesh.createBuffers(device: device)
-        
+    for chunk in chunks where !chunk.mesh.isEmpty {
+      if let buffers = try? chunk.mesh.createBuffers(device: device) {
         renderEncoder.setVertexBuffer(buffers.vertexBuffer, offset: 0, index: 0) // set vertices
         renderEncoder.setVertexBuffer(buffers.uniformBuffer, offset: 0, index: 2) // set chunk specific uniforms
-        renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: buffers.indexBuffer.length / 4, indexType: .uint32, indexBuffer: buffers.indexBuffer, indexBufferOffset: 0)
+        renderEncoder.drawIndexedPrimitives(
+          type: .triangle,
+          indexCount: buffers.indexBuffer.length / 4,
+          indexType: .uint32,
+          indexBuffer: buffers.indexBuffer,
+          indexBufferOffset: 0)
+      } else {
+        Logger.error("failed to prepare buffers for chunk at \(chunk.position.chunkX),\(chunk.position.chunkZ)")
       }
     }
   }

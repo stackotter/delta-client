@@ -78,11 +78,13 @@ struct PacketWriter {
   
   mutating func writeItemStack(_ itemStack: ItemStack) {
     writeBool(itemStack.isEmpty)
-    if itemStack.isEmpty {
-      let item = itemStack.item!
-      writeVarInt(Int32(item.id))
-      writeByte(Int8(itemStack.count))
-      writeNBT(item.nbt ?? NBTCompound())
+    if !itemStack.isEmpty {
+      // TODO: use enum for itemstack
+      if let item = itemStack.item {
+        writeVarInt(Int32(item.id))
+        writeByte(Int8(itemStack.count))
+        writeNBT(item.nbt ?? NBTCompound())
+      }
     }
   }
   

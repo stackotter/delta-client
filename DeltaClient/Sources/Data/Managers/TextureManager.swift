@@ -7,7 +7,7 @@
 
 import Foundation
 import MetalKit
-import os
+
 
 enum TextureError: LocalizedError {
   case failedToGetBlockTexturesFolder
@@ -56,10 +56,10 @@ class TextureManager {
             index += 1
           }
         } else {
-          Logger.warning("failed to load '\(textureName).png' as cgimage")
+          Logger.warn("failed to load '\(textureName).png' as cgimage")
         }
       } else {
-        Logger.warning("failed to create cgdataprovider for '\(textureName).png'")
+        Logger.warn("failed to create cgdataprovider for '\(textureName).png'")
       }
     }
   }

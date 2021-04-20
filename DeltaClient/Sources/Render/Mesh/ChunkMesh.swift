@@ -8,7 +8,7 @@
 import Foundation
 import MetalKit
 import simd
-import os
+
 
 class ChunkMesh: Mesh {
   typealias Uniforms = ChunkUniforms
@@ -75,33 +75,30 @@ class ChunkMesh: Mesh {
       
       // TODO: cache this
       stopwatch.startMeasurement("generate indexToCoordinates")
-      var indexToCoordinates: [Int: Position] = [:]
-      var index = 0
+      var indexToCoordinates: [Position] = []
       for y in 0..<16 {
         for z in 0..<16 {
           for x in 0..<16 {
             let position = Position(x: x, y: y, z: z)
-            indexToCoordinates[index] = position
-            index += 1
+            indexToCoordinates.append(position)
           }
         }
       }
       stopwatch.stopMeasurement("generate indexToCoordinates")
       
       stopwatch.startMeasurement("generate mesh")
-      for (sectionIndex, section) in chunk.sections.enumerated() {
-        if section.blockCount != 0 { // section isn't empty
-          let offset = sectionIndex * ChunkSection.NUM_BLOCKS
-          for i in 0..<ChunkSection.NUM_BLOCKS {
-            // get block state and add block to mesh if not air
-            let state = section.blocks[i]
-            if state != 0 { // block isn't air
-              let blockIndex = offset + i // block index in chunk
-              var position = indexToCoordinates[i]!
-              position.y += sectionIndex * 16
-              
-              addBlock(position.x, position.y, position.z, index: blockIndex, state: state)
-            }
+      for (sectionIndex, section) in chunk.sections.enumerated() where section.blockCount != 0 {
+        let offset = sectionIndex * ChunkSection.NUM_BLOCKS
+        for i in 0..<ChunkSection.NUM_BLOCKS {
+          // get block state and add block to mesh if not air
+          let state = section.blocks[i]
+          if state != 0 { // block isn't air
+            let blockIndex = offset + i // block index in chunk
+            // TODO: decide if index to coordinates caching actually saves time
+            var position = indexToCoordinates[i]
+            position.y += sectionIndex * 16
+            
+            addBlock(position.x, position.y, position.z, index: blockIndex, state: state)
           }
         }
       }
@@ -166,7 +163,9 @@ class ChunkMesh: Mesh {
     }
     
     // add vertices
+    // swiftlint:disable force_unwrapping
     let vertexIndices = faceVertexIndices[direction]!
+    // swiftlint:enable force_unwrapping
     for (uvIndex, vertexIndex) in vertexIndices.enumerated() {
       let position = simd_float4(cubeVertexPositions[vertexIndex], 1) * matrix
       vertices.append(
@@ -198,7 +197,7 @@ class ChunkMesh: Mesh {
     // multiply each quadIndex by 4 to get the start index of each of the block's rendered faces
     if let quads = blockIndexToQuads[index] {
       for i in (0..<quads.count).reversed() {
-        removeQuad(atIndex: blockIndexToQuads[index]![i])
+        removeQuad(atIndex: quads[i])
       }
       blockIndexToQuads.removeValue(forKey: index)
     }
@@ -207,16 +206,26 @@ class ChunkMesh: Mesh {
   private func removeQuad(atIndex quadIndex: Int) {
     let lastQuad = vertices.count / 4 - 1
     let isLastQuad = quadIndex == lastQuad
-    let blockIndex = quadToBlockIndex[quadIndex]!
+    guard let blockIndex = quadToBlockIndex[quadIndex] else {
+      Logger.error("failed to remove quad from chunk mesh")
+      return
+    }
     
     indices.removeLast(quadWinding.count) // remove a winding
     
     if !isLastQuad {
-      let lastBlockIndex = quadToBlockIndex[lastQuad]!
+      guard
+        let lastBlockIndex = quadToBlockIndex[lastQuad],
+        var lastBlockQuads = blockIndexToQuads[lastBlockIndex],
+        let indexOfIndex = lastBlockQuads.firstIndex(of: lastQuad)
+      else {
+        Logger.error("failed to get index/quads of last block in mesh")
+        return
+      }
+      lastBlockQuads.remove(at: indexOfIndex)
+      lastBlockQuads.insert(quadIndex, at: indexOfIndex)
+      blockIndexToQuads[lastBlockIndex] = lastBlockQuads
       quadToBlockIndex[quadIndex] = lastBlockIndex
-      let indexOfIndex = blockIndexToQuads[lastBlockIndex]!.firstIndex(of: lastQuad)!
-      blockIndexToQuads[lastBlockIndex]!.remove(at: indexOfIndex)
-      blockIndexToQuads[lastBlockIndex]!.insert(quadIndex, at: indexOfIndex)
       
       let quadBegin = quadIndex * 4
       let quadEnd = quadBegin + 4
@@ -225,7 +234,15 @@ class ChunkMesh: Mesh {
     quadToBlockIndex.removeValue(forKey: lastQuad)
     vertices.removeLast(4)
     
-    blockIndexToQuads[blockIndex]!.remove(at: blockIndexToQuads[blockIndex]!.lastIndex(of: quadIndex)!)
+    guard
+      var quads = blockIndexToQuads[blockIndex],
+      let quadIndex = quads.lastIndex(of: quadIndex)
+    else {
+      Logger.error("failed to get quad to remove, buckle-up, this could get bumpy")
+      return
+    }
+    quads.remove(at: quadIndex)
+    blockIndexToQuads[blockIndex] = quads
   }
   
   private func updateNeighbours(of index: Int) {

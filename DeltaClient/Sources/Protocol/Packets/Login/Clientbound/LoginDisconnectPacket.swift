@@ -13,7 +13,7 @@ struct LoginDisconnectPacket: ClientboundPacket {
   var reason: ChatComponent
   
   init(from packetReader: inout PacketReader) throws {
-    reason = packetReader.readChat()
+    reason = try packetReader.readChat()
   }
   
   func handle(for server: Server) throws {

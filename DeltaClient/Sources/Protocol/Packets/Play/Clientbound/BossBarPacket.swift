@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 struct BossBarPacket: ClientboundPacket {
   static let id: Int = 0x0c
@@ -24,12 +24,12 @@ struct BossBarPacket: ClientboundPacket {
   }
   
   init(from packetReader: inout PacketReader) throws {
-    uuid = packetReader.readUUID()
+    uuid = try packetReader.readUUID()
     let actionId = packetReader.readVarInt()
     
     switch actionId {
       case 0:
-        let title = packetReader.readChat()
+        let title = try packetReader.readChat()
         let health = packetReader.readFloat()
         let color = packetReader.readVarInt()
         let division = packetReader.readVarInt()
@@ -41,7 +41,7 @@ struct BossBarPacket: ClientboundPacket {
         let health = packetReader.readFloat()
         action = .updateHealth(health: health)
       case 3:
-        let title = packetReader.readChat()
+        let title = try packetReader.readChat()
         action = .updateTitle(title: title)
       case 4:
         let color = packetReader.readVarInt()
@@ -51,7 +51,7 @@ struct BossBarPacket: ClientboundPacket {
         let flags = packetReader.readUnsignedByte()
         action = .updateFlags(flags: flags)
       default:
-        Logger.debug("invalid boss bar action id")
+        Logger.warn("invalid boss bar action id")
         action = .remove
     }
   }

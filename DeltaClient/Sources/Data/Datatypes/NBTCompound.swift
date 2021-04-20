@@ -156,7 +156,7 @@ struct NBTCompound: CustomStringConvertible {
           break
         }
         let nameLength = Int(buffer.readShort(endian: .big))
-        let name = buffer.readString(length: nameLength)
+        let name = try buffer.readString(length: nameLength)
         
         nbtTags[name] = try readTag(ofType: type, withId: n, andName: name)
       } else { // type not valid
@@ -193,7 +193,7 @@ struct NBTCompound: CustomStringConvertible {
         value = buffer.readSignedBytes(n: length)
       case .string:
         let length = Int(buffer.readShort(endian: .big))
-        value = buffer.readString(length: length)
+        value = try buffer.readString(length: length)
       case .list:
         let typeId = buffer.readByte()
         if let listType = NBTTagType(rawValue: typeId) {

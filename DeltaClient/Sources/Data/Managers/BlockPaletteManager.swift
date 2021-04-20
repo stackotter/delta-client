@@ -7,7 +7,7 @@
 
 import Foundation
 import simd
-import os
+
 
 enum BlockPaletteError: LocalizedError {
   case invalidPixlyzerData
@@ -27,15 +27,15 @@ class BlockPaletteManager {
     self.cacheManager = cacheManager
     
     if cacheManager.cacheExists(name: "block-palette") {
-      Logger.log("loading cached global palette")
+      Logger.info("loading cached global palette")
       try loadGlobalPaletteCache()
-      Logger.log("loaded cached global palette")
+      Logger.info("loaded cached global palette")
     } else {
-      Logger.log("generating global palette")
+      Logger.info("generating global palette")
       try generateGlobalPalette()
-      Logger.log("caching global palette")
+      Logger.info("caching global palette")
       try cacheGlobalPalette()
-      Logger.log("cached global palette")
+      Logger.info("cached global palette")
     }
   }
   
@@ -518,9 +518,7 @@ class BlockPaletteManager {
       let matrix = MatrixUtil.rotationMatrix2d(Float(rotation) / 180 * Float.pi)
       for (index, var uv) in uvs.enumerated() {
         uv -= textureCenter
-        // swiftlint:disable shorthand_operator
         uv = uv * matrix // simd doesn't support *= between a vector and a matrix
-        // swiftlint:enable shorthand_operator
         uv += textureCenter
         uvs[index] = uv
       }

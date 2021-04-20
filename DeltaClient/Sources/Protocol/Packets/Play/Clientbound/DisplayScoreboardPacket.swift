@@ -15,6 +15,6 @@ struct DisplayScoreboardPacket: ClientboundPacket {
 
   init(from packetReader: inout PacketReader) throws {
     position = packetReader.readByte()
-    scoreName = packetReader.readString()
+    scoreName = try packetReader.readString()
   }
 }

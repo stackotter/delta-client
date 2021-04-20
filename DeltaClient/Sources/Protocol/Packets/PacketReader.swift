@@ -6,22 +6,22 @@
 //
 
 import Foundation
-import os
+
+enum PacketReaderError: LocalizedError {
+  case invalidNBT
+  case failedToReadSlotNBT
+  case invalidJSON
+  case invalidBooleanByte
+  case invalidIdentifier
+  case chatStringTooLong
+  case identifierTooLong
+  case invalidUUIDString
+}
 
 struct PacketReader {
   var packetId: Int
   var buffer: Buffer
   var locale: MinecraftLocale
-  
-  enum PacketReaderError: LocalizedError {
-    case invalidNBT
-    case failedToReadSlotNBT
-    case invalidJSON
-    case invalidBooleanByte
-    case invalidIdentifier
-    case chatStringTooLong
-    case identifierTooLong
-  }
   
   var remaining: Int {
     get {
@@ -91,9 +91,9 @@ struct PacketReader {
     return buffer.readDouble(endian: .big)
   }
   
-  mutating func readString() -> String {
+  mutating func readString() throws -> String {
     let length = Int(buffer.readVarInt())
-    let string = buffer.readString(length: length)
+    let string = try buffer.readString(length: length)
     return string
   }
   
@@ -107,22 +107,22 @@ struct PacketReader {
   
   // Complex datatypes
   
-  mutating func readChat() -> ChatComponent {
-    let string = readString()
+  mutating func readChat() throws -> ChatComponent {
+    let string = try readString()
     if string.count > 32767 {
-      Logger.debug("chat string of length \(string.count) is longer than max of 32767")
+      Logger.warn("chat string of length \(string.count) is longer than max of 32767")
     }
     do {
       let json = try JSON.fromString(string)
-      let chat = ChatComponentUtil.parseJSON(json, locale: locale)
-      return chat ?? ChatStringComponent(fromString: "failed to parse chat component")
+      let chat = try ChatComponentUtil.parseJSON(json, locale: locale)
+      return chat
     } catch {
       return ChatStringComponent(fromString: "invalid json in chat component")
     }
   }
   
   mutating func readIdentifier() throws -> Identifier {
-    let string = readString()
+    let string = try readString()
     if string.count > 32767 {
       throw PacketReaderError.identifierTooLong
     }
@@ -169,13 +169,16 @@ struct PacketReader {
     return angle
   }
   
-  mutating func readUUID() -> UUID {
+  mutating func readUUID() throws -> UUID {
     let bytes = buffer.readBytes(n: 16)
     var string = ""
     for byte in bytes {
       string += String(format: "%02X", byte)
     }
-    return UUID.fromString(string)!
+    guard let uuid = UUID.fromString(string) else {
+      throw PacketReaderError.invalidUUIDString
+    }
+    return uuid
   }
   
   mutating func readByteArray(length: Int) -> [UInt8] {
@@ -183,7 +186,7 @@ struct PacketReader {
   }
   
   mutating func readJSON() throws -> JSON {
-    let jsonString = readString()
+    let jsonString = try readString()
     guard let json = try? JSON.fromString(jsonString) else {
       throw PacketReaderError.invalidJSON
     }

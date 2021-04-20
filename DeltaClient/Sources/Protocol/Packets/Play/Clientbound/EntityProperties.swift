@@ -36,7 +36,7 @@ struct EntityProperties: ClientboundPacket {
       let numModifiers = packetReader.readVarInt()
       var modifiers: [ModifierData] = []
       for _ in 0..<numModifiers {
-        let uuid = packetReader.readUUID()
+        let uuid = try packetReader.readUUID()
         let amount = packetReader.readDouble()
         let operation = packetReader.readByte()
         let modifier = ModifierData(uuid: uuid, amount: amount, operation: operation)

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 import Zip
 
 enum StorageError: LocalizedError {
@@ -30,7 +30,7 @@ class StorageManager {
       var isDirectory: ObjCBool = false
       let fileExists = fileManager.fileExists(atPath: self.storageDir.path, isDirectory: &isDirectory)
       if !fileExists || !isDirectory.boolValue {
-        Logger.log("creating application support directory")
+        Logger.info("creating application support directory")
         do {
           try fileManager.createDirectory(at: self.storageDir, withIntermediateDirectories: true, attributes: nil)
         } catch {

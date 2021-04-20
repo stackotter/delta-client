@@ -6,13 +6,17 @@
 //
 
 import Foundation
-import os
 
 // TODO: make these throwing
 // TODO: handle errors in api response using status code (403)
 // TODO: clean up api
 struct MojangAPI {
-  static func login(email: String, password: String, clientToken: String, completion: @escaping (MojangAuthenticationResponse) -> Void) {
+  static func login(
+    email: String,
+    password: String,
+    clientToken: String,
+    completion: @escaping (MojangAuthenticationResponse) -> Void)
+  {
     let requestObject = MojangAuthenticationRequest(
       agent: MojangAgent(),
       username: email,
@@ -26,28 +30,33 @@ struct MojangAPI {
     do {
       requestBody = try encoder.encode(requestObject)
     } catch {
-      Logger.error("failed to serialise mojang authentication request, \(error)")
+      Logger.error("failed to serialise mojang authentication request: \(error)")
       return
     }
     
     RequestUtil.post(MojangAPIDefinition.AUTHENTICATION_URL, requestBody) { data, error in
-      if error != nil {
-        Logger.error("failed to authenticate mojang account '\(email)': \(error!)")
+      if let error = error {
+        Logger.warn("failed to authenticate mojang account '\(email)': \(error)")
       } else if let jsonData = data {
         do {
           let response = try JSONDecoder().decode(MojangAuthenticationResponse.self, from: jsonData)
           completion(response)
         } catch {
-          Logger.error("failed to parse mojang authentication response, \(error)")
+          Logger.error("failed to parse mojang authentication response: \(error)")
         }
       } else {
-        Logger.error("failed to authenticate mojang account '\(email)', no response body")
+        Logger.error("failed to authenticate mojang account '\(email)': no response body")
       }
     }
   }
   
   // TODO: a lot of repeated code in these functions
-  static func join(accessToken: String, selectedProfile: String, serverHash: String, completion: @escaping () -> Void) {
+  static func join(
+    accessToken: String,
+    selectedProfile: String,
+    serverHash: String,
+    completion: @escaping () -> Void)
+  {
     let requestObject = MojangJoinRequest(
       accessToken: accessToken,
       selectedProfile: selectedProfile,
@@ -64,8 +73,8 @@ struct MojangAPI {
     }
     
     RequestUtil.post(MojangAPIDefinition.JOIN_SERVER_URL, requestBody) { _, error in
-      if error != nil {
-        Logger.error("mojang api join request failed: \(error!)")
+      if let error = error {
+        Logger.warn("mojang api join request failed: \(error)")
       } else {
         completion()
       }
@@ -73,7 +82,12 @@ struct MojangAPI {
     }
   }
   
-  static func refresh(accessToken: String, clientToken: String, completion: @escaping (_ accessToken: String) -> Void, failure: @escaping () -> Void) {
+  static func refresh(
+    accessToken: String,
+    clientToken: String,
+    completion: @escaping (_ accessToken: String) -> Void,
+    failure: @escaping () -> Void)
+  {
     let requestObject = [
       "accessToken": accessToken,
       "clientToken": clientToken
@@ -92,7 +106,7 @@ struct MojangAPI {
               if let newAccessToken = response["accessToken"] as? String {
                 completion(newAccessToken)
               } else {
-                Logger.error("failed to refresh access token: \(response["errorMessage"] ?? "no error message provided")")
+                Logger.error("failed to refresh access token: \(response["errorMessage"] ?? "no error message")")
                 failure()
               }
             } else {

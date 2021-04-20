@@ -31,8 +31,14 @@ struct JoinGamePacket: ClientboundPacket {
     playerEntityId = packetReader.readInt()
     let gamemodeInt = Int8(packetReader.readUnsignedByte())
     isHardcore = gamemodeInt & 0x8 == 0x8
-    gamemode = Gamemode(rawValue: gamemodeInt)!
-    previousGamemode = Gamemode(rawValue: packetReader.readByte())!
+    guard
+      let gamemode = Gamemode(rawValue: gamemodeInt),
+      let previousGamemode = Gamemode(rawValue: packetReader.readByte())
+    else {
+      throw ClientboundPacketError.invalidGamemode
+    }
+    self.gamemode = gamemode
+    self.previousGamemode = previousGamemode
     worldCount = packetReader.readVarInt()
     worldNames = []
     for _ in 0..<worldCount {

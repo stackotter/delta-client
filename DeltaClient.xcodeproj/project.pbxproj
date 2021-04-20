@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,6 +11,9 @@
 		78052348261433A800079A01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7805221C261433A700079A01 /* Assets.xcassets */; };
 		780523B6261433A800079A01 /* DeltaClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229D261433A700079A01 /* DeltaClientApp.swift */; };
 		781829A5262A6F7E000F59B0 /* ChunkLighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781829A4262A6F7E000F59B0 /* ChunkLighting.swift */; };
+		78513204262D5FEC0054268A /* ChatError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513203262D5FEC0054268A /* ChatError.swift */; };
+		7851320A262D69280054268A /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513209262D69280054268A /* LogMessage.swift */; };
+		78513223262D7A980054268A /* MeshBuffers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513222262D7A980054268A /* MeshBuffers.swift */; };
 		7851F7AE26255E0F009B59DD /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7851F7AD26255E0F009B59DD /* Camera.swift */; };
 		7864084F262C545C00FE3A10 /* CacheFaceDirection.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78640848262C545C00FE3A10 /* CacheFaceDirection.pb.swift */; };
 		78640850262C545C00FE3A10 /* CacheBlockModelElementFace.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78640849262C545C00FE3A10 /* CacheBlockModelElementFace.pb.swift */; };
@@ -61,7 +64,6 @@
 		78D91970261FB4CD00A4782F /* RecipeRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91819261FB4CC00A4782F /* RecipeRegistry.swift */; };
 		78D91971261FB4CD00A4782F /* ChatStringComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9181B261FB4CC00A4782F /* ChatStringComponent.swift */; };
 		78D91972261FB4CD00A4782F /* ChatTranslateComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9181C261FB4CC00A4782F /* ChatTranslateComponent.swift */; };
-		78D91973261FB4CD00A4782F /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9181D261FB4CC00A4782F /* File.swift */; };
 		78D91974261FB4CD00A4782F /* ChatComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9181E261FB4CC00A4782F /* ChatComponent.swift */; };
 		78D91975261FB4CD00A4782F /* ChatScoreComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9181F261FB4CC00A4782F /* ChatScoreComponent.swift */; };
 		78D91976261FB4CD00A4782F /* ChatStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91820261FB4CC00A4782F /* ChatStyle.swift */; };
@@ -320,7 +322,6 @@
 		78D91A7E261FB4CE00A4782F /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9194A261FB4CD00A4782F /* StorageManager.swift */; };
 		78D91A7F261FB4CE00A4782F /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9194B261FB4CD00A4782F /* CacheManager.swift */; };
 		78D91A80261FB4CE00A4782F /* LocaleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9194C261FB4CD00A4782F /* LocaleManager.swift */; };
-		78D91A81261FB4CE00A4782F /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9194D261FB4CD00A4782F /* AccountManager.swift */; };
 		78D91A82261FB4CE00A4782F /* TextureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9194E261FB4CD00A4782F /* TextureManager.swift */; };
 		78D91A83261FB4CE00A4782F /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9194F261FB4CD00A4782F /* AssetManager.swift */; };
 		78D91A84261FB4CE00A4782F /* BlockPaletteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91950261FB4CD00A4782F /* BlockPaletteManager.swift */; };
@@ -373,6 +374,9 @@
 		784194B7258204CD0070DE78 /* DeltaClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194C9258204D10070DE78 /* DeltaClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D4258204D10070DE78 /* DeltaClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		78513203262D5FEC0054268A /* ChatError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatError.swift; sourceTree = "<group>"; };
+		78513209262D69280054268A /* LogMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogMessage.swift; sourceTree = "<group>"; };
+		78513222262D7A980054268A /* MeshBuffers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshBuffers.swift; sourceTree = "<group>"; };
 		7851F7AD26255E0F009B59DD /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		78640846262C545C00FE3A10 /* CompileProtobuf.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = CompileProtobuf.sh; sourceTree = "<group>"; };
 		78640848262C545C00FE3A10 /* CacheFaceDirection.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheFaceDirection.pb.swift; sourceTree = "<group>"; };
@@ -422,7 +426,6 @@
 		78D91819261FB4CC00A4782F /* RecipeRegistry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecipeRegistry.swift; sourceTree = "<group>"; };
 		78D9181B261FB4CC00A4782F /* ChatStringComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatStringComponent.swift; sourceTree = "<group>"; };
 		78D9181C261FB4CC00A4782F /* ChatTranslateComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatTranslateComponent.swift; sourceTree = "<group>"; };
-		78D9181D261FB4CC00A4782F /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		78D9181E261FB4CC00A4782F /* ChatComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatComponent.swift; sourceTree = "<group>"; };
 		78D9181F261FB4CC00A4782F /* ChatScoreComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatScoreComponent.swift; sourceTree = "<group>"; };
 		78D91820261FB4CC00A4782F /* ChatStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatStyle.swift; sourceTree = "<group>"; };
@@ -688,7 +691,6 @@
 		78D9194A261FB4CD00A4782F /* StorageManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		78D9194B261FB4CD00A4782F /* CacheManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
 		78D9194C261FB4CD00A4782F /* LocaleManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocaleManager.swift; sourceTree = "<group>"; };
-		78D9194D261FB4CD00A4782F /* AccountManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountManager.swift; sourceTree = "<group>"; };
 		78D9194E261FB4CD00A4782F /* TextureManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextureManager.swift; sourceTree = "<group>"; };
 		78D9194F261FB4CD00A4782F /* AssetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
 		78D91950261FB4CD00A4782F /* BlockPaletteManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockPaletteManager.swift; sourceTree = "<group>"; };
@@ -789,6 +791,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		78513208262D69150054268A /* Log */ = {
+			isa = PBXGroup;
+			children = (
+				78D91826261FB4CC00A4782F /* Logger.swift */,
+				78513209262D69280054268A /* LogMessage.swift */,
+			);
+			path = Log;
+			sourceTree = "<group>";
+		};
 		78640847262C545C00FE3A10 /* Generated */ = {
 			isa = PBXGroup;
 			children = (
@@ -805,6 +816,7 @@
 		78D917F9261FB4CC00A4782F /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				78513208262D69150054268A /* Log */,
 				78E2323E26280B4D00B08B4B /* Event */,
 				78D91927261FB4CD00A4782F /* Data */,
 				78D91A8E261FB4E100A4782F /* SwiftUI */,
@@ -879,12 +891,12 @@
 			children = (
 				78D9181B261FB4CC00A4782F /* ChatStringComponent.swift */,
 				78D9181C261FB4CC00A4782F /* ChatTranslateComponent.swift */,
-				78D9181D261FB4CC00A4782F /* File.swift */,
 				78D9181E261FB4CC00A4782F /* ChatComponent.swift */,
 				78D9181F261FB4CC00A4782F /* ChatScoreComponent.swift */,
 				78D91820261FB4CC00A4782F /* ChatStyle.swift */,
 				78D91821261FB4CC00A4782F /* ChatKeybindComponent.swift */,
 				78D91822261FB4CC00A4782F /* ChatComponentUtil.swift */,
+				78513203262D5FEC0054268A /* ChatError.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -895,7 +907,6 @@
 				78D91824261FB4CC00A4782F /* ThreadUtil.swift */,
 				78D91825261FB4CC00A4782F /* RequestUtil.swift */,
 				7868885426239C3000BD3F03 /* Random.swift */,
-				78D91826261FB4CC00A4782F /* Logger.swift */,
 				78D91827261FB4CC00A4782F /* CompressionUtil.swift */,
 				78D91828261FB4CC00A4782F /* Profiler.swift */,
 				78D9182A261FB4CC00A4782F /* Stopwatch.swift */,
@@ -995,6 +1006,7 @@
 			isa = PBXGroup;
 			children = (
 				78D9184C261FB4CC00A4782F /* Mesh.swift */,
+				78513222262D7A980054268A /* MeshBuffers.swift */,
 				78D9184D261FB4CC00A4782F /* CubeFaces.swift */,
 				78D9184E261FB4CC00A4782F /* ChunkMesh.swift */,
 				78D9184F261FB4CC00A4782F /* Vertex.swift */,
@@ -1408,7 +1420,6 @@
 				78D91948261FB4CD00A4782F /* ConfigManager.swift */,
 				78D9194A261FB4CD00A4782F /* StorageManager.swift */,
 				78D9194C261FB4CD00A4782F /* LocaleManager.swift */,
-				78D9194D261FB4CD00A4782F /* AccountManager.swift */,
 				78D9194E261FB4CD00A4782F /* TextureManager.swift */,
 				78D9194F261FB4CD00A4782F /* AssetManager.swift */,
 				78D91950261FB4CD00A4782F /* BlockPaletteManager.swift */,
@@ -1455,7 +1466,7 @@
 				784194B3258204CD0070DE78 /* Sources */,
 				784194B4258204CD0070DE78 /* Frameworks */,
 				784194B5258204CD0070DE78 /* Resources */,
-				78B4A35A25932E4700961E0F /* ShellScript */,
+				78513227262D7B180054268A /* ShellScript */,
 				78640842262C4E8000FE3A10 /* ShellScript */,
 			);
 			buildRules = (
@@ -1582,6 +1593,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		78513227262D7B180054268A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# TAGS=\"TODO:\"\n# ERRORTAG=\"ERROR:\"\n# find \"${SRCROOT}\" \\( -name \"*.h\" -or -name \"*.m\" -or -name \"*.swift\" \\) -print0 | xargs -0 egrep --with-filename --line-number --only-matching \"($TAGS).*\\$|($ERRORTAG).*\\$\" | perl -p -e \"s/($TAGS)/ warning: \\$1/\" | perl -p -e \"s/($ERRORTAG)/ error: \\$1/\"\n";
+		};
 		78640842262C4E8000FE3A10 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1598,24 +1626,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
-		};
-		78B4A35A25932E4700961E0F /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n# TAGS=\"TODO:|FIXME:\"\n# echo \"searching ${SRCROOT} for ${TAGS}\"\n# find \"${SRCROOT}\" \\( -name \"*.swift\" \\) -print0 | xargs -0 egrep --with-filename --line-number --only-matching \"($TAGS).*\\$\" | perl -p -e \"s/($TAGS)/ warning: \\$1/\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1654,6 +1664,7 @@
 				78D91998261FB4CD00A4782F /* Mesh.swift in Sources */,
 				78D91A5D261FB4CE00A4782F /* InnermostNetworkLayer.swift in Sources */,
 				78D9195C261FB4CD00A4782F /* BannerDuplicateRecipe.swift in Sources */,
+				78513223262D7A980054268A /* MeshBuffers.swift in Sources */,
 				78D9198C261FB4CD00A4782F /* EntityVelocity.swift in Sources */,
 				78D91A82261FB4CE00A4782F /* TextureManager.swift in Sources */,
 				78D91965261FB4CD00A4782F /* MapExtendingRecipe.swift in Sources */,
@@ -1694,7 +1705,6 @@
 				78D919AF261FB4CD00A4782F /* ServerDescriptor.swift in Sources */,
 				78D91A86261FB4CE00A4782F /* MinecraftLocale.swift in Sources */,
 				78D91A0C261FB4CD00A4782F /* DeclareRecipesPacket.swift in Sources */,
-				78D91973261FB4CD00A4782F /* File.swift in Sources */,
 				78D91A27261FB4CD00A4782F /* AcknowledgePlayerDiggingPacket.swift in Sources */,
 				78D91A3C261FB4CD00A4782F /* SoundEffectPacket.swift in Sources */,
 				78D91969261FB4CD00A4782F /* RepairItemRecipe.swift in Sources */,
@@ -1725,6 +1735,7 @@
 				78D91977261FB4CD00A4782F /* ChatKeybindComponent.swift in Sources */,
 				78D91A9E261FB4E100A4782F /* LoginView.swift in Sources */,
 				78D919D7261FB4CD00A4782F /* CloseWindowServerboundPacket.swift in Sources */,
+				78513204262D5FEC0054268A /* ChatError.swift in Sources */,
 				78D919ED261FB4CD00A4782F /* CraftRecipeRequestPacket.swift in Sources */,
 				78D91A49261FB4CD00A4782F /* StopSoundPacket.swift in Sources */,
 				78D91981261FB4CD00A4782F /* MojangAgent.swift in Sources */,
@@ -1849,7 +1860,6 @@
 				78D91A16261FB4CD00A4782F /* EntityEquipmentPacket.swift in Sources */,
 				78D919B9261FB4CD00A4782F /* PingPacket.swift in Sources */,
 				78D919EA261FB4CD00A4782F /* HeldItemChangeServerboundPacket.swift in Sources */,
-				78D91A81261FB4CE00A4782F /* AccountManager.swift in Sources */,
 				78D91A9F261FB4E100A4782F /* AddServerView.swift in Sources */,
 				78D91A59261FB4CE00A4782F /* CompressionLayer.swift in Sources */,
 				78D91A57261FB4CE00A4782F /* SocketLayer.swift in Sources */,
@@ -1903,6 +1913,7 @@
 				78D919DD261FB4CD00A4782F /* EntityActionPacket.swift in Sources */,
 				78D91A9C261FB4E100A4782F /* ServerDetailView.swift in Sources */,
 				78D919CD261FB4CD00A4782F /* SpectatePacket.swift in Sources */,
+				7851320A262D69280054268A /* LogMessage.swift in Sources */,
 				78D919FE261FB4CD00A4782F /* OpenBookPacket.swift in Sources */,
 				78D91988261FB4CD00A4782F /* MojangAccount.swift in Sources */,
 				78D9196C261FB4CD00A4782F /* SmithingRecipe.swift in Sources */,

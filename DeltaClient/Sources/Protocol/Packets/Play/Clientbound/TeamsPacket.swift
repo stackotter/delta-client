@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 struct TeamsPacket: ClientboundPacket {
   static let id: Int = 0x4c
@@ -43,21 +43,21 @@ struct TeamsPacket: ClientboundPacket {
   }
 
   init(from packetReader: inout PacketReader) throws {
-    teamName = packetReader.readString()
+    teamName = try packetReader.readString()
     let mode = packetReader.readByte()
     switch mode {
       case 0: // create
-        let teamDisplayName = packetReader.readChat()
+        let teamDisplayName = try packetReader.readChat()
         let friendlyFlags = packetReader.readByte()
-        let nameTagVisibility = packetReader.readString()
-        let collisionRule = packetReader.readString()
+        let nameTagVisibility = try packetReader.readString()
+        let collisionRule = try packetReader.readString()
         let teamColor = packetReader.readVarInt()
-        let teamPrefix = packetReader.readChat()
-        let teamSuffix = packetReader.readChat()
+        let teamPrefix = try packetReader.readChat()
+        let teamSuffix = try packetReader.readChat()
         let entityCount = packetReader.readVarInt()
         var entities: [String] = []
         for _ in 0..<entityCount {
-          let entity = packetReader.readString()
+          let entity = try packetReader.readString()
           entities.append(entity)
         }
         let createAction = TeamAction.Create(
@@ -70,13 +70,13 @@ struct TeamsPacket: ClientboundPacket {
       case 1: // remove
         action = .remove
       case 2: // update info
-        let teamDisplayName = packetReader.readChat()
+        let teamDisplayName = try packetReader.readChat()
         let friendlyFlags = packetReader.readByte()
-        let nameTagVisibility = packetReader.readString()
-        let collisionRule = packetReader.readString()
+        let nameTagVisibility = try packetReader.readString()
+        let collisionRule = try packetReader.readString()
         let teamColor = packetReader.readVarInt()
-        let teamPrefix = packetReader.readChat()
-        let teamSuffix = packetReader.readChat()
+        let teamPrefix = try packetReader.readChat()
+        let teamSuffix = try packetReader.readChat()
         let updateInfoAction = TeamAction.UpdateInfo(
           teamDisplayName: teamDisplayName, friendlyFlags: friendlyFlags,
           nameTagVisibility: nameTagVisibility, collisionRule: collisionRule,
@@ -87,7 +87,7 @@ struct TeamsPacket: ClientboundPacket {
         let entityCount = packetReader.readVarInt()
         var entities: [String] = []
         for _ in 0..<entityCount {
-          let entity = packetReader.readString()
+          let entity = try packetReader.readString()
           entities.append(entity)
         }
         action = .addPlayers(entities: entities)
@@ -95,7 +95,7 @@ struct TeamsPacket: ClientboundPacket {
         let entityCount = packetReader.readVarInt()
         var entities: [String] = []
         for _ in 0..<entityCount {
-          let entity = packetReader.readString()
+          let entity = try packetReader.readString()
           entities.append(entity)
         }
         action = .removePlayers(entities: entities)

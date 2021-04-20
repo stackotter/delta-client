@@ -7,7 +7,7 @@
 
 import Foundation
 import MetalKit
-import os
+
 
 class RenderCoordinator: NSObject, MTKViewDelegate {
   var client: Client

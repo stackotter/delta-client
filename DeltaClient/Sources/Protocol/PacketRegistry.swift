@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 class PacketRegistry {
   var clientboundPackets: [PacketState: [Int: ClientboundPacket.Type]] = [
@@ -141,7 +141,12 @@ class PacketRegistry {
   
   func addClientboundPacket(_ packet: ClientboundPacket.Type, toState state: PacketState) {
     let id = packet.id
-    clientboundPackets[state]![id] = packet
+    if var packets = clientboundPackets[state] {
+      packets[id] = packet
+      clientboundPackets[state] = packets
+    } else {
+      clientboundPackets[state] = [id: packet]
+    }
   }
   
   func getClientboundPacketType(withId id: Int, andState state: PacketState) -> ClientboundPacket.Type? {

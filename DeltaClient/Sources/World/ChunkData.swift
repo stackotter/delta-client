@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 // stores the raw bytes the chunk was sent as to be decoded later
 // this is because chunks aren't sent in a nice order and take a while to decode
@@ -20,7 +20,8 @@ struct ChunkData {
   
   func unpack(blockPaletteManager: BlockPaletteManager) throws -> Chunk {
     do {
-      let start = CFAbsoluteTimeGetCurrent()
+      var stopwatch = Stopwatch(mode: .summary)
+      stopwatch.startMeasurement("chunk unpack")
       var packetReader = reader // mutable copy
       
       // this first bit isn't too slow (cause it all only happens once)
@@ -57,16 +58,22 @@ struct ChunkData {
           let blockEntity = BlockEntity(position: position, identifier: identifier, nbt: blockEntityNBT)
           blockEntities.append(blockEntity)
         } catch {
-          Logger.log("error decoding block entities: \(error.localizedDescription)")
+          Logger.warn("error decoding block entities: \(error.localizedDescription)")
         }
       }
-      let elapsed = CFAbsoluteTimeGetCurrent() - start
-      Logger.log(String(format: "completed chunk at \(position) in %.2fms", elapsed * 1000))
+      stopwatch.stopMeasurement("chunk unpack")
+      stopwatch.summary()
       
-      let chunk = Chunk(position: position, heightMaps: heightMaps, ignoreOldData: ignoreOldData, biomes: biomes, sections: sections, blockEntities: blockEntities, blockPaletteManager: blockPaletteManager)
-      return chunk
+      return Chunk(
+        position: position,
+        heightMaps: heightMaps,
+        ignoreOldData: ignoreOldData,
+        biomes: biomes,
+        sections: sections,
+        blockEntities: blockEntities,
+        blockPaletteManager: blockPaletteManager)
     } catch {
-      Logger.log("failed to unpack chunk: \(error.localizedDescription)")
+      Logger.warn("failed to unpack chunk: \(error.localizedDescription)")
       throw error
     }
   }

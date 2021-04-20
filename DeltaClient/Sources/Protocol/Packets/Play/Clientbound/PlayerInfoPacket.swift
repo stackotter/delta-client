@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import os
 
 struct PlayerInfoPacket: ClientboundPacket {
   static let id: Int = 0x33
@@ -26,19 +25,19 @@ struct PlayerInfoPacket: ClientboundPacket {
     let numPlayers = packetReader.readVarInt()
     playerActions = []
     for _ in 0..<numPlayers {
-      let uuid = packetReader.readUUID()
+      let uuid = try packetReader.readUUID()
       let playerAction: PlayerInfoAction
       switch actionId {
         case 0: // add player
-          let playerName = packetReader.readString()
+          let playerName = try packetReader.readString()
           let numProperties = packetReader.readVarInt()
           var properties: [PlayerProperty] = []
           for _ in 0..<numProperties {
-            let propertyName = packetReader.readString()
-            let value = packetReader.readString()
+            let propertyName = try packetReader.readString()
+            let value = try packetReader.readString()
             var signature: String?
             if packetReader.readBool() {
-              signature = packetReader.readString()
+              signature = try packetReader.readString()
             }
             let property = PlayerProperty(name: propertyName, value: value, signature: signature)
             properties.append(property)
@@ -47,7 +46,7 @@ struct PlayerInfoPacket: ClientboundPacket {
           let ping = packetReader.readVarInt()
           var displayName: ChatComponent?
           if packetReader.readBool() {
-            displayName = packetReader.readChat()
+            displayName = try packetReader.readChat()
           }
           let playerInfo = PlayerInfo(uuid: uuid, name: playerName, properties: properties, gamemode: gamemode, ping: ping, displayName: displayName)
           playerAction = .addPlayer(playerInfo: playerInfo)
@@ -60,13 +59,13 @@ struct PlayerInfoPacket: ClientboundPacket {
         case 3: // update display name
           var displayName: ChatComponent?
           if packetReader.readBool() {
-            displayName = packetReader.readChat()
+            displayName = try packetReader.readChat()
           }
           playerAction = .updateDisplayName(displayName: displayName)
         case 4: // remove player
           playerAction = .removePlayer
         default:
-          Logger.debug("invalid player info action")
+          Logger.warn("invalid player info action")
           continue
       }
       playerActions.append((uuid: uuid, action: playerAction))

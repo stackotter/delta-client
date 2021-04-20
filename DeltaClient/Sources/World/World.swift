@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 // TODO: make World threadsafe
 class World {
@@ -33,7 +33,7 @@ class World {
     if let chunk = chunks[position.chunkPosition] {
       chunk.setBlock(at: position.relativeToChunk, to: state)
     } else {
-      Logger.log("attempt to update block in non-existent chunk at \(position.chunkPosition)")
+      Logger.warn("attempt to update block in non-existent chunk at \(position.chunkPosition)")
     }
   }
   
@@ -41,7 +41,7 @@ class World {
     if let chunk = chunks[position.chunkPosition] {
       return chunk.getBlock(at: position.relativeToChunk)
     } else {
-      Logger.warning("failed to get block. no chunk at \(position.chunkPosition)")
+      Logger.warn("get block called for non existent chunk: \(position.chunkPosition)")
       return 0 // air
     }
   }

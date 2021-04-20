@@ -41,7 +41,7 @@ struct MapDataPacket: ClientboundPacket {
       let hasDisplayName = packetReader.readBool()
       var displayName: ChatComponent?
       if hasDisplayName {
-        displayName = packetReader.readChat()
+        displayName = try packetReader.readChat()
       }
       let icon = MapIcon(type: type, x: x, z: z, direction: direction, displayName: displayName)
       icons.append(icon)

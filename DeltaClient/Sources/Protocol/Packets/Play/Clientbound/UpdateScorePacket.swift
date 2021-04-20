@@ -17,9 +17,9 @@ struct UpdateScorePacket: ClientboundPacket {
   
   init(from packetReader: inout PacketReader) throws {
     // TODO: implement strings with max length in packetreader
-    entityName = packetReader.readString()
+    entityName = try packetReader.readString()
     action = packetReader.readByte()
-    objectiveName = packetReader.readString()
+    objectiveName = try packetReader.readString()
     if action != 1 {
       value = packetReader.readVarInt()
     }

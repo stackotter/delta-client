@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 struct ChatMessageClientboundPacket: ClientboundPacket {
   static let id: Int = 0x0e
@@ -16,12 +16,12 @@ struct ChatMessageClientboundPacket: ClientboundPacket {
   var sender: UUID
   
   init(from packetReader: inout PacketReader) throws {
-    message = packetReader.readChat()
+    message = try packetReader.readChat()
     position = packetReader.readByte()
-    sender = packetReader.readUUID()
+    sender = try packetReader.readUUID()
   }
   
   func handle(for server: Server) throws {
-    Logger.log("chat message : \(message.toText())")
+    Logger.info("chat message : \(message.toText())")
   }
 }

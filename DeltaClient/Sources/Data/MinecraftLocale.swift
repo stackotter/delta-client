@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 
 enum MinecraftLocaleError: LocalizedError {
   case unableToParseLocale
@@ -30,7 +30,7 @@ struct MinecraftLocale {
         return
       }
     } catch {
-      Logger.error("failed to parse locale `\(localeFile.lastPathComponent)`")
+      Logger.warn("failed to parse locale `\(localeFile.lastPathComponent)`")
       throw error
     }
     throw MinecraftLocaleError.unableToParseLocale

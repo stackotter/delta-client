@@ -8,7 +8,11 @@
 import Foundation
 import MetalKit
 import simd
-import os
+
+
+enum MeshError: LocalizedError {
+  case failedToCreateBuffer
+}
 
 protocol Mesh {
   associatedtype Uniforms
@@ -33,32 +37,51 @@ extension Mesh {
     }
   }
   
-  mutating func createBuffers(device: MTLDevice) -> (vertexBuffer: MTLBuffer, indexBuffer: MTLBuffer, uniformBuffer: MTLBuffer) {
-    queue.sync {
-      if hasChanged { // only remake the buffers if something has been changed
-        Logger.debug("regenerating chunk mesh buffers")
-        
-        let vertexBufferSize = MemoryLayout<Vertex>.stride * vertices.count
-        vertexBuffer = device.makeBuffer(bytes: vertices, length: vertexBufferSize, options: [.storageModeShared])!
-        vertexBuffer.label = "vertexBuffer"
-        
-        let indexBufferSize = MemoryLayout<UInt32>.stride * indices.count
-        indexBuffer = device.makeBuffer(bytes: indices, length: indexBufferSize, options: [.storageModeShared])!
-        indexBuffer.label = "indexBuffer"
-        
+  func createIndexBuffer(device: MTLDevice) throws -> MTLBuffer {
+    let indexBufferSize = MemoryLayout<UInt32>.stride * indices.count
+    guard let buffer = device.makeBuffer(bytes: indices, length: indexBufferSize, options: [.storageModeShared]) else {
+      throw MeshError.failedToCreateBuffer
+    }
+    buffer.label = "indexBuffer"
+    return buffer
+  }
+  
+  func createVertexBuffer(device: MTLDevice) throws -> MTLBuffer {
+    let vertexBufferSize = MemoryLayout<Vertex>.stride * vertices.count
+    guard let buffer = device.makeBuffer(bytes: vertices, length: vertexBufferSize, options: [.storageModeShared]) else {
+      throw MeshError.failedToCreateBuffer
+    }
+    buffer.label = "vertexBuffer"
+    return buffer
+  }
+  
+  func createUniformBuffer(device: MTLDevice) throws -> MTLBuffer {
+    var uniforms = self.uniforms // mutable copy
+    let uniformBufferSize = MemoryLayout<Uniforms>.stride
+    guard let buffer = device.makeBuffer(bytes: &uniforms, length: uniformBufferSize, options: [.storageModeShared]) else {
+      throw MeshError.failedToCreateBuffer
+    }
+    buffer.label = "uniformBuffer"
+    return buffer
+  }
+  
+  mutating func createBuffers(device: MTLDevice) throws -> MeshBuffers {
+    try queue.sync {
+      // only remake the buffers if something has been changed
+      if hasChanged {
         // TODO: have separate hasChanged for uniforms (they change a lot less often for chunks)
         // TODO: reuse buffer for uniforms (they have a fixed size)
-        let uniformBufferSize = MemoryLayout<Uniforms>.stride
-        uniformBuffer = device.makeBuffer(bytes: &uniforms, length: uniformBufferSize, options: [.storageModeShared])!
-        uniformBuffer.label = "uniformBuffer"
+        vertexBuffer = try createVertexBuffer(device: device)
+        indexBuffer = try createVertexBuffer(device: device)
+        uniformBuffer = try createUniformBuffer(device: device)
         
         hasChanged = false
       }
     }
     
-    return (
-      vertexBuffer: vertexBuffer,
+    return MeshBuffers(
       indexBuffer: indexBuffer,
+      vertexBuffer: vertexBuffer,
       uniformBuffer: uniformBuffer
     )
   }

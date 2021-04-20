@@ -16,10 +16,10 @@ struct ScoreboardObjectivePacket: ClientboundPacket {
   var type: Int?
 
   init(from packetReader: inout PacketReader) throws {
-    objectiveName = packetReader.readString()
+    objectiveName = try packetReader.readString()
     mode = packetReader.readUnsignedByte()
     if mode == 0 || mode == 2 {
-      objectiveValue = packetReader.readChat()
+      objectiveValue = try packetReader.readChat()
       type = packetReader.readVarInt()
     }
   }

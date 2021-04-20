@@ -7,7 +7,7 @@
 
 import Foundation
 import simd
-import os
+
 
 enum FaceDirection: Int {
   case up = 0
@@ -123,7 +123,7 @@ enum FaceDirection: Int {
       return .down
     }
     
-    Logger.debug("vector \(vector) did not match a direction")
+    Logger.warn("vector \(vector) did not match a direction")
     return .up
   }
   

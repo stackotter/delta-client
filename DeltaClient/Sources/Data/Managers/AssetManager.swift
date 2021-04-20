@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+
 import Zip
 
 enum AssetError: LocalizedError {
@@ -49,14 +49,14 @@ class AssetManager {
     // if version_urls.json doesn't exist download the contents from mojang
     let versionURLsFile = storageManager.absoluteFromRelative("version_urls.json")
     if !storageManager.fileExists(at: versionURLsFile) {
-      Logger.log("downloading versions manifest")
+      Logger.info("downloading versions manifest..")
       try downloadVersionURLs()
-      Logger.log("downloaded versions manifest")
+      Logger.info("downloaded versions manifest")
     }
     let downloadURLs = try JSON.fromURL(versionURLsFile)
     
     // download version metadata
-    Logger.log("downloading client jar metadata")
+    Logger.info("downloading client jar metadata..")
     guard let downloadURLString = downloadURLs.getString(forKey: Constants.versionString) else {
       Logger.error("failed to find download url for version \(Constants.versionString) metadata json")
       throw AssetError.noURLForVersion(Constants.versionString)
@@ -82,14 +82,14 @@ class AssetManager {
     let clientJarExtracted = FileManager.default.temporaryDirectory.appendingPathComponent("client", isDirectory: true)
     try FileManager.default.createDirectory(at: clientJarExtracted, withIntermediateDirectories: true, attributes: nil)
     do {
-      Logger.debug("downloading client jar..")
+      Logger.info("downloading client jar..")
       let clientJarData = try Data(contentsOf: clientJarURL)
       try clientJarData.write(to: clientJar)
     } catch {
       Logger.error("failed to download client jar")
       throw AssetError.failedToDownloadClientJar(error)
     }
-    Logger.log("extracting client jar")
+    Logger.info("extracting client jar")
     do {
       Zip.addCustomFileExtension("jar")
       try Zip.unzipFile(clientJar, destination: clientJarExtracted, overwrite: true, password: nil)
@@ -97,7 +97,7 @@ class AssetManager {
       Logger.error("failed to extract client jar with error: \(error)")
       throw AssetError.failedToExtractClientJar(error)
     }
-    Logger.debug("extracted client jar")
+    Logger.info("extracted client jar")
     
     // copy assets from extracted jar to application support
     try FileManager.default.copyItem(at: clientJarExtracted.appendingPathComponent("assets"), to: assetsFolder)

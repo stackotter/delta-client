@@ -14,7 +14,7 @@ struct ResourcePackSendPacket: ClientboundPacket {
   var hash: String
 
   init(from packetReader: inout PacketReader) throws {
-    url = packetReader.readString()
-    hash = packetReader.readString()
+    url = try packetReader.readString()
+    hash = try packetReader.readString()
   }
 }
