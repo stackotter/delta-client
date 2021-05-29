@@ -14,11 +14,7 @@ struct OfflineLoginView: View {
   @State var username = ""
   
   func addAccount() {
-    let account = OfflineAccount(
-      profiles: [
-        "offline": Profile(name: username, id: UUID().uuidString)
-      ],
-      selectedProfile: "offline")
+    let account = OfflineAccount(username: username)
     configManager.addOfflineAccount(account)
     configManager.selectAccount(uuid: account.id, type: .offline)
     viewState.returnToPrevious()

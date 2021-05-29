@@ -9,27 +9,22 @@ import Foundation
 
 struct MojangAccount: Account {
   var id: String
+  var profileId: String
+  var name: String
   var email: String
   var accessToken: String
-  var profiles: [String: Profile]
-  var selectedProfile: String
   
   init(
     id: String,
+    profileId: String,
+    name: String,
     email: String,
-    accessToken: String,
-    profiles: [Profile],
-    selectedProfile: String)
+    accessToken: String)
   {
     self.id = id
+    self.profileId = profileId
+    self.name = name
     self.email = email
     self.accessToken = accessToken
-    self.selectedProfile = selectedProfile
-    
-    var profilesMap: [String: Profile] = [:]
-    for profile in profiles {
-      profilesMap[profile.id] = profile
-    }
-    self.profiles = profilesMap
   }
 }

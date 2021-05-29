@@ -39,14 +39,12 @@ struct EncryptionRequestPacket: ClientboundPacket {
     ])
     
     // TODO: configmanager should be a singleton
-    // swiftlint:disable force_unwrapping
     let configManager = server.managers.configManager!
     if let account = configManager.getSelectedAccount() {
       if let mojangAccount = account as? MojangAccount {
         let accessToken = mojangAccount.accessToken
         // TODO: when multi accounting is done no force unwrapping should be necessary
-        let selectedProfile = account.getSelectedProfile()!.id
-        // swiftlint:enable force_unwrapping
+        let selectedProfile = account.profileId
         MojangAPI.join(
           accessToken: accessToken,
           selectedProfile: selectedProfile,

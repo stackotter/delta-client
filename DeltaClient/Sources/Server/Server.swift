@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 class Server: Hashable {
   var managers: Managers
   var connection: ServerConnection
@@ -27,7 +26,7 @@ class Server: Hashable {
   
   var eventManager = EventManager<ServerEvent>()
   
-  var profile: Profile
+  var account: Account
   
   // Init
   
@@ -35,10 +34,8 @@ class Server: Hashable {
     self.descriptor = descriptor
     self.managers = managers
     
-    // TODO: pass this info to server (don't get it to get it itself)
-    profile = self.managers.configManager.getSelectedAccount()!.getSelectedProfile()!
-    
-    self.player = Player(username: profile.name)
+    account = managers.configManager.getSelectedAccount() ?? OfflineAccount(username: "error")
+    self.player = Player(username: account.name)
     
     self.config = ServerConfig.createDefault()
     self.packetRegistry = PacketRegistry.createDefault()

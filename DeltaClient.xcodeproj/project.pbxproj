@@ -14,6 +14,7 @@
 		7844A6AD2661B7DD008CFBF2 /* AccountType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6AC2661B7DD008CFBF2 /* AccountType.swift */; };
 		7844A6BD2661C1F6008CFBF2 /* AccountSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6BC2661C1F6008CFBF2 /* AccountSettingsView.swift */; };
 		7844A6C22661C78D008CFBF2 /* AccountIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6C12661C78D008CFBF2 /* AccountIdentifier.swift */; };
+		7844A6CA2661CD70008CFBF2 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6C92661CD6F008CFBF2 /* Profile.swift */; };
 		78513204262D5FEC0054268A /* ChatError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513203262D5FEC0054268A /* ChatError.swift */; };
 		7851320A262D69280054268A /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513209262D69280054268A /* LogMessage.swift */; };
 		78513223262D7A980054268A /* MeshBuffers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513222262D7A980054268A /* MeshBuffers.swift */; };
@@ -104,7 +105,6 @@
 		78D91981261FB4CD00A4782F /* MojangAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9182E261FB4CC00A4782F /* MojangAgent.swift */; };
 		78D91982261FB4CD00A4782F /* MojangUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9182F261FB4CC00A4782F /* MojangUser.swift */; };
 		78D91983261FB4CD00A4782F /* MojangAuthenticationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91830261FB4CC00A4782F /* MojangAuthenticationResponse.swift */; };
-		78D91984261FB4CD00A4782F /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91831261FB4CC00A4782F /* Profile.swift */; };
 		78D91985261FB4CD00A4782F /* MojangJoinRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91832261FB4CC00A4782F /* MojangJoinRequest.swift */; };
 		78D91986261FB4CD00A4782F /* MojangAPIDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91833261FB4CC00A4782F /* MojangAPIDefinition.swift */; };
 		78D91987261FB4CD00A4782F /* MojangAuthenticationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91834261FB4CC00A4782F /* MojangAuthenticationRequest.swift */; };
@@ -402,6 +402,7 @@
 		7844A6AC2661B7DD008CFBF2 /* AccountType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountType.swift; sourceTree = "<group>"; };
 		7844A6BC2661C1F6008CFBF2 /* AccountSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsView.swift; sourceTree = "<group>"; };
 		7844A6C12661C78D008CFBF2 /* AccountIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountIdentifier.swift; sourceTree = "<group>"; };
+		7844A6C92661CD6F008CFBF2 /* Profile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		78513203262D5FEC0054268A /* ChatError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatError.swift; sourceTree = "<group>"; };
 		78513209262D69280054268A /* LogMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogMessage.swift; sourceTree = "<group>"; };
 		78513222262D7A980054268A /* MeshBuffers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshBuffers.swift; sourceTree = "<group>"; };
@@ -491,7 +492,6 @@
 		78D9182E261FB4CC00A4782F /* MojangAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MojangAgent.swift; sourceTree = "<group>"; };
 		78D9182F261FB4CC00A4782F /* MojangUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MojangUser.swift; sourceTree = "<group>"; };
 		78D91830261FB4CC00A4782F /* MojangAuthenticationResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MojangAuthenticationResponse.swift; sourceTree = "<group>"; };
-		78D91831261FB4CC00A4782F /* Profile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		78D91832261FB4CC00A4782F /* MojangJoinRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MojangJoinRequest.swift; sourceTree = "<group>"; };
 		78D91833261FB4CC00A4782F /* MojangAPIDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MojangAPIDefinition.swift; sourceTree = "<group>"; };
 		78D91834261FB4CC00A4782F /* MojangAuthenticationRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MojangAuthenticationRequest.swift; sourceTree = "<group>"; };
@@ -858,8 +858,8 @@
 				78D9182D261FB4CC00A4782F /* MojangAPI.swift */,
 				78D9182E261FB4CC00A4782F /* MojangAgent.swift */,
 				78D9182F261FB4CC00A4782F /* MojangUser.swift */,
+				7844A6C92661CD6F008CFBF2 /* Profile.swift */,
 				78D91830261FB4CC00A4782F /* MojangAuthenticationResponse.swift */,
-				78D91831261FB4CC00A4782F /* Profile.swift */,
 				78D91832261FB4CC00A4782F /* MojangJoinRequest.swift */,
 				78D91833261FB4CC00A4782F /* MojangAPIDefinition.swift */,
 				78D91834261FB4CC00A4782F /* MojangAuthenticationRequest.swift */,
@@ -1774,6 +1774,7 @@
 				7844A6C22661C78D008CFBF2 /* AccountIdentifier.swift in Sources */,
 				78D919E6261FB4CD00A4782F /* PlayerRotationPacket.swift in Sources */,
 				78D91A31261FB4CD00A4782F /* ScoreboardObjectivePacket.swift in Sources */,
+				7844A6CA2661CD70008CFBF2 /* Profile.swift in Sources */,
 				78D9197A261FB4CD00A4782F /* RequestUtil.swift in Sources */,
 				78D919F9261FB4CD00A4782F /* PlayerAbilitiesPacket.swift in Sources */,
 				78D919DF261FB4CD00A4782F /* PlayerMovementPacket.swift in Sources */,
@@ -1890,7 +1891,6 @@
 				78D919E7261FB4CD00A4782F /* PlayerPositionPacket.swift in Sources */,
 				78D91A35261FB4CD00A4782F /* ResourcePackSendPacket.swift in Sources */,
 				78D919EF261FB4CD00A4782F /* TradeListPacket.swift in Sources */,
-				78D91984261FB4CD00A4782F /* Profile.swift in Sources */,
 				78D7E4E32633DF6C00FB1A3B /* MicrosoftAPIDefinition.swift in Sources */,
 				78D91A85261FB4CE00A4782F /* Config.swift in Sources */,
 				78D9199C261FB4CD00A4782F /* BlockModelElement.swift in Sources */,

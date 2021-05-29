@@ -9,19 +9,14 @@ import Foundation
 
 struct OfflineAccount: Account {
   var id: String
-  var profiles: [String: Profile]
-  var selectedProfile: String
+  var profileId: String
+  var name: String
   
-  init(
-    profiles: [String: Profile],
-    selectedProfile: String)
-  {
-    let username = profiles[selectedProfile]?.name ?? "error"
+  init(username: String) {
     let generatedUUID = UUID.fromString("OfflinePlayer: \(username)")?.uuidString
-    
     id = generatedUUID ?? UUID().uuidString
+    profileId = id
     
-    self.profiles = profiles
-    self.selectedProfile = selectedProfile
+    name = username
   }
 }

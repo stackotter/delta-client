@@ -24,10 +24,10 @@ struct MojangLoginView: View {
       onCompletion: { response in
         let account = MojangAccount(
           id: response.user.id,
+          profileId: response.selectedProfile.id,
+          name: response.selectedProfile.name,
           email: response.user.username,
-          accessToken: response.accessToken,
-          profiles: response.availableProfiles,
-          selectedProfile: response.selectedProfile.id
+          accessToken: response.accessToken
         )
         configManager.addMojangAccount(account)
         configManager.selectAccount(uuid: account.id, type: .mojang)
