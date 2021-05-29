@@ -27,20 +27,18 @@ class Server: Hashable {
   
   var eventManager = EventManager<ServerEvent>()
   
+  var profile: Profile
+  
   // Init
   
-  init(descriptor: ServerDescriptor, managers: Managers) {
+  init(descriptor: ServerDescriptor, managers: Managers) { // TODO: remove need for passing managers
     self.descriptor = descriptor
     self.managers = managers
     
+    // TODO: pass this info to server (don't get it to get it itself)
+    profile = self.managers.configManager.getSelectedAccount()!.getSelectedProfile()!
     
-    #if DEBUG
-    let username = "epicboi"
-    #else
-    let username = self.managers.configManager.getSelectedProfile()!.name
-    #endif
-    
-    self.player = Player(username: username)
+    self.player = Player(username: profile.name)
     
     self.config = ServerConfig.createDefault()
     self.packetRegistry = PacketRegistry.createDefault()

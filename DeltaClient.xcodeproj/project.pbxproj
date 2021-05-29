@@ -11,6 +11,9 @@
 		78052348261433A800079A01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7805221C261433A700079A01 /* Assets.xcassets */; };
 		780523B6261433A800079A01 /* DeltaClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229D261433A700079A01 /* DeltaClientApp.swift */; };
 		781829A5262A6F7E000F59B0 /* ChunkLighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781829A4262A6F7E000F59B0 /* ChunkLighting.swift */; };
+		7844A6AD2661B7DD008CFBF2 /* AccountType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6AC2661B7DD008CFBF2 /* AccountType.swift */; };
+		7844A6BD2661C1F6008CFBF2 /* AccountSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6BC2661C1F6008CFBF2 /* AccountSettingsView.swift */; };
+		7844A6C22661C78D008CFBF2 /* AccountIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6C12661C78D008CFBF2 /* AccountIdentifier.swift */; };
 		78513204262D5FEC0054268A /* ChatError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513203262D5FEC0054268A /* ChatError.swift */; };
 		7851320A262D69280054268A /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513209262D69280054268A /* LogMessage.swift */; };
 		78513223262D7A980054268A /* MeshBuffers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513222262D7A980054268A /* MeshBuffers.swift */; };
@@ -25,13 +28,34 @@
 		7868886D2623F67D00BD3F03 /* get_neighbouring_blocks.c in Sources */ = {isa = PBXBuildFile; fileRef = 7868886C2623F67D00BD3F03 /* get_neighbouring_blocks.c */; };
 		7868887526243D9F00BD3F03 /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7868887426243D9E00BD3F03 /* MathUtil.swift */; };
 		786D34FF2627EB4200DB8C2F /* ChunkPreparer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786D34FE2627EB4200DB8C2F /* ChunkPreparer.swift */; };
+		78756166264F2780006C9C36 /* MojangLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78756165264F2780006C9C36 /* MojangLoginView.swift */; };
+		7875616B264F2A71006C9C36 /* OfflineLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7875616A264F2A71006C9C36 /* OfflineLoginView.swift */; };
+		78756170264F2DE7006C9C36 /* OfflineAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7875616F264F2DE7006C9C36 /* OfflineAccount.swift */; };
+		78756175264F2DFD006C9C36 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78756174264F2DFD006C9C36 /* Account.swift */; };
+		787F5C252633F506003B5782 /* XSTSAuthenticationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787F5C242633F506003B5782 /* XSTSAuthenticationRequest.swift */; };
+		787F5C2A2633F7C9003B5782 /* XSTSAuthenticationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787F5C292633F7C9003B5782 /* XSTSAuthenticationResponse.swift */; };
+		787F5C2F2633F93E003B5782 /* MinecraftXboxAuthenticationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787F5C2E2633F93E003B5782 /* MinecraftXboxAuthenticationRequest.swift */; };
+		787F5C342633F9DF003B5782 /* MinecraftXboxAuthenticationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787F5C332633F9DF003B5782 /* MinecraftXboxAuthenticationResponse.swift */; };
+		787F5C392633FC1F003B5782 /* GameOwnershipResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787F5C382633FC1F003B5782 /* GameOwnershipResponse.swift */; };
+		787F5C3E263405A5003B5782 /* XSTSAuthenticationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787F5C3D263405A5003B5782 /* XSTSAuthenticationError.swift */; };
 		7892880E261438A000F17DBB /* DeltaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A9261433A700079A01 /* DeltaClientTests.swift */; };
 		78928812261438A500F17DBB /* DeltaClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052170261433A600079A01 /* DeltaClientUITests.swift */; };
+		789DD3C52633F32800FD7532 /* XboxLiveAuthenticationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789DD3C42633F32800FD7532 /* XboxLiveAuthenticationResponse.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
 		78C64CC826251D2700375CBB /* WorldUniforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C64CC726251D2700375CBB /* WorldUniforms.swift */; };
 		78C64CD526251D4D00375CBB /* ChunkUniforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C64CD426251D4D00375CBB /* ChunkUniforms.swift */; };
 		78C64CDD2625555C00375CBB /* AxisAlignedBoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C64CDC2625555B00375CBB /* AxisAlignedBoundingBox.swift */; };
 		78D1F89D2626471900AEE7AE /* Frustum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D1F89C2626471900AEE7AE /* Frustum.swift */; };
+		78D7E49C26338CCD00FB1A3B /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E49B26338CCD00FB1A3B /* WebView.swift */; };
+		78D7E4A126338D1C00FB1A3B /* MicrosoftAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E4A026338D1C00FB1A3B /* MicrosoftAuthView.swift */; };
+		78D7E4AF2633C96200FB1A3B /* MicrosoftAccessTokenResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E4AE2633C96200FB1A3B /* MicrosoftAccessTokenResponse.swift */; };
+		78D7E4B92633D00B00FB1A3B /* ContentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E4B82633D00B00FB1A3B /* ContentType.swift */; };
+		78D7E4C12633D2C500FB1A3B /* MojangRefreshTokenRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E4C02633D2C500FB1A3B /* MojangRefreshTokenRequest.swift */; };
+		78D7E4C62633D3C800FB1A3B /* MojangRefreshTokenResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E4C52633D3C800FB1A3B /* MojangRefreshTokenResponse.swift */; };
+		78D7E4CB2633D6FD00FB1A3B /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E4CA2633D6FD00FB1A3B /* URL.swift */; };
+		78D7E4D02633D98000FB1A3B /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E4CF2633D98000FB1A3B /* Request.swift */; };
+		78D7E4E32633DF6C00FB1A3B /* MicrosoftAPIDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E4E22633DF6C00FB1A3B /* MicrosoftAPIDefinition.swift */; };
+		78D7E4E82633EFD800FB1A3B /* XboxLiveAuthenticationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E4E72633EFD800FB1A3B /* XboxLiveAuthenticationRequest.swift */; };
 		78D917E4261F08E400A4782F /* IDZSwiftCommonCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 78D917E3261F08E400A4782F /* IDZSwiftCommonCrypto */; };
 		78D91954261FB4CD00A4782F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D917FA261FB4CC00A4782F /* Constants.swift */; };
 		78D91955261FB4CD00A4782F /* CraftingRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D917FD261FB4CC00A4782F /* CraftingRecipe.swift */; };
@@ -80,7 +104,7 @@
 		78D91981261FB4CD00A4782F /* MojangAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9182E261FB4CC00A4782F /* MojangAgent.swift */; };
 		78D91982261FB4CD00A4782F /* MojangUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9182F261FB4CC00A4782F /* MojangUser.swift */; };
 		78D91983261FB4CD00A4782F /* MojangAuthenticationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91830261FB4CC00A4782F /* MojangAuthenticationResponse.swift */; };
-		78D91984261FB4CD00A4782F /* MojangProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91831261FB4CC00A4782F /* MojangProfile.swift */; };
+		78D91984261FB4CD00A4782F /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91831261FB4CC00A4782F /* Profile.swift */; };
 		78D91985261FB4CD00A4782F /* MojangJoinRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91832261FB4CC00A4782F /* MojangJoinRequest.swift */; };
 		78D91986261FB4CD00A4782F /* MojangAPIDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91833261FB4CC00A4782F /* MojangAPIDefinition.swift */; };
 		78D91987261FB4CD00A4782F /* MojangAuthenticationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91834261FB4CC00A4782F /* MojangAuthenticationRequest.swift */; };
@@ -339,6 +363,7 @@
 		78D91AA2261FB4E100A4782F /* GameCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91A97261FB4E100A4782F /* GameCommandView.swift */; };
 		78D91AA3261FB4E100A4782F /* GameRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91A98261FB4E100A4782F /* GameRenderView.swift */; };
 		78D91AA4261FB4E100A4782F /* EditServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91A99261FB4E100A4782F /* EditServerView.swift */; };
+		78E0C13126337F82009D882D /* MicrosoftAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E0C13026337F82009D882D /* MicrosoftAuth.swift */; };
 		78E2324526280B9E00B08B4B /* AppEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E2324426280B9E00B08B4B /* AppEvent.swift */; };
 		78E2324A26280C8000B08B4B /* ServerEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E2324926280C8000B08B4B /* ServerEvent.swift */; };
 		78E232522628138300B08B4B /* EventProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E232512628138300B08B4B /* EventProtocol.swift */; };
@@ -374,6 +399,9 @@
 		784194B7258204CD0070DE78 /* DeltaClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194C9258204D10070DE78 /* DeltaClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D4258204D10070DE78 /* DeltaClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7844A6AC2661B7DD008CFBF2 /* AccountType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountType.swift; sourceTree = "<group>"; };
+		7844A6BC2661C1F6008CFBF2 /* AccountSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsView.swift; sourceTree = "<group>"; };
+		7844A6C12661C78D008CFBF2 /* AccountIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountIdentifier.swift; sourceTree = "<group>"; };
 		78513203262D5FEC0054268A /* ChatError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatError.swift; sourceTree = "<group>"; };
 		78513209262D69280054268A /* LogMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogMessage.swift; sourceTree = "<group>"; };
 		78513222262D7A980054268A /* MeshBuffers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshBuffers.swift; sourceTree = "<group>"; };
@@ -391,10 +419,31 @@
 		7868886C2623F67D00BD3F03 /* get_neighbouring_blocks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = get_neighbouring_blocks.c; sourceTree = "<group>"; };
 		7868887426243D9E00BD3F03 /* MathUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathUtil.swift; sourceTree = "<group>"; };
 		786D34FE2627EB4200DB8C2F /* ChunkPreparer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkPreparer.swift; sourceTree = "<group>"; };
+		78756165264F2780006C9C36 /* MojangLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangLoginView.swift; sourceTree = "<group>"; };
+		7875616A264F2A71006C9C36 /* OfflineLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineLoginView.swift; sourceTree = "<group>"; };
+		7875616F264F2DE7006C9C36 /* OfflineAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineAccount.swift; sourceTree = "<group>"; };
+		78756174264F2DFD006C9C36 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		787F5C242633F506003B5782 /* XSTSAuthenticationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XSTSAuthenticationRequest.swift; sourceTree = "<group>"; };
+		787F5C292633F7C9003B5782 /* XSTSAuthenticationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XSTSAuthenticationResponse.swift; sourceTree = "<group>"; };
+		787F5C2E2633F93E003B5782 /* MinecraftXboxAuthenticationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftXboxAuthenticationRequest.swift; sourceTree = "<group>"; };
+		787F5C332633F9DF003B5782 /* MinecraftXboxAuthenticationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftXboxAuthenticationResponse.swift; sourceTree = "<group>"; };
+		787F5C382633FC1F003B5782 /* GameOwnershipResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOwnershipResponse.swift; sourceTree = "<group>"; };
+		787F5C3D263405A5003B5782 /* XSTSAuthenticationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XSTSAuthenticationError.swift; sourceTree = "<group>"; };
+		789DD3C42633F32800FD7532 /* XboxLiveAuthenticationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XboxLiveAuthenticationResponse.swift; sourceTree = "<group>"; };
 		78C64CC726251D2700375CBB /* WorldUniforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldUniforms.swift; sourceTree = "<group>"; };
 		78C64CD426251D4D00375CBB /* ChunkUniforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkUniforms.swift; sourceTree = "<group>"; };
 		78C64CDC2625555B00375CBB /* AxisAlignedBoundingBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisAlignedBoundingBox.swift; sourceTree = "<group>"; };
 		78D1F89C2626471900AEE7AE /* Frustum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frustum.swift; sourceTree = "<group>"; };
+		78D7E49B26338CCD00FB1A3B /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		78D7E4A026338D1C00FB1A3B /* MicrosoftAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrosoftAuthView.swift; sourceTree = "<group>"; };
+		78D7E4AE2633C96200FB1A3B /* MicrosoftAccessTokenResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrosoftAccessTokenResponse.swift; sourceTree = "<group>"; };
+		78D7E4B82633D00B00FB1A3B /* ContentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentType.swift; sourceTree = "<group>"; };
+		78D7E4C02633D2C500FB1A3B /* MojangRefreshTokenRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangRefreshTokenRequest.swift; sourceTree = "<group>"; };
+		78D7E4C52633D3C800FB1A3B /* MojangRefreshTokenResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangRefreshTokenResponse.swift; sourceTree = "<group>"; };
+		78D7E4CA2633D6FD00FB1A3B /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
+		78D7E4CF2633D98000FB1A3B /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
+		78D7E4E22633DF6C00FB1A3B /* MicrosoftAPIDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrosoftAPIDefinition.swift; sourceTree = "<group>"; };
+		78D7E4E72633EFD800FB1A3B /* XboxLiveAuthenticationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XboxLiveAuthenticationRequest.swift; sourceTree = "<group>"; };
 		78D917FA261FB4CC00A4782F /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		78D917FD261FB4CC00A4782F /* CraftingRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftingRecipe.swift; sourceTree = "<group>"; };
 		78D917FE261FB4CC00A4782F /* CraftingShapeless.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CraftingShapeless.swift; sourceTree = "<group>"; };
@@ -442,7 +491,7 @@
 		78D9182E261FB4CC00A4782F /* MojangAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MojangAgent.swift; sourceTree = "<group>"; };
 		78D9182F261FB4CC00A4782F /* MojangUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MojangUser.swift; sourceTree = "<group>"; };
 		78D91830261FB4CC00A4782F /* MojangAuthenticationResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MojangAuthenticationResponse.swift; sourceTree = "<group>"; };
-		78D91831261FB4CC00A4782F /* MojangProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MojangProfile.swift; sourceTree = "<group>"; };
+		78D91831261FB4CC00A4782F /* Profile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		78D91832261FB4CC00A4782F /* MojangJoinRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MojangJoinRequest.swift; sourceTree = "<group>"; };
 		78D91833261FB4CC00A4782F /* MojangAPIDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MojangAPIDefinition.swift; sourceTree = "<group>"; };
 		78D91834261FB4CC00A4782F /* MojangAuthenticationRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MojangAuthenticationRequest.swift; sourceTree = "<group>"; };
@@ -708,6 +757,7 @@
 		78D91A97261FB4E100A4782F /* GameCommandView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameCommandView.swift; sourceTree = "<group>"; };
 		78D91A98261FB4E100A4782F /* GameRenderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameRenderView.swift; sourceTree = "<group>"; };
 		78D91A99261FB4E100A4782F /* EditServerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditServerView.swift; sourceTree = "<group>"; };
+		78E0C13026337F82009D882D /* MicrosoftAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrosoftAuth.swift; sourceTree = "<group>"; };
 		78E2324426280B9E00B08B4B /* AppEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEvent.swift; sourceTree = "<group>"; };
 		78E2324926280C8000B08B4B /* ServerEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerEvent.swift; sourceTree = "<group>"; };
 		78E232512628138300B08B4B /* EventProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventProtocol.swift; sourceTree = "<group>"; };
@@ -771,6 +821,63 @@
 			path = DeltaClientTests;
 			sourceTree = "<group>";
 		};
+		782170DF26304604008DE1C4 /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				782170E026304604008DE1C4 /* Microsoft */,
+				782170E126304604008DE1C4 /* Mojang */,
+				782170E226304604008DE1C4 /* Offline */,
+				78756174264F2DFD006C9C36 /* Account.swift */,
+				7844A6AC2661B7DD008CFBF2 /* AccountType.swift */,
+				7844A6C12661C78D008CFBF2 /* AccountIdentifier.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
+		782170E026304604008DE1C4 /* Microsoft */ = {
+			isa = PBXGroup;
+			children = (
+				78D7E4E22633DF6C00FB1A3B /* MicrosoftAPIDefinition.swift */,
+				78E0C13026337F82009D882D /* MicrosoftAuth.swift */,
+				78D7E4AE2633C96200FB1A3B /* MicrosoftAccessTokenResponse.swift */,
+				78D7E4E72633EFD800FB1A3B /* XboxLiveAuthenticationRequest.swift */,
+				789DD3C42633F32800FD7532 /* XboxLiveAuthenticationResponse.swift */,
+				787F5C242633F506003B5782 /* XSTSAuthenticationRequest.swift */,
+				787F5C292633F7C9003B5782 /* XSTSAuthenticationResponse.swift */,
+				787F5C3D263405A5003B5782 /* XSTSAuthenticationError.swift */,
+				787F5C2E2633F93E003B5782 /* MinecraftXboxAuthenticationRequest.swift */,
+				787F5C332633F9DF003B5782 /* MinecraftXboxAuthenticationResponse.swift */,
+				787F5C382633FC1F003B5782 /* GameOwnershipResponse.swift */,
+			);
+			path = Microsoft;
+			sourceTree = "<group>";
+		};
+		782170E126304604008DE1C4 /* Mojang */ = {
+			isa = PBXGroup;
+			children = (
+				78D9182D261FB4CC00A4782F /* MojangAPI.swift */,
+				78D9182E261FB4CC00A4782F /* MojangAgent.swift */,
+				78D9182F261FB4CC00A4782F /* MojangUser.swift */,
+				78D91830261FB4CC00A4782F /* MojangAuthenticationResponse.swift */,
+				78D91831261FB4CC00A4782F /* Profile.swift */,
+				78D91832261FB4CC00A4782F /* MojangJoinRequest.swift */,
+				78D91833261FB4CC00A4782F /* MojangAPIDefinition.swift */,
+				78D91834261FB4CC00A4782F /* MojangAuthenticationRequest.swift */,
+				78D91835261FB4CC00A4782F /* MojangAccount.swift */,
+				78D7E4C02633D2C500FB1A3B /* MojangRefreshTokenRequest.swift */,
+				78D7E4C52633D3C800FB1A3B /* MojangRefreshTokenResponse.swift */,
+			);
+			path = Mojang;
+			sourceTree = "<group>";
+		};
+		782170E226304604008DE1C4 /* Offline */ = {
+			isa = PBXGroup;
+			children = (
+				7875616F264F2DE7006C9C36 /* OfflineAccount.swift */,
+			);
+			path = Offline;
+			sourceTree = "<group>";
+		};
 		784194AE258204CD0070DE78 = {
 			isa = PBXGroup;
 			children = (
@@ -816,6 +923,7 @@
 		78D917F9261FB4CC00A4782F /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				782170DF26304604008DE1C4 /* Account */,
 				78513208262D69150054268A /* Log */,
 				78E2323E26280B4D00B08B4B /* Event */,
 				78D91927261FB4CD00A4782F /* Data */,
@@ -906,6 +1014,8 @@
 			children = (
 				78D91824261FB4CC00A4782F /* ThreadUtil.swift */,
 				78D91825261FB4CC00A4782F /* RequestUtil.swift */,
+				78D7E4CF2633D98000FB1A3B /* Request.swift */,
+				78D7E4B82633D00B00FB1A3B /* ContentType.swift */,
 				7868885426239C3000BD3F03 /* Random.swift */,
 				78D91827261FB4CC00A4782F /* CompressionUtil.swift */,
 				78D91828261FB4CC00A4782F /* Profiler.swift */,
@@ -913,35 +1023,11 @@
 				78D91836261FB4CC00A4782F /* MatrixUtil.swift */,
 				78D9183B261FB4CC00A4782F /* CryptoUtil.swift */,
 				7868887426243D9E00BD3F03 /* MathUtil.swift */,
-				78D9182B261FB4CC00A4782F /* API */,
+				78D91829261FB4CC00A4782F /* RequestMethod.swift */,
+				78D7E4CA2633D6FD00FB1A3B /* URL.swift */,
 				78D91837261FB4CC00A4782F /* C */,
 			);
 			path = Util;
-			sourceTree = "<group>";
-		};
-		78D9182B261FB4CC00A4782F /* API */ = {
-			isa = PBXGroup;
-			children = (
-				78D91829261FB4CC00A4782F /* RequestMethod.swift */,
-				78D9182C261FB4CC00A4782F /* Mojang */,
-			);
-			path = API;
-			sourceTree = "<group>";
-		};
-		78D9182C261FB4CC00A4782F /* Mojang */ = {
-			isa = PBXGroup;
-			children = (
-				78D9182D261FB4CC00A4782F /* MojangAPI.swift */,
-				78D9182E261FB4CC00A4782F /* MojangAgent.swift */,
-				78D9182F261FB4CC00A4782F /* MojangUser.swift */,
-				78D91830261FB4CC00A4782F /* MojangAuthenticationResponse.swift */,
-				78D91831261FB4CC00A4782F /* MojangProfile.swift */,
-				78D91832261FB4CC00A4782F /* MojangJoinRequest.swift */,
-				78D91833261FB4CC00A4782F /* MojangAPIDefinition.swift */,
-				78D91834261FB4CC00A4782F /* MojangAuthenticationRequest.swift */,
-				78D91835261FB4CC00A4782F /* MojangAccount.swift */,
-			);
-			path = Mojang;
 			sourceTree = "<group>";
 		};
 		78D91837261FB4CC00A4782F /* C */ = {
@@ -1434,13 +1520,18 @@
 				78D91A90261FB4E100A4782F /* ViewState.swift */,
 				78D91A91261FB4E100A4782F /* ServerDetailView.swift */,
 				78D91A92261FB4E100A4782F /* EditServerListView.swift */,
+				7844A6BC2661C1F6008CFBF2 /* AccountSettingsView.swift */,
 				78D91A93261FB4E100A4782F /* LoginView.swift */,
+				78756165264F2780006C9C36 /* MojangLoginView.swift */,
+				7875616A264F2A71006C9C36 /* OfflineLoginView.swift */,
 				78D91A94261FB4E100A4782F /* AddServerView.swift */,
 				78D91A95261FB4E100A4782F /* ServerListView.swift */,
 				78D91A96261FB4E100A4782F /* ServerListEntryView.swift */,
 				78D91A97261FB4E100A4782F /* GameCommandView.swift */,
 				78D91A98261FB4E100A4782F /* GameRenderView.swift */,
 				78D91A99261FB4E100A4782F /* EditServerView.swift */,
+				78D7E49B26338CCD00FB1A3B /* WebView.swift */,
+				78D7E4A026338D1C00FB1A3B /* MicrosoftAuthView.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -1642,6 +1733,7 @@
 				78D91971261FB4CD00A4782F /* ChatStringComponent.swift in Sources */,
 				78D91986261FB4CD00A4782F /* MojangAPIDefinition.swift in Sources */,
 				78D91A73261FB4CE00A4782F /* UUID.swift in Sources */,
+				7875616B264F2A71006C9C36 /* OfflineLoginView.swift in Sources */,
 				78D9199F261FB4CD00A4782F /* IntermediateBlockModelElementFace.swift in Sources */,
 				78D91A38261FB4CD00A4782F /* BossBarPacket.swift in Sources */,
 				78D91A71261FB4CE00A4782F /* Axis.swift in Sources */,
@@ -1654,6 +1746,7 @@
 				78D919E0261FB4CD00A4782F /* RecipeBookDataPacket.swift in Sources */,
 				78D91961261FB4CD00A4782F /* SuspiciousStewRecipe.swift in Sources */,
 				78D91A79261FB4CE00A4782F /* Difficulty.swift in Sources */,
+				78D7E4B92633D00B00FB1A3B /* ContentType.swift in Sources */,
 				78D9199B261FB4CD00A4782F /* Vertex.swift in Sources */,
 				78D91976261FB4CD00A4782F /* ChatStyle.swift in Sources */,
 				78D919D3261FB4CD00A4782F /* SteerBoatPacket.swift in Sources */,
@@ -1665,7 +1758,9 @@
 				78D91A5D261FB4CE00A4782F /* InnermostNetworkLayer.swift in Sources */,
 				78D9195C261FB4CD00A4782F /* BannerDuplicateRecipe.swift in Sources */,
 				78513223262D7A980054268A /* MeshBuffers.swift in Sources */,
+				78D7E4E82633EFD800FB1A3B /* XboxLiveAuthenticationRequest.swift in Sources */,
 				78D9198C261FB4CD00A4782F /* EntityVelocity.swift in Sources */,
+				787F5C3E263405A5003B5782 /* XSTSAuthenticationError.swift in Sources */,
 				78D91A82261FB4CE00A4782F /* TextureManager.swift in Sources */,
 				78D91965261FB4CD00A4782F /* MapExtendingRecipe.swift in Sources */,
 				78D91A7D261FB4CE00A4782F /* EventManager.swift in Sources */,
@@ -1676,6 +1771,7 @@
 				78D9195F261FB4CD00A4782F /* FireworkStarFadeRecipe.swift in Sources */,
 				78D919A8261FB4CD00A4782F /* ChunkPosition.swift in Sources */,
 				78D91A05261FB4CD00A4782F /* ChunkDataPacket.swift in Sources */,
+				7844A6C22661C78D008CFBF2 /* AccountIdentifier.swift in Sources */,
 				78D919E6261FB4CD00A4782F /* PlayerRotationPacket.swift in Sources */,
 				78D91A31261FB4CD00A4782F /* ScoreboardObjectivePacket.swift in Sources */,
 				78D9197A261FB4CD00A4782F /* RequestUtil.swift in Sources */,
@@ -1696,6 +1792,7 @@
 				78C64CD526251D4D00375CBB /* ChunkUniforms.swift in Sources */,
 				78D91A2F261FB4CD00A4782F /* SetCooldownPacket.swift in Sources */,
 				78D919F5261FB4CD00A4782F /* EntityVelocityPacket.swift in Sources */,
+				7844A6AD2661B7DD008CFBF2 /* AccountType.swift in Sources */,
 				78D919CE261FB4CD00A4782F /* UpdateCommandBlockPacket.swift in Sources */,
 				78D91A9A261FB4E100A4782F /* AppView.swift in Sources */,
 				78D91A1E261FB4CD00A4782F /* AdvancementsPacket.swift in Sources */,
@@ -1709,6 +1806,7 @@
 				78D91A3C261FB4CD00A4782F /* SoundEffectPacket.swift in Sources */,
 				78D91969261FB4CD00A4782F /* RepairItemRecipe.swift in Sources */,
 				78D91A26261FB4CD00A4782F /* JoinGamePacket.swift in Sources */,
+				787F5C252633F506003B5782 /* XSTSAuthenticationRequest.swift in Sources */,
 				78D91958261FB4CD00A4782F /* Item.swift in Sources */,
 				78D919A9261FB4CD00A4782F /* World.swift in Sources */,
 				78D919E8261FB4CD00A4782F /* SelectTradePacket.swift in Sources */,
@@ -1760,10 +1858,12 @@
 				78D91982261FB4CD00A4782F /* MojangUser.swift in Sources */,
 				78D91A33261FB4CD00A4782F /* UpdateHealthPacket.swift in Sources */,
 				78D91A0F261FB4CD00A4782F /* EntitySoundEffectPacket.swift in Sources */,
+				78756175264F2DFD006C9C36 /* Account.swift in Sources */,
 				78D91989261FB4CD00A4782F /* MatrixUtil.swift in Sources */,
 				78D919E5261FB4CD00A4782F /* EditBookPacket.swift in Sources */,
 				78D91972261FB4CD00A4782F /* ChatTranslateComponent.swift in Sources */,
 				78640852262C545C00FE3A10 /* CacheBlockModelElement.pb.swift in Sources */,
+				78D7E4D02633D98000FB1A3B /* Request.swift in Sources */,
 				78D91A87261FB4CE00A4782F /* Managers.swift in Sources */,
 				78D91A10261FB4CD00A4782F /* ServerDifficultyPacket.swift in Sources */,
 				78D919B2261FB4CD00A4782F /* ServerConfig.swift in Sources */,
@@ -1779,6 +1879,7 @@
 				78D91A01261FB4CD00A4782F /* BlockBreakAnimationPacket.swift in Sources */,
 				78D919CC261FB4CD00A4782F /* PluginMessageServerboundPacket.swift in Sources */,
 				78D91A60261FB4CE00A4782F /* Client.swift in Sources */,
+				78D7E4AF2633C96200FB1A3B /* MicrosoftAccessTokenResponse.swift in Sources */,
 				78E2324526280B9E00B08B4B /* AppEvent.swift in Sources */,
 				78D91978261FB4CD00A4782F /* ChatComponentUtil.swift in Sources */,
 				78D919DA261FB4CD00A4782F /* CreativeInventoryActionPacket.swift in Sources */,
@@ -1789,10 +1890,12 @@
 				78D919E7261FB4CD00A4782F /* PlayerPositionPacket.swift in Sources */,
 				78D91A35261FB4CD00A4782F /* ResourcePackSendPacket.swift in Sources */,
 				78D919EF261FB4CD00A4782F /* TradeListPacket.swift in Sources */,
-				78D91984261FB4CD00A4782F /* MojangProfile.swift in Sources */,
+				78D91984261FB4CD00A4782F /* Profile.swift in Sources */,
+				78D7E4E32633DF6C00FB1A3B /* MicrosoftAPIDefinition.swift in Sources */,
 				78D91A85261FB4CE00A4782F /* Config.swift in Sources */,
 				78D9199C261FB4CD00A4782F /* BlockModelElement.swift in Sources */,
 				78D919FF261FB4CD00A4782F /* PlayerListHeaderAndFooterPacket.swift in Sources */,
+				78756170264F2DE7006C9C36 /* OfflineAccount.swift in Sources */,
 				78D91A55261FB4CE00A4782F /* PacketLayer.swift in Sources */,
 				78D91A80261FB4CE00A4782F /* LocaleManager.swift in Sources */,
 				78D919D8261FB4CD00A4782F /* PickItemPacket.swift in Sources */,
@@ -1820,6 +1923,7 @@
 				78D919C1261FB4CD00A4782F /* UpdateJigsawBlockPacket.swift in Sources */,
 				78D91A4B261FB4CD00A4782F /* LoginPluginResponse.swift in Sources */,
 				78D91954261FB4CD00A4782F /* Constants.swift in Sources */,
+				78D7E4C62633D3C800FB1A3B /* MojangRefreshTokenResponse.swift in Sources */,
 				78D91A7E261FB4CE00A4782F /* StorageManager.swift in Sources */,
 				78D919B3261FB4CD00A4782F /* TabList.swift in Sources */,
 				78D9196B261FB4CD00A4782F /* Ingredient.swift in Sources */,
@@ -1827,14 +1931,18 @@
 				78D919E9261FB4CD00A4782F /* InteractEntityPacket.swift in Sources */,
 				78D91963261FB4CD00A4782F /* BookCloningRecipe.swift in Sources */,
 				78D91975261FB4CD00A4782F /* ChatScoreComponent.swift in Sources */,
+				78D7E4C12633D2C500FB1A3B /* MojangRefreshTokenRequest.swift in Sources */,
 				78D919B0261FB4CD00A4782F /* ServerPinger.swift in Sources */,
 				7868887526243D9F00BD3F03 /* MathUtil.swift in Sources */,
 				78D91A22261FB4CD00A4782F /* CraftRecipeResponsePacket.swift in Sources */,
+				787F5C392633FC1F003B5782 /* GameOwnershipResponse.swift in Sources */,
 				78D91A08261FB4CD00A4782F /* SpawnExperienceOrbPacket.swift in Sources */,
 				78C64CDD2625555C00375CBB /* AxisAlignedBoundingBox.swift in Sources */,
 				78D919FC261FB4CD00A4782F /* NBTQueryResponse.swift in Sources */,
 				78D919C3261FB4CD00A4782F /* ClickWindowButtonPacket.swift in Sources */,
+				789DD3C52633F32800FD7532 /* XboxLiveAuthenticationResponse.swift in Sources */,
 				78E2324A26280C8000B08B4B /* ServerEvent.swift in Sources */,
+				78D7E4A126338D1C00FB1A3B /* MicrosoftAuthView.swift in Sources */,
 				78D91A24261FB4CD00A4782F /* SetPassengersPacket.swift in Sources */,
 				78D919A3261FB4CD00A4782F /* RenderCoordinator.swift in Sources */,
 				78D919AC261FB4CD00A4782F /* ChunkData.swift in Sources */,
@@ -1856,6 +1964,7 @@
 				78D919AB261FB4CD00A4782F /* Chunk.swift in Sources */,
 				78D919F0261FB4CD00A4782F /* TagsPacket.swift in Sources */,
 				78D91959261FB4CD00A4782F /* SmeltingRecipe.swift in Sources */,
+				787F5C342633F9DF003B5782 /* MinecraftXboxAuthenticationResponse.swift in Sources */,
 				78D91A19261FB4CD00A4782F /* EntityEffectPacket.swift in Sources */,
 				78D91A16261FB4CD00A4782F /* EntityEquipmentPacket.swift in Sources */,
 				78D919B9261FB4CD00A4782F /* PingPacket.swift in Sources */,
@@ -1865,6 +1974,7 @@
 				78D91A57261FB4CE00A4782F /* SocketLayer.swift in Sources */,
 				78D91992261FB4CD00A4782F /* PlayerRotation.swift in Sources */,
 				78D91A83261FB4CE00A4782F /* AssetManager.swift in Sources */,
+				78756166264F2780006C9C36 /* MojangLoginView.swift in Sources */,
 				78D91974261FB4CD00A4782F /* ChatComponent.swift in Sources */,
 				78D91990261FB4CD00A4782F /* Hand.swift in Sources */,
 				78D9196F261FB4CD00A4782F /* HeatRecipe.swift in Sources */,
@@ -1886,6 +1996,7 @@
 				78D9198D261FB4CD00A4782F /* EntityPosition.swift in Sources */,
 				78D919BA261FB4CD00A4782F /* StatusRequestPacket.swift in Sources */,
 				78D91A23261FB4CD00A4782F /* TitlePacket.swift in Sources */,
+				7844A6BD2661C1F6008CFBF2 /* AccountSettingsView.swift in Sources */,
 				78D91A74261FB4CE00A4782F /* JSON.swift in Sources */,
 				78D91A37261FB4CD00A4782F /* ChangeGameStatePacket.swift in Sources */,
 				78D91A6F261FB4CE00A4782F /* Gamemode.swift in Sources */,
@@ -1895,6 +2006,7 @@
 				78D91A7C261FB4CE00A4782F /* ConfigManager.swift in Sources */,
 				78D91A1F261FB4CD00A4782F /* EntityStatusPacket.swift in Sources */,
 				78D919AD261FB4CD00A4782F /* PingResult.swift in Sources */,
+				78D7E4CB2633D6FD00FB1A3B /* URL.swift in Sources */,
 				78D91956261FB4CD00A4782F /* CraftingShapeless.swift in Sources */,
 				78D91A1C261FB4CD00A4782F /* EntityRotationPacket.swift in Sources */,
 				780523B6261433A800079A01 /* DeltaClientApp.swift in Sources */,
@@ -1910,18 +2022,22 @@
 				78D91A3D261FB4CD00A4782F /* SelectAdvancementTabPacket.swift in Sources */,
 				78D919F3261FB4CD00A4782F /* MultiBlockChangePacket.swift in Sources */,
 				78640851262C545C00FE3A10 /* CacheBlockModelPalette.pb.swift in Sources */,
+				787F5C2A2633F7C9003B5782 /* XSTSAuthenticationResponse.swift in Sources */,
 				78D919DD261FB4CD00A4782F /* EntityActionPacket.swift in Sources */,
 				78D91A9C261FB4E100A4782F /* ServerDetailView.swift in Sources */,
 				78D919CD261FB4CD00A4782F /* SpectatePacket.swift in Sources */,
 				7851320A262D69280054268A /* LogMessage.swift in Sources */,
 				78D919FE261FB4CD00A4782F /* OpenBookPacket.swift in Sources */,
 				78D91988261FB4CD00A4782F /* MojangAccount.swift in Sources */,
+				78D7E49C26338CCD00FB1A3B /* WebView.swift in Sources */,
 				78D9196C261FB4CD00A4782F /* SmithingRecipe.swift in Sources */,
+				78E0C13126337F82009D882D /* MicrosoftAuth.swift in Sources */,
 				78D91A50261FB4CD00A4782F /* SetCompressionPacket.swift in Sources */,
 				78D91991261FB4CD00A4782F /* PlayerEntityAction.swift in Sources */,
 				78640853262C545C00FE3A10 /* CacheBlockModel.pb.swift in Sources */,
 				78D9195B261FB4CD00A4782F /* SmokingRecipe.swift in Sources */,
 				78D919D4261FB4CD00A4782F /* VehicleMoveServerboundPacket.swift in Sources */,
+				787F5C2F2633F93E003B5782 /* MinecraftXboxAuthenticationRequest.swift in Sources */,
 				78D91A53261FB4CE00A4782F /* PacketState.swift in Sources */,
 				78D91A04261FB4CD00A4782F /* WindowItemsPacket.swift in Sources */,
 				78D91A5B261FB4CE00A4782F /* OutermostNetworkLayer.swift in Sources */,

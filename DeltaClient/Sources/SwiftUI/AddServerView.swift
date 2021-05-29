@@ -7,26 +7,18 @@
 
 import SwiftUI
 
-
-enum AddServerPreviousState {
-  case serverList
-  case editServerList
-}
-
 struct AddServerView: View {
   var configManager: ConfigManager
   var viewState: ViewState<AppViewState>
-  var previousState: AddServerPreviousState
   
   @State var serverName = ""
   @State var ip = ""
   
   @State var errorMessage: String?
   
-  init(configManager: ConfigManager, viewState: ViewState<AppViewState>, previousState: AddServerPreviousState) {
+  init(configManager: ConfigManager, viewState: ViewState<AppViewState>) {
     self.configManager = configManager
     self.viewState = viewState
-    self.previousState = previousState
   }
   
   func addServer() {
@@ -40,7 +32,7 @@ struct AddServerView: View {
         } else {
           let descriptor = ServerDescriptor(name: serverName, host: host, port: UInt16(port))
           configManager.addServer(descriptor)
-          returnToPrevious()
+          viewState.returnToPrevious()
         }
       } else {
         Logger.error("invalid server ip")
@@ -49,15 +41,6 @@ struct AddServerView: View {
     } else {
       Logger.error("invalid server ip")
       errorMessage = "please provide valid ip"
-    }
-  }
-  
-  func returnToPrevious() {
-    switch previousState {
-      case .serverList:
-        viewState.update(to: .serverList)
-      case .editServerList:
-        viewState.update(to: .editServerList)
     }
   }
   
@@ -78,7 +61,7 @@ struct AddServerView: View {
     .navigationTitle("Add Server")
     .toolbar {
       Button("cancel") {
-        returnToPrevious()
+        viewState.returnToPrevious()
       }
     }
   }

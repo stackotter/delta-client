@@ -26,7 +26,7 @@ class ConfigManager: ObservableObject {
         let decoder = JSONDecoder()
         self.config = try decoder.decode(Config.self, from: configJSON)
         if getHasLoggedIn() {
-          refreshAccessToken(success: {})
+          refreshCurrentAccount(success: {})
         }
         return
       } catch {
@@ -53,66 +53,120 @@ class ConfigManager: ObservableObject {
     }
   }
   
-  // Get
-  
   func getHasLoggedIn() -> Bool {
     return config.hasLoggedIn
   }
   
-  func getServerList() -> ServerList {
-    return ServerList(config.servers)
+  func getConfig() -> Config {
+    return config
   }
   
-  func getServers() -> [ServerDescriptor] {
-    return config.servers
-  }
-  
-  func getServer(at index: Int) -> ServerDescriptor {
-    return config.servers[index]
-  }
-  
-  func getSelectedProfile() -> MojangProfile? {
-    if let uuid = config.selectedProfile {
-      return config.profiles[uuid]
-    }
-    return nil
-  }
-  
-  func getSelectedAccount() -> MojangAccount? {
-    return config.account
-  }
-  
-  func getClientToken() -> String {
-    return config.clientToken
-  }
-  
-  // Set
-  
-  func setUser(account: MojangAccount, profiles: [MojangProfile], selectedProfile: String) {
+  func selectAccount(uuid: String, type: AccountType) {
     ThreadUtil.runInMain {
-      config.account = account
-      for profile in profiles {
-        config.profiles[profile.id] = profile
-      }
-      config.selectedProfile = selectedProfile
+      config.selectedAccount = uuid
+      config.selectedAccountType = type.rawValue
       config.hasLoggedIn = true
       writeConfig()
     }
   }
   
-  func setSelectedProfile(_ uuid: String) {
+  func setMojangAccount(withUUID uuid: String, to account: MojangAccount) {
     ThreadUtil.runInMain {
-      config.selectedProfile = uuid
+      config.mojangAccounts[uuid] = account
       writeConfig()
     }
   }
   
+  func setOfflineAccount(withUUID uuid: String, to account: OfflineAccount) {
+    ThreadUtil.runInMain {
+      config.offlineAccounts[uuid] = account
+      writeConfig()
+    }
+  }
+  
+  func addMojangAccount(_ account: MojangAccount) {
+    ThreadUtil.runInMain {
+      config.mojangAccounts[account.id] = account
+      writeConfig()
+    }
+  }
+  
+  func addOfflineAccount(_ account: OfflineAccount) {
+    ThreadUtil.runInMain {
+      config.offlineAccounts[account.id] = account
+      writeConfig()
+    }
+  }
+  
+  func getSelectedAccountType() -> AccountType? {
+    guard let typeString = config.selectedAccountType else {
+      return nil
+    }
+    
+    if let type = AccountType(rawValue: typeString) {
+      return type
+    }
+    
+    Logger.warn("invalid account type, logging out")
+    logout()
+    return nil
+  }
+  
+  func getSelectedAccount() -> Account? {
+    guard
+      let uuid = config.selectedAccount,
+      let accountType = getSelectedAccountType()
+    else {
+      return nil
+    }
+    
+    switch accountType {
+      case .mojang:
+        if let account = config.mojangAccounts[uuid] {
+          return account
+        }
+      case .offline:
+        if let account = config.offlineAccounts[uuid] {
+          return account
+        }
+    }
+    
+    Logger.warn("selected account doesn't exist, logging out")
+    logout()
+    return nil
+  }
+  
+  func getAccounts() -> [AccountIdentifier: Account] {
+    var accounts: [AccountIdentifier: Account] = [:]
+    for (uuid, account) in config.mojangAccounts as [String: Account] {
+      accounts[AccountIdentifier(
+        uuid: uuid,
+        type: .mojang
+      )] = account
+    }
+    for (uuid, account) in config.offlineAccounts as [String: Account] {
+      accounts[AccountIdentifier(
+        uuid: uuid,
+        type: .offline
+      )] = account
+    }
+    return accounts
+  }
+  
   func logout() {
     ThreadUtil.runInMain {
-      config.account = nil
-      config.profiles = [:]
-      config.selectedProfile = nil
+      config.selectedAccount = nil
+      config.selectedAccountType = nil
       config.hasLoggedIn = false
+      writeConfig()
+    }
+  }
+  
+  func logoutAll() {
+    ThreadUtil.runInMain {
+      logout()
+      config.mojangAccounts = [:]
+      config.offlineAccounts = [:]
       writeConfig()
     }
   }
@@ -138,15 +192,38 @@ class ConfigManager: ObservableObject {
     }
   }
   
-  // Util
+  func getServer(at index: Int) -> ServerDescriptor {
+    return config.servers[index]
+  }
   
-  func refreshAccessToken(success: @escaping () -> Void) {
-    MojangAPI.refresh(accessToken: self.config.account!.accessToken, clientToken: self.config.clientToken, completion: { newAccessToken in
-      self.config.account!.accessToken = newAccessToken
-      self.writeConfig()
-      success()
-    }, failure: {
-      self.logout()
-    })
+  func getServers() -> [ServerDescriptor] {
+    return config.servers
+  }
+  
+  func getServerList() -> ServerList {
+    return ServerList(config.servers)
+  }
+  
+  func getClientToken() -> String {
+    return config.clientToken
+  }
+  
+  func refreshCurrentAccount(success: @escaping () -> Void) {
+    if let account = getSelectedAccount() {
+      if var mojangAccount = account as? MojangAccount {
+        MojangAPI.refresh(
+          accessToken: mojangAccount.accessToken,
+          clientToken: config.clientToken,
+          onCompletion: { newAccessToken in
+            mojangAccount.accessToken = newAccessToken
+            self.setMojangAccount(withUUID: mojangAccount.id, to: mojangAccount)
+            success()
+          },
+          onFailure: { error in
+            Logger.warn("logging out because access token refresh failed: \(error)")
+            self.logout()
+          })
+      }
+    }
   }
 }

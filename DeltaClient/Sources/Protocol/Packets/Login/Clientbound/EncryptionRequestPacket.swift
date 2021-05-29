@@ -42,36 +42,49 @@ struct EncryptionRequestPacket: ClientboundPacket {
     // swiftlint:disable force_unwrapping
     let configManager = server.managers.configManager!
     if let account = configManager.getSelectedAccount() {
-      let accessToken = account.accessToken
-      // TODO: when multi accounting is done no force unwrapping should be necessary
-      let selectedProfile = configManager.getSelectedProfile()!.id
-      // swiftlint:enable force_unwrapping
-      MojangAPI.join(accessToken: accessToken, selectedProfile: selectedProfile, serverHash: serverHash, completion: {
-        // block inbound thread until encryption is enabled
-        server.connection.networkStack.inboundThread.sync {
-          do {
-            // send encryption response packet
-            let publicKeyData = Data(publicKey)
-            let encryptedSharedSecret = try CryptoUtil.encryptRSA(
-              data: Data(sharedSecret),
-              publicKeyDERData: publicKeyData)
-            let encryptedVerifyToken = try CryptoUtil.encryptRSA(
-              data: Data(verifyToken),
-              publicKeyDERData: publicKeyData)
-            let encryptionResponse = EncryptionResponsePacket(
-              sharedSecret: [UInt8](encryptedSharedSecret),
-              verifyToken: [UInt8](encryptedVerifyToken))
-            server.sendPacket(encryptionResponse)
-            
-            // wait for packet to send then enable encryption
-            server.connection.networkStack.outboundThread.sync {
-              server.connection.enableEncryption(sharedSecret: sharedSecret)
+      if let mojangAccount = account as? MojangAccount {
+        let accessToken = mojangAccount.accessToken
+        // TODO: when multi accounting is done no force unwrapping should be necessary
+        let selectedProfile = account.getSelectedProfile()!.id
+        // swiftlint:enable force_unwrapping
+        MojangAPI.join(
+          accessToken: accessToken,
+          selectedProfile: selectedProfile,
+          serverHash: serverHash,
+          onCompletion: {
+            // block inbound thread until encryption is enabled
+            server.connection.networkStack.inboundThread.sync {
+              do {
+                // send encryption response packet
+                let publicKeyData = Data(publicKey)
+                let encryptedSharedSecret = try CryptoUtil.encryptRSA(
+                  data: Data(sharedSecret),
+                  publicKeyDERData: publicKeyData)
+                let encryptedVerifyToken = try CryptoUtil.encryptRSA(
+                  data: Data(verifyToken),
+                  publicKeyDERData: publicKeyData)
+                let encryptionResponse = EncryptionResponsePacket(
+                  sharedSecret: [UInt8](encryptedSharedSecret),
+                  verifyToken: [UInt8](encryptedVerifyToken))
+                server.sendPacket(encryptionResponse)
+                
+                // wait for packet to send then enable encryption
+                server.connection.networkStack.outboundThread.sync {
+                  server.connection.enableEncryption(sharedSecret: sharedSecret)
+                }
+              } catch {
+                Logger.error("failed to enable encryption: \(error)")
+              }
             }
-          } catch {
-            Logger.error("failed to enable encryption: \(error)")
+          },
+          onFailure: { error in
+            Logger.error("join request for online server failed: \(error)")
           }
-        }
-      })
+        )
+      } else {
+        Logger.error("cannot join online server with offline account")
+        DeltaClientApp.triggerError("cannot join online server with offline account")
+      }
     } else {
       Logger.error("not logged in")
       DeltaClientApp.triggerError("failed to join server: not logged in")

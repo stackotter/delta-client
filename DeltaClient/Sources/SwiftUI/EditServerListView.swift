@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct EditServerListView: View {
   @ObservedObject var configManager: ConfigManager
   var viewState: ViewState<AppViewState>
@@ -65,7 +64,7 @@ struct EditServerListView: View {
     .navigationTitle("Edit Server List")
     .toolbar(content: {
       Button("add server") {
-        viewState.update(to: .addServer(previousState: .editServerList))
+        viewState.update(to: .addServer)
       }
       Button("done") {
         viewState.update(to: .serverList)

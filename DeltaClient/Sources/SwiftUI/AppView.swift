@@ -11,9 +11,10 @@ enum AppViewState {
   case login
   case serverList
   case editServerList
-  case addServer(previousState: AddServerPreviousState)
+  case addServer
   case editServer(_ index: Int)
   case playing(withRendering: Bool, serverDescriptor: ServerDescriptor)
+  case accountSettings
 }
 
 struct AppView: View {
@@ -25,10 +26,10 @@ struct AppView: View {
     
     let serverList = self.managers.configManager.getServerList()
     serverList.refresh()
-    if self.managers.configManager.getHasLoggedIn() {
-      self.state = ViewState(initialState: .serverList)
-    } else {
-      self.state = ViewState(initialState: .login)
+    
+    state = ViewState(initialState: .serverList)
+    if !managers.configManager.getHasLoggedIn() {
+      state.update(to: .login)
     }
     
     DeltaClientApp.eventManager.registerEventHandler(handleEvent)
@@ -54,8 +55,8 @@ struct AppView: View {
         ServerListView(configManager: managers.configManager, viewState: state)
       case .editServerList:
         EditServerListView(configManager: managers.configManager, viewState: state)
-      case .addServer(let previousState):
-        AddServerView(configManager: managers.configManager, viewState: state, previousState: previousState)
+      case .addServer:
+        AddServerView(configManager: managers.configManager, viewState: state)
       case .editServer(let index):
         EditServerView(configManager: managers.configManager, viewState: state, serverIndex: index)
       case .playing(let withRendering, let serverDescriptor):
@@ -64,6 +65,8 @@ struct AppView: View {
         } else {
           GameCommandView(serverDescriptor: serverDescriptor, managers: managers)
         }
+      case .accountSettings:
+        AccountSettingsView(configManager: managers.configManager, viewState: state)
     }
   }
 }

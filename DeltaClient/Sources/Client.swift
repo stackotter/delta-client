@@ -22,9 +22,19 @@ class Client {
   // Server interaction
   
   func play() {
-    self.managers.configManager.refreshAccessToken(success: {
-      self.server.login()
-    })
+    guard let accountType = self.managers.configManager.getSelectedAccountType() else {
+      self.managers.configManager.logout()
+      DeltaClientApp.triggerError("you must create an account before you can join servers")
+      return
+    }
+    switch accountType {
+      case .mojang:
+        self.managers.configManager.refreshCurrentAccount(success: {
+          self.server.login()
+        })
+      case .offline:
+        self.server.login()
+    }
   }
   
   func quit() {
@@ -36,7 +46,7 @@ class Client {
   // TODO: create CLI class
   // swiftlint:disable function_body_length
   func runCommand(_ command: String) {
-    let logger = Logger(name: "CLI")
+    let logger = Logger(name: "CLI", detail: "CLI")
     logger.info("running command `\(command)`")
     let parts = command.split(separator: " ")
     if let command = parts.first {
@@ -100,6 +110,10 @@ class Client {
           } else {
             Logger.info("usage: getlight x y z")
           }
+        case "chat":
+          let message = options.joined(separator: " ")
+          let packet = ChatMessageServerboundPacket(message: message)
+          server.sendPacket(packet)
         default:
           Logger.warn("invalid command")
       }

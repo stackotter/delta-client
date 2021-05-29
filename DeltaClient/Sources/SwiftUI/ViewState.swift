@@ -18,8 +18,23 @@ class ViewState<T>: ObservableObject {
   
   func update(to newState: T) {
     ThreadUtil.runInMain {
-      self.previous = self.value
-      self.value = newState
+      previous = value
+      value = newState
+    }
+  }
+  
+  func update(to newState: T, returnTo previousState: T) {
+    ThreadUtil.runInMain {
+      previous = previousState
+      value = newState
+    }
+  }
+  
+  func returnToPrevious() {
+    ThreadUtil.runInMain {
+      let saved = value
+      value = previous
+      previous = saved
     }
   }
 }

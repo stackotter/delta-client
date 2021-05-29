@@ -7,26 +7,51 @@
 
 import Foundation
 
+enum RequestError: LocalizedError {
+  case requestFailedWithNoError
+  case failedToEncodeRequestBody
+}
+
 struct RequestUtil {
-  static func get(_ url: URL, _ data: Data, completion: @escaping (Data?, Error?) -> Void) {
-    RequestUtil.request(url, data, method: .get, completion: completion)
-  }
-  
-  static func post(_ url: URL, _ data: Data, completion: @escaping (Data?, Error?) -> Void) {
-    RequestUtil.request(url, data, method: .post, completion: completion)
-  }
-  
-  static func request(_ url: URL, _ data: Data, method: RequestMethod, completion: @escaping (Data?, Error?) -> Void) {
-    var request = URLRequest(url: url)
-    request.httpBody = data
-    request.httpMethod = method.rawValue
-    request.allHTTPHeaderFields = [
-      "Content-Type": "application/json"
-    ]
+  static func perform(
+    _ request: Request,
+    onCompletion: @escaping (HTTPURLResponse, Data) -> Void,
+    onFailure: @escaping (Error) -> Void)
+  {
+    var urlRequest = URLRequest(url: request.url)
+    urlRequest.httpMethod = request.method.rawValue
+    urlRequest.httpBody = request.body
     
-    let task = URLSession.shared.dataTask(with: request) { data, _, error in
-      completion(data, error)
+    urlRequest.addValue(request.contentType.rawValue, forHTTPHeaderField: "Content-Type")
+    for (key, value) in request.headers {
+      urlRequest.addValue(value, forHTTPHeaderField: key)
+    }
+    
+    let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+      if let response = response as? HTTPURLResponse {
+        print(response)
+      }
+      if let error = error {
+        onFailure(error)
+      } else if let data = data {
+        if let response = response as? HTTPURLResponse {
+          onCompletion(response, data)
+        }
+      } else {
+        onFailure(RequestError.requestFailedWithNoError)
+      }
     }
     task.resume()
+  }
+  
+  static func urlEncode(_ string: String) -> String {
+    return string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+  }
+  
+  static func encodeParameters(_ parameters: [String: String]) -> String {
+    let parameterArray = parameters.map { (key, value) -> String in
+      return "\(urlEncode(key))=\(urlEncode(value))"
+    }
+    return parameterArray.joined(separator: "&")
   }
 }

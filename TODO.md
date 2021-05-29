@@ -1,3 +1,13 @@
+## Priorities
+
+1. [ ] multi-accounting
+   1. [ ] ditch microsoft accounts for now (until someone complains)
+   2. [ ] create account switcher
+   3. [ ] require logging in with a valid account before using offline accounts?
+2. [ ] thread safety in chunk loading, preparing and rendering
+3. [ ] consistent chunk loading on higher render distance default generation worlds
+4. [ ] basic lighting
+
 ## UI
 
 - [ ] fix refresh button looking like it's disabled after clicking
@@ -5,6 +15,7 @@
 - [ ] rework to use event manager instead of passing around a reference to the view state
 - [ ] rename serverlistview to homeview or something and appview to rootview or something
 - [ ] auto-dismiss error when logout is clicked
+- [ ] design better login screens
 
 ## Networking
 
@@ -105,6 +116,8 @@
 - [ ] World should eventually be mostly structs and just contain helper methods and be used a data holder (chunks shouldn't need to update their meshes and stuff probably, that's chunk preparers job, could involve callbacks though)
 - [ ] the rest of the code shouldn't know that rendering even exists (the renderer should just observe the world)
 - [ ] nbt code as encoder and decoder maybe?
+- [ ] merge client and server into just client (there is no server in my code, there should be just a client and a server connection)
+- [ ] make configmanager singleton?
 
 ## Optimisation
 
@@ -120,4 +133,10 @@
 - [ ] fix SwiftLint stuff
 - [ ] meet the airbnb swift style guidelines
   - [ ] use MARK
-- [ ] fix error handling, 
+- [ ] fix error handling
+- [ ] create logging guidelines and conform to them (like about what log levels to use when)
+- [ ] create error guidelines and conform to them (like about when to throw errors and when to return nil and where to put error enums)
+- [ ] setup SwiftFormat
+- [ ] use american spellings
+- [ ] make wrapper view for adding titles
+- [ ] create swiftui previews for all views

@@ -41,11 +41,16 @@ struct ServerListView: View {
         viewState.update(to: .editServerList)
       }
       Button("add") {
-        viewState.update(to: .addServer(previousState: .serverList))
+        viewState.update(to: .addServer)
       }
       Button("refresh") {
         serverList.refresh()
       }
+      Button(action: {
+        viewState.update(to: .accountSettings)
+      }, label: {
+        Image(systemName: "person.crop.circle")
+      })
     })
   }
 }
