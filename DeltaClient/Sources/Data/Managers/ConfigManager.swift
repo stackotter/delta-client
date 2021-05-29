@@ -25,9 +25,7 @@ class ConfigManager: ObservableObject {
         let configJSON = try Data(contentsOf: self.configFile)
         let decoder = JSONDecoder()
         self.config = try decoder.decode(Config.self, from: configJSON)
-        if getHasLoggedIn() {
-          refreshCurrentAccount(success: {})
-        }
+        refreshMojangAccounts()
         return
       } catch {
         Logger.warn("failed to load existing config: \(error)")
@@ -54,7 +52,7 @@ class ConfigManager: ObservableObject {
   }
   
   func getHasLoggedIn() -> Bool {
-    return config.hasLoggedIn
+    return getSelectedAccount() != nil
   }
   
   func getConfig() -> Config {
@@ -65,7 +63,6 @@ class ConfigManager: ObservableObject {
     ThreadUtil.runInMain {
       config.selectedAccount = uuid
       config.selectedAccountType = type.rawValue
-      config.hasLoggedIn = true
       writeConfig()
     }
   }
@@ -136,28 +133,48 @@ class ConfigManager: ObservableObject {
     return nil
   }
   
-  func getAccounts() -> [AccountIdentifier: Account] {
-    var accounts: [AccountIdentifier: Account] = [:]
-    for (uuid, account) in config.mojangAccounts as [String: Account] {
-      accounts[AccountIdentifier(
-        uuid: uuid,
-        type: .mojang
-      )] = account
+  func getOfflineAccounts() -> [Account] {
+    var accounts: [Account] = []
+    for (_, account) in config.offlineAccounts {
+      accounts.append(account as Account)
     }
-    for (uuid, account) in config.offlineAccounts as [String: Account] {
-      accounts[AccountIdentifier(
-        uuid: uuid,
-        type: .offline
-      )] = account
+    return accounts
+  }
+  
+  func getMojangAccounts() -> [Account] {
+    var accounts: [Account] = []
+    for (_, account) in config.mojangAccounts {
+      accounts.append(account as Account)
     }
     return accounts
   }
   
   func logout() {
     ThreadUtil.runInMain {
+      if let account = getSelectedAccount(),
+         let accountType = getSelectedAccountType() {
+        removeAccount(uuid: account.id, type: accountType)
+      }
       config.selectedAccount = nil
       config.selectedAccountType = nil
-      config.hasLoggedIn = false
+      writeConfig()
+    }
+  }
+  
+  func removeAccount(uuid: String, type: AccountType) {
+    ThreadUtil.runInMain {
+      switch type {
+        case .mojang:
+          config.mojangAccounts.removeValue(forKey: uuid)
+        case .offline:
+          config.offlineAccounts.removeValue(forKey: uuid)
+      }
+      
+      if config.selectedAccount == uuid && config.selectedAccountType == type.rawValue {
+        config.selectedAccount = nil
+        config.selectedAccountType = nil
+      }
+      
       writeConfig()
     }
   }
@@ -208,22 +225,25 @@ class ConfigManager: ObservableObject {
     return config.clientToken
   }
   
-  func refreshCurrentAccount(success: @escaping () -> Void) {
-    if let account = getSelectedAccount() {
-      if var mojangAccount = account as? MojangAccount {
-        MojangAPI.refresh(
-          accessToken: mojangAccount.accessToken,
-          clientToken: config.clientToken,
-          onCompletion: { newAccessToken in
-            mojangAccount.accessToken = newAccessToken
-            self.setMojangAccount(withUUID: mojangAccount.id, to: mojangAccount)
-            success()
-          },
-          onFailure: { error in
-            Logger.warn("logging out because access token refresh failed: \(error)")
-            self.logout()
-          })
-      }
+  func refreshMojangAccounts() {
+    for (_, account) in config.mojangAccounts {
+      refreshMojangAccount(account: account)
     }
+  }
+  
+  func refreshMojangAccount(account: MojangAccount, success: @escaping () -> Void = {}) {
+    MojangAPI.refresh(
+      accessToken: account.accessToken,
+      clientToken: config.clientToken,
+      onCompletion: { newAccessToken in
+        var mojangAccount = account // mutable copy
+        mojangAccount.accessToken = newAccessToken
+        self.setMojangAccount(withUUID: mojangAccount.id, to: mojangAccount)
+        success()
+      },
+      onFailure: { error in
+        Logger.warn("access token refresh failed, logging out: \(error)")
+        self.logout()
+      })
   }
 }

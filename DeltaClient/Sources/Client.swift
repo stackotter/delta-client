@@ -22,18 +22,18 @@ class Client {
   // Server interaction
   
   func play() {
-    guard let accountType = self.managers.configManager.getSelectedAccountType() else {
+    guard let account = self.managers.configManager.getSelectedAccount() else {
       self.managers.configManager.logout()
       DeltaClientApp.triggerError("you must create an account before you can join servers")
       return
     }
-    switch accountType {
-      case .mojang:
-        self.managers.configManager.refreshCurrentAccount(success: {
-          self.server.login()
-        })
-      case .offline:
+    
+    if let mojangAccount = account as? MojangAccount {
+      self.managers.configManager.refreshMojangAccount(account: mojangAccount, success: {
         self.server.login()
+      })
+    } else {
+      self.server.login()
     }
   }
   

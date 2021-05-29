@@ -7,8 +7,7 @@
 
 import Foundation
 
-class Config: Codable {
-  var hasLoggedIn: Bool
+struct Config: Codable {
   var clientToken: String
   var selectedAccount: String?
   var selectedAccountType: String?
@@ -17,7 +16,6 @@ class Config: Codable {
   var servers: [ServerDescriptor]
   
   init(
-    hasLoggedIn: Bool,
     clientToken: String,
     selectedAccount: String?,
     selectedAccountType: String?,
@@ -25,9 +23,9 @@ class Config: Codable {
     offlineAccounts: [String: OfflineAccount],
     servers: [ServerDescriptor])
   {
-    self.hasLoggedIn = hasLoggedIn
     self.clientToken = clientToken
     self.selectedAccount = selectedAccount
+    self.selectedAccountType = selectedAccountType
     self.mojangAccounts = mojangAccounts
     self.offlineAccounts = offlineAccounts
     self.servers = servers
@@ -35,7 +33,6 @@ class Config: Codable {
 
   static func createDefault() -> Config {
     return Config(
-      hasLoggedIn: false,
       clientToken: UUID().uuidString, // random uuid
       selectedAccount: nil,
       selectedAccountType: nil,
