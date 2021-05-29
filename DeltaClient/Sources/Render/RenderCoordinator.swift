@@ -12,14 +12,9 @@ import MetalKit
 class RenderCoordinator: NSObject, MTKViewDelegate {
   var client: Client
   
+  var physicsEngine: PhysicsEngine
   var worldRenderer: WorldRenderer
-  
   var commandQueue: MTLCommandQueue
-  
-  var stopwatch: Stopwatch
-  var frameCounter = 0
-  
-  var logInterval = 60
   
   init(client: Client) {
     guard let device = MTLCreateSystemDefaultDevice() else {
@@ -31,30 +26,13 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
     }
     
     self.client = client
+    self.physicsEngine = PhysicsEngine(client: client)
     self.worldRenderer = WorldRenderer(client: client)
-    self.stopwatch = Stopwatch(mode: .summary, name: "frame times")
     
     self.commandQueue = commandQueue
   }
   
-  func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-    
-  }
-  
-  func willStartFrame() {
-    stopwatch.startMeasurement("render frame")
-  }
-  
-  func didFinishFrame() {
-    stopwatch.stopMeasurement("render frame")
-    
-    if frameCounter == logInterval {
-      stopwatch.summary()
-      stopwatch.reset()
-      frameCounter = 0
-    }
-    frameCounter += 1
-  }
+  func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) { }
   
   func getClearColor() -> MTLClearColor {
     return MTLClearColorMake(0.65, 0.8, 1, 1)
@@ -73,10 +51,11 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
       fatalError("failed to get metal device (it used to be there)")
     }
     
-    willStartFrame()
+    // physics
+    physicsEngine.update()
     
+    // render
     let aspect = getAspectRatio(of: view)
-    
     if let commandBuffer = commandQueue.makeCommandBuffer() {
       if let renderPassDescriptor = view.currentRenderPassDescriptor {
         renderPassDescriptor.colorAttachments[0].clearColor = getClearColor()
@@ -92,7 +71,5 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
         }
       }
     }
-    
-    didFinishFrame()
   }
 }

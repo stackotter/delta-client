@@ -28,9 +28,6 @@ struct RequestUtil {
     }
     
     let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-      if let response = response as? HTTPURLResponse {
-        print(response)
-      }
       if let error = error {
         onFailure(error)
       } else if let data = data {

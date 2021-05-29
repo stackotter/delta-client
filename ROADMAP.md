@@ -123,12 +123,12 @@ The demo versions are just milestones that work towards the first Alpha release
 
 ### Todo
 
-- [ ] add basis for multi-accounting
-  - [ ] config
-  - [ ] login code
-- [ ] add offline account support
+- [x] add basis for multi-accounting
+  - [x] config
+  - [x] login code
+- [x] add offline account support
 - [ ] add microsoft account support
-- [ ] ui for switching accounts
+- [x] ui for switching accounts
 
 ## Demo 7 - Collisions and Proper Physics
 

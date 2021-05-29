@@ -1,21 +1,19 @@
 ## Priorities
 
-1. [ ] multi-accounting
-   1. [ ] ditch microsoft accounts for now (until someone complains)
-   2. [ ] create account switcher
-   3. [ ] require logging in with a valid account before using offline accounts?
+1. [x] multi-accounting
+   1. [x] ditch microsoft accounts for now (until someone complains)
+   2. [x] create account switcher
 2. [ ] thread safety in chunk loading, preparing and rendering
 3. [ ] consistent chunk loading on higher render distance default generation worlds
-4. [ ] basic lighting
+4. [ ] use lighting data sent from server
 
 ## UI
 
 - [ ] fix refresh button looking like it's disabled after clicking
 - [ ] add more useful messages instead of just 'downloading terrain' when joining games
-- [ ] rework to use event manager instead of passing around a reference to the view state
-- [ ] rename serverlistview to homeview or something and appview to rootview or something
 - [ ] auto-dismiss error when logout is clicked
-- [ ] design better login screens
+- [ ] fix ui consistency
+- [ ] use environment object to pass view state around
 
 ## Networking
 
@@ -116,8 +114,9 @@
 - [ ] World should eventually be mostly structs and just contain helper methods and be used a data holder (chunks shouldn't need to update their meshes and stuff probably, that's chunk preparers job, could involve callbacks though)
 - [ ] the rest of the code shouldn't know that rendering even exists (the renderer should just observe the world)
 - [ ] nbt code as encoder and decoder maybe?
-- [ ] merge client and server into just client (there is no server in my code, there should be just a client and a server connection)
-- [ ] make configmanager singleton?
+- [ ] merge client and server into client (i am not making a server, there should be just a Client and a ServerConnection)
+- [ ] make ConfigManager singleton?
+- [ ] PhysicEngine should be able to take World as input instead of Client
 
 ## Optimisation
 
@@ -136,7 +135,6 @@
 - [ ] fix error handling
 - [ ] create logging guidelines and conform to them (like about what log levels to use when)
 - [ ] create error guidelines and conform to them (like about when to throw errors and when to return nil and where to put error enums)
-- [ ] setup SwiftFormat
 - [ ] use american spellings
 - [ ] make wrapper view for adding titles
 - [ ] create swiftui previews for all views

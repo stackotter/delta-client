@@ -15,6 +15,7 @@
 		7844A6BD2661C1F6008CFBF2 /* AccountSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6BC2661C1F6008CFBF2 /* AccountSettingsView.swift */; };
 		7844A6C22661C78D008CFBF2 /* AccountIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6C12661C78D008CFBF2 /* AccountIdentifier.swift */; };
 		7844A6CA2661CD70008CFBF2 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6C92661CD6F008CFBF2 /* Profile.swift */; };
+		7844A6D826625EC4008CFBF2 /* PhysicsEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6D726625EC4008CFBF2 /* PhysicsEngine.swift */; };
 		78513204262D5FEC0054268A /* ChatError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513203262D5FEC0054268A /* ChatError.swift */; };
 		7851320A262D69280054268A /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513209262D69280054268A /* LogMessage.swift */; };
 		78513223262D7A980054268A /* MeshBuffers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513222262D7A980054268A /* MeshBuffers.swift */; };
@@ -403,6 +404,7 @@
 		7844A6BC2661C1F6008CFBF2 /* AccountSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsView.swift; sourceTree = "<group>"; };
 		7844A6C12661C78D008CFBF2 /* AccountIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountIdentifier.swift; sourceTree = "<group>"; };
 		7844A6C92661CD6F008CFBF2 /* Profile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		7844A6D726625EC4008CFBF2 /* PhysicsEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhysicsEngine.swift; sourceTree = "<group>"; };
 		78513203262D5FEC0054268A /* ChatError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatError.swift; sourceTree = "<group>"; };
 		78513209262D69280054268A /* LogMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogMessage.swift; sourceTree = "<group>"; };
 		78513222262D7A980054268A /* MeshBuffers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshBuffers.swift; sourceTree = "<group>"; };
@@ -898,6 +900,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		7844A6D626625EB9008CFBF2 /* Physics */ = {
+			isa = PBXGroup;
+			children = (
+				7844A6D726625EC4008CFBF2 /* PhysicsEngine.swift */,
+			);
+			path = Physics;
+			sourceTree = "<group>";
+		};
 		78513208262D69150054268A /* Log */ = {
 			isa = PBXGroup;
 			children = (
@@ -936,6 +946,7 @@
 				78D9185C261FB4CC00A4782F /* World */,
 				78D91863261FB4CC00A4782F /* Server */,
 				78D9186B261FB4CC00A4782F /* Protocol */,
+				7844A6D626625EB9008CFBF2 /* Physics */,
 				78D91925261FB4CD00A4782F /* StartupSequence.swift */,
 				78D91926261FB4CD00A4782F /* Client.swift */,
 				78D917FA261FB4CC00A4782F /* Constants.swift */,
@@ -1859,6 +1870,7 @@
 				78D91982261FB4CD00A4782F /* MojangUser.swift in Sources */,
 				78D91A33261FB4CD00A4782F /* UpdateHealthPacket.swift in Sources */,
 				78D91A0F261FB4CD00A4782F /* EntitySoundEffectPacket.swift in Sources */,
+				7844A6D826625EC4008CFBF2 /* PhysicsEngine.swift in Sources */,
 				78756175264F2DFD006C9C36 /* Account.swift in Sources */,
 				78D91989261FB4CD00A4782F /* MatrixUtil.swift in Sources */,
 				78D919E5261FB4CD00A4782F /* EditBookPacket.swift in Sources */,
