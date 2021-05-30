@@ -31,7 +31,7 @@ struct EditServerView: View {
         } else {
           let descriptor = ServerDescriptor(name: serverName, host: host, port: UInt16(port))
           configManager.removeServer(at: serverIndex)
-          configManager.addServer(descriptor)
+          configManager.addServer(descriptor, at: serverIndex)
           viewState.returnToPrevious()
         }
       } else {
