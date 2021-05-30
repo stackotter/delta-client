@@ -10,7 +10,7 @@ import simd
 
 struct Camera {
   var fovY: Float = 0.5 * .pi // 90deg
-  var nearDistance: Float = 0.0001
+  var nearDistance: Float = 0.01
   var farDistance: Float = 1000
   
   var aspect: Float = 1

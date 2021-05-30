@@ -14,17 +14,13 @@ enum WorldRendererError: LocalizedError {
 }
 
 class WorldRenderer {
-  var pipelineState: MTLRenderPipelineState
-  var depthState: MTLDepthStencilState
-  
-  var blockArrayTexture: MTLTexture
-  
   var client: Client
   
-  let nearDistance = 0.0001
-  let farDistance = 1000
-  var camera: Camera
+  var pipelineState: MTLRenderPipelineState
+  var depthState: MTLDepthStencilState
+  var blockArrayTexture: MTLTexture
   
+  var camera: Camera
   var world: World?
   var chunkPreparer: ChunkPreparer
   
