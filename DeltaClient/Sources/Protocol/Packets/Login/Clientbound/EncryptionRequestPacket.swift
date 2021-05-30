@@ -39,8 +39,7 @@ struct EncryptionRequestPacket: ClientboundPacket {
     ])
     
     // TODO: configmanager should be a singleton
-    let configManager = server.managers.configManager!
-    if let account = configManager.getSelectedAccount() {
+    if let account = server.managers.configManager.getSelectedAccount() {
       if let mojangAccount = account as? MojangAccount {
         let accessToken = mojangAccount.accessToken
         // TODO: when multi accounting is done no force unwrapping should be necessary

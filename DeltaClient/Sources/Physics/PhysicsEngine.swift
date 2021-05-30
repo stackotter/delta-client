@@ -42,6 +42,8 @@ class PhysicsEngine {
   }
   
   func performStep() {
-    client.server.player.position.z += PhysicsEngine.playerSpeed / PhysicsEngine.clocksPerSecond
+    client.server.player.position.x += client.server.player.velocity.x / PhysicsEngine.clocksPerSecond
+    client.server.player.position.y += client.server.player.velocity.y / PhysicsEngine.clocksPerSecond
+    client.server.player.position.z += client.server.player.velocity.z / PhysicsEngine.clocksPerSecond
   }
 }

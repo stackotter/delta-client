@@ -84,7 +84,7 @@ struct AccountSettingsView: View {
     }
     .frame(width: 380)
     .navigationTitle("Account Settings")
-    .toolbar(content: {
+    .toolbar {
       Button("logout all") {
         logoutAll()
       }
@@ -98,9 +98,10 @@ struct AccountSettingsView: View {
           alertMessage = "Please select an account"
           showAlert = true
         }
-      }.alert(isPresented: $showAlert, content: {
-        Alert(title: Text("Account Error"), message: Text(alertMessage), dismissButton: .default(Text("Ok")))
-      })
-    })
+      }
+    }
+    .alert(isPresented: $showAlert) {
+      Alert(title: Text("Account Error"), message: Text(alertMessage), dismissButton: .default(Text("Ok")))
+    }
   }
 }

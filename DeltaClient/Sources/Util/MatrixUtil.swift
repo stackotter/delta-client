@@ -103,6 +103,13 @@ struct MatrixUtil {
     )
   }
   
+  static func rotationMatrix2dDouble(_ angle: Double) -> matrix_double2x2 {
+    return matrix_double2x2(
+      [cos(angle), -sin(angle)],
+      [sin(angle), cos(angle)]
+    )
+  }
+  
   static func matrix4x4to3x3(_ matrix: matrix_float4x4) -> matrix_float3x3 {
     return matrix_float3x3([
       [

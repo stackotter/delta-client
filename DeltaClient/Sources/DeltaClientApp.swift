@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 @main
 struct DeltaClientApp: App {
   public static var eventManager = EventManager<AppEvent>()
@@ -83,13 +82,6 @@ struct DeltaClientApp: App {
         }
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-    .commands {
-      CommandMenu("Account", content: {
-        Button("logout") {
-          DeltaClientApp.eventManager.triggerEvent(.logout)
-        }
-      })
     }
   }
 }

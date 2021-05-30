@@ -62,13 +62,13 @@ struct EditServerListView: View {
     }
     .frame(width: 300)
     .navigationTitle("Edit Server List")
-    .toolbar(content: {
+    .toolbar {
       Button("add server") {
         viewState.update(to: .addServer)
       }
       Button("done") {
         viewState.update(to: .serverList)
       }
-    })
+    }
   }
 }

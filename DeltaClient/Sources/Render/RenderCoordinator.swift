@@ -51,6 +51,15 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
       fatalError("failed to get metal device (it used to be there)")
     }
     
+    guard let view = view as? InteractiveMTKView else {
+      fatalError("something has gone seriously wrong, view passed to RenderCoordinator was not interactive")
+    }
+    
+    // update player
+    let input = view.inputState
+    view.inputState.resetMouseDelta()
+    client.server.player.update(with: input)
+    
     // physics
     physicsEngine.update()
     

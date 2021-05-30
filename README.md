@@ -29,9 +29,9 @@ Here's how the client currently performs when run on my 2020 dual-core Intel i5 
   - [x] Encryption (for non-offline mode servers)
     - [x] Mojang accounts
     - [ ] Microsoft accounts
-  - [ ] LAN servers
+  - [ ] LAN server detection
 - [x] Basic config system
-  - [ ] Multi-accounting
+  - [x] Multi-accounting
 - [ ] Command-based interface
   - [x] Basic structure
   - [x] Chat command
@@ -78,6 +78,10 @@ Here's how the client currently performs when run on my 2020 dual-core Intel i5 
       - [ ] Creative inventory
 - [ ] Sound
   - [ ] Basic sounds system
+- [ ] Physics
+  - [x] Physics loop
+  - [x] Input system
+  - [ ] Collision system
 
 ## Minecraft version support
 

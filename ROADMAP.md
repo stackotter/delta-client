@@ -82,12 +82,12 @@ The demo versions are just milestones that work towards the first Alpha release
 
 ### Todo
 
-- [ ] create an input system
-  - [ ] keyboard
-  - [ ] mouse
-- [ ] create a physics loop
-  - [ ] make a loop that runs at a consistent interval
-  - [ ] add basic physics simulation
+- [x] create an input system
+  - [x] keyboard
+  - [x] mouse
+- [x] create a physics loop
+  - [x] make a loop that runs at a consistent interval
+  - [x] add basic physics simulation
 - [ ] hook up input system to send packets to server
 - [ ] add input settings (mouse sensitivity and keymappings)
 

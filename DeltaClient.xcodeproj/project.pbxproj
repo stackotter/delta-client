@@ -11,6 +11,8 @@
 		78052348261433A800079A01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7805221C261433A700079A01 /* Assets.xcassets */; };
 		780523B6261433A800079A01 /* DeltaClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229D261433A700079A01 /* DeltaClientApp.swift */; };
 		781829A5262A6F7E000F59B0 /* ChunkLighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781829A4262A6F7E000F59B0 /* ChunkLighting.swift */; };
+		7824FC2B2662F60300414468 /* InteractiveMTKView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824FC2A2662F60300414468 /* InteractiveMTKView.swift */; };
+		7824FC332662F67100414468 /* InputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824FC322662F67100414468 /* InputState.swift */; };
 		7844A6AD2661B7DD008CFBF2 /* AccountType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6AC2661B7DD008CFBF2 /* AccountType.swift */; };
 		7844A6BD2661C1F6008CFBF2 /* AccountSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6BC2661C1F6008CFBF2 /* AccountSettingsView.swift */; };
 		7844A6C22661C78D008CFBF2 /* AccountIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6C12661C78D008CFBF2 /* AccountIdentifier.swift */; };
@@ -397,6 +399,8 @@
 		780522A9261433A700079A01 /* DeltaClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeltaClientTests.swift; sourceTree = "<group>"; };
 		780522AA261433A700079A01 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		781829A4262A6F7E000F59B0 /* ChunkLighting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkLighting.swift; sourceTree = "<group>"; };
+		7824FC2A2662F60300414468 /* InteractiveMTKView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveMTKView.swift; sourceTree = "<group>"; };
+		7824FC322662F67100414468 /* InputState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputState.swift; sourceTree = "<group>"; };
 		784194B7258204CD0070DE78 /* DeltaClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194C9258204D10070DE78 /* DeltaClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		784194D4258204D10070DE78 /* DeltaClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeltaClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -806,7 +810,6 @@
 			isa = PBXGroup;
 			children = (
 				78D917F9261FB4CC00A4782F /* Sources */,
-				7805229D261433A700079A01 /* DeltaClientApp.swift */,
 				780522A7261433A700079A01 /* Info.plist */,
 				7805221C261433A700079A01 /* Assets.xcassets */,
 				7805229E261433A700079A01 /* DeltaClient.entitlements */,
@@ -880,6 +883,15 @@
 			path = Offline;
 			sourceTree = "<group>";
 		};
+		7824FC292662F5E300414468 /* Input */ = {
+			isa = PBXGroup;
+			children = (
+				7824FC2A2662F60300414468 /* InteractiveMTKView.swift */,
+				7824FC322662F67100414468 /* InputState.swift */,
+			);
+			path = Input;
+			sourceTree = "<group>";
+		};
 		784194AE258204CD0070DE78 = {
 			isa = PBXGroup;
 			children = (
@@ -947,6 +959,8 @@
 				78D91863261FB4CC00A4782F /* Server */,
 				78D9186B261FB4CC00A4782F /* Protocol */,
 				7844A6D626625EB9008CFBF2 /* Physics */,
+				7824FC292662F5E300414468 /* Input */,
+				7805229D261433A700079A01 /* DeltaClientApp.swift */,
 				78D91925261FB4CD00A4782F /* StartupSequence.swift */,
 				78D91926261FB4CD00A4782F /* Client.swift */,
 				78D917FA261FB4CC00A4782F /* Constants.swift */,
@@ -1908,6 +1922,7 @@
 				78D9199C261FB4CD00A4782F /* BlockModelElement.swift in Sources */,
 				78D919FF261FB4CD00A4782F /* PlayerListHeaderAndFooterPacket.swift in Sources */,
 				78756170264F2DE7006C9C36 /* OfflineAccount.swift in Sources */,
+				7824FC332662F67100414468 /* InputState.swift in Sources */,
 				78D91A55261FB4CE00A4782F /* PacketLayer.swift in Sources */,
 				78D91A80261FB4CE00A4782F /* LocaleManager.swift in Sources */,
 				78D919D8261FB4CD00A4782F /* PickItemPacket.swift in Sources */,
@@ -2000,6 +2015,7 @@
 				7851F7AE26255E0F009B59DD /* Camera.swift in Sources */,
 				78D91A72261FB4CE00A4782F /* ItemStack.swift in Sources */,
 				78D91A11261FB4CD00A4782F /* AttachEntityPacket.swift in Sources */,
+				7824FC2B2662F60300414468 /* InteractiveMTKView.swift in Sources */,
 				78D9197D261FB4CD00A4782F /* Profiler.swift in Sources */,
 				78C64CC826251D2700375CBB /* WorldUniforms.swift in Sources */,
 				78D91A07261FB4CD00A4782F /* EffectPacket.swift in Sources */,
