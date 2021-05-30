@@ -122,7 +122,7 @@ class Chunk {
     ]
     
     // convert the c function's return value into a more useful format
-    let chunks = [self, neighbours[.north], neighbours[.east], neighbours[.south], neighbours[.west]]
+    let chunks = [self, neighbours[.north], neighbours[.east], neighbours[.south], neighbours[.west]] // TODO: there are lots of crashes here in prod on hypixel
     for (index, neighbour) in result.enumerated() {
       if neighbour.chunk_num != -1, let neighbourChunk = chunks[neighbour.chunk_num] {
         if let direction = FaceDirection(rawValue: index) {

@@ -9,52 +9,42 @@ import SwiftUI
 
 
 struct EditServerView: View {
-  var configManager: ConfigManager
-  var viewState: ViewState<AppViewState>
+  @EnvironmentObject var configManager: ConfigManager
+  @EnvironmentObject var viewState: ViewState<AppViewState>
+  
   var serverIndex: Int
   
-  @State var serverName: String
-  @State var ip: String
+  @State private var serverName: String = ""
+  @State private var ip: String = ""
   
-  @State var errorMessage: String?
+  @State private var showAlert: Bool = false
+  @State private var alertMessage: String = ""
   
-  init(configManager: ConfigManager, viewState: ViewState<AppViewState>, serverIndex: Int) {
-    self.configManager = configManager
-    self.viewState = viewState
-    self.serverIndex = serverIndex
-    
-    // set initial text field values
-    let descriptor = self.configManager.getServer(at: self.serverIndex)
-    self._serverName = State(wrappedValue: descriptor.name)
-    self._ip = State(wrappedValue: "\(descriptor.host):\(descriptor.port)")
-  }
-  
-  func addServer() {
+  func editServer() {
     if serverName.isEmpty {
-      errorMessage = "please provide a display name"
+      showAlert("please provide a display name")
     } else if let url = URL(string: "minecraft://\(ip)") {
       if let host = url.host {
         let port = url.port ?? 25565
         if port > UInt16.max {
-          errorMessage = "port must be less than \(Int(UInt16.max) + 1)"
+          showAlert("port must be less than \(Int(UInt16.max) + 1)")
         } else {
           let descriptor = ServerDescriptor(name: serverName, host: host, port: UInt16(port))
           configManager.removeServer(at: serverIndex)
           configManager.addServer(descriptor)
-          returnToEdit()
+          viewState.returnToPrevious()
         }
       } else {
-        Logger.error("invalid server ip")
-        errorMessage = "please provide valid ip"
+        showAlert("please provide valid ip")
       }
     } else {
-      Logger.error("invalid server ip")
-      errorMessage = "please provide valid ip"
+      showAlert("please provide valid ip")
     }
   }
   
-  func returnToEdit() {
-    viewState.update(to: .editServerList)
+  func showAlert(_ message: String) {
+    alertMessage = message
+    showAlert = true
   }
   
   var body: some View {
@@ -63,19 +53,25 @@ struct EditServerView: View {
       TextField("ip", text: $ip)
       HStack {
         Button("save") {
-          addServer()
+          editServer()
         }
-      }
-      if errorMessage != nil {
-        Text(errorMessage!)
       }
     }
     .frame(width: 200)
     .navigationTitle("Edit Server")
     .toolbar {
       Button("cancel") {
-        returnToEdit()
+        viewState.returnToPrevious()
       }
+    }
+    .onAppear {
+      // autofill current server details
+      let descriptor = configManager.getServer(at: serverIndex)
+      serverName = descriptor.name
+      ip = "\(descriptor.host):\(descriptor.port)"
+    }
+    .alert(isPresented: $showAlert) {
+      Alert(title: Text("Server Error"), message: Text(alertMessage), dismissButton: .default(Text("Ok")))
     }
   }
 }

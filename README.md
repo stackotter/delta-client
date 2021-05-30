@@ -46,6 +46,7 @@ Here's how the client currently performs when run on my 2020 dual-core Intel i5 
     - [x] Block models
     - [x] Multipart structures (e.g. fences)
     - [x] Multiple chunks
+    - [ ] Lighting
     - [ ] Animated textures (e.g. lava)
     - [ ] Fluids (lava and water)
     - [ ] Block entities (e.g. chests)

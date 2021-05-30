@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct MojangLoginView: View {
-  var configManager: ConfigManager
-  var viewState: ViewState<AppViewState>
+  @EnvironmentObject var configManager: ConfigManager
+  @EnvironmentObject var viewState: ViewState<AppViewState>
   
   @State var email = ""
   @State var password = ""

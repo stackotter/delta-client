@@ -18,7 +18,7 @@ enum AppViewState {
 }
 
 struct AppView: View {
-  @ObservedObject var state: ViewState<AppViewState>
+  @StateObject var state = ViewState(initialState: AppViewState.serverList)
   var managers: Managers
   
   init(managers: Managers) {
@@ -26,8 +26,6 @@ struct AppView: View {
     
     let serverList = self.managers.configManager.getServerList()
     serverList.refresh()
-    
-    state = ViewState(initialState: .serverList)
     if !managers.configManager.getHasLoggedIn() {
       state.update(to: .login)
     }
@@ -37,8 +35,6 @@ struct AppView: View {
   
   func handleEvent(_ event: AppEvent) {
     switch event {
-      case .leaveServer:
-        state.update(to: .serverList)
       case .logout:
         managers.configManager.logout()
         state.update(to: .login)
@@ -48,25 +44,29 @@ struct AppView: View {
   }
   
   var body: some View {
-    switch state.value {
-      case .login:
-        LoginView(configManager: managers.configManager, viewState: state)
-      case .serverList:
-        ServerListView(configManager: managers.configManager, viewState: state)
-      case .editServerList:
-        EditServerListView(configManager: managers.configManager, viewState: state)
-      case .addServer:
-        AddServerView(configManager: managers.configManager, viewState: state)
-      case .editServer(let index):
-        EditServerView(configManager: managers.configManager, viewState: state, serverIndex: index)
-      case .playing(let withRendering, let serverDescriptor):
-        if withRendering {
-          GameRenderView(serverDescriptor: serverDescriptor, managers: managers)
-        } else {
-          GameCommandView(serverDescriptor: serverDescriptor, managers: managers)
-        }
-      case .accountSettings:
-        AccountSettingsView(configManager: managers.configManager, viewState: state)
+    Group {
+      switch state.value {
+        case .login:
+          LoginView()
+        case .serverList:
+          ServerListView()
+        case .editServerList:
+          EditServerListView()
+        case .addServer:
+          AddServerView()
+        case .editServer(let index):
+          EditServerView(serverIndex: index)
+        case .playing(let withRendering, let serverDescriptor):
+          if withRendering {
+            GameRenderView(serverDescriptor: serverDescriptor, managers: managers)
+          } else {
+            GameCommandView(serverDescriptor: serverDescriptor, managers: managers)
+          }
+        case .accountSettings:
+          AccountSettingsView()
+      }
     }
+    .environmentObject(state)
+    .environmentObject(managers.configManager)
   }
 }

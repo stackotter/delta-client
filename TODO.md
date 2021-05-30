@@ -11,9 +11,8 @@
 
 - [ ] fix refresh button looking like it's disabled after clicking
 - [ ] add more useful messages instead of just 'downloading terrain' when joining games
-- [ ] auto-dismiss error when logout is clicked
 - [ ] fix ui consistency
-- [ ] use environment object to pass view state around
+- [x] use environment object to pass view state around
 
 ## Networking
 
@@ -24,8 +23,6 @@
 - [x] mojang api
   - [x] refresh access token
 - [ ] create protocol definition file
-- [ ] fix initial ping being weird (a packet is being sent when it shouldn't be)
-- [ ] investigate empty packets
 - [ ] fix error handling for mojang api (probably with event manager) (at the moment the errors are silent)
 - [ ] shutdown networking properly when leaving server
   - [ ] teardown server and client objects properly
@@ -45,6 +42,7 @@
 ## Rendering
 
 - [ ] basic shading
+- [ ] fix chunks not loading (lighting data issue?)
 - [x] multiple chunks first test
 - [x] look into keeping vertices in gpu mem when they are unchanged between frames?
 - [ ] look into using private storage instead of shared for vertex buffers
@@ -52,7 +50,7 @@
 - [ ] multipart structures
 - [ ] fix block changes having incorrect culling
 - [ ] fix indices (either use 6 vertices to a face or do the fancy shader thing from before so that all the index buffers aren't needed anymore)
-- [ ] investigate why the initial chunks at 10 rener distance take so long to load
+- [ ] investigate why the initial chunks at 10 render distance take so long to load
 - [ ] wait for neighbouring chunks
 - [ ] make bottom face of block the darkest
 - [ ] fix precision errors (an issue with near and far being too different, raising near to 0.1 could probably help)
@@ -60,7 +58,6 @@
 ## Block models
 
 - [x] multipart
-- [ ] multiple models for one block
 - [ ] fix stair sides not being detected as full faces (because they're made of two elements)
 - [x] separate out block model structs into separate files
 - [ ] investigate campfires (probably animated textures?)
@@ -69,12 +66,11 @@
 - [ ] investigate cauldron water not showing
 - [ ] identify translucent blocks
 - [ ] detect when full faces are not culling full faces (when they are transparent)
-- [ ] fix path block xray
+- [ ] cull faces between path blocks
 - [ ] stop using a dictionary for the block palette, just use an array
 - [ ] respect weighting for block variants
 - [ ] fix stairs again (an upside-down stair with a block against each full face has a bunch of incorrect culling)
 - [ ] piston textures
-- [ ] levers going the wrong way
 
 ## Chunk preparing
 
@@ -100,14 +96,12 @@
 - [ ] clean up matrixutil to be a matrix_float4x4 extension possibly?
 - [ ] use rethrows
 - [ ] simplify data classes (like chunk) that should just be a data source
-- [ ] use some concurrent dispatchqueues
 - [x] have a default eventmanager (treat it as a singleton)
 - [ ] make most of the managers singletons where possible (hopefully get rid of Managers)
   - [ ] https://forums.swift.org/t/is-there-any-way-to-throw-error-from-singleton-class-init/39207, https://medium.com/@tlimaye91/thread-safe-singletons-in-swift-a4f6a977d6e6
 - [ ] potentially move over to using Carthage instead of swift package manager
-- [ ] use new new position properties instead of all the spread out functions now
-- [ ] always use the position type as the argument to functions
-- [ ] initialise world to an EmptyWorld instead of optional
+- [ ] use new position properties instead of all the spread out functions now
+- [ ] maybe use simd vector types instead of position?
 
 ## Architecture
 
@@ -138,3 +132,4 @@
 - [ ] use american spellings
 - [ ] make wrapper view for adding titles
 - [ ] create swiftui previews for all views
+- [ ] make proper alert system (for popup errors)

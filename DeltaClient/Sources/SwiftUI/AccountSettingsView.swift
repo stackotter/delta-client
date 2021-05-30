@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct AccountSettingsView: View {
-  @ObservedObject var configManager: ConfigManager
-  var viewState: ViewState<AppViewState>
+  @EnvironmentObject var configManager: ConfigManager
+  @EnvironmentObject var viewState: ViewState<AppViewState>
   
   @State private var alertMessage = ""
   @State private var showAlert = false

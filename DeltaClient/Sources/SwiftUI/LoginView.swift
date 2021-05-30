@@ -14,8 +14,8 @@ enum LoginViewState {
 }
 
 struct LoginView: View {
-  var configManager: ConfigManager
-  var viewState: ViewState<AppViewState>
+  @EnvironmentObject var configManager: ConfigManager
+  @EnvironmentObject var viewState: ViewState<AppViewState>
   
   @ObservedObject var state = ViewState<LoginViewState>(initialState: .initial)
   
@@ -32,9 +32,9 @@ struct LoginView: View {
             }
           }
         case .mojang:
-          MojangLoginView(configManager: configManager, viewState: viewState)
+          MojangLoginView()
         case .offline:
-          OfflineLoginView(configManager: configManager, viewState: viewState)
+          OfflineLoginView()
       }
     }
     .frame(width: 200)

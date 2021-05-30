@@ -8,18 +8,13 @@
 import SwiftUI
 
 struct AddServerView: View {
-  var configManager: ConfigManager
-  var viewState: ViewState<AppViewState>
+  @EnvironmentObject var configManager: ConfigManager
+  @EnvironmentObject var viewState: ViewState<AppViewState>
   
   @State var serverName = ""
   @State var ip = ""
   
   @State var errorMessage: String?
-  
-  init(configManager: ConfigManager, viewState: ViewState<AppViewState>) {
-    self.configManager = configManager
-    self.viewState = viewState
-  }
   
   func addServer() {
     if serverName.isEmpty {

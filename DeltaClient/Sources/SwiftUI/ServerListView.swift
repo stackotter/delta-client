@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct ServerListView: View {
-  @ObservedObject var configManager: ConfigManager
-  var viewState: ViewState<AppViewState>
+  @EnvironmentObject var configManager: ConfigManager
+  @EnvironmentObject var viewState: ViewState<AppViewState>
   
   var body: some View {
     let serverList = configManager.getServerList()

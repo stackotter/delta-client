@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct EditServerListView: View {
-  @ObservedObject var configManager: ConfigManager
-  var viewState: ViewState<AppViewState>
+  @EnvironmentObject var configManager: ConfigManager
+  @EnvironmentObject var viewState: ViewState<AppViewState>
   
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {

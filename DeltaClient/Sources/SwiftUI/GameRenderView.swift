@@ -14,6 +14,8 @@ enum GameViewStateEnum {
 }
 
 struct GameRenderView: View {
+  @EnvironmentObject var viewState: ViewState<AppViewState>
+  
   @ObservedObject var state = ViewState<GameViewStateEnum>(initialState: .downloadingTerrain)
   
   let client: Client
@@ -48,7 +50,7 @@ struct GameRenderView: View {
     .toolbar(content: {
       Button("leave") {
         client.quit()
-        DeltaClientApp.eventManager.triggerEvent(.leaveServer)
+        viewState.returnToPrevious()
       }
     })
   }
