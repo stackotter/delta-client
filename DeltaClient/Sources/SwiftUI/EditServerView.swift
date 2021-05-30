@@ -48,13 +48,13 @@ struct EditServerView: View {
   }
   
   var body: some View {
-    VStack(alignment: .leading, spacing: 16) {
-      TextField("display name", text: $serverName)
-      TextField("ip", text: $ip)
-      HStack {
-        Button("save") {
-          editServer()
-        }
+    VStack(alignment: .center, spacing: 16) {
+      VStack(spacing: 8) {
+        TextField("display name", text: $serverName)
+        TextField("ip", text: $ip)
+      }
+      Button("save") {
+        editServer()
       }
     }
     .frame(width: 200)

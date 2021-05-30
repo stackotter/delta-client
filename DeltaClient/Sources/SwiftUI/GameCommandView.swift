@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct GameCommandView: View {
+  @EnvironmentObject var viewState: ViewState<AppViewState>
+  
   @State var command: String = ""
   
   var client: Client
@@ -30,7 +32,7 @@ struct GameCommandView: View {
     .toolbar(content: {
       Button("leave") {
         client.quit()
-        DeltaClientApp.eventManager.triggerEvent(.leaveServer)
+        viewState.returnToPrevious()
       }
     })
   }

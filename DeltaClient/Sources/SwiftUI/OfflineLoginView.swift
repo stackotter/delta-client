@@ -22,7 +22,7 @@ struct OfflineLoginView: View {
   
   var body: some View {
     Group {
-      VStack(spacing: 8) {
+      VStack(spacing: 16) {
         TextField("username", text: $username)
         Button("add") {
           addAccount()
