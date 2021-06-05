@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Server: Hashable {
+class Server: Observable, Hashable {
   var managers: Managers
   var connection: ServerConnection
   var descriptor: ServerDescriptor
@@ -35,18 +35,22 @@ class Server: Hashable {
     self.managers = managers
     
     account = managers.configManager.getSelectedAccount() ?? OfflineAccount(username: "error")
-    self.player = Player(username: account.name)
+    player = Player(username: account.name)
     
-    self.config = ServerConfig.createDefault()
-    self.packetRegistry = PacketRegistry.createDefault()
-    self.connection = ServerConnection(host: descriptor.host, port: descriptor.port, eventManager: eventManager)
-    self.connection.setPacketHandler(handlePacket)
+    config = ServerConfig.createDefault()
+    packetRegistry = PacketRegistry.createDefault()
+    
+    connection = ServerConnection(host: descriptor.host, port: descriptor.port, eventManager: eventManager)
+    super.init()
+    connection.setPacketHandler(handlePacket)
   }
   
   // World
   
-  func newWorld(config: WorldConfig) {
-    world = World(config: config, managers: managers, eventManager: eventManager)
+  func joinWorld(info: World.Info) {
+    let newWorld = World(info: info, managers: managers)
+    notifyObservers(Server.Event.JoinWorld(world: newWorld))
+    world = newWorld
   }
   
   // Networking

@@ -12,9 +12,12 @@ import MetalKit
 class RenderCoordinator: NSObject, MTKViewDelegate {
   var client: Client
   
+  var camera: Camera
   var physicsEngine: PhysicsEngine
-  var worldRenderer: WorldRenderer
+  var worldRenderer: WorldRenderer?
+  
   var commandQueue: MTLCommandQueue
+  var blockArrayTexture: MTLTexture
   
   init(client: Client) {
     guard let device = MTLCreateSystemDefaultDevice() else {
@@ -26,10 +29,42 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
     }
     
     self.client = client
-    self.physicsEngine = PhysicsEngine(client: client)
-    self.worldRenderer = WorldRenderer(client: client)
-    
     self.commandQueue = commandQueue
+    
+    // setup physics engine (should possibly get the client to do this?)
+    physicsEngine = PhysicsEngine(client: client)
+    
+    // setup camera
+    let fovDegrees: Float = 90
+    let fovRadians = fovDegrees / 180 * Float.pi
+    camera = Camera()
+    camera.fovY = fovRadians
+    
+    // setup textures
+    blockArrayTexture = client.managers.textureManager.createArrayTexture(metalDevice: device)
+    
+    // register server update handler
+    super.init()
+    
+    // create world renderer
+    if let world = client.server.world {
+      worldRenderer = WorldRenderer(world: world, blockPaletteManager: client.managers.blockPaletteManager, blockArrayTexture: blockArrayTexture)
+    }
+    
+    // register listener for changing worlds
+    client.server.registerUpdateHandler(handleClientUpdate(_:))
+  }
+  
+  func handleClientUpdate(_ event: Event) {
+    switch event {
+      case let event as Server.Event.JoinWorld:
+        worldRenderer = WorldRenderer(
+          world: event.world,
+          blockPaletteManager: client.managers.blockPaletteManager,
+          blockArrayTexture: blockArrayTexture)
+      default:
+        break
+    }
   }
   
   func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) { }
@@ -55,7 +90,7 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
       fatalError("something has gone seriously wrong, view passed to RenderCoordinator was not interactive")
     }
     
-    // update player
+    // update player velocity
     let input = view.inputState
     view.inputState.resetMouseDelta()
     client.server.player.update(with: input)
@@ -63,8 +98,13 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
     // physics
     physicsEngine.update()
     
-    // render
+    // update camera parameters
     let aspect = getAspectRatio(of: view)
+    camera.aspect = aspect
+    camera.position = client.server.player.getEyePositon().vector
+    camera.setRotation(playerLook: client.server.player.look)
+    
+    // render
     if let commandBuffer = commandQueue.makeCommandBuffer() {
       if let renderPassDescriptor = view.currentRenderPassDescriptor {
         renderPassDescriptor.colorAttachments[0].clearColor = getClearColor()
@@ -72,7 +112,9 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
         renderPassDescriptor.colorAttachments[0].storeAction = .store
         if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
           // run renderers
-          worldRenderer.draw(device: device, renderEncoder: renderEncoder, aspect: aspect)
+          if let worldRenderer = worldRenderer {
+            worldRenderer.draw(device: device, renderEncoder: renderEncoder, camera: camera)
+          }
           
           renderEncoder.endEncoding()
           commandBuffer.present(drawable)

@@ -13,13 +13,18 @@ enum CardinalDirection {
   case south
   case west
   
+  static var allDirections: [CardinalDirection] = [
+    .north,
+    .east,
+    .south,
+    .west]
+  
   var opposite: CardinalDirection {
     let oppositeMap: [CardinalDirection: CardinalDirection] = [
       .north: .south,
       .south: .north,
       .east: .west,
-      .west: .east
-    ]
+      .west: .east]
     return oppositeMap[self]!
   }
 }

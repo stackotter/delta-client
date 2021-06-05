@@ -37,17 +37,17 @@ struct RespawnPacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
+    let worldInfo = World.Info(
+      name: worldName,
+      dimension: dimension,
+      hashedSeed: hashedSeed,
+      isDebug: isDebug,
+      isFlat: isFlat)
+    
     if let world = server.world {
-      world.config = WorldConfig(
-        worldName: worldName, dimension: dimension,
-        hashedSeed: hashedSeed, isDebug: isDebug, isFlat: isFlat
-      )
+      world.setInfo(worldInfo)
     } else {
-      let worldConfig = WorldConfig(
-        worldName: worldName, dimension: dimension,
-        hashedSeed: hashedSeed, isDebug: isDebug, isFlat: isFlat
-      )
-      server.newWorld(config: worldConfig)
+      server.joinWorld(info: worldInfo)
     }
     server.player.gamemode = gamemode
     

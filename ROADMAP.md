@@ -1,6 +1,6 @@
 # Demo Versions
 
-The demo versions are just milestones that work towards the first Alpha release
+The demo versions are just proof-of-concepts.
 
 ## Demo 1 - Efficient Launch, Basic Rendering & All Networking *(Released)*
 
@@ -38,15 +38,36 @@ The demo versions are just milestones that work towards the first Alpha release
 - [x] refresh access token before each server join
 - [x] fix first time server join
 
-## Demo 3 - Improved Rendering *(WIP)*
+# Alpha Versions
+
+The demo versions were just proof-of-concepts. The alpha versions will still be far from complete but will be looking a lot more promising.
+
+## Alpha 1 - Basically Spectator Mode *(WIP)*
 
 ### New Features
 
-- basic shading
-- multipart structures
-- random block rotations
-- multichunk rendering
-- other rendering fixes
+- rendering
+  - proper lighting
+  - multipart structures (e.g. fences)
+  - random block rotations
+  - multichunk rendering
+  - complete redesigned rendering system
+  - animated textures
+  - frustum culling
+- movements
+  - basic physics
+  - basic input system
+  - basic spectator mode movement (freecam)
+- ui
+  - cleaner ui code
+  - cleaner ui
+  - edit server list screen
+  - accounts screen
+- accounts
+  - multiaccounting (allow easily switching between accounts)
+  - mojang accounts
+  - offline account
+- improved memory usage
 
 ### Todo
 
@@ -61,27 +82,14 @@ The demo versions are just milestones that work towards the first Alpha release
 - [ ] base chunk bounding box off highest and lowest blocks
 - [ ] fix gpu ram usage (clear buffers when not being used, possibly use private mode buffers, possibly use a big default size buffer and transfer things through that)
 - [ ] fix indices (either use 6 vertices to a face or do the fancy shader thing from before (adjusting the vertex indices))
-- [ ] possibly use section based rendering instead of chunk based
 - [ ] optimise chunk mesh preparation
+- [ ] possibly use section based rendering instead of chunk based
 - [x] basic multichunk rendering
 - [x] fix hypixel chunk loading
 - [ ] fix grass block sides
 - [ ] implement rescale
 - [ ] random block variants (that match vanilla)
 - [x] frustum culling for chunks
-- [ ] profile whole draw function and optimise
-
-## Demo 4 - Movement
-
-### New Features
-
-- basic controls
-  - position
-  - look
-- basic physics loop (without gravity)
-
-### Todo
-
 - [x] create an input system
   - [x] keyboard
   - [x] mouse
@@ -90,53 +98,20 @@ The demo versions are just milestones that work towards the first Alpha release
   - [x] add basic physics simulation
 - [ ] hook up input system to send packets to server
 - [ ] add input settings (mouse sensitivity and keymappings)
-
-## Demo 5 - Code & UI Improvements
-
-### New Features
-
-- cleaner code
-- improved ui
-- improved error handling and displaying
-- improved startup verbosity
-- better threading
-
-### Todo
-
-- [ ] rework ui code
-- [ ] rewrite ui code like the fruta example
-- [ ] rework mojang api and login flow
-- [ ] find and remove redundant code
-- [ ] get rid of all node cycles identified by xcode memory graph (to fix ram usage)
-- [ ] maybe remove commands mode
-- [ ] improve error handling and displaying
-- [ ] use count up down latch thingo like minosoft for startup sequence
-- [ ] thread safety of world and chunks and stuff
-
-## Demo 6 - Multi-accounting
-
-### Features
-
-- offline account support
-- microsoft accounts
-- multi-accounting
-
-### Todo
-
 - [x] add basis for multi-accounting
   - [x] config
   - [x] login code
 - [x] add offline account support
-- [ ] add microsoft account support
 - [x] ui for switching accounts
+- [ ] fix memory usage errors (when leaving a server or starting the app for the first time a lot of memory doesn't get freed for some reason)
 
-## Demo 7 - Collisions and Proper Physics
+## Alpha 2 - Creative Mode Without Inventory
 
 ### New Features
 
 - collision system
 - auto-jump
-- gravity (for noobs)
+- gravity
 
 ### Todo
 
@@ -147,13 +122,7 @@ The demo versions are just milestones that work towards the first Alpha release
 - [ ] auto-jump
 - [ ] add gravity to physics
 
-# Alpha Versions
-
-The alpha versions will still be far from useable but a majority of the groundwork will be there.
-
-These versions will also start looking a lot more like the real thing.
-
-## Alpha 1 - Basic Survival Mode
+## Alpha 3 - Basic Survival Mode
 
 ### New Features - Basic HUD & Inventory
 

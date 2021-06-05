@@ -17,9 +17,13 @@ enum FaceDirection: Int {
   case east = 4
   case west = 5
   
-  static var directions: [FaceDirection] {
-    return [.down, .up, .north, .south, .west, .east]
-  }
+  static var allDirections: [FaceDirection] = [
+    .down,
+    .up,
+    .north,
+    .south,
+    .west,
+    .east]
   
   var axis: Axis {
     switch self {

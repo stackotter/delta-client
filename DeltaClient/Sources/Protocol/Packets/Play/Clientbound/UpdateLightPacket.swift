@@ -59,7 +59,7 @@ struct UpdateLightPacket: ClientboundPacket {
     var blockLightIndex = 0
     if let world = server.world {
       let chunkLighting = world.lighting[chunkPosition] ?? ChunkLighting()
-      for i in 0..<(Chunk.NUM_SECTIONS + 1) {
+      for i in 0..<(Chunk.numSections + 1) {
         let sectionNum = i - 1
         if (skyLightMask >> i) & 0x1 == 1 {
           if i == 0 {

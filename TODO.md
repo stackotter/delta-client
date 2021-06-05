@@ -3,15 +3,14 @@
 1. [x] multi-accounting
    1. [x] ditch microsoft accounts for now (until someone complains)
    2. [x] create account switcher
-2. [ ] thread safety in chunk loading, preparing and rendering
-3. [ ] consistent chunk loading on higher render distance default generation worlds
-4. [ ] use lighting data sent from server
+2. [x] thread safety in chunk loading, preparing and rendering
+3. [x] complete rendering restructure
+4. [ ] consistent chunk loading on higher render distance default generation worlds
+5. [ ] use lighting data sent from server
 
 ## UI
 
-- [ ] fix refresh button looking like it's disabled after clicking
-- [ ] add more useful messages instead of just 'downloading terrain' when joining games
-- [ ] fix ui consistency
+- [x] fix ui consistency
 - [x] use environment object to pass view state around
 
 ## Networking
@@ -33,7 +32,7 @@
 
 - [x] Basic config system
 - [x] Remove dependence on vanilla minecraft installation being present
-- [ ] prettify config json
+- [x] prettify config json
 
 ## Startup
 
@@ -41,7 +40,7 @@
 
 ## Rendering
 
-- [ ] basic shading
+- [x] basic shading
 - [ ] fix chunks not loading (lighting data issue?)
 - [x] multiple chunks first test
 - [x] look into keeping vertices in gpu mem when they are unchanged between frames?
@@ -54,6 +53,7 @@
 - [ ] wait for neighbouring chunks
 - [ ] make bottom face of block the darkest
 - [ ] fix precision errors (an issue with near and far being too different, raising near to 0.1 could probably help)
+- [x] completely refactor
 
 ## Block models
 
@@ -95,18 +95,18 @@
 - [x] re-enable sandbox
 - [ ] clean up matrixutil to be a matrix_float4x4 extension possibly?
 - [ ] use rethrows
-- [ ] simplify data classes (like chunk) that should just be a data source
+- [x] simplify data classes (like chunk) that should just be a data source
 - [x] have a default eventmanager (treat it as a singleton)
 - [ ] make most of the managers singletons where possible (hopefully get rid of Managers)
   - [ ] https://forums.swift.org/t/is-there-any-way-to-throw-error-from-singleton-class-init/39207, https://medium.com/@tlimaye91/thread-safe-singletons-in-swift-a4f6a977d6e6
 - [ ] potentially move over to using Carthage instead of swift package manager
-- [ ] use new position properties instead of all the spread out functions now
+- [x] use new position properties instead of all the spread out functions now
 - [ ] maybe use simd vector types instead of position?
 
 ## Architecture
 
-- [ ] World should eventually be mostly structs and just contain helper methods and be used a data holder (chunks shouldn't need to update their meshes and stuff probably, that's chunk preparers job, could involve callbacks though)
-- [ ] the rest of the code shouldn't know that rendering even exists (the renderer should just observe the world)
+- [x] World should eventually be mostly structs and just contain helper methods and be used a data holder (chunks shouldn't need to update their meshes and stuff probably, that's chunk preparers job, could involve callbacks though)
+- [x] the rest of the code shouldn't know that rendering even exists (the renderer should just observe the world)
 - [ ] nbt code as encoder and decoder maybe?
 - [ ] merge client and server into client (i am not making a server, there should be just a Client and a ServerConnection)
 - [ ] make ConfigManager singleton?
@@ -118,11 +118,10 @@
 
 ## Code Cleanup
 
-- [ ] restructure folder structure
-- [ ] move most things out of data folder (it's a bit ambiguous)
+- [x] restructure folder structure
 - [ ] split buffer into InBuffer and OutBuffer
-- [ ] always use the position type instead of separate x, y and z arguments
-- [ ] get rid of getIndexForBlock or whatever and use the calculated property of Position
+- [x] always use the position type instead of separate x, y and z arguments
+- [x] get rid of getIndexForBlock or whatever and use the calculated property of Position
 - [ ] fix SwiftLint stuff
 - [ ] meet the airbnb swift style guidelines
   - [ ] use MARK
@@ -133,3 +132,5 @@
 - [ ] make wrapper view for adding titles
 - [ ] create swiftui previews for all views
 - [ ] make proper alert system (for popup errors)
+- [ ] use enums and extensions of those enums to do namespacing (instead of a flat namespace)
+- [x] refactor rendering completely to be more oop style and cleaner (hopefully optimising it a bit along the way too)

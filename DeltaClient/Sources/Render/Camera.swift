@@ -39,4 +39,10 @@ struct Camera {
     let worldToClip = getWorldToClipMatrix()
     return Frustum(worldToClip: worldToClip)
   }
+  
+  func isChunkVisible(at chunkPosition: ChunkPosition) -> Bool {
+    let chunkAxisAlignedBoundingBox = AxisAlignedBoundingBox(forChunkAt: chunkPosition)
+    let frustum = getFrustum()
+    return frustum.approximatelyContains(chunkAxisAlignedBoundingBox)
+  }
 }

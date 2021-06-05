@@ -7,45 +7,53 @@
 
 import Foundation
 import MetalKit
-
+import simd
 
 enum WorldRendererError: LocalizedError {
   case failedToCreateUniformBuffer
 }
 
 class WorldRenderer {
-  var client: Client
-  
   var pipelineState: MTLRenderPipelineState
   var depthState: MTLDepthStencilState
   var blockArrayTexture: MTLTexture
+  var blockPaletteManager: BlockPaletteManager
   
-  var camera: Camera
-  var world: World?
-  var chunkPreparer: ChunkPreparer
+  var world: World
+  var chunkRenderers: [ChunkPosition: ChunkRenderer] = [:]
   
-  init(client: Client) {
-    Logger.info("initialising world renderer")
+  var chunkPreparationThread = DispatchQueue(
+    label: "WorldRenderer.chunkPreparationThread",
+    attributes: .concurrent)
+  
+  var frozenChunks = Set<ChunkPosition>()
+  var frozenChunkNeighbourBlockUpdates: [ChunkPosition: (CardinalDirection, World.Event.SetBlock)] = [:]
+  
+  init(world: World, blockPaletteManager: BlockPaletteManager, blockArrayTexture: MTLTexture) {
+    Logger.info("Initialising WorldRenderer")
     
     // get metal device
     guard let metalDevice = MTLCreateSystemDefaultDevice() else {
-      Logger.error("no metal device found")
-      fatalError("no metal device found")
+      Logger.error("No metal device found")
+      fatalError("No metal device found")
     }
     
     // load shaders
-    Logger.info("loading shaders")
+    Logger.info("Loading shaders")
     guard
       let defaultLibrary = metalDevice.makeDefaultLibrary(),
       let vertex = defaultLibrary.makeFunction(name: "chunkVertexShader"),
       let fragment = defaultLibrary.makeFunction(name: "chunkFragmentShader")
     else {
-      Logger.error("failed to load shaders")
-      fatalError("failed to load world shaders")
+      Logger.error("Failed to load chunk shaders")
+      fatalError("Failed to load chunk shaders")
     }
     
+    self.blockArrayTexture = blockArrayTexture
+    self.blockPaletteManager = blockPaletteManager
+    
     // create pipeline descriptor
-    Logger.info("creating pipeline descriptor")
+    Logger.info("Creating pipeline descriptor")
     let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
     pipelineStateDescriptor.label = "Triangle Pipeline"
     pipelineStateDescriptor.vertexFunction = vertex
@@ -54,11 +62,12 @@ class WorldRenderer {
     pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float
     
     // create pipeline state
-    Logger.info("creating pipeline state")
+    Logger.info("Creating pipeline state")
     do {
       pipelineState = try metalDevice.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
     } catch {
-      fatalError("failed to create render pipeline state")
+      Logger.error("Failed to create render pipeline state")
+      fatalError("Failed to create render pipeline state")
     }
     
     // setup depth texture settings
@@ -67,32 +76,79 @@ class WorldRenderer {
     depthDescriptor.isDepthWriteEnabled = true
     
     guard let depthState = metalDevice.makeDepthStencilState(descriptor: depthDescriptor) else {
-      Logger.error("failed to create depth stencil state")
-      fatalError("failed to create depth stencil state")
+      Logger.error("Failed to create depth stencil state")
+      fatalError("Failed to create depth stencil state")
     }
     self.depthState = depthState
     
-    Logger.info("loading textures")
-    blockArrayTexture = client.managers.textureManager.createArrayTexture(metalDevice: metalDevice)
-    
-    // setup camera
-    let fovDegrees: Float = 90
-    let fovRadians = fovDegrees / 180 * Float.pi
-    camera = Camera()
-    camera.fovY = fovRadians
-    
-    // TODO: remove need for this fatal error
-    guard let world = client.server.world else {
-      fatalError("no world supplied to world renderer")
-    }
-    self.chunkPreparer = ChunkPreparer(world: world, camera: camera)
-    
-    self.client = client
-    
-    Logger.info("initialised renderer")
+    self.world = world
+    Logger.info("Initialised WorldRenderer")
   }
   
-  func createWorldUniforms() -> WorldUniforms {
+  func handle(_ events: [Event]) {
+    events.forEach { event in
+      switch event {
+        case let event as World.Event.AddChunk:
+          handle(event)
+        case let event as World.Event.RemoveChunk:
+          handle(event)
+        case let event as World.Event.SetBlock:
+          handle(event)
+        default:
+          break
+      }
+    }
+  }
+  
+  func handle(_ event: World.Event.AddChunk) {
+    // create renderer
+    let position = event.position
+    let renderer = ChunkRenderer(for: event.chunk, at: position, with: blockPaletteManager)
+    
+    // set chunk's neighbours
+    for (direction) in CardinalDirection.allDirections {
+      let neighbourPosition = position.neighbour(inDirection: direction)
+      if let neighbourRenderer = chunkRenderers[neighbourPosition] {
+        renderer.setNeighbour(to: neighbourRenderer.chunk, direction: direction)
+        neighbourRenderer.setNeighbour(to: renderer.chunk, direction: direction.opposite)
+      }
+    }
+    
+    // add chunk renderer
+    chunkRenderers[position] = renderer
+  }
+  
+  func handle(_ event: World.Event.RemoveChunk) {
+    if let renderer = chunkRenderers.removeValue(forKey: event.position) {
+      let neighbourRenderers = getNeighbourRenderers(of: renderer)
+      for (direction, neighbourRenderer) in neighbourRenderers {
+        neighbourRenderer.invalidateMesh()
+        neighbourRenderer.neighbourChunks.removeValue(forKey: direction.opposite)
+      }
+    }
+  }
+  
+  func handle(_ event: World.Event.SetBlock) {
+    if let renderer = chunkRenderers[event.position.chunkPosition] {
+      renderer.handle(event)
+      for (direction, neighbourRenderer) in getNeighbourRenderers(of: renderer) {
+        neighbourRenderer.handleNeighbour(event, direction: direction)
+      }
+    }
+  }
+  
+  func getNeighbourRenderers(of renderer: ChunkRenderer) -> [CardinalDirection: ChunkRenderer] {
+    var neighbourRenderers: [CardinalDirection: ChunkRenderer] = [:]
+    renderer.neighbourChunks.forEach { direction, _ in
+      let neighbourPosition = renderer.position.neighbour(inDirection: direction)
+      if let neighbourRenderer = chunkRenderers[neighbourPosition] {
+        neighbourRenderers[direction] = neighbourRenderer
+      }
+    }
+    return neighbourRenderers
+  }
+  
+  func createWorldUniforms(for camera: Camera) -> WorldUniforms {
     return WorldUniforms(worldToClipSpace: camera.getWorldToClipMatrix())
   }
   
@@ -105,28 +161,100 @@ class WorldRenderer {
     return uniformBuffer
   }
   
-  func draw(device: MTLDevice, renderEncoder: MTLRenderCommandEncoder, aspect: Float) {
-    // update camera parameters
-    camera.aspect = aspect
-    camera.position = client.server.player.getEyePositon().vector
-    camera.setRotation(playerLook: client.server.player.look)
+  func freezeChunk(at chunkPosition: ChunkPosition) {
+    frozenChunks.insert(chunkPosition)
+  }
+  
+  func unfreezeChunk(at chunkPosition: ChunkPosition) {
+    frozenChunks.remove(chunkPosition)
+    if let chunkRenderer = chunkRenderers[chunkPosition] {
+      frozenChunkNeighbourBlockUpdates.forEach { chunkPosition, neighbourEvent in
+        let (direction, event) = neighbourEvent
+        chunkRenderer.handleNeighbour(event, direction: direction)
+      }
+    }
+  }
+  
+  func filterAndPreprocessEvent(event: Event) -> Bool {
+    switch event {
+      case let event as World.Event.SetBlock:
+        let chunkPosition = event.position.chunkPosition
+        if self.frozenChunks.contains(chunkPosition) {
+          return false
+        }
+        for direction in CardinalDirection.allDirections {
+          let neighbourChunkPosition = chunkPosition.neighbour(inDirection: direction)
+          if self.frozenChunks.contains(neighbourChunkPosition) {
+            self.frozenChunkNeighbourBlockUpdates[chunkPosition] = (direction.opposite, event)
+            // the event will still be processed as it is not in a frozen chunk
+            // we just save the event and catch up the frozen chunk once it is unfrozen
+            return true
+          }
+        }
+        return true
+      default:
+        // all other events are safe to process
+        return true
+    }
+  }
+  
+  func draw(device: MTLDevice, renderEncoder: MTLRenderCommandEncoder, camera: Camera) {
+    // get world to process the current batch of world events
+    let events = world.processBatch(filter: filterAndPreprocessEvent(event:))
     
-    // update chunk preparer
-    chunkPreparer.setCamera(camera)
-    chunkPreparer.prepareChunks()
+    // process the world events for WorldRenderer too
+    handle(events)
     
-    // get chunks to render
-    var chunks: [Chunk] = []
-    let chunkPositions = chunkPreparer.getChunksToRender()
-    for chunkPosition in chunkPositions {
-      if let chunk = client.server.world?.chunks[chunkPosition] {
-        if !chunk.mesh.isEmpty {
-          chunks.append(chunk)
+    // unfreeze renderers that have finished preparing
+    let frozenRenderers = frozenChunks.map { chunkPosition in
+      return chunkRenderers[chunkPosition]
+    }
+    
+    frozenRenderers.forEach { chunkRenderer in
+      if let chunkRenderer = chunkRenderer,
+         chunkRenderer.isReadyToRender() {
+        Logger.debug("Unfreezing chunk at \(chunkRenderer.position)")
+        unfreezeChunk(at: chunkRenderer.position)
+      }
+    }
+    
+    // get ChunkRenderers which are ready to be rendered
+    let renderersToRender = chunkRenderers.filter { chunkPosition, chunkRenderer in
+      return camera.isChunkVisible(at: chunkPosition) &&
+        chunkRenderer.isReadyToRender() &&
+        !frozenChunks.contains(chunkPosition)
+    }
+    
+    // get a list visible that need to be prepared
+    let cameraPosition2d = simd_float2(camera.position.x, camera.position.z)
+    var chunksToPrepare = [ChunkPosition](chunkRenderers.filter { chunkPosition, chunkRenderer in
+      return chunkRenderer.isReadyToPrepare() &&
+        camera.isChunkVisible(at: chunkPosition) &&
+        !frozenChunks.contains(chunkPosition)
+    }.keys)
+    
+    // sort chunks by distance from player
+    chunksToPrepare = chunksToPrepare.sorted {
+      let point1 = simd_float2(Float($0.chunkX) * Float(Chunk.width), Float($0.chunkZ) * Float(Chunk.depth))
+      let point2 = simd_float2(Float($1.chunkX) * Float(Chunk.width), Float($1.chunkZ) * Float(Chunk.depth))
+      let distance1 = simd_distance_squared(cameraPosition2d, point1)
+      let distance2 = simd_distance_squared(cameraPosition2d, point2)
+      return distance2 > distance1
+    }
+    
+    // prepare chunks that require preparing and freeze any updates for them
+    chunksToPrepare.forEach { chunkPosition in
+      if let chunkRenderer = chunkRenderers[chunkPosition] {
+        freezeChunk(at: chunkPosition)
+        chunkPreparationThread.async {
+          Logger.debug("Preparing chunk at \(chunkPosition)")
+          chunkRenderer.prepare()
+          Logger.debug("Prepared chunk at \(chunkPosition)")
         }
       }
     }
     
-    // encode draw instructions
+    // encode render pipeline
     renderEncoder.setRenderPipelineState(pipelineState)
     renderEncoder.setDepthStencilState(depthState)
     renderEncoder.setFrontFacing(.clockwise)
@@ -140,7 +268,7 @@ class WorldRenderer {
     }
     
     // set uniforms
-    let worldUniforms = createWorldUniforms()
+    let worldUniforms = createWorldUniforms(for: camera)
     guard let worldUniformBuffer = try? createWorldUniformBuffer(from: worldUniforms, for: device) else {
       Logger.error("failed to create world uniform buffer")
       return
@@ -148,19 +276,8 @@ class WorldRenderer {
     renderEncoder.setVertexBuffer(worldUniformBuffer, offset: 0, index: 1)
     
     // render chunks
-    for chunk in chunks where !chunk.mesh.isEmpty {
-      if let buffers = try? chunk.mesh.createBuffers(device: device) {
-        renderEncoder.setVertexBuffer(buffers.vertexBuffer, offset: 0, index: 0) // set vertices
-        renderEncoder.setVertexBuffer(buffers.uniformBuffer, offset: 0, index: 2) // set chunk specific uniforms
-        renderEncoder.drawIndexedPrimitives(
-          type: .triangle,
-          indexCount: buffers.indexBuffer.length / 4,
-          indexType: .uint32,
-          indexBuffer: buffers.indexBuffer,
-          indexBufferOffset: 0)
-      } else {
-        Logger.error("failed to prepare buffers for chunk at \(chunk.position.chunkX),\(chunk.position.chunkZ)")
-      }
+    renderersToRender.forEach { _, chunkRenderer in
+      chunkRenderer.render(to: renderEncoder, with: device)
     }
   }
 }

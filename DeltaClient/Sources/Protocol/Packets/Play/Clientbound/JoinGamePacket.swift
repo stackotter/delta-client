@@ -61,8 +61,8 @@ struct JoinGamePacket: ClientboundPacket {
                                  dimensionCodec: dimensionCodec, maxPlayers: maxPlayers,
                                  viewDistance: viewDistance, useReducedDebugInfo: reducedDebugInfo,
                                  enableRespawnScreen: enableRespawnScreen)
-    let worldConfig = WorldConfig(worldName: worldName, dimension: dimension,
+    let worldInfo = World.Info(name: worldName, dimension: dimension,
                                   hashedSeed: hashedSeed, isDebug: isDebug, isFlat: isFlat)
-    server.world = World(config: worldConfig, managers: server.managers, eventManager: server.eventManager)
+    server.joinWorld(info: worldInfo)
   }
 }

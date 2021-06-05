@@ -13,8 +13,7 @@ import simd
 class ChunkMesh: Mesh {
   typealias Uniforms = ChunkUniforms
   
-  var chunk: Chunk
-  var queue: DispatchQueue
+  var queue = DispatchQueue(label: "chunkMesh")
   
   var vertices: [Vertex] = []
   var indices: [UInt32] = []
@@ -28,23 +27,27 @@ class ChunkMesh: Mesh {
   
   private var blockPaletteManager: BlockPaletteManager
   
+  // chunks
+  var chunk: Chunk
+  var chunkPosition: ChunkPosition
+  var neighbourChunks: [CardinalDirection: Chunk]
+  
   // maps block index to where its quads are in the vertex data
   private var blockIndexToQuads: [Int: [Int]] = [:]
   private var quadToBlockIndex: [Int: Int] = [:]
   
   private var stopwatch = Stopwatch(mode: .summary, name: "ChunkMesh")
   
-  // cube geometry constants
+  // cube geometry
   private let quadWinding: [UInt32] = [0, 1, 2, 2, 3, 0]
   
-  private let faceVertexIndices: [FaceDirection: [Int]] = [
+  private let quadVertexIndices: [FaceDirection: [Int]] = [
     .up: [3, 7, 4, 0],
     .down: [6, 2, 1, 5],
     .east: [3, 2, 6, 7],
     .west: [4, 5, 1, 0],
     .north: [0, 1, 2, 3],
-    .south: [7, 6, 5, 4]
-  ]
+    .south: [7, 6, 5, 4]]
   
   private let cubeVertexPositions: [simd_float3] = [
     simd_float3([0, 1, 0]),
@@ -54,64 +57,65 @@ class ChunkMesh: Mesh {
     simd_float3([0, 1, 1]),
     simd_float3([0, 0, 1]),
     simd_float3([1, 0, 1]),
-    simd_float3([1, 1, 1])
-  ]
+    simd_float3([1, 1, 1])]
   
-  init(blockPaletteManager: BlockPaletteManager, chunk: Chunk) {
+  init(blockPaletteManager: BlockPaletteManager, chunk: Chunk, position: ChunkPosition, neighbourChunks: [CardinalDirection: Chunk]) {
     self.blockPaletteManager = blockPaletteManager
     self.chunk = chunk
-    self.queue = DispatchQueue(label: "chunkMesh")
+    self.chunkPosition = position
+    self.neighbourChunks = neighbourChunks
   }
   
-  // public interface functions
-  
-  func ingestChunk() {
-    queue.sync {
-      hasChanged = true
-      vertices = []
-      indices = []
-      quadToBlockIndex = [:]
-      blockIndexToQuads = [:]
-      
-      // TODO: cache this
-      stopwatch.startMeasurement("generate indexToCoordinates")
-      var indexToCoordinates: [Position] = []
-      for y in 0..<16 {
-        for z in 0..<16 {
-          for x in 0..<16 {
-            let position = Position(x: x, y: y, z: z)
-            indexToCoordinates.append(position)
+  func prepare() {
+    hasChanged = true
+    vertices = []
+    indices = []
+    quadToBlockIndex = [:]
+    blockIndexToQuads = [:]
+    
+    // add blocks to mesh
+    chunk.sections.enumerated().forEach { sectionIndex, section in
+      if section.blockCount != 0 {
+        let sectionY = sectionIndex * 16
+        for y in 0..<16 {
+          for z in 0..<16 {
+            for x in 0..<16 {
+              var position = Position(x: x, y: y, z: z)
+              let sectionRelativeBlockIndex = position.blockIndex
+              let state = section.getBlockState(at: sectionRelativeBlockIndex)
+              if state != 0 {
+                position.y += sectionY
+                addBlock(at: position, with: state)
+              }
+            }
           }
         }
       }
-      stopwatch.stopMeasurement("generate indexToCoordinates")
-      
-      stopwatch.startMeasurement("generate mesh")
-      for (sectionIndex, section) in chunk.sections.enumerated() where section.blockCount != 0 {
-        let offset = sectionIndex * ChunkSection.NUM_BLOCKS
-        for i in 0..<ChunkSection.NUM_BLOCKS {
-          // get block state and add block to mesh if not air
-          let state = section.blocks[i]
-          if state != 0 { // block isn't air
-            let blockIndex = offset + i // block index in chunk
-            // TODO: decide if index to coordinates caching actually saves time
-            var position = indexToCoordinates[i]
-            position.y += sectionIndex * 16
-            
-            addBlock(position.x, position.y, position.z, index: blockIndex, state: state)
-          }
-        }
-      }
-      stopwatch.stopMeasurement("generate mesh")
-      
-      stopwatch.summary()
-      
-      let xOffset = chunk.position.chunkX * 16
-      let zOffset = chunk.position.chunkZ * 16
-      let modelToWorldMatrix = MatrixUtil.translationMatrix([Float(xOffset), 0.0, Float(zOffset)])
-      
-      uniforms = ChunkUniforms(modelToWorld: modelToWorldMatrix)
     }
+    
+    // calculate model to world matrix
+    let xOffset = chunkPosition.chunkX * 16
+    let zOffset = chunkPosition.chunkZ * 16
+    let modelToWorldMatrix = MatrixUtil.translationMatrix([Float(xOffset), 0.0, Float(zOffset)])
+    uniforms = ChunkUniforms(modelToWorld: modelToWorldMatrix)
+  }
+  
+  func getCullingNeighbours(ofBlockAt index: Int, and position: Position) -> [FaceDirection] {
+    let neighbouringBlocks = chunk.getNonAirNeighbours(ofBlockAt: index)
+    
+    var cullingNeighbours: [FaceDirection] = []
+    for (direction, neighbourIndex) in neighbouringBlocks {
+      let neighbourBlockState = chunk.getBlock(at: neighbourIndex)
+      if neighbourBlockState != 0 {
+        if let blockModel = blockPaletteManager.getVariant(for: neighbourBlockState, at: position) {
+          if blockModel.fullFaces.contains(direction.opposite) {
+            cullingNeighbours.append(direction)
+          }
+        }
+      }
+    }
+    
+    return cullingNeighbours
   }
   
   // mesh building functions
@@ -120,14 +124,16 @@ class ChunkMesh: Mesh {
     let x = index & 0x0f
     let z = (index & 0xf0) >> 4
     let y = index >> 8
-    addBlock(x, y, z, index: index, state: state)
+    let position = Position(x: x, y: y, z: z)
+    addBlock(at: position, with: state)
   }
   
-  private func addBlock(_ x: Int, _ y: Int, _ z: Int, index: Int, state: UInt16) {
-    let cullFaces = chunk.getCullingNeighbours(forIndex: index, x: x, y: y, z: z)
+  private func addBlock(at position: Position, with state: UInt16) {
+    let blockIndex = position.blockIndex
+    let cullFaces = getCullingNeighbours(ofBlockAt: blockIndex, and: position)
     
-    if let blockModel = blockPaletteManager.getVariant(for: state, x: x, y: y, z: z) {
-      let modelToWorld = MatrixUtil.translationMatrix(simd_float3(Float(x), Float(y), Float(z)))
+    if let blockModel = blockPaletteManager.getVariant(for: state, at: position) {
+      let modelToWorld = MatrixUtil.translationMatrix(position.floatVector)
       
       var quadIndices: [Int] = []
       for element in blockModel.elements {
@@ -140,22 +146,22 @@ class ChunkMesh: Mesh {
               continue
             }
           }
-          let quadIndex = addQuad(x, y, z, direction: faceDirection, matrix: vertexToWorld, face: face)
+          let quadIndex = addQuad(direction: faceDirection, matrix: vertexToWorld, face: face)
           
           quadIndices.append(quadIndex)
-          quadToBlockIndex[quadIndex] = index
+          quadToBlockIndex[quadIndex] = blockIndex
         }
       }
       
       if !quadIndices.isEmpty {
-        blockIndexToQuads[index] = quadIndices
+        blockIndexToQuads[position.blockIndex] = quadIndices
       }
     } else {
       Logger.debug("skipping block because no block model found")
     }
   }
   
-  private func addQuad(_ x: Int, _ y: Int, _ z: Int, direction: FaceDirection, matrix: matrix_float4x4, face: BlockModelElementFace) -> Int {
+  private func addQuad(direction: FaceDirection, matrix: matrix_float4x4, face: BlockModelElementFace) -> Int {
     // add windings
     let offset = UInt32(vertices.count) // the index of the first vertex of the quad
     for index in quadWinding {
@@ -164,7 +170,7 @@ class ChunkMesh: Mesh {
     
     // add vertices
     // swiftlint:disable force_unwrapping
-    let vertexIndices = faceVertexIndices[direction]!
+    let vertexIndices = quadVertexIndices[direction]!
     // swiftlint:enable force_unwrapping
     for (uvIndex, vertexIndex) in vertexIndices.enumerated() {
       let position = simd_float4(cubeVertexPositions[vertexIndex], 1) * matrix
@@ -180,17 +186,17 @@ class ChunkMesh: Mesh {
   
   // Mesh Editing Functions
   
-  func replaceBlock(at index: Int, newState: UInt16) {
-    queue.sync {
-      hasChanged = true
-      removeBlock(atIndex: index)
-      if newState != 0 {
-        Logger.debug("add new block")
-        addBlock(at: index, with: newState)
-      }
+  func replaceBlock(at index: Int, with newState: UInt16, shouldUpdateNeighbours: Bool = true) {
+    hasChanged = true
+    removeBlock(atIndex: index)
+    if newState != 0 {
+      Logger.debug("add new block")
+      addBlock(at: index, with: newState)
     }
     
-    updateNeighbours(of: index)
+    if shouldUpdateNeighbours {
+      updateNeighbours(of: index)
+    }
   }
   
   private func removeBlock(atIndex index: Int) {
@@ -246,13 +252,14 @@ class ChunkMesh: Mesh {
   }
   
   private func updateNeighbours(of index: Int) {
-    let presentNeighbours = chunk.getPresentNeighbours(forIndex: index)
-    for (_, (neighbourChunk, neighbourIndex)) in presentNeighbours {
-      neighbourChunk.mesh.queue.sync {
-        let state = neighbourChunk.getBlock(atIndex: neighbourIndex)
-        neighbourChunk.mesh.removeBlock(atIndex: neighbourIndex)
-        neighbourChunk.mesh.addBlock(at: neighbourIndex, with: state)
-      }
+    // update non-air neighbours of neighbours to ensure faces are culled correctly
+    let neighbours = chunk.getNonAirNeighbours(ofBlockAt: index)
+    neighbours.forEach { _, neighbourBlockIndex in
+      let neighbourBlockState = chunk.getBlock(at: neighbourBlockIndex)
+      replaceBlock(
+        at: neighbourBlockIndex,
+        with: neighbourBlockState,
+        shouldUpdateNeighbours: false)
     }
   }
 }

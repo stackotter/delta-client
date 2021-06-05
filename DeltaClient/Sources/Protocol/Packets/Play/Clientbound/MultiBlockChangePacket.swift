@@ -43,19 +43,13 @@ struct MultiBlockChangePacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    if let chunk = server.world?.chunks[chunkPosition] {
-      for record in records {
-        chunk.setBlock(
-          at: Position(
-            x: Int(record.x),
-            y: Int(record.y),
-            z: Int(record.z)
-          ),
-          to: UInt16(record.blockId)
-        )
-      }
-    } else {
-      Logger.error("multi block change received for non-loaded chunk")
+    records.forEach { record in
+      server.world?.setBlock(
+        at: Position(
+          x: Int(record.x),
+          y: Int(record.y),
+          z: Int(record.z)),
+        to: UInt16(record.blockId))
     }
   }
 }

@@ -50,7 +50,7 @@ Here's how the client currently performs when run on my 2020 dual-core Intel i5 
     - [ ] Animated textures (e.g. lava)
     - [ ] Fluids (lava and water)
     - [ ] Block entities (e.g. chests)
-    - [ ] Chunk culling
+    - [x] Chunk culling
   - [ ] HUD
     - [ ] Basic text
     - [ ] Chat

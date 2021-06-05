@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 class ChunkLighting {
   static var DEFAULT_SKYLIGHT_LEVEL: UInt8 = 255
   static var DEFAULT_BLOCKLIGHT_LEVEL: UInt8 = 255
@@ -24,7 +23,7 @@ class ChunkLighting {
   }
   
   func getSkyLightLevel(at position: Position) -> UInt8 {
-    let index = position.relativeToChunkSection.index
+    let index = position.relativeToChunkSection.blockIndex
     if let skyLightArray = skyLightData[position.sectionIndex] {
       let compactValue = skyLightArray[index >> 1]
       let level: UInt8
@@ -40,7 +39,7 @@ class ChunkLighting {
   }
   
   func getBlockLightLevel(at position: Position) -> UInt8 {
-    let index = position.relativeToChunkSection.index
+    let index = position.relativeToChunkSection.blockIndex
     if let blockLightArray = blockLightData[position.sectionIndex] {
       let compactValue = blockLightArray[index >> 1]
       let level: UInt8

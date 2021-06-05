@@ -56,8 +56,6 @@ struct Player {
     let remainder = look.yaw.truncatingRemainder(dividingBy: 360)
     look.yaw = remainder < 0 ? 360 + remainder : remainder // find modulo from remainder
     
-    Logger.debug("yaw: \(look.yaw)")
-    
     // update velocity relative to yaw
     velocity = [0, 0, 0]
     if input.pressedKeys.contains(13) {

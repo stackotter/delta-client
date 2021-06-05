@@ -41,7 +41,7 @@ class BlockPaletteManager {
   
   // Getters
   
-  func getVariant(for state: UInt16, x: Int, y: Int, z: Int) -> BlockModel? {
+  func getVariant(for state: UInt16, at: Position) -> BlockModel? {
     // TODO: write random generation in c to get same output as vanilla (and for speed)
 //    if let variants = blockModelPalette[state] {
 //      if variants.count == 1 {
@@ -255,7 +255,7 @@ class BlockPaletteManager {
       // floating point precision was leading to faces not being identified
       let margin: Float = 0.00001
       
-      for direction in FaceDirection.directions {
+      for direction in FaceDirection.allDirections {
         // 0 if the direction is a negative direction, otherwise 1
         let directionVector = direction.toVector()
         let value = (directionVector.x + directionVector.y + directionVector.z + 1) / 2.0

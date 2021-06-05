@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import simd
 
-struct Position {
+struct Position: Hashable {
   var x: Int
   var y: Int
   var z: Int
@@ -19,23 +20,36 @@ struct Position {
   }
   
   var relativeToChunk: Position {
-    let relativeX = x - chunkPosition.chunkX * ChunkSection.WIDTH
-    let relativeZ = z - chunkPosition.chunkZ * ChunkSection.DEPTH
+    let relativeX = x - chunkPosition.chunkX * Chunk.Section.width
+    let relativeZ = z - chunkPosition.chunkZ * Chunk.Section.depth
     return Position(x: relativeX, y: y, z: relativeZ)
   }
   
   var relativeToChunkSection: Position {
-    let relativeX = x - chunkPosition.chunkX * ChunkSection.WIDTH
-    let relativeZ = z - chunkPosition.chunkZ * ChunkSection.DEPTH
-    let relativeY = y - sectionIndex * ChunkSection.HEIGHT
+    let relativeX = x - chunkPosition.chunkX * Chunk.Section.width
+    let relativeZ = z - chunkPosition.chunkZ * Chunk.Section.depth
+    let relativeY = y - sectionIndex * Chunk.Section.height
     return Position(x: relativeX, y: relativeY, z: relativeZ)
   }
   
-  var index: Int {
-    return (y * Chunk.DEPTH + z) * Chunk.WIDTH + x
+  var floatVector: simd_float3 {
+    return simd_float3(
+      Float(x),
+      Float(y),
+      Float(z))
+  }
+  
+  var blockIndex: Int {
+    return (y * Chunk.depth + z) * Chunk.width + x
   }
   
   var sectionIndex: Int {
-    return y / ChunkSection.HEIGHT
+    return y / Chunk.Section.height
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(x)
+    hasher.combine(y)
+    hasher.combine(z)
   }
 }
