@@ -86,6 +86,7 @@ class Chunk {
       position.y < Chunk.height && position.y >= 0)
   }
   
+  /// Gets the indices of the blocks in this chunk that neighbour the block at `index`
   func getNeighbouringIndices(for index: Int) -> [FaceDirection: Int] {
     // TODO: remove get_neighbouring_blocks c function
     var neighbouringBlocks: [FaceDirection: Int] = [:]
@@ -117,13 +118,13 @@ class Chunk {
     return neighbouringBlocks
   }
   
-  // get which faces of block are against non-air neighbours
+  /// Gets the indices of all non-air blocks in chunk that neighbour the block at `index`
   func getNonAirNeighbours(ofBlockAt index: Int) -> [FaceDirection: Int] {
-    var presentNeighbours = getNeighbouringIndices(for: index)
-    for (direction, index) in presentNeighbours where getBlock(at: index) == 0 {
-      presentNeighbours.removeValue(forKey: direction)
+    var nonAirNeighbours = getNeighbouringIndices(for: index)
+    for (direction, index) in nonAirNeighbours where getBlock(at: index) == 0 {
+      nonAirNeighbours.removeValue(forKey: direction)
     }
     
-    return presentNeighbours
+    return nonAirNeighbours
   }
 }

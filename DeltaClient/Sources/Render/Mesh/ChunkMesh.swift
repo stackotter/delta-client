@@ -100,12 +100,53 @@ class ChunkMesh: Mesh {
     uniforms = ChunkUniforms(modelToWorld: modelToWorldMatrix)
   }
   
+  func getNeighbouringBlockStates(ofBlockAt index: Int) -> [FaceDirection: UInt16] {
+    var neighbouringBlockStates: [FaceDirection: UInt16] = [:]
+    
+    if index % Chunk.blocksPerLayer >= Chunk.width {
+      neighbouringBlockStates[.north] = chunk.getBlock(at: index - Chunk.width)
+    } else {
+      let neighbourBlockIndex = index + Chunk.blocksPerLayer - Chunk.width
+      neighbouringBlockStates[.north] = neighbourChunks[.north]?.getBlock(at: neighbourBlockIndex)
+    }
+    
+    if index % Chunk.blocksPerLayer < Chunk.blocksPerLayer - Chunk.width {
+      neighbouringBlockStates[.south] = chunk.getBlock(at: index + Chunk.width)
+    } else {
+      let neighbourBlockIndex = index - Chunk.blocksPerLayer + Chunk.width
+      neighbouringBlockStates[.south] = neighbourChunks[.south]?.getBlock(at: neighbourBlockIndex)
+    }
+    
+    if index % Chunk.width != Chunk.width - 1 {
+      neighbouringBlockStates[.east] = chunk.getBlock(at: index + 1)
+    } else {
+      let neighbourBlockIndex = index - 15
+      neighbouringBlockStates[.east] = neighbourChunks[.east]?.getBlock(at: neighbourBlockIndex)
+    }
+    
+    if index % Chunk.width != 0 {
+      neighbouringBlockStates[.west] = chunk.getBlock(at: index - 1)
+    } else {
+      let neighbourBlockIndex = index + 15
+      neighbouringBlockStates[.west] = neighbourChunks[.west]?.getBlock(at: neighbourBlockIndex)
+    }
+    
+    if index < Chunk.numBlocks - Chunk.blocksPerLayer {
+      neighbouringBlockStates[.up] = chunk.getBlock(at: index + Chunk.blocksPerLayer)
+    }
+    
+    if index >= Chunk.blocksPerLayer {
+      neighbouringBlockStates[.down] = chunk.getBlock(at: index - Chunk.blocksPerLayer)
+    }
+    
+    return neighbouringBlockStates
+  }
+  
   func getCullingNeighbours(ofBlockAt index: Int, and position: Position) -> [FaceDirection] {
-    let neighbouringBlocks = chunk.getNonAirNeighbours(ofBlockAt: index)
+    let neighbouringBlockStates = getNeighbouringBlockStates(ofBlockAt: index)
     
     var cullingNeighbours: [FaceDirection] = []
-    for (direction, neighbourIndex) in neighbouringBlocks {
-      let neighbourBlockState = chunk.getBlock(at: neighbourIndex)
+    for (direction, neighbourBlockState) in neighbouringBlockStates {
       if neighbourBlockState != 0 {
         if let blockModel = blockPaletteManager.getVariant(for: neighbourBlockState, at: position) {
           if blockModel.fullFaces.contains(direction.opposite) {
@@ -157,7 +198,7 @@ class ChunkMesh: Mesh {
         blockIndexToQuads[position.blockIndex] = quadIndices
       }
     } else {
-      Logger.debug("skipping block because no block model found")
+      Logger.debug("Skipping block with no block model")
     }
   }
   
@@ -244,7 +285,7 @@ class ChunkMesh: Mesh {
       var quads = blockIndexToQuads[blockIndex],
       let quadIndex = quads.lastIndex(of: quadIndex)
     else {
-      Logger.error("failed to get quad to remove, buckle-up, this could get bumpy")
+      Logger.error("Failed to get quad to remove, buckle-up, this could get bumpy")
       return
     }
     quads.remove(at: quadIndex)

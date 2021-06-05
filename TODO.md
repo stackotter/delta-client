@@ -52,8 +52,9 @@
 - [ ] investigate why the initial chunks at 10 render distance take so long to load
 - [ ] wait for neighbouring chunks
 - [ ] make bottom face of block the darkest
-- [ ] fix precision errors (an issue with near and far being too different, raising near to 0.1 could probably help)
+- [x] fix precision errors (an issue with near and far being too different, raising near to 0.1 could probably help)
 - [x] completely refactor
+- [x] fix face culling between chunks (could possibly make get neighbourBlockStates function to make a less complex solution than last time)
 
 ## Block models
 
