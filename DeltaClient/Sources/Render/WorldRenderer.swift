@@ -218,40 +218,50 @@ class WorldRenderer {
       }
     }
     
-    // get ChunkRenderers which are ready to be rendered
-    let renderersToRender = chunkRenderers.filter { chunkPosition, chunkRenderer in
-      return camera.isChunkVisible(at: chunkPosition) &&
-        chunkRenderer.isReadyToRender() &&
-        !frozenChunks.contains(chunkPosition)
-    }
-    
-    // get a list visible that need to be prepared
-    let cameraPosition2d = simd_float2(camera.position.x, camera.position.z)
-    var chunksToPrepare = [ChunkPosition](chunkRenderers.filter { chunkPosition, chunkRenderer in
-      return chunkRenderer.isReadyToPrepare() &&
-        camera.isChunkVisible(at: chunkPosition) &&
-        !frozenChunks.contains(chunkPosition)
-    }.keys)
-    
     // sort chunks by distance from player
-    chunksToPrepare = chunksToPrepare.sorted {
-      let point1 = simd_float2(Float($0.chunkX) * Float(Chunk.width), Float($0.chunkZ) * Float(Chunk.depth))
-      let point2 = simd_float2(Float($1.chunkX) * Float(Chunk.width), Float($1.chunkZ) * Float(Chunk.depth))
+    let cameraPosition2d = simd_float2(camera.position.x, camera.position.z)
+    var sortedChunkRenderers = [ChunkRenderer](chunkRenderers.values).sorted {
+      let point1 = simd_float2(Float($0.position.chunkX) * Float(Chunk.width), Float($0.position.chunkZ) * Float(Chunk.depth))
+      let point2 = simd_float2(Float($1.position.chunkX) * Float(Chunk.width), Float($1.position.chunkZ) * Float(Chunk.depth))
       let distance1 = simd_distance_squared(cameraPosition2d, point1)
       let distance2 = simd_distance_squared(cameraPosition2d, point2)
       return distance2 > distance1
     }
     
+    // get visible chunks
+    let visibleChunks = sortedChunkRenderers.map { $0.position }.filter { chunkPosition in
+      return camera.isChunkVisible(at: chunkPosition)
+    }
+    
+    // put visible chunks first
+    sortedChunkRenderers.sort {
+      return visibleChunks.contains($0.position) && !visibleChunks.contains($1.position)
+    }
+    
+    // get list of chunks still to be prepared
+    let renderersToPrepare = sortedChunkRenderers.filter { chunkRenderer in
+      return chunkRenderer.isReadyToPrepare() &&
+        !frozenChunks.contains(chunkRenderer.position)
+    }
+    
     // prepare chunks that require preparing and freeze any updates for them
-    chunksToPrepare.forEach { chunkPosition in
-      if let chunkRenderer = chunkRenderers[chunkPosition] {
-        freezeChunk(at: chunkPosition)
-        chunkPreparationThread.async {
-          Logger.debug("Preparing chunk at \(chunkPosition)")
-          chunkRenderer.prepare()
-          Logger.debug("Prepared chunk at \(chunkPosition)")
-        }
+    for chunkRenderer in renderersToPrepare {
+      if frozenChunks.count == 3 {
+        break
       }
+      freezeChunk(at: chunkRenderer.position)
+      chunkPreparationThread.async {
+        Logger.debug("Preparing chunk at \(chunkRenderer.position)")
+        chunkRenderer.prepare()
+        Logger.debug("Prepared chunk at \(chunkRenderer.position)")
+      }
+    }
+    
+    // get ChunkRenderers which are ready to be rendered
+    let renderersToRender = sortedChunkRenderers.filter { chunkRenderer in
+      return visibleChunks.contains(chunkRenderer.position) &&
+        chunkRenderer.isReadyToRender() &&
+        !frozenChunks.contains(chunkRenderer.position)
     }
     
     // encode render pipeline
@@ -270,13 +280,13 @@ class WorldRenderer {
     // set uniforms
     let worldUniforms = createWorldUniforms(for: camera)
     guard let worldUniformBuffer = try? createWorldUniformBuffer(from: worldUniforms, for: device) else {
-      Logger.error("failed to create world uniform buffer")
+      Logger.error("Failed to create world uniform buffer")
       return
     }
     renderEncoder.setVertexBuffer(worldUniformBuffer, offset: 0, index: 1)
     
     // render chunks
-    renderersToRender.forEach { _, chunkRenderer in
+    renderersToRender.forEach { chunkRenderer in
       chunkRenderer.render(to: renderEncoder, with: device)
     }
   }

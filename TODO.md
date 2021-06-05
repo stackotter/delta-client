@@ -12,6 +12,7 @@
 
 - [x] fix ui consistency
 - [x] use environment object to pass view state around
+- [ ] fix dismissing error screens
 
 ## Networking
 
@@ -72,14 +73,18 @@
 - [ ] respect weighting for block variants
 - [ ] fix stairs again (an upside-down stair with a block against each full face has a bunch of incorrect culling)
 - [ ] piston textures
+- [ ] fences with block on top don't render? (fence posts at least)
+- [ ] top half of door doesn't render from inside of house
 
 ## Chunk preparing
 
 - [ ] optimise new parts
   - [ ] optimise by replacing the slowest parts with c probably lol
 - [ ] fix grass block overlay render order (possibly just bodge and make the underneath element slightly smaller)
-- [ ] split translucent blocks into separate file
-- [ ] split transparent and translucent blocks into separate meshes
+- [ ] split translucent blocks into a separate palette? or at least have a nice way of knowing if a block counts as translucent, transparent or opaque
+- [ ] split translucent blocks into a separate mesh type?
+- [ ] make a generic cubemesh object? that has adding elements and stuff so that it can be reused for entities later?
+- [ ] fix chunk preparing order in new rendering system (it doesn't reevaluate the order of chunks to prepare when the player turns around, could possibly fix this by only allowing 3 frozen chunks at a time and re-evaluating chunk order after every 3?)
 
 ## General
 
