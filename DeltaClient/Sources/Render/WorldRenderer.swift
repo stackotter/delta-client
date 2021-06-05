@@ -98,6 +98,17 @@ class WorldRenderer {
           break
       }
     }
+    
+    // send block changes to neighbouring chunks of the block change
+    // this must be done after the block changes have all been processed in their chunks
+    events.forEach { event in
+      switch event {
+        case let event as World.Event.SetBlock:
+          handleNeighbours(event)
+        default:
+          break
+      }
+    }
   }
   
   func handle(_ event: World.Event.AddChunk) {
@@ -131,6 +142,11 @@ class WorldRenderer {
   func handle(_ event: World.Event.SetBlock) {
     if let renderer = chunkRenderers[event.position.chunkPosition] {
       renderer.handle(event)
+    }
+  }
+  
+  func handleNeighbours(_ event: World.Event.SetBlock) {
+    if let renderer = chunkRenderers[event.position.chunkPosition] {
       for (direction, neighbourRenderer) in getNeighbourRenderers(of: renderer) {
         neighbourRenderer.handleNeighbour(event, direction: direction)
       }

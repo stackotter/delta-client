@@ -5,7 +5,7 @@
    2. [x] create account switcher
 2. [x] thread safety in chunk loading, preparing and rendering
 3. [x] complete rendering restructure
-4. [ ] consistent chunk loading on higher render distance default generation worlds
+4. [x] consistent chunk loading on higher render distance default generation worlds
 5. [ ] use lighting data sent from server
 
 ## UI
@@ -50,8 +50,8 @@
 - [ ] multipart structures
 - [ ] fix block changes having incorrect culling
 - [ ] fix indices (either use 6 vertices to a face or do the fancy shader thing from before so that all the index buffers aren't needed anymore)
-- [ ] investigate why the initial chunks at 10 render distance take so long to load
-- [ ] wait for neighbouring chunks
+- [x] investigate why the initial chunks at 10 render distance take so long to load
+- [x] wait for neighbouring chunks
 - [ ] make bottom face of block the darkest
 - [x] fix precision errors (an issue with near and far being too different, raising near to 0.1 could probably help)
 - [x] completely refactor
@@ -84,7 +84,9 @@
 - [ ] split translucent blocks into a separate palette? or at least have a nice way of knowing if a block counts as translucent, transparent or opaque
 - [ ] split translucent blocks into a separate mesh type?
 - [ ] make a generic cubemesh object? that has adding elements and stuff so that it can be reused for entities later?
-- [ ] fix chunk preparing order in new rendering system (it doesn't reevaluate the order of chunks to prepare when the player turns around, could possibly fix this by only allowing 3 frozen chunks at a time and re-evaluating chunk order after every 3?)
+- [x] fix chunk preparing order in new rendering system (it doesn't reevaluate the order of chunks to prepare when the player turns around, could possibly fix this by only allowing 3 frozen chunks at a time and re-evaluating chunk order after every 3?)
+- [ ] fix random faces of blocks randomly not deleting (possibly rewrite meshing system)
+- [x] fix multiblock changes
 
 ## General
 

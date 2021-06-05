@@ -43,28 +43,34 @@ class ChunkRenderer {
     switch direction {
       case .north:
         if positionInNeighbour.z != 15 {
+          Logger.debug("Discarding neighbouring change to the \(direction)")
           return
         }
         affectedPosition.z = 0
       case .east:
         if positionInNeighbour.x != 0 {
+          Logger.debug("Discarding neighbouring change to the \(direction)")
           return
         }
         affectedPosition.x = 15
       case .south:
         if positionInNeighbour.z != 0 {
+          Logger.debug("Discarding neighbouring change to the \(direction)")
           return
         }
         affectedPosition.z = 15
       case .west:
         if positionInNeighbour.x != 15 {
+          Logger.debug("Discarding neighbouring change to the \(direction)")
           return
         }
         affectedPosition.x = 0
     }
     
     // update mesh
-    mesh?.replaceBlock(at: affectedPosition.blockIndex, with: event.newState)
+    let blockIndex = affectedPosition.blockIndex
+    let blockState = chunk.getBlock(at: blockIndex)
+    mesh?.replaceBlock(at: blockIndex, with: blockState, shouldUpdateNeighbours: false)
   }
   
   func setNeighbour(to neighbour: Chunk, direction: CardinalDirection) {

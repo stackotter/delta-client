@@ -49,6 +49,7 @@ struct MultiBlockChangePacket: ClientboundPacket {
           x: Int(record.x),
           y: Int(record.y),
           z: Int(record.z)),
+        inChunkAt: chunkPosition,
         to: UInt16(record.blockId))
     }
   }
