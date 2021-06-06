@@ -141,7 +141,7 @@ class WorldRenderer {
   
   func handle(_ event: World.Event.SetBlock) {
     if let renderer = chunkRenderers[event.position.chunkPosition] {
-      renderer.handleBlockChange(event)
+      renderer.handle(event)
     }
   }
   
@@ -154,7 +154,7 @@ class WorldRenderer {
           updates.append((direction.opposite, event))
           frozenChunkNeighbourBlockUpdates[neighbourRenderer.position] = updates
         } else {
-          neighbourRenderer.handleNeighbourBlockChange(event, direction: direction)
+          neighbourRenderer.handleNeighbour(event, direction: direction)
         }
       }
     }
@@ -204,7 +204,7 @@ class WorldRenderer {
     {
       neighbourUpdates.forEach { neighbourEvent in
         let (direction, event) = neighbourEvent
-        chunkRenderer.handleNeighbourBlockChange(event, direction: direction)
+        chunkRenderer.handleNeighbour(event, direction: direction)
       }
     }
   }

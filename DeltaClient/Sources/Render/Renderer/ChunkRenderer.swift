@@ -15,8 +15,7 @@ class ChunkRenderer {
   var neighbourChunks: [CardinalDirection: Chunk] = [:]
   
   var blockPaletteManager: BlockPaletteManager
-  var mesher: ChunkMesher?
-  var mesh: ElementMesh?
+  var mesh: ChunkMesh?
   
   // TODO: remove need to pass block palette manager
   init(for chunk: Chunk, at position: ChunkPosition, with blockPaletteManager: BlockPaletteManager) {
@@ -25,21 +24,19 @@ class ChunkRenderer {
     self.blockPaletteManager = blockPaletteManager
   }
   
-  func handleBlockChange(_ event: World.Event.SetBlock) {
+  func handle(_ event: World.Event.SetBlock) {
     // check if update is relevant
     if event.position.chunkPosition != position {
       Logger.warn("Invalid SetBlock event sent to ChunkRenderer")
       return
     }
-
+    
     // update mesh
     let relativePosition = event.position.relativeToChunk
-    if let mesh = mesh {
-      mesher?.replaceBlock(at: relativePosition, in: mesh, with: event.newState)
-    }
+    mesh?.replaceBlock(at: relativePosition.blockIndex, with: event.newState)
   }
   
-  func handleNeighbourBlockChange(_ event: World.Event.SetBlock, direction: CardinalDirection) {
+  func handleNeighbour(_ event: World.Event.SetBlock, direction: CardinalDirection) {
     // calculate affected block's position and discard event if change is irrelevant
     let positionInNeighbour = event.position.relativeToChunk
     var affectedPosition = positionInNeighbour
@@ -69,17 +66,11 @@ class ChunkRenderer {
         }
         affectedPosition.x = 0
     }
-
+    
     // update mesh
     let blockIndex = affectedPosition.blockIndex
     let blockState = chunk.getBlock(at: blockIndex)
-    if let mesh = mesh {
-      mesher?.replaceBlock(
-        at: affectedPosition,
-        in: mesh,
-        with: blockState,
-        shouldUpdateNeighbours: false)
-    }
+    mesh?.replaceBlock(at: blockIndex, with: blockState, shouldUpdateNeighbours: false)
   }
   
   func setNeighbour(to neighbour: Chunk, direction: CardinalDirection) {
@@ -87,28 +78,12 @@ class ChunkRenderer {
   }
   
   func prepare() {
-    // create empty mesh with uniforms
-    let xOffset = position.chunkX * 16
-    let zOffset = position.chunkZ * 16
-    let modelToWorldMatrix = MatrixUtil.translationMatrix(
-      [Float(xOffset), 0.0, Float(zOffset)])
-    let uniforms = Uniforms(
-      transformation: modelToWorldMatrix)
-    
-    let mesh = ElementMesh(uniforms: uniforms)
-    
-    // create mesher
-    var mesher = ChunkMesher(
-      for: chunk,
-      at: position,
-      withNeighbours: neighbourChunks,
-      blockPaletteManager: blockPaletteManager)
-    
-    // prepare chunk
-    mesher.prepare(into: mesh)
-    
-    // update globals
-    self.mesher = mesher
+    let mesh = ChunkMesh(
+      blockPaletteManager: blockPaletteManager,
+      chunk: chunk,
+      position: position,
+      neighbourChunks: neighbourChunks)
+    mesh.prepare()
     self.mesh = mesh
   }
   
