@@ -14,7 +14,7 @@ At the moment I am not accepting contributions to this repository. This is still
 
 ## Discord [![Discord](https://img.shields.io/discord/851058836776419368.svg?label=&logo=discord&logoColor=ffffff&color=5C5C5C&labelColor=6A7EC2)](https://discord.gg/xZPyDbmR6k)
 
-If you need help with something, want to talk with me or just like the project enough, feel free to join the community on [Discord](https://discord.gg/4DvrTcEtTX)
+If you need help with something, want to talk with me or just like the project enough, feel free to join the community on [Discord](https://discord.gg/xZPyDbmR6k)
 
 ## Metrics
 
