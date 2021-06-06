@@ -50,7 +50,8 @@ struct Frustum {
       }
     }
     
-    // the bounding box does not lie completely outside any of the frustum planes (although it may still be outside the frustum)
+    // the bounding box does not lie completely outside any of the frustum planes
+    // although it may still be outside the frustum (hence approximate)
     return true
   }
 }

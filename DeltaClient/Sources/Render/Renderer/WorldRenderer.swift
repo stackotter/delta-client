@@ -27,7 +27,7 @@ class WorldRenderer {
     attributes: .concurrent)
   
   var frozenChunks = Set<ChunkPosition>()
-  var frozenChunkNeighbourBlockUpdates: [ChunkPosition: (CardinalDirection, World.Event.SetBlock)] = [:]
+  var frozenChunkNeighbourBlockUpdates: [ChunkPosition: [(CardinalDirection, World.Event.SetBlock)]] = [:]
   
   init(world: World, blockPaletteManager: BlockPaletteManager, blockArrayTexture: MTLTexture) {
     Logger.info("Initialising WorldRenderer")
@@ -148,7 +148,14 @@ class WorldRenderer {
   func handleNeighbours(_ event: World.Event.SetBlock) {
     if let renderer = chunkRenderers[event.position.chunkPosition] {
       for (direction, neighbourRenderer) in getNeighbourRenderers(of: renderer) {
-        neighbourRenderer.handleNeighbour(event, direction: direction)
+        if frozenChunks.contains(neighbourRenderer.position) {
+          // we just save the event and catch up the frozen chunk once it is unfrozen
+          var updates = frozenChunkNeighbourBlockUpdates[neighbourRenderer.position] ?? []
+          updates.append((direction.opposite, event))
+          frozenChunkNeighbourBlockUpdates[neighbourRenderer.position] = updates
+        } else {
+          neighbourRenderer.handleNeighbour(event, direction: direction)
+        }
       }
     }
   }
@@ -164,15 +171,23 @@ class WorldRenderer {
     return neighbourRenderers
   }
   
-  func createWorldUniforms(for camera: Camera) -> WorldUniforms {
-    return WorldUniforms(worldToClipSpace: camera.getWorldToClipMatrix())
+  func createWorldUniforms(for camera: Camera) -> Uniforms {
+    let worldToClipSpace = camera.getWorldToClipMatrix()
+    return Uniforms(transformation: worldToClipSpace)
   }
   
-  func createWorldUniformBuffer(from uniforms: WorldUniforms, for device: MTLDevice) throws -> MTLBuffer! {
-    var uniforms = uniforms // create mutable copy
-    guard let uniformBuffer = device.makeBuffer(bytes: &uniforms, length: MemoryLayout<WorldUniforms>.stride, options: []) else {
+  func createWorldUniformBuffer(from uniforms: Uniforms, for device: MTLDevice) throws -> MTLBuffer! {
+    var mutableUniforms = uniforms
+    
+    guard
+      let uniformBuffer = device.makeBuffer(
+        bytes: &mutableUniforms,
+        length: MemoryLayout<Uniforms>.stride,
+        options: [])
+    else {
       throw WorldRendererError.failedToCreateUniformBuffer
     }
+    
     uniformBuffer.label = "worldUniformBuffer"
     return uniformBuffer
   }
@@ -183,40 +198,31 @@ class WorldRenderer {
   
   func unfreezeChunk(at chunkPosition: ChunkPosition) {
     frozenChunks.remove(chunkPosition)
-    if let chunkRenderer = chunkRenderers[chunkPosition] {
-      frozenChunkNeighbourBlockUpdates.forEach { chunkPosition, neighbourEvent in
+    if
+      let chunkRenderer = chunkRenderers[chunkPosition],
+      let neighbourUpdates = frozenChunkNeighbourBlockUpdates[chunkPosition]
+    {
+      neighbourUpdates.forEach { neighbourEvent in
         let (direction, event) = neighbourEvent
         chunkRenderer.handleNeighbour(event, direction: direction)
       }
     }
   }
   
-  func filterAndPreprocessEvent(event: Event) -> Bool {
+  /// Decides whether to process a world event this frame
+  func shouldProcessWorldEvent(event: Event) -> Bool {
     switch event {
       case let event as World.Event.SetBlock:
-        let chunkPosition = event.position.chunkPosition
-        if self.frozenChunks.contains(chunkPosition) {
-          return false
-        }
-        for direction in CardinalDirection.allDirections {
-          let neighbourChunkPosition = chunkPosition.neighbour(inDirection: direction)
-          if self.frozenChunks.contains(neighbourChunkPosition) {
-            self.frozenChunkNeighbourBlockUpdates[chunkPosition] = (direction.opposite, event)
-            // the event will still be processed as it is not in a frozen chunk
-            // we just save the event and catch up the frozen chunk once it is unfrozen
-            return true
-          }
-        }
-        return true
+        let isChunkFrozen = frozenChunks.contains(event.position.chunkPosition)
+        return !isChunkFrozen
       default:
-        // all other events are safe to process
         return true
     }
   }
   
   func draw(device: MTLDevice, renderEncoder: MTLRenderCommandEncoder, camera: Camera) {
     // get world to process the current batch of world events
-    let events = world.processBatch(filter: filterAndPreprocessEvent(event:))
+    let events = world.processBatch(filter: shouldProcessWorldEvent(event:))
     
     // process the world events for WorldRenderer too
     handle(events)
@@ -237,8 +243,12 @@ class WorldRenderer {
     // sort chunks by distance from player
     let cameraPosition2d = simd_float2(camera.position.x, camera.position.z)
     var sortedChunkRenderers = [ChunkRenderer](chunkRenderers.values).sorted {
-      let point1 = simd_float2(Float($0.position.chunkX) * Float(Chunk.width), Float($0.position.chunkZ) * Float(Chunk.depth))
-      let point2 = simd_float2(Float($1.position.chunkX) * Float(Chunk.width), Float($1.position.chunkZ) * Float(Chunk.depth))
+      let point1 = simd_float2(
+        Float($0.position.chunkX) * Float(Chunk.width),
+        Float($0.position.chunkZ) * Float(Chunk.depth))
+      let point2 = simd_float2(
+        Float($1.position.chunkX) * Float(Chunk.width),
+        Float($1.position.chunkZ) * Float(Chunk.depth))
       let distance1 = simd_distance_squared(cameraPosition2d, point1)
       let distance2 = simd_distance_squared(cameraPosition2d, point2)
       return distance2 > distance1

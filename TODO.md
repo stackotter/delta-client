@@ -75,6 +75,7 @@
 - [ ] piston textures
 - [ ] fences with block on top don't render? (fence posts at least)
 - [ ] top half of door doesn't render from inside of house
+- [ ] fix most of the above issues and then rewrite block model loading
 
 ## Chunk preparing
 
@@ -87,6 +88,7 @@
 - [x] fix chunk preparing order in new rendering system (it doesn't reevaluate the order of chunks to prepare when the player turns around, could possibly fix this by only allowing 3 frozen chunks at a time and re-evaluating chunk order after every 3?)
 - [ ] fix random faces of blocks randomly not deleting (possibly rewrite meshing system)
 - [x] fix multiblock changes
+- [ ] fix chunk updates caused by things like tnt that just resend part of the affected chunk instead of using a multi-block change
 
 ## General
 
@@ -109,7 +111,7 @@
   - [ ] https://forums.swift.org/t/is-there-any-way-to-throw-error-from-singleton-class-init/39207, https://medium.com/@tlimaye91/thread-safe-singletons-in-swift-a4f6a977d6e6
 - [ ] potentially move over to using Carthage instead of swift package manager
 - [x] use new position properties instead of all the spread out functions now
-- [ ] maybe use simd vector types instead of position?
+- [ ] move all issues from here to issue tracker
 
 ## Architecture
 

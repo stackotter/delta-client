@@ -34,7 +34,6 @@
 		7868885526239C3000BD3F03 /* Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7868885426239C3000BD3F03 /* Random.swift */; };
 		7868886D2623F67D00BD3F03 /* get_neighbouring_blocks.c in Sources */ = {isa = PBXBuildFile; fileRef = 7868886C2623F67D00BD3F03 /* get_neighbouring_blocks.c */; };
 		7868887526243D9F00BD3F03 /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7868887426243D9E00BD3F03 /* MathUtil.swift */; };
-		786D34FF2627EB4200DB8C2F /* ChunkPreparer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786D34FE2627EB4200DB8C2F /* ChunkPreparer.swift */; };
 		78756166264F2780006C9C36 /* MojangLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78756165264F2780006C9C36 /* MojangLoginView.swift */; };
 		7875616B264F2A71006C9C36 /* OfflineLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7875616A264F2A71006C9C36 /* OfflineLoginView.swift */; };
 		78756170264F2DE7006C9C36 /* OfflineAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7875616F264F2DE7006C9C36 /* OfflineAccount.swift */; };
@@ -46,15 +45,18 @@
 		787F5C342633F9DF003B5782 /* MinecraftXboxAuthenticationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787F5C332633F9DF003B5782 /* MinecraftXboxAuthenticationResponse.swift */; };
 		787F5C392633FC1F003B5782 /* GameOwnershipResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787F5C382633FC1F003B5782 /* GameOwnershipResponse.swift */; };
 		787F5C3E263405A5003B5782 /* XSTSAuthenticationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787F5C3D263405A5003B5782 /* XSTSAuthenticationError.swift */; };
+		7885C040266C61EA0036B8F6 /* ElementMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7885C03F266C61EA0036B8F6 /* ElementMesh.swift */; };
+		7885C05E266C64470036B8F6 /* Uniforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7885C05D266C64470036B8F6 /* Uniforms.swift */; };
 		7892880E261438A000F17DBB /* DeltaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A9261433A700079A01 /* DeltaClientTests.swift */; };
 		78928812261438A500F17DBB /* DeltaClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052170261433A600079A01 /* DeltaClientUITests.swift */; };
 		789DD3C52633F32800FD7532 /* XboxLiveAuthenticationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789DD3C42633F32800FD7532 /* XboxLiveAuthenticationResponse.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
 		78BDCD7F266B092D004D7A63 /* EventBatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BDCD7E266B092D004D7A63 /* EventBatch.swift */; };
-		78C64CC826251D2700375CBB /* WorldUniforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C64CC726251D2700375CBB /* WorldUniforms.swift */; };
-		78C64CD526251D4D00375CBB /* ChunkUniforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C64CD426251D4D00375CBB /* ChunkUniforms.swift */; };
 		78C64CDD2625555C00375CBB /* AxisAlignedBoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C64CDC2625555B00375CBB /* AxisAlignedBoundingBox.swift */; };
 		78D1F89D2626471900AEE7AE /* Frustum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D1F89C2626471900AEE7AE /* Frustum.swift */; };
+		78D44829266C80EB00CD3234 /* ModelElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D44828266C80EB00CD3234 /* ModelElement.swift */; };
+		78D4482E266C838B00CD3234 /* ModelElementFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D4482D266C838B00CD3234 /* ModelElementFace.swift */; };
+		78D44836266C851A00CD3234 /* LightLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D44835266C851A00CD3234 /* LightLevel.swift */; };
 		78D7E49C26338CCD00FB1A3B /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E49B26338CCD00FB1A3B /* WebView.swift */; };
 		78D7E4A126338D1C00FB1A3B /* MicrosoftAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E4A026338D1C00FB1A3B /* MicrosoftAuthView.swift */; };
 		78D7E4AF2633C96200FB1A3B /* MicrosoftAccessTokenResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E4AE2633C96200FB1A3B /* MicrosoftAccessTokenResponse.swift */; };
@@ -133,7 +135,6 @@
 		78D91996261FB4CD00A4782F /* PlayerProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91848261FB4CC00A4782F /* PlayerProperty.swift */; };
 		78D91997261FB4CD00A4782F /* PlayerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91849261FB4CC00A4782F /* PlayerInfo.swift */; };
 		78D91998261FB4CD00A4782F /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9184C261FB4CC00A4782F /* Mesh.swift */; };
-		78D91999261FB4CD00A4782F /* CubeFaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9184D261FB4CC00A4782F /* CubeFaces.swift */; };
 		78D9199A261FB4CD00A4782F /* ChunkMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9184E261FB4CC00A4782F /* ChunkMesh.swift */; };
 		78D9199B261FB4CD00A4782F /* Vertex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9184F261FB4CC00A4782F /* Vertex.swift */; };
 		78D9199C261FB4CD00A4782F /* BlockModelElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91851261FB4CC00A4782F /* BlockModelElement.swift */; };
@@ -145,7 +146,7 @@
 		78D919A2261FB4CD00A4782F /* BlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91857261FB4CC00A4782F /* BlockModel.swift */; };
 		78D919A3261FB4CD00A4782F /* RenderCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91858261FB4CC00A4782F /* RenderCoordinator.swift */; };
 		78D919A4261FB4CD00A4782F /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91859261FB4CC00A4782F /* MetalView.swift */; };
-		78D919A5261FB4CD00A4782F /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 78D9185A261FB4CC00A4782F /* shaders.metal */; };
+		78D919A5261FB4CD00A4782F /* ChunkShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 78D9185A261FB4CC00A4782F /* ChunkShaders.metal */; };
 		78D919A6261FB4CD00A4782F /* WorldRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9185B261FB4CC00A4782F /* WorldRenderer.swift */; };
 		78D919A7261FB4CD00A4782F /* ChunkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9185D261FB4CC00A4782F /* ChunkSection.swift */; };
 		78D919A8261FB4CD00A4782F /* ChunkPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9185E261FB4CC00A4782F /* ChunkPosition.swift */; };
@@ -438,7 +439,6 @@
 		7868886B2623F67D00BD3F03 /* get_neighbouring_blocks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = get_neighbouring_blocks.h; sourceTree = "<group>"; };
 		7868886C2623F67D00BD3F03 /* get_neighbouring_blocks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = get_neighbouring_blocks.c; sourceTree = "<group>"; };
 		7868887426243D9E00BD3F03 /* MathUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathUtil.swift; sourceTree = "<group>"; };
-		786D34FE2627EB4200DB8C2F /* ChunkPreparer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkPreparer.swift; sourceTree = "<group>"; };
 		78756165264F2780006C9C36 /* MojangLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MojangLoginView.swift; sourceTree = "<group>"; };
 		7875616A264F2A71006C9C36 /* OfflineLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineLoginView.swift; sourceTree = "<group>"; };
 		7875616F264F2DE7006C9C36 /* OfflineAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineAccount.swift; sourceTree = "<group>"; };
@@ -450,12 +450,15 @@
 		787F5C332633F9DF003B5782 /* MinecraftXboxAuthenticationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftXboxAuthenticationResponse.swift; sourceTree = "<group>"; };
 		787F5C382633FC1F003B5782 /* GameOwnershipResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOwnershipResponse.swift; sourceTree = "<group>"; };
 		787F5C3D263405A5003B5782 /* XSTSAuthenticationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XSTSAuthenticationError.swift; sourceTree = "<group>"; };
+		7885C03F266C61EA0036B8F6 /* ElementMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMesh.swift; sourceTree = "<group>"; };
+		7885C05D266C64470036B8F6 /* Uniforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uniforms.swift; sourceTree = "<group>"; };
 		789DD3C42633F32800FD7532 /* XboxLiveAuthenticationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XboxLiveAuthenticationResponse.swift; sourceTree = "<group>"; };
 		78BDCD7E266B092D004D7A63 /* EventBatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventBatch.swift; sourceTree = "<group>"; };
-		78C64CC726251D2700375CBB /* WorldUniforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldUniforms.swift; sourceTree = "<group>"; };
-		78C64CD426251D4D00375CBB /* ChunkUniforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkUniforms.swift; sourceTree = "<group>"; };
 		78C64CDC2625555B00375CBB /* AxisAlignedBoundingBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisAlignedBoundingBox.swift; sourceTree = "<group>"; };
 		78D1F89C2626471900AEE7AE /* Frustum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frustum.swift; sourceTree = "<group>"; };
+		78D44828266C80EB00CD3234 /* ModelElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelElement.swift; sourceTree = "<group>"; };
+		78D4482D266C838B00CD3234 /* ModelElementFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelElementFace.swift; sourceTree = "<group>"; };
+		78D44835266C851A00CD3234 /* LightLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLevel.swift; sourceTree = "<group>"; };
 		78D7E49B26338CCD00FB1A3B /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		78D7E4A026338D1C00FB1A3B /* MicrosoftAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrosoftAuthView.swift; sourceTree = "<group>"; };
 		78D7E4AE2633C96200FB1A3B /* MicrosoftAccessTokenResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrosoftAccessTokenResponse.swift; sourceTree = "<group>"; };
@@ -535,7 +538,6 @@
 		78D91848261FB4CC00A4782F /* PlayerProperty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerProperty.swift; sourceTree = "<group>"; };
 		78D91849261FB4CC00A4782F /* PlayerInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerInfo.swift; sourceTree = "<group>"; };
 		78D9184C261FB4CC00A4782F /* Mesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mesh.swift; sourceTree = "<group>"; };
-		78D9184D261FB4CC00A4782F /* CubeFaces.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CubeFaces.swift; sourceTree = "<group>"; };
 		78D9184E261FB4CC00A4782F /* ChunkMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkMesh.swift; sourceTree = "<group>"; };
 		78D9184F261FB4CC00A4782F /* Vertex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vertex.swift; sourceTree = "<group>"; };
 		78D91851261FB4CC00A4782F /* BlockModelElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockModelElement.swift; sourceTree = "<group>"; };
@@ -547,7 +549,7 @@
 		78D91857261FB4CC00A4782F /* BlockModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockModel.swift; sourceTree = "<group>"; };
 		78D91858261FB4CC00A4782F /* RenderCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenderCoordinator.swift; sourceTree = "<group>"; };
 		78D91859261FB4CC00A4782F /* MetalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
-		78D9185A261FB4CC00A4782F /* shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = shaders.metal; sourceTree = "<group>"; };
+		78D9185A261FB4CC00A4782F /* ChunkShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = ChunkShaders.metal; sourceTree = "<group>"; };
 		78D9185B261FB4CC00A4782F /* WorldRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorldRenderer.swift; sourceTree = "<group>"; };
 		78D9185D261FB4CC00A4782F /* ChunkSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkSection.swift; sourceTree = "<group>"; };
 		78D9185E261FB4CC00A4782F /* ChunkPosition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkPosition.swift; sourceTree = "<group>"; };
@@ -945,6 +947,7 @@
 			isa = PBXGroup;
 			children = (
 				7844A6D726625EC4008CFBF2 /* PhysicsEngine.swift */,
+				78C64CDC2625555B00375CBB /* AxisAlignedBoundingBox.swift */,
 			);
 			path = Physics;
 			sourceTree = "<group>";
@@ -969,6 +972,60 @@
 				7864084D262C545C00FE3A10 /* CacheBlockModelContainer.pb.swift */,
 			);
 			path = Generated;
+			sourceTree = "<group>";
+		};
+		7885C04C266C62A30036B8F6 /* Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				78D9185B261FB4CC00A4782F /* WorldRenderer.swift */,
+				78FA27182664F6E800F3BDF5 /* ChunkRenderer.swift */,
+			);
+			path = Renderer;
+			sourceTree = "<group>";
+		};
+		7885C04D266C62A30036B8F6 /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				78D1F89C2626471900AEE7AE /* Frustum.swift */,
+				7851F7AD26255E0F009B59DD /* Camera.swift */,
+			);
+			path = Camera;
+			sourceTree = "<group>";
+		};
+		7885C04E266C62D40036B8F6 /* Shader */ = {
+			isa = PBXGroup;
+			children = (
+				78D9185A261FB4CC00A4782F /* ChunkShaders.metal */,
+				7885C05D266C64470036B8F6 /* Uniforms.swift */,
+				78D44835266C851A00CD3234 /* LightLevel.swift */,
+				78D9184F261FB4CC00A4782F /* Vertex.swift */,
+			);
+			name = Shader;
+			path = Renderer/Shader;
+			sourceTree = "<group>";
+		};
+		7885C052266C63760036B8F6 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				7885C053266C63760036B8F6 /* Block */,
+				78D44828266C80EB00CD3234 /* ModelElement.swift */,
+				78D4482D266C838B00CD3234 /* ModelElementFace.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		7885C053266C63760036B8F6 /* Block */ = {
+			isa = PBXGroup;
+			children = (
+				78D91857261FB4CC00A4782F /* BlockModel.swift */,
+				78D91851261FB4CC00A4782F /* BlockModelElement.swift */,
+				78D91852261FB4CC00A4782F /* BlockModelElementFace.swift */,
+				78D91853261FB4CC00A4782F /* FaceDirection.swift */,
+				78D91854261FB4CC00A4782F /* IntermediateBlockModelElementFace.swift */,
+				78D91855261FB4CC00A4782F /* IntermediateBlockModel.swift */,
+				78D91856261FB4CC00A4782F /* IntermediateBlockModelElement.swift */,
+			);
+			path = Block;
 			sourceTree = "<group>";
 		};
 		78D917F9261FB4CC00A4782F /* Sources */ = {
@@ -1130,18 +1187,11 @@
 			isa = PBXGroup;
 			children = (
 				78D9184B261FB4CC00A4782F /* Mesh */,
-				78D91850261FB4CC00A4782F /* BlockModel */,
+				7885C04D266C62A30036B8F6 /* Camera */,
+				7885C052266C63760036B8F6 /* Model */,
+				7885C04C266C62A30036B8F6 /* Renderer */,
+				7885C04E266C62D40036B8F6 /* Shader */,
 				78D91858261FB4CC00A4782F /* RenderCoordinator.swift */,
-				78D91859261FB4CC00A4782F /* MetalView.swift */,
-				78D9185A261FB4CC00A4782F /* shaders.metal */,
-				78D9185B261FB4CC00A4782F /* WorldRenderer.swift */,
-				78FA27182664F6E800F3BDF5 /* ChunkRenderer.swift */,
-				786D34FE2627EB4200DB8C2F /* ChunkPreparer.swift */,
-				78D1F89C2626471900AEE7AE /* Frustum.swift */,
-				78C64CDC2625555B00375CBB /* AxisAlignedBoundingBox.swift */,
-				7851F7AD26255E0F009B59DD /* Camera.swift */,
-				78C64CC726251D2700375CBB /* WorldUniforms.swift */,
-				78C64CD426251D4D00375CBB /* ChunkUniforms.swift */,
 			);
 			path = Render;
 			sourceTree = "<group>";
@@ -1151,25 +1201,10 @@
 			children = (
 				78D9184C261FB4CC00A4782F /* Mesh.swift */,
 				78513222262D7A980054268A /* MeshBuffers.swift */,
-				78D9184D261FB4CC00A4782F /* CubeFaces.swift */,
 				78D9184E261FB4CC00A4782F /* ChunkMesh.swift */,
-				78D9184F261FB4CC00A4782F /* Vertex.swift */,
+				7885C03F266C61EA0036B8F6 /* ElementMesh.swift */,
 			);
 			path = Mesh;
-			sourceTree = "<group>";
-		};
-		78D91850261FB4CC00A4782F /* BlockModel */ = {
-			isa = PBXGroup;
-			children = (
-				78D91857261FB4CC00A4782F /* BlockModel.swift */,
-				78D91851261FB4CC00A4782F /* BlockModelElement.swift */,
-				78D91852261FB4CC00A4782F /* BlockModelElementFace.swift */,
-				78D91853261FB4CC00A4782F /* FaceDirection.swift */,
-				78D91854261FB4CC00A4782F /* IntermediateBlockModelElementFace.swift */,
-				78D91855261FB4CC00A4782F /* IntermediateBlockModel.swift */,
-				78D91856261FB4CC00A4782F /* IntermediateBlockModelElement.swift */,
-			);
-			path = BlockModel;
 			sourceTree = "<group>";
 		};
 		78D9185C261FB4CC00A4782F /* World */ = {
@@ -1572,6 +1607,7 @@
 		78D91A8E261FB4E100A4782F /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				78D91859261FB4CC00A4782F /* MetalView.swift */,
 				78D91A8F261FB4E100A4782F /* AppView.swift */,
 				78D91A90261FB4E100A4782F /* ViewState.swift */,
 				78D91A91261FB4E100A4782F /* ServerDetailView.swift */,
@@ -1815,6 +1851,7 @@
 				78D91A73261FB4CE00A4782F /* UUID.swift in Sources */,
 				7836CC372667A31F00B5E5EE /* ServerUpdateEvent.swift in Sources */,
 				7875616B264F2A71006C9C36 /* OfflineLoginView.swift in Sources */,
+				78D44836266C851A00CD3234 /* LightLevel.swift in Sources */,
 				78D9199F261FB4CD00A4782F /* IntermediateBlockModelElementFace.swift in Sources */,
 				78D91A38261FB4CD00A4782F /* BossBarPacket.swift in Sources */,
 				78D91A71261FB4CE00A4782F /* Axis.swift in Sources */,
@@ -1871,7 +1908,6 @@
 				78D919DB261FB4CD00A4782F /* WindowConfirmationServerboundPacket.swift in Sources */,
 				78D91980261FB4CD00A4782F /* MojangAPI.swift in Sources */,
 				78D919F8261FB4CD00A4782F /* OpenWindowPacket.swift in Sources */,
-				78C64CD526251D4D00375CBB /* ChunkUniforms.swift in Sources */,
 				78D91A2F261FB4CD00A4782F /* SetCooldownPacket.swift in Sources */,
 				78D919F5261FB4CD00A4782F /* EntityVelocityPacket.swift in Sources */,
 				7844A6AD2661B7DD008CFBF2 /* AccountType.swift in Sources */,
@@ -1927,6 +1963,7 @@
 				78D9196E261FB4CD00A4782F /* BlastingRecipe.swift in Sources */,
 				78D91A28261FB4CD00A4782F /* SetSlotPacket.swift in Sources */,
 				78D919BE261FB4CD00A4782F /* HandshakePacket.swift in Sources */,
+				7885C05E266C64470036B8F6 /* Uniforms.swift in Sources */,
 				78D9198A261FB4CD00A4782F /* chunkunpack.c in Sources */,
 				78D919B1261FB4CD00A4782F /* Server.swift in Sources */,
 				78D919C6261FB4CD00A4782F /* QueryEntityNBTPacket.swift in Sources */,
@@ -1935,6 +1972,7 @@
 				78D919A1261FB4CD00A4782F /* IntermediateBlockModelElement.swift in Sources */,
 				78D91A18261FB4CD00A4782F /* KeepAliveClientboundPacket.swift in Sources */,
 				78D9195E261FB4CD00A4782F /* MapCloningRecipe.swift in Sources */,
+				7885C040266C61EA0036B8F6 /* ElementMesh.swift in Sources */,
 				78D91994261FB4CD00A4782F /* DominantHand.swift in Sources */,
 				78FA272E2664FE2E00F3BDF5 /* WorldEvent.swift in Sources */,
 				78D91982261FB4CD00A4782F /* MojangUser.swift in Sources */,
@@ -1969,7 +2007,7 @@
 				78D919DA261FB4CD00A4782F /* CreativeInventoryActionPacket.swift in Sources */,
 				78D91A9B261FB4E100A4782F /* ViewState.swift in Sources */,
 				78D91A0B261FB4CD00A4782F /* EntityPositionAndRotationPacket.swift in Sources */,
-				78D919A5261FB4CD00A4782F /* shaders.metal in Sources */,
+				78D919A5261FB4CD00A4782F /* ChunkShaders.metal in Sources */,
 				78D919D0261FB4CD00A4782F /* UpdateCommandBlockMinecartPacket.swift in Sources */,
 				78D919E7261FB4CD00A4782F /* PlayerPositionPacket.swift in Sources */,
 				78D91A35261FB4CD00A4782F /* ResourcePackSendPacket.swift in Sources */,
@@ -2076,7 +2114,6 @@
 				78D91A11261FB4CD00A4782F /* AttachEntityPacket.swift in Sources */,
 				7824FC2B2662F60300414468 /* InteractiveMTKView.swift in Sources */,
 				78D9197D261FB4CD00A4782F /* Profiler.swift in Sources */,
-				78C64CC826251D2700375CBB /* WorldUniforms.swift in Sources */,
 				78D91A07261FB4CD00A4782F /* EffectPacket.swift in Sources */,
 				78D919FA261FB4CD00A4782F /* EntityMovementPacket.swift in Sources */,
 				78D919C5261FB4CD00A4782F /* UpdateSignPacket.swift in Sources */,
@@ -2094,6 +2131,7 @@
 				78D91A7C261FB4CE00A4782F /* ConfigManager.swift in Sources */,
 				78D91A1F261FB4CD00A4782F /* EntityStatusPacket.swift in Sources */,
 				78D919AD261FB4CD00A4782F /* PingResult.swift in Sources */,
+				78D44829266C80EB00CD3234 /* ModelElement.swift in Sources */,
 				78D7E4CB2633D6FD00FB1A3B /* URL.swift in Sources */,
 				78D91956261FB4CD00A4782F /* CraftingShapeless.swift in Sources */,
 				78D91A1C261FB4CD00A4782F /* EntityRotationPacket.swift in Sources */,
@@ -2133,7 +2171,6 @@
 				78D91A04261FB4CD00A4782F /* WindowItemsPacket.swift in Sources */,
 				78D91A5B261FB4CE00A4782F /* OutermostNetworkLayer.swift in Sources */,
 				78D91995261FB4CD00A4782F /* Player.swift in Sources */,
-				786D34FF2627EB4200DB8C2F /* ChunkPreparer.swift in Sources */,
 				78D91A6C261FB4CE00A4782F /* Equipment.swift in Sources */,
 				781829A5262A6F7E000F59B0 /* ChunkLighting.swift in Sources */,
 				78D91A56261FB4CE00A4782F /* ProtocolLayer.swift in Sources */,
@@ -2160,12 +2197,12 @@
 				78D919E2261FB4CD00A4782F /* PlayerBlockPlacementPacket.swift in Sources */,
 				78D91962261FB4CD00A4782F /* FireworkRocketRecipe.swift in Sources */,
 				78D91A58261FB4CE00A4782F /* EncryptionLayer.swift in Sources */,
+				78D4482E266C838B00CD3234 /* ModelElementFace.swift in Sources */,
 				78D9198B261FB4CD00A4782F /* CryptoUtil.swift in Sources */,
 				78D91A3F261FB4CD00A4782F /* SetExperiencePacket.swift in Sources */,
 				78D919F6261FB4CD00A4782F /* EntityHeadLookPacket.swift in Sources */,
 				78D919C2261FB4CD00A4782F /* TeleportConfirmPacket.swift in Sources */,
 				78D91955261FB4CD00A4782F /* CraftingRecipe.swift in Sources */,
-				78D91999261FB4CD00A4782F /* CubeFaces.swift in Sources */,
 				78D919F1261FB4CD00A4782F /* WindowConfirmationClientboundPacket.swift in Sources */,
 				78D919CA261FB4CD00A4782F /* SteerVehiclePacket.swift in Sources */,
 				78D91A42261FB4CD00A4782F /* PlayerPositionAndLookClientboundPacket.swift in Sources */,

@@ -6,22 +6,17 @@
 //
 
 import Foundation
-import MetalKit
+import Metal
 import simd
-
 
 enum MeshError: LocalizedError {
   case failedToCreateBuffer
 }
 
 protocol Mesh {
-  associatedtype Uniforms
-  
-  var queue: DispatchQueue { get set }
-  
   var vertices: [Vertex] { get set }
   var indices: [UInt32] { get set }
-  var uniforms: Uniforms! { get set }
+  var uniforms: Uniforms { get set }
 
   var vertexBuffer: MTLBuffer! { get set }
   var indexBuffer: MTLBuffer! { get set }
@@ -32,9 +27,7 @@ protocol Mesh {
 
 extension Mesh {
   var isEmpty: Bool {
-    queue.sync {
-      return vertices.isEmpty
-    }
+    return vertices.isEmpty
   }
   
   func createIndexBuffer(device: MTLDevice) throws -> MTLBuffer {
@@ -66,17 +59,15 @@ extension Mesh {
   }
   
   mutating func createBuffers(device: MTLDevice) throws -> MeshBuffers {
-    try queue.sync {
-      // only remake the buffers if something has been changed
-      if hasChanged {
-        // TODO: have separate hasChanged for uniforms (they change a lot less often for chunks)
-        // TODO: reuse buffer for uniforms (they have a fixed size)
-        vertexBuffer = try createVertexBuffer(device: device)
-        indexBuffer = try createIndexBuffer(device: device)
-        uniformBuffer = try createUniformBuffer(device: device)
-        
-        hasChanged = false
-      }
+    // only remake the buffers if something has been changed
+    if hasChanged {
+      // TODO: have separate hasChanged for uniforms (they change a lot less often for chunks)
+      // TODO: reuse buffer for uniforms (they have a fixed size)
+      vertexBuffer = try createVertexBuffer(device: device)
+      indexBuffer = try createIndexBuffer(device: device)
+      uniformBuffer = try createUniformBuffer(device: device)
+      
+      hasChanged = false
     }
     
     return MeshBuffers(

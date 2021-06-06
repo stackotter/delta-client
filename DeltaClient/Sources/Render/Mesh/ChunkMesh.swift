@@ -11,19 +11,14 @@ import simd
 
 
 class ChunkMesh: Mesh {
-  typealias Uniforms = ChunkUniforms
-  
-  var queue = DispatchQueue(label: "chunkMesh")
-  
   var vertices: [Vertex] = []
   var indices: [UInt32] = []
-  var uniforms: ChunkUniforms!
+  var uniforms = Uniforms()
   
+  var hasChanged = false
   var vertexBuffer: MTLBuffer!
   var indexBuffer: MTLBuffer!
   var uniformBuffer: MTLBuffer!
-  
-  var hasChanged: Bool = false
   
   private var blockPaletteManager: BlockPaletteManager
   
@@ -97,7 +92,7 @@ class ChunkMesh: Mesh {
     let xOffset = chunkPosition.chunkX * 16
     let zOffset = chunkPosition.chunkZ * 16
     let modelToWorldMatrix = MatrixUtil.translationMatrix([Float(xOffset), 0.0, Float(zOffset)])
-    uniforms = ChunkUniforms(modelToWorld: modelToWorldMatrix)
+    uniforms = Uniforms(transformation: modelToWorldMatrix)
   }
   
   func getNeighbouringBlockStates(ofBlockAt index: Int) -> [FaceDirection: UInt16] {

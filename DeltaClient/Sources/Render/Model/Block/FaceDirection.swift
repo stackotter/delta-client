@@ -8,7 +8,6 @@
 import Foundation
 import simd
 
-
 enum FaceDirection: Int {
   case up = 0
   case down = 1
