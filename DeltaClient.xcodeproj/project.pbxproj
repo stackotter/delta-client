@@ -57,6 +57,8 @@
 		78D44829266C80EB00CD3234 /* ModelElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D44828266C80EB00CD3234 /* ModelElement.swift */; };
 		78D4482E266C838B00CD3234 /* ModelElementFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D4482D266C838B00CD3234 /* ModelElementFace.swift */; };
 		78D44836266C851A00CD3234 /* LightLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D44835266C851A00CD3234 /* LightLevel.swift */; };
+		78D4483B266C891300CD3234 /* CubeGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D4483A266C891300CD3234 /* CubeGeometry.swift */; };
+		78D44840266C8F6A00CD3234 /* ChunkMesher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D4483F266C8F6A00CD3234 /* ChunkMesher.swift */; };
 		78D7E49C26338CCD00FB1A3B /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E49B26338CCD00FB1A3B /* WebView.swift */; };
 		78D7E4A126338D1C00FB1A3B /* MicrosoftAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E4A026338D1C00FB1A3B /* MicrosoftAuthView.swift */; };
 		78D7E4AF2633C96200FB1A3B /* MicrosoftAccessTokenResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D7E4AE2633C96200FB1A3B /* MicrosoftAccessTokenResponse.swift */; };
@@ -459,6 +461,8 @@
 		78D44828266C80EB00CD3234 /* ModelElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelElement.swift; sourceTree = "<group>"; };
 		78D4482D266C838B00CD3234 /* ModelElementFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelElementFace.swift; sourceTree = "<group>"; };
 		78D44835266C851A00CD3234 /* LightLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLevel.swift; sourceTree = "<group>"; };
+		78D4483A266C891300CD3234 /* CubeGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubeGeometry.swift; sourceTree = "<group>"; };
+		78D4483F266C8F6A00CD3234 /* ChunkMesher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkMesher.swift; sourceTree = "<group>"; };
 		78D7E49B26338CCD00FB1A3B /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		78D7E4A026338D1C00FB1A3B /* MicrosoftAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrosoftAuthView.swift; sourceTree = "<group>"; };
 		78D7E4AE2633C96200FB1A3B /* MicrosoftAccessTokenResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrosoftAccessTokenResponse.swift; sourceTree = "<group>"; };
@@ -1203,6 +1207,8 @@
 				78513222262D7A980054268A /* MeshBuffers.swift */,
 				78D9184E261FB4CC00A4782F /* ChunkMesh.swift */,
 				7885C03F266C61EA0036B8F6 /* ElementMesh.swift */,
+				78D4483F266C8F6A00CD3234 /* ChunkMesher.swift */,
+				78D4483A266C891300CD3234 /* CubeGeometry.swift */,
 			);
 			path = Mesh;
 			sourceTree = "<group>";
@@ -1944,6 +1950,7 @@
 				78D919AE261FB4CD00A4782F /* ServerList.swift in Sources */,
 				78D91A09261FB4CD00A4782F /* WindowPropertyPacket.swift in Sources */,
 				78D91A0D261FB4CD00A4782F /* CameraPacket.swift in Sources */,
+				78D4483B266C891300CD3234 /* CubeGeometry.swift in Sources */,
 				78D91A21261FB4CD00A4782F /* BlockChangePacket.swift in Sources */,
 				78D91967261FB4CD00A4782F /* SpecialRecipe.swift in Sources */,
 				78D919BB261FB4CD00A4782F /* StatusResponsePacket.swift in Sources */,
@@ -2056,6 +2063,7 @@
 				78D91975261FB4CD00A4782F /* ChatScoreComponent.swift in Sources */,
 				78D7E4C12633D2C500FB1A3B /* MojangRefreshTokenRequest.swift in Sources */,
 				78D919B0261FB4CD00A4782F /* ServerPinger.swift in Sources */,
+				78D44840266C8F6A00CD3234 /* ChunkMesher.swift in Sources */,
 				7868887526243D9F00BD3F03 /* MathUtil.swift in Sources */,
 				78D91A22261FB4CD00A4782F /* CraftRecipeResponsePacket.swift in Sources */,
 				78FA273A266501D900F3BDF5 /* AddChunk.swift in Sources */,

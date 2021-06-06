@@ -71,6 +71,7 @@ class ChunkMesh: Mesh {
     // add blocks to mesh
     chunk.sections.enumerated().forEach { sectionIndex, section in
       if section.blockCount != 0 {
+        
         let sectionY = sectionIndex * 16
         for y in 0..<16 {
           for z in 0..<16 {
@@ -85,6 +86,7 @@ class ChunkMesh: Mesh {
             }
           }
         }
+        
       }
     }
     
@@ -141,12 +143,10 @@ class ChunkMesh: Mesh {
     let neighbouringBlockStates = getNeighbouringBlockStates(ofBlockAt: index)
     
     var cullingNeighbours: [FaceDirection] = []
-    for (direction, neighbourBlockState) in neighbouringBlockStates {
-      if neighbourBlockState != 0 {
-        if let blockModel = blockPaletteManager.getVariant(for: neighbourBlockState, at: position) {
-          if blockModel.fullFaces.contains(direction.opposite) {
-            cullingNeighbours.append(direction)
-          }
+    for (direction, neighbourBlockState) in neighbouringBlockStates where neighbourBlockState != 0 {
+      if let blockModel = blockPaletteManager.getVariant(for: neighbourBlockState, at: position) {
+        if blockModel.fullFaces.contains(direction.opposite) {
+          cullingNeighbours.append(direction)
         }
       }
     }

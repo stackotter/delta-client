@@ -10,7 +10,7 @@ import simd
 
 struct BlockModelElementFace {
   var uvs: [simd_float2]
-  var textureIndex: UInt16 // the index of the texture to use in the block texture buffer
+  var textureIndex: UInt16
   var cullface: FaceDirection?
   var tintIndex: Int8
   var light: Float

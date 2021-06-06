@@ -76,6 +76,8 @@
 - [ ] fences with block on top don't render? (fence posts at least)
 - [ ] top half of door doesn't render from inside of house
 - [ ] fix most of the above issues and then rewrite block model loading
+- [ ] remove hardcoding of 0 as the blockstate for air
+- [ ] fix rendering of cobwebs only being visible from one side (maybe they're culling?)
 
 ## Chunk preparing
 
@@ -89,6 +91,10 @@
 - [ ] fix random faces of blocks randomly not deleting (possibly rewrite meshing system)
 - [x] fix multiblock changes
 - [ ] fix chunk updates caused by things like tnt that just resend part of the affected chunk instead of using a multi-block change
+- [ ] get rid of ChunkMesher
+- [ ] make ElementMesh into ChunkMesh
+- [ ] only make a ChunkRenderer once all neighbours are received to avoid optionals
+- [ ] move over to simpler chunk section based renderer (remesh chunk sections on block change and stuff)
 
 ## General
 
