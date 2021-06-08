@@ -30,22 +30,22 @@ class WorldRenderer {
   var frozenChunkNeighbourBlockUpdates: [ChunkPosition: [(CardinalDirection, World.Event.SetBlock)]] = [:]
   
   init(world: World, blockPaletteManager: BlockPaletteManager, blockArrayTexture: MTLTexture) {
-    Logger.info("Initialising WorldRenderer")
+    log.info("Initialising WorldRenderer")
     
     // get metal device
     guard let metalDevice = MTLCreateSystemDefaultDevice() else {
-      Logger.error("No metal device found")
+      log.critical("No metal device found")
       fatalError("No metal device found")
     }
     
     // load shaders
-    Logger.info("Loading shaders")
+    log.info("Loading chunk shaders")
     guard
       let defaultLibrary = metalDevice.makeDefaultLibrary(),
       let vertex = defaultLibrary.makeFunction(name: "chunkVertexShader"),
       let fragment = defaultLibrary.makeFunction(name: "chunkFragmentShader")
     else {
-      Logger.error("Failed to load chunk shaders")
+      log.critical("Failed to load chunk shaders")
       fatalError("Failed to load chunk shaders")
     }
     
@@ -53,7 +53,7 @@ class WorldRenderer {
     self.blockPaletteManager = blockPaletteManager
     
     // create pipeline descriptor
-    Logger.info("Creating pipeline descriptor")
+    log.debug("Creating pipeline descriptor")
     let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
     pipelineStateDescriptor.label = "Triangle Pipeline"
     pipelineStateDescriptor.vertexFunction = vertex
@@ -62,11 +62,11 @@ class WorldRenderer {
     pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float
     
     // create pipeline state
-    Logger.info("Creating pipeline state")
+    log.debug("Creating pipeline state")
     do {
       pipelineState = try metalDevice.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
     } catch {
-      Logger.error("Failed to create render pipeline state")
+      log.critical("Failed to create render pipeline state")
       fatalError("Failed to create render pipeline state")
     }
     
@@ -76,13 +76,13 @@ class WorldRenderer {
     depthDescriptor.isDepthWriteEnabled = true
     
     guard let depthState = metalDevice.makeDepthStencilState(descriptor: depthDescriptor) else {
-      Logger.error("Failed to create depth stencil state")
+      log.critical("Failed to create depth stencil state")
       fatalError("Failed to create depth stencil state")
     }
     self.depthState = depthState
     
     self.world = world
-    Logger.info("Initialised WorldRenderer")
+    log.info("Initialised WorldRenderer")
   }
   
   func handle(_ events: [Event]) {
@@ -193,10 +193,12 @@ class WorldRenderer {
   }
   
   func freezeChunk(at chunkPosition: ChunkPosition) {
+    log.debug("Freezing chunk at \(chunkPosition)")
     frozenChunks.insert(chunkPosition)
   }
   
   func unfreezeChunk(at chunkPosition: ChunkPosition) {
+    log.debug("Unfreezing chunk at \(chunkPosition)")
     frozenChunks.remove(chunkPosition)
     if
       let chunkRenderer = chunkRenderers[chunkPosition],
@@ -235,7 +237,6 @@ class WorldRenderer {
     frozenRenderers.forEach { chunkRenderer in
       if let chunkRenderer = chunkRenderer,
          chunkRenderer.isReadyToRender() {
-        Logger.debug("Unfreezing chunk at \(chunkRenderer.position)")
         unfreezeChunk(at: chunkRenderer.position)
       }
     }
@@ -277,9 +278,9 @@ class WorldRenderer {
       }
       freezeChunk(at: chunkRenderer.position)
       chunkPreparationThread.async {
-        Logger.debug("Preparing chunk at \(chunkRenderer.position)")
+        log.debug("Preparing chunk at \(chunkRenderer.position)")
         chunkRenderer.prepare()
-        Logger.debug("Prepared chunk at \(chunkRenderer.position)")
+        log.debug("Prepared chunk at \(chunkRenderer.position)")
       }
     }
     
@@ -306,7 +307,7 @@ class WorldRenderer {
     // set uniforms
     let worldUniforms = createWorldUniforms(for: camera)
     guard let worldUniformBuffer = try? createWorldUniformBuffer(from: worldUniforms, for: device) else {
-      Logger.error("Failed to create world uniform buffer")
+      log.error("Failed to create world uniform buffer")
       return
     }
     renderEncoder.setVertexBuffer(worldUniformBuffer, offset: 0, index: 1)

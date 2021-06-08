@@ -6,81 +6,72 @@
 //
 
 import Foundation
-import os
+import Puppy
+import Logging
 
-struct Logger {
-  static let shared = Logger()
-  
-  private var osLogger: os.Logger
-  
-  init() {
-    osLogger = os.Logger()
-  }
-  
-  init(name: String, detail: String = "") {
-    osLogger = os.Logger(subsystem: name, category: detail)
-  }
-  
-  func trace(_ message: String) {
-    osLogger.debug("\(message)")
-  }
-  
-  func debug(_ message: String) {
-    osLogger.debug("\(message)")
-  }
-  
-  func info(_ message: String) {
-    osLogger.info("\(message)")
+// create global logger
+let log = Logger.makePuppyLogger(logLevel: .trace)
+
+/// Utility for creating DeltaClient's global logger
+enum Logger {
+  /**
+   Creates a `Puppy` logger with an `OSLogger`, `ConsoleLogger` (if in a release build)
+   and a `FileRotationLogger` which logs to 'log/latest.log' in 'Application Support'
+   
+   - Parameter logLevel: The initial log level for the `ConsoleLogger` to log at
+   
+   - Returns: A `Puppy` instance
+   */
+  static func makePuppyLogger(logLevel: LogLevel) -> Puppy {
+    let log = Puppy.default
+    
+    // Logs to the OS' central logging system
+    let oslog = OSLogger("dev.stackotter.delta-client.os-log")
+    oslog.format = OSLogFormatter()
+    log.add(oslog)
     
     #if !DEBUG
-    var logMessage = LogMessage()
-    logMessage.add("[ INFO ] ", [.bold])
-    logMessage.add(message, LogMessage.Style.info)
-    print(logMessage.toString())
+    // If this is a release build, log to stdout as well. We don't log to stdout in
+    // debug builds because then the logs double up in XCode's console
+    let console = ConsoleLogger("dev.stackotter.delta-client.console-log")
+    console.format = LogFormatter(withColour: true)
+    log.add(console, withLevel: .info)
     #endif
-  }
-  
-  func warn(_ message: String) {
-    osLogger.warning("\(message)")
     
-    #if !DEBUG
-    var logMessage = LogMessage()
-    logMessage.add("[ WARN ] ", [.bold])
-    logMessage.add(message, LogMessage.Style.warn)
-    print(logMessage.toString())
-    #endif
-  }
-  
-  func error(_ message: String) {
-    osLogger.error("\(message)")
+    // TODO: StorageManager should be a singleton if possible
+    if let storageManager = try? StorageManager() {
+      let logFile = storageManager.absoluteFromRelative("log/latest.log")
+      do {
+        let fileRotation = try FileRotationLogger("dev.stackotter.delta-client.file-rotation-log", fileURL: logFile)
+        fileRotation.format = LogFormatter(withColour: false)
+        fileRotation.maxFileSize = 10 * 1024 * 1024
+        fileRotation.maxArchivedFilesCount = 5
+        log.add(fileRotation)
+      } catch {
+        log.error("Failed to initialize FileRotationLogger for '\(logFile.absoluteString)'")
+      }
+    } else {
+      log.error("Failed to initialize StorageManager to intialize FileRotationLogger")
+    }
     
-    #if !DEBUG
-    var logMessage = LogMessage()
-    logMessage.add("[ ERR ]  ", [.bold])
-    logMessage.add(message, LogMessage.Style.error)
-    print(logMessage.toString())
-    #endif
+    LoggingSystem.bootstrap { label in
+      return PuppyLogHandler(label: label, puppy: log)
+    }
+    
+    return log
   }
 }
 
-extension Logger {
-  static func trace(_ message: String) {
-    Logger.shared.trace(message)
-  }
-  
-  static func debug(_ message: String) {
-    Logger.shared.debug(message)
-  }
-  
-  static func info(_ message: String) {
-    Logger.shared.info(message)
-  }
-  
-  static func warn(_ message: String) {
-    Logger.shared.warn(message)
-  }
-  
-  static func error(_ message: String) {
-    Logger.shared.error(message)
+extension Puppy {
+  /** Updates the `LogLevel` of any `ConsoleLogger`s attached to this `Puppy` instance
+   
+   - Parameter newLogLevel: The `LogLevel` to update the `ConsoleLogger`s to
+   */
+  func updateConsoleLogLevel(to newLogLevel: LogLevel) {
+    loggers.forEach { logger in
+      if let logger = logger as? ConsoleLogger {
+        logger.logLevel = newLogLevel
+      }
+    }
   }
 }

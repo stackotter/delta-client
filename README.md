@@ -1,12 +1,18 @@
 # Minecraft Delta Client - Changing the meaning of speed
 
-## Overview
+> An open source rewrite of Minecraft Java Edition written in Swift for macOS
 
-Delta Client is an open source rewrite of Minecraft Java Edition written in Swift (Apple's modern programming language). The main focus of this project is to create a highly efficient Java Edition compatible client for macOS.
+## Tl;dr
 
-In the future the project will also hopefully support iOS, iPadOS and maybe tvOS. This would allow playing on Java Edition servers, on platforms normally limited to Bedrock Edition.
+This client is not at all useable yet. If you're looking for a client to use to play Minecraft today, then this is not for you. But hopefully one day it does get to a useable state.
+
+## Disclaimer
 
 **I am NOT responsible for anti-cheat bans, the client has not been thoroughly tested yet and is still deep in development.**
+
+## Overview
+
+The main focus of this project is to create a highly efficient Java Edition compatible client written in Swift for macOS. Using Swift means that in the future the client may be able to run on iOS, iPadOS and maybe tvOS. This would allow playing on Java Edition servers, on platforms normally limited to Bedrock Edition.
 
 ## Contributing
 

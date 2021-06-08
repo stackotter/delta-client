@@ -26,7 +26,7 @@ struct MicrosoftAuthView: View {
             MicrosoftAuth.getXSTSToken(xboxLiveToken, onCompletion: { xstsToken in
               MicrosoftAuth.getMinecraftAccessToken(xstsToken, userHash, onCompletion: { minecraftAccessToken in
                 MicrosoftAuth.getAttachedLicenses(minecraftAccessToken, onCompletion: { licenses in
-                  Logger.debug("licenses: \(licenses)")
+                  log.debug("licenses: \(licenses)")
                 }, onFailure: { error in
                   DeltaClientApp.triggerError("Failed to get attached product licenses: \(error)")
                 })

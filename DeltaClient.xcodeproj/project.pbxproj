@@ -22,7 +22,6 @@
 		7844A6CA2661CD70008CFBF2 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6C92661CD6F008CFBF2 /* Profile.swift */; };
 		7844A6D826625EC4008CFBF2 /* PhysicsEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844A6D726625EC4008CFBF2 /* PhysicsEngine.swift */; };
 		78513204262D5FEC0054268A /* ChatError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513203262D5FEC0054268A /* ChatError.swift */; };
-		7851320A262D69280054268A /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513209262D69280054268A /* LogMessage.swift */; };
 		78513223262D7A980054268A /* MeshBuffers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78513222262D7A980054268A /* MeshBuffers.swift */; };
 		7851F7AE26255E0F009B59DD /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7851F7AD26255E0F009B59DD /* Camera.swift */; };
 		7864084F262C545C00FE3A10 /* CacheFaceDirection.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78640848262C545C00FE3A10 /* CacheFaceDirection.pb.swift */; };
@@ -39,6 +38,15 @@
 		78756170264F2DE7006C9C36 /* OfflineAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7875616F264F2DE7006C9C36 /* OfflineAccount.swift */; };
 		78756175264F2DFD006C9C36 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78756174264F2DFD006C9C36 /* Account.swift */; };
 		787576252665053E00F87F0E /* WorldInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787576242665053E00F87F0E /* WorldInfo.swift */; };
+		787EA9B6266E0FDF0019C35B /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = 787EA9B5266E0FDF0019C35B /* Puppy */; };
+		787EA9BB266E10790019C35B /* LogFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787EA9BA266E10790019C35B /* LogFormatter.swift */; };
+		787EA9C1266E10DB0019C35B /* LogComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787EA9C0266E10DB0019C35B /* LogComponent.swift */; };
+		787EA9C9266E11930019C35B /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787EA9C8266E11930019C35B /* LogLevel.swift */; };
+		787EA9D1266E11D90019C35B /* TimeStampComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787EA9D0266E11D90019C35B /* TimeStampComponent.swift */; };
+		787EA9D9266E120E0019C35B /* LogLevelComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787EA9D8266E120E0019C35B /* LogLevelComponent.swift */; };
+		787EA9DE266E12440019C35B /* MessageComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787EA9DD266E12440019C35B /* MessageComponent.swift */; };
+		787EA9E3266E12560019C35B /* CallerComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787EA9E2266E12560019C35B /* CallerComponent.swift */; };
+		787EA9E8266E2DAD0019C35B /* OSLogFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787EA9E7266E2DAD0019C35B /* OSLogFormatter.swift */; };
 		787F5C252633F506003B5782 /* XSTSAuthenticationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787F5C242633F506003B5782 /* XSTSAuthenticationRequest.swift */; };
 		787F5C2A2633F7C9003B5782 /* XSTSAuthenticationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787F5C292633F7C9003B5782 /* XSTSAuthenticationResponse.swift */; };
 		787F5C2F2633F93E003B5782 /* MinecraftXboxAuthenticationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787F5C2E2633F93E003B5782 /* MinecraftXboxAuthenticationRequest.swift */; };
@@ -421,7 +429,6 @@
 		7844A6C92661CD6F008CFBF2 /* Profile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		7844A6D726625EC4008CFBF2 /* PhysicsEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhysicsEngine.swift; sourceTree = "<group>"; };
 		78513203262D5FEC0054268A /* ChatError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatError.swift; sourceTree = "<group>"; };
-		78513209262D69280054268A /* LogMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogMessage.swift; sourceTree = "<group>"; };
 		78513222262D7A980054268A /* MeshBuffers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshBuffers.swift; sourceTree = "<group>"; };
 		7851F7AD26255E0F009B59DD /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		78640846262C545C00FE3A10 /* CompileProtobuf.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = CompileProtobuf.sh; sourceTree = "<group>"; };
@@ -441,6 +448,14 @@
 		7875616F264F2DE7006C9C36 /* OfflineAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineAccount.swift; sourceTree = "<group>"; };
 		78756174264F2DFD006C9C36 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		787576242665053E00F87F0E /* WorldInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldInfo.swift; sourceTree = "<group>"; };
+		787EA9BA266E10790019C35B /* LogFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogFormatter.swift; sourceTree = "<group>"; };
+		787EA9C0266E10DB0019C35B /* LogComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogComponent.swift; sourceTree = "<group>"; };
+		787EA9C8266E11930019C35B /* LogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevel.swift; sourceTree = "<group>"; };
+		787EA9D0266E11D90019C35B /* TimeStampComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeStampComponent.swift; sourceTree = "<group>"; };
+		787EA9D8266E120E0019C35B /* LogLevelComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevelComponent.swift; sourceTree = "<group>"; };
+		787EA9DD266E12440019C35B /* MessageComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComponent.swift; sourceTree = "<group>"; };
+		787EA9E2266E12560019C35B /* CallerComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallerComponent.swift; sourceTree = "<group>"; };
+		787EA9E7266E2DAD0019C35B /* OSLogFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSLogFormatter.swift; sourceTree = "<group>"; };
 		787F5C242633F506003B5782 /* XSTSAuthenticationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XSTSAuthenticationRequest.swift; sourceTree = "<group>"; };
 		787F5C292633F7C9003B5782 /* XSTSAuthenticationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XSTSAuthenticationResponse.swift; sourceTree = "<group>"; };
 		787F5C2E2633F93E003B5782 /* MinecraftXboxAuthenticationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftXboxAuthenticationRequest.swift; sourceTree = "<group>"; };
@@ -793,6 +808,7 @@
 				78B6A1EB25FC588000CFE493 /* Zip in Frameworks */,
 				7802C1AF261097F00068E8A1 /* SwiftProtobuf in Frameworks */,
 				78D917E4261F08E400A4782F /* IDZSwiftCommonCrypto in Frameworks */,
+				787EA9B6266E0FDF0019C35B /* Puppy in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -949,8 +965,11 @@
 		78513208262D69150054268A /* Log */ = {
 			isa = PBXGroup;
 			children = (
+				787EA9BF266E10B00019C35B /* LogComponent */,
 				78D91826261FB4CC00A4782F /* Logger.swift */,
-				78513209262D69280054268A /* LogMessage.swift */,
+				787EA9BA266E10790019C35B /* LogFormatter.swift */,
+				787EA9E7266E2DAD0019C35B /* OSLogFormatter.swift */,
+				787EA9C8266E11930019C35B /* LogLevel.swift */,
 			);
 			path = Log;
 			sourceTree = "<group>";
@@ -966,6 +985,18 @@
 				7864084D262C545C00FE3A10 /* CacheBlockModelContainer.pb.swift */,
 			);
 			path = Generated;
+			sourceTree = "<group>";
+		};
+		787EA9BF266E10B00019C35B /* LogComponent */ = {
+			isa = PBXGroup;
+			children = (
+				787EA9C0266E10DB0019C35B /* LogComponent.swift */,
+				787EA9D0266E11D90019C35B /* TimeStampComponent.swift */,
+				787EA9D8266E120E0019C35B /* LogLevelComponent.swift */,
+				787EA9DD266E12440019C35B /* MessageComponent.swift */,
+				787EA9E2266E12560019C35B /* CallerComponent.swift */,
+			);
+			path = LogComponent;
 			sourceTree = "<group>";
 		};
 		7885C04C266C62A30036B8F6 /* Renderer */ = {
@@ -1675,6 +1706,7 @@
 				78B6A1EA25FC588000CFE493 /* Zip */,
 				7802C1AE261097F00068E8A1 /* SwiftProtobuf */,
 				78D917E3261F08E400A4782F /* IDZSwiftCommonCrypto */,
+				787EA9B5266E0FDF0019C35B /* Puppy */,
 			);
 			productName = Minecraft;
 			productReference = 784194B7258204CD0070DE78 /* DeltaClient.app */;
@@ -1752,6 +1784,7 @@
 				78B6A1E925FC588000CFE493 /* XCRemoteSwiftPackageReference "Zip" */,
 				7802C1AD261097F00068E8A1 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 				78D917E2261F08E400A4782F /* XCRemoteSwiftPackageReference "IDZSwiftCommonCrypto" */,
+				787EA9B4266E0FDF0019C35B /* XCRemoteSwiftPackageReference "Puppy" */,
 			);
 			productRefGroup = 784194B8258204CD0070DE78 /* Products */;
 			projectDirPath = "";
@@ -1909,6 +1942,7 @@
 				78D9196D261FB4CD00A4782F /* CampfireCookingRecipe.swift in Sources */,
 				78D91A43261FB4CD00A4782F /* VehicleMoveClientboundPacket.swift in Sources */,
 				78D919AF261FB4CD00A4782F /* ServerDescriptor.swift in Sources */,
+				787EA9E3266E12560019C35B /* CallerComponent.swift in Sources */,
 				78D91A86261FB4CE00A4782F /* MinecraftLocale.swift in Sources */,
 				78D91A0C261FB4CD00A4782F /* DeclareRecipesPacket.swift in Sources */,
 				78D91A27261FB4CD00A4782F /* AcknowledgePlayerDiggingPacket.swift in Sources */,
@@ -1921,6 +1955,7 @@
 				78D919E8261FB4CD00A4782F /* SelectTradePacket.swift in Sources */,
 				78D91A3B261FB4CD00A4782F /* BlockEntityDataPacket.swift in Sources */,
 				78D91A77261FB4CE00A4782F /* Endian.swift in Sources */,
+				787EA9D1266E11D90019C35B /* TimeStampComponent.swift in Sources */,
 				78D91A32261FB4CD00A4782F /* OpenHorseWindowPacket.swift in Sources */,
 				78D91A51261FB4CE00A4782F /* EncryptionRequestPacket.swift in Sources */,
 				78D91A1B261FB4CD00A4782F /* OpenSignEditorPacket.swift in Sources */,
@@ -1940,6 +1975,7 @@
 				78D919BB261FB4CD00A4782F /* StatusResponsePacket.swift in Sources */,
 				78D91A20261FB4CD00A4782F /* RespawnPacket.swift in Sources */,
 				78D91977261FB4CD00A4782F /* ChatKeybindComponent.swift in Sources */,
+				787EA9E8266E2DAD0019C35B /* OSLogFormatter.swift in Sources */,
 				78D91A9E261FB4E100A4782F /* LoginView.swift in Sources */,
 				78D919D7261FB4CD00A4782F /* CloseWindowServerboundPacket.swift in Sources */,
 				78513204262D5FEC0054268A /* ChatError.swift in Sources */,
@@ -1977,6 +2013,7 @@
 				78D7E4D02633D98000FB1A3B /* Request.swift in Sources */,
 				78D91A87261FB4CE00A4782F /* Managers.swift in Sources */,
 				78D91A10261FB4CD00A4782F /* ServerDifficultyPacket.swift in Sources */,
+				787EA9DE266E12440019C35B /* MessageComponent.swift in Sources */,
 				78BDCD7F266B092D004D7A63 /* EventBatch.swift in Sources */,
 				78D919B2261FB4CD00A4782F /* ServerConfig.swift in Sources */,
 				78D91A47261FB4CD00A4782F /* PlayDisconnectPacket.swift in Sources */,
@@ -1984,6 +2021,7 @@
 				78D91A39261FB4CD00A4782F /* TabCompleteClientboundPacket.swift in Sources */,
 				78D91A84261FB4CE00A4782F /* BlockPaletteManager.swift in Sources */,
 				78D91A3A261FB4CD00A4782F /* UpdateLightPacket.swift in Sources */,
+				787EA9C1266E10DB0019C35B /* LogComponent.swift in Sources */,
 				78D919C8261FB4CD00A4782F /* PlayerDiggingPacket.swift in Sources */,
 				78D91A0A261FB4CD00A4782F /* MapDataPacket.swift in Sources */,
 				78D919FB261FB4CD00A4782F /* UpdateViewPositionPacket.swift in Sources */,
@@ -2058,6 +2096,7 @@
 				78E2324A26280C8000B08B4B /* ServerEvent.swift in Sources */,
 				78D7E4A126338D1C00FB1A3B /* MicrosoftAuthView.swift in Sources */,
 				78D91A24261FB4CD00A4782F /* SetPassengersPacket.swift in Sources */,
+				787EA9D9266E120E0019C35B /* LogLevelComponent.swift in Sources */,
 				78D919A3261FB4CD00A4782F /* RenderCoordinator.swift in Sources */,
 				78D919AC261FB4CD00A4782F /* ChunkData.swift in Sources */,
 				78D91A44261FB4CD00A4782F /* UpdateScorePacket.swift in Sources */,
@@ -2089,6 +2128,7 @@
 				78D91992261FB4CD00A4782F /* PlayerRotation.swift in Sources */,
 				78D91A83261FB4CE00A4782F /* AssetManager.swift in Sources */,
 				78756166264F2780006C9C36 /* MojangLoginView.swift in Sources */,
+				787EA9C9266E11930019C35B /* LogLevel.swift in Sources */,
 				78D91974261FB4CD00A4782F /* ChatComponent.swift in Sources */,
 				78D91990261FB4CD00A4782F /* Hand.swift in Sources */,
 				78D9196F261FB4CD00A4782F /* HeatRecipe.swift in Sources */,
@@ -2143,11 +2183,11 @@
 				781F48BC266651B00030F71C /* SetBlock.swift in Sources */,
 				78D91A9C261FB4E100A4782F /* ServerDetailView.swift in Sources */,
 				78D919CD261FB4CD00A4782F /* SpectatePacket.swift in Sources */,
-				7851320A262D69280054268A /* LogMessage.swift in Sources */,
 				78D919FE261FB4CD00A4782F /* OpenBookPacket.swift in Sources */,
 				78D91988261FB4CD00A4782F /* MojangAccount.swift in Sources */,
 				78FA27282664FD4400F3BDF5 /* Event.swift in Sources */,
 				78D7E49C26338CCD00FB1A3B /* WebView.swift in Sources */,
+				787EA9BB266E10790019C35B /* LogFormatter.swift in Sources */,
 				78D9196C261FB4CD00A4782F /* SmithingRecipe.swift in Sources */,
 				78E0C13126337F82009D882D /* MicrosoftAuth.swift in Sources */,
 				78D91A50261FB4CD00A4782F /* SetCompressionPacket.swift in Sources */,
@@ -2546,6 +2586,14 @@
 				minimumVersion = 1.15.0;
 			};
 		};
+		787EA9B4266E0FDF0019C35B /* XCRemoteSwiftPackageReference "Puppy" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stackotter/Puppy";
+			requirement = {
+				kind = revision;
+				revision = 220efa559042f5b7dc99cf089bd4dbb31e217371;
+			};
+		};
 		78B6A1E925FC588000CFE493 /* XCRemoteSwiftPackageReference "Zip" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/marmelroy/Zip";
@@ -2569,6 +2617,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 7802C1AD261097F00068E8A1 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobuf;
+		};
+		787EA9B5266E0FDF0019C35B /* Puppy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 787EA9B4266E0FDF0019C35B /* XCRemoteSwiftPackageReference "Puppy" */;
+			productName = Puppy;
 		};
 		78B6A1EA25FC588000CFE493 /* Zip */ = {
 			isa = XCSwiftPackageProductDependency;

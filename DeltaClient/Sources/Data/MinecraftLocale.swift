@@ -30,7 +30,7 @@ struct MinecraftLocale {
         return
       }
     } catch {
-      Logger.warn("failed to parse locale `\(localeFile.lastPathComponent)`")
+      log.warning("failed to parse locale `\(localeFile.lastPathComponent)`")
       throw error
     }
     throw MinecraftLocaleError.unableToParseLocale

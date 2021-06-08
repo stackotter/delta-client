@@ -26,6 +26,6 @@ struct PluginMessagePacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    Logger.debug("plugin message received with channel: \(pluginMessage.channel)")
+    log.debug("plugin message received with channel: \(pluginMessage.channel)")
   }
 }

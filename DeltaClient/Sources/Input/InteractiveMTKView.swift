@@ -38,12 +38,10 @@ class InteractiveMTKView: MTKView {
       return
     }
     
-    Logger.debug("key pressed: \(event.keyCode)")
     inputState.pressedKeys.insert(event.keyCode)
   }
   
   override func keyUp(with event: NSEvent) {
-    Logger.debug("key released: \(event.keyCode)")
     inputState.pressedKeys.remove(event.keyCode)
     
     // escape key releases mouse
@@ -60,7 +58,6 @@ class InteractiveMTKView: MTKView {
   
   override func mouseMoved(with event: NSEvent) {
     if mouseCaptured {
-      Logger.debug("mouse moved")
       inputState.mouseDelta += [
         Float(event.deltaX),
         Float(event.deltaY)

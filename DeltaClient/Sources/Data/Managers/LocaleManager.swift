@@ -32,7 +32,7 @@ class LocaleManager {
   
   func addLocale(fromFile file: URL, withName name: String) throws {
     guard let locale = try? MinecraftLocale(localeFile: file) else {
-      Logger.error("failed to add locale")
+      log.error("failed to add locale")
       throw LocaleError.badLocaleFile
     }
     locales[name] = locale

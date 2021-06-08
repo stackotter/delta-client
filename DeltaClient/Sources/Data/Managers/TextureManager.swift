@@ -56,10 +56,10 @@ class TextureManager {
             index += 1
           }
         } else {
-          Logger.warn("failed to load '\(textureName).png' as cgimage")
+          log.warning("failed to load '\(textureName).png' as cgimage")
         }
       } else {
-        Logger.warn("failed to create cgdataprovider for '\(textureName).png'")
+        log.warning("failed to create cgdataprovider for '\(textureName).png'")
       }
     }
   }

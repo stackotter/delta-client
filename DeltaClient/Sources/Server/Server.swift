@@ -70,7 +70,7 @@ class Server: Observable, Hashable {
         reader.locale = managers.localeManager.currentLocale
         
         guard let packetType = packetRegistry.getClientboundPacketType(withId: reader.packetId, andState: packetState) else {
-          Logger.warn("non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
+          log.warning("non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
           return
         }
         
@@ -78,7 +78,7 @@ class Server: Observable, Hashable {
         try packet.handle(for: self)
       }
     } catch {
-      Logger.warn("failed to handle packet: \(error)")
+      log.warning("failed to handle packet: \(error)")
     }
   }
   

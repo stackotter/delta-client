@@ -18,7 +18,7 @@ struct PlayDisconnectPacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    Logger.info("disconnected: \(reason.toText())")
+    log.info("Disconnected from server: \(reason.toText())")
     DeltaClientApp.triggerError(reason.toText())
   }
 }

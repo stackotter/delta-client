@@ -30,7 +30,7 @@ class EncryptionLayer: NetworkLayer {
   func enableEncryption(sharedSecret: [UInt8]) {
     inputCryptor = createCryptor(sharedSecret: sharedSecret, operation: .decrypt)
     outputCryptor = createCryptor(sharedSecret: sharedSecret, operation: .encrypt)
-    Logger.debug("enabled encryption")
+    log.debug("enabled encryption")
   }
   
   func handleInbound(_ buffer: Buffer) {
@@ -40,7 +40,7 @@ class EncryptionLayer: NetworkLayer {
       if status == .success {
         inboundSuccessor?.handleInbound(Buffer(decrypted))
       } else {
-        Logger.error("failed to decrypt packet: \(status)")
+        log.error("failed to decrypt packet: \(status)")
       }
     } else {
       inboundSuccessor?.handleInbound(buffer)
@@ -54,7 +54,7 @@ class EncryptionLayer: NetworkLayer {
       if status == .success {
         outboundSuccessor?.handleOutbound(Buffer(encrypted))
       } else {
-        Logger.error("failed to decrypt packet: \(status)")
+        log.error("failed to decrypt packet: \(status)")
       }
     } else {
       outboundSuccessor?.handleOutbound(buffer)

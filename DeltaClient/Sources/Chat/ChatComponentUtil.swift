@@ -19,7 +19,7 @@ struct ChatComponentUtil {
     } else if json.containsKey("score") {
       return try ChatScoreComponent(from: json, locale: locale)
     } else {
-      Logger.warn("invalid chat component json: \(json.dict)")
+      log.warning("invalid chat component json: \(json.dict)")
       throw ChatError.invalidJSON
     }
   }
@@ -36,7 +36,7 @@ struct ChatComponentUtil {
       parent.siblings = try readSiblingsArray(array: [Any](array.dropFirst()), locale: locale)
       return parent
     } else {
-      Logger.warn("failed to ready chat component (invalid type)")
+      log.warning("failed to ready chat component (invalid type)")
       throw ChatError.invalidComponentType
     }
   }

@@ -100,7 +100,7 @@ struct TeamsPacket: ClientboundPacket {
         }
         action = .removePlayers(entities: entities)
       default:
-        Logger.debug("invalid team action")
+        log.debug("invalid team action")
         action = .remove
     }
   }

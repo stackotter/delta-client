@@ -59,7 +59,7 @@ struct ChunkData {
           let blockEntity = BlockEntity(position: position, identifier: identifier, nbt: blockEntityNBT)
           blockEntities.append(blockEntity)
         } catch {
-          Logger.warn("error decoding block entities: \(error.localizedDescription)")
+          log.warning("error decoding block entities: \(error.localizedDescription)")
         }
       }
       stopwatch.stopMeasurement("chunk unpack")
@@ -72,7 +72,7 @@ struct ChunkData {
         sections: sections,
         blockEntities: blockEntities)
     } catch {
-      Logger.warn("failed to unpack chunk: \(error.localizedDescription)")
+      log.warning("failed to unpack chunk: \(error.localizedDescription)")
       throw error
     }
   }

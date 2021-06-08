@@ -22,6 +22,6 @@ struct ChatMessageClientboundPacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    Logger.info("chat message : \(message.toText())")
+    log.info("Chat message received: \(message.toText())")
   }
 }

@@ -70,20 +70,20 @@ struct EncryptionRequestPacket: ClientboundPacket {
                   server.connection.enableEncryption(sharedSecret: sharedSecret)
                 }
               } catch {
-                Logger.error("failed to enable encryption: \(error)")
+                log.error("failed to enable encryption: \(error)")
               }
             }
           },
           onFailure: { error in
-            Logger.error("join request for online server failed: \(error)")
+            log.error("join request for online server failed: \(error)")
           }
         )
       } else {
-        Logger.error("cannot join online server with offline account")
+        log.error("cannot join online server with offline account")
         DeltaClientApp.triggerError("cannot join online server with offline account")
       }
     } else {
-      Logger.error("not logged in")
+      log.error("not logged in")
       DeltaClientApp.triggerError("failed to join server: not logged in")
       return
     }

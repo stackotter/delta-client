@@ -30,7 +30,7 @@ struct GameRenderView: View {
   func handleEvent(_ event: AppEvent) {
     switch event {
       case .downloadedTerrain:
-        Logger.info("finished downloading terrain")
+        log.info("Finished downloading terrain")
         state.update(to: .playing)
       default:
         break

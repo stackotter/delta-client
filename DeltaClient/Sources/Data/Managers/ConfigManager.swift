@@ -28,12 +28,12 @@ class ConfigManager: ObservableObject {
         refreshMojangAccounts()
         return
       } catch {
-        Logger.warn("failed to load existing config: \(error)")
+        log.warning("Failed to load existing config: \(error)")
       }
     }
     
     // TODO: don't rely on fall-through (a bit hard to read)
-    Logger.info("resetting config file to defaults")
+    log.warning("Resetting config file to defaults")
     try? storageManager.removeFile(configFile)
     self.config = Config.createDefault()
     
@@ -47,7 +47,7 @@ class ConfigManager: ObservableObject {
       let data = try encoder.encode(config)
       try data.write(to: configFile)
     } catch {
-      Logger.error("failed to write config: \(error)")
+      log.error("failed to write config: \(error)")
     }
   }
   
@@ -104,7 +104,7 @@ class ConfigManager: ObservableObject {
       return type
     }
     
-    Logger.warn("invalid account type, logging out")
+    log.warning("invalid account type, logging out")
     logout()
     return nil
   }
@@ -128,7 +128,7 @@ class ConfigManager: ObservableObject {
         }
     }
     
-    Logger.warn("selected account doesn't exist, logging out")
+    log.warning("selected account doesn't exist, logging out")
     logout()
     return nil
   }
@@ -242,7 +242,7 @@ class ConfigManager: ObservableObject {
         success()
       },
       onFailure: { error in
-        Logger.warn("access token refresh failed, logging out: \(error)")
+        log.warning("access token refresh failed, logging out: \(error)")
         self.logout()
       })
   }

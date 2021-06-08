@@ -28,7 +28,7 @@ struct CompressionUtil {
       COMPRESSION_ZLIB)
     
     if length != decompressedLength {
-      Logger.warn("actual decompressed length does not match length in packet")
+      log.warning("actual decompressed length does not match length in packet")
     }
     
     let data = Data(bytes: buffer, count: length)

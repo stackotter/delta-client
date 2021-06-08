@@ -30,7 +30,7 @@ class StorageManager {
       var isDirectory: ObjCBool = false
       let fileExists = fileManager.fileExists(atPath: self.storageDir.path, isDirectory: &isDirectory)
       if !fileExists || !isDirectory.boolValue {
-        Logger.info("creating application support directory")
+        log.debug("Creating application support directory")
         do {
           try fileManager.createDirectory(at: self.storageDir, withIntermediateDirectories: true, attributes: nil)
         } catch {
@@ -88,7 +88,7 @@ class StorageManager {
     do {
       try fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
     } catch {
-      Logger.error("failed to create directory '\(url)'")
+      log.error("failed to create directory '\(url)'")
       throw StorageError.failedToCreateDirectory(error)
     }
   }

@@ -27,15 +27,15 @@ class BlockPaletteManager {
     self.cacheManager = cacheManager
     
     if cacheManager.cacheExists(name: "block-palette") {
-      Logger.info("loading cached global palette")
+      log.info("Loading cached global palette")
       try loadGlobalPaletteCache()
-      Logger.info("loaded cached global palette")
+      log.info("Loaded cached global palette")
     } else {
-      Logger.info("generating global palette")
+      log.info("Generating global palette")
       try generateGlobalPalette()
-      Logger.info("caching global palette")
+      log.info("Caching global palette")
       try cacheGlobalPalette()
-      Logger.info("cached global palette")
+      log.info("Cached global palette")
     }
   }
   
@@ -95,14 +95,14 @@ class BlockPaletteManager {
   func generateGlobalPalette() throws {
     let pixlyzerDataFile = assetManager.getPixlyzerFolder().appendingPathComponent("blocks.json")
     guard let pixlyzerJSON = try? JSON.fromURL(pixlyzerDataFile).dict as? [String: [String: Any]] else {
-      Logger.error("failed to parse pixlyzer block palette")
+      log.error("Failed to parse pixlyzer block palette")
       throw BlockPaletteError.invalidPixlyzerData
     }
     for (blockName, block) in pixlyzerJSON {
       let blockJSON = JSON(dict: block)
       
       guard let states = blockJSON.getJSON(forKey: "states")?.dict as? [String: [String: Any]] else {
-        Logger.error("invalid pixlyzer json format for \(blockName)")
+        log.error("Invalid pixlyzer json format for \(blockName)")
         throw BlockPaletteError.invalidPixlyzerData
       }
       
@@ -147,7 +147,7 @@ class BlockPaletteManager {
                   let blockModel = try loadBlockModel(for: modelIdentifier, xRot: xRot, yRot: yRot, zRot: zRot, uvlock: uvlock)
                   blockModels.append(blockModel)
                 } catch {
-                  Logger.error("failed to load model for \(modelIdentifierString): \(error)")
+                  log.warning("Failed to load model for \(modelIdentifierString): \(error)")
                 }
               }
             }
@@ -165,7 +165,7 @@ class BlockPaletteManager {
           // add to palette
           blockModelPalette[UInt16(stateId)] = variants
         } else {
-          Logger.error("invalid state id: \(stateIdString)")
+          log.warning("Invalid state id: \(stateIdString)")
         }
       }
     }
@@ -242,7 +242,7 @@ class BlockPaletteManager {
             // most likely an animated texture
           }
         } else {
-          Logger.error("invalid texture variable: \(intermediateFace.textureVariable) on \(identifier)")
+          log.warning("Invalid texture variable: \(intermediateFace.textureVariable) on \(identifier)")
         }
       }
       let element = BlockModelElement(modelMatrix: elementModelMatrix, faces: faces)
@@ -368,7 +368,7 @@ class BlockPaletteManager {
                 case "z":
                   rotationMatrix = MatrixUtil.rotationMatrix(z: rotation)
                 default:
-                  Logger.error("invalid rotation axis")
+                  log.warning("Invalid rotation axis")
               }
               if let matrix = rotationMatrix {
                 modelMatrix *= matrix
@@ -376,7 +376,7 @@ class BlockPaletteManager {
               }
               modelMatrix *= MatrixUtil.translationMatrix(rotationOriginVector)
             } else {
-              Logger.error("invalid rotation on block model element")
+              log.warning("Invalid rotation on block model element")
             }
           }
           
@@ -461,13 +461,13 @@ class BlockPaletteManager {
                   faces[direction] = face
                 } else {
                   // IMPLEMENT: automatic uv generation
-                  Logger.error("invalid uv \(uv)")
+                  log.error("invalid uv \(uv)")
                 }
               } else {
-                Logger.error("block model element doesn't specify texture")
+                log.warning("Block model element doesn't specify texture")
               }
             } else {
-              Logger.error("invalid face direction: \(faceName)")
+              log.warning("Invalid face direction: \(faceName)")
             }
           }
           
@@ -478,7 +478,7 @@ class BlockPaletteManager {
           )
           elements.append(element)
         } else {
-          Logger.error("invalid from or to on \(identifier). \(from), \(to)")
+          log.warning("Invalid from or to on \(identifier). \(from), \(to)")
         }
       }
     } else {

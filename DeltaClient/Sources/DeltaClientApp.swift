@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import Puppy
 
+// TODO: severely reorganise and clean up DeltaClientApp
 @main
 struct DeltaClientApp: App {
-  public static var eventManager = EventManager<AppEvent>()
-
   @ObservedObject var state = ViewState<AppStateEnum>(initialState: .loading(message: "loading game.."))
+  
+  // eventually remove the need for eventManager, it's old and clunky
+  public static var eventManager = EventManager<AppEvent>()
 
   enum AppStateEnum {
     case loading(message: String)
@@ -20,6 +23,27 @@ struct DeltaClientApp: App {
   }
 
   init() {
+    // get log level from command-line arguments
+    let logLevel = UserDefaults.standard.string(forKey: "logLevel")
+    var level: LogLevel?
+    if let logLevel = logLevel {
+      switch logLevel {
+        case "trace": level = .trace
+        case "debug": level = .debug
+        case "info": level = .info
+        case "warning": level = .warning
+        case "error": level = .error
+        default:
+          log.warning("Invalid argument for logLevel. Valid values: trace, debug, info, warning and error")
+          level = .info
+      }
+    } else {
+      level = .info
+    }
+    if let level = level {
+      log.updateConsoleLogLevel(to: level)
+    }
+    
     DeltaClientApp.eventManager.registerEventHandler(handleEvent)
 
     // run app startup sequence
@@ -41,12 +65,12 @@ struct DeltaClientApp: App {
   func handleEvent(_ event: AppEvent) {
     switch event {
       case .loadingScreenMessage(let message):
-        Logger.info(message)
+        log.info(message)
         state.update(to: .loading(message: message))
       case .loadingComplete(let managers):
         state.update(to: .loaded(managers: managers))
       case .error(let message):
-        Logger.error(message)
+        log.error(message)
         state.update(to: .error(message: message))
       default:
         break

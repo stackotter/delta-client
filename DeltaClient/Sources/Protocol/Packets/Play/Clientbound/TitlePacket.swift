@@ -44,7 +44,7 @@ struct TitlePacket: ClientboundPacket {
       case 5: // reset
         action = .reset
       default:
-        Logger.debug("invalid title action received")
+        log.debug("invalid title action received")
         action = .reset
     }
   }

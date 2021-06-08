@@ -87,7 +87,7 @@ class ChunkMesh: Mesh {
           }
         }
         let elapsed = CFAbsoluteTimeGetCurrent() - startTime
-        Logger.info("completed chunk section in \(elapsed) seconds with \(section.blockCount) blocks")
+        log.debug("Prepared ChunkMesh for chunk at \(chunkPosition) with \(section.blockCount) blocks in \(elapsed) seconds")
       }
     }
     
@@ -196,7 +196,7 @@ class ChunkMesh: Mesh {
         blockIndexToQuads[position.blockIndex] = quadIndices
       }
     } else {
-      Logger.debug("Skipping block with no block model")
+      log.warning("Skipping block with no block model, blockState=\(state)")
     }
   }
   
@@ -229,7 +229,6 @@ class ChunkMesh: Mesh {
     hasChanged = true
     removeBlock(atIndex: index)
     if newState != 0 {
-      Logger.debug("add new block")
       addBlock(at: index, with: newState)
     }
     
@@ -252,7 +251,7 @@ class ChunkMesh: Mesh {
     let lastQuad = vertices.count / 4 - 1
     let isLastQuad = quadIndex == lastQuad
     guard let blockIndex = quadToBlockIndex[quadIndex] else {
-      Logger.error("failed to remove quad from chunk mesh")
+      log.warning("Failed to remove quad from ChunkMesh")
       return
     }
     
@@ -264,7 +263,7 @@ class ChunkMesh: Mesh {
         var lastBlockQuads = blockIndexToQuads[lastBlockIndex],
         let indexOfIndex = lastBlockQuads.firstIndex(of: lastQuad)
       else {
-        Logger.error("failed to get index/quads of last block in mesh")
+        log.error("Failed to get index or quads of last block in ChunkMesh at \(chunkPosition)")
         return
       }
       lastBlockQuads.remove(at: indexOfIndex)
@@ -283,7 +282,7 @@ class ChunkMesh: Mesh {
       var quads = blockIndexToQuads[blockIndex],
       let quadIndex = quads.lastIndex(of: quadIndex)
     else {
-      Logger.error("Failed to get quad to remove, buckle-up, this could get bumpy")
+      log.error("Failed to get quad to remove, buckle-up, this could get bumpy")
       return
     }
     quads.remove(at: quadIndex)

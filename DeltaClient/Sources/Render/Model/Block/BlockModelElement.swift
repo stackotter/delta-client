@@ -22,7 +22,7 @@ extension BlockModelElement {
         let face = BlockModelElementFace(fromCache: cacheFace)
         faces[direction] = face
       } else {
-        Logger.warn("invalid face direction in block model cache")
+        log.warning("invalid face direction in block model cache")
       }
     }
   }

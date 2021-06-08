@@ -126,7 +126,7 @@ enum FaceDirection: Int {
       return .down
     }
     
-    Logger.warn("vector \(vector) did not match a direction")
+    log.warning("vector \(vector) did not match a direction")
     return .up
   }
   

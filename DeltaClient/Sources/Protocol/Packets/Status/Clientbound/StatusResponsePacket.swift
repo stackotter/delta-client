@@ -26,7 +26,7 @@ struct StatusResponsePacket: ClientboundPacket {
       let maxPlayers = players.getInt(forKey: "max"),
       let numPlayers = players.getInt(forKey: "online")
     else {
-      Logger.warn("failed to parse status response json")
+      log.warning("failed to parse status response json")
       return
     }
     

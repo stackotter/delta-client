@@ -65,7 +65,7 @@ struct PlayerInfoPacket: ClientboundPacket {
         case 4: // remove player
           playerAction = .removePlayer
         default:
-          Logger.warn("invalid player info action")
+          log.warning("invalid player info action")
           continue
       }
       playerActions.append((uuid: uuid, action: playerAction))

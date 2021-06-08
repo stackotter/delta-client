@@ -31,11 +31,11 @@ struct AddServerView: View {
           viewState.returnToPrevious()
         }
       } else {
-        Logger.error("invalid server ip")
+        log.error("invalid server ip")
         showAlert("please provide valid ip")
       }
     } else {
-      Logger.error("invalid server ip")
+      log.error("invalid server ip")
       showAlert("please provide valid ip")
     }
   }

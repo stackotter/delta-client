@@ -44,7 +44,7 @@ struct Stopwatch {
       }
       
       if mode == .verbose {
-        log(category: category, message: String(format: "%.4fms", measurement))
+        logCategorySummary(category: category, message: String(format: "%.4fms", measurement))
       }
     }
   }
@@ -55,7 +55,7 @@ struct Stopwatch {
         let average = times.reduce(0.0, +) / Double(times.count)
         var message = times.count == 1 ? "" : "avg "
         message += String(format: "%.4fms", average)
-        log(category: category, message: message)
+        logCategorySummary(category: category, message: message)
       }
     }
   }
@@ -65,7 +65,7 @@ struct Stopwatch {
     measurements = [:]
   }
   
-  private func log(category: String, message: String) {
-    Logger.info("\(name.map { "\($0), " } ?? "")\(category): \(message)")
+  private func logCategorySummary(category: String, message: String) {
+    log.info("\(name.map { "\($0), " } ?? "")\(category): \(message)")
   }
 }

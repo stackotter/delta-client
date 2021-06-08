@@ -84,7 +84,7 @@ struct DeclareRecipesPacket: ClientboundPacket {
               case "campfire_cooking":
                 recipe = CampfireCookingRecipe(group: group, ingredient: ingredient, result: result, experience: experience, cookingTime: cookingTime)
               default:
-                Logger.warn("unknown heat recipe type: \(type.toString())")
+                log.warning("unknown heat recipe type: \(type.toString())")
                 break
             }
             if recipe != nil {
@@ -156,13 +156,13 @@ struct DeclareRecipesPacket: ClientboundPacket {
               case "crafting_special_suspiciousstew":
                 recipe = SuspiciousStewRecipe()
               default:
-                Logger.warn("unknown special recipe type: \(type.toString())")
+                log.warning("unknown special recipe type: \(type.toString())")
             }
             if let recipe = recipe {
               recipeRegistry.specialRecipes[recipeId] = recipe
             }
           default:
-            Logger.warn("unknown recipe type")
+            log.warning("unknown recipe type")
         }
       }
     }

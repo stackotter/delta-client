@@ -51,7 +51,7 @@ struct BossBarPacket: ClientboundPacket {
         let flags = packetReader.readUnsignedByte()
         action = .updateFlags(flags: flags)
       default:
-        Logger.warn("invalid boss bar action id")
+        log.warning("invalid boss bar action id")
         action = .remove
     }
   }

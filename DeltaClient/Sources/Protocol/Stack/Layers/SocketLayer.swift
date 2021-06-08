@@ -120,9 +120,9 @@ class SocketLayer: OutermostNetworkLayer {
   
   private func handleNWError(_ error: NWError) {
     if error == NWError.posix(.ECONNREFUSED) {
-      Logger.error("connection refused: '\(self.host):\(self.port)'")
+      log.error("connection refused: '\(self.host):\(self.port)'")
     } else if error == NWError.dns(-65554) {
-      Logger.error("server at '\(self.host):\(self.port)' possibly uses SRV records (unsupported)")
+      log.error("server at '\(self.host):\(self.port)' possibly uses SRV records (unsupported)")
     }
   }
 }

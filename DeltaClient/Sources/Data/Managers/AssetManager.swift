@@ -49,31 +49,31 @@ class AssetManager {
     // if version_urls.json doesn't exist download the contents from mojang
     let versionURLsFile = storageManager.absoluteFromRelative("version_urls.json")
     if !storageManager.fileExists(at: versionURLsFile) {
-      Logger.info("downloading versions manifest..")
+      log.debug("Downloading versions manifest")
       try downloadVersionURLs()
-      Logger.info("downloaded versions manifest")
+      log.debug("Downloaded versions manifest")
     }
     let downloadURLs = try JSON.fromURL(versionURLsFile)
     
     // download version metadata
-    Logger.info("downloading client jar metadata..")
+    log.debug("Downloading client jar metadata")
     guard let downloadURLString = downloadURLs.getString(forKey: Constants.versionString) else {
-      Logger.error("failed to find download url for version \(Constants.versionString) metadata json")
+      log.error("Failed to find download url for version \(Constants.versionString) metadata json")
       throw AssetError.noURLForVersion(Constants.versionString)
     }
     guard let downloadURL = URL(string: downloadURLString) else {
-      Logger.error("invalid client metadata download url for version \(Constants.versionString) in version_urls.json")
+      log.error("Invalid client metadata download url for version \(Constants.versionString) in version_urls.json")
       throw AssetError.invalidMetadataURL(version: Constants.versionString, url: downloadURLString)
     }
     let clientVersionMetadata = try JSON.fromURL(downloadURL)
     
     // get client jar download url
     guard let clientJarURLString = clientVersionMetadata.getJSON(forKey: "downloads")?.getJSON(forKey: "client")?.getString(forKey: "url") else {
-      Logger.error("invalid version json for \(Constants.versionString)")
+      log.error("Invalid version json for \(Constants.versionString)")
       throw AssetError.invalidVersionMetadata
     }
     guard let clientJarURL = URL(string: clientJarURLString) else {
-      Logger.error("invalid client jar download url")
+      log.error("Invalid client jar download url")
       throw AssetError.invalidClientJarURL(url: clientJarURLString)
     }
     
@@ -82,22 +82,22 @@ class AssetManager {
     let clientJarExtracted = FileManager.default.temporaryDirectory.appendingPathComponent("client", isDirectory: true)
     try FileManager.default.createDirectory(at: clientJarExtracted, withIntermediateDirectories: true, attributes: nil)
     do {
-      Logger.info("downloading client jar..")
+      log.debug("Downloading client jar")
       let clientJarData = try Data(contentsOf: clientJarURL)
       try clientJarData.write(to: clientJar)
     } catch {
-      Logger.error("failed to download client jar")
+      log.error("Failed to download client jar")
       throw AssetError.failedToDownloadClientJar(error)
     }
-    Logger.info("extracting client jar")
+    log.debug("Extracting client jar")
     do {
       Zip.addCustomFileExtension("jar")
       try Zip.unzipFile(clientJar, destination: clientJarExtracted, overwrite: true, password: nil)
     } catch {
-      Logger.error("failed to extract client jar with error: \(error)")
+      log.error("Failed to extract client jar with error: \(error)")
       throw AssetError.failedToExtractClientJar(error)
     }
-    Logger.info("extracted client jar")
+    log.debug("Extracted client jar")
     
     // copy assets from extracted jar to application support
     try FileManager.default.copyItem(at: clientJarExtracted.appendingPathComponent("assets"), to: assetsFolder)
@@ -113,7 +113,7 @@ class AssetManager {
     do {
       try blockPaletteJSON.write(to: blockPaletteFile)
     } catch {
-      Logger.error("failed to download pixlyzer block palette")
+      log.error("Failed to download pixlyzer block palette")
       throw AssetError.pixlyzerDownloadFailed(error)
     }
   }
@@ -124,7 +124,7 @@ class AssetManager {
     do {
       let versionManifestJson = try JSON.fromURL(versionManifestURL)
       guard let versionsArray = versionManifestJson.getArray(forKey: "versions") as? [[String: Any]] else {
-        Logger.error("failed to parse version manifest")
+        log.error("Failed to parse version manifest")
         throw AssetError.failedToParseManifest
       }
       var downloadURLs: [String: String] = [:] // maps versions to download urls
@@ -133,7 +133,7 @@ class AssetManager {
         
         guard let version = versionJson.getString(forKey: "id"),
               let downloadURL = versionJson.getString(forKey: "url") else {
-          Logger.error("failed to parse version manifest")
+          log.error("Failed to parse version manifest")
           throw AssetError.failedToParseManifest
         }
         downloadURLs[version] = downloadURL
@@ -144,7 +144,7 @@ class AssetManager {
         }
       }
     } catch {
-      Logger.error("failed to download/process version manifest: error")
+      log.error("Failed to download/process version manifest: error")
       throw AssetError.manifestDownloadFailed(error)
     }
   }

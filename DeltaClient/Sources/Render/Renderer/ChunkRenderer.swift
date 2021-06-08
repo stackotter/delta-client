@@ -27,7 +27,7 @@ class ChunkRenderer {
   func handle(_ event: World.Event.SetBlock) {
     // check if update is relevant
     if event.position.chunkPosition != position {
-      Logger.warn("Invalid SetBlock event sent to ChunkRenderer")
+      log.warning("Invalid SetBlock event sent to ChunkRenderer")
       return
     }
     
@@ -43,25 +43,25 @@ class ChunkRenderer {
     switch direction {
       case .north:
         if positionInNeighbour.z != 15 {
-          Logger.debug("Discarding neighbouring change to the \(direction)")
+          log.debug("Discarding neighbouring change to the \(direction)")
           return
         }
         affectedPosition.z = 0
       case .east:
         if positionInNeighbour.x != 0 {
-          Logger.debug("Discarding neighbouring change to the \(direction)")
+          log.debug("Discarding neighbouring change to the \(direction)")
           return
         }
         affectedPosition.x = 15
       case .south:
         if positionInNeighbour.z != 0 {
-          Logger.debug("Discarding neighbouring change to the \(direction)")
+          log.debug("Discarding neighbouring change to the \(direction)")
           return
         }
         affectedPosition.z = 15
       case .west:
         if positionInNeighbour.x != 15 {
-          Logger.debug("Discarding neighbouring change to the \(direction)")
+          log.debug("Discarding neighbouring change to the \(direction)")
           return
         }
         affectedPosition.x = 0
@@ -110,7 +110,7 @@ class ChunkRenderer {
         indexBuffer: buffers.indexBuffer,
         indexBufferOffset: 0)
     } else {
-      Logger.error("failed to prepare buffers for chunk at \(position.chunkX),\(position.chunkZ)")
+      log.error("failed to prepare buffers for chunk at \(position.chunkX),\(position.chunkZ)")
     }
   }
 }

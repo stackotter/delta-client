@@ -110,7 +110,7 @@ struct PacketReader {
   mutating func readChat() throws -> ChatComponent {
     let string = try readString()
     if string.count > 32767 {
-      Logger.warn("chat string of length \(string.count) is longer than max of 32767")
+      log.warning("chat string of length \(string.count) is longer than max of 32767")
     }
     do {
       let json = try JSON.fromString(string)

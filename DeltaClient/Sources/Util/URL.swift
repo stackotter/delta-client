@@ -19,11 +19,11 @@ extension URL {
       if let newURL = components.url {
         return newURL
       } else {
-        Logger.warn("failed to append query items to url: \(self.absoluteString)")
+        log.warning("failed to append query items to url: \(self.absoluteString)")
         return self
       }
     }
-    Logger.warn("failed to append query items to url: \(self.absoluteString)")
+    log.warning("failed to append query items to url: \(self.absoluteString)")
     return self
   }
 }

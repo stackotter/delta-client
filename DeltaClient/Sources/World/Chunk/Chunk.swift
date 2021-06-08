@@ -66,7 +66,7 @@ class Chunk {
       "Invalid block index passed to Chunk.setBlock(at:to:), index=\(index)")
     
     if getBlock(at: index) == newState {
-      Logger.trace("Ignoring attempt to set block to state it's already in")
+      log.trace("Ignoring attempt to set block to state it's already in")
       return
     }
     

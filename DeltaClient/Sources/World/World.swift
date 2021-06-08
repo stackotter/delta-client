@@ -108,7 +108,7 @@ class World {
     } else if let chunk = chunks[position.chunkPosition] {
       chunk.setBlock(at: position.relativeToChunk, to: state)
     } else {
-      Logger.warn("Cannet set block in non-existent chunk, chunkPosition=\(position.chunkPosition)")
+      log.warning("Cannet set block in non-existent chunk, chunkPosition=\(position.chunkPosition)")
     }
   }
   
@@ -124,7 +124,7 @@ class World {
     } else if let chunk = chunks[chunkPosition] {
       chunk.setBlock(at: position, to: newState)
     } else {
-      Logger.warn("Cannot set block in non-existent chunk, chunkPosition=\(chunkPosition)")
+      log.warning("Cannot set block in non-existent chunk, chunkPosition=\(chunkPosition)")
     }
   }
   
@@ -132,7 +132,7 @@ class World {
     if let chunk = chunks[position.chunkPosition] {
       return chunk.getBlock(at: position.relativeToChunk)
     } else {
-      Logger.warn("get block called for non existent chunk: \(position.chunkPosition)")
+      log.warning("get block called for non existent chunk: \(position.chunkPosition)")
       return 0 // air
     }
   }
@@ -159,7 +159,7 @@ class World {
         let chunk = try chunkData.unpack(blockPaletteManager: self.managers.blockPaletteManager)
         self.addChunk(chunk, at: chunkData.position)
       } catch {
-        Logger.error("Failed to unpack chunk at \(chunkData.position)")
+        log.error("Failed to unpack chunk at \(chunkData.position)")
       }
     }
   }

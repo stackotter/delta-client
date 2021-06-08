@@ -67,7 +67,7 @@ struct JSON {
       try data.write(to: url)
       return true
     } catch {
-      Logger.error("failed to write json to file `\(url.absoluteString)`")
+      log.error("failed to write json to file `\(url.absoluteString)`")
       return false
     }
   }

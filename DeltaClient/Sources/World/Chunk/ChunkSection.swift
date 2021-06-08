@@ -23,7 +23,7 @@ extension Chunk {
       if !palette.isEmpty { // indirect palette
         self.blocks = blockIds.map {
           if $0 >= palette.count {
-            Logger.warn("Indirect palette lookup failed: \($0) out of bounds for palette of length \(palette.count)")
+            log.warning("Indirect palette lookup failed: \($0) out of bounds for palette of length \(palette.count)")
             return 0
           }
           return palette[Int($0)]

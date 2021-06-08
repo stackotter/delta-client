@@ -44,14 +44,14 @@ class ServerPinger: Hashable, ObservableObject {
       var reader = packetReader
       if let packetState = connection.state.toPacketState() {
         guard let packetType = packetRegistry.getClientboundPacketType(withId: reader.packetId, andState: packetState) else {
-          Logger.debug("non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
+          log.debug("non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
           return
         }
         let packet = try packetType.init(from: &reader)
         try packet.handle(for: self)
       }
     } catch {
-      Logger.debug("failed to handle packet: \(error)")
+      log.debug("failed to handle packet: \(error)")
     }
   }
   
