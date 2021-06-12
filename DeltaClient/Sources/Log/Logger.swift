@@ -9,17 +9,16 @@ import Foundation
 import Puppy
 import Logging
 
-// create global logger
+/// The global DeltaClient logger
 let log = Logger.makePuppyLogger(logLevel: .trace)
 
 /// Utility for creating DeltaClient's global logger
 enum Logger {
   /**
    Creates a `Puppy` logger with an `OSLogger`, `ConsoleLogger` (if in a release build)
-   and a `FileRotationLogger` which logs to 'log/latest.log' in 'Application Support'
+   and a `FileRotationLogger` which logs to 'log/latest.log' in 'Application Support'.
    
    - Parameter logLevel: The initial log level for the `ConsoleLogger` to log at
-   
    - Returns: A `Puppy` instance
    */
   static func makePuppyLogger(logLevel: LogLevel) -> Puppy {

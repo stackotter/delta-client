@@ -19,7 +19,7 @@ class World {
   var age: Int = -1
   var downloadingTerrain: Bool = true
   
-  private var chunks: [ChunkPosition: Chunk] = [:]
+  private(set) var chunks: [ChunkPosition: Chunk] = [:]
   var lighting: [ChunkPosition: ChunkLighting] = [:]
   
   var chunkCount: Int {
@@ -105,10 +105,10 @@ class World {
         position: position,
         newState: state)
       eventBatch.add(event)
-    } else if let chunk = chunks[position.chunkPosition] {
+    } else if let chunk = chunks[position.chunk] {
       chunk.setBlock(at: position.relativeToChunk, to: state)
     } else {
-      log.warning("Cannet set block in non-existent chunk, chunkPosition=\(position.chunkPosition)")
+      log.warning("Cannet set block in non-existent chunk, chunkPosition=\(position.chunk)")
     }
   }
   
@@ -129,19 +129,29 @@ class World {
   }
   
   func getBlock(at position: Position) -> UInt16 {
-    if let chunk = chunks[position.chunkPosition] {
+    if let chunk = chunks[position.chunk] {
       return chunk.getBlock(at: position.relativeToChunk)
     } else {
-      log.warning("get block called for non existent chunk: \(position.chunkPosition)")
+      log.warning("get block called for non existent chunk: \(position.chunk)")
       return 0 // air
     }
   }
   
   // Chunk
   
-  /// Use with caution, it's safer to use World's other methods if possible
-  func getChunks() -> [ChunkPosition: Chunk] {
-    return chunks
+  func chunk(at chunkPosition: ChunkPosition) -> Chunk? {
+    return chunks[chunkPosition]
+  }
+  
+  func neighbours(ofChunkAt chunkPosition: ChunkPosition) -> [CardinalDirection: Chunk] {
+    let neighbourPositions = chunkPosition.allNeighbours
+    var neighbourChunks: [CardinalDirection: Chunk] = [:]
+    for (direction, neighbourPosition) in neighbourPositions {
+      if let neighbour = chunk(at: neighbourPosition) {
+        neighbourChunks[direction] = neighbour
+      }
+    }
+    return neighbourChunks
   }
   
   func addChunk(_ chunk: Chunk, at position: ChunkPosition, bypassBatching: Bool = false) {

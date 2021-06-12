@@ -7,30 +7,59 @@
 
 import Foundation
 import Metal
-import simd
 
 enum MeshError: LocalizedError {
   case failedToCreateBuffer
 }
 
-protocol Mesh {
-  var vertices: [Vertex] { get set }
-  var indices: [UInt32] { get set }
-  var uniforms: Uniforms { get set }
-
-  var vertexBuffer: MTLBuffer! { get set }
-  var indexBuffer: MTLBuffer! { get set }
-  var uniformBuffer: MTLBuffer! { get set }
+class Mesh {
+  /// The mesh's vertex data
+  var vertices: [Vertex] = []
+  /// The mesh's winding
+  var indices: [UInt32] = []
+  /// Holds the section's model to world transformation matrix
+  var uniforms = Uniforms()
   
-  var hasChanged: Bool { get set }
-}
-
-extension Mesh {
+  /// A cache of the mesh's buffers
+  private var buffers: MeshBuffers?
+  
+  /// Whether the mesh contains any geometry or not
   var isEmpty: Bool {
-    return vertices.isEmpty
+    return vertices.isEmpty || indices.isEmpty
   }
   
-  func createIndexBuffer(device: MTLDevice) throws -> MTLBuffer {
+  /**
+   Gets the vertex, index and uniforms buffers for the mesh.
+   
+   If the buffers are not yet generated they will be created and populated with the mesh's
+   current geometry. Otherwise, they are just returned from the private cache variable.
+   
+   - Parameter device: `MTLDevice` to create the buffers on.
+   - Returns: Three MTLBuffer's; a vertex buffer, an index buffer and a uniforms buffer.
+   */
+  func getBuffers(for device: MTLDevice) throws -> MeshBuffers {
+    if let buffers = buffers {
+      return buffers
+    }
+    
+    let vertexBuffer = try createVertexBuffer(device: device)
+    let indexBuffer = try createIndexBuffer(device: device)
+    let uniformsBuffer = try createUniformsBuffer(device: device)
+    
+    let buffers = MeshBuffers(
+      vertexBuffer: vertexBuffer,
+      indexBuffer: indexBuffer,
+      uniformsBuffer: uniformsBuffer)
+    self.buffers = buffers
+    return buffers
+  }
+  
+  /// Removes the cached buffers and forces them to be recreated next time they are requested.
+  func clearBufferCache() {
+    buffers = nil
+  }
+  
+  private func createIndexBuffer(device: MTLDevice) throws -> MTLBuffer {
     let indexBufferSize = MemoryLayout<UInt32>.stride * indices.count
     guard let buffer = device.makeBuffer(bytes: indices, length: indexBufferSize, options: [.storageModeShared]) else {
       throw MeshError.failedToCreateBuffer
@@ -39,7 +68,7 @@ extension Mesh {
     return buffer
   }
   
-  func createVertexBuffer(device: MTLDevice) throws -> MTLBuffer {
+  private func createVertexBuffer(device: MTLDevice) throws -> MTLBuffer {
     let vertexBufferSize = MemoryLayout<Vertex>.stride * vertices.count
     guard let buffer = device.makeBuffer(bytes: vertices, length: vertexBufferSize, options: [.storageModeShared]) else {
       throw MeshError.failedToCreateBuffer
@@ -48,32 +77,12 @@ extension Mesh {
     return buffer
   }
   
-  func createUniformBuffer(device: MTLDevice) throws -> MTLBuffer {
-    var uniforms = self.uniforms // mutable copy
+  private func createUniformsBuffer(device: MTLDevice) throws -> MTLBuffer {
     let uniformBufferSize = MemoryLayout<Uniforms>.stride
     guard let buffer = device.makeBuffer(bytes: &uniforms, length: uniformBufferSize, options: [.storageModeShared]) else {
       throw MeshError.failedToCreateBuffer
     }
-    buffer.label = "uniformBuffer"
+    buffer.label = "uniformsBuffer"
     return buffer
-  }
-  
-  mutating func createBuffers(device: MTLDevice) throws -> MeshBuffers {
-    // only remake the buffers if something has been changed
-    if hasChanged {
-      // TODO: have separate hasChanged for uniforms (they change a lot less often for chunks)
-      // TODO: reuse buffer for uniforms (they have a fixed size)
-      vertexBuffer = try createVertexBuffer(device: device)
-      indexBuffer = try createIndexBuffer(device: device)
-      uniformBuffer = try createUniformBuffer(device: device)
-      
-      hasChanged = false
-    }
-    
-    return MeshBuffers(
-      vertexBuffer: vertexBuffer,
-      indexBuffer: indexBuffer,
-      uniformBuffer: uniformBuffer
-    )
   }
 }

@@ -11,5 +11,5 @@ import Metal
 struct MeshBuffers {
   var vertexBuffer: MTLBuffer
   var indexBuffer: MTLBuffer
-  var uniformBuffer: MTLBuffer
+  var uniformsBuffer: MTLBuffer
 }

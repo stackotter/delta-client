@@ -57,6 +57,8 @@
 		7892880E261438A000F17DBB /* DeltaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780522A9261433A700079A01 /* DeltaClientTests.swift */; };
 		78928812261438A500F17DBB /* DeltaClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78052170261433A600079A01 /* DeltaClientUITests.swift */; };
 		789DD3C52633F32800FD7532 /* XboxLiveAuthenticationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789DD3C42633F32800FD7532 /* XboxLiveAuthenticationResponse.swift */; };
+		78A29CE22671F5830029C603 /* CubeGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A29CE12671F5830029C603 /* CubeGeometry.swift */; };
+		78A29CEA267227DA0029C603 /* ChunkSectionPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A29CE9267227DA0029C603 /* ChunkSectionPosition.swift */; };
 		78B6A1EB25FC588000CFE493 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 78B6A1EA25FC588000CFE493 /* Zip */; };
 		78BDCD7F266B092D004D7A63 /* EventBatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BDCD7E266B092D004D7A63 /* EventBatch.swift */; };
 		78C64CDD2625555C00375CBB /* AxisAlignedBoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C64CDC2625555B00375CBB /* AxisAlignedBoundingBox.swift */; };
@@ -140,7 +142,7 @@
 		78D91996261FB4CD00A4782F /* PlayerProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91848261FB4CC00A4782F /* PlayerProperty.swift */; };
 		78D91997261FB4CD00A4782F /* PlayerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91849261FB4CC00A4782F /* PlayerInfo.swift */; };
 		78D91998261FB4CD00A4782F /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9184C261FB4CC00A4782F /* Mesh.swift */; };
-		78D9199A261FB4CD00A4782F /* ChunkMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9184E261FB4CC00A4782F /* ChunkMesh.swift */; };
+		78D9199A261FB4CD00A4782F /* ChunkSectionMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9184E261FB4CC00A4782F /* ChunkSectionMesh.swift */; };
 		78D9199B261FB4CD00A4782F /* Vertex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D9184F261FB4CC00A4782F /* Vertex.swift */; };
 		78D9199C261FB4CD00A4782F /* BlockModelElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91851261FB4CC00A4782F /* BlockModelElement.swift */; };
 		78D9199D261FB4CD00A4782F /* BlockModelElementFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D91852261FB4CC00A4782F /* BlockModelElementFace.swift */; };
@@ -464,6 +466,8 @@
 		787F5C3D263405A5003B5782 /* XSTSAuthenticationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XSTSAuthenticationError.swift; sourceTree = "<group>"; };
 		7885C05D266C64470036B8F6 /* Uniforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uniforms.swift; sourceTree = "<group>"; };
 		789DD3C42633F32800FD7532 /* XboxLiveAuthenticationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XboxLiveAuthenticationResponse.swift; sourceTree = "<group>"; };
+		78A29CE12671F5830029C603 /* CubeGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubeGeometry.swift; sourceTree = "<group>"; };
+		78A29CE9267227DA0029C603 /* ChunkSectionPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkSectionPosition.swift; sourceTree = "<group>"; };
 		78BDCD7E266B092D004D7A63 /* EventBatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventBatch.swift; sourceTree = "<group>"; };
 		78C64CDC2625555B00375CBB /* AxisAlignedBoundingBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisAlignedBoundingBox.swift; sourceTree = "<group>"; };
 		78D1F89C2626471900AEE7AE /* Frustum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frustum.swift; sourceTree = "<group>"; };
@@ -547,7 +551,7 @@
 		78D91848261FB4CC00A4782F /* PlayerProperty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerProperty.swift; sourceTree = "<group>"; };
 		78D91849261FB4CC00A4782F /* PlayerInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerInfo.swift; sourceTree = "<group>"; };
 		78D9184C261FB4CC00A4782F /* Mesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mesh.swift; sourceTree = "<group>"; };
-		78D9184E261FB4CC00A4782F /* ChunkMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkMesh.swift; sourceTree = "<group>"; };
+		78D9184E261FB4CC00A4782F /* ChunkSectionMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunkSectionMesh.swift; sourceTree = "<group>"; };
 		78D9184F261FB4CC00A4782F /* Vertex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vertex.swift; sourceTree = "<group>"; };
 		78D91851261FB4CC00A4782F /* BlockModelElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockModelElement.swift; sourceTree = "<group>"; };
 		78D91852261FB4CC00A4782F /* BlockModelElementFace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockModelElementFace.swift; sourceTree = "<group>"; };
@@ -1224,7 +1228,8 @@
 			children = (
 				78D9184C261FB4CC00A4782F /* Mesh.swift */,
 				78513222262D7A980054268A /* MeshBuffers.swift */,
-				78D9184E261FB4CC00A4782F /* ChunkMesh.swift */,
+				78D9184E261FB4CC00A4782F /* ChunkSectionMesh.swift */,
+				78A29CE12671F5830029C603 /* CubeGeometry.swift */,
 			);
 			path = Mesh;
 			sourceTree = "<group>";
@@ -1665,6 +1670,7 @@
 			isa = PBXGroup;
 			children = (
 				78D9185E261FB4CC00A4782F /* ChunkPosition.swift */,
+				78A29CE9267227DA0029C603 /* ChunkSectionPosition.swift */,
 				78D91861261FB4CC00A4782F /* Chunk.swift */,
 				78D9185D261FB4CC00A4782F /* ChunkSection.swift */,
 				781829A4262A6F7E000F59B0 /* ChunkLighting.swift */,
@@ -2044,12 +2050,14 @@
 				78D91A85261FB4CE00A4782F /* Config.swift in Sources */,
 				78D9199C261FB4CD00A4782F /* BlockModelElement.swift in Sources */,
 				78D919FF261FB4CD00A4782F /* PlayerListHeaderAndFooterPacket.swift in Sources */,
+				78A29CEA267227DA0029C603 /* ChunkSectionPosition.swift in Sources */,
 				78756170264F2DE7006C9C36 /* OfflineAccount.swift in Sources */,
 				7824FC332662F67100414468 /* InputState.swift in Sources */,
 				78D91A55261FB4CE00A4782F /* PacketLayer.swift in Sources */,
 				78D91A80261FB4CE00A4782F /* LocaleManager.swift in Sources */,
 				78D919D8261FB4CD00A4782F /* PickItemPacket.swift in Sources */,
 				78D919E4261FB4CD00A4782F /* PlayerPositionAndRotationServerboundPacket.swift in Sources */,
+				78A29CE22671F5830029C603 /* CubeGeometry.swift in Sources */,
 				78D91A5F261FB4CE00A4782F /* StartupSequence.swift in Sources */,
 				78D919DC261FB4CD00A4782F /* AdvancementTabPacket.swift in Sources */,
 				78D91A2B261FB4CD00A4782F /* ChatMessageClientboundPacket.swift in Sources */,
@@ -2168,7 +2176,7 @@
 				78D91AA4261FB4E100A4782F /* EditServerView.swift in Sources */,
 				78D91A4D261FB4CD00A4782F /* EncryptionResponsePacket.swift in Sources */,
 				78D91A6D261FB4CE00A4782F /* LauncherProfile.swift in Sources */,
-				78D9199A261FB4CD00A4782F /* ChunkMesh.swift in Sources */,
+				78D9199A261FB4CD00A4782F /* ChunkSectionMesh.swift in Sources */,
 				78D91A17261FB4CD00A4782F /* TimeUpdatePacket.swift in Sources */,
 				78D9197F261FB4CD00A4782F /* Stopwatch.swift in Sources */,
 				78D9197C261FB4CD00A4782F /* CompressionUtil.swift in Sources */,
