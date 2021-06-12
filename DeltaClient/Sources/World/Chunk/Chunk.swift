@@ -8,7 +8,6 @@
 import Foundation
 
 class Chunk {
-  // constants
   static let width = 16
   static let depth = 16
   static let height = 256
@@ -16,13 +15,11 @@ class Chunk {
   static let numBlocks = height * blocksPerLayer
   static let numSections = 16
   
-  // chunk data
+  /// No-one really knows what this is for. Vanilla servers just send it.
   var heightMaps: NBTCompound
   var ignoreOldData: Bool
   var blockEntities: [BlockEntity]
   var sections: [Chunk.Section]
-  
-  var stopwatch = Stopwatch(mode: .summary, name: "chunk")
   
   // in the format that it is received
   var biomes: [UInt8]
@@ -32,8 +29,8 @@ class Chunk {
     ignoreOldData: Bool,
     biomes: [UInt8],
     sections: [Chunk.Section],
-    blockEntities: [BlockEntity])
-  {
+    blockEntities: [BlockEntity]
+  ) {
     self.heightMaps = heightMaps
     self.ignoreOldData = ignoreOldData
     self.biomes = biomes
@@ -73,6 +70,10 @@ class Chunk {
     let sectionIndex = index / Section.numBlocks
     let sectionBlockIndex = index % Section.numBlocks
     sections[sectionIndex].setBlockState(at: sectionBlockIndex, to: newState)
+  }
+  
+  func setSection(atIndex index: Int, to section: Section) {
+    sections[index] = section
   }
   
   func isValidBlockIndex(_ index: Int) -> Bool {

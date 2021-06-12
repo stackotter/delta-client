@@ -7,9 +7,7 @@
 
 import Foundation
 
-// stores the raw bytes the chunk was sent as to be decoded later
-// this is because chunks aren't sent in a nice order and take a while to decode
-// so they're stored as chunk data until we can start unpacking them (in order of distance from player)
+/// A temporary storage format for chunks before they are unpacked
 struct ChunkData {
   var position: ChunkPosition
   
@@ -17,7 +15,7 @@ struct ChunkData {
   // chunkX and chunkZ have already been read
   var reader: PacketReader
   
-  func unpack(blockPaletteManager: BlockPaletteManager) throws -> Chunk {
+  func unpack(blockPaletteManager: BlockPaletteManager) throws -> UnpackedChunkData {
     do {
       var stopwatch = Stopwatch(mode: .summary)
       stopwatch.startMeasurement("chunk unpack")
@@ -59,52 +57,57 @@ struct ChunkData {
           let blockEntity = BlockEntity(position: position, identifier: identifier, nbt: blockEntityNBT)
           blockEntities.append(blockEntity)
         } catch {
-          log.warning("error decoding block entities: \(error.localizedDescription)")
+          log.warning("Error decoding block entities: \(error.localizedDescription)")
         }
       }
       stopwatch.stopMeasurement("chunk unpack")
       stopwatch.summary()
       
-      return Chunk(
+      return UnpackedChunkData(
+        chunkPosition: position,
+        fullChunk: fullChunk,
+        primaryBitMask: primaryBitMask,
         heightMaps: heightMaps,
         ignoreOldData: ignoreOldData,
         biomes: biomes,
         sections: sections,
         blockEntities: blockEntities)
     } catch {
-      log.warning("failed to unpack chunk: \(error.localizedDescription)")
+      log.warning("Failed to unpack chunk: \(error.localizedDescription)")
       throw error
     }
   }
   
   func readChunkSections(_ packetReader: inout PacketReader, primaryBitMask: Int) -> [Chunk.Section] {
     var sections: [Chunk.Section] = []
-    for i in 0..<16 { // TODO_LATER: 16 hardcoded here could break future versions
+    for i in 0..<Chunk.numSections {
       if primaryBitMask >> i & 0x1 == 0x1 {
         let blockCount = packetReader.readShort()
         let bitsPerBlock = packetReader.readUnsignedByte()
         
+        // read palette if present
         var palette: [UInt16] = []
-        if bitsPerBlock <= 8 { // use indirect palette (otherwise direct palette)
+        if bitsPerBlock <= 8 {
           let paletteLength = packetReader.readVarInt()
           for _ in 0..<paletteLength {
             palette.append(UInt16(packetReader.readVarInt()))
           }
         }
         
+        // read block states
         let dataArrayLength = packetReader.readVarInt()
         var dataArray: [UInt64] = []
         for _ in 0..<dataArrayLength {
           dataArray.append(UInt64(packetReader.buffer.readLong(endian: .big)))
         }
-        
         var blocks: [UInt16] = [UInt16](repeating: 0, count: 4096)
-        unpack_chunk(&dataArray, Int32(dataArray.count), Int32(bitsPerBlock), &blocks)
+        unpack_long_array(&dataArray, Int32(dataArray.count), Int32(bitsPerBlock), &blocks)
         
         let section = Chunk.Section(blockIds: blocks, palette: palette, blockCount: blockCount)
         sections.append(section)
       } else {
-        let section = Chunk.Section() // empty section
+        // empty section
+        let section = Chunk.Section()
         sections.append(section)
       }
     }

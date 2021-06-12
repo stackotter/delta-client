@@ -9,9 +9,13 @@ import Foundation
 import MetalKit
 import simd
 
+// TODO: Error enums should all have their own files
+
 enum WorldRendererError: LocalizedError {
   case failedToCreateUniformBuffer
 }
+
+// TODO: add documentation
 
 class WorldRenderer {
   var pipelineState: MTLRenderPipelineState
@@ -81,7 +85,7 @@ class WorldRenderer {
   }
   
   func handle(_ events: [Event]) {
-    var updatedSections: Set<ChunkSectionPosition> = []
+    var sectionsToUpdate: Set<ChunkSectionPosition> = []
     
     events.forEach { event in
       switch event {
@@ -89,15 +93,21 @@ class WorldRenderer {
           handle(event)
         case let event as World.Event.RemoveChunk:
           handle(event)
+        case let chunkUpdate as World.Event.UpdateChunk:
+          chunkUpdate.data.presentSections.forEach { sectionIndex in
+            let sectionPosition = ChunkSectionPosition(chunkUpdate.position, sectionY: sectionIndex)
+            let neighbours = sectionsNeighbouring(sectionAt: sectionPosition)
+            sectionsToUpdate.formUnion(neighbours)
+          }
         case let blockUpdate as World.Event.SetBlock:
           let affectedSections = sectionsAffected(by: blockUpdate)
-          updatedSections.formUnion(affectedSections)
+          sectionsToUpdate.formUnion(affectedSections)
         default:
           break
       }
     }
     
-    updatedSections.forEach { section in
+    sectionsToUpdate.forEach { section in
       if let chunkRenderer = chunkRenderers[section.chunk] {
         chunkRenderer.handleSectionUpdate(at: section.sectionY)
       }
@@ -181,6 +191,36 @@ class WorldRenderer {
     return affectedSections
   }
   
+  func sectionsNeighbouring(sectionAt sectionPosition: ChunkSectionPosition) -> [ChunkSectionPosition] {
+    var northNeighbour = sectionPosition
+    northNeighbour.sectionZ -= 1
+    var eastNeighbour = sectionPosition
+    eastNeighbour.sectionX += 1
+    var southNeighbour = sectionPosition
+    southNeighbour.sectionZ += 1
+    var westNeighbour = sectionPosition
+    westNeighbour.sectionX -= 1
+    var upNeighbour = sectionPosition
+    upNeighbour.sectionY += 1
+    var downNeighbour = sectionPosition
+    downNeighbour.sectionY -= 1
+    
+    var neighbours = [
+      northNeighbour,
+      eastNeighbour,
+      southNeighbour,
+      westNeighbour]
+    
+    if upNeighbour.sectionY < Chunk.numSections {
+      neighbours.append(upNeighbour)
+    }
+    if downNeighbour.sectionY >= 0 {
+      neighbours.append(downNeighbour)
+    }
+    
+    return neighbours
+  }
+  
   func getNeighbourRenderers(of renderer: ChunkRenderer) -> [CardinalDirection: ChunkRenderer] {
     var neighbourRenderers: [CardinalDirection: ChunkRenderer] = [:]
     renderer.chunkPosition.allNeighbours.forEach { direction, neighbourPosition in
@@ -222,9 +262,24 @@ class WorldRenderer {
             if chunkRenderer.sectionFrozen(at: section.sectionY) {
               return false
             }
-          } else {
-            log.warning("Ignoring block update at \(blockUpdate.position) for non-existent chunk at \(section.chunk)")
-            return false
+          }
+        }
+        return true
+      case let chunkUpdate as World.Event.UpdateChunk:
+        if let chunkRenderer = chunkRenderers[chunkUpdate.position] {
+          let neighbourRenderers = getNeighbourRenderers(of: chunkRenderer)
+          for sectionIndex in chunkUpdate.data.presentSections {
+            for (_, renderer) in neighbourRenderers {
+              if renderer.sectionFrozen(at: sectionIndex) {
+                return false
+              }
+            }
+            if
+              chunkRenderer.sectionFrozen(at: sectionIndex - 1) ||
+              chunkRenderer.sectionFrozen(at: sectionIndex + 1)
+            {
+              return false
+            }
           }
         }
         return true

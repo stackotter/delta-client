@@ -6,7 +6,11 @@
 2. [x] thread safety in chunk loading, preparing and rendering
 3. [x] complete rendering restructure
 4. [x] consistent chunk loading on higher render distance default generation worlds
-5. [ ] use lighting data sent from server
+5. [x] rewrite mesh generation
+6. [x] support chunk resend updates (for tnt)
+7. [ ] chunk section culling
+8. [ ] use lighting data sent from server
+9. [ ] rewrite block model loading
 
 ## UI
 

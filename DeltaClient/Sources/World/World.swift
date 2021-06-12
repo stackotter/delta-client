@@ -90,6 +90,8 @@ class World {
         setBlock(at: event.position, to: event.newState, bypassBatching: true)
       case let event as Event.AddChunk:
         addChunk(event.chunk, at: event.position, bypassBatching: true)
+      case let event as Event.UpdateChunk:
+        updateChunk(at: event.position, with: event.data, bypassBatching: true)
       case let event as Event.RemoveChunk:
         removeChunk(at: event.position, bypassBatching: true)
       default:
@@ -155,19 +157,45 @@ class World {
   }
   
   func addChunk(_ chunk: Chunk, at position: ChunkPosition, bypassBatching: Bool = false) {
-    let event = Event.AddChunk(position: position, chunk: chunk)
     if batchingEnabled && !bypassBatching {
+      let event = Event.AddChunk(position: position, chunk: chunk)
       eventBatch.add(event)
     } else {
       chunks[position] = chunk
     }
   }
   
+  func updateChunk(at position: ChunkPosition, with data: UnpackedChunkData, bypassBatching: Bool = false) {
+    if batchingEnabled && !bypassBatching {
+      let event = Event.UpdateChunk(position: position, data: data)
+      eventBatch.add(event)
+    } else {
+      if let chunk = chunk(at: position) {
+        chunk.blockEntities = data.blockEntities
+        chunk.heightMaps = data.heightMaps
+        chunk.ignoreOldData = data.ignoreOldData
+        data.presentSections.forEach { sectionIndex in
+          chunk.setSection(atIndex: sectionIndex, to: data.sections[sectionIndex])
+        }
+      }
+    }
+  }
+  
   func addChunkData(_ chunkData: ChunkData) {
     chunkThread.async {
       do {
-        let chunk = try chunkData.unpack(blockPaletteManager: self.managers.blockPaletteManager)
-        self.addChunk(chunk, at: chunkData.position)
+        let unpackedChunkData = try chunkData.unpack(blockPaletteManager: self.managers.blockPaletteManager)
+        if self.chunks.keys.contains(unpackedChunkData.chunkPosition) {
+          self.updateChunk(at: unpackedChunkData.chunkPosition, with: unpackedChunkData)
+        } else {
+          let chunk = Chunk(
+            heightMaps: unpackedChunkData.heightMaps,
+            ignoreOldData: unpackedChunkData.ignoreOldData,
+            biomes: unpackedChunkData.biomes,
+            sections: unpackedChunkData.sections,
+            blockEntities: unpackedChunkData.blockEntities)
+          self.addChunk(chunk, at: unpackedChunkData.chunkPosition)
+        }
       } catch {
         log.error("Failed to unpack chunk at \(chunkData.position)")
       }

@@ -1,5 +1,5 @@
 //
-//  chunkunpack.c
+//  unpack_long_array.c
 //  DeltaClient
 //
 //  Created by Rohan van Klinken on 1/3/21.
@@ -7,9 +7,9 @@
 
 #include <stdio.h>
 #include <time.h>
-#include "chunkunpack.h"
+#include "unpack_long_array.h"
 
-void unpack_chunk(unsigned long long longs[], int num_longs, int bitsPerBlock, unsigned short * blocks) {
+void unpack_long_array(unsigned long long longs[], int num_longs, int bitsPerBlock, unsigned short * blocks) {
   unsigned short state;
   
   int index;
@@ -19,12 +19,13 @@ void unpack_chunk(unsigned long long longs[], int num_longs, int bitsPerBlock, u
   int blockNumber = 0;
   
   // TODO: check number of longs is enough
-
+  
+  int blocksPerLong = 64 / bitsPerBlock;
   for (int y = 0; y < 16; y++) {
     for (int z = 0; z < 16; z++) {
       for (int x = 0; x < 16; x++) {
-        index = blockNumber / (64 / bitsPerBlock);
-        offset = (blockNumber % (64 / bitsPerBlock)) * bitsPerBlock;
+        index = blockNumber / blocksPerLong;
+        offset = (blockNumber % blocksPerLong) * bitsPerBlock;
         
         state = (unsigned short)(longs[index] >> offset);
         state &= mask;
