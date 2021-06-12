@@ -31,8 +31,7 @@ struct AxisAlignedBoundingBox {
       bbl,
       bbr,
       tbl,
-      tbr
-    ]
+      tbr]
   }
 }
 
@@ -41,12 +40,21 @@ extension AxisAlignedBoundingBox {
     self.position = [
       Float(chunkPosition.chunkX * Chunk.width),
       0.0,
-      Float(chunkPosition.chunkZ * Chunk.depth)
-    ]
+      Float(chunkPosition.chunkZ * Chunk.depth)]
     self.size = [
       Float(Chunk.width),
       Float(Chunk.height),
-      Float(Chunk.depth)
-    ]
+      Float(Chunk.depth)]
+  }
+  
+  init(forChunkSectionAt chunkSectionPosition: ChunkSectionPosition) {
+    self.position = [
+      Float(chunkSectionPosition.sectionX * Chunk.Section.width),
+      Float(chunkSectionPosition.sectionY * Chunk.Section.height),
+      Float(chunkSectionPosition.sectionZ * Chunk.Section.depth)]
+    self.size = [
+      Float(Chunk.Section.width),
+      Float(Chunk.Section.height),
+      Float(Chunk.Section.depth)]
   }
 }

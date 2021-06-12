@@ -370,7 +370,7 @@ class WorldRenderer {
     
     // render chunks
     renderersToRender.forEach { chunkRenderer in
-      chunkRenderer.render(to: renderEncoder, with: device)
+      chunkRenderer.render(to: renderEncoder, with: device, and: camera)
     }
   }
 }

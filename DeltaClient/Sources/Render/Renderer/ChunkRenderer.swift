@@ -126,9 +126,12 @@ class ChunkRenderer {
   }
   
   /// Renders this renderer's chunk
-  func render(to encoder: MTLRenderCommandEncoder, with device: MTLDevice) {
+  func render(to encoder: MTLRenderCommandEncoder, with device: MTLDevice, and camera: Camera) {
     sectionMeshesAccessQueue.sync {
       for (sectionY, sectionMesh) in sectionMeshes where !sectionMesh.isEmpty {
+        if !camera.isChunkSectionVisible(at: ChunkSectionPosition(chunkPosition, sectionY: sectionY)) {
+          continue
+        }
         if let buffers = try? sectionMesh.getBuffers(for: device) {
           encoder.setVertexBuffer(buffers.vertexBuffer, offset: 0, index: 0)
           encoder.setVertexBuffer(buffers.uniformsBuffer, offset: 0, index: 2)
