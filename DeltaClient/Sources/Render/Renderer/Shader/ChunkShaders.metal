@@ -36,7 +36,7 @@ struct ChunkUniforms
   float4x4 modelToWorld;
 };
 
-constexpr sampler textureSampler (mag_filter::nearest, min_filter::nearest);
+constexpr sampler textureSampler (mag_filter::nearest, min_filter::nearest, mip_filter::linear);
 
 vertex RasteriserData chunkVertexShader(uint vertexId [[vertex_id]], constant Vertex *vertices [[buffer(0)]],
                                         constant WorldUniforms &worldUniforms [[buffer(1)]],

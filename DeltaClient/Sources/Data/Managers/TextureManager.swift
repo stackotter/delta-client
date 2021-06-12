@@ -71,6 +71,7 @@ class TextureManager {
     textureDescriptor.pixelFormat = .bgra8Unorm
     textureDescriptor.width = 16
     textureDescriptor.height = 16
+    textureDescriptor.mipmapLevelCount = 5 // TODO: don't hardcode mipmap levels
     
     let textureArray = metalDevice.makeTexture(descriptor: textureDescriptor)!
     
@@ -112,6 +113,22 @@ class TextureManager {
         bytesPerRow: bytesPerRow,
         bytesPerImage: bytesPerRow * height
       )
+    }
+    
+    if let commandQueue = metalDevice.makeCommandQueue() {
+      if let commandBuffer = commandQueue.makeCommandBuffer() {
+        if let blitCommandEncoder = commandBuffer.makeBlitCommandEncoder() {
+          blitCommandEncoder.generateMipmaps(for: textureArray)
+          blitCommandEncoder.endEncoding()
+          commandBuffer.commit()
+        } else {
+          log.error("Failed to create blit command encoder to create mipmaps")
+        }
+      } else {
+        log.error("Failed to create command buffer to create mipmaps")
+      }
+    } else {
+      log.error("Failed to create command queue to create mipmaps")
     }
     
     return textureArray

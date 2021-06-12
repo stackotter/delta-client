@@ -38,7 +38,7 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
     let fovDegrees: Float = 90
     let fovRadians = fovDegrees / 180 * Float.pi
     camera = Camera()
-    camera.fovY = fovRadians
+    camera.setFovY(fovRadians)
     
     // setup textures
     blockArrayTexture = client.managers.textureManager.createArrayTexture(metalDevice: device)
@@ -100,8 +100,8 @@ class RenderCoordinator: NSObject, MTKViewDelegate {
     
     // update camera parameters
     let aspect = getAspectRatio(of: view)
-    camera.aspect = aspect
-    camera.position = client.server.player.getEyePositon().vector
+    camera.setAspect(aspect)
+    camera.setPosition(client.server.player.getEyePositon().vector)
     camera.setRotation(playerLook: client.server.player.look)
     
     // render

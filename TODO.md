@@ -8,15 +8,19 @@
 4. [x] consistent chunk loading on higher render distance default generation worlds
 5. [x] rewrite mesh generation
 6. [x] support chunk resend updates (for tnt)
-7. [ ] chunk section culling
+7. [x] chunk section culling
 8. [ ] use lighting data sent from server
-9. [ ] rewrite block model loading
+9. [x] mip maps
+10. [ ] rewrite block model loading
 
 ## UI
 
 - [x] fix ui consistency
 - [x] use environment object to pass view state around
 - [ ] fix dismissing error screens
+- [ ] make wrapper view for adding titles
+- [ ] create swiftui previews for all views
+- [ ] make proper alert system (for popup errors)?
 
 ## Networking
 
@@ -29,7 +33,7 @@
 - [ ] create protocol definition file
 - [ ] fix error handling for mojang api (probably with event manager) (at the moment the errors are silent)
 - [ ] shutdown networking properly when leaving server
-  - [ ] teardown server and client objects properly
+  - [ ] teardown server and client objects properly (or just avoid creating reference cycles)
 - [ ] get new chunks receiving when player is moved
 - [ ] auto-respawn
 
@@ -67,6 +71,8 @@
 - [x] completely refactor
 - [x] fix face culling between chunks (could possibly make get neighbourBlockStates function to make a less complex solution than last time)
 - [ ] use new async/await for concurrency in rendering
+- [x] mip maps
+- [ ] split opaque and translucent textures into separate texture arrays to fix mip map issues
 
 ## Block models
 
@@ -86,20 +92,19 @@
 - [ ] piston textures
 - [ ] fences with block on top don't render? (fence posts at least)
 - [ ] top half of door doesn't render from inside of house
-- [ ] fix most of the above issues and then rewrite block model loading
+- [ ] rewrite block model loading and fix all the above issues while i'm at it hopefully
 - [ ] potentially use the swift-numerics library for approximate equality and stuff
 
 ## Chunk preparing
 
-- [ ] optimise by replacing the slowest parts with c probably lol
-- [ ] fix grass block overlay render order (hopefully this is fixed when i implement the new chunk meshing system)
+- [x] optimise by replacing the slowest parts with c probably lol
+- [x] fix grass block overlay render order (hopefully this is fixed when i implement the new chunk meshing system)
 - [ ] split translucent blocks into a separate palette? or at least have a nice way of knowing if a block counts as translucent, transparent or opaque
 - [ ] split translucent blocks into a separate mesh type (for all the resorting stuff)?
-- [ ] make a generic cubemesh object? that has adding elements and stuff so that it can be reused for entities later?
 - [x] fix chunk preparing order in new rendering system (it doesn't reevaluate the order of chunks to prepare when the player turns around, could possibly fix this by only allowing 3 frozen chunks at a time and re-evaluating chunk order after every 3?)
 - [x] fix multiblock changes
-- [ ] handle chunk updates caused by things like tnt that just resend part of the affected chunk instead of using a multi-block change
-- [ ] rewrite meshing system and give up on mesh editing (for now)
+- [x] handle chunk updates caused by things like tnt that just resend part of the affected chunk instead of using a multi-block change
+- [x] rewrite meshing system and give up on mesh editing (for now)
 
 ## Memory
 
@@ -144,9 +149,6 @@
 - [ ] create logging guidelines and conform to them (like about what log levels to use when)
 - [ ] create error guidelines and conform to them (like about when to throw errors and when to return nil and where to put error enums)
 - [ ] use american spellings
-- [ ] make wrapper view for adding titles
-- [ ] create swiftui previews for all views
-- [ ] make proper alert system (for popup errors)
 - [ ] use enums and extensions of those enums to do namespacing (instead of a flat namespace)
 - [x] refactor rendering completely to be more oop style and cleaner (hopefully optimising it a bit along the way too)
 - [ ] make most of the managers singletons where possible (hopefully get rid of Managers)

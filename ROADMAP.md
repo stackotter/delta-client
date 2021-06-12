@@ -54,6 +54,7 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
   - complete redesigned rendering system
   - animated textures
   - frustum culling
+  - mip maps
 - movements
   - basic physics
   - basic input system
@@ -77,16 +78,17 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
 - [x] order chunks based on distance from player when generating meshes
 - [x] order chunks based off frustum as well
 - [x] basic shading (face normal based) (bake light levels into block models)
+- [x] mip maps
 - [ ] lighting
 - [ ] animated textures
-- [ ] base chunk bounding box off highest and lowest blocks
 - [ ] fix gpu ram usage (clear buffers when not being used, possibly use private mode buffers, possibly use a big default size buffer and transfer things through that)
 - [ ] fix indices (either use 6 vertices to a face or do the fancy shader thing from before (adjusting the vertex indices))
 - [ ] optimise chunk mesh preparation
-- [ ] possibly use section based rendering instead of chunk based
+- [ ] translucency support
+- [x] possibly use section based rendering instead of chunk based
 - [x] basic multichunk rendering
 - [x] fix hypixel chunk loading
-- [ ] fix grass block sides
+- [x] fix grass block sides
 - [ ] implement rescale
 - [ ] random block variants (that match vanilla)
 - [x] frustum culling for chunks

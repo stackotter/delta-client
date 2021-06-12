@@ -27,31 +27,49 @@ struct Camera {
   /// This camera's rotation aroudn the y axis (yaw).
   private(set) var yRot: Float = 0
   
+  private(set) var frustum: Frustum?
+  
   /// Sets this camera's vertical FOV. Horizontal FOV is calculated from vertical FOV and aspect ratio.
   mutating func setFovY(_ fovY: Float) {
     self.fovY = fovY
+    recalculateFrustum()
   }
   
   /// Sets this camera's clipping planes.
   mutating func setClippingPlanes(near: Float, far: Float) {
     nearDistance = near
     farDistance = far
+    recalculateFrustum()
   }
   
   /// Sets this camera's aspect ratio.
   mutating func setAspect(_ aspect: Float) {
     self.aspect = aspect
+    recalculateFrustum()
   }
   
   /// Sets this camera's position in world coordinates.
   mutating func setPosition(_ position: simd_float3) {
     self.position = position
+    recalculateFrustum()
   }
   
   /// Sets the rotation of this camera in radians.
   mutating func setRotation(xRot: Float, yRot: Float) {
     self.xRot = xRot
     self.yRot = yRot
+    recalculateFrustum()
+  }
+  
+  /// Invalidates the cached view frustum
+  private mutating func recalculateFrustum() {
+    frustum = calculateFrustum()
+  }
+  
+  /// Calculates the camera's frustum from its parameters
+  private func calculateFrustum() -> Frustum {
+    let worldToClip = getWorldToClipMatrix()
+    return Frustum(worldToClip: worldToClip)
   }
   
   /// Faces this camera in the direction described by a `PlayerRotation`.
@@ -76,10 +94,13 @@ struct Camera {
     return worldToCamera * cameraToClip
   }
   
-  /// Returns this camera's frustum. The frustum is cached until this camera's parameters are changed.
+  /// Returns this camera's frustum. The frustum is cached until the camera's parameters are changed.
   func getFrustum() -> Frustum {
-    let worldToClip = getWorldToClipMatrix()
-    return Frustum(worldToClip: worldToClip)
+    if let frustum = frustum {
+      return frustum
+    } else {
+      return calculateFrustum()
+    }
   }
   
   /// Determine if the specified chunk is visible from this camera.
