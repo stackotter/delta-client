@@ -62,6 +62,7 @@ Here's how the client currently performs when run on my 2020 dual-core Intel i5 
     - [x] Multiple chunks
     - [ ] Lighting
     - [ ] Animated textures (e.g. lava)
+    - [ ] Translucency
     - [ ] Fluids (lava and water)
     - [ ] Block entities (e.g. chests)
     - [x] Chunk culling
@@ -72,7 +73,7 @@ Here's how the client currently performs when run on my 2020 dual-core Intel i5 
     - [ ] Bossbars
     - [ ] Scoreboard
     - [ ] Health, hunger and experience
-  - [ ] Items
+  - [ ] Items (like in the inventory and hotbar)
   - [ ] Entities
     - [ ] Basic entity rendering (just coloured cubes)
     - [ ] Render entity models
