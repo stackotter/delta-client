@@ -55,19 +55,17 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
   - animated textures
   - frustum culling
   - mip maps
+  - proper tints (redstone, leaves, water and grass etc.)
+  - fluids
+  - proper transparency and translucency rendering
 - movements
-  - basic physics
   - basic input system
   - basic spectator mode movement (freecam)
 - ui
-  - cleaner ui code
-  - cleaner ui
+  - cleaner ui and ui code
   - edit server list screen
   - accounts screen
-- accounts
-  - multiaccounting (allow easily switching between accounts)
-  - mojang accounts
-  - offline account
+- multi-accounting (allow easily switching between accounts)
 - improved memory usage
 
 ### Todo
@@ -79,12 +77,15 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
 - [x] order chunks based off frustum as well
 - [x] basic shading (face normal based) (bake light levels into block models)
 - [x] mip maps
+- [ ] rewrite block model loading system
 - [ ] lighting
 - [ ] animated textures
 - [ ] fix gpu ram usage (clear buffers when not being used, possibly use private mode buffers, possibly use a big default size buffer and transfer things through that)
 - [ ] fix indices (either use 6 vertices to a face or do the fancy shader thing from before (adjusting the vertex indices))
 - [ ] optimise chunk mesh preparation
-- [ ] translucency support
+- [ ] proper transparent and translucent rendering
+- [ ] non-transparent leaves for now (better performance)
+- [ ] reduce cpu time for frames (gpu frame time is well below 16ms, cpu is taking up the majority of the time each frame)
 - [x] possibly use section based rendering instead of chunk based
 - [x] basic multichunk rendering
 - [x] fix hypixel chunk loading
@@ -98,8 +99,7 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
 - [x] create a physics loop
   - [x] make a loop that runs at a consistent interval
   - [x] add basic physics simulation
-- [ ] hook up input system to send packets to server
-- [ ] add input settings (mouse sensitivity and keymappings)
+- [ ] add input configuration (mouse sensitivity and keymappings)
 - [x] add basis for multi-accounting
   - [x] config
   - [x] login code

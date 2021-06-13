@@ -2442,8 +2442,9 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = "demo 2";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.stackotter.delta-client";
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.stackotter.delta-client";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "DeltaClient/Sources/Util/C/bridging-header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -2473,8 +2474,9 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = "demo 2";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.stackotter.delta-client";
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.stackotter.delta-client";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "DeltaClient/Sources/Util/C/bridging-header.h";
 				SWIFT_VERSION = 5.0;
 			};

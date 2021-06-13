@@ -1,10 +1,18 @@
+# Todo
+
+I kind of just put current todos here and also things that I'm putting off until later. But if you just want to know how development is going the roadmap in the README will give you a better overall idea of how complete the project is. And `ROADMAP.md` contains more details on planned releases and stuff. This file is really just for me to keep a whole mess of todos and reminders in.
+
 ## Priorities
 
-1. [ ] rewrite block model loading
-2. [ ] properly handle transparency
-3. [ ] properly support translucency
-4. [ ] fix frustum culling lagging behind actual view
-5. [ ] implement proper lighting
+1. [ ] reduce cpu time for rendering (gpu time is around 8ms whereas cpu time is around 16ms)
+2. [ ] optimise chunk mesh preparation
+3. [ ] fix memory loops (client or server or something like that is retained after leaving server)
+4. [ ] clean up WorldRenderer
+5. [ ] fix frustum culling lagging behind actual view
+6. [ ] rewrite block model loading
+7. [ ] properly render transparency
+8. [ ] properly render translucency
+9. [ ] implement proper lighting
 
 ## UI
 
@@ -12,6 +20,7 @@
 - [ ] make wrapper view for adding titles
 - [ ] create swiftui previews for all views
 - [ ] make proper alert system (for popup errors)?
+- [ ] fix bug that lets you initial launch the client and then doesn't get you to add an account
 
 ## Networking
 
@@ -41,6 +50,7 @@
 
 - [ ] look into using private storage instead of shared for vertex buffers
 - [ ] animated textures
+- [ ] lighting
 - [ ] possibly remove need for indices buffers (either use 6 vertices to a face or do the fancy shader thing from before so that all the index buffers aren't needed anymore)
 - [ ] use face normals for consistent block shading
 - [ ] use new async/await for concurrency in rendering
