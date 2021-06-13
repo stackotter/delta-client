@@ -1,6 +1,6 @@
 # Minecraft Delta Client - Changing the meaning of speed
 
-> An open source rewrite of Minecraft Java Edition written in Swift for macOS
+An open source rewrite of Minecraft Java Edition written in Swift for macOS.
 
 ## Tl;dr
 
@@ -20,7 +20,7 @@ At the moment I am not accepting contributions to this repository. This is still
 
 ## Discord [![Discord](https://img.shields.io/discord/851058836776419368.svg?label=&logo=discord&logoColor=ffffff&color=5C5C5C&labelColor=6A7EC2)](https://discord.gg/xZPyDbmR6k)
 
-If you need help with something, want to talk with me or just like the project enough, feel free to join the community on [Discord](https://discord.gg/xZPyDbmR6k)
+If you want to have a say in the development of the client or have any questions, feel free to join the community on [Discord](https://discord.gg/xZPyDbmR6k)
 
 ## Metrics
 
@@ -112,26 +112,24 @@ Once both of these versions are implemented, my plan is to add support for the f
 ## Installation
 
 1. Download the latest release from the releases page
-2. Unzip the download and open the application inside
+2. Unzip the download (if it doesn't automatically do so) and open the app inside
 3. You will get a security alert, click ok
-4. Open System Preferences and navigate to 'Security & Privacy', and then to the 'General' tab
-5. There should be a thing saying '"DeltaClient" was blocked from use...', click 'Open Anyway'
-6. You should get another pop-up, click 'Open'
-7. Wait for it to download and process the requirec assets (this only has to happen once and should take around 40s with a mediocre internet speed)
-8. You can move DeltaClient to your Applications folder for ease of use if you want
+4. Right click the app and click open
+5. You should get another pop-up, click 'Open'
+6. Wait for it to download and process the required assets (this only has to happen once and should take around 40s with a mediocre internet speed)
+7. You can move DeltaClient to your Applications folder for ease of use if you want
 
 ## Usage
 
-To try out the client follow the installation instructions and then add any server's you want to connect to. The servers must be 1.16.1 as this is the only version supported right now.
+To start a test server download a 1.16.1 server jar from [here](https://mcversions.net/download/1.16.1). Then in Terminal type `java -jar ` and then drag the download .jar file onto the terminal window and then hit enter. Wait for the server to start up. Now add a new server with the ip 127.0.0.1 in DeltaClient and you should be able to connect to it. The Minecraft server jar does take up a lot of ram and cpu so people have reported that that has made their fans really loud. It is most likely not DeltaClient making the fans spin like a helicopter.
 
 ## Troubleshooting
 
 As DeltaClient is still in development it is expected that you will probably run into some errors. Here are the basic troubleshooting steps you should take if you run into any errors;
 
-1. Open Finder then press ```cmd-shift-g``` and go to the following path ```~/Library/Containers/com.stackotter.delta-client/Data/Library```
-2. Delete the folder named ```Application Support```. This completely resets the app
+First, create an issue on this GitHub repository for the error. To find the logs hit cmd+shift+g and enter in `~/Library/Containers/dev.stackotter.delta-client/Data/Library/Application Support/log`. The relevant logs are likely in `latest.log` in that folder.
 
-I appreciate it if you can also create an issue for the error, especially if it persists because it may also be affecting other users. All issues are appreciated no matter how minor.
+If the error is in app startup you can also try running `rm ~/Library/Containers/dev.stackotter.delta-client/Data/Library/Application Support/.haslaunched` in Terminal to perform a fresh install. Next time the app starts it will backup all your current configuration before performing the fresh install.
 
 ## Screenshots
 
