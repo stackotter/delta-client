@@ -35,6 +35,12 @@ class ChunkRenderer {
   
   private var blockPaletteManager: BlockPaletteManager
   
+  var frozenSectionCount: Int {
+    frozenSectionsAccessQueue.sync {
+      return frozenSections.count
+    }
+  }
+  
   init(
     for chunk: Chunk,
     at position: ChunkPosition,

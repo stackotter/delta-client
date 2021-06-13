@@ -9,7 +9,7 @@ import Foundation
 
 extension World.Event {
   struct SetBlock: Event {
-    var position: Position
-    var newState: UInt16
+    let position: Position
+    let newState: UInt16
   }
 }

@@ -11,6 +11,9 @@
 		78052348261433A800079A01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7805221C261433A700079A01 /* Assets.xcassets */; };
 		780523B6261433A800079A01 /* DeltaClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805229D261433A700079A01 /* DeltaClientApp.swift */; };
 		781829A5262A6F7E000F59B0 /* ChunkLighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781829A4262A6F7E000F59B0 /* ChunkLighting.swift */; };
+		781B150D2675615A001AE32B /* BinaryUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781B150C2675615A001AE32B /* BinaryUtil.swift */; };
+		781B151226756854001AE32B /* ChunkLightingUpdateData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781B151126756854001AE32B /* ChunkLightingUpdateData.swift */; };
+		781B151A267569D1001AE32B /* UpdateChunkLighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781B1519267569D1001AE32B /* UpdateChunkLighting.swift */; };
 		781F48BC266651B00030F71C /* SetBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781F48BB266651B00030F71C /* SetBlock.swift */; };
 		7824FC2B2662F60300414468 /* InteractiveMTKView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824FC2A2662F60300414468 /* InteractiveMTKView.swift */; };
 		7824FC332662F67100414468 /* InputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824FC322662F67100414468 /* InputState.swift */; };
@@ -419,6 +422,9 @@
 		780522A9261433A700079A01 /* DeltaClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeltaClientTests.swift; sourceTree = "<group>"; };
 		780522AA261433A700079A01 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		781829A4262A6F7E000F59B0 /* ChunkLighting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkLighting.swift; sourceTree = "<group>"; };
+		781B150C2675615A001AE32B /* BinaryUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinaryUtil.swift; sourceTree = "<group>"; };
+		781B151126756854001AE32B /* ChunkLightingUpdateData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkLightingUpdateData.swift; sourceTree = "<group>"; };
+		781B1519267569D1001AE32B /* UpdateChunkLighting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChunkLighting.swift; sourceTree = "<group>"; };
 		781F48BB266651B00030F71C /* SetBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetBlock.swift; sourceTree = "<group>"; };
 		7824FC2A2662F60300414468 /* InteractiveMTKView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveMTKView.swift; sourceTree = "<group>"; };
 		7824FC322662F67100414468 /* InputState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputState.swift; sourceTree = "<group>"; };
@@ -1167,6 +1173,7 @@
 				7868887426243D9E00BD3F03 /* MathUtil.swift */,
 				78D91829261FB4CC00A4782F /* RequestMethod.swift */,
 				78D7E4CA2633D6FD00FB1A3B /* URL.swift */,
+				781B150C2675615A001AE32B /* BinaryUtil.swift */,
 				78D91837261FB4CC00A4782F /* C */,
 				78FA271D2664FABB00F3BDF5 /* Observable.swift */,
 				78FA27272664FD4400F3BDF5 /* Event.swift */,
@@ -1678,6 +1685,7 @@
 				78D91861261FB4CC00A4782F /* Chunk.swift */,
 				78D9185D261FB4CC00A4782F /* ChunkSection.swift */,
 				781829A4262A6F7E000F59B0 /* ChunkLighting.swift */,
+				781B151126756854001AE32B /* ChunkLightingUpdateData.swift */,
 				78D91862261FB4CC00A4782F /* ChunkData.swift */,
 				787BEBEE2674BEBD00F50B2C /* UnpackedChunkData.swift */,
 			);
@@ -1692,6 +1700,7 @@
 				787BEBF62674C2B300F50B2C /* UpdateChunk.swift */,
 				78FA273E266501F300F3BDF5 /* RemoveChunk.swift */,
 				781F48BB266651B00030F71C /* SetBlock.swift */,
+				781B1519267569D1001AE32B /* UpdateChunkLighting.swift */,
 			);
 			path = Event;
 			sourceTree = "<group>";
@@ -1878,6 +1887,7 @@
 			files = (
 				78D91A54261FB4CE00A4782F /* InboundNetworkLayer.swift in Sources */,
 				78E232522628138300B08B4B /* EventProtocol.swift in Sources */,
+				781B150D2675615A001AE32B /* BinaryUtil.swift in Sources */,
 				78D91A46261FB4CD00A4782F /* CloseWindowClientboundPacket.swift in Sources */,
 				78D91AA0261FB4E100A4782F /* ServerListView.swift in Sources */,
 				78D919EC261FB4CD00A4782F /* KeepAliveServerboundPacket.swift in Sources */,
@@ -1955,6 +1965,7 @@
 				78D91A70261FB4CE00A4782F /* CardinalDirection.swift in Sources */,
 				78D9196D261FB4CD00A4782F /* CampfireCookingRecipe.swift in Sources */,
 				78D91A43261FB4CD00A4782F /* VehicleMoveClientboundPacket.swift in Sources */,
+				781B151226756854001AE32B /* ChunkLightingUpdateData.swift in Sources */,
 				78D919AF261FB4CD00A4782F /* ServerDescriptor.swift in Sources */,
 				787EA9E3266E12560019C35B /* CallerComponent.swift in Sources */,
 				78D91A86261FB4CE00A4782F /* MinecraftLocale.swift in Sources */,
@@ -2208,6 +2219,7 @@
 				78E0C13126337F82009D882D /* MicrosoftAuth.swift in Sources */,
 				78D91A50261FB4CD00A4782F /* SetCompressionPacket.swift in Sources */,
 				78D91991261FB4CD00A4782F /* PlayerEntityAction.swift in Sources */,
+				781B151A267569D1001AE32B /* UpdateChunkLighting.swift in Sources */,
 				78640853262C545C00FE3A10 /* CacheBlockModel.pb.swift in Sources */,
 				78D9195B261FB4CD00A4782F /* SmokingRecipe.swift in Sources */,
 				78D919D4261FB4CD00A4782F /* VehicleMoveServerboundPacket.swift in Sources */,

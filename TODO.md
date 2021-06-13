@@ -1,8 +1,10 @@
 ## Priorities
 
-1. [ ] implement proper lighting
-2. [ ] rewrite block model loading
+1. [ ] rewrite block model loading
+2. [ ] properly handle transparency
 3. [ ] properly support translucency
+4. [ ] fix frustum culling lagging behind actual view
+5. [ ] implement proper lighting
 
 ## UI
 

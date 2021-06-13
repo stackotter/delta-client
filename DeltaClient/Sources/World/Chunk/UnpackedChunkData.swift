@@ -18,8 +18,6 @@ struct UnpackedChunkData {
   var blockEntities: [BlockEntity]
   
   var presentSections: [Int] {
-    return (0..<Chunk.numSections).filter { sectionIndex in
-      return (primaryBitMask >> sectionIndex) & 0x1 == 0x1
-    }
+    return BinaryUtil.setBits(of: primaryBitMask, n: Chunk.numSections)
   }
 }

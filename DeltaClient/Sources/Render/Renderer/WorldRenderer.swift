@@ -99,6 +99,17 @@ class WorldRenderer {
             let neighbours = sectionsNeighbouring(sectionAt: sectionPosition)
             sectionsToUpdate.formUnion(neighbours)
           }
+        case let chunkLightingUpdate as World.Event.UpdateChunkLighting:
+          if let chunk = world.chunk(at: chunkLightingUpdate.position) {
+            if let renderer = chunkRenderers[chunkLightingUpdate.position] {
+              
+            } else {
+              let addChunkEvent = World.Event.AddChunk(
+                position: chunkLightingUpdate.position,
+                chunk: chunk)
+              handle(addChunkEvent)
+            }
+          }
         case let blockUpdate as World.Event.SetBlock:
           let affectedSections = sectionsAffected(by: blockUpdate)
           sectionsToUpdate.formUnion(affectedSections)
@@ -117,7 +128,8 @@ class WorldRenderer {
   func handle(_ event: World.Event.AddChunk) {
     // create renderer for added chunk if all neighbours are present
     let neighbours = world.neighbours(ofChunkAt: event.position)
-    if neighbours.count == 4 {
+    let litNeighbours = neighbours.filter { $0.value.lighting.isPopulated }
+    if litNeighbours.count == 4 && event.chunk.lighting.isPopulated {
       let chunkRenderer = ChunkRenderer(
         for: event.chunk,
         at: event.position,
@@ -131,7 +143,8 @@ class WorldRenderer {
     for (direction, neighbour) in neighbours {
       let neighbourPosition = event.position.neighbour(inDirection: direction)
       let neighbourNeighbours = world.neighbours(ofChunkAt: neighbourPosition)
-      if neighbourNeighbours.count == 4 {
+      let neighbourLitNeighbours = neighbourNeighbours.filter { $0.value.lighting.isPopulated }
+      if neighbourLitNeighbours.count == 4 && neighbour.lighting.isPopulated {
         let chunkRenderer = ChunkRenderer(
           for: neighbour,
           at: neighbourPosition,
@@ -154,6 +167,7 @@ class WorldRenderer {
     }
   }
   
+  /// Returns the sections that require re-meshing after the specified block update
   func sectionsAffected(by blockUpdate: World.Event.SetBlock) -> [ChunkSectionPosition] {
     var affectedSections: [ChunkSectionPosition] = [blockUpdate.position.chunkSection]
     
@@ -191,6 +205,7 @@ class WorldRenderer {
     return affectedSections
   }
   
+  /// Returns the positions of all valid chunk sections that neighbour the specific chunk section
   func sectionsNeighbouring(sectionAt sectionPosition: ChunkSectionPosition) -> [ChunkSectionPosition] {
     var northNeighbour = sectionPosition
     northNeighbour.sectionZ -= 1
@@ -283,6 +298,17 @@ class WorldRenderer {
           }
         }
         return true
+      case let chunkLightingUpdate as World.Event.UpdateChunkLighting:
+        var affectedChunks = [chunkLightingUpdate.position]
+        affectedChunks.append(contentsOf: chunkLightingUpdate.position.allNeighbours.values)
+        for chunkPosition in affectedChunks {
+          if let renderer = chunkRenderers[chunkPosition] {
+            if renderer.frozenSectionCount != 0 {
+              return false
+            }
+          }
+        }
+        return true
       default:
         return true
     }
@@ -318,6 +344,9 @@ class WorldRenderer {
     sortedChunkRenderers.sort {
       return visibleChunks.contains($0.chunkPosition) && !visibleChunks.contains($1.chunkPosition)
     }
+    
+    // TODO: only create chunk renderers for lit chunks
+    sortedChunkRenderers = sortedChunkRenderers.filter { $0.chunk.lighting.isPopulated }
     
     // remove prepared chunks from preparing chunks
     preparingChunks.forEach { chunkPosition in

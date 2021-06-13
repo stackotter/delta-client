@@ -124,7 +124,9 @@ class ChunkSectionMesh: Mesh {
           uv: face.uvs[uvIndex],
           light: face.light,
           textureIndex: face.textureIndex,
-          tintIndex: face.tintIndex)
+          tintIndex: face.tintIndex,
+          skyLightLevel: 15,
+          blockLightLevel: 15)
       )
     }
   }
@@ -136,52 +138,71 @@ class ChunkSectionMesh: Mesh {
    always be returned. If the block at `sectionIndex` is at y-level 0 or 255 the down or up neighbours
    will be omitted respectively (as there will be none). Otherwise, all neighbours are included.
    
-   The function is implemented the verbose non-dynamic way it is to improve performance.
-   
-   - Returns: A a mapping from each possible direction to a corresponding block state.
+   - Returns: A mapping from each possible direction to a corresponding block state.
    */
   func getNeighbouringBlockStates(ofBlockAt index: Int) -> [FaceDirection: UInt16] {
     // convert a section relative index to a chunk relative index
-    let indexInChunk = index + sectionPosition.sectionY * Chunk.Section.numBlocks
     var neighbouringBlockStates: [FaceDirection: UInt16] = [:]
     
-    if indexInChunk % Chunk.blocksPerLayer >= Chunk.width {
-      neighbouringBlockStates[.north] = chunk.getBlock(at: indexInChunk - Chunk.width)
-    } else {
-      let neighbourBlockIndex = indexInChunk + Chunk.blocksPerLayer - Chunk.width
-      neighbouringBlockStates[.north] = neighbourChunks[.north]?.getBlock(at: neighbourBlockIndex)
-    }
-    
-    if indexInChunk % Chunk.blocksPerLayer < Chunk.blocksPerLayer - Chunk.width {
-      neighbouringBlockStates[.south] = chunk.getBlock(at: indexInChunk + Chunk.width)
-    } else {
-      let neighbourBlockIndex = indexInChunk - Chunk.blocksPerLayer + Chunk.width
-      neighbouringBlockStates[.south] = neighbourChunks[.south]?.getBlock(at: neighbourBlockIndex)
-    }
-    
-    if indexInChunk % Chunk.width != Chunk.width - 1 {
-      neighbouringBlockStates[.east] = chunk.getBlock(at: indexInChunk + 1)
-    } else {
-      let neighbourBlockIndex = indexInChunk - 15
-      neighbouringBlockStates[.east] = neighbourChunks[.east]?.getBlock(at: neighbourBlockIndex)
-    }
-    
-    if indexInChunk % Chunk.width != 0 {
-      neighbouringBlockStates[.west] = chunk.getBlock(at: indexInChunk - 1)
-    } else {
-      let neighbourBlockIndex = indexInChunk + 15
-      neighbouringBlockStates[.west] = neighbourChunks[.west]?.getBlock(at: neighbourBlockIndex)
-    }
-    
-    if indexInChunk < Chunk.numBlocks - Chunk.blocksPerLayer {
-      neighbouringBlockStates[.up] = chunk.getBlock(at: indexInChunk + Chunk.blocksPerLayer)
-    }
-    
-    if indexInChunk >= Chunk.blocksPerLayer {
-      neighbouringBlockStates[.down] = chunk.getBlock(at: indexInChunk - Chunk.blocksPerLayer)
+    let neighbourIndices = getNeighbourIndices(ofBlockAt: index)
+    for (faceDirection, neighbourBlock) in neighbourIndices {
+      let blockState: UInt16?
+      if let direction = neighbourBlock.chunkDirection {
+        blockState = neighbourChunks[direction]?.getBlock(at: neighbourBlock.index)
+      } else {
+        blockState = chunk.getBlock(at: neighbourBlock.index)
+      }
+      neighbouringBlockStates[faceDirection] = blockState
     }
     
     return neighbouringBlockStates
+  }
+  
+  /**
+   Returns a map from each direction to a cardinal direction and a chunk relative block index.
+   
+   The cardinal direction is which chunk a neighbour resides in. If the cardinal direction for
+   a neighbour is nil then the neighbour is in the current chunk.
+   
+   - Parameter index: A section-relative block index
+   */
+  func getNeighbourIndices(ofBlockAt index: Int) -> [FaceDirection: (chunkDirection: CardinalDirection?, index: Int)] {
+    let indexInChunk = index + sectionPosition.sectionY * Chunk.Section.numBlocks
+    var neighbouringIndices: [FaceDirection: (chunkDirection: CardinalDirection?, index: Int)] = [:]
+    
+    if indexInChunk % Chunk.blocksPerLayer >= Chunk.width {
+      neighbouringIndices[.north] = (nil, indexInChunk - Chunk.width)
+    } else {
+      neighbouringIndices[.north] = (chunkDirection: .north, index: indexInChunk + Chunk.blocksPerLayer - Chunk.width)
+    }
+    
+    if indexInChunk % Chunk.blocksPerLayer < Chunk.blocksPerLayer - Chunk.width {
+      neighbouringIndices[.south] = (nil, indexInChunk + Chunk.width)
+    } else {
+      neighbouringIndices[.south] = (chunkDirection: .south, index: indexInChunk - Chunk.blocksPerLayer + Chunk.width)
+    }
+    
+    if indexInChunk % Chunk.width != Chunk.width - 1 {
+      neighbouringIndices[.east] = (nil, indexInChunk + 1)
+    } else {
+      neighbouringIndices[.east] = (chunkDirection: .east, index: indexInChunk - 15)
+    }
+    
+    if indexInChunk % Chunk.width != 0 {
+      neighbouringIndices[.west] = (nil, indexInChunk - 1)
+    } else {
+      neighbouringIndices[.west] = (chunkDirection: .west, index: indexInChunk + 15)
+    }
+    
+    if indexInChunk < Chunk.numBlocks - Chunk.blocksPerLayer {
+      neighbouringIndices[.up] = (nil, indexInChunk + Chunk.blocksPerLayer)
+    }
+    
+    if indexInChunk >= Chunk.blocksPerLayer {
+      neighbouringIndices[.down] = (nil, indexInChunk - Chunk.blocksPerLayer)
+    }
+    
+    return neighbouringIndices
   }
   
   /**
@@ -212,7 +233,34 @@ class ChunkSectionMesh: Mesh {
     return cullingNeighbours
   }
   
-  /// Generates a lookup table to quickly convert from section block index to block position
+  /// Returns the sky light level for the block at the specified section-relative block index.
+  func getSkyLightLevel(ofBlockAt index: Int) -> UInt8 {
+    let neighbourIndices = getNeighbourIndices(ofBlockAt: index)
+    var levels: [UInt8] = []
+    for (_, neighbourBlock) in neighbourIndices {
+      let level: UInt8?
+      if let direction = neighbourBlock.chunkDirection {
+        level = neighbourChunks[direction]?.lighting.getSkyLightLevel(atIndex: neighbourBlock.index)
+      } else {
+        level = chunk.lighting.getSkyLightLevel(atIndex: neighbourBlock.index)
+      }
+      levels.append(level ?? ChunkLighting.defaultSkyLightLevel)
+    }
+    
+    // get light levels for top and bottom blocks in chunk
+    let indexAdjustment = Chunk.Section.numBlocks - Chunk.blocksPerLayer
+    if index < Chunk.blocksPerLayer && sectionPosition.sectionY == 0 {
+      let lightIndex = index + indexAdjustment
+      levels.append(chunk.lighting.getSkyLightLevel(atIndex: lightIndex, inSectionAt: -1))
+    } else if index > indexAdjustment && sectionPosition.sectionY == (Chunk.numSections - 1) {
+      let lightIndex = index - indexAdjustment
+      levels.append(chunk.lighting.getSkyLightLevel(atIndex: lightIndex, inSectionAt: Chunk.numSections))
+    }
+    
+    return levels.max() ?? 0
+  }
+  
+  /// Generates a lookup table to quickly convert from section block index to block position.
   private static func generateIndexLookup() -> [Position] {
     var lookup: [Position] = []
     for y in 0..<16 {

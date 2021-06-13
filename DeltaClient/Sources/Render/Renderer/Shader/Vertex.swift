@@ -9,9 +9,11 @@ import Foundation
 import simd
 
 struct Vertex {
-  var position: simd_float3
-  var uv: simd_float2
-  var light: Float
-  var textureIndex: uint16
-  var tintIndex: Int8
+  let position: simd_float3
+  let uv: simd_float2
+  let light: Float
+  let textureIndex: uint16
+  let tintIndex: Int8
+  let skyLightLevel: UInt8
+  let blockLightLevel: UInt8
 }

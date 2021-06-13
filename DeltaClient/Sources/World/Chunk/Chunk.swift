@@ -17,22 +17,23 @@ class Chunk {
   
   /// No-one really knows what this is for. Vanilla servers just send it.
   var heightMaps: NBTCompound
-  var ignoreOldData: Bool
+  /// Block entities for this chunk (i.e. chests, beds etc.)
   var blockEntities: [BlockEntity]
+  /// Block states are stored in chunk sections corresponding to 16x16x16 divisions of the chunk from lowest to highest.
   var sections: [Chunk.Section]
   
-  // in the format that it is received
-  var biomes: [UInt8]
+  /// 3d biome data in 4x4x4 blocks.
+  var biomes: [UInt8] // in the format that it is received
+  /// Lighting data that is populated once UpdateLightPacket is receive for this chunk.
+  var lighting = ChunkLighting()
   
   init(
     heightMaps: NBTCompound,
-    ignoreOldData: Bool,
     biomes: [UInt8],
     sections: [Chunk.Section],
     blockEntities: [BlockEntity]
   ) {
     self.heightMaps = heightMaps
-    self.ignoreOldData = ignoreOldData
     self.biomes = biomes
     self.sections = sections
     self.blockEntities = blockEntities

@@ -9,7 +9,7 @@ import Foundation
 
 extension World.Event {
   struct UpdateChunk: Event {
-    var position: ChunkPosition
-    var data: UnpackedChunkData
+    let position: ChunkPosition
+    let data: UnpackedChunkData
   }
 }

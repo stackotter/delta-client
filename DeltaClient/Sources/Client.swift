@@ -102,7 +102,7 @@ class Client {
               return
             }
             let position = Position(x: x, y: y, z: z)
-            if let lighting = server.world?.lighting[position.chunk] {
+            if let lighting = server.world?.chunk(at: position.chunk)?.lighting {
               log.info("skyLight: \(lighting.getSkyLightLevel(at: position))")
               log.info("blockLight: \(lighting.getBlockLightLevel(at: position))")
             }

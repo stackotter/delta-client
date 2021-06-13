@@ -15,6 +15,8 @@ struct Vertex
   float light;
   uint16_t textureIndex;
   int8_t tintIndex;
+  int8_t skyLightLevel;
+  int8_t blockLightLevel;
 };
 
 struct RasteriserData

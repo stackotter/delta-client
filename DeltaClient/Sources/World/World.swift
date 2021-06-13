@@ -7,20 +7,28 @@
 
 import Foundation
 
-
 // TODO: make World threadsafe
 class World {
+  /// The name of this world
   var name: Identifier
+  /// The dimension data for this world
   var dimension: Identifier
+  /// The hashed seed of this world
   var hashedSeed: Int
+  /// Whether this world is a debug world or not
   var isDebug: Bool
+  /// Whether this world is superflat or not.
   var isFlat: Bool
   
+  /// The world's age.
   var age: Int = -1
-  var downloadingTerrain: Bool = true
+  /// Whether this world is still downloading terrain.
+  var downloadingTerrain = true
   
+  /// The world's chunks.
   private(set) var chunks: [ChunkPosition: Chunk] = [:]
-  var lighting: [ChunkPosition: ChunkLighting] = [:]
+  /// Lighting data that arrived before its respective chunk or was sent for a non-existent chunk.
+  private var chunklessLightingData: [ChunkPosition: ChunkLightingUpdateData] = [:]
   
   var chunkCount: Int {
     return chunks.count
@@ -94,6 +102,8 @@ class World {
         updateChunk(at: event.position, with: event.data, bypassBatching: true)
       case let event as Event.RemoveChunk:
         removeChunk(at: event.position, bypassBatching: true)
+      case let event as Event.UpdateChunkLighting:
+        updateChunkLighting(at: event.position, with: event.data, bypassBatching: true)
       default:
         break
     }
@@ -107,7 +117,7 @@ class World {
         position: position,
         newState: state)
       eventBatch.add(event)
-    } else if let chunk = chunks[position.chunk] {
+    } else if let chunk = chunk(at: position.chunk) {
       chunk.setBlock(at: position.relativeToChunk, to: state)
     } else {
       log.warning("Cannet set block in non-existent chunk, chunkPosition=\(position.chunk)")
@@ -123,7 +133,7 @@ class World {
         position: absolutePosition,
         newState: newState)
       eventBatch.add(event)
-    } else if let chunk = chunks[chunkPosition] {
+    } else if let chunk = chunk(at: position.chunk) {
       chunk.setBlock(at: position, to: newState)
     } else {
       log.warning("Cannot set block in non-existent chunk, chunkPosition=\(chunkPosition)")
@@ -131,7 +141,7 @@ class World {
   }
   
   func getBlock(at position: Position) -> UInt16 {
-    if let chunk = chunks[position.chunk] {
+    if let chunk = chunk(at: position.chunk) {
       return chunk.getBlock(at: position.relativeToChunk)
     } else {
       log.warning("get block called for non existent chunk: \(position.chunk)")
@@ -161,6 +171,9 @@ class World {
       let event = Event.AddChunk(position: position, chunk: chunk)
       eventBatch.add(event)
     } else {
+      if let lightingData = chunklessLightingData.removeValue(forKey: position) {
+        chunk.lighting.update(with: lightingData)
+      }
       chunks[position] = chunk
     }
   }
@@ -169,15 +182,26 @@ class World {
     if batchingEnabled && !bypassBatching {
       let event = Event.UpdateChunk(position: position, data: data)
       eventBatch.add(event)
-    } else {
-      if let chunk = chunk(at: position) {
-        chunk.blockEntities = data.blockEntities
-        chunk.heightMaps = data.heightMaps
-        chunk.ignoreOldData = data.ignoreOldData
-        data.presentSections.forEach { sectionIndex in
-          chunk.setSection(atIndex: sectionIndex, to: data.sections[sectionIndex])
-        }
+    } else if let chunk = chunk(at: position) {
+      chunk.blockEntities = data.blockEntities
+      chunk.heightMaps = data.heightMaps
+      data.presentSections.forEach { sectionIndex in
+        chunk.setSection(atIndex: sectionIndex, to: data.sections[sectionIndex])
       }
+    } else {
+      log.warning("Chunk update received for non-existent chunk")
+    }
+  }
+  
+  func updateChunkLighting(at position: ChunkPosition, with data: ChunkLightingUpdateData, bypassBatching: Bool = false) {
+    if batchingEnabled && !bypassBatching {
+      let event = Event.UpdateChunkLighting(position: position, data: data)
+      eventBatch.add(event)
+    } else if let chunk = chunk(at: position) {
+      chunk.lighting.update(with: data)
+    } else {
+      // Most likely the chunk just hasn't unpacked yet so wait for that
+      chunklessLightingData[position] = data
     }
   }
   
@@ -190,7 +214,6 @@ class World {
         } else {
           let chunk = Chunk(
             heightMaps: unpackedChunkData.heightMaps,
-            ignoreOldData: unpackedChunkData.ignoreOldData,
             biomes: unpackedChunkData.biomes,
             sections: unpackedChunkData.sections,
             blockEntities: unpackedChunkData.blockEntities)

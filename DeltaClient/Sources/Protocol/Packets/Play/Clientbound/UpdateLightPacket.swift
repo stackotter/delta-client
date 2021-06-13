@@ -31,10 +31,7 @@ struct UpdateLightPacket: ClientboundPacket {
     emptyBlockLightMask = packetReader.readVarInt()
     
     skyLightArrays = []
-    var numArrays = 0
-    for i in 0..<16 {
-      numArrays += Int(skyLightMask >> i) & 0x01
-    }
+    var numArrays = BinaryUtil.setBits(of: skyLightMask, n: Chunk.numSections).count
     for _ in 0..<numArrays {
       let length = packetReader.readVarInt()
       let bytes = packetReader.readByteArray(length: length)
@@ -42,10 +39,7 @@ struct UpdateLightPacket: ClientboundPacket {
     }
     
     blockLightArrays = []
-    numArrays = 0
-    for i in 0..<16 {
-      numArrays += Int(blockLightMask >> i) & 0x01
-    }
+    numArrays = BinaryUtil.setBits(of: blockLightMask, n: Chunk.numSections).count
     for _ in 0..<numArrays {
       let length = packetReader.readVarInt()
       let bytes = packetReader.readByteArray(length: length)
@@ -54,36 +48,16 @@ struct UpdateLightPacket: ClientboundPacket {
   }
   
   func handle(for server: Server) throws {
-    // NOTE: we just ignore the first and last sections sent for now (above and below the world)
-    var skyLightIndex = 0
-    var blockLightIndex = 0
     if let world = server.world {
-      let chunkLighting = world.lighting[chunkPosition] ?? ChunkLighting()
-      for i in 0..<(Chunk.numSections + 1) {
-        let sectionNum = i - 1
-        if (skyLightMask >> i) & 0x1 == 1 {
-          if i == 0 {
-            skyLightIndex += 1
-            continue
-          }
-          chunkLighting.updateSectionSkyLight(with: skyLightArrays[skyLightIndex], for: sectionNum)
-        } else if (emptySkyLightMask >> i) & 0x1 == 1 {
-          // empty sky light section
-          chunkLighting.updateSectionSkyLight(with: [UInt8](repeating: 0, count: 2048), for: sectionNum)
-        }
-        
-        if (blockLightMask >> i) & 0x1 == 1 {
-          if i == 0 {
-            blockLightIndex += 1
-            continue
-          }
-          chunkLighting.updateSectionBlockLight(with: blockLightArrays[blockLightIndex], for: sectionNum)
-        } else if (emptyBlockLightMask >> i) & 0x1 == 1 {
-          // empty block light section
-          chunkLighting.updateSectionBlockLight(with: [UInt8](repeating: 0, count: 2048), for: sectionNum)
-        }
-      }
-      world.lighting[chunkPosition] = chunkLighting
+      let data = ChunkLightingUpdateData(
+        trustEdges: trustEdges,
+        skyLightMask: skyLightMask,
+        blockLightMask: blockLightMask,
+        emptySkyLightMask: emptySkyLightMask,
+        emptyBlockLightMask: emptyBlockLightMask,
+        skyLightArrays: skyLightArrays,
+        blockLightArrays: blockLightArrays)
+      world.updateChunkLighting(at: chunkPosition, with: data)
     }
   }
 }

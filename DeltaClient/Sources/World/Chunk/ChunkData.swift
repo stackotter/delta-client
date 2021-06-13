@@ -80,8 +80,9 @@ struct ChunkData {
   
   func readChunkSections(_ packetReader: inout PacketReader, primaryBitMask: Int) -> [Chunk.Section] {
     var sections: [Chunk.Section] = []
-    for i in 0..<Chunk.numSections {
-      if primaryBitMask >> i & 0x1 == 0x1 {
+    let presentSections = BinaryUtil.setBits(of: primaryBitMask, n: Chunk.numSections)
+    for sectionIndex in 0..<Chunk.numSections {
+      if presentSections.contains(sectionIndex) {
         let blockCount = packetReader.readShort()
         let bitsPerBlock = packetReader.readUnsignedByte()
         
