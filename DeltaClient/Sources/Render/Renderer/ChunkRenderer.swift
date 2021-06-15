@@ -30,8 +30,7 @@ class ChunkRenderer {
   private var sectionMeshesAccessQueue = DispatchQueue(label: "dev.stackotter.sectionMeshesAccessQueue")
   /// A concurrent queue for asynchronously preparing section meshes
   private var meshPreparationQueue = DispatchQueue(
-    label: "dev.stackotter.meshPreparationQueue",
-    attributes: .concurrent)
+    label: "dev.stackotter.meshPreparationQueue")
   
   private var blockPaletteManager: BlockPaletteManager
   
@@ -93,6 +92,7 @@ class ChunkRenderer {
         self.unfreezeSection(at: sectionY)
       }
       if isLastInitialSection {
+        // TODO: use count up latch instead
         log.debug("Completed intial mesh creation for chunk at \(self.chunkPosition)")
         self.hasCompletedInitialPrepare = true
       }

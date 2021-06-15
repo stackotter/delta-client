@@ -74,11 +74,13 @@ I kind of just put current todos here and also things that I'm putting off until
 - [ ] top half of door doesn't render from inside of house
 - [ ] rewrite block model loading and fix all the above issues while i'm at it hopefully
 - [ ] potentially use the swift-numerics library for approximate equality and stuff
+- [ ] create more advanced face culling, perhaps generate a unique number for each face shape and just compare face shape id's when creating meshes
 
 ## Chunk preparing
 
 - [ ] split translucent blocks into a separate palette? or at least have a nice way of knowing if a block counts as translucent, transparent or opaque
 - [ ] split translucent blocks into a separate mesh type (for all the resorting stuff)?
+- [ ] use threadsafe counter to detect when initial prepare is complete instead of current dodge way
 
 ## Memory
 
