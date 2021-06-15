@@ -234,6 +234,13 @@ class World {
     }
   }
   
+  func chunkComplete(at position: ChunkPosition) -> Bool {
+    if let chunk = chunk(at: position) {
+      return chunk.lighting.isPopulated
+    }
+    return false
+  }
+  
   func finishDownloadingTerrain() {
     // once this runs on the thread the last chunk will have unpacked
     chunkThread.async {

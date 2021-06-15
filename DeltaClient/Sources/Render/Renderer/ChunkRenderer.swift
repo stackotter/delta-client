@@ -99,6 +99,11 @@ class ChunkRenderer {
     }
   }
   
+  /// Forces all of the chunk's meshes to be re-generated. Existing meshes are not deleted until the new ones are ready.
+  func invalidateMeshes() {
+    requiresPreparing = true
+  }
+  
   /// Updates the appropriate section mesh for a section update.
   func handleSectionUpdate(at sectionY: Int) {
     if sectionFrozen(at: sectionY) {

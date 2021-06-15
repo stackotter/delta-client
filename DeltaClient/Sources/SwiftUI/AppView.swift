@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum AppViewState {
+enum AppViewState: Equatable {
   case login
   case serverList
   case editServerList
@@ -24,23 +24,9 @@ struct AppView: View {
   init(managers: Managers) {
     self.managers = managers
     
+    // TODO: this is a horrible place to refresh the server list
     let serverList = self.managers.configManager.getServerList()
     serverList.refresh()
-    if !managers.configManager.getHasLoggedIn() {
-      state.update(to: .login)
-    }
-    
-    DeltaClientApp.eventManager.registerEventHandler(handleEvent)
-  }
-  
-  func handleEvent(_ event: AppEvent) {
-    switch event {
-      case .logout:
-        managers.configManager.logout()
-        state.update(to: .login)
-      default:
-        break
-    }
   }
   
   var body: some View {
@@ -68,5 +54,10 @@ struct AppView: View {
     }
     .environmentObject(state)
     .environmentObject(managers.configManager)
+    .onAppear {
+      if state.value == .serverList && !managers.configManager.getHasLoggedIn() {
+        state.update(to: .login)
+      }
+    }
   }
 }

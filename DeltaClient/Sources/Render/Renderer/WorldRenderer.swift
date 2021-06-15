@@ -15,8 +15,7 @@ enum WorldRendererError: LocalizedError {
   case failedToCreateUniformBuffer
 }
 
-// TODO: add documentation
-
+/// A renderer that renders a `World`
 class WorldRenderer {
   var pipelineState: MTLRenderPipelineState
   var depthState: MTLDepthStencilState
@@ -84,40 +83,33 @@ class WorldRenderer {
     log.info("Initialised WorldRenderer")
   }
   
+  /// Handles a batch of world events.
   func handle(_ events: [Event]) {
     var sectionsToUpdate: Set<ChunkSectionPosition> = []
     
     events.forEach { event in
       switch event {
         case let event as World.Event.AddChunk:
-          handle(event)
+          handleAddChunk(event)
         case let event as World.Event.RemoveChunk:
-          handle(event)
+          handleRemoveChunk(event)
+        case let chunkLightingUpdate as World.Event.UpdateChunkLighting:
+          handleLightingUpdate(chunkLightingUpdate)
+        case let blockUpdate as World.Event.SetBlock:
+          let affectedSections = sectionsAffected(by: blockUpdate)
+          sectionsToUpdate.formUnion(affectedSections)
         case let chunkUpdate as World.Event.UpdateChunk:
           chunkUpdate.data.presentSections.forEach { sectionIndex in
             let sectionPosition = ChunkSectionPosition(chunkUpdate.position, sectionY: sectionIndex)
             let neighbours = sectionsNeighbouring(sectionAt: sectionPosition)
             sectionsToUpdate.formUnion(neighbours)
           }
-        case let chunkLightingUpdate as World.Event.UpdateChunkLighting:
-          if let chunk = world.chunk(at: chunkLightingUpdate.position) {
-            if let renderer = chunkRenderers[chunkLightingUpdate.position] {
-              
-            } else {
-              let addChunkEvent = World.Event.AddChunk(
-                position: chunkLightingUpdate.position,
-                chunk: chunk)
-              handle(addChunkEvent)
-            }
-          }
-        case let blockUpdate as World.Event.SetBlock:
-          let affectedSections = sectionsAffected(by: blockUpdate)
-          sectionsToUpdate.formUnion(affectedSections)
         default:
           break
       }
     }
     
+    // Update all necessary section meshes
     sectionsToUpdate.forEach { section in
       if let chunkRenderer = chunkRenderers[section.chunk] {
         chunkRenderer.handleSectionUpdate(at: section.sectionY)
@@ -125,46 +117,61 @@ class WorldRenderer {
     }
   }
   
-  func handle(_ event: World.Event.AddChunk) {
-    // create renderer for added chunk if all neighbours are present
-    let neighbours = world.neighbours(ofChunkAt: event.position)
-    let litNeighbours = neighbours.filter { $0.value.lighting.isPopulated }
-    if litNeighbours.count == 4 && event.chunk.lighting.isPopulated {
-      let chunkRenderer = ChunkRenderer(
-        for: event.chunk,
-        at: event.position,
-        withNeighbours: neighbours,
-        with: blockPaletteManager)
-      chunkRenderers[event.position] = chunkRenderer
-      log.debug("Created chunk renderer for chunk at \(event.position) because all neighbours are present")
-    }
-    
-    // create renderers for any neighbours the event completed
-    for (direction, neighbour) in neighbours {
-      let neighbourPosition = event.position.neighbour(inDirection: direction)
-      let neighbourNeighbours = world.neighbours(ofChunkAt: neighbourPosition)
-      let neighbourLitNeighbours = neighbourNeighbours.filter { $0.value.lighting.isPopulated }
-      if neighbourLitNeighbours.count == 4 && neighbour.lighting.isPopulated {
-        let chunkRenderer = ChunkRenderer(
-          for: neighbour,
-          at: neighbourPosition,
-          withNeighbours: neighbourNeighbours,
-          with: blockPaletteManager)
-        chunkRenderers[neighbourPosition] = chunkRenderer
-        log.debug("Created chunk renderer for chunk at \(neighbourPosition) because neighbour chunk arrived")
+  /// Creates renderers for all chunks that are renderable after the given update.
+  func handleAddChunk(_ event: World.Event.AddChunk) {
+    let affectedPositions = event.position.andNeighbours
+    for position in affectedPositions {
+      if canRenderChunk(at: position) && !chunkRenderers.keys.contains(position) {
+        if let neighbour = world.chunk(at: position) {
+          let neighbours = world.neighbours(ofChunkAt: position)
+          
+          let chunkRenderer = ChunkRenderer(
+            for: neighbour,
+            at: position,
+            withNeighbours: neighbours,
+            with: blockPaletteManager)
+          chunkRenderers[position] = chunkRenderer
+          log.debug("Created chunk renderer for chunk at \(position)")
+        }
       }
     }
   }
   
-  func handle(_ event: World.Event.RemoveChunk) {
-    let chunkPosition = event.position
-    let chunkRenderer = chunkRenderers.removeValue(forKey: chunkPosition)
-    if let chunkRenderer = chunkRenderer {
-      log.debug("Removing renderers for chunk at \(event.position) and all of its neighbours")
-      getNeighbourRenderers(of: chunkRenderer).forEach { _, neighbourRenderer in
-        chunkRenderers.removeValue(forKey: neighbourRenderer.chunkPosition)
+  /// Removes all renderers made invalid by a given chunk removal.
+  func handleRemoveChunk(_ event: World.Event.RemoveChunk) {
+    let affectedChunks = event.position.andNeighbours
+    for chunkPosition in affectedChunks {
+      chunkRenderers.removeValue(forKey: chunkPosition)
+    }
+  }
+  
+  /// Handles a chunk lighting update.
+  func handleLightingUpdate(_ event: World.Event.UpdateChunkLighting) {
+    if let chunk = world.chunk(at: event.position) {
+      if let renderer = chunkRenderers[event.position] {
+        // TODO: only update sections affected by the lighting update
+        renderer.invalidateMeshes()
+      } else {
+        let addChunkEvent = World.Event.AddChunk(
+          position: event.position,
+          chunk: chunk)
+        handleAddChunk(addChunkEvent)
       }
     }
+  }
+  
+  /**
+   Returns whether a chunk is ready to be rendered or not.
+   To be renderable a chunk must be complete and so must its neighours.
+   */
+  func canRenderChunk(at position: ChunkPosition) -> Bool {
+    let chunkPositions = position.andNeighbours
+    for chunkPosition in chunkPositions {
+      if !world.chunkComplete(at: chunkPosition) {
+        return false
+      }
+    }
+    return true
   }
   
   /// Returns the sections that require re-meshing after the specified block update
@@ -192,11 +199,13 @@ class WorldRenderer {
     
     // check whether sections above and below are also affected
     let updatedSection = blockUpdate.position.chunkSection
-    if updateRelativeToChunk.y % 16 == 15 && updateRelativeToChunk.y != Chunk.height - 1 {
+    
+    let sectionHeight = Chunk.Section.height
+    if updateRelativeToChunk.y % sectionHeight == sectionHeight - 1 && updateRelativeToChunk.y != Chunk.height - 1 {
       var section = updatedSection
       section.sectionY += 1
       affectedSections.append(section)
-    } else if updateRelativeToChunk.y % 16 == 0 && updateRelativeToChunk.y != 0 {
+    } else if updateRelativeToChunk.y % sectionHeight == 0 && updateRelativeToChunk.y != 0 {
       var section = updatedSection
       section.sectionY -= 1
       affectedSections.append(section)
@@ -220,11 +229,7 @@ class WorldRenderer {
     var downNeighbour = sectionPosition
     downNeighbour.sectionY -= 1
     
-    var neighbours = [
-      northNeighbour,
-      eastNeighbour,
-      southNeighbour,
-      westNeighbour]
+    var neighbours = [northNeighbour, eastNeighbour, southNeighbour, westNeighbour]
     
     if upNeighbour.sectionY < Chunk.numSections {
       neighbours.append(upNeighbour)
@@ -236,6 +241,7 @@ class WorldRenderer {
     return neighbours
   }
   
+  /// Returns a map from each cardinal direction to the given renderer's neighbour in that direction.
   func getNeighbourRenderers(of renderer: ChunkRenderer) -> [CardinalDirection: ChunkRenderer] {
     var neighbourRenderers: [CardinalDirection: ChunkRenderer] = [:]
     renderer.chunkPosition.allNeighbours.forEach { direction, neighbourPosition in
@@ -271,36 +277,35 @@ class WorldRenderer {
   func shouldProcessWorldEvent(event: Event) -> Bool {
     switch event {
       case let blockUpdate as World.Event.SetBlock:
+        // Postpone handling of the block update if it affects a frozen chunk section
         let affectedSections = sectionsAffected(by: blockUpdate)
         for section in affectedSections {
-          if let chunkRenderer = chunkRenderers[section.chunk] {
-            if chunkRenderer.sectionFrozen(at: section.sectionY) {
+          if let renderer = chunkRenderers[section.chunk] {
+            if renderer.sectionFrozen(at: section.sectionY) {
               return false
             }
           }
         }
         return true
       case let chunkUpdate as World.Event.UpdateChunk:
-        if let chunkRenderer = chunkRenderers[chunkUpdate.position] {
-          let neighbourRenderers = getNeighbourRenderers(of: chunkRenderer)
-          for sectionIndex in chunkUpdate.data.presentSections {
+        // Postpone handling of the chunk update if any of the affected sections are are frozen
+        if let renderer = chunkRenderers[chunkUpdate.position] {
+          let neighbourRenderers = getNeighbourRenderers(of: renderer)
+          for index in chunkUpdate.data.presentSections {
+            if renderer.sectionFrozen(at: index - 1) || renderer.sectionFrozen(at: index + 1) {
+              return false
+            }
             for (_, renderer) in neighbourRenderers {
-              if renderer.sectionFrozen(at: sectionIndex) {
+              if renderer.sectionFrozen(at: index) {
                 return false
               }
-            }
-            if
-              chunkRenderer.sectionFrozen(at: sectionIndex - 1) ||
-              chunkRenderer.sectionFrozen(at: sectionIndex + 1)
-            {
-              return false
             }
           }
         }
         return true
       case let chunkLightingUpdate as World.Event.UpdateChunkLighting:
-        var affectedChunks = [chunkLightingUpdate.position]
-        affectedChunks.append(contentsOf: chunkLightingUpdate.position.allNeighbours.values)
+        // Postpone handling of a lighting update if the chunk of any of its neighbours contain frozen sections
+        let affectedChunks = chunkLightingUpdate.position.andNeighbours
         for chunkPosition in affectedChunks {
           if let renderer = chunkRenderers[chunkPosition] {
             if renderer.frozenSectionCount != 0 {
@@ -344,9 +349,6 @@ class WorldRenderer {
     sortedChunkRenderers.sort {
       return visibleChunks.contains($0.chunkPosition) && !visibleChunks.contains($1.chunkPosition)
     }
-    
-    // TODO: only create chunk renderers for lit chunks
-    sortedChunkRenderers = sortedChunkRenderers.filter { $0.chunk.lighting.isPopulated }
     
     // remove prepared chunks from preparing chunks
     preparingChunks.forEach { chunkPosition in

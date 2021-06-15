@@ -34,14 +34,14 @@ class ChunkLighting {
     guard skyLightIndices.count == data.skyLightArrays.count else {
       let bitsSet = skyLightIndices.count
       let sectionsReceived = data.skyLightArrays.count
-      log.error("Invalid sky light mask sent. \(bitsSet) bits set but \(sectionsReceived) sky light sections received")
+      log.error("Invalid sky light mask sent. \(bitsSet) bits set but \(sectionsReceived) sections received")
       return
     }
     
     guard blockLightIndices.count == data.blockLightArrays.count else {
       let bitsSet = blockLightIndices.count
       let sectionsReceived = data.blockLightArrays.count
-      log.error("Invalid block light mask sent. \(bitsSet) bits set but \(sectionsReceived) block light sections received")
+      log.error("Invalid block light mask sent. \(bitsSet) bits set but \(sectionsReceived) sections received")
       return
     }
     

@@ -4,10 +4,10 @@ I kind of just put current todos here and also things that I'm putting off until
 
 ## Priorities
 
-1. [ ] reduce cpu time for rendering (gpu time is around 8ms whereas cpu time is around 16ms)
-2. [ ] optimise chunk mesh preparation
-3. [ ] fix memory loops (client or server or something like that is retained after leaving server)
-4. [ ] clean up WorldRenderer
+1. [ ] optimise chunk mesh preparation
+2. [ ] reduce cpu bottleneck on fps
+3. [ ] fix reference retain cycles
+4. [x] clean up WorldRenderer
 5. [ ] fix frustum culling lagging behind actual view
 6. [ ] rewrite block model loading
 7. [ ] properly render transparency
