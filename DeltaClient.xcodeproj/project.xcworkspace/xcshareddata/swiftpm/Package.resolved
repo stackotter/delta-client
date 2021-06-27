@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "DeltaCore",
-        "repositoryURL": "https://github.com/stackotter/delta-core",
-        "state": {
-          "branch": "main",
-          "revision": "48392b45d85278205cbe76b827096f0f8ff3104d",
-          "version": null
-        }
-      },
-      {
         "package": "IDZSwiftCommonCrypto",
         "repositoryURL": "https://github.com/iosdevzone/IDZSwiftCommonCrypto",
         "state": {
@@ -20,21 +11,12 @@
         }
       },
       {
-        "package": "Puppy",
-        "repositoryURL": "https://github.com/stackotter/Puppy",
-        "state": {
-          "branch": null,
-          "revision": "220efa559042f5b7dc99cf089bd4dbb31e217371",
-          "version": null
-        }
-      },
-      {
         "package": "swift-log",
-        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
-          "branch": null,
-          "revision": "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
-          "version": "1.4.2"
+          "branch": "main",
+          "revision": "d8af258aecd93cd8604e74ade3c0fe438bac13f8",
+          "version": null
         }
       },
       {

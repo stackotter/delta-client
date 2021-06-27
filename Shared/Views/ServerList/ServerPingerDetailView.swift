@@ -10,7 +10,7 @@ import DeltaCore
 
 struct ServerPingerDetailView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
-  @ObservedObject var pinger: ServerPinger
+  @ObservedObject var pinger: Pinger
   
   var body: some View {
     let descriptor = pinger.descriptor

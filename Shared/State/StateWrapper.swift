@@ -21,6 +21,10 @@ class StateWrapper<State>: ObservableObject {
   /// Update the app state to the state specified, on the main thread.
   func update(to newState: State) {
     ThreadUtil.runInMain {
+      // Update state
+      let current = self.current
+      self.current = newState
+      
       // Simplify state history
       if let index = history.firstIndex(where: { name(of: $0) == name(of: current) }) {
         history.removeLast(history.count - index)
@@ -31,9 +35,6 @@ class StateWrapper<State>: ObservableObject {
       
       // Update state history
       history.append(current)
-      
-      // Update state
-      current = newState
     }
   }
   

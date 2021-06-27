@@ -11,12 +11,26 @@
 		78000291267A1AC5003C1685 /* DeltaClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7800027D267A1AB8003C1685 /* DeltaClientApp.swift */; };
 		78000294267A1AC5003C1685 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7800027F267A1AC5003C1685 /* Assets.xcassets */; };
 		78000295267A1AC5003C1685 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7800027F267A1AC5003C1685 /* Assets.xcassets */; };
+		78233229267EC31100694E76 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 78233228267EC31100694E76 /* Logging */; };
+		7823322D267EC3B700694E76 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7823322C267EC3B700694E76 /* Logging.swift */; };
+		7823322E267EC3B700694E76 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7823322C267EC3B700694E76 /* Logging.swift */; };
+		78233232267EC54300694E76 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78233231267EC54300694E76 /* StorageManager.swift */; };
+		78233233267EC54300694E76 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78233231267EC54300694E76 /* StorageManager.swift */; };
 		782F369D267D803E0034380E /* ServerPingerListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F369C267D803D0034380E /* ServerPingerListItem.swift */; };
 		782F369E267D803E0034380E /* ServerPingerListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F369C267D803D0034380E /* ServerPingerListItem.swift */; };
 		782F36A4267D87830034380E /* StateWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F36A3267D87830034380E /* StateWrapper.swift */; };
 		782F36A5267D87830034380E /* StateWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F36A3267D87830034380E /* StateWrapper.swift */; };
 		782F36B2267D8E310034380E /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F36B1267D8E310034380E /* AppState.swift */; };
 		782F36B3267D8E310034380E /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F36B1267D8E310034380E /* AppState.swift */; };
+		7839E378267EBE9200D9C591 /* DeltaLogger in Frameworks */ = {isa = PBXBuildFile; productRef = 7839E377267EBE9200D9C591 /* DeltaLogger */; };
+		78B6B1A52687D9470041B1E1 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1A42687D9470041B1E1 /* ErrorView.swift */; };
+		78B6B1A62687D9470041B1E1 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1A42687D9470041B1E1 /* ErrorView.swift */; };
+		78B6B1B12687DCE20041B1E1 /* WarningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1B02687DCE20041B1E1 /* WarningView.swift */; };
+		78B6B1B22687DCE20041B1E1 /* WarningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1B02687DCE20041B1E1 /* WarningView.swift */; };
+		78B6B1BF2687DF370041B1E1 /* ModalState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1BE2687DF370041B1E1 /* ModalState.swift */; };
+		78B6B1C02687DF370041B1E1 /* ModalState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1BE2687DF370041B1E1 /* ModalState.swift */; };
+		78B6B1C42687E3440041B1E1 /* StorageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1C32687E3440041B1E1 /* StorageError.swift */; };
+		78B6B1C52687E3440041B1E1 /* StorageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1C32687E3440041B1E1 /* StorageError.swift */; };
 		78D73B9B267D4D9A00B460E8 /* DeltaCore in Frameworks */ = {isa = PBXBuildFile; productRef = 78D73B9A267D4D9A00B460E8 /* DeltaCore */; };
 		78D73B9D267D4D9A00B460E8 /* DeltaCoreC in Frameworks */ = {isa = PBXBuildFile; productRef = 78D73B9C267D4D9A00B460E8 /* DeltaCoreC */; };
 		78D73BA2267D4DCE00B460E8 /* DeltaCore in Frameworks */ = {isa = PBXBuildFile; productRef = 78D73BA1267D4DCE00B460E8 /* DeltaCore */; };
@@ -29,12 +43,8 @@
 		78E18833267D966E0069E701 /* PlayServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18831267D966E0069E701 /* PlayServerView.swift */; };
 		78E18845267DB6050069E701 /* RouterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18844267DB6050069E701 /* RouterView.swift */; };
 		78E18846267DB6050069E701 /* RouterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18844267DB6050069E701 /* RouterView.swift */; };
-		78E1884A267DB7310069E701 /* LifecycleState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18849267DB7310069E701 /* LifecycleState.swift */; };
-		78E1884B267DB7310069E701 /* LifecycleState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18849267DB7310069E701 /* LifecycleState.swift */; };
 		78E18851267DBADA0069E701 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18850267DBADA0069E701 /* LoadingView.swift */; };
 		78E18852267DBADA0069E701 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18850267DBADA0069E701 /* LoadingView.swift */; };
-		78E18856267DBB960069E701 /* DismissibleErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18855267DBB960069E701 /* DismissibleErrorView.swift */; };
-		78E18857267DBB960069E701 /* DismissibleErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18855267DBB960069E701 /* DismissibleErrorView.swift */; };
 		78E1885D267DBD6A0069E701 /* FatalErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E1885C267DBD6A0069E701 /* FatalErrorView.swift */; };
 		78E1885E267DBD6A0069E701 /* FatalErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E1885C267DBD6A0069E701 /* FatalErrorView.swift */; };
 /* End PBXBuildFile section */
@@ -47,17 +57,22 @@
 		7800028C267A1AC5003C1685 /* DeltaClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7800028E267A1AC5003C1685 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7800028F267A1AC5003C1685 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		7823322C267EC3B700694E76 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		78233231267EC54300694E76 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		782F369C267D803D0034380E /* ServerPingerListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerPingerListItem.swift; sourceTree = "<group>"; };
 		782F36A3267D87830034380E /* StateWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateWrapper.swift; sourceTree = "<group>"; };
 		782F36B1267D8E310034380E /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		7839E37B267EBEB400D9C591 /* delta-logger */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "delta-logger"; path = "../delta-logger"; sourceTree = "<group>"; };
+		78B6B1A42687D9470041B1E1 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
+		78B6B1B02687DCE20041B1E1 /* WarningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningView.swift; sourceTree = "<group>"; };
+		78B6B1BE2687DF370041B1E1 /* ModalState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalState.swift; sourceTree = "<group>"; };
+		78B6B1C32687E3440041B1E1 /* StorageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageError.swift; sourceTree = "<group>"; };
 		78D73BAA267D4E6300B460E8 /* delta-core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "delta-core"; path = "../delta-core"; sourceTree = "<group>"; };
 		78D73BB0267D505C00B460E8 /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
 		78D73BB7267D6AAC00B460E8 /* ServerPingerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerPingerDetailView.swift; sourceTree = "<group>"; };
 		78E18831267D966E0069E701 /* PlayServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayServerView.swift; sourceTree = "<group>"; };
 		78E18844267DB6050069E701 /* RouterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterView.swift; sourceTree = "<group>"; };
-		78E18849267DB7310069E701 /* LifecycleState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifecycleState.swift; sourceTree = "<group>"; };
 		78E18850267DBADA0069E701 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
-		78E18855267DBB960069E701 /* DismissibleErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissibleErrorView.swift; sourceTree = "<group>"; };
 		78E1885C267DBD6A0069E701 /* FatalErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FatalErrorView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -76,6 +91,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				78D73B9D267D4D9A00B460E8 /* DeltaCoreC in Frameworks */,
+				7839E378267EBE9200D9C591 /* DeltaLogger in Frameworks */,
+				78233229267EC31100694E76 /* Logging in Frameworks */,
 				78D73B9B267D4D9A00B460E8 /* DeltaCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -90,6 +107,7 @@
 				78000286267A1AC5003C1685 /* iOS */,
 				7800028D267A1AC5003C1685 /* macOS */,
 				78D73BAA267D4E6300B460E8 /* delta-core */,
+				7839E37B267EBEB400D9C591 /* delta-logger */,
 				78000285267A1AC5003C1685 /* Products */,
 				78D73BA0267D4DCE00B460E8 /* Frameworks */,
 			);
@@ -98,11 +116,11 @@
 		7800027C267A1AB8003C1685 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				78E18865267DC7C30069E701 /* State */,
 				78D73BAF267D500800B460E8 /* Views */,
+				78E18869267DC8330069E701 /* Storage */,
 				7800027D267A1AB8003C1685 /* DeltaClientApp.swift */,
-				782F36A3267D87830034380E /* StateWrapper.swift */,
-				782F36B1267D8E310034380E /* AppState.swift */,
-				78E18849267DB7310069E701 /* LifecycleState.swift */,
+				7823322C267EC3B700694E76 /* Logging.swift */,
 				7800027F267A1AC5003C1685 /* Assets.xcassets */,
 			);
 			path = Shared;
@@ -144,16 +162,44 @@
 		78D73BAF267D500800B460E8 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				78E18864267DC7620069E701 /* ServerList */,
+				78E1885C267DBD6A0069E701 /* FatalErrorView.swift */,
+				78E18831267D966E0069E701 /* PlayServerView.swift */,
+				78E18844267DB6050069E701 /* RouterView.swift */,
+				78B6B1A42687D9470041B1E1 /* ErrorView.swift */,
+				78B6B1B02687DCE20041B1E1 /* WarningView.swift */,
+				78E18850267DBADA0069E701 /* LoadingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		78E18864267DC7620069E701 /* ServerList */ = {
+			isa = PBXGroup;
+			children = (
 				78D73BB0267D505C00B460E8 /* ServerListView.swift */,
 				782F369C267D803D0034380E /* ServerPingerListItem.swift */,
 				78D73BB7267D6AAC00B460E8 /* ServerPingerDetailView.swift */,
-				78E18831267D966E0069E701 /* PlayServerView.swift */,
-				78E18844267DB6050069E701 /* RouterView.swift */,
-				78E18850267DBADA0069E701 /* LoadingView.swift */,
-				78E18855267DBB960069E701 /* DismissibleErrorView.swift */,
-				78E1885C267DBD6A0069E701 /* FatalErrorView.swift */,
 			);
-			path = Views;
+			path = ServerList;
+			sourceTree = "<group>";
+		};
+		78E18865267DC7C30069E701 /* State */ = {
+			isa = PBXGroup;
+			children = (
+				782F36A3267D87830034380E /* StateWrapper.swift */,
+				782F36B1267D8E310034380E /* AppState.swift */,
+				78B6B1BE2687DF370041B1E1 /* ModalState.swift */,
+			);
+			path = State;
+			sourceTree = "<group>";
+		};
+		78E18869267DC8330069E701 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				78233231267EC54300694E76 /* StorageManager.swift */,
+				78B6B1C32687E3440041B1E1 /* StorageError.swift */,
+			);
+			path = Storage;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -196,6 +242,8 @@
 			packageProductDependencies = (
 				78D73B9A267D4D9A00B460E8 /* DeltaCore */,
 				78D73B9C267D4D9A00B460E8 /* DeltaCoreC */,
+				7839E377267EBE9200D9C591 /* DeltaLogger */,
+				78233228267EC31100694E76 /* Logging */,
 			);
 			productName = "DeltaClient (macOS)";
 			productReference = 7800028C267A1AC5003C1685 /* DeltaClient.app */;
@@ -229,6 +277,8 @@
 			mainGroup = 78000277267A1AB7003C1685;
 			packageReferences = (
 				78D73B99267D4D9A00B460E8 /* XCRemoteSwiftPackageReference "delta-core" */,
+				7839E376267EBE9200D9C591 /* XCRemoteSwiftPackageReference "delta-logger" */,
+				78233227267EC31100694E76 /* XCRemoteSwiftPackageReference "swift-log" */,
 			);
 			productRefGroup = 78000285267A1AC5003C1685 /* Products */;
 			projectDirPath = "";
@@ -265,17 +315,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				782F369D267D803E0034380E /* ServerPingerListItem.swift in Sources */,
-				78E1884A267DB7310069E701 /* LifecycleState.swift in Sources */,
 				78E18832267D966E0069E701 /* PlayServerView.swift in Sources */,
 				78E18851267DBADA0069E701 /* LoadingView.swift in Sources */,
 				78E1885D267DBD6A0069E701 /* FatalErrorView.swift in Sources */,
+				78B6B1BF2687DF370041B1E1 /* ModalState.swift in Sources */,
 				782F36A4267D87830034380E /* StateWrapper.swift in Sources */,
 				78000290267A1AC5003C1685 /* DeltaClientApp.swift in Sources */,
 				782F36B2267D8E310034380E /* AppState.swift in Sources */,
+				7823322D267EC3B700694E76 /* Logging.swift in Sources */,
 				78D73BB8267D6AAC00B460E8 /* ServerPingerDetailView.swift in Sources */,
 				78D73BB1267D505C00B460E8 /* ServerListView.swift in Sources */,
+				78B6B1B12687DCE20041B1E1 /* WarningView.swift in Sources */,
+				78B6B1C42687E3440041B1E1 /* StorageError.swift in Sources */,
+				78B6B1A52687D9470041B1E1 /* ErrorView.swift in Sources */,
 				78E18845267DB6050069E701 /* RouterView.swift in Sources */,
-				78E18856267DBB960069E701 /* DismissibleErrorView.swift in Sources */,
+				78233232267EC54300694E76 /* StorageManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,17 +338,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				782F369E267D803E0034380E /* ServerPingerListItem.swift in Sources */,
-				78E1884B267DB7310069E701 /* LifecycleState.swift in Sources */,
 				78E18833267D966E0069E701 /* PlayServerView.swift in Sources */,
 				78E18852267DBADA0069E701 /* LoadingView.swift in Sources */,
 				78E1885E267DBD6A0069E701 /* FatalErrorView.swift in Sources */,
+				78B6B1C02687DF370041B1E1 /* ModalState.swift in Sources */,
 				782F36A5267D87830034380E /* StateWrapper.swift in Sources */,
 				78000291267A1AC5003C1685 /* DeltaClientApp.swift in Sources */,
 				782F36B3267D8E310034380E /* AppState.swift in Sources */,
+				7823322E267EC3B700694E76 /* Logging.swift in Sources */,
 				78D73BB9267D6AAC00B460E8 /* ServerPingerDetailView.swift in Sources */,
 				78D73BB2267D505C00B460E8 /* ServerListView.swift in Sources */,
+				78B6B1B22687DCE20041B1E1 /* WarningView.swift in Sources */,
+				78B6B1C52687E3440041B1E1 /* StorageError.swift in Sources */,
+				78B6B1A62687D9470041B1E1 /* ErrorView.swift in Sources */,
 				78E18846267DB6050069E701 /* RouterView.swift in Sources */,
-				78E18857267DBB960069E701 /* DismissibleErrorView.swift in Sources */,
+				78233233267EC54300694E76 /* StorageManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -542,6 +600,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		78233227267EC31100694E76 /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		7839E376267EBE9200D9C591 /* XCRemoteSwiftPackageReference "delta-logger" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stackotter/delta-logger";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		78D73B99267D4D9A00B460E8 /* XCRemoteSwiftPackageReference "delta-core" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stackotter/delta-core";
@@ -553,6 +627,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		78233228267EC31100694E76 /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 78233227267EC31100694E76 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
+		7839E377267EBE9200D9C591 /* DeltaLogger */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7839E376267EBE9200D9C591 /* XCRemoteSwiftPackageReference "delta-logger" */;
+			productName = DeltaLogger;
+		};
 		78D73B9A267D4D9A00B460E8 /* DeltaCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 78D73B99267D4D9A00B460E8 /* XCRemoteSwiftPackageReference "delta-core" */;

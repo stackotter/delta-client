@@ -9,7 +9,7 @@ import SwiftUI
 import DeltaCore
 
 struct ServerPingerListItem: View {
-  @StateObject var pinger: ServerPinger
+  @StateObject var pinger: Pinger
   
   var body: some View {
     let isOnline = pinger.pingResult != nil

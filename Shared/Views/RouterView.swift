@@ -9,21 +9,29 @@ import SwiftUI
 import DeltaCore
 
 struct RouterView: View {
+  @EnvironmentObject var modalState: StateWrapper<ModalState>
   @EnvironmentObject var appState: StateWrapper<AppState>
   @EnvironmentObject var configManager: ConfigManager
   
   var body: some View {
-    switch appState.current {
-      case .launch:
-        LoadingView()
-      case .playServer(let descriptor):
-        PlayServerView(serverDescriptor: descriptor)
-      case .serverList:
-        ServerListView(serverList: configManager.getServerPingerList())
-      case .error(let message):
-        DismissibleErrorView(message: message)
-      case .fatalError(let message):
-        FatalErrorView(message: message)
+    Group {
+      switch modalState.current {
+        case .none:
+          switch appState.current {
+            case .launch:
+              LoadingView()
+            case .serverList:
+              ServerListView(serverList: configManager.getServerPingerList())
+            case .playServer(let descriptor):
+              PlayServerView(serverDescriptor: descriptor)
+            case .fatalError(let message):
+              FatalErrorView(message: message)
+          }
+        case .warning(let message):
+          WarningView(message: message)
+        case .error(let message, let safeState):
+          ErrorView(message: message, safeState: safeState)
+      }
     }
   }
 }
