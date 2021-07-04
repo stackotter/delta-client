@@ -11,21 +11,32 @@ import DeltaCore
 struct RouterView: View {
   @EnvironmentObject var modalState: StateWrapper<ModalState>
   @EnvironmentObject var appState: StateWrapper<AppState>
+  @EnvironmentObject var loadingState: StateWrapper<LoadingState>
   
   var body: some View {
     Group {
       switch modalState.current {
         case .none:
-          switch appState.current {
-            case .launch:
-              LoadingView()
-            case .serverList:
-              let serverList = ServerPingerList(ConfigManager.default.config.servers)
-              ServerListView(serverList: serverList)
-            case .playServer(let descriptor):
-              PlayServerView(serverDescriptor: descriptor)
-            case .fatalError(let message):
-              FatalErrorView(message: message)
+          switch loadingState.current {
+            case .loading:
+              Text("Loading")
+                .navigationTitle("Loading")
+            case let .loadingWithMessage(message):
+              Text(message)
+                .navigationTitle("Loading")
+            case let .error(message):
+              Text(message)
+                .navigationTitle("Error")
+            case let .done(registry):
+              switch appState.current {
+                case .serverList:
+                  let serverList = ServerPingerList(ConfigManager.default.config.servers)
+                  ServerListView(serverList: serverList)
+                case .playServer(let descriptor):
+                  PlayServerView(serverDescriptor: descriptor, registry: registry)
+                case .fatalError(let message):
+                  FatalErrorView(message: message)
+              }
           }
         case .warning(let message):
           WarningView(message: message)

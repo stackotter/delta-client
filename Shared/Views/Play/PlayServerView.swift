@@ -15,24 +15,15 @@ enum PlayState {
 
 struct PlayServerView: View {
   var serverDescriptor: ServerDescriptor
-  
   var client: Client
   
   @ObservedObject var state = StateWrapper<PlayState>(initial: .downloadingTerrain)
   
-  init(serverDescriptor: ServerDescriptor) {
+  init(serverDescriptor: ServerDescriptor, registry: Registry) {
     self.serverDescriptor = serverDescriptor
     
     do {
-      let texturePalette = try AssetManager.default.getBlockTexturePalette()
-      let pixlyzerData = StorageManager.default.absoluteFromRelative("pixlyzer-data/blocks.json")
-      let blockModels = AssetManager.default.vanillaAssetsDirectory.appendingPathComponent("minecraft/models/block")
-      let blockPalette = try BlockPalette.parse(
-        fromPixlyzerDataAt: pixlyzerData,
-        withBlockModelDirectoryAt: blockModels,
-        andTexturesFrom: texturePalette)
-      
-      client = Client(blockPalette: blockPalette)
+      client = Client(registry: registry)
       client.eventBus.registerHandler(handleClientEvent)
       try client.join(serverDescribedBy: serverDescriptor, with: OfflineAccount(username: "epicboi69"))
     } catch {

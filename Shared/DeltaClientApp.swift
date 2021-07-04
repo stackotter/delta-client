@@ -11,10 +11,34 @@ import DeltaCore
 @main
 struct DeltaClientApp: App {
   @ObservedObject static var modalState = StateWrapper<ModalState>(initial: .none)
-  @ObservedObject static var appState = StateWrapper<AppState>(initial: .launch)
+  @ObservedObject static var appState = StateWrapper<AppState>(initial: .serverList)
+  @ObservedObject static var loadingState = StateWrapper<LoadingState>(initial: .loading)
   
   init() {
-    Self.appState.update(to: .serverList)
+    let taskQueue = DispatchQueue(label: "dev.stackotter.delta-client.startupTasks")
+    
+    // Load the registry
+    taskQueue.async {
+      do {
+        Self.loadingState.update(to: .loadingWithMessage("Loading block texture palette"))
+        let texturePalette = try AssetManager.default.getBlockTexturePalette()
+        
+        Self.loadingState.update(to: .loadingWithMessage("Loading pixlyzer data"))
+        let pixlyzerData = StorageManager.default.absoluteFromRelative("pixlyzer-data/blocks.json")
+        
+        Self.loadingState.update(to: .loadingWithMessage("Loading block models"))
+        let blockModels = AssetManager.default.vanillaAssetsDirectory.appendingPathComponent("minecraft/models/block")
+        let blockRegistry = try BlockRegistry.parse(
+          fromPixlyzerDataAt: pixlyzerData,
+          withBlockModelDirectoryAt: blockModels,
+          andTexturesFrom: texturePalette)
+        
+        let registry = Registry(blockRegistry: blockRegistry)
+        Self.loadingState.update(to: .done(registry))
+      } catch {
+        Self.loadingState.update(to: .error("Failed to create registry: \(error)"))
+      }
+    }
   }
   
   var body: some Scene {
@@ -23,6 +47,7 @@ struct DeltaClientApp: App {
         .frame(width: 800, height: 400)
         .environmentObject(Self.modalState)
         .environmentObject(Self.appState)
+        .environmentObject(Self.loadingState)
     }
   }
   

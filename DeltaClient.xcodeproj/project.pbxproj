@@ -45,6 +45,8 @@
 		78427870268FBCEF00FF16C2 /* VersionManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842786E268FBCEF00FF16C2 /* VersionManifest.swift */; };
 		7842788F268FD27F00FF16C2 /* StringKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842788E268FD27F00FF16C2 /* StringKey.swift */; };
 		78427890268FD27F00FF16C2 /* StringKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842788E268FD27F00FF16C2 /* StringKey.swift */; };
+		788195C12691E2960099575B /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788195C02691E2960099575B /* LoadingState.swift */; };
+		788195C22691E2960099575B /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788195C02691E2960099575B /* LoadingState.swift */; };
 		78B6B1A52687D9470041B1E1 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1A42687D9470041B1E1 /* ErrorView.swift */; };
 		78B6B1A62687D9470041B1E1 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1A42687D9470041B1E1 /* ErrorView.swift */; };
 		78B6B1B12687DCE20041B1E1 /* WarningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1B02687DCE20041B1E1 /* WarningView.swift */; };
@@ -65,8 +67,6 @@
 		78E18833267D966E0069E701 /* PlayServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18831267D966E0069E701 /* PlayServerView.swift */; };
 		78E18845267DB6050069E701 /* RouterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18844267DB6050069E701 /* RouterView.swift */; };
 		78E18846267DB6050069E701 /* RouterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18844267DB6050069E701 /* RouterView.swift */; };
-		78E18851267DBADA0069E701 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18850267DBADA0069E701 /* LoadingView.swift */; };
-		78E18852267DBADA0069E701 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E18850267DBADA0069E701 /* LoadingView.swift */; };
 		78E1885D267DBD6A0069E701 /* FatalErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E1885C267DBD6A0069E701 /* FatalErrorView.swift */; };
 		78E1885E267DBD6A0069E701 /* FatalErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E1885C267DBD6A0069E701 /* FatalErrorView.swift */; };
 /* End PBXBuildFile section */
@@ -96,6 +96,7 @@
 		78427867268FBB8300FF16C2 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		7842786E268FBCEF00FF16C2 /* VersionManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionManifest.swift; sourceTree = "<group>"; };
 		7842788E268FD27F00FF16C2 /* StringKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringKey.swift; sourceTree = "<group>"; };
+		788195C02691E2960099575B /* LoadingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingState.swift; sourceTree = "<group>"; };
 		78B6B1A42687D9470041B1E1 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		78B6B1B02687DCE20041B1E1 /* WarningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningView.swift; sourceTree = "<group>"; };
 		78B6B1BE2687DF370041B1E1 /* ModalState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalState.swift; sourceTree = "<group>"; };
@@ -105,7 +106,6 @@
 		78D73BB7267D6AAC00B460E8 /* ServerPingerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerPingerDetailView.swift; sourceTree = "<group>"; };
 		78E18831267D966E0069E701 /* PlayServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayServerView.swift; sourceTree = "<group>"; };
 		78E18844267DB6050069E701 /* RouterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterView.swift; sourceTree = "<group>"; };
-		78E18850267DBADA0069E701 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		78E1885C267DBD6A0069E701 /* FatalErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FatalErrorView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -221,7 +221,6 @@
 				78F77E10268F22C90092F002 /* Alert */,
 				78F77E11268F22E20092F002 /* Play */,
 				78E18844267DB6050069E701 /* RouterView.swift */,
-				78E18850267DBADA0069E701 /* LoadingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -242,6 +241,7 @@
 				782F36A3267D87830034380E /* StateWrapper.swift */,
 				782F36B1267D8E310034380E /* AppState.swift */,
 				78B6B1BE2687DF370041B1E1 /* ModalState.swift */,
+				788195C02691E2960099575B /* LoadingState.swift */,
 			);
 			path = State;
 			sourceTree = "<group>";
@@ -393,11 +393,11 @@
 				782F369D267D803E0034380E /* ServerPingerListItem.swift in Sources */,
 				7842786F268FBCEF00FF16C2 /* VersionManifest.swift in Sources */,
 				78E18832267D966E0069E701 /* PlayServerView.swift in Sources */,
-				78E18851267DBADA0069E701 /* LoadingView.swift in Sources */,
 				78E1885D267DBD6A0069E701 /* FatalErrorView.swift in Sources */,
 				78B6B1BF2687DF370041B1E1 /* ModalState.swift in Sources */,
 				782F36A4267D87830034380E /* StateWrapper.swift in Sources */,
 				78000290267A1AC5003C1685 /* DeltaClientApp.swift in Sources */,
+				788195C12691E2960099575B /* LoadingState.swift in Sources */,
 				782F36B2267D8E310034380E /* AppState.swift in Sources */,
 				7823322D267EC3B700694E76 /* Logging.swift in Sources */,
 				78D73BB8267D6AAC00B460E8 /* ServerPingerDetailView.swift in Sources */,
@@ -427,11 +427,11 @@
 				782F369E267D803E0034380E /* ServerPingerListItem.swift in Sources */,
 				78427870268FBCEF00FF16C2 /* VersionManifest.swift in Sources */,
 				78E18833267D966E0069E701 /* PlayServerView.swift in Sources */,
-				78E18852267DBADA0069E701 /* LoadingView.swift in Sources */,
 				78E1885E267DBD6A0069E701 /* FatalErrorView.swift in Sources */,
 				78B6B1C02687DF370041B1E1 /* ModalState.swift in Sources */,
 				782F36A5267D87830034380E /* StateWrapper.swift in Sources */,
 				78000291267A1AC5003C1685 /* DeltaClientApp.swift in Sources */,
+				788195C22691E2960099575B /* LoadingState.swift in Sources */,
 				782F36B3267D8E310034380E /* AppState.swift in Sources */,
 				7823322E267EC3B700694E76 /* Logging.swift in Sources */,
 				78D73BB9267D6AAC00B460E8 /* ServerPingerDetailView.swift in Sources */,

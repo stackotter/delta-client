@@ -30,7 +30,7 @@ class StorageManager {
     }
     
     let storagePath = storageDirectory.path
-    log.debug("Using \(storagePath) as storage directory")
+    log.trace("Using \(storagePath) as storage directory")
     
     // Create the storage directory if required
     if !Self.directoryExists(at: storageDirectory) {
