@@ -46,12 +46,6 @@ Here's how the client currently performs when run on my 2020 dual-core Intel i5 
   - [ ] LAN server detection
 - [x] Basic config system
   - [x] Multi-accounting
-- [ ] Command-based interface
-  - [x] Basic structure
-  - [x] Chat command
-  - [x] Tab list command
-  - [ ] Action commands
-  - [ ] Movement commands
 - [ ] Rendering
   - [ ] World
     - [x] Basic block rendering
@@ -135,39 +129,10 @@ If the error is in app startup you can also try running `rm ~/Library/Containers
 
 ## Screenshots
 
-#### Server list
+![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/ui.png?raw=true)
 
-![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/server-list.png?raw=true)
+![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/from-ground.png?raw=true)
 
-#### Current rendering (it has progressed from here but i am yet to update the screenshots)
+![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/aerial.png?raw=true)
 
-![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/progress-5.png?raw=true)
-
-#### The same place but in vanilla Minecraft
-
-![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/progress-5-vanilla.png?raw=true)
-
-#### An initial test of 10 render distance
-
-![alt text](https://github.com/stackotter/minecraft-swift-edition/blob/main/screenshots/rendering/initial-10-view-distance-test.png?raw=true)
-
-## Command Interface
-
-Currently the client gives you the option to join a world in commands mode.
-
-These are NOT commands in the traditional minecraft sense (e.g. ```/kill``` and ```/time set day```). They are basic commands that let you interact with the server.
-
-More commands will probably be added later.
-
-Actually, I might just disable these soon, they're pretty useless.
-
-#### Current Commands
-
-- ```say [message]```
-  - sends a message in chat
-- ```swing [mainhand|offhand]```
-  - causes the player's arm to swing. can be used to say hi to other players :) (and also just to test if it's working)
-- ```tablist```
-  - lists players in tab list
-- ```getblock [x] [y] [z]```
-  - gets the block state id of the block at position
+![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/hypixel.png?raw=true)
