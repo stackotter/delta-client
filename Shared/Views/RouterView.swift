@@ -11,7 +11,6 @@ import DeltaCore
 struct RouterView: View {
   @EnvironmentObject var modalState: StateWrapper<ModalState>
   @EnvironmentObject var appState: StateWrapper<AppState>
-  @EnvironmentObject var configManager: ConfigManager
   
   var body: some View {
     Group {
@@ -21,7 +20,8 @@ struct RouterView: View {
             case .launch:
               LoadingView()
             case .serverList:
-              ServerListView(serverList: configManager.getServerPingerList())
+              let serverList = ServerPingerList(ConfigManager.default.config.servers)
+              ServerListView(serverList: serverList)
             case .playServer(let descriptor):
               PlayServerView(serverDescriptor: descriptor)
             case .fatalError(let message):

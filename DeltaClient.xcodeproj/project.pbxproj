@@ -22,7 +22,29 @@
 		782F36A5267D87830034380E /* StateWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F36A3267D87830034380E /* StateWrapper.swift */; };
 		782F36B2267D8E310034380E /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F36B1267D8E310034380E /* AppState.swift */; };
 		782F36B3267D8E310034380E /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F36B1267D8E310034380E /* AppState.swift */; };
+		7839921326911DCD005E93FD /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7839921226911DCD005E93FD /* MetalView.swift */; };
+		7839921426911DCD005E93FD /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7839921226911DCD005E93FD /* MetalView.swift */; };
 		7839E378267EBE9200D9C591 /* DeltaLogger in Frameworks */ = {isa = PBXBuildFile; productRef = 7839E377267EBE9200D9C591 /* DeltaLogger */; };
+		78427845268F275A00FF16C2 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427844268F275A00FF16C2 /* ConfigManager.swift */; };
+		78427846268F275A00FF16C2 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427844268F275A00FF16C2 /* ConfigManager.swift */; };
+		7842784A268F288300FF16C2 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427849268F288300FF16C2 /* Config.swift */; };
+		7842784B268F288300FF16C2 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427849268F288300FF16C2 /* Config.swift */; };
+		7842784F268F364B00FF16C2 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842784E268F364B00FF16C2 /* CacheManager.swift */; };
+		78427850268F364B00FF16C2 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842784E268F364B00FF16C2 /* CacheManager.swift */; };
+		78427854268FB42500FF16C2 /* CacheError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427853268FB42500FF16C2 /* CacheError.swift */; };
+		78427855268FB42500FF16C2 /* CacheError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427853268FB42500FF16C2 /* CacheError.swift */; };
+		78427859268FB67C00FF16C2 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427858268FB67C00FF16C2 /* AssetManager.swift */; };
+		7842785A268FB67C00FF16C2 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427858268FB67C00FF16C2 /* AssetManager.swift */; };
+		7842785E268FB91F00FF16C2 /* VersionsManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842785D268FB91F00FF16C2 /* VersionsManifest.swift */; };
+		7842785F268FB91F00FF16C2 /* VersionsManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842785D268FB91F00FF16C2 /* VersionsManifest.swift */; };
+		78427863268FBA2200FF16C2 /* AssetError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427862268FBA2200FF16C2 /* AssetError.swift */; };
+		78427864268FBA2200FF16C2 /* AssetError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427862268FBA2200FF16C2 /* AssetError.swift */; };
+		78427868268FBB8300FF16C2 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427867268FBB8300FF16C2 /* Constants.swift */; };
+		78427869268FBB8300FF16C2 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427867268FBB8300FF16C2 /* Constants.swift */; };
+		7842786F268FBCEF00FF16C2 /* VersionManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842786E268FBCEF00FF16C2 /* VersionManifest.swift */; };
+		78427870268FBCEF00FF16C2 /* VersionManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842786E268FBCEF00FF16C2 /* VersionManifest.swift */; };
+		7842788F268FD27F00FF16C2 /* StringKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842788E268FD27F00FF16C2 /* StringKey.swift */; };
+		78427890268FD27F00FF16C2 /* StringKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842788E268FD27F00FF16C2 /* StringKey.swift */; };
 		78B6B1A52687D9470041B1E1 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1A42687D9470041B1E1 /* ErrorView.swift */; };
 		78B6B1A62687D9470041B1E1 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1A42687D9470041B1E1 /* ErrorView.swift */; };
 		78B6B1B12687DCE20041B1E1 /* WarningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1B02687DCE20041B1E1 /* WarningView.swift */; };
@@ -62,7 +84,18 @@
 		782F369C267D803D0034380E /* ServerPingerListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerPingerListItem.swift; sourceTree = "<group>"; };
 		782F36A3267D87830034380E /* StateWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateWrapper.swift; sourceTree = "<group>"; };
 		782F36B1267D8E310034380E /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		7839921226911DCD005E93FD /* MetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
 		7839E37B267EBEB400D9C591 /* delta-logger */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "delta-logger"; path = "../delta-logger"; sourceTree = "<group>"; };
+		78427844268F275A00FF16C2 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
+		78427849268F288300FF16C2 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		7842784E268F364B00FF16C2 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
+		78427853268FB42500FF16C2 /* CacheError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheError.swift; sourceTree = "<group>"; };
+		78427858268FB67C00FF16C2 /* AssetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
+		7842785D268FB91F00FF16C2 /* VersionsManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionsManifest.swift; sourceTree = "<group>"; };
+		78427862268FBA2200FF16C2 /* AssetError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetError.swift; sourceTree = "<group>"; };
+		78427867268FBB8300FF16C2 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		7842786E268FBCEF00FF16C2 /* VersionManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionManifest.swift; sourceTree = "<group>"; };
+		7842788E268FD27F00FF16C2 /* StringKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringKey.swift; sourceTree = "<group>"; };
 		78B6B1A42687D9470041B1E1 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		78B6B1B02687DCE20041B1E1 /* WarningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningView.swift; sourceTree = "<group>"; };
 		78B6B1BE2687DF370041B1E1 /* ModalState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalState.swift; sourceTree = "<group>"; };
@@ -121,6 +154,7 @@
 				78E18869267DC8330069E701 /* Storage */,
 				7800027D267A1AB8003C1685 /* DeltaClientApp.swift */,
 				7823322C267EC3B700694E76 /* Logging.swift */,
+				78427867268FBB8300FF16C2 /* Constants.swift */,
 				7800027F267A1AC5003C1685 /* Assets.xcassets */,
 			);
 			path = Shared;
@@ -152,6 +186,27 @@
 			path = macOS;
 			sourceTree = "<group>";
 		};
+		7842789E268FD35C00FF16C2 /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				78427849268F288300FF16C2 /* Config.swift */,
+				7842785D268FB91F00FF16C2 /* VersionsManifest.swift */,
+				7842786E268FBCEF00FF16C2 /* VersionManifest.swift */,
+				7842788E268FD27F00FF16C2 /* StringKey.swift */,
+			);
+			path = JSON;
+			sourceTree = "<group>";
+		};
+		7842789F268FD37C00FF16C2 /* Error */ = {
+			isa = PBXGroup;
+			children = (
+				78B6B1C32687E3440041B1E1 /* StorageError.swift */,
+				78427862268FBA2200FF16C2 /* AssetError.swift */,
+				78427853268FB42500FF16C2 /* CacheError.swift */,
+			);
+			path = Error;
+			sourceTree = "<group>";
+		};
 		78D73BA0267D4DCE00B460E8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -163,11 +218,9 @@
 			isa = PBXGroup;
 			children = (
 				78E18864267DC7620069E701 /* ServerList */,
-				78E1885C267DBD6A0069E701 /* FatalErrorView.swift */,
-				78E18831267D966E0069E701 /* PlayServerView.swift */,
+				78F77E10268F22C90092F002 /* Alert */,
+				78F77E11268F22E20092F002 /* Play */,
 				78E18844267DB6050069E701 /* RouterView.swift */,
-				78B6B1A42687D9470041B1E1 /* ErrorView.swift */,
-				78B6B1B02687DCE20041B1E1 /* WarningView.swift */,
 				78E18850267DBADA0069E701 /* LoadingView.swift */,
 			);
 			path = Views;
@@ -196,10 +249,33 @@
 		78E18869267DC8330069E701 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				7842789F268FD37C00FF16C2 /* Error */,
+				7842789E268FD35C00FF16C2 /* JSON */,
 				78233231267EC54300694E76 /* StorageManager.swift */,
-				78B6B1C32687E3440041B1E1 /* StorageError.swift */,
+				78427844268F275A00FF16C2 /* ConfigManager.swift */,
+				7842784E268F364B00FF16C2 /* CacheManager.swift */,
+				78427858268FB67C00FF16C2 /* AssetManager.swift */,
 			);
 			path = Storage;
+			sourceTree = "<group>";
+		};
+		78F77E10268F22C90092F002 /* Alert */ = {
+			isa = PBXGroup;
+			children = (
+				78B6B1A42687D9470041B1E1 /* ErrorView.swift */,
+				78B6B1B02687DCE20041B1E1 /* WarningView.swift */,
+				78E1885C267DBD6A0069E701 /* FatalErrorView.swift */,
+			);
+			path = Alert;
+			sourceTree = "<group>";
+		};
+		78F77E11268F22E20092F002 /* Play */ = {
+			isa = PBXGroup;
+			children = (
+				78E18831267D966E0069E701 /* PlayServerView.swift */,
+				7839921226911DCD005E93FD /* MetalView.swift */,
+			);
+			path = Play;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -315,6 +391,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				782F369D267D803E0034380E /* ServerPingerListItem.swift in Sources */,
+				7842786F268FBCEF00FF16C2 /* VersionManifest.swift in Sources */,
 				78E18832267D966E0069E701 /* PlayServerView.swift in Sources */,
 				78E18851267DBADA0069E701 /* LoadingView.swift in Sources */,
 				78E1885D267DBD6A0069E701 /* FatalErrorView.swift in Sources */,
@@ -325,11 +402,21 @@
 				7823322D267EC3B700694E76 /* Logging.swift in Sources */,
 				78D73BB8267D6AAC00B460E8 /* ServerPingerDetailView.swift in Sources */,
 				78D73BB1267D505C00B460E8 /* ServerListView.swift in Sources */,
+				7842784A268F288300FF16C2 /* Config.swift in Sources */,
 				78B6B1B12687DCE20041B1E1 /* WarningView.swift in Sources */,
+				78427859268FB67C00FF16C2 /* AssetManager.swift in Sources */,
+				78427854268FB42500FF16C2 /* CacheError.swift in Sources */,
+				7842784F268F364B00FF16C2 /* CacheManager.swift in Sources */,
+				78427845268F275A00FF16C2 /* ConfigManager.swift in Sources */,
+				7842785E268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
+				7842788F268FD27F00FF16C2 /* StringKey.swift in Sources */,
 				78B6B1C42687E3440041B1E1 /* StorageError.swift in Sources */,
 				78B6B1A52687D9470041B1E1 /* ErrorView.swift in Sources */,
 				78E18845267DB6050069E701 /* RouterView.swift in Sources */,
+				78427863268FBA2200FF16C2 /* AssetError.swift in Sources */,
+				7839921326911DCD005E93FD /* MetalView.swift in Sources */,
 				78233232267EC54300694E76 /* StorageManager.swift in Sources */,
+				78427868268FBB8300FF16C2 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +425,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				782F369E267D803E0034380E /* ServerPingerListItem.swift in Sources */,
+				78427870268FBCEF00FF16C2 /* VersionManifest.swift in Sources */,
 				78E18833267D966E0069E701 /* PlayServerView.swift in Sources */,
 				78E18852267DBADA0069E701 /* LoadingView.swift in Sources */,
 				78E1885E267DBD6A0069E701 /* FatalErrorView.swift in Sources */,
@@ -348,11 +436,21 @@
 				7823322E267EC3B700694E76 /* Logging.swift in Sources */,
 				78D73BB9267D6AAC00B460E8 /* ServerPingerDetailView.swift in Sources */,
 				78D73BB2267D505C00B460E8 /* ServerListView.swift in Sources */,
+				7842784B268F288300FF16C2 /* Config.swift in Sources */,
 				78B6B1B22687DCE20041B1E1 /* WarningView.swift in Sources */,
+				7842785A268FB67C00FF16C2 /* AssetManager.swift in Sources */,
+				78427855268FB42500FF16C2 /* CacheError.swift in Sources */,
+				78427850268F364B00FF16C2 /* CacheManager.swift in Sources */,
+				78427846268F275A00FF16C2 /* ConfigManager.swift in Sources */,
+				7842785F268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
+				78427890268FD27F00FF16C2 /* StringKey.swift in Sources */,
 				78B6B1C52687E3440041B1E1 /* StorageError.swift in Sources */,
 				78B6B1A62687D9470041B1E1 /* ErrorView.swift in Sources */,
 				78E18846267DB6050069E701 /* RouterView.swift in Sources */,
+				78427864268FBA2200FF16C2 /* AssetError.swift in Sources */,
+				7839921426911DCD005E93FD /* MetalView.swift in Sources */,
 				78233233267EC54300694E76 /* StorageManager.swift in Sources */,
+				78427869268FBB8300FF16C2 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,6 +515,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = "";
 			};
 			name = Debug;
 		};
@@ -471,6 +570,7 @@
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = "";
 			};
 			name = Release;
 		};
@@ -536,7 +636,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.stackotter.DeltaClient;
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.stackotter.delta-client";
 				PRODUCT_NAME = DeltaClient;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
@@ -560,7 +660,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.stackotter.DeltaClient;
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.stackotter.delta-client";
 				PRODUCT_NAME = DeltaClient;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;

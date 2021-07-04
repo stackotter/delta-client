@@ -13,16 +13,7 @@ struct DeltaClientApp: App {
   @ObservedObject static var modalState = StateWrapper<ModalState>(initial: .none)
   @ObservedObject static var appState = StateWrapper<AppState>(initial: .launch)
   
-  @ObservedObject var configManager: ConfigManager
-  
   init() {
-    
-    // TODO: make storage manager a singleton
-    let storageManager = try! DeltaCore.StorageManager()
-    
-    // TODO: make config manager a singleton too if possible
-    configManager = try! ConfigManager(storageManager: storageManager)
-    
     Self.appState.update(to: .serverList)
   }
   
@@ -32,7 +23,6 @@ struct DeltaClientApp: App {
         .frame(width: 800, height: 400)
         .environmentObject(Self.modalState)
         .environmentObject(Self.appState)
-        .environmentObject(configManager)
     }
   }
   
@@ -46,5 +36,11 @@ struct DeltaClientApp: App {
   static func modalError(_ message: String, safeState: AppState? = nil) {
     log.error("\(message)")
     Self.modalState.update(to: .error(message, safeState: safeState))
+  }
+  
+  /// Logs a fatal error and then fatal errors.
+  static func fatal(_ message: String) -> Never {
+    log.critical(message)
+    fatalError(message)
   }
 }
