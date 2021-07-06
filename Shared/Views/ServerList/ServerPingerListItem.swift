@@ -18,7 +18,7 @@ struct ServerPingerListItem: View {
         case let .success(info):
           // Ping succeeded
           let isCompatible = info.protocolVersion == Constants.protocolVersion
-          color = isCompatible ? .green : .red
+          color = isCompatible ? .green : .yellow
         case .failure:
           // Connection failed
           color = .red

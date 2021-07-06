@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "DeltaCore",
-        "repositoryURL": "https://github.com/stackotter/delta-core",
-        "state": {
-          "branch": "main",
-          "revision": "91c38586e7c9ede0b63ba97bc0ab05e6903d2702",
-          "version": null
-        }
-      },
-      {
         "package": "DeltaLogger",
         "repositoryURL": "https://github.com/stackotter/delta-logger",
         "state": {
@@ -29,12 +20,39 @@
         }
       },
       {
+        "package": "NioDNS",
+        "repositoryURL": "https://github.com/OpenKitten/NioDNS",
+        "state": {
+          "branch": null,
+          "revision": "3f4705538ab10004c28c2b3767345ea27607a9d2",
+          "version": "1.0.2"
+        }
+      },
+      {
         "package": "swift-log",
         "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
           "branch": "main",
           "revision": "d8af258aecd93cd8604e74ade3c0fe438bac13f8",
           "version": null
+        }
+      },
+      {
+        "package": "swift-nio",
+        "repositoryURL": "https://github.com/apple/swift-nio.git",
+        "state": {
+          "branch": null,
+          "revision": "8da5c5a4e6c5084c296b9f39dc54f00be146e0fa",
+          "version": "1.14.2"
+        }
+      },
+      {
+        "package": "swift-nio-zlib-support",
+        "repositoryURL": "https://github.com/apple/swift-nio-zlib-support.git",
+        "state": {
+          "branch": null,
+          "revision": "37760e9a52030bb9011972c5213c3350fa9d41fd",
+          "version": "1.0.0"
         }
       },
       {

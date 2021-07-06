@@ -17,7 +17,7 @@ struct ServerPingerDetailView: View {
     VStack(alignment: .leading) {
       Text(descriptor.name)
         .font(.title)
-      Text("\(descriptor.host):\(String(descriptor.port))")
+      Text(descriptor.description)
       
       if let result = pinger.pingResult {
         switch result {
