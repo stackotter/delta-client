@@ -11,16 +11,30 @@ import DeltaCore
 struct ServerPingerListItem: View {
   @StateObject var pinger: Pinger
   
+  var indicatorColor: Color {
+    let color: Color
+    if let result = pinger.pingResult {
+      switch result {
+        case let .success(info):
+          // Ping succeeded
+          let isCompatible = info.protocolVersion == Constants.protocolVersion
+          color = isCompatible ? .green : .red
+        case .failure:
+          // Connection failed
+          color = .red
+      }
+    } else {
+      // In the process of pinging
+      color = .red
+    }
+    return color
+  }
+  
   var body: some View {
-    let isOnline = pinger.pingResult != nil
-    let isCompatible = pinger.pingResult?.protocolVersion == Constants.protocolVersion
-    let indicatorColor: Color = isOnline ? (isCompatible ? .green : .yellow) : .red
     HStack {
       Text(pinger.descriptor.name)
       Spacer()
-      Circle()
-        .foregroundColor(indicatorColor)
-        .fixedSize()
+      PingIndicator(color: indicatorColor)
     }
   }
 }

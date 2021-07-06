@@ -18,10 +18,16 @@ struct ServerPingerDetailView: View {
       Text(descriptor.name)
         .font(.title)
       Text("\(descriptor.host):\(String(descriptor.port))")
-      if let pingInfo = pinger.pingResult {
-        Text("\(pingInfo.numPlayers)/\(pingInfo.maxPlayers) online")
-          .padding(.bottom, 8)
-        Text(pingInfo.description)
+      
+      if let result = pinger.pingResult {
+        switch result {
+          case let .success(info):
+            Text("\(info.numPlayers)/\(info.maxPlayers) online")
+              .padding(.bottom, 8)
+            Text(info.description)
+          case let .failure(error):
+            Text("Connection failed: \(error.localizedDescription)")
+        }
       } else {
         Text("Pinging..")
       }
