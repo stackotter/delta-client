@@ -44,7 +44,7 @@ struct DeltaClientApp: App {
   var body: some Scene {
     WindowGroup {
       RouterView()
-        .frame(width: 800, height: 400)
+        .frame(minWidth: 800, minHeight: 400)
         .environmentObject(Self.modalState)
         .environmentObject(Self.appState)
         .environmentObject(Self.loadingState)

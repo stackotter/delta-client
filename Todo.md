@@ -6,3 +6,4 @@
 - [ ] Packets should be passed `Client` instead of `Server`.
 - [ ] `Client` should store the world and all that, the `ServerConnection` just does the networking.
 - [ ] Use weak self in handlers and all that.
+- [ ] Change ping message to 'Server Offline' instead of pinging when server has responded to ping and is offline

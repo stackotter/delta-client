@@ -2,6 +2,24 @@
   "object": {
     "pins": [
       {
+        "package": "DeltaCore",
+        "repositoryURL": "https://github.com/stackotter/delta-core",
+        "state": {
+          "branch": "main",
+          "revision": "91c38586e7c9ede0b63ba97bc0ab05e6903d2702",
+          "version": null
+        }
+      },
+      {
+        "package": "DeltaLogger",
+        "repositoryURL": "https://github.com/stackotter/delta-logger",
+        "state": {
+          "branch": "main",
+          "revision": "a2ffeb3596fd32bf5ff0ad9fda9b610ae7481745",
+          "version": null
+        }
+      },
+      {
         "package": "IDZSwiftCommonCrypto",
         "repositoryURL": "https://github.com/iosdevzone/IDZSwiftCommonCrypto",
         "state": {
@@ -17,15 +35,6 @@
           "branch": "main",
           "revision": "d8af258aecd93cd8604e74ade3c0fe438bac13f8",
           "version": null
-        }
-      },
-      {
-        "package": "SwiftProtobuf",
-        "repositoryURL": "https://github.com/apple/swift-protobuf",
-        "state": {
-          "branch": null,
-          "revision": "1f62db409f2c9b0223a3f68567b4a01333aae778",
-          "version": "1.17.0"
         }
       },
       {

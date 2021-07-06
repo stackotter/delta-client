@@ -39,12 +39,8 @@
 		7842785F268FB91F00FF16C2 /* VersionsManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842785D268FB91F00FF16C2 /* VersionsManifest.swift */; };
 		78427863268FBA2200FF16C2 /* AssetError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427862268FBA2200FF16C2 /* AssetError.swift */; };
 		78427864268FBA2200FF16C2 /* AssetError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427862268FBA2200FF16C2 /* AssetError.swift */; };
-		78427868268FBB8300FF16C2 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427867268FBB8300FF16C2 /* Constants.swift */; };
-		78427869268FBB8300FF16C2 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427867268FBB8300FF16C2 /* Constants.swift */; };
 		7842786F268FBCEF00FF16C2 /* VersionManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842786E268FBCEF00FF16C2 /* VersionManifest.swift */; };
 		78427870268FBCEF00FF16C2 /* VersionManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842786E268FBCEF00FF16C2 /* VersionManifest.swift */; };
-		7842788F268FD27F00FF16C2 /* StringKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842788E268FD27F00FF16C2 /* StringKey.swift */; };
-		78427890268FD27F00FF16C2 /* StringKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842788E268FD27F00FF16C2 /* StringKey.swift */; };
 		788195C12691E2960099575B /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788195C02691E2960099575B /* LoadingState.swift */; };
 		788195C22691E2960099575B /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788195C02691E2960099575B /* LoadingState.swift */; };
 		78B6B1A52687D9470041B1E1 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1A42687D9470041B1E1 /* ErrorView.swift */; };
@@ -79,13 +75,13 @@
 		7800028C267A1AC5003C1685 /* DeltaClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7800028E267A1AC5003C1685 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7800028F267A1AC5003C1685 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		78050DAE269428E10024C049 /* delta-core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "delta-core"; path = "../delta-core"; sourceTree = "<group>"; };
 		7823322C267EC3B700694E76 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		78233231267EC54300694E76 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		782F369C267D803D0034380E /* ServerPingerListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerPingerListItem.swift; sourceTree = "<group>"; };
 		782F36A3267D87830034380E /* StateWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateWrapper.swift; sourceTree = "<group>"; };
 		782F36B1267D8E310034380E /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		7839921226911DCD005E93FD /* MetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
-		7839E37B267EBEB400D9C591 /* delta-logger */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "delta-logger"; path = "../delta-logger"; sourceTree = "<group>"; };
 		78427844268F275A00FF16C2 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
 		78427849268F288300FF16C2 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		7842784E268F364B00FF16C2 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
@@ -93,15 +89,12 @@
 		78427858268FB67C00FF16C2 /* AssetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
 		7842785D268FB91F00FF16C2 /* VersionsManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionsManifest.swift; sourceTree = "<group>"; };
 		78427862268FBA2200FF16C2 /* AssetError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetError.swift; sourceTree = "<group>"; };
-		78427867268FBB8300FF16C2 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		7842786E268FBCEF00FF16C2 /* VersionManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionManifest.swift; sourceTree = "<group>"; };
-		7842788E268FD27F00FF16C2 /* StringKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringKey.swift; sourceTree = "<group>"; };
 		788195C02691E2960099575B /* LoadingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingState.swift; sourceTree = "<group>"; };
 		78B6B1A42687D9470041B1E1 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		78B6B1B02687DCE20041B1E1 /* WarningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningView.swift; sourceTree = "<group>"; };
 		78B6B1BE2687DF370041B1E1 /* ModalState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalState.swift; sourceTree = "<group>"; };
 		78B6B1C32687E3440041B1E1 /* StorageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageError.swift; sourceTree = "<group>"; };
-		78D73BAA267D4E6300B460E8 /* delta-core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "delta-core"; path = "../delta-core"; sourceTree = "<group>"; };
 		78D73BB0267D505C00B460E8 /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
 		78D73BB7267D6AAC00B460E8 /* ServerPingerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerPingerDetailView.swift; sourceTree = "<group>"; };
 		78E18831267D966E0069E701 /* PlayServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayServerView.swift; sourceTree = "<group>"; };
@@ -138,9 +131,8 @@
 			children = (
 				7800027C267A1AB8003C1685 /* Shared */,
 				78000286267A1AC5003C1685 /* iOS */,
+				78050DAE269428E10024C049 /* delta-core */,
 				7800028D267A1AC5003C1685 /* macOS */,
-				78D73BAA267D4E6300B460E8 /* delta-core */,
-				7839E37B267EBEB400D9C591 /* delta-logger */,
 				78000285267A1AC5003C1685 /* Products */,
 				78D73BA0267D4DCE00B460E8 /* Frameworks */,
 			);
@@ -154,7 +146,6 @@
 				78E18869267DC8330069E701 /* Storage */,
 				7800027D267A1AB8003C1685 /* DeltaClientApp.swift */,
 				7823322C267EC3B700694E76 /* Logging.swift */,
-				78427867268FBB8300FF16C2 /* Constants.swift */,
 				7800027F267A1AC5003C1685 /* Assets.xcassets */,
 			);
 			path = Shared;
@@ -192,7 +183,6 @@
 				78427849268F288300FF16C2 /* Config.swift */,
 				7842785D268FB91F00FF16C2 /* VersionsManifest.swift */,
 				7842786E268FBCEF00FF16C2 /* VersionManifest.swift */,
-				7842788E268FD27F00FF16C2 /* StringKey.swift */,
 			);
 			path = JSON;
 			sourceTree = "<group>";
@@ -409,14 +399,12 @@
 				7842784F268F364B00FF16C2 /* CacheManager.swift in Sources */,
 				78427845268F275A00FF16C2 /* ConfigManager.swift in Sources */,
 				7842785E268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
-				7842788F268FD27F00FF16C2 /* StringKey.swift in Sources */,
 				78B6B1C42687E3440041B1E1 /* StorageError.swift in Sources */,
 				78B6B1A52687D9470041B1E1 /* ErrorView.swift in Sources */,
 				78E18845267DB6050069E701 /* RouterView.swift in Sources */,
 				78427863268FBA2200FF16C2 /* AssetError.swift in Sources */,
 				7839921326911DCD005E93FD /* MetalView.swift in Sources */,
 				78233232267EC54300694E76 /* StorageManager.swift in Sources */,
-				78427868268FBB8300FF16C2 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -443,14 +431,12 @@
 				78427850268F364B00FF16C2 /* CacheManager.swift in Sources */,
 				78427846268F275A00FF16C2 /* ConfigManager.swift in Sources */,
 				7842785F268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
-				78427890268FD27F00FF16C2 /* StringKey.swift in Sources */,
 				78B6B1C52687E3440041B1E1 /* StorageError.swift in Sources */,
 				78B6B1A62687D9470041B1E1 /* ErrorView.swift in Sources */,
 				78E18846267DB6050069E701 /* RouterView.swift in Sources */,
 				78427864268FBA2200FF16C2 /* AssetError.swift in Sources */,
 				7839921426911DCD005E93FD /* MetalView.swift in Sources */,
 				78233233267EC54300694E76 /* StorageManager.swift in Sources */,
-				78427869268FBB8300FF16C2 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

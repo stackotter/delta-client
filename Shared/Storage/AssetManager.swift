@@ -146,7 +146,7 @@ class AssetManager {
         throw AssetError.cgImageFailure
       }
       
-      if cgImage.width == Constants.textureSize && cgImage.height == Constants.textureSize {
+      if cgImage.width == 16 && cgImage.height == 16 {
         images.append(cgImage)
         identifierToIndex[identifier] = index
         index += 1

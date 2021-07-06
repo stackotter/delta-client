@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftProtobuf
 
 /// CacheManager provides all of the functionality DeltaClient requires for its caching needs.
 ///
@@ -41,44 +40,44 @@ class CacheManager {
     return StorageManager.default.fileExists(at: file)
   }
   
-  /// Read the cache with the given name to the given message format.
-  public func readCache<ProtobufMessage: SwiftProtobuf.Message>(named name: String) throws -> ProtobufMessage {
-    guard cacheExists(name: name) else {
-      throw CacheError.noSuchCache
-    }
-    
-    let file = urlForCache(named: name)
-    let data: Data
-    do {
-      data = try Data(contentsOf: file)
-    } catch {
-      log.error("Failed to read cache '\(name)': \(error)")
-      throw CacheError.failedToRead
-    }
-    do {
-      let deserialized = try ProtobufMessage(serializedData: data)
-      return deserialized
-    } catch {
-      log.error("Failed to deserialize cache '\(name)': \(error)")
-      throw CacheError.failedToDeserialize
-    }
-  }
-  
-  /// Write the given protobuf message to the cache with the given name.
-  public func writeCache<ProtobufMessage: SwiftProtobuf.Message>(_ cache: ProtobufMessage, named name: String) throws {
-    let file = urlForCache(named: name)
-    let data: Data
-    do {
-      data = try cache.serializedData()
-    } catch {
-      log.error("Failed to serialize cache '\(name)': \(error)")
-      throw CacheError.failedToSerialize
-    }
-    do {
-      try data.write(to: file)
-    } catch {
-      log.error("Failed to write cache '\(name)': \(error)")
-      throw CacheError.failedToWrite
-    }
-  }
+//  /// Read the cache with the given name to the given message format.
+//  public func readCache<ProtobufMessage: SwiftProtobuf.Message>(named name: String) throws -> ProtobufMessage {
+//    guard cacheExists(name: name) else {
+//      throw CacheError.noSuchCache
+//    }
+//    
+//    let file = urlForCache(named: name)
+//    let data: Data
+//    do {
+//      data = try Data(contentsOf: file)
+//    } catch {
+//      log.error("Failed to read cache '\(name)': \(error)")
+//      throw CacheError.failedToRead
+//    }
+//    do {
+//      let deserialized = try ProtobufMessage(serializedData: data)
+//      return deserialized
+//    } catch {
+//      log.error("Failed to deserialize cache '\(name)': \(error)")
+//      throw CacheError.failedToDeserialize
+//    }
+//  }
+//  
+//  /// Write the given protobuf message to the cache with the given name.
+//  public func writeCache<ProtobufMessage: SwiftProtobuf.Message>(_ cache: ProtobufMessage, named name: String) throws {
+//    let file = urlForCache(named: name)
+//    let data: Data
+//    do {
+//      data = try cache.serializedData()
+//    } catch {
+//      log.error("Failed to serialize cache '\(name)': \(error)")
+//      throw CacheError.failedToSerialize
+//    }
+//    do {
+//      try data.write(to: file)
+//    } catch {
+//      log.error("Failed to write cache '\(name)': \(error)")
+//      throw CacheError.failedToWrite
+//    }
+//  }
 }
