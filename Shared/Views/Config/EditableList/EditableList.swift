@@ -32,8 +32,8 @@ struct EditableList<ItemLabel: View, ItemEditor: EditorView>: View {
   
   init(
     _ items: [ItemEditor.Item],
-    @ViewBuilder itemLabel: @escaping (ItemEditor.Item) -> ItemLabel,
     itemEditor: ItemEditor.Type,
+    @ViewBuilder itemLabel: @escaping (ItemEditor.Item) -> ItemLabel,
     completion: @escaping ([ItemEditor.Item]) -> Void,
     cancelation: @escaping () -> Void
   ) {

@@ -1,5 +1,5 @@
 //
-//  ServerPingerDetailView.swift
+//  ServerDetail.swift
 //  DeltaClient
 //
 //  Created by Rohan van Klinken on 19/6/21.
@@ -8,7 +8,7 @@
 import SwiftUI
 import DeltaCore
 
-struct ServerPingerDetailView: View {
+struct ServerDetail: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
   @ObservedObject var pinger: Pinger
   
@@ -18,18 +18,21 @@ struct ServerPingerDetailView: View {
       Text(descriptor.name)
         .font(.title)
       Text(descriptor.description)
+        .padding(.bottom, 8)
       
       if let result = pinger.pingResult {
         switch result {
           case let .success(info):
-            Text("\(info.numPlayers)/\(info.maxPlayers) online")
+            Text(verbatim: "\(info.numPlayers)/\(info.maxPlayers) online")
+            Text("version: \(info.versionName) \(info.protocolVersion == Constants.protocolVersion ? "" : "(incompatible)")")
               .padding(.bottom, 8)
-            Text(info.description)
           case let .failure(error):
             Text("Connection failed: \(error.localizedDescription)")
+              .padding(.bottom, 8)
         }
       } else {
         Text("Pinging..")
+          .padding(.bottom, 8)
       }
       
       Button("Play") {

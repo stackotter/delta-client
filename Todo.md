@@ -3,7 +3,7 @@
 ## UI
 
 - [x] Change ping message to 'Server Offline' instead of pinging when server has responded to ping and is offline
-- [ ] Reimplement server list editing UI
+- [x] Reimplement server list editing UI
 - [ ] Create settings screen on cmd+,
 - [ ] Make flexible way to add settings UI elements
 - [ ] proper error messages when joining server

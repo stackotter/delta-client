@@ -34,8 +34,8 @@ struct ServerListView: View {
       List {
         if !pingers.isEmpty {
           ForEach(pingers, id: \.self) { pinger in
-            NavigationLink(destination: ServerPingerDetailView(pinger: pinger)) {
-              ServerPingerListItem(pinger: pinger)
+            NavigationLink(destination: ServerDetail(pinger: pinger)) {
+              ServerListItem(pinger: pinger)
             }
           }
         } else {

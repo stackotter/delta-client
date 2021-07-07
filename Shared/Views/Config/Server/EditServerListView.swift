@@ -15,18 +15,25 @@ struct EditServerListView: View {
   @State var servers = ConfigManager.default.config.servers
   
   var body: some View {
-    VStack {
-      EditableList(servers, itemLabel: { item in
+    EditableList(
+      servers,
+      itemEditor: ServerEditorView.self,
+      itemLabel: { item in
         Text("\(item.name)")
-      }, itemEditor: ServerEditorView.self, completion: { editedServers in
+          .font(.headline)
+        Text("\(item.description)")
+          .font(.subheadline)
+      },
+      completion: { editedServers in
         var config = ConfigManager.default.config
         config.servers = editedServers
         ConfigManager.default.setConfig(to: config)
         appState.pop()
-      }, cancelation: {
+      },
+      cancelation: {
         appState.pop()
-      })
-    }
+      }
+    )
     .padding()
     .navigationTitle("Edit Servers")
   }
