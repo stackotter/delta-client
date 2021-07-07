@@ -30,8 +30,9 @@ struct RouterView: View {
             case let .done(registry):
               switch appState.current {
                 case .serverList:
-                  let serverList = ServerPingerList(ConfigManager.default.config.servers)
-                  ServerListView(serverList: serverList)
+                  ServerListView()
+                case .editServerList:
+                  EditServerListView()
                 case .playServer(let descriptor):
                   PlayServerView(serverDescriptor: descriptor, registry: registry)
                 case .fatalError(let message):

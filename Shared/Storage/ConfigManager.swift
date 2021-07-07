@@ -20,6 +20,8 @@ public class ConfigManager {
   /// The file to store config in.
   private let configFile: URL
   
+  private let queue = DispatchQueue(label: "dev.stackotter.delta-client.ConfigManager")
+  
   /// Creates a manager for the specified config file. Creates default config if required.
   private init(for configFile: URL) {
     self.configFile = configFile
@@ -47,9 +49,16 @@ public class ConfigManager {
   }
   
   /// Updates the config and writes it to the config file.
-  public func setConfig(to config: Config) throws {
+  public func setConfig(to config: Config) {
     self.config = config
-    try commitConfig()
+    
+    queue.async {
+      do {
+        try self.commitConfig()
+      } catch {
+        log.error("Failed to write config to file: \(error)")
+      }
+    }
   }
   
   /// Commits the current config to this manager's config file.

@@ -7,6 +7,7 @@
 - [ ] Create settings screen on cmd+,
 - [ ] Make flexible way to add settings UI elements
 - [ ] proper error messages when joining server
+- [ ] direct connect
 
 ## Settings
 

@@ -11,6 +11,7 @@ import DeltaCore
 /// App states
 indirect enum AppState: Equatable {
   case serverList
+  case editServerList
   case playServer(ServerDescriptor)
   case fatalError(String)
 }

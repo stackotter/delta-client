@@ -13,6 +13,14 @@
 		78000295267A1AC5003C1685 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7800027F267A1AC5003C1685 /* Assets.xcassets */; };
 		78050DB926944C040024C049 /* PingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050DB826944C040024C049 /* PingIndicator.swift */; };
 		78050DBA26944C040024C049 /* PingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050DB826944C040024C049 /* PingIndicator.swift */; };
+		78050DE82695151C0024C049 /* EditServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050DE72695151C0024C049 /* EditServerListView.swift */; };
+		78050DE92695151C0024C049 /* EditServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050DE72695151C0024C049 /* EditServerListView.swift */; };
+		78050DED269588520024C049 /* IconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050DEC269588510024C049 /* IconButton.swift */; };
+		78050DEE269588520024C049 /* IconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050DEC269588510024C049 /* IconButton.swift */; };
+		78050DF926958F2D0024C049 /* EditableList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050DF826958F2D0024C049 /* EditableList.swift */; };
+		78050DFA26958F2D0024C049 /* EditableList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050DF826958F2D0024C049 /* EditableList.swift */; };
+		78050E0D2695BC050024C049 /* EditableListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050E0C2695BC050024C049 /* EditableListRow.swift */; };
+		78050E0E2695BC050024C049 /* EditableListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050E0C2695BC050024C049 /* EditableListRow.swift */; };
 		78233229267EC31100694E76 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 78233228267EC31100694E76 /* Logging */; };
 		7823322D267EC3B700694E76 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7823322C267EC3B700694E76 /* Logging.swift */; };
 		7823322E267EC3B700694E76 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7823322C267EC3B700694E76 /* Logging.swift */; };
@@ -45,6 +53,12 @@
 		78427870268FBCEF00FF16C2 /* VersionManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842786E268FBCEF00FF16C2 /* VersionManifest.swift */; };
 		788195C12691E2960099575B /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788195C02691E2960099575B /* LoadingState.swift */; };
 		788195C22691E2960099575B /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788195C02691E2960099575B /* LoadingState.swift */; };
+		788538892695C8BB00932F71 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788538882695C8BB00932F71 /* EditorView.swift */; };
+		7885388A2695C8BB00932F71 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788538882695C8BB00932F71 /* EditorView.swift */; };
+		78ABBBC926964A0F00475BFE /* OptionalNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */; };
+		78ABBBCA26964A0F00475BFE /* OptionalNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */; };
+		78ABBBCE2696540C00475BFE /* IPField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBCD2696540C00475BFE /* IPField.swift */; };
+		78ABBBCF2696540C00475BFE /* IPField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBCD2696540C00475BFE /* IPField.swift */; };
 		78B6B1A52687D9470041B1E1 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1A42687D9470041B1E1 /* ErrorView.swift */; };
 		78B6B1A62687D9470041B1E1 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1A42687D9470041B1E1 /* ErrorView.swift */; };
 		78B6B1B12687DCE20041B1E1 /* WarningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1B02687DCE20041B1E1 /* WarningView.swift */; };
@@ -53,6 +67,8 @@
 		78B6B1C02687DF370041B1E1 /* ModalState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1BE2687DF370041B1E1 /* ModalState.swift */; };
 		78B6B1C42687E3440041B1E1 /* StorageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1C32687E3440041B1E1 /* StorageError.swift */; };
 		78B6B1C52687E3440041B1E1 /* StorageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1C32687E3440041B1E1 /* StorageError.swift */; };
+		78C1C01C2696644500604D15 /* ServerEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C1C01B2696644500604D15 /* ServerEditorView.swift */; };
+		78C1C01D2696644500604D15 /* ServerEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C1C01B2696644500604D15 /* ServerEditorView.swift */; };
 		78D73B9B267D4D9A00B460E8 /* DeltaCore in Frameworks */ = {isa = PBXBuildFile; productRef = 78D73B9A267D4D9A00B460E8 /* DeltaCore */; };
 		78D73B9D267D4D9A00B460E8 /* DeltaCoreC in Frameworks */ = {isa = PBXBuildFile; productRef = 78D73B9C267D4D9A00B460E8 /* DeltaCoreC */; };
 		78D73BA2267D4DCE00B460E8 /* DeltaCore in Frameworks */ = {isa = PBXBuildFile; productRef = 78D73BA1267D4DCE00B460E8 /* DeltaCore */; };
@@ -79,6 +95,10 @@
 		7800028F267A1AC5003C1685 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		78050DAE269428E10024C049 /* delta-core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "delta-core"; path = "../delta-core"; sourceTree = "<group>"; };
 		78050DB826944C040024C049 /* PingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingIndicator.swift; sourceTree = "<group>"; };
+		78050DE72695151C0024C049 /* EditServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditServerListView.swift; sourceTree = "<group>"; };
+		78050DEC269588510024C049 /* IconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconButton.swift; sourceTree = "<group>"; };
+		78050DF826958F2D0024C049 /* EditableList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableList.swift; sourceTree = "<group>"; };
+		78050E0C2695BC050024C049 /* EditableListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableListRow.swift; sourceTree = "<group>"; };
 		7823322C267EC3B700694E76 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		78233231267EC54300694E76 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		782F369C267D803D0034380E /* ServerPingerListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerPingerListItem.swift; sourceTree = "<group>"; };
@@ -94,10 +114,14 @@
 		78427862268FBA2200FF16C2 /* AssetError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetError.swift; sourceTree = "<group>"; };
 		7842786E268FBCEF00FF16C2 /* VersionManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionManifest.swift; sourceTree = "<group>"; };
 		788195C02691E2960099575B /* LoadingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingState.swift; sourceTree = "<group>"; };
+		788538882695C8BB00932F71 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
+		78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalNumberField.swift; sourceTree = "<group>"; };
+		78ABBBCD2696540C00475BFE /* IPField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPField.swift; sourceTree = "<group>"; };
 		78B6B1A42687D9470041B1E1 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		78B6B1B02687DCE20041B1E1 /* WarningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningView.swift; sourceTree = "<group>"; };
 		78B6B1BE2687DF370041B1E1 /* ModalState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalState.swift; sourceTree = "<group>"; };
 		78B6B1C32687E3440041B1E1 /* StorageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageError.swift; sourceTree = "<group>"; };
+		78C1C01B2696644500604D15 /* ServerEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerEditorView.swift; sourceTree = "<group>"; };
 		78D73BB0267D505C00B460E8 /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
 		78D73BB7267D6AAC00B460E8 /* ServerPingerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerPingerDetailView.swift; sourceTree = "<group>"; };
 		78E18831267D966E0069E701 /* PlayServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayServerView.swift; sourceTree = "<group>"; };
@@ -180,6 +204,16 @@
 			path = macOS;
 			sourceTree = "<group>";
 		};
+		78050DE6269514ED0024C049 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				78C1C0222696647800604D15 /* Server */,
+				78C1C0212696646A00604D15 /* EditableList */,
+				78C1C0202696645A00604D15 /* Field */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 		7842789E268FD35C00FF16C2 /* JSON */ = {
 			isa = PBXGroup;
 			children = (
@@ -200,6 +234,34 @@
 			path = Error;
 			sourceTree = "<group>";
 		};
+		78C1C0202696645A00604D15 /* Field */ = {
+			isa = PBXGroup;
+			children = (
+				78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */,
+				78ABBBCD2696540C00475BFE /* IPField.swift */,
+			);
+			path = Field;
+			sourceTree = "<group>";
+		};
+		78C1C0212696646A00604D15 /* EditableList */ = {
+			isa = PBXGroup;
+			children = (
+				78050DF826958F2D0024C049 /* EditableList.swift */,
+				78050E0C2695BC050024C049 /* EditableListRow.swift */,
+				788538882695C8BB00932F71 /* EditorView.swift */,
+			);
+			path = EditableList;
+			sourceTree = "<group>";
+		};
+		78C1C0222696647800604D15 /* Server */ = {
+			isa = PBXGroup;
+			children = (
+				78050DE72695151C0024C049 /* EditServerListView.swift */,
+				78C1C01B2696644500604D15 /* ServerEditorView.swift */,
+			);
+			path = Server;
+			sourceTree = "<group>";
+		};
 		78D73BA0267D4DCE00B460E8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -213,7 +275,9 @@
 				78E18864267DC7620069E701 /* ServerList */,
 				78F77E10268F22C90092F002 /* Alert */,
 				78F77E11268F22E20092F002 /* Play */,
+				78050DE6269514ED0024C049 /* Config */,
 				78E18844267DB6050069E701 /* RouterView.swift */,
+				78050DEC269588510024C049 /* IconButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -386,9 +450,12 @@
 			files = (
 				782F369D267D803E0034380E /* ServerPingerListItem.swift in Sources */,
 				7842786F268FBCEF00FF16C2 /* VersionManifest.swift in Sources */,
+				78050DF926958F2D0024C049 /* EditableList.swift in Sources */,
 				78E18832267D966E0069E701 /* PlayServerView.swift in Sources */,
+				78050DE82695151C0024C049 /* EditServerListView.swift in Sources */,
 				78E1885D267DBD6A0069E701 /* FatalErrorView.swift in Sources */,
 				78B6B1BF2687DF370041B1E1 /* ModalState.swift in Sources */,
+				788538892695C8BB00932F71 /* EditorView.swift in Sources */,
 				782F36A4267D87830034380E /* StateWrapper.swift in Sources */,
 				78000290267A1AC5003C1685 /* DeltaClientApp.swift in Sources */,
 				788195C12691E2960099575B /* LoadingState.swift in Sources */,
@@ -398,13 +465,18 @@
 				78D73BB1267D505C00B460E8 /* ServerListView.swift in Sources */,
 				7842784A268F288300FF16C2 /* Config.swift in Sources */,
 				78B6B1B12687DCE20041B1E1 /* WarningView.swift in Sources */,
+				78ABBBCE2696540C00475BFE /* IPField.swift in Sources */,
 				78427859268FB67C00FF16C2 /* AssetManager.swift in Sources */,
+				78050DED269588520024C049 /* IconButton.swift in Sources */,
 				78427854268FB42500FF16C2 /* CacheError.swift in Sources */,
 				7842784F268F364B00FF16C2 /* CacheManager.swift in Sources */,
 				78427845268F275A00FF16C2 /* ConfigManager.swift in Sources */,
 				7842785E268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
 				78B6B1C42687E3440041B1E1 /* StorageError.swift in Sources */,
 				78B6B1A52687D9470041B1E1 /* ErrorView.swift in Sources */,
+				78ABBBC926964A0F00475BFE /* OptionalNumberField.swift in Sources */,
+				78050E0D2695BC050024C049 /* EditableListRow.swift in Sources */,
+				78C1C01C2696644500604D15 /* ServerEditorView.swift in Sources */,
 				78E18845267DB6050069E701 /* RouterView.swift in Sources */,
 				78427863268FBA2200FF16C2 /* AssetError.swift in Sources */,
 				7839921326911DCD005E93FD /* MetalView.swift in Sources */,
@@ -419,9 +491,12 @@
 			files = (
 				782F369E267D803E0034380E /* ServerPingerListItem.swift in Sources */,
 				78427870268FBCEF00FF16C2 /* VersionManifest.swift in Sources */,
+				78050DFA26958F2D0024C049 /* EditableList.swift in Sources */,
 				78E18833267D966E0069E701 /* PlayServerView.swift in Sources */,
+				78050DE92695151C0024C049 /* EditServerListView.swift in Sources */,
 				78E1885E267DBD6A0069E701 /* FatalErrorView.swift in Sources */,
 				78B6B1C02687DF370041B1E1 /* ModalState.swift in Sources */,
+				7885388A2695C8BB00932F71 /* EditorView.swift in Sources */,
 				782F36A5267D87830034380E /* StateWrapper.swift in Sources */,
 				78000291267A1AC5003C1685 /* DeltaClientApp.swift in Sources */,
 				788195C22691E2960099575B /* LoadingState.swift in Sources */,
@@ -431,13 +506,18 @@
 				78D73BB2267D505C00B460E8 /* ServerListView.swift in Sources */,
 				7842784B268F288300FF16C2 /* Config.swift in Sources */,
 				78B6B1B22687DCE20041B1E1 /* WarningView.swift in Sources */,
+				78ABBBCF2696540C00475BFE /* IPField.swift in Sources */,
 				7842785A268FB67C00FF16C2 /* AssetManager.swift in Sources */,
+				78050DEE269588520024C049 /* IconButton.swift in Sources */,
 				78427855268FB42500FF16C2 /* CacheError.swift in Sources */,
 				78427850268F364B00FF16C2 /* CacheManager.swift in Sources */,
 				78427846268F275A00FF16C2 /* ConfigManager.swift in Sources */,
 				7842785F268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
 				78B6B1C52687E3440041B1E1 /* StorageError.swift in Sources */,
 				78B6B1A62687D9470041B1E1 /* ErrorView.swift in Sources */,
+				78ABBBCA26964A0F00475BFE /* OptionalNumberField.swift in Sources */,
+				78050E0E2695BC050024C049 /* EditableListRow.swift in Sources */,
+				78C1C01D2696644500604D15 /* ServerEditorView.swift in Sources */,
 				78E18846267DB6050069E701 /* RouterView.swift in Sources */,
 				78427864268FBA2200FF16C2 /* AssetError.swift in Sources */,
 				7839921426911DCD005E93FD /* MetalView.swift in Sources */,

@@ -22,17 +22,17 @@ struct DeltaClientApp: App {
       do {
         Self.loadingState.update(to: .loadingWithMessage("Loading block texture palette"))
         let texturePalette = try AssetManager.default.getBlockTexturePalette()
-        
+
         Self.loadingState.update(to: .loadingWithMessage("Loading pixlyzer data"))
         let pixlyzerData = StorageManager.default.absoluteFromRelative("pixlyzer-data/blocks.json")
-        
+
         Self.loadingState.update(to: .loadingWithMessage("Loading block models"))
         let blockModels = AssetManager.default.vanillaAssetsDirectory.appendingPathComponent("minecraft/models/block")
         let blockRegistry = try BlockRegistry.parse(
           fromPixlyzerDataAt: pixlyzerData,
           withBlockModelDirectoryAt: blockModels,
           andTexturesFrom: texturePalette)
-        
+
         let registry = Registry(blockRegistry: blockRegistry)
         Self.loadingState.update(to: .done(registry))
       } catch {
