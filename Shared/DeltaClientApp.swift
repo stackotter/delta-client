@@ -49,6 +49,7 @@ struct DeltaClientApp: App {
         .environmentObject(Self.appState)
         .environmentObject(Self.loadingState)
     }
+    
     #if os(macOS)
     Settings {
       SettingsView()

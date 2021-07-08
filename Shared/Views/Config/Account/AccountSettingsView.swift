@@ -22,6 +22,7 @@ struct AccountSettingsView: View {
   
   /// Saves the given accounts to the config file.
   func save(_ accounts: [Account]) {
+    // Filter out duplicate accounts
     var uniqueAccounts: [Account] = []
     for account in accounts {
       let collisions = uniqueAccounts.filter { $0.id == account.id }
@@ -30,41 +31,48 @@ struct AccountSettingsView: View {
       }
     }
     
-    var config = ConfigManager.default.config
-    config.offlineAccounts = [:]
-    config.mojangAccounts = [:]
-    if let index = selectedIndex {
-      config.selectedAccount = accounts[index].id
-    } else {
-      config.selectedAccount = nil
-    }
-    
-    uniqueAccounts.forEach { account in
-      switch account {
-        case let account as MojangAccount:
-          config.mojangAccounts[account.id] = account
-        case let account as OfflineAccount:
-          config.offlineAccounts[account.id] = account
-        default:
-          break
-      }
-    }
-    ConfigManager.default.setConfig(to: config)
-    
     if accounts.count != uniqueAccounts.count {
       self.accounts = uniqueAccounts
+      return // Updating accounts will run this function again so we just stop here
     }
+    
+    var config = ConfigManager.default.config
+    
+    // Set accounts
+    config.setAccounts(uniqueAccounts)
+    
+    // Select account
+    do {
+      try config.selectAccount(getSelectedAccount())
+    } catch {
+      selectedIndex = nil
+    }
+    
+    ConfigManager.default.setConfig(to: config)
   }
   
   /// Updates the selected account in the config file.
   func saveSelected(_ index: Int?) {
     var config = ConfigManager.default.config
-    if let index = index {
-      config.selectedAccount = accounts[index].id
-    } else {
-      config.selectedAccount = nil
+    do {
+      try config.selectAccount(getSelectedAccount())
+      ConfigManager.default.setConfig(to: config)
+    } catch {
+      selectedIndex = nil
     }
-    ConfigManager.default.setConfig(to: config)
+  }
+  
+  /// Returns the currently selected account if any.
+  func getSelectedAccount() -> Account? {
+    if let selectedIndex = selectedIndex {
+      if selectedIndex < 0 || selectedIndex >= accounts.count {
+        self.selectedIndex = nil
+        return nil
+      } else {
+        return accounts[selectedIndex]
+      }
+    }
+    return nil
   }
   
   var body: some View {
