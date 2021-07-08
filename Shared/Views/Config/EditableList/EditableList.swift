@@ -27,8 +27,12 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
     _ isLast: Bool,
     _ handler: @escaping (Action) -> Void
   ) -> Row
+  
   let save: (() -> Void)?
   let cancel: (() -> Void)?
+  
+  /// Message to display when the list is empty.
+  let emptyMessage: String
   
   enum Action {
     case delete
@@ -50,13 +54,14 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
       _ handler: @escaping (Action) -> Void
     ) -> Row,
     saveAction: (() -> Void)?,
-    cancelAction: (() -> Void)?
+    cancelAction: (() -> Void)?,
+    emptyMessage: String = "No items"
   ) {
     self._items = items
     self._selected = selected
     self.itemEditor = itemEditor
     self.row = row
-    
+    self.emptyMessage = emptyMessage
     save = saveAction
     cancel = cancelAction
   }
@@ -87,6 +92,10 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
       switch state.current {
         case .list:
           VStack(alignment: .center, spacing: 16) {
+            if items.count == 0 {
+              Text(emptyMessage).italic()
+            }
+            
             ScrollView(showsIndicators: true) {
               ForEach(items.indices, id: \.self) { index in
                 VStack(alignment: .leading) {
@@ -109,19 +118,24 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
               state.update(to: .addItem)
             }
             
-            HStack {
-              if let save = save {
-                Button("Save", action: save)
-              }
-              if let cancel = cancel {
-                Button("Cancel", action: cancel)
-                  .buttonStyle(BorderlessButtonStyle())
+            if save != nil || cancel != nil {
+              HStack {
+                if let save = save {
+                  Button("Done", action: save)
+                }
+                if let cancel = cancel {
+                  Button("Cancel", action: cancel)
+                    .buttonStyle(BorderlessButtonStyle())
+                }
               }
             }
           }
         case .addItem:
           itemEditor.init(nil, completion: { newItem in
             items.append(newItem)
+            if selected == nil {
+              selected = items.count - 1
+            }
             state.update(to: .list)
           }, cancelation: {
             state.update(to: .list)

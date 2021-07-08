@@ -33,6 +33,10 @@ struct RouterView: View {
                   ServerListView()
                 case .editServerList:
                   EditServerListView()
+                case .accounts:
+                  AccountSettingsView(saveAction: {
+                    appState.update(to: .serverList)
+                  })
                 case .playServer(let descriptor):
                   PlayServerView(serverDescriptor: descriptor, registry: registry)
                 case .fatalError(let message):

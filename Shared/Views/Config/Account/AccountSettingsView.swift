@@ -12,11 +12,15 @@ struct AccountSettingsView: View {
   @State var accounts: [Account]
   @State var selectedIndex: Int?
   
-  init() {
+  let saveAction: (() -> Void)?
+  
+  init(saveAction: (() -> Void)? = nil) {
+    self.saveAction = saveAction
+    
     _accounts = State(initialValue: ConfigManager.default.config.accounts)
     
     _selectedIndex = State(initialValue: accounts.firstIndex {
-      $0.id == ConfigManager.default.config.selectedAccount
+      $0.id == ConfigManager.default.config.selectedAccountId
     })
   }
   
@@ -76,26 +80,35 @@ struct AccountSettingsView: View {
   }
   
   var body: some View {
-    EditableList($accounts.onChange(save), selected: $selectedIndex.onChange(saveSelected), itemEditor: AccountLoginView.self, row: { item, selected, isFirst, isLast, handler in
-      HStack {
-        Image(systemName: "chevron.right")
-          .opacity(selected ? 1 : 0)
-        
-        VStack(alignment: .leading) {
-          Text(item.name)
-            .font(.headline)
-          Text(item.type)
-            .font(.subheadline)
-        }
-        
-        Spacer()
-        
-        Button("Select") { handler(.select) }
-          .disabled(selected)
-          .buttonStyle(BorderlessButtonStyle())
-        IconButton("xmark") { handler(.delete) }
-      }
-    }, saveAction: nil, cancelAction: nil)
+    VStack {
+      EditableList(
+        $accounts.onChange(save),
+        selected: $selectedIndex.onChange(saveSelected),
+        itemEditor: AccountLoginView.self,
+        row: { item, selected, isFirst, isLast, handler in
+          HStack {
+            Image(systemName: "chevron.right")
+              .opacity(selected ? 1 : 0)
+            
+            VStack(alignment: .leading) {
+              Text(item.username)
+                .font(.headline)
+              Text(item.type)
+                .font(.subheadline)
+            }
+            
+            Spacer()
+            
+            Button("Select") { handler(.select) }
+              .disabled(selected)
+              .buttonStyle(BorderlessButtonStyle())
+            IconButton("xmark") { handler(.delete) }
+          }
+        },
+        saveAction: saveAction,
+        cancelAction: nil,
+        emptyMessage: "No accounts")
+    }
     .padding()
     .navigationTitle("Accounts")
   }

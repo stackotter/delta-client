@@ -23,30 +23,34 @@ struct EditServerListView: View {
   
   var body: some View {
     VStack {
-      EditableList($servers, itemEditor: ServerEditorView.self, row: { item, selected, isFirst, isLast, handler in
-        HStack {
-          VStack {
-            IconButton("chevron.up", isDisabled: isFirst) { handler(.moveUp) }
-            IconButton("chevron.down", isDisabled: isLast) { handler(.moveDown) }
-          }
-          
-          VStack(alignment: .leading) {
-            Text(item.name)
-              .font(.headline)
-            Text(item.description)
-              .font(.subheadline)
-          }
-          
-          Spacer()
-          
+      EditableList(
+        $servers,
+        itemEditor: ServerEditorView.self,
+        row: { item, selected, isFirst, isLast, handler in
           HStack {
-            IconButton("square.and.pencil") { handler(.edit) }
-            IconButton("xmark") { handler(.delete) }
+            VStack {
+              IconButton("chevron.up", isDisabled: isFirst) { handler(.moveUp) }
+              IconButton("chevron.down", isDisabled: isLast) { handler(.moveDown) }
+            }
+            
+            VStack(alignment: .leading) {
+              Text(item.name)
+                .font(.headline)
+              Text(item.description)
+                .font(.subheadline)
+            }
+            
+            Spacer()
+            
+            HStack {
+              IconButton("square.and.pencil") { handler(.edit) }
+              IconButton("xmark") { handler(.delete) }
+            }
           }
-        }
-      },
-      saveAction: save,
-      cancelAction: appState.pop)
+        },
+        saveAction: save,
+        cancelAction: appState.pop,
+        emptyMessage: "No servers")
     }
     .padding()
     .navigationTitle("Edit Servers")

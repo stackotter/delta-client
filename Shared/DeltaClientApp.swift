@@ -66,7 +66,6 @@ struct DeltaClientApp: App {
   
   /// Display a dismissible error and then transition to `safeState` if supplied.
   static func modalError(_ message: String, safeState: AppState? = nil) {
-    log.error("\(message)")
     Self.modalState.update(to: .error(message, safeState: safeState))
   }
   

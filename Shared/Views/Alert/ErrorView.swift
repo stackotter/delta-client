@@ -15,16 +15,15 @@ struct ErrorView: View {
   let safeState: AppState?
   
   var body: some View {
-    Text(message)
-      .navigationTitle("Error")
-      .toolbar {
-        Spacer()
-        Button("dismiss") {
-          if let nextState = safeState {
-            appState.update(to: nextState)
-          }
-          modalState.update(to: .none)
+    VStack {
+      Text(message)
+      Button("Ok") {
+        if let nextState = safeState {
+          appState.update(to: nextState)
         }
+        modalState.update(to: .none)
       }
+    }
+    .navigationTitle("Error")
   }
 }

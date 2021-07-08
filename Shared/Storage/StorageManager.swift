@@ -22,10 +22,9 @@ class StorageManager {
     if let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
       storageDirectory = applicationSupport.appendingPathComponent("dev.stackotter.delta-client")
     } else {
-      DeltaClientApp.modalWarning(
-        "Failed to get application support directory, using temporary directory instead")
-      let fallback = FileManager.default.temporaryDirectory.appendingPathComponent(
-        "dev.stackotter.delta-client.fallback")
+      log.warning("Failed to get application support directory, using temporary directory instead")
+      DeltaClientApp.modalWarning("Failed to get application support directory, using temporary directory instead")
+      let fallback = FileManager.default.temporaryDirectory.appendingPathComponent("dev.stackotter.delta-client.fallback")
       storageDirectory = fallback
     }
     

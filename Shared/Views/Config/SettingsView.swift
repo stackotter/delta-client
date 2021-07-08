@@ -11,7 +11,7 @@ struct SettingsView: View {
   var body: some View {
     NavigationView {
       List {
-        NavigationLink("Accounts", destination: AccountSettingsView())
+        NavigationLink("Accounts", destination: AccountSettingsView().padding())
       }
       .listStyle(SidebarListStyle())
     }

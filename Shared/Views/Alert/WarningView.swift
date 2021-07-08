@@ -14,12 +14,12 @@ struct WarningView: View {
   let message: String
   
   var body: some View {
-    Text(message)
-      .navigationTitle("Warning")
-      .toolbar {
-        Button("dismiss") {
-          modalState.update(to: .none)
-        }
+    VStack {
+      Text(message)
+      Button("Ok") {
+        modalState.update(to: .none)
       }
+    }
+    .navigationTitle("Warning")
   }
 }

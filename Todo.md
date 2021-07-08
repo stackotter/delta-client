@@ -11,7 +11,7 @@
 
 ## Settings
 
-- [ ] Account switching
+- [x] Account switching
 - [ ] Render distance setting
 - [ ] Keymapping
 - [ ] Mouse sensitivity
@@ -21,20 +21,3 @@
 
 - [ ] Move texture loading stuff to DeltaCore
 - [ ] DeltaClient probably only needs StorageManager and ConfigManager
-
-
-# EditableList
-
-init(
-  items: Binding<[Item]>,
-  selected: Binding<Int?>,
-  row: (Item, Bool, (Action) -> Void) -> Row,
-  itemEditor: Editor.Type)
-
-enum Action {
-  case edit
-  case delete
-  case moveUp
-  case moveDown
-  case select
-}
