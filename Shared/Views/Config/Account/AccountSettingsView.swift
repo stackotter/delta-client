@@ -38,8 +38,8 @@ struct AccountSettingsView: View {
     
     var config = ConfigManager.default.config
     
-    // Set accounts
-    config.setAccounts(uniqueAccounts)
+    // Update accounts
+    config.updateAccounts(uniqueAccounts)
     
     // Select account
     do {

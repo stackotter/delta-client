@@ -23,6 +23,7 @@ struct ServerListView: View {
     refresh()
   }
   
+  /// Ping all servers
   func refresh() {
     for pinger in pingers {
       pinger.ping()
@@ -39,14 +40,16 @@ struct ServerListView: View {
             }
           }
         } else {
-          Text("no servers")
-            .italic()
+          Text("no servers").italic()
         }
         
         HStack {
+          // Edit
           IconButton("square.and.pencil") {
             appState.update(to: .editServerList)
           }
+          
+          // Refresh servers
           IconButton("arrow.clockwise") {
             refresh()
           }

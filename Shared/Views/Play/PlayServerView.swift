@@ -27,6 +27,7 @@ struct PlayServerView: View {
       client.eventBus.registerHandler(handleClientEvent)
       try client.join(serverDescribedBy: serverDescriptor, with: OfflineAccount(username: "epicboi69"))
     } catch {
+      // TODO: no more fatal error
       fatalError("whoops: \(error)")
     }
   }

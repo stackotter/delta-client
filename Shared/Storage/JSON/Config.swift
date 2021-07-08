@@ -68,7 +68,7 @@ public struct Config: Codable {
   }
   
   /// Removes all accounts and replaces them with the given accounts.
-  public mutating func replaceAccounts(_ accounts: [Account]) {
+  public mutating func updateAccounts(_ accounts: [Account]) {
     accounts.forEach { account in
       switch account {
         case let account as MojangAccount:
