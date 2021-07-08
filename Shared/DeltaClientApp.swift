@@ -16,7 +16,7 @@ struct DeltaClientApp: App {
   
   init() {
     let taskQueue = DispatchQueue(label: "dev.stackotter.delta-client.startupTasks")
-    
+
     // Load the registry
     taskQueue.async {
       do {
@@ -49,6 +49,11 @@ struct DeltaClientApp: App {
         .environmentObject(Self.appState)
         .environmentObject(Self.loadingState)
     }
+    #if os(macOS)
+    Settings {
+      SettingsView()
+    }
+    #endif
   }
   
   /// Display a dismissible warning.

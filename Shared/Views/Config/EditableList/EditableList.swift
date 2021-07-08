@@ -13,38 +13,55 @@ enum EditableListState {
   case editItem(Int)
 }
 
-enum EditListAction {
-  case delete
-  case edit
-  case moveUp
-  case moveDown
-}
-
-struct EditableList<ItemLabel: View, ItemEditor: EditorView>: View {
+struct EditableList<Row: View, ItemEditor: EditorView>: View {
   @ObservedObject var state = StateWrapper<EditableListState>(initial: .list)
-  @State var items: [ItemEditor.Item]
   
-  let itemLabel: (ItemEditor.Item) -> ItemLabel
+  @Binding var items: [ItemEditor.Item]
+  @Binding var selected: Int?
+  
   let itemEditor: ItemEditor.Type
+  let row: (
+    _ item: ItemEditor.Item,
+    _ selected: Bool,
+    _ isFirst: Bool,
+    _ isLast: Bool,
+    _ handler: @escaping (Action) -> Void
+  ) -> Row
+  let save: (() -> Void)?
+  let cancel: (() -> Void)?
   
-  let completionHandler: ([ItemEditor.Item]) -> Void
-  let cancelationHandler: () -> Void
-  
-  init(
-    _ items: [ItemEditor.Item],
-    itemEditor: ItemEditor.Type,
-    @ViewBuilder itemLabel: @escaping (ItemEditor.Item) -> ItemLabel,
-    completion: @escaping ([ItemEditor.Item]) -> Void,
-    cancelation: @escaping () -> Void
-  ) {
-    self._items = State(initialValue: items)
-    self.itemLabel = itemLabel
-    self.itemEditor = itemEditor
-    completionHandler = completion
-    cancelationHandler = cancelation
+  enum Action {
+    case delete
+    case edit
+    case moveUp
+    case moveDown
+    case select
   }
   
-  func handleItemAction(_ index: Int, _ action: EditListAction) {
+  init(
+    _ items: Binding<[ItemEditor.Item]>,
+    selected: Binding<Int?> = Binding<Int?>(get: { nil }, set: { _ in }),
+    itemEditor: ItemEditor.Type,
+    @ViewBuilder row: @escaping (
+      _ item: ItemEditor.Item,
+      _ selected: Bool,
+      _ isFirst: Bool,
+      _ isLast: Bool,
+      _ handler: @escaping (Action) -> Void
+    ) -> Row,
+    saveAction: (() -> Void)?,
+    cancelAction: (() -> Void)?
+  ) {
+    self._items = items
+    self._selected = selected
+    self.itemEditor = itemEditor
+    self.row = row
+    
+    save = saveAction
+    cancel = cancelAction
+  }
+  
+  func handleItemAction(_ index: Int, _ action: Action) {
     switch action {
       case .delete:
         items.remove(at: index)
@@ -60,6 +77,8 @@ struct EditableList<ItemLabel: View, ItemEditor: EditorView>: View {
           let item = items.remove(at: index)
           items.insert(item, at: index + 1)
         }
+      case .select:
+        selected = index
     }
   }
   
@@ -73,9 +92,11 @@ struct EditableList<ItemLabel: View, ItemEditor: EditorView>: View {
                 VStack(alignment: .leading) {
                   Divider()
                   
-                  EditableListRow(at: index, outOf: items.count, content: {
-                    itemLabel(items[index])
-                  }, handler: handleItemAction)
+                  let isFirst = index == 0
+                  let isLast = index == items.count - 1
+                  row(items[index], selected == index, isFirst, isLast, { action in
+                    handleItemAction(index, action)
+                  })
                   
                   if index == items.count - 1 {
                     Divider()
@@ -89,11 +110,13 @@ struct EditableList<ItemLabel: View, ItemEditor: EditorView>: View {
             }
             
             HStack {
-              Button("Save") {
-                completionHandler(items)
+              if let save = save {
+                Button("Save", action: save)
               }
-              Button("Cancel", action: cancelationHandler)
-                .buttonStyle(BorderlessButtonStyle())
+              if let cancel = cancel {
+                Button("Cancel", action: cancel)
+                  .buttonStyle(BorderlessButtonStyle())
+              }
             }
           }
         case .addItem:

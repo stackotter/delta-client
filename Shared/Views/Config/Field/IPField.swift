@@ -39,15 +39,12 @@ struct IPField: View {
     if components.count == 0 {
       log.trace("Invalid ip, empty string")
       isValid = false
-      return
     } else if components.count > 2 {
       log.trace("Invalid ip, too many components: '\(newValue)'")
       isValid = false
-      return
     } else if newValue.hasSuffix(":") {
       log.trace("Invalid ip, empty port: '\(newValue)'")
       isValid = false
-      return
     }
     
     // Check host component
@@ -77,6 +74,8 @@ struct IPField: View {
         log.trace("Invalid port component: '\(portString)'")
         isValid = false
       }
+    } else {
+      port = nil
     }
   }
   

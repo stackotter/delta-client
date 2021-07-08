@@ -16,6 +16,13 @@ public struct Config: Codable {
   public var offlineAccounts: [String: OfflineAccount]
   public var servers: [ServerDescriptor]
   
+  public var accounts: [Account] {
+    var accounts: [Account] = []
+    accounts.append(contentsOf: [MojangAccount](mojangAccounts.values) as [Account])
+    accounts.append(contentsOf: [OfflineAccount](offlineAccounts.values) as [Account])
+    return accounts
+  }
+  
   public init() {
     clientToken = UUID().uuidString
     mojangAccounts = [:]

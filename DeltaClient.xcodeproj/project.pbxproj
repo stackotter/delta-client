@@ -19,8 +19,10 @@
 		78050DEE269588520024C049 /* IconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050DEC269588510024C049 /* IconButton.swift */; };
 		78050DF926958F2D0024C049 /* EditableList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050DF826958F2D0024C049 /* EditableList.swift */; };
 		78050DFA26958F2D0024C049 /* EditableList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050DF826958F2D0024C049 /* EditableList.swift */; };
-		78050E0D2695BC050024C049 /* EditableListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050E0C2695BC050024C049 /* EditableListRow.swift */; };
-		78050E0E2695BC050024C049 /* EditableListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78050E0C2695BC050024C049 /* EditableListRow.swift */; };
+		7806A8A226968B1C002F4115 /* EmailField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7806A8A126968B1C002F4115 /* EmailField.swift */; };
+		7806A8A326968B1C002F4115 /* EmailField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7806A8A126968B1C002F4115 /* EmailField.swift */; };
+		7806A8A7269699E3002F4115 /* Binding+onChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7806A8A6269699E3002F4115 /* Binding+onChange.swift */; };
+		7806A8A8269699E3002F4115 /* Binding+onChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7806A8A6269699E3002F4115 /* Binding+onChange.swift */; };
 		78233229267EC31100694E76 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 78233228267EC31100694E76 /* Logging */; };
 		7823322D267EC3B700694E76 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7823322C267EC3B700694E76 /* Logging.swift */; };
 		7823322E267EC3B700694E76 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7823322C267EC3B700694E76 /* Logging.swift */; };
@@ -59,6 +61,12 @@
 		78ABBBCA26964A0F00475BFE /* OptionalNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */; };
 		78ABBBCE2696540C00475BFE /* IPField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBCD2696540C00475BFE /* IPField.swift */; };
 		78ABBBCF2696540C00475BFE /* IPField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBCD2696540C00475BFE /* IPField.swift */; };
+		78B4B70D2696706B00DF28B2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B4B70C2696706B00DF28B2 /* SettingsView.swift */; };
+		78B4B710269670B400DF28B2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B4B70C2696706B00DF28B2 /* SettingsView.swift */; };
+		78B4B714269670EC00DF28B2 /* AccountSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B4B713269670EC00DF28B2 /* AccountSettingsView.swift */; };
+		78B4B7172696712000DF28B2 /* AccountSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B4B713269670EC00DF28B2 /* AccountSettingsView.swift */; };
+		78B4B71B2696714300DF28B2 /* AccountLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B4B71A2696714300DF28B2 /* AccountLoginView.swift */; };
+		78B4B71C2696714300DF28B2 /* AccountLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B4B71A2696714300DF28B2 /* AccountLoginView.swift */; };
 		78B6B1A52687D9470041B1E1 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1A42687D9470041B1E1 /* ErrorView.swift */; };
 		78B6B1A62687D9470041B1E1 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1A42687D9470041B1E1 /* ErrorView.swift */; };
 		78B6B1B12687DCE20041B1E1 /* WarningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1B02687DCE20041B1E1 /* WarningView.swift */; };
@@ -98,7 +106,8 @@
 		78050DE72695151C0024C049 /* EditServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditServerListView.swift; sourceTree = "<group>"; };
 		78050DEC269588510024C049 /* IconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconButton.swift; sourceTree = "<group>"; };
 		78050DF826958F2D0024C049 /* EditableList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableList.swift; sourceTree = "<group>"; };
-		78050E0C2695BC050024C049 /* EditableListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableListRow.swift; sourceTree = "<group>"; };
+		7806A8A126968B1C002F4115 /* EmailField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailField.swift; sourceTree = "<group>"; };
+		7806A8A6269699E3002F4115 /* Binding+onChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+onChange.swift"; sourceTree = "<group>"; };
 		7823322C267EC3B700694E76 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		78233231267EC54300694E76 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		782F369C267D803D0034380E /* ServerListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListItem.swift; sourceTree = "<group>"; };
@@ -117,6 +126,9 @@
 		788538882695C8BB00932F71 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
 		78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalNumberField.swift; sourceTree = "<group>"; };
 		78ABBBCD2696540C00475BFE /* IPField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPField.swift; sourceTree = "<group>"; };
+		78B4B70C2696706B00DF28B2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		78B4B713269670EC00DF28B2 /* AccountSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsView.swift; sourceTree = "<group>"; };
+		78B4B71A2696714300DF28B2 /* AccountLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountLoginView.swift; sourceTree = "<group>"; };
 		78B6B1A42687D9470041B1E1 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		78B6B1B02687DCE20041B1E1 /* WarningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningView.swift; sourceTree = "<group>"; };
 		78B6B1BE2687DF370041B1E1 /* ModalState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalState.swift; sourceTree = "<group>"; };
@@ -207,11 +219,30 @@
 		78050DE6269514ED0024C049 /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				7806A8AB26969AA3002F4115 /* Account */,
 				78C1C0222696647800604D15 /* Server */,
 				78C1C0212696646A00604D15 /* EditableList */,
 				78C1C0202696645A00604D15 /* Field */,
+				78B4B70C2696706B00DF28B2 /* SettingsView.swift */,
 			);
 			path = Config;
+			sourceTree = "<group>";
+		};
+		7806A8AB26969AA3002F4115 /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				78B4B713269670EC00DF28B2 /* AccountSettingsView.swift */,
+				78B4B71A2696714300DF28B2 /* AccountLoginView.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
+		7806A8AC26969B69002F4115 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				7806A8A6269699E3002F4115 /* Binding+onChange.swift */,
+			);
+			path = Helper;
 			sourceTree = "<group>";
 		};
 		7842789E268FD35C00FF16C2 /* JSON */ = {
@@ -239,6 +270,7 @@
 			children = (
 				78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */,
 				78ABBBCD2696540C00475BFE /* IPField.swift */,
+				7806A8A126968B1C002F4115 /* EmailField.swift */,
 			);
 			path = Field;
 			sourceTree = "<group>";
@@ -247,7 +279,6 @@
 			isa = PBXGroup;
 			children = (
 				78050DF826958F2D0024C049 /* EditableList.swift */,
-				78050E0C2695BC050024C049 /* EditableListRow.swift */,
 				788538882695C8BB00932F71 /* EditorView.swift */,
 			);
 			path = EditableList;
@@ -272,6 +303,7 @@
 		78D73BAF267D500800B460E8 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				7806A8AC26969B69002F4115 /* Helper */,
 				78E18864267DC7620069E701 /* ServerList */,
 				78F77E10268F22C90092F002 /* Alert */,
 				78F77E11268F22E20092F002 /* Play */,
@@ -459,6 +491,7 @@
 				782F36A4267D87830034380E /* StateWrapper.swift in Sources */,
 				78000290267A1AC5003C1685 /* DeltaClientApp.swift in Sources */,
 				788195C12691E2960099575B /* LoadingState.swift in Sources */,
+				7806A8A7269699E3002F4115 /* Binding+onChange.swift in Sources */,
 				782F36B2267D8E310034380E /* AppState.swift in Sources */,
 				7823322D267EC3B700694E76 /* Logging.swift in Sources */,
 				78D73BB8267D6AAC00B460E8 /* ServerDetail.swift in Sources */,
@@ -468,17 +501,20 @@
 				78ABBBCE2696540C00475BFE /* IPField.swift in Sources */,
 				78427859268FB67C00FF16C2 /* AssetManager.swift in Sources */,
 				78050DED269588520024C049 /* IconButton.swift in Sources */,
+				78B4B71B2696714300DF28B2 /* AccountLoginView.swift in Sources */,
+				78B4B714269670EC00DF28B2 /* AccountSettingsView.swift in Sources */,
 				78427854268FB42500FF16C2 /* CacheError.swift in Sources */,
 				7842784F268F364B00FF16C2 /* CacheManager.swift in Sources */,
 				78427845268F275A00FF16C2 /* ConfigManager.swift in Sources */,
 				7842785E268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
 				78B6B1C42687E3440041B1E1 /* StorageError.swift in Sources */,
+				7806A8A226968B1C002F4115 /* EmailField.swift in Sources */,
 				78B6B1A52687D9470041B1E1 /* ErrorView.swift in Sources */,
 				78ABBBC926964A0F00475BFE /* OptionalNumberField.swift in Sources */,
-				78050E0D2695BC050024C049 /* EditableListRow.swift in Sources */,
 				78C1C01C2696644500604D15 /* ServerEditorView.swift in Sources */,
 				78E18845267DB6050069E701 /* RouterView.swift in Sources */,
 				78427863268FBA2200FF16C2 /* AssetError.swift in Sources */,
+				78B4B70D2696706B00DF28B2 /* SettingsView.swift in Sources */,
 				7839921326911DCD005E93FD /* MetalView.swift in Sources */,
 				78233232267EC54300694E76 /* StorageManager.swift in Sources */,
 				78050DB926944C040024C049 /* PingIndicator.swift in Sources */,
@@ -500,6 +536,7 @@
 				782F36A5267D87830034380E /* StateWrapper.swift in Sources */,
 				78000291267A1AC5003C1685 /* DeltaClientApp.swift in Sources */,
 				788195C22691E2960099575B /* LoadingState.swift in Sources */,
+				7806A8A8269699E3002F4115 /* Binding+onChange.swift in Sources */,
 				782F36B3267D8E310034380E /* AppState.swift in Sources */,
 				7823322E267EC3B700694E76 /* Logging.swift in Sources */,
 				78D73BB9267D6AAC00B460E8 /* ServerDetail.swift in Sources */,
@@ -509,17 +546,20 @@
 				78ABBBCF2696540C00475BFE /* IPField.swift in Sources */,
 				7842785A268FB67C00FF16C2 /* AssetManager.swift in Sources */,
 				78050DEE269588520024C049 /* IconButton.swift in Sources */,
+				78B4B71C2696714300DF28B2 /* AccountLoginView.swift in Sources */,
+				78B4B7172696712000DF28B2 /* AccountSettingsView.swift in Sources */,
 				78427855268FB42500FF16C2 /* CacheError.swift in Sources */,
 				78427850268F364B00FF16C2 /* CacheManager.swift in Sources */,
 				78427846268F275A00FF16C2 /* ConfigManager.swift in Sources */,
 				7842785F268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
 				78B6B1C52687E3440041B1E1 /* StorageError.swift in Sources */,
+				7806A8A326968B1C002F4115 /* EmailField.swift in Sources */,
 				78B6B1A62687D9470041B1E1 /* ErrorView.swift in Sources */,
 				78ABBBCA26964A0F00475BFE /* OptionalNumberField.swift in Sources */,
-				78050E0E2695BC050024C049 /* EditableListRow.swift in Sources */,
 				78C1C01D2696644500604D15 /* ServerEditorView.swift in Sources */,
 				78E18846267DB6050069E701 /* RouterView.swift in Sources */,
 				78427864268FBA2200FF16C2 /* AssetError.swift in Sources */,
+				78B4B710269670B400DF28B2 /* SettingsView.swift in Sources */,
 				7839921426911DCD005E93FD /* MetalView.swift in Sources */,
 				78233233267EC54300694E76 /* StorageManager.swift in Sources */,
 				78050DBA26944C040024C049 /* PingIndicator.swift in Sources */,

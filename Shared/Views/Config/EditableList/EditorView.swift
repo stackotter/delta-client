@@ -8,7 +8,7 @@
 import SwiftUI
 
 protocol EditorView: View {
-  associatedtype Item: Hashable
+  associatedtype Item
   
   init(_ item: Item?, completion: @escaping (Item) -> Void, cancelation: @escaping () -> Void)
 }
