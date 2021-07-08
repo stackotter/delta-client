@@ -44,7 +44,7 @@ struct DeltaClientApp: App {
   var body: some Scene {
     WindowGroup {
       RouterView()
-        .frame(minWidth: 800, minHeight: 400)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .environmentObject(Self.modalState)
         .environmentObject(Self.appState)
         .environmentObject(Self.loadingState)
@@ -53,6 +53,7 @@ struct DeltaClientApp: App {
     #if os(macOS)
     Settings {
       SettingsView()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     #endif
   }
