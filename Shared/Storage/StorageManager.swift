@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ZIPFoundation
 
 /// A manager that provides all of the functionality DeltaClient needs to interact with the file system.
 class StorageManager {
