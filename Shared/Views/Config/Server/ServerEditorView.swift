@@ -16,11 +16,14 @@ struct ServerEditorView: EditorView {
   var cancelationHandler: (() -> Void)?
   
   @State var isIpValid = false
+  /// True if this is editing an existing server.
+  let isEditor: Bool
   
   init(_ item: ServerDescriptor?, completion: @escaping (ServerDescriptor) -> Void, cancelation: (() -> Void)?) {
     completionHandler = completion
     cancelationHandler = cancelation
     
+    isEditor = item == nil
     _descriptor = State(initialValue: item ?? ServerDescriptor(name: "", host: "", port: nil))
   }
   
@@ -46,12 +49,14 @@ struct ServerEditorView: EditorView {
       HStack {
         if let cancel = cancelationHandler {
           Button("Cancel", action: cancel)
-            .buttonStyle(BorderlessButtonStyle())
+            .buttonStyle(SecondaryButtonStyle())
         }
-        Button("Save") {
+        Button(isEditor ? "Save" : "Add") {
           if verify() { completionHandler(descriptor) }
         }
+        .buttonStyle(PrimaryButtonStyle())
       }
+      .padding(.top, 8)
     }
     .frame(width: 200)
   }

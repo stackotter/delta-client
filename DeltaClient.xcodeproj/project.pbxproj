@@ -71,6 +71,12 @@
 		78427864268FBA2200FF16C2 /* AssetError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427862268FBA2200FF16C2 /* AssetError.swift */; };
 		7842786F268FBCEF00FF16C2 /* VersionManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842786E268FBCEF00FF16C2 /* VersionManifest.swift */; };
 		78427870268FBCEF00FF16C2 /* VersionManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842786E268FBCEF00FF16C2 /* VersionManifest.swift */; };
+		7845DDC5269A4DDE008FC70E /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7845DDC4269A4DDE008FC70E /* PrimaryButtonStyle.swift */; };
+		7845DDC6269A4DDE008FC70E /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7845DDC4269A4DDE008FC70E /* PrimaryButtonStyle.swift */; };
+		7845DDCA269A4E00008FC70E /* SecondaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7845DDC9269A4E00008FC70E /* SecondaryButtonStyle.swift */; };
+		7845DDCB269A4E00008FC70E /* SecondaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7845DDC9269A4E00008FC70E /* SecondaryButtonStyle.swift */; };
+		7845DDCF269A5350008FC70E /* DisabledButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7845DDCE269A5350008FC70E /* DisabledButtonStyle.swift */; };
+		7845DDD0269A5350008FC70E /* DisabledButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7845DDCE269A5350008FC70E /* DisabledButtonStyle.swift */; };
 		788195C12691E2960099575B /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788195C02691E2960099575B /* LoadingState.swift */; };
 		788195C22691E2960099575B /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788195C02691E2960099575B /* LoadingState.swift */; };
 		788538892695C8BB00932F71 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788538882695C8BB00932F71 /* EditorView.swift */; };
@@ -151,6 +157,9 @@
 		7842785D268FB91F00FF16C2 /* VersionsManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionsManifest.swift; sourceTree = "<group>"; };
 		78427862268FBA2200FF16C2 /* AssetError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetError.swift; sourceTree = "<group>"; };
 		7842786E268FBCEF00FF16C2 /* VersionManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionManifest.swift; sourceTree = "<group>"; };
+		7845DDC4269A4DDE008FC70E /* PrimaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonStyle.swift; sourceTree = "<group>"; };
+		7845DDC9269A4E00008FC70E /* SecondaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonStyle.swift; sourceTree = "<group>"; };
+		7845DDCE269A5350008FC70E /* DisabledButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledButtonStyle.swift; sourceTree = "<group>"; };
 		788195C02691E2960099575B /* LoadingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingState.swift; sourceTree = "<group>"; };
 		788538882695C8BB00932F71 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
 		78AA801F2699329300664150 /* VideoConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoConfig.swift; sourceTree = "<group>"; };
@@ -356,6 +365,9 @@
 				78050DE6269514ED0024C049 /* Config */,
 				78E18844267DB6050069E701 /* RouterView.swift */,
 				78050DEC269588510024C049 /* IconButton.swift */,
+				7845DDC4269A4DDE008FC70E /* PrimaryButtonStyle.swift */,
+				7845DDC9269A4E00008FC70E /* SecondaryButtonStyle.swift */,
+				7845DDCE269A5350008FC70E /* DisabledButtonStyle.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -562,13 +574,16 @@
 				78427845268F275A00FF16C2 /* ConfigManager.swift in Sources */,
 				7842785E268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
 				78B6B1C42687E3440041B1E1 /* StorageError.swift in Sources */,
+				7845DDCA269A4E00008FC70E /* SecondaryButtonStyle.swift in Sources */,
 				7806A8A226968B1C002F4115 /* EmailField.swift in Sources */,
+				7845DDC5269A4DDE008FC70E /* PrimaryButtonStyle.swift in Sources */,
 				78B6B1A52687D9470041B1E1 /* ErrorView.swift in Sources */,
 				78ABBBC926964A0F00475BFE /* OptionalNumberField.swift in Sources */,
 				78C1C01C2696644500604D15 /* ServerEditorView.swift in Sources */,
 				78E18845267DB6050069E701 /* RouterView.swift in Sources */,
 				78203EB02696B27100D97A93 /* ConfigError.swift in Sources */,
 				78427863268FBA2200FF16C2 /* AssetError.swift in Sources */,
+				7845DDCF269A5350008FC70E /* DisabledButtonStyle.swift in Sources */,
 				78B4B70D2696706B00DF28B2 /* SettingsView.swift in Sources */,
 				7839921326911DCD005E93FD /* MetalView.swift in Sources */,
 				7837265926991DAF00E39326 /* ClientInputDelegate.swift in Sources */,
@@ -617,13 +632,16 @@
 				78427846268F275A00FF16C2 /* ConfigManager.swift in Sources */,
 				7842785F268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
 				78B6B1C52687E3440041B1E1 /* StorageError.swift in Sources */,
+				7845DDCB269A4E00008FC70E /* SecondaryButtonStyle.swift in Sources */,
 				7806A8A326968B1C002F4115 /* EmailField.swift in Sources */,
+				7845DDC6269A4DDE008FC70E /* PrimaryButtonStyle.swift in Sources */,
 				78B6B1A62687D9470041B1E1 /* ErrorView.swift in Sources */,
 				78ABBBCA26964A0F00475BFE /* OptionalNumberField.swift in Sources */,
 				78C1C01D2696644500604D15 /* ServerEditorView.swift in Sources */,
 				78E18846267DB6050069E701 /* RouterView.swift in Sources */,
 				78203EB12696B27100D97A93 /* ConfigError.swift in Sources */,
 				78427864268FBA2200FF16C2 /* AssetError.swift in Sources */,
+				7845DDD0269A5350008FC70E /* DisabledButtonStyle.swift in Sources */,
 				78B4B710269670B400DF28B2 /* SettingsView.swift in Sources */,
 				7839921426911DCD005E93FD /* MetalView.swift in Sources */,
 				7837265A26991DAF00E39326 /* ClientInputDelegate.swift in Sources */,

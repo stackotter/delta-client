@@ -26,17 +26,25 @@ struct ServerDetail: View {
             Text(verbatim: "\(info.numPlayers)/\(info.maxPlayers) online")
             Text("version: \(info.versionName) \(info.protocolVersion == Constants.protocolVersion ? "" : "(incompatible)")")
               .padding(.bottom, 8)
+            Button("Play") {
+              appState.update(to: .playServer(descriptor))
+            }
+            .buttonStyle(SecondaryButtonStyle())
+            .frame(width: 150)
           case let .failure(error):
             Text("Connection failed: \(error.localizedDescription)")
               .padding(.bottom, 8)
+            Button("Play") { }
+              .buttonStyle(SecondaryButtonStyle())
+              .frame(width: 150)
+              .disabled(false)
         }
       } else {
         Text("Pinging..")
           .padding(.bottom, 8)
-      }
-      
-      Button("Play") {
-        appState.update(to: .playServer(descriptor))
+        Button("Play") { }
+          .buttonStyle(DisabledButtonStyle())
+          .frame(width: 150)
       }
     }
   }

@@ -114,21 +114,26 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
               }
             }
             
-            Button("Add") {
-              state.update(to: .addItem)
-            }
-            
-            if save != nil || cancel != nil {
-              HStack {
-                if let cancel = cancel {
-                  Button("Cancel", action: cancel)
-                    .buttonStyle(BorderlessButtonStyle())
-                }
-                if let save = save {
-                  Button("Done", action: save)
+            VStack {
+              Button("Add") {
+                state.update(to: .addItem)
+              }
+              .buttonStyle(SecondaryButtonStyle())
+              
+              if save != nil || cancel != nil {
+                HStack {
+                  if let cancel = cancel {
+                    Button("Cancel", action: cancel)
+                      .buttonStyle(SecondaryButtonStyle())
+                  }
+                  if let save = save {
+                    Button("Save", action: save)
+                      .buttonStyle(PrimaryButtonStyle())
+                  }
                 }
               }
             }
+            .frame(width: 200)
           }
         case .addItem:
           itemEditor.init(nil, completion: { newItem in

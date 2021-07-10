@@ -75,7 +75,6 @@ struct AccountLoginView: EditorView {
               TextField("Username", text: $username)
           }
         }
-        .padding(.bottom, 8)
         
         if let error = errorMessage {
           Text(error)
@@ -85,10 +84,12 @@ struct AccountLoginView: EditorView {
         HStack {
           if let cancel = cancelationHandler {
             Button("Cancel", action: cancel)
-              .buttonStyle(BorderlessButtonStyle())
+              .buttonStyle(SecondaryButtonStyle())
           }
           Button("Login", action: login)
+            .buttonStyle(PrimaryButtonStyle())
         }
+        .padding(.top, 8)
       } else {
         Text("Logging in..")
       }

@@ -90,6 +90,8 @@ struct PlayServerView: View {
           VStack {
             Text("Downloading terrain..")
             Button("Cancel", action: disconnect)
+              .buttonStyle(SecondaryButtonStyle())
+              .frame(width: 150)
           }
         case .playing:
           ZStack {
@@ -111,15 +113,20 @@ struct PlayServerView: View {
             if !cursorCaptured {
               switch overlayState.current {
                 case .menu:
+                  // Invisible button for escape to exit menu. Because keyboard shortcuts aren't working with my custom button styles
+                  Button("Back to game", action: inputDelegate.captureCursor)
+                    .keyboardShortcut(.escape, modifiers: [])
+                    .opacity(0)
+                  
                   VStack {
                     Button("Back to game", action: inputDelegate.captureCursor)
-                      .keyboardShortcut(.escape, modifiers: [])
-                      .frame(width: 100)
+                      .buttonStyle(PrimaryButtonStyle())
                     Button("Settings", action: { overlayState.update(to: .settings) })
-                      .frame(width: 100)
+                      .buttonStyle(SecondaryButtonStyle())
                     Button("Disconnect", action: disconnect)
-                      .frame(width: 100)
+                      .buttonStyle(SecondaryButtonStyle())
                   }
+                  .frame(width: 200)
                 case .settings:
                   InGameSettingsView(eventBus: client.eventBus, onDone: {
                     overlayState.update(to: .menu)
