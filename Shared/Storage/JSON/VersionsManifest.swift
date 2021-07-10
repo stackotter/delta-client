@@ -21,12 +21,14 @@ struct VersionsManifest: Codable {
     var id: String
     var type: VersionType
     var url: URL
-    var time: Date
-    var releaseTime: Date
+    var time: String
+    var releaseTime: String
   }
   
   enum VersionType: String, Codable {
     case release
     case snapshot
+    case oldBeta = "old_beta"
+    case oldAlpha = "old_alpha"
   }
 }

@@ -108,7 +108,7 @@ class AssetManager {
       let data = try Data(contentsOf: versionsManifestURL)
       versionsManifest = try JSONDecoder().decode(VersionsManifest.self, from: data)
     } catch {
-      throw AssetError.versionsManifestFailure
+      throw AssetError.versionsManifestFailure(error)
     }
     
     return versionsManifest
@@ -128,7 +128,7 @@ class AssetManager {
       let data = try Data(contentsOf: versionURL)
       versionManifest = try JSONDecoder().decode(VersionManifest.self, from: data)
     } catch {
-      throw AssetError.versionManifestFailure
+      throw AssetError.versionManifestFailure(error)
     }
     
     return versionManifest
@@ -186,5 +186,13 @@ class AssetManager {
     return TexturePalette(
       identifierToIndex: identifierToIndex,
       textures: images)
+  }
+  
+  // MARK: - Locale
+  
+  // TODO: clean up locale loading
+  public func getLocale() throws -> MinecraftLocale {
+    let localeURL = vanillaAssetsDirectory.appendingPathComponent("minecraft/lang/en_us.json")
+    return try MinecraftLocale(localeFile: localeURL)
   }
 }

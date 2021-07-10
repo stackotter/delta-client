@@ -8,8 +8,8 @@
 import Foundation
 
 enum AssetError: LocalizedError {
-  case versionsManifestFailure
-  case versionManifestFailure
+  case versionsManifestFailure(Error)
+  case versionManifestFailure(Error)
   case clientJarDownloadFailure
   case clientJarExtractionFailure
   case assetCopyFailure

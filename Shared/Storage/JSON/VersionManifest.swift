@@ -12,8 +12,8 @@ struct VersionManifest: Codable {
   var assets: String
   var downloads: Downloads
   var id: String
-  var releaseTime: Date
-  var time: Date
+  var releaseTime: String
+  var time: String
   var type: VersionsManifest.VersionType
   
   struct AssetIndex: Codable {

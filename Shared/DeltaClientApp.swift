@@ -41,8 +41,10 @@ struct DeltaClientApp: App {
           fromPixlyzerDataAt: pixlyzerData,
           withBlockModelDirectoryAt: blockModels,
           andTexturesFrom: texturePalette)
+        
+        let locale = try AssetManager.default.getLocale()
 
-        let registry = Registry(blockRegistry: blockRegistry)
+        let registry = Registry(blockRegistry: blockRegistry, locale: locale)
         
         if ConfigManager.default.config.accounts.isEmpty {
           Self.appState.update(to: .login)

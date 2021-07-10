@@ -6,11 +6,12 @@
 - [x] Reimplement server list editing UI
 - [x] Create settings screen on cmd+,
 - [x] Make flexible way to add settings UI elements
-- [ ] Proper error messages when joining server
-- [ ] direct connect
+- [x] Proper error messages when joining server
 - [ ] Make loading message while joining a server more accurate (instead of just downloading terrain)
-- [x] login prompt if no accounts are selected
-- [ ] pixlyzer data downloader
+- [ ] Improve loading messages for first startup
+- [ ] Direct connect
+- [x] Login prompt if no accounts are selected
+- [x] Pixlyzer data downloader
 
 ## Settings
 
@@ -19,6 +20,7 @@
 - [ ] Keymapping
 - [ ] Mouse sensitivity
 - [ ] Resource pack chooser
+- [ ] Locale loading
 
 ## Clean up
 
