@@ -112,13 +112,13 @@ struct PlayServerView: View {
               switch overlayState.current {
                 case .menu:
                   VStack {
-                    Group {
-                      Button("Back to game", action: inputDelegate.captureCursor)
-                        .keyboardShortcut(.escape, modifiers: [])
-                      Button("Settings", action: { overlayState.update(to: .settings) })
-                      Button("Disconnect", action: disconnect)
-                    }
-                    .frame(width: 100)
+                    Button("Back to game", action: inputDelegate.captureCursor)
+                      .keyboardShortcut(.escape, modifiers: [])
+                      .frame(width: 100)
+                    Button("Settings", action: { overlayState.update(to: .settings) })
+                      .frame(width: 100)
+                    Button("Disconnect", action: disconnect)
+                      .frame(width: 100)
                   }
                 case .settings:
                   InGameSettingsView(eventBus: client.eventBus, onDone: {

@@ -17,6 +17,6 @@ public struct VideoConfig: Codable {
   /// Creates the default rendering config
   public init() {
     renderDistance = 10
-    fov = 90
+    fov = 70
   }
 }

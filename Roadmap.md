@@ -77,7 +77,7 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
 - [x] order chunks based off frustum as well
 - [x] basic shading (face normal based) (bake light levels into block models)
 - [x] mip maps
-- [ ] rewrite block model loading system
+- [x] rewrite block model loading system
 - [ ] lighting
 - [ ] animated textures
 - [ ] fix gpu ram usage (clear buffers when not being used, possibly use private mode buffers, possibly use a big default size buffer and transfer things through that)

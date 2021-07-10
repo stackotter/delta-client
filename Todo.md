@@ -1,5 +1,7 @@
 # TODO
 
+- [ ] Rewrite roadmap
+
 ## UI
 
 - [x] Change ping message to 'Server Offline' instead of pinging when server has responded to ping and is offline
@@ -25,4 +27,5 @@
 ## Clean up
 
 - [ ] Move texture loading stuff to DeltaCore
+- [ ] Move vanilla asset downloading to DeltaCore
 - [ ] DeltaClient probably only needs StorageManager and ConfigManager

@@ -120,12 +120,12 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
             
             if save != nil || cancel != nil {
               HStack {
-                if let save = save {
-                  Button("Done", action: save)
-                }
                 if let cancel = cancel {
                   Button("Cancel", action: cancel)
                     .buttonStyle(BorderlessButtonStyle())
+                }
+                if let save = save {
+                  Button("Done", action: save)
                 }
               }
             }

@@ -44,12 +44,12 @@ struct ServerEditorView: EditorView {
       }
       
       HStack {
-        Button("Save") {
-          if verify() { completionHandler(descriptor) }
-        }
         if let cancel = cancelationHandler {
           Button("Cancel", action: cancel)
             .buttonStyle(BorderlessButtonStyle())
+        }
+        Button("Save") {
+          if verify() { completionHandler(descriptor) }
         }
       }
     }

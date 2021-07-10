@@ -83,11 +83,11 @@ struct AccountLoginView: EditorView {
         }
         
         HStack {
-          Button("Login", action: login)
           if let cancel = cancelationHandler {
             Button("Cancel", action: cancel)
               .buttonStyle(BorderlessButtonStyle())
           }
+          Button("Login", action: login)
         }
       } else {
         Text("Logging in..")
