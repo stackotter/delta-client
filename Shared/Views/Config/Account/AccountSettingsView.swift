@@ -9,23 +9,20 @@ import SwiftUI
 import DeltaCore
 
 struct AccountSettingsView: View {
-  @State var accounts: [Account]
-  @State var selectedIndex: Int?
+  @State var accounts: [Account] = []
+  @State var selectedIndex: Int? = nil
   
   let saveAction: (() -> Void)?
   
   init(saveAction: (() -> Void)? = nil) {
     self.saveAction = saveAction
-    
-    _accounts = State(initialValue: ConfigManager.default.config.accounts)
-    
-    _selectedIndex = State(initialValue: accounts.firstIndex {
-      $0.id == ConfigManager.default.config.selectedAccountId
-    })
   }
   
   /// Saves the given accounts to the config file.
   func save(_ accounts: [Account]) {
+    // Recalculate the index of the selected account
+    selectedIndex = getSelectedIndex()
+    
     // Filter out duplicate accounts
     var uniqueAccounts: [Account] = []
     for account in accounts {
@@ -79,6 +76,12 @@ struct AccountSettingsView: View {
     return nil
   }
   
+  func getSelectedIndex() -> Int? {
+    return accounts.firstIndex {
+      $0.id == ConfigManager.default.config.selectedAccountId
+    }
+  }
+  
   var body: some View {
     VStack {
       EditableList(
@@ -110,5 +113,10 @@ struct AccountSettingsView: View {
         emptyMessage: "No accounts")
     }
     .navigationTitle("Accounts")
+    .onAppear {
+      accounts = ConfigManager.default.config.accounts
+      
+      selectedIndex = getSelectedIndex()
+    }
   }
 }

@@ -36,7 +36,7 @@ struct RouterView: View {
                 case .accounts:
                   AccountSettingsView(saveAction: {
                     appState.update(to: .serverList)
-                  })
+                  }).padding()
                 case .playServer(let descriptor):
                   InputView { inputCaptureEnabled, setDelegate in
                     PlayServerView(serverDescriptor: descriptor, registry: registry, inputCaptureEnabled: inputCaptureEnabled, delegateSetter: setDelegate)

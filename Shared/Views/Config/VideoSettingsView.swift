@@ -12,15 +12,11 @@ struct VideoSettingsView: View {
   /// Config updates are sent straight to the event bus as soon as they are made if event bus is present.
   var eventBus: EventBus?
   
-  @State var renderDistance: Double
-  @State var fov: Double
+  @State var renderDistance: Double = 0
+  @State var fov: Double = 0
   
   init(eventBus: EventBus? = nil) {
     self.eventBus = eventBus
-    
-    let config = ConfigManager.default.config
-    _renderDistance = State<Double>(initialValue: Double(config.video.renderDistance))
-    _fov = State<Double>(initialValue: Double(config.video.fov))
   }
   
   /// Handle when user stops/starts editing.
@@ -66,5 +62,10 @@ struct VideoSettingsView: View {
     }
     .frame(width: 400)
     .navigationTitle("Video")
+    .onAppear {
+      let config = ConfigManager.default.config
+      renderDistance = Double(config.video.renderDistance)
+      fov = Double(config.video.fov)
+    }
   }
 }
