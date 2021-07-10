@@ -21,7 +21,15 @@ class AssetManager {
   /// Creates a new asset manager.
   private init() {
     vanillaAssetsDirectory = StorageManager.default.absoluteFromRelative("assets")
-    pixlyzerDirectory = StorageManager.default.absoluteFromRelative("pixlyzer-data")
+    pixlyzerDirectory = StorageManager.default.absoluteFromRelative("pixlyzer")
+//    if !StorageManager.default.directoryExists(at: pixlyzerDirectory) {
+//      do {
+//        try StorageManager.default.createDirectory(at: pixlyzerDirectory)
+//      } catch {
+//        let message = "Failed to create pixlyzer data directory: \(error)"
+//        DeltaClientApp.fatal(message)
+//      }
+//    }
   }
   
   // MARK: - Download
@@ -64,6 +72,28 @@ class AssetManager {
     } catch {
       log.error("Failed to copy assets from extracted client jar: \(error)")
       throw AssetError.assetCopyFailure
+    }
+  }
+  
+  public func downloadPixlyzerData(forVersion version: String) throws {
+    // swiftlint:disable force_unwrap
+    let pixlyzerBlockPaletteURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/blocks.min.json")!
+    // swiftlint:enable force_unwrap
+    
+    let pixlyzerBlockPaletteFile = pixlyzerDirectory.appendingPathComponent("blocks.min.json")
+    
+    let data: Data
+    do {
+      data = try Data(contentsOf: pixlyzerBlockPaletteURL)
+    } catch {
+      throw AssetError.failedToDownloadPixlyzerData(error)
+    }
+    
+    do {
+      try StorageManager.default.createDirectory(at: pixlyzerDirectory)
+      try data.write(to: pixlyzerBlockPaletteFile)
+    } catch {
+      throw AssetError.failedToWritePixlyzerData(error)
     }
   }
   

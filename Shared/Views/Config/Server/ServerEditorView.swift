@@ -13,11 +13,11 @@ struct ServerEditorView: EditorView {
   @State var errorMessage: String?
   
   var completionHandler: (ServerDescriptor) -> Void
-  var cancelationHandler: () -> Void
+  var cancelationHandler: (() -> Void)?
   
   @State var isIpValid = false
   
-  init(_ item: ServerDescriptor?, completion: @escaping (ServerDescriptor) -> Void, cancelation: @escaping () -> Void) {
+  init(_ item: ServerDescriptor?, completion: @escaping (ServerDescriptor) -> Void, cancelation: (() -> Void)?) {
     completionHandler = completion
     cancelationHandler = cancelation
     
@@ -45,14 +45,12 @@ struct ServerEditorView: EditorView {
       
       HStack {
         Button("Save") {
-          if verify() {
-            completionHandler(descriptor)
-          }
+          if verify() { completionHandler(descriptor) }
         }
-        Button("Cancel") {
-          cancelationHandler()
+        if let cancel = cancelationHandler {
+          Button("Cancel", action: cancel)
+            .buttonStyle(BorderlessButtonStyle())
         }
-        .buttonStyle(BorderlessButtonStyle())
       }
     }
     .frame(width: 200)

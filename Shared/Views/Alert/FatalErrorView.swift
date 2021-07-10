@@ -12,6 +12,7 @@ struct FatalErrorView: View {
   
   var body: some View {
     Text(message)
+      .frame(width: 400)
       .navigationTitle("Fatal Error")
   }
 }

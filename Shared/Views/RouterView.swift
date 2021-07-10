@@ -33,6 +33,22 @@ struct RouterView: View {
                   ServerListView()
                 case .editServerList:
                   EditServerListView()
+                case .login:
+                  AccountLoginView(completion: { account in
+                    var config = ConfigManager.default.config
+                    var accounts = config.accounts
+                    accounts.append(account)
+                    config.updateAccounts(accounts)
+                    do {
+                      try config.selectAccount(account)
+                    } catch {
+                      log.error("Failed to select account")
+                      appState.update(to: .fatalError("Failed to select account (something went very wrong)"))
+                      return
+                    }
+                    ConfigManager.default.setConfig(to: config)
+                    appState.update(to: .serverList)
+                  }, cancelation: nil)
                 case .accounts:
                   AccountSettingsView(saveAction: {
                     appState.update(to: .serverList)

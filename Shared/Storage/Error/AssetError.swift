@@ -17,4 +17,6 @@ enum AssetError: LocalizedError {
   case dataProviderFailure
   case cgImageFailure
   case noURLForVersion(String)
+  case failedToDownloadPixlyzerData(Error)
+  case failedToWritePixlyzerData(Error)
 }

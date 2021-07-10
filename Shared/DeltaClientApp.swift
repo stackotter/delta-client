@@ -20,11 +20,20 @@ struct DeltaClientApp: App {
     // Load the registry
     taskQueue.async {
       do {
+        if !StorageManager.default.directoryExists(at: AssetManager.default.vanillaAssetsDirectory) {
+          Self.loadingState.update(to: .loadingWithMessage("Downloading vanilla assets (might take a little while)"))
+          try AssetManager.default.downloadVanillaAssets(forVersion: Constants.versionString)
+        }
+        
+        if !StorageManager.default.directoryExists(at: AssetManager.default.pixlyzerDirectory) {
+          Self.loadingState.update(to: .loadingWithMessage("Downloading pixlyzer data"))
+          try AssetManager.default.downloadPixlyzerData(forVersion: Constants.versionString)
+        }
+        
         Self.loadingState.update(to: .loadingWithMessage("Loading block texture palette"))
         let texturePalette = try AssetManager.default.getBlockTexturePalette()
 
-        Self.loadingState.update(to: .loadingWithMessage("Loading pixlyzer data"))
-        let pixlyzerData = StorageManager.default.absoluteFromRelative("pixlyzer-data/blocks.json")
+        let pixlyzerData = AssetManager.default.pixlyzerDirectory.appendingPathComponent("blocks.min.json")
 
         Self.loadingState.update(to: .loadingWithMessage("Loading block models"))
         let blockModels = AssetManager.default.vanillaAssetsDirectory.appendingPathComponent("minecraft/models/block")
@@ -34,6 +43,11 @@ struct DeltaClientApp: App {
           andTexturesFrom: texturePalette)
 
         let registry = Registry(blockRegistry: blockRegistry)
+        
+        if ConfigManager.default.config.accounts.isEmpty {
+          Self.appState.update(to: .login)
+        }
+        
         Self.loadingState.update(to: .done(registry))
       } catch {
         Self.loadingState.update(to: .error("Failed to create registry: \(error)"))

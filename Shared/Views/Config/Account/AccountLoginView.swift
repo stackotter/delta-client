@@ -11,7 +11,7 @@ import DeltaCore
 struct AccountLoginView: EditorView {
   typealias Item = Account
   
-  @State var accountType = AccountType.offline
+  @State var accountType = AccountType.mojang
   
   @State var isEmailValid = false
   @State var username = ""
@@ -22,10 +22,10 @@ struct AccountLoginView: EditorView {
   @State var loggingIn = false
   
   let completionHandler: (Item) -> Void
-  let cancelationHandler: () -> Void
+  let cancelationHandler: (() -> Void)?
   
   /// Ignores `item` because this is only ever used for logging into account not editing them.
-  init(_ item: Item?, completion: @escaping (Item) -> Void, cancelation: @escaping () -> Void) {
+  init(_ item: Item?=nil, completion: @escaping (Item) -> Void, cancelation: (() -> Void)?) {
     completionHandler = completion
     cancelationHandler = cancelation
   }
@@ -58,7 +58,7 @@ struct AccountLoginView: EditorView {
   var body: some View {
     VStack {
       if !loggingIn {
-        Picker("Type", selection: $accountType) {
+        Picker("Account Type", selection: $accountType) {
           ForEach(AccountType.allCases) { type in
             Text(type.rawValue.capitalized)
               .tag(type)
@@ -84,8 +84,10 @@ struct AccountLoginView: EditorView {
         
         HStack {
           Button("Login", action: login)
-          Button("Cancel", action: cancelationHandler)
-            .buttonStyle(BorderlessButtonStyle())
+          if let cancel = cancelationHandler {
+            Button("Cancel", action: cancel)
+              .buttonStyle(BorderlessButtonStyle())
+          }
         }
       } else {
         Text("Logging in..")

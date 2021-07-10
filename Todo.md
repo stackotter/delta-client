@@ -8,6 +8,9 @@
 - [x] Make flexible way to add settings UI elements
 - [ ] Proper error messages when joining server
 - [ ] direct connect
+- [ ] Make loading message while joining a server more accurate (instead of just downloading terrain)
+- [x] login prompt if no accounts are selected
+- [ ] pixlyzer data downloader
 
 ## Settings
 
