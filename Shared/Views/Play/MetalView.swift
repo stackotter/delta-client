@@ -10,7 +10,7 @@ import DeltaCore
 import MetalKit
 import SwiftUI
 
-struct MetalView: NSViewRepresentable {
+final class MetalView: NSViewRepresentable {
   var client: Client
   
   init(client: Client) {
@@ -22,7 +22,8 @@ struct MetalView: NSViewRepresentable {
   }
   
   func makeNSView(context: Context) -> some NSView {
-    let mtkView = InteractiveMTKView()
+    let mtkView = MTKView()
+    
     if let metalDevice = MTLCreateSystemDefaultDevice() {
       mtkView.device = metalDevice
     }
@@ -34,7 +35,7 @@ struct MetalView: NSViewRepresentable {
     mtkView.depthStencilPixelFormat = .depth32Float
     mtkView.clearDepth = 1.0
     
-    // accept input
+    // Accept input
     mtkView.becomeFirstResponder()
     return mtkView
   }

@@ -109,7 +109,6 @@ struct AccountSettingsView: View {
         cancelAction: nil,
         emptyMessage: "No accounts")
     }
-    .padding()
     .navigationTitle("Accounts")
   }
 }

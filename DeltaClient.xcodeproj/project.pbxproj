@@ -25,6 +25,10 @@
 		7806A8A8269699E3002F4115 /* Binding+onChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7806A8A6269699E3002F4115 /* Binding+onChange.swift */; };
 		78203EB02696B27100D97A93 /* ConfigError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78203EAF2696B27100D97A93 /* ConfigError.swift */; };
 		78203EB12696B27100D97A93 /* ConfigError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78203EAF2696B27100D97A93 /* ConfigError.swift */; };
+		78203EB526970CD300D97A93 /* InGameSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78203EB426970CD300D97A93 /* InGameSettingsView.swift */; };
+		78203EB626970CD300D97A93 /* InGameSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78203EB426970CD300D97A93 /* InGameSettingsView.swift */; };
+		78203EBA26970D1D00D97A93 /* VideoSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78203EB926970D1D00D97A93 /* VideoSettingsView.swift */; };
+		78203EBB26970D1D00D97A93 /* VideoSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78203EB926970D1D00D97A93 /* VideoSettingsView.swift */; };
 		78233229267EC31100694E76 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 78233228267EC31100694E76 /* Logging */; };
 		7823322D267EC3B700694E76 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7823322C267EC3B700694E76 /* Logging.swift */; };
 		7823322E267EC3B700694E76 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7823322C267EC3B700694E76 /* Logging.swift */; };
@@ -36,6 +40,18 @@
 		782F36A5267D87830034380E /* StateWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F36A3267D87830034380E /* StateWrapper.swift */; };
 		782F36B2267D8E310034380E /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F36B1267D8E310034380E /* AppState.swift */; };
 		782F36B3267D8E310034380E /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 782F36B1267D8E310034380E /* AppState.swift */; };
+		7837263E2699194C00E39326 /* InputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7837263D2699194C00E39326 /* InputView.swift */; };
+		7837263F2699194C00E39326 /* InputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7837263D2699194C00E39326 /* InputView.swift */; };
+		783726432699198100E39326 /* InputDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 783726422699198100E39326 /* InputDelegate.swift */; };
+		783726442699198100E39326 /* InputDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 783726422699198100E39326 /* InputDelegate.swift */; };
+		783726482699199800E39326 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 783726472699199800E39326 /* Key.swift */; };
+		783726492699199800E39326 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 783726472699199800E39326 /* Key.swift */; };
+		7837264D269919A900E39326 /* ModifierKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7837264C269919A900E39326 /* ModifierKey.swift */; };
+		7837264E269919A900E39326 /* ModifierKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7837264C269919A900E39326 /* ModifierKey.swift */; };
+		7837265226991A1E00E39326 /* KeyMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7837265126991A1E00E39326 /* KeyMapping.swift */; };
+		7837265326991A1E00E39326 /* KeyMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7837265126991A1E00E39326 /* KeyMapping.swift */; };
+		7837265926991DAF00E39326 /* ClientInputDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7837265826991DAF00E39326 /* ClientInputDelegate.swift */; };
+		7837265A26991DAF00E39326 /* ClientInputDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7837265826991DAF00E39326 /* ClientInputDelegate.swift */; };
 		7839921326911DCD005E93FD /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7839921226911DCD005E93FD /* MetalView.swift */; };
 		7839921426911DCD005E93FD /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7839921226911DCD005E93FD /* MetalView.swift */; };
 		7839E378267EBE9200D9C591 /* DeltaLogger in Frameworks */ = {isa = PBXBuildFile; productRef = 7839E377267EBE9200D9C591 /* DeltaLogger */; };
@@ -59,6 +75,8 @@
 		788195C22691E2960099575B /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788195C02691E2960099575B /* LoadingState.swift */; };
 		788538892695C8BB00932F71 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788538882695C8BB00932F71 /* EditorView.swift */; };
 		7885388A2695C8BB00932F71 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788538882695C8BB00932F71 /* EditorView.swift */; };
+		78AA80202699329300664150 /* VideoConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AA801F2699329300664150 /* VideoConfig.swift */; };
+		78AA80212699329300664150 /* VideoConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AA801F2699329300664150 /* VideoConfig.swift */; };
 		78ABBBC926964A0F00475BFE /* OptionalNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */; };
 		78ABBBCA26964A0F00475BFE /* OptionalNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */; };
 		78ABBBCE2696540C00475BFE /* IPField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBCD2696540C00475BFE /* IPField.swift */; };
@@ -111,11 +129,19 @@
 		7806A8A126968B1C002F4115 /* EmailField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailField.swift; sourceTree = "<group>"; };
 		7806A8A6269699E3002F4115 /* Binding+onChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+onChange.swift"; sourceTree = "<group>"; };
 		78203EAF2696B27100D97A93 /* ConfigError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigError.swift; sourceTree = "<group>"; };
+		78203EB426970CD300D97A93 /* InGameSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InGameSettingsView.swift; sourceTree = "<group>"; };
+		78203EB926970D1D00D97A93 /* VideoSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSettingsView.swift; sourceTree = "<group>"; };
 		7823322C267EC3B700694E76 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		78233231267EC54300694E76 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		782F369C267D803D0034380E /* ServerListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListItem.swift; sourceTree = "<group>"; };
 		782F36A3267D87830034380E /* StateWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateWrapper.swift; sourceTree = "<group>"; };
 		782F36B1267D8E310034380E /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		7837263D2699194C00E39326 /* InputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputView.swift; sourceTree = "<group>"; };
+		783726422699198100E39326 /* InputDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputDelegate.swift; sourceTree = "<group>"; };
+		783726472699199800E39326 /* Key.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
+		7837264C269919A900E39326 /* ModifierKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifierKey.swift; sourceTree = "<group>"; };
+		7837265126991A1E00E39326 /* KeyMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyMapping.swift; sourceTree = "<group>"; };
+		7837265826991DAF00E39326 /* ClientInputDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientInputDelegate.swift; sourceTree = "<group>"; };
 		7839921226911DCD005E93FD /* MetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
 		78427844268F275A00FF16C2 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
 		78427849268F288300FF16C2 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
@@ -127,6 +153,7 @@
 		7842786E268FBCEF00FF16C2 /* VersionManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionManifest.swift; sourceTree = "<group>"; };
 		788195C02691E2960099575B /* LoadingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingState.swift; sourceTree = "<group>"; };
 		788538882695C8BB00932F71 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
+		78AA801F2699329300664150 /* VideoConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoConfig.swift; sourceTree = "<group>"; };
 		78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalNumberField.swift; sourceTree = "<group>"; };
 		78ABBBCD2696540C00475BFE /* IPField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPField.swift; sourceTree = "<group>"; };
 		78B4B70C2696706B00DF28B2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -183,6 +210,7 @@
 		7800027C267A1AB8003C1685 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				7837265D269929A900E39326 /* Input */,
 				78E18865267DC7C30069E701 /* State */,
 				78D73BAF267D500800B460E8 /* Views */,
 				78E18869267DC8330069E701 /* Storage */,
@@ -227,6 +255,8 @@
 				78C1C0212696646A00604D15 /* EditableList */,
 				78C1C0202696645A00604D15 /* Field */,
 				78B4B70C2696706B00DF28B2 /* SettingsView.swift */,
+				78203EB426970CD300D97A93 /* InGameSettingsView.swift */,
+				78203EB926970D1D00D97A93 /* VideoSettingsView.swift */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -248,10 +278,22 @@
 			path = Helper;
 			sourceTree = "<group>";
 		};
+		7837265D269929A900E39326 /* Input */ = {
+			isa = PBXGroup;
+			children = (
+				783726422699198100E39326 /* InputDelegate.swift */,
+				783726472699199800E39326 /* Key.swift */,
+				7837264C269919A900E39326 /* ModifierKey.swift */,
+				7837265826991DAF00E39326 /* ClientInputDelegate.swift */,
+			);
+			path = Input;
+			sourceTree = "<group>";
+		};
 		7842789E268FD35C00FF16C2 /* JSON */ = {
 			isa = PBXGroup;
 			children = (
 				78427849268F288300FF16C2 /* Config.swift */,
+				78AA801F2699329300664150 /* VideoConfig.swift */,
 				7842785D268FB91F00FF16C2 /* VersionsManifest.swift */,
 				7842786E268FBCEF00FF16C2 /* VersionManifest.swift */,
 			);
@@ -346,6 +388,7 @@
 				7842789F268FD37C00FF16C2 /* Error */,
 				7842789E268FD35C00FF16C2 /* JSON */,
 				78233231267EC54300694E76 /* StorageManager.swift */,
+				7837265126991A1E00E39326 /* KeyMapping.swift */,
 				78427844268F275A00FF16C2 /* ConfigManager.swift */,
 				7842784E268F364B00FF16C2 /* CacheManager.swift */,
 				78427858268FB67C00FF16C2 /* AssetManager.swift */,
@@ -367,6 +410,7 @@
 			isa = PBXGroup;
 			children = (
 				78E18831267D966E0069E701 /* PlayServerView.swift */,
+				7837263D2699194C00E39326 /* InputView.swift */,
 				7839921226911DCD005E93FD /* MetalView.swift */,
 			);
 			path = Play;
@@ -493,11 +537,15 @@
 				78B6B1BF2687DF370041B1E1 /* ModalState.swift in Sources */,
 				788538892695C8BB00932F71 /* EditorView.swift in Sources */,
 				782F36A4267D87830034380E /* StateWrapper.swift in Sources */,
+				78AA80202699329300664150 /* VideoConfig.swift in Sources */,
 				78000290267A1AC5003C1685 /* DeltaClientApp.swift in Sources */,
 				788195C12691E2960099575B /* LoadingState.swift in Sources */,
 				7806A8A7269699E3002F4115 /* Binding+onChange.swift in Sources */,
+				78203EBA26970D1D00D97A93 /* VideoSettingsView.swift in Sources */,
+				783726482699199800E39326 /* Key.swift in Sources */,
 				782F36B2267D8E310034380E /* AppState.swift in Sources */,
 				7823322D267EC3B700694E76 /* Logging.swift in Sources */,
+				7837263E2699194C00E39326 /* InputView.swift in Sources */,
 				78D73BB8267D6AAC00B460E8 /* ServerDetail.swift in Sources */,
 				78D73BB1267D505C00B460E8 /* ServerListView.swift in Sources */,
 				7842784A268F288300FF16C2 /* Config.swift in Sources */,
@@ -505,9 +553,11 @@
 				78ABBBCE2696540C00475BFE /* IPField.swift in Sources */,
 				78427859268FB67C00FF16C2 /* AssetManager.swift in Sources */,
 				78050DED269588520024C049 /* IconButton.swift in Sources */,
+				7837265226991A1E00E39326 /* KeyMapping.swift in Sources */,
 				78B4B71B2696714300DF28B2 /* AccountLoginView.swift in Sources */,
 				78B4B714269670EC00DF28B2 /* AccountSettingsView.swift in Sources */,
 				78427854268FB42500FF16C2 /* CacheError.swift in Sources */,
+				78203EB526970CD300D97A93 /* InGameSettingsView.swift in Sources */,
 				7842784F268F364B00FF16C2 /* CacheManager.swift in Sources */,
 				78427845268F275A00FF16C2 /* ConfigManager.swift in Sources */,
 				7842785E268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
@@ -521,7 +571,10 @@
 				78427863268FBA2200FF16C2 /* AssetError.swift in Sources */,
 				78B4B70D2696706B00DF28B2 /* SettingsView.swift in Sources */,
 				7839921326911DCD005E93FD /* MetalView.swift in Sources */,
+				7837265926991DAF00E39326 /* ClientInputDelegate.swift in Sources */,
+				783726432699198100E39326 /* InputDelegate.swift in Sources */,
 				78233232267EC54300694E76 /* StorageManager.swift in Sources */,
+				7837264D269919A900E39326 /* ModifierKey.swift in Sources */,
 				78050DB926944C040024C049 /* PingIndicator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -539,11 +592,15 @@
 				78B6B1C02687DF370041B1E1 /* ModalState.swift in Sources */,
 				7885388A2695C8BB00932F71 /* EditorView.swift in Sources */,
 				782F36A5267D87830034380E /* StateWrapper.swift in Sources */,
+				78AA80212699329300664150 /* VideoConfig.swift in Sources */,
 				78000291267A1AC5003C1685 /* DeltaClientApp.swift in Sources */,
 				788195C22691E2960099575B /* LoadingState.swift in Sources */,
 				7806A8A8269699E3002F4115 /* Binding+onChange.swift in Sources */,
+				78203EBB26970D1D00D97A93 /* VideoSettingsView.swift in Sources */,
+				783726492699199800E39326 /* Key.swift in Sources */,
 				782F36B3267D8E310034380E /* AppState.swift in Sources */,
 				7823322E267EC3B700694E76 /* Logging.swift in Sources */,
+				7837263F2699194C00E39326 /* InputView.swift in Sources */,
 				78D73BB9267D6AAC00B460E8 /* ServerDetail.swift in Sources */,
 				78D73BB2267D505C00B460E8 /* ServerListView.swift in Sources */,
 				7842784B268F288300FF16C2 /* Config.swift in Sources */,
@@ -551,9 +608,11 @@
 				78ABBBCF2696540C00475BFE /* IPField.swift in Sources */,
 				7842785A268FB67C00FF16C2 /* AssetManager.swift in Sources */,
 				78050DEE269588520024C049 /* IconButton.swift in Sources */,
+				7837265326991A1E00E39326 /* KeyMapping.swift in Sources */,
 				78B4B71C2696714300DF28B2 /* AccountLoginView.swift in Sources */,
 				78B4B7172696712000DF28B2 /* AccountSettingsView.swift in Sources */,
 				78427855268FB42500FF16C2 /* CacheError.swift in Sources */,
+				78203EB626970CD300D97A93 /* InGameSettingsView.swift in Sources */,
 				78427850268F364B00FF16C2 /* CacheManager.swift in Sources */,
 				78427846268F275A00FF16C2 /* ConfigManager.swift in Sources */,
 				7842785F268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
@@ -567,7 +626,10 @@
 				78427864268FBA2200FF16C2 /* AssetError.swift in Sources */,
 				78B4B710269670B400DF28B2 /* SettingsView.swift in Sources */,
 				7839921426911DCD005E93FD /* MetalView.swift in Sources */,
+				7837265A26991DAF00E39326 /* ClientInputDelegate.swift in Sources */,
+				783726442699198100E39326 /* InputDelegate.swift in Sources */,
 				78233233267EC54300694E76 /* StorageManager.swift in Sources */,
+				7837264E269919A900E39326 /* ModifierKey.swift in Sources */,
 				78050DBA26944C040024C049 /* PingIndicator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

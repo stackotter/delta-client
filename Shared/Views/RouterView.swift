@@ -38,7 +38,9 @@ struct RouterView: View {
                     appState.update(to: .serverList)
                   })
                 case .playServer(let descriptor):
-                  PlayServerView(serverDescriptor: descriptor, registry: registry)
+                  InputView { inputCaptureEnabled, setDelegate in
+                    PlayServerView(serverDescriptor: descriptor, registry: registry, inputCaptureEnabled: inputCaptureEnabled, delegateSetter: setDelegate)
+                  }
                 case .fatalError(let message):
                   FatalErrorView(message: message)
               }

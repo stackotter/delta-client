@@ -13,41 +13,46 @@ enum PlayState {
   case playing
 }
 
-class PlayStateObject {
-  var client: Client
-  
-  init(client: Client) {
-    self.client = client
-  }
+enum OverlayState {
+  case menu
+  case settings
 }
 
 struct PlayServerView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
-  
   @ObservedObject var state = StateWrapper<PlayState>(initial: .downloadingTerrain)
+  @ObservedObject var overlayState = StateWrapper<OverlayState>(initial: .menu)
   
-  var serverDescriptor: ServerDescriptor
+  @Binding var cursorCaptured: Bool
+  
   var client: Client
+  var inputDelegate: ClientInputDelegate
   
-  init(serverDescriptor: ServerDescriptor, registry: Registry) {
-    self.serverDescriptor = serverDescriptor
+  init(serverDescriptor: ServerDescriptor, registry: Registry, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
+    // Link whether the cursor is captured to whether input gets sent to delegate
+    _cursorCaptured = inputCaptureEnabled
     
     client = Client(registry: registry)
+    inputDelegate = ClientInputDelegate(for: client)
+    setDelegate(inputDelegate)
+    
     client.eventBus.registerHandler(handleClientEvent)
     
-    joinServer()
+    joinServer(serverDescriptor)
   }
   
-  func joinServer() {
+  func joinServer(_ descriptor: ServerDescriptor) {
+    // Get the account to use
     guard let account = ConfigManager.default.config.selectedAccount else {
       log.error("Error, attempted to join server without a selected account.")
       DeltaClientApp.modalError("Please login and select an account before joining a server", safeState: .accounts)
       return
     }
     
+    // Refresh the account (if Mojang) and then join the server
     ConfigManager.default.refreshSelectedAccount(onCompletion: { account in
       client.joinServer(
-        describedBy: serverDescriptor,
+        describedBy: descriptor,
         with: account,
         onFailure: { error in
           log.error("Failed to join server: \(error)")
@@ -82,13 +87,46 @@ struct PlayServerView: View {
     Group {
       switch state.current {
         case .downloadingTerrain:
-          Text("Downloading terrain..")
-          Button("Cancel", action: disconnect)
+          VStack {
+            Text("Downloading terrain..")
+            Button("Cancel", action: disconnect)
+          }
         case .playing:
-          MetalView(client: client)
-            .toolbar(content: {
-              Button("Leave", action: disconnect)
-            })
+          ZStack {
+            MetalView(client: client)
+              .opacity(cursorCaptured ? 1 : 0.2)
+              .onAppear {
+                inputDelegate.bind($cursorCaptured.onChange { newValue in
+                  // When showing overlay make sure menu is the first view
+                  if newValue == false {
+                    overlayState.update(to: .menu)
+                  }
+                })
+                // TODO: make a way to pass initial render config to metal view
+                client.eventBus.dispatch(ChangeFOVEvent(fovDegrees: ConfigManager.default.config.video.fov))
+                
+                inputDelegate.captureCursor()
+              }
+            
+            if !cursorCaptured {
+              switch overlayState.current {
+                case .menu:
+                  VStack {
+                    Group {
+                      Button("Back to game", action: inputDelegate.captureCursor)
+                        .keyboardShortcut(.escape, modifiers: [])
+                      Button("Settings", action: { overlayState.update(to: .settings) })
+                      Button("Disconnect", action: disconnect)
+                    }
+                    .frame(width: 100)
+                  }
+                case .settings:
+                  InGameSettingsView(eventBus: client.eventBus, onDone: {
+                    overlayState.update(to: .menu)
+                  })
+              }
+            }
+          }
       }
     }
   }

@@ -21,6 +21,8 @@ public struct Config: Codable {
   public var offlineAccounts: [String: OfflineAccount]
   /// The user's server list.
   public var servers: [ServerDescriptor]
+  /// Rendering related configuration.
+  public var video: VideoConfig
   
   /// All of the user's accounts.
   public var accounts: [Account] {
@@ -52,6 +54,7 @@ public struct Config: Codable {
     mojangAccounts = [:]
     offlineAccounts = [:]
     servers = []
+    video = VideoConfig()
   }
   
   /// Returns the type of the given account
