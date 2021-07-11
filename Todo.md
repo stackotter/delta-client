@@ -14,6 +14,7 @@
 - [ ] Direct connect
 - [x] Login prompt if no accounts are selected
 - [x] Pixlyzer data downloader
+- [ ] § colour code support
 
 ## Settings
 

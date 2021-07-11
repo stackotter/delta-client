@@ -1,5 +1,5 @@
 //
-//  IPField.swift
+//  AddressField.swift
 //  DeltaClient
 //
 //  Created by Rohan van Klinken on 8/7/21.
@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-struct IPField: View {
+struct AddressField: View {
   static private let ipRegex = try! NSRegularExpression(pattern: "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}$")
   static private let domainRegex = try! NSRegularExpression(pattern: "^[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*$")
   

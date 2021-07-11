@@ -85,8 +85,8 @@
 		78AA80212699329300664150 /* VideoConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AA801F2699329300664150 /* VideoConfig.swift */; };
 		78ABBBC926964A0F00475BFE /* OptionalNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */; };
 		78ABBBCA26964A0F00475BFE /* OptionalNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */; };
-		78ABBBCE2696540C00475BFE /* IPField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBCD2696540C00475BFE /* IPField.swift */; };
-		78ABBBCF2696540C00475BFE /* IPField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBCD2696540C00475BFE /* IPField.swift */; };
+		78ABBBCE2696540C00475BFE /* AddressField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBCD2696540C00475BFE /* AddressField.swift */; };
+		78ABBBCF2696540C00475BFE /* AddressField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABBBCD2696540C00475BFE /* AddressField.swift */; };
 		78B4B70D2696706B00DF28B2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B4B70C2696706B00DF28B2 /* SettingsView.swift */; };
 		78B4B710269670B400DF28B2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B4B70C2696706B00DF28B2 /* SettingsView.swift */; };
 		78B4B714269670EC00DF28B2 /* AccountSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B4B713269670EC00DF28B2 /* AccountSettingsView.swift */; };
@@ -164,7 +164,7 @@
 		788538882695C8BB00932F71 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
 		78AA801F2699329300664150 /* VideoConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoConfig.swift; sourceTree = "<group>"; };
 		78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalNumberField.swift; sourceTree = "<group>"; };
-		78ABBBCD2696540C00475BFE /* IPField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPField.swift; sourceTree = "<group>"; };
+		78ABBBCD2696540C00475BFE /* AddressField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressField.swift; sourceTree = "<group>"; };
 		78B4B70C2696706B00DF28B2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		78B4B713269670EC00DF28B2 /* AccountSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsView.swift; sourceTree = "<group>"; };
 		78B4B71A2696714300DF28B2 /* AccountLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountLoginView.swift; sourceTree = "<group>"; };
@@ -324,7 +324,7 @@
 			isa = PBXGroup;
 			children = (
 				78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */,
-				78ABBBCD2696540C00475BFE /* IPField.swift */,
+				78ABBBCD2696540C00475BFE /* AddressField.swift */,
 				7806A8A126968B1C002F4115 /* EmailField.swift */,
 			);
 			path = Field;
@@ -562,7 +562,7 @@
 				78D73BB1267D505C00B460E8 /* ServerListView.swift in Sources */,
 				7842784A268F288300FF16C2 /* Config.swift in Sources */,
 				78B6B1B12687DCE20041B1E1 /* WarningView.swift in Sources */,
-				78ABBBCE2696540C00475BFE /* IPField.swift in Sources */,
+				78ABBBCE2696540C00475BFE /* AddressField.swift in Sources */,
 				78427859268FB67C00FF16C2 /* AssetManager.swift in Sources */,
 				78050DED269588520024C049 /* IconButton.swift in Sources */,
 				7837265226991A1E00E39326 /* KeyMapping.swift in Sources */,
@@ -620,7 +620,7 @@
 				78D73BB2267D505C00B460E8 /* ServerListView.swift in Sources */,
 				7842784B268F288300FF16C2 /* Config.swift in Sources */,
 				78B6B1B22687DCE20041B1E1 /* WarningView.swift in Sources */,
-				78ABBBCF2696540C00475BFE /* IPField.swift in Sources */,
+				78ABBBCF2696540C00475BFE /* AddressField.swift in Sources */,
 				7842785A268FB67C00FF16C2 /* AssetManager.swift in Sources */,
 				78050DEE269588520024C049 /* IconButton.swift in Sources */,
 				7837265326991A1E00E39326 /* KeyMapping.swift in Sources */,
@@ -825,6 +825,7 @@
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 2W73HS7DLT;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -834,10 +835,12 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "dev.stackotter.delta-client";
 				PRODUCT_NAME = DeltaClient;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "";
 			};
 			name = Debug;
 		};
@@ -849,6 +852,7 @@
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 2W73HS7DLT;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -858,10 +862,12 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "dev.stackotter.delta-client";
 				PRODUCT_NAME = DeltaClient;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "";
 			};
 			name = Release;
 		};
