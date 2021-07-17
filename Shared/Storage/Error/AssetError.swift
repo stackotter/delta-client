@@ -19,4 +19,5 @@ enum AssetError: LocalizedError {
   case noURLForVersion(String)
   case failedToDownloadPixlyzerData(Error)
   case failedToWritePixlyzerData(Error)
+  case failedToCreatePackMCMetaData
 }

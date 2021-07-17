@@ -23,6 +23,7 @@ struct ErrorView: View {
         }
         modalState.update(to: .none)
       }
+      .buttonStyle(PrimaryButtonStyle())
     }
     .navigationTitle("Error")
   }

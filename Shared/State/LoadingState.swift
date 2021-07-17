@@ -12,5 +12,5 @@ enum LoadingState {
   case loading
   case loadingWithMessage(String)
   case error(String)
-  case done(Registry)
+  case done(Registry, ResourcePack)
 }

@@ -20,6 +20,8 @@ struct DeltaClientApp: App {
     // Load the registry
     taskQueue.async {
       do {
+        // TODO: handle asset downloading in delta core so that people using delta core can take advantage of it
+        
         if !StorageManager.default.directoryExists(at: AssetManager.default.vanillaAssetsDirectory) {
           Self.loadingState.update(to: .loadingWithMessage("Downloading vanilla assets (might take a little while)"))
           try AssetManager.default.downloadVanillaAssets(forVersion: Constants.versionString)
@@ -30,18 +32,13 @@ struct DeltaClientApp: App {
           try AssetManager.default.downloadPixlyzerData(forVersion: Constants.versionString)
         }
         
-        Self.loadingState.update(to: .loadingWithMessage("Loading block texture palette"))
-        let texturePalette = try AssetManager.default.getBlockTexturePalette()
-
-        let pixlyzerData = AssetManager.default.pixlyzerDirectory.appendingPathComponent("blocks.min.json")
-
-        Self.loadingState.update(to: .loadingWithMessage("Loading block models"))
-        let blockModels = AssetManager.default.vanillaAssetsDirectory.appendingPathComponent("minecraft/models/block")
-        let blockRegistry = try BlockRegistry.parse(
-          fromPixlyzerDataAt: pixlyzerData,
-          withBlockModelDirectoryAt: blockModels,
-          andTexturesFrom: texturePalette)
+        Self.loadingState.update(to: .loadingWithMessage("Loading block registry"))
+        let blockRegistry = try BlockRegistry.load(fromPixlyzerDataDirectory: AssetManager.default.pixlyzerDirectory)
         
+        Self.loadingState.update(to: .loadingWithMessage("Loading resource pack"))
+        let resourcePack = try ResourcePack.load(from: AssetManager.default.vanillaAssetsDirectory, blockRegistry: blockRegistry)
+        
+        // TODO: locale should be part of the resourcepack not the registry. Registries should always be the same (unlike resource pack which can be changed)
         let locale = try AssetManager.default.getLocale()
 
         let registry = Registry(blockRegistry: blockRegistry, locale: locale)
@@ -50,7 +47,7 @@ struct DeltaClientApp: App {
           Self.appState.update(to: .login)
         }
         
-        Self.loadingState.update(to: .done(registry))
+        Self.loadingState.update(to: .done(registry, resourcePack))
       } catch {
         Self.loadingState.update(to: .error("Failed to create registry: \(error)"))
       }

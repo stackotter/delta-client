@@ -127,7 +127,6 @@
 		7800028C267A1AC5003C1685 /* DeltaClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7800028E267A1AC5003C1685 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7800028F267A1AC5003C1685 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
-		78050DAE269428E10024C049 /* delta-core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "delta-core"; path = "../delta-core"; sourceTree = "<group>"; };
 		78050DB826944C040024C049 /* PingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingIndicator.swift; sourceTree = "<group>"; };
 		78050DE72695151C0024C049 /* EditServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditServerListView.swift; sourceTree = "<group>"; };
 		78050DEC269588510024C049 /* IconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconButton.swift; sourceTree = "<group>"; };
@@ -162,6 +161,7 @@
 		7845DDCE269A5350008FC70E /* DisabledButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledButtonStyle.swift; sourceTree = "<group>"; };
 		788195C02691E2960099575B /* LoadingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingState.swift; sourceTree = "<group>"; };
 		788538882695C8BB00932F71 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
+		78A3696826A178C000861CFE /* delta-core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "delta-core"; path = "../delta-core"; sourceTree = "<group>"; };
 		78AA801F2699329300664150 /* VideoConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoConfig.swift; sourceTree = "<group>"; };
 		78ABBBC826964A0F00475BFE /* OptionalNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalNumberField.swift; sourceTree = "<group>"; };
 		78ABBBCD2696540C00475BFE /* AddressField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressField.swift; sourceTree = "<group>"; };
@@ -210,7 +210,7 @@
 				7800027C267A1AB8003C1685 /* Shared */,
 				78000286267A1AC5003C1685 /* iOS */,
 				7800028D267A1AC5003C1685 /* macOS */,
-				78050DAE269428E10024C049 /* delta-core */,
+				78A3696826A178C000861CFE /* delta-core */,
 				78000285267A1AC5003C1685 /* Products */,
 				78D73BA0267D4DCE00B460E8 /* Frameworks */,
 			);

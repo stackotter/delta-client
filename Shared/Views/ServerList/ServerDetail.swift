@@ -29,13 +29,13 @@ struct ServerDetail: View {
             Button("Play") {
               appState.update(to: .playServer(descriptor))
             }
-            .buttonStyle(SecondaryButtonStyle())
+            .buttonStyle(PrimaryButtonStyle())
             .frame(width: 150)
           case let .failure(error):
             Text("Connection failed: \(error.localizedDescription)")
               .padding(.bottom, 8)
             Button("Play") { }
-              .buttonStyle(SecondaryButtonStyle())
+              .buttonStyle(PrimaryButtonStyle())
               .frame(width: 150)
               .disabled(false)
         }

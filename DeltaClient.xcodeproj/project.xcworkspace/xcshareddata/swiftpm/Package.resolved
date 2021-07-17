@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "DeltaCore",
+        "repositoryURL": "https://github.com/stackotter/delta-core",
+        "state": {
+          "branch": "main",
+          "revision": "8e104c169c992db6d7452ba016e0c061fae10ac5",
+          "version": null
+        }
+      },
+      {
         "package": "DeltaLogger",
         "repositoryURL": "https://github.com/stackotter/delta-logger",
         "state": {

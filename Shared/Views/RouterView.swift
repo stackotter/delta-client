@@ -25,9 +25,8 @@ struct RouterView: View {
               Text(message)
                 .navigationTitle("Loading")
             case let .error(message):
-              Text(message)
-                .navigationTitle("Error")
-            case let .done(registry):
+              FatalErrorView(message: message)
+            case let .done(registry, resourcePack):
               switch appState.current {
                 case .serverList:
                   ServerListView()
@@ -55,7 +54,7 @@ struct RouterView: View {
                   }).padding()
                 case .playServer(let descriptor):
                   InputView { inputCaptureEnabled, setDelegate in
-                    PlayServerView(serverDescriptor: descriptor, registry: registry, inputCaptureEnabled: inputCaptureEnabled, delegateSetter: setDelegate)
+                    PlayServerView(serverDescriptor: descriptor, registry: registry, resourcePack: resourcePack, inputCaptureEnabled: inputCaptureEnabled, delegateSetter: setDelegate)
                   }
                 case .fatalError(let message):
                   FatalErrorView(message: message)

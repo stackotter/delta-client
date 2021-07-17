@@ -22,17 +22,9 @@ class AssetManager {
   private init() {
     vanillaAssetsDirectory = StorageManager.default.absoluteFromRelative("assets")
     pixlyzerDirectory = StorageManager.default.absoluteFromRelative("pixlyzer")
-//    if !StorageManager.default.directoryExists(at: pixlyzerDirectory) {
-//      do {
-//        try StorageManager.default.createDirectory(at: pixlyzerDirectory)
-//      } catch {
-//        let message = "Failed to create pixlyzer data directory: \(error)"
-//        DeltaClientApp.fatal(message)
-//      }
-//    }
   }
   
-  // MARK: - Download
+  // MARK: Download
   
   /// Downloads the vanilla client and extracts its assets (textures, block models, etc.).
   public func downloadVanillaAssets(forVersion version: String) throws {
@@ -72,6 +64,19 @@ class AssetManager {
     } catch {
       log.error("Failed to copy assets from extracted client jar: \(error)")
       throw AssetError.assetCopyFailure
+    }
+    
+    // Create a default pack.mcmeta for it
+    log.info("Creating pack.mcmeta")
+    let contents = #"{"pack": {"pack_format": 5, "description": "The default vanilla assets"}}"#
+    guard let data = contents.data(using: .utf8) else {
+      throw AssetError.failedToCreatePackMCMetaData
+    }
+    
+    do {
+      try data.write(to: vanillaAssetsDirectory.appendingPathComponent("pack.mcmeta"))
+    } catch {
+      log.error("Failed to write pack.mcmeta file to vanilla assets")
     }
   }
   
@@ -144,51 +149,7 @@ class AssetManager {
     return urls
   }
   
-  // MARK: - Textures
-  
-  /// Returns a texture palette of block textures.
-  public func getBlockTexturePalette() throws -> TexturePalette {
-    let textureDirectory = vanillaAssetsDirectory.appendingPathComponent("minecraft/textures/block")
-    
-    guard let textureDirectoryContents = try? StorageManager.default.contentsOfDirectory(at: textureDirectory) else {
-      throw AssetError.blockTextureEnumerationFailure
-    }
-    
-    var textureFiles: [URL] = []
-    for file in textureDirectoryContents where file.pathExtension == "png" {
-      textureFiles.append(file)
-    }
-    
-    var images: [CGImage] = []
-    var identifierToIndex: [Identifier: Int] = [:]
-    var index: Int = 0
-    for file in textureFiles {
-      let textureName = file.deletingPathExtension().lastPathComponent
-      let identifier = Identifier(name: "block/\(textureName)")
-      
-      guard let dataProvider = CGDataProvider(url: file as CFURL) else {
-        log.error("Failed to get image data provider for texture '\(textureName)'")
-        throw AssetError.dataProviderFailure
-      }
-      
-      guard let cgImage = CGImage(pngDataProviderSource: dataProvider, decode: nil, shouldInterpolate: false, intent: .defaultIntent) else {
-        log.error("Failed to create CGImage for texture '\(textureName)'")
-        throw AssetError.cgImageFailure
-      }
-      
-      if cgImage.width == 16 && cgImage.height == 16 {
-        images.append(cgImage)
-        identifierToIndex[identifier] = index
-        index += 1
-      }
-    }
-    
-    return TexturePalette(
-      identifierToIndex: identifierToIndex,
-      textures: images)
-  }
-  
-  // MARK: - Locale
+  // MARK: Locale
   
   // TODO: clean up locale loading
   public func getLocale() throws -> MinecraftLocale {
