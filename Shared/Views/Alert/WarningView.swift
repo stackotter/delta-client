@@ -19,7 +19,10 @@ struct WarningView: View {
       Button("Ok") {
         modalState.update(to: .none)
       }
+      .buttonStyle(PrimaryButtonStyle())
+      .frame(width: 100)
     }
     .navigationTitle("Warning")
+    .frame(width: 200)
   }
 }
