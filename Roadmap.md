@@ -79,7 +79,7 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
 - [x] mip maps
 - [x] rewrite block model loading system
 - [ ] lighting
-- [ ] animated textures
+- [x] animated textures
 - [ ] fix gpu ram usage (clear buffers when not being used, possibly use private mode buffers, possibly use a big default size buffer and transfer things through that)
 - [ ] fix indices (either use 6 vertices to a face or do the fancy shader thing from before (adjusting the vertex indices))
 - [ ] optimise chunk mesh preparation
