@@ -115,9 +115,9 @@ Once both of these versions are implemented, my plan is to add support for the f
 
 ## Usage
 
-We now have an official test server made by @ninjadev64! The address is `delta.stackotter.dev`. To run it cheaply, the server goes to sleep. To join it click play and you'll get a message telling you that it's starting up. Wait around 30-45 seconds and then click play again and you should be good to go. Alternatively, you can run your own server on your laptop (see below).
+We now have an official test server made by @ninjadev64! The address is `delta.stackotter.dev`. To run it cheaply, the server goes to sleep. To join it click play and you'll get a message telling you that it's starting up. Wait around 15-20 seconds and then click play again and you should be good to go. Alternatively, you can run your own server on your computer (see below).
 
-To start a test server download a 1.16.1 server jar from [here](https://mcversions.net/download/1.16.1). Then in Terminal type `java -jar ` and then drag the download .jar file onto the terminal window and then hit enter. Wait for the server to start up. Now add a new server with the ip 127.0.0.1 in Delta Client and you should be able to connect to it. The Minecraft server jar does take up a lot of ram and cpu so people have reported that that has made their fans really loud. It is most likely not Delta Client making the fans spin like a helicopter.
+To start a test server download a 1.16.1 server jar from [here](https://mcversions.net/download/1.16.1). Then in Terminal type `java -jar ` and then drag the download .jar file onto the terminal window and then hit enter. Wait for the server to start up. Now add a new server with the ip 127.0.0.1 in Delta Client and you should be able to connect to it. The Minecraft server jar does take up a lot of ram and cpu so people have reported that that has made their laptop fans really loud. It is most likely not Delta Client making the fans spin like a helicopter.
 
 To run Delta Client from terminal you can run `/path/to/DeltaClient.app/Contents/MacOS/DeltaClient` in terminal. This allows you to see the pretty coloured logs as the app is running :)
 
