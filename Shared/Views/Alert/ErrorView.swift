@@ -27,6 +27,6 @@ struct ErrorView: View {
       .frame(width: 100)
     }
     .navigationTitle("Error")
-    .frame(width: 200)
+    .frame(width: 500)
   }
 }

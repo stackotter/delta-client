@@ -70,16 +70,20 @@ struct PlayServerView: View {
       case _ as TerrainDownloadCompletionEvent:
         state.update(to: .playing)
       case let disconnectEvent as PlayDisconnectEvent:
-        DeltaClientApp.modalError("Disconnected from server: \(disconnectEvent.reason)", safeState: .serverList)
+        DeltaClientApp.modalError("Disconnected from server during play:\n\n\(disconnectEvent.reason)", safeState: .serverList)
       case let disconnectEvent as LoginDisconnectEvent:
-        DeltaClientApp.modalError("Disconnected from server: \(disconnectEvent.reason)", safeState: .serverList)
+        DeltaClientApp.modalError("Disconnected from server during login:\n\n\(disconnectEvent.reason)", safeState: .serverList)
+      case let packetError as PacketHandlingErrorEvent:
+        DeltaClientApp.modalError("Failed to handle packet with id 0x\(String(packetError.packetId, radix: 16)):\n\n\(packetError.error)", safeState: .serverList)
+      case let packetError as PacketDecodingErrorEvent:
+        DeltaClientApp.modalError("Failed to decode packet with id 0x\(String(packetError.packetId, radix: 16)):\n\n\(packetError.error)", safeState: .serverList)
       default:
         break
     }
   }
   
   func disconnect() {
-    client.leave()
+    client.closeConnection()
     appState.update(to: .serverList)
   }
   
