@@ -59,8 +59,6 @@
 		78427846268F275A00FF16C2 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427844268F275A00FF16C2 /* ConfigManager.swift */; };
 		7842784A268F288300FF16C2 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427849268F288300FF16C2 /* Config.swift */; };
 		7842784B268F288300FF16C2 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427849268F288300FF16C2 /* Config.swift */; };
-		7842784F268F364B00FF16C2 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842784E268F364B00FF16C2 /* CacheManager.swift */; };
-		78427850268F364B00FF16C2 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842784E268F364B00FF16C2 /* CacheManager.swift */; };
 		78427854268FB42500FF16C2 /* CacheError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427853268FB42500FF16C2 /* CacheError.swift */; };
 		78427855268FB42500FF16C2 /* CacheError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427853268FB42500FF16C2 /* CacheError.swift */; };
 		78427859268FB67C00FF16C2 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427858268FB67C00FF16C2 /* AssetManager.swift */; };
@@ -103,6 +101,8 @@
 		78B6B1C52687E3440041B1E1 /* StorageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B6B1C32687E3440041B1E1 /* StorageError.swift */; };
 		78C1C01C2696644500604D15 /* ServerEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C1C01B2696644500604D15 /* ServerEditorView.swift */; };
 		78C1C01D2696644500604D15 /* ServerEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C1C01B2696644500604D15 /* ServerEditorView.swift */; };
+		78D2EECB26BF729200E16274 /* LoadedResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D2EECA26BF729200E16274 /* LoadedResources.swift */; };
+		78D2EECC26BF729200E16274 /* LoadedResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D2EECA26BF729200E16274 /* LoadedResources.swift */; };
 		78D73B9B267D4D9A00B460E8 /* DeltaCore in Frameworks */ = {isa = PBXBuildFile; productRef = 78D73B9A267D4D9A00B460E8 /* DeltaCore */; };
 		78D73B9D267D4D9A00B460E8 /* DeltaCoreC in Frameworks */ = {isa = PBXBuildFile; productRef = 78D73B9C267D4D9A00B460E8 /* DeltaCoreC */; };
 		78D73BA2267D4DCE00B460E8 /* DeltaCore in Frameworks */ = {isa = PBXBuildFile; productRef = 78D73BA1267D4DCE00B460E8 /* DeltaCore */; };
@@ -150,7 +150,6 @@
 		7839921226911DCD005E93FD /* MetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
 		78427844268F275A00FF16C2 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
 		78427849268F288300FF16C2 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
-		7842784E268F364B00FF16C2 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
 		78427853268FB42500FF16C2 /* CacheError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheError.swift; sourceTree = "<group>"; };
 		78427858268FB67C00FF16C2 /* AssetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
 		7842785D268FB91F00FF16C2 /* VersionsManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionsManifest.swift; sourceTree = "<group>"; };
@@ -173,6 +172,7 @@
 		78B6B1BE2687DF370041B1E1 /* ModalState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalState.swift; sourceTree = "<group>"; };
 		78B6B1C32687E3440041B1E1 /* StorageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageError.swift; sourceTree = "<group>"; };
 		78C1C01B2696644500604D15 /* ServerEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerEditorView.swift; sourceTree = "<group>"; };
+		78D2EECA26BF729200E16274 /* LoadedResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadedResources.swift; sourceTree = "<group>"; };
 		78D73BB0267D505C00B460E8 /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
 		78D73BB7267D6AAC00B460E8 /* ServerDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetail.swift; sourceTree = "<group>"; };
 		78E18831267D966E0069E701 /* PlayServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayServerView.swift; sourceTree = "<group>"; };
@@ -386,6 +386,7 @@
 		78E18865267DC7C30069E701 /* State */ = {
 			isa = PBXGroup;
 			children = (
+				78D2EECA26BF729200E16274 /* LoadedResources.swift */,
 				782F36A3267D87830034380E /* StateWrapper.swift */,
 				782F36B1267D8E310034380E /* AppState.swift */,
 				78B6B1BE2687DF370041B1E1 /* ModalState.swift */,
@@ -402,7 +403,6 @@
 				78233231267EC54300694E76 /* StorageManager.swift */,
 				7837265126991A1E00E39326 /* KeyMapping.swift */,
 				78427844268F275A00FF16C2 /* ConfigManager.swift */,
-				7842784E268F364B00FF16C2 /* CacheManager.swift */,
 				78427858268FB67C00FF16C2 /* AssetManager.swift */,
 			);
 			path = Storage;
@@ -540,6 +540,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78D2EECB26BF729200E16274 /* LoadedResources.swift in Sources */,
 				782F369D267D803E0034380E /* ServerListItem.swift in Sources */,
 				7842786F268FBCEF00FF16C2 /* VersionManifest.swift in Sources */,
 				78050DF926958F2D0024C049 /* EditableList.swift in Sources */,
@@ -570,7 +571,6 @@
 				78B4B714269670EC00DF28B2 /* AccountSettingsView.swift in Sources */,
 				78427854268FB42500FF16C2 /* CacheError.swift in Sources */,
 				78203EB526970CD300D97A93 /* InGameSettingsView.swift in Sources */,
-				7842784F268F364B00FF16C2 /* CacheManager.swift in Sources */,
 				78427845268F275A00FF16C2 /* ConfigManager.swift in Sources */,
 				7842785E268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
 				78B6B1C42687E3440041B1E1 /* StorageError.swift in Sources */,
@@ -598,6 +598,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78D2EECC26BF729200E16274 /* LoadedResources.swift in Sources */,
 				782F369E267D803E0034380E /* ServerListItem.swift in Sources */,
 				78427870268FBCEF00FF16C2 /* VersionManifest.swift in Sources */,
 				78050DFA26958F2D0024C049 /* EditableList.swift in Sources */,
@@ -628,7 +629,6 @@
 				78B4B7172696712000DF28B2 /* AccountSettingsView.swift in Sources */,
 				78427855268FB42500FF16C2 /* CacheError.swift in Sources */,
 				78203EB626970CD300D97A93 /* InGameSettingsView.swift in Sources */,
-				78427850268F364B00FF16C2 /* CacheManager.swift in Sources */,
 				78427846268F275A00FF16C2 /* ConfigManager.swift in Sources */,
 				7842785F268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
 				78B6B1C52687E3440041B1E1 /* StorageError.swift in Sources */,

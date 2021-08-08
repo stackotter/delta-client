@@ -21,6 +21,8 @@ struct DeltaClientApp: App {
     taskQueue.async {
       do {
         // TODO: handle asset downloading in delta core so that people using delta core can take advantage of it
+        var stopwatch = Stopwatch(mode: .summary, name: "Startup")
+        stopwatch.startMeasurement("Full startup")
         
         if !StorageManager.default.directoryExists(at: AssetManager.default.vanillaAssetsDirectory) {
           Self.loadingState.update(to: .loadingWithMessage("Downloading vanilla assets (might take a little while)"))
@@ -33,21 +35,44 @@ struct DeltaClientApp: App {
         }
         
         Self.loadingState.update(to: .loadingWithMessage("Loading block registry"))
+        stopwatch.startMeasurement("Load block registry")
         let blockRegistry = try BlockRegistry.load(fromPixlyzerDataDirectory: AssetManager.default.pixlyzerDirectory)
+        stopwatch.stopMeasurement("Load block registry")
         
         Self.loadingState.update(to: .loadingWithMessage("Loading resource pack"))
-        let resourcePack = try ResourcePack.load(from: AssetManager.default.vanillaAssetsDirectory, blockRegistry: blockRegistry)
+        stopwatch.startMeasurement("Load resource pack")
+        let packCache = StorageManager.default.absoluteFromRelative("cache/vanilla.rpcache/")
+        let cacheExists = StorageManager.default.directoryExists(at: packCache)
+        let resourcePack = try ResourcePack.load(from: AssetManager.default.vanillaAssetsDirectory, blockRegistry: blockRegistry, cacheDirectory: cacheExists ? packCache : nil)
+        stopwatch.stopMeasurement("Load resource pack")
+        if !cacheExists {
+          stopwatch.startMeasurement("Cache resource pack")
+          do {
+            try resourcePack.cache(to: packCache)
+          } catch {
+            log.warning("Failed to cache vanilla resource pack")
+          }
+          stopwatch.stopMeasurement("Cache resource pack")
+        }
         
         // TODO: locale should be part of the resourcepack not the registry. Registries should always be the same (unlike resource pack which can be changed)
+        stopwatch.startMeasurement("Load locale")
         let locale = try AssetManager.default.getLocale()
+        stopwatch.stopMeasurement("Load locale")
 
+        stopwatch.startMeasurement("Create registry")
         let registry = Registry(blockRegistry: blockRegistry, locale: locale)
+        stopwatch.stopMeasurement("Create registry")
         
         if ConfigManager.default.config.accounts.isEmpty {
           Self.appState.update(to: .login)
         }
         
-        Self.loadingState.update(to: .done(registry, resourcePack))
+        stopwatch.startMeasurement("Finish loading")
+        Self.loadingState.update(to: .done(LoadedResources(resourcePack: resourcePack, registry: registry)))
+        stopwatch.stopMeasurement("Finish loading")
+        
+        stopwatch.stopMeasurement("Full startup")
       } catch {
         Self.loadingState.update(to: .error("Failed to create registry: \(error)"))
       }

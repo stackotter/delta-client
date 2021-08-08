@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "DeltaCore",
-        "repositoryURL": "https://github.com/stackotter/delta-core",
-        "state": {
-          "branch": "main",
-          "revision": "8e104c169c992db6d7452ba016e0c061fae10ac5",
-          "version": null
-        }
-      },
-      {
         "package": "DeltaLogger",
         "repositoryURL": "https://github.com/stackotter/delta-logger",
         "state": {
@@ -62,6 +53,15 @@
           "branch": null,
           "revision": "37760e9a52030bb9011972c5213c3350fa9d41fd",
           "version": "1.0.0"
+        }
+      },
+      {
+        "package": "SwiftProtobuf",
+        "repositoryURL": "https://github.com/apple/swift-protobuf.git",
+        "state": {
+          "branch": null,
+          "revision": "1f62db409f2c9b0223a3f68567b4a01333aae778",
+          "version": "1.17.0"
         }
       },
       {
