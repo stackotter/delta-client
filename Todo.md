@@ -11,7 +11,7 @@
 - [x] Proper error messages when joining server
 - [ ] Make loading message while joining a server more accurate (instead of just downloading terrain)
 - [ ] Improve loading messages for first startup
-- [ ] Direct connect
+- [x] Direct connect
 - [x] Login prompt if no accounts are selected
 - [x] Pixlyzer data downloader
 - [ ] § colour code support

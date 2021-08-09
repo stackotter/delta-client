@@ -75,6 +75,8 @@
 		7845DDCB269A4E00008FC70E /* SecondaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7845DDC9269A4E00008FC70E /* SecondaryButtonStyle.swift */; };
 		7845DDCF269A5350008FC70E /* DisabledButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7845DDCE269A5350008FC70E /* DisabledButtonStyle.swift */; };
 		7845DDD0269A5350008FC70E /* DisabledButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7845DDCE269A5350008FC70E /* DisabledButtonStyle.swift */; };
+		787C23D226C1423600323875 /* DirectConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C23D126C1423600323875 /* DirectConnectView.swift */; };
+		787C23D326C1423600323875 /* DirectConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C23D126C1423600323875 /* DirectConnectView.swift */; };
 		788195C12691E2960099575B /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788195C02691E2960099575B /* LoadingState.swift */; };
 		788195C22691E2960099575B /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788195C02691E2960099575B /* LoadingState.swift */; };
 		788538892695C8BB00932F71 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 788538882695C8BB00932F71 /* EditorView.swift */; };
@@ -158,6 +160,7 @@
 		7845DDC4269A4DDE008FC70E /* PrimaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonStyle.swift; sourceTree = "<group>"; };
 		7845DDC9269A4E00008FC70E /* SecondaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonStyle.swift; sourceTree = "<group>"; };
 		7845DDCE269A5350008FC70E /* DisabledButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledButtonStyle.swift; sourceTree = "<group>"; };
+		787C23D126C1423600323875 /* DirectConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectConnectView.swift; sourceTree = "<group>"; };
 		788195C02691E2960099575B /* LoadingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingState.swift; sourceTree = "<group>"; };
 		788538882695C8BB00932F71 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
 		78A3696826A178C000861CFE /* delta-core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "delta-core"; path = "../delta-core"; sourceTree = "<group>"; };
@@ -422,6 +425,7 @@
 			isa = PBXGroup;
 			children = (
 				78E18831267D966E0069E701 /* PlayServerView.swift */,
+				787C23D126C1423600323875 /* DirectConnectView.swift */,
 				7837263D2699194C00E39326 /* InputView.swift */,
 				7839921226911DCD005E93FD /* MetalView.swift */,
 			);
@@ -586,6 +590,7 @@
 				7845DDCF269A5350008FC70E /* DisabledButtonStyle.swift in Sources */,
 				78B4B70D2696706B00DF28B2 /* SettingsView.swift in Sources */,
 				7839921326911DCD005E93FD /* MetalView.swift in Sources */,
+				787C23D226C1423600323875 /* DirectConnectView.swift in Sources */,
 				7837265926991DAF00E39326 /* ClientInputDelegate.swift in Sources */,
 				783726432699198100E39326 /* InputDelegate.swift in Sources */,
 				78233232267EC54300694E76 /* StorageManager.swift in Sources */,
@@ -644,6 +649,7 @@
 				7845DDD0269A5350008FC70E /* DisabledButtonStyle.swift in Sources */,
 				78B4B710269670B400DF28B2 /* SettingsView.swift in Sources */,
 				7839921426911DCD005E93FD /* MetalView.swift in Sources */,
+				787C23D326C1423600323875 /* DirectConnectView.swift in Sources */,
 				7837265A26991DAF00E39326 /* ClientInputDelegate.swift in Sources */,
 				783726442699198100E39326 /* InputDelegate.swift in Sources */,
 				78233233267EC54300694E76 /* StorageManager.swift in Sources */,

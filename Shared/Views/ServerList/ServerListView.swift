@@ -53,6 +53,11 @@ struct ServerListView: View {
           IconButton("arrow.clockwise") {
             refresh()
           }
+          
+          // Direct connect
+          IconButton("personalhotspot") {
+            appState.update(to: .directConnect)
+          }
         }
       }
       .listStyle(SidebarListStyle())

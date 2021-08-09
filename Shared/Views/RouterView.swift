@@ -52,6 +52,8 @@ struct RouterView: View {
                   AccountSettingsView(saveAction: {
                     appState.update(to: .serverList)
                   }).padding()
+                case .directConnect:
+                  DirectConnectView()
                 case .playServer(let descriptor):
                   InputView { inputCaptureEnabled, setDelegate in
                     PlayServerView(
