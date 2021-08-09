@@ -18,7 +18,7 @@ The main focus of this project is to create a highly efficient Java Edition comp
 
 If you want to have a say in the development of the client or have any questions, feel free to join the community on [Discord](https://discord.gg/xZPyDbmR6k).
 
-## Metrics
+## Metrics (outdated)
 
 Here's how the client currently performs when run on my 2020 dual-core Intel i5 MacBook Air with 8gb of ram (yeah it's not powerful whatsoever);
 
@@ -38,7 +38,7 @@ Here's how the client currently performs when run on my 2020 dual-core Intel i5 
   - [x] Server list ping
   - [x] Encryption (for non-offline mode servers)
     - [x] Mojang accounts
-    - [ ] Microsoft accounts
+    - [ ] Microsoft accounts (if you have a Microsoft account and are willing to test logging on for me I can implement this)
   - [ ] LAN server detection
 - [x] Basic config system
   - [x] Multi-accounting
@@ -91,11 +91,11 @@ Here's how the client currently performs when run on my 2020 dual-core Intel i5 
 
 ## Minecraft version support
 
-- [ ] 1.8.9 (will come once 1.16.1 is pretty polished)
-- [x] 1.16.1
+At the moment the client only supports joining 1.16.1 servers. However, another developer is working on creating a way for us to easily add support for more Minecraft versions.
 
-Once both of these versions are implemented, my plan is to add support for the following versions whenever a new one comes out;
+Not every version will be perfectly supported but we will try and have the most polished support for the following versions;
 
+- 1.8.9
 - the latest speedrunning version (currently 1.16.1 and may be for a while)
 - the latest stable version
 
