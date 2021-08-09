@@ -14,13 +14,9 @@ This client is not at all useable yet. If you're looking for a client to use to 
 
 The main focus of this project is to create a highly efficient Java Edition compatible client written in Swift for macOS. Using Swift means that in the future the client may be able to run on iOS, iPadOS and maybe tvOS. This would allow playing on Java Edition servers, on platforms normally limited to Bedrock Edition.
 
-## Contributing
-
-At the moment I am not accepting contributions to this repository. This is still my personal project and I probably won't accept contributions until it gets to a more complete state.
-
 ## Discord [![Discord](https://img.shields.io/discord/851058836776419368.svg?label=&logo=discord&logoColor=ffffff&color=5C5C5C&labelColor=6A7EC2)](https://discord.gg/xZPyDbmR6k)
 
-If you want to have a say in the development of the client or have any questions, feel free to join the community on [Discord](https://discord.gg/xZPyDbmR6k)
+If you want to have a say in the development of the client or have any questions, feel free to join the community on [Discord](https://discord.gg/xZPyDbmR6k).
 
 ## Metrics
 
