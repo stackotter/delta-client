@@ -24,26 +24,26 @@ struct DeltaClientApp: App {
         var stopwatch = Stopwatch(mode: .summary, name: "Startup")
         stopwatch.startMeasurement("Full startup")
         
-        if !StorageManager.default.directoryExists(at: AssetManager.default.vanillaAssetsDirectory) {
+        if !StorageManager.default.directoryExists(at: StorageManager.default.vanillaAssetsDirectory) {
           Self.loadingState.update(to: .loadingWithMessage("Downloading vanilla assets (might take a little while)"))
-          try AssetManager.default.downloadVanillaAssets(forVersion: Constants.versionString)
+          try ResourcePack.downloadVanillaAssets(forVersion: Constants.versionString, to: StorageManager.default.vanillaAssetsDirectory)
         }
         
-        if !StorageManager.default.directoryExists(at: AssetManager.default.pixlyzerDirectory) {
+        if !StorageManager.default.directoryExists(at: StorageManager.default.pixlyzerDirectory) {
           Self.loadingState.update(to: .loadingWithMessage("Downloading pixlyzer data"))
-          try AssetManager.default.downloadPixlyzerData(forVersion: Constants.versionString)
+          try ResourcePack.downloadPixlyzerData(forVersion: Constants.versionString, to: StorageManager.default.pixlyzerDirectory)
         }
         
         Self.loadingState.update(to: .loadingWithMessage("Loading block registry"))
         stopwatch.startMeasurement("Load block registry")
-        let blockRegistry = try BlockRegistry.load(fromPixlyzerDataDirectory: AssetManager.default.pixlyzerDirectory)
+        let blockRegistry = try BlockRegistry.load(fromPixlyzerDataDirectory: StorageManager.default.pixlyzerDirectory)
         stopwatch.stopMeasurement("Load block registry")
         
         Self.loadingState.update(to: .loadingWithMessage("Loading resource pack"))
         stopwatch.startMeasurement("Load resource pack")
         let packCache = StorageManager.default.absoluteFromRelative("cache/vanilla.rpcache/")
         let cacheExists = StorageManager.default.directoryExists(at: packCache)
-        let resourcePack = try ResourcePack.load(from: AssetManager.default.vanillaAssetsDirectory, blockRegistry: blockRegistry, cacheDirectory: cacheExists ? packCache : nil)
+        let resourcePack = try ResourcePack.load(from: StorageManager.default.vanillaAssetsDirectory, blockRegistry: blockRegistry, cacheDirectory: cacheExists ? packCache : nil)
         stopwatch.stopMeasurement("Load resource pack")
         if !cacheExists {
           stopwatch.startMeasurement("Cache resource pack")
@@ -54,14 +54,9 @@ struct DeltaClientApp: App {
           }
           stopwatch.stopMeasurement("Cache resource pack")
         }
-        
-        // TODO: locale should be part of the resourcepack not the registry. Registries should always be the same (unlike resource pack which can be changed)
-        stopwatch.startMeasurement("Load locale")
-        let locale = try AssetManager.default.getLocale()
-        stopwatch.stopMeasurement("Load locale")
 
         stopwatch.startMeasurement("Create registry")
-        let registry = Registry(blockRegistry: blockRegistry, locale: locale)
+        let registry = Registry(blockRegistry: blockRegistry)
         stopwatch.stopMeasurement("Create registry")
         
         if ConfigManager.default.config.accounts.isEmpty {

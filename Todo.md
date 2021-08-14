@@ -27,6 +27,6 @@
 
 ## Clean up
 
-- [ ] Move texture loading stuff to DeltaCore
+- [x] Move texture loading stuff to DeltaCore
 - [ ] Move vanilla asset downloading to DeltaCore
 - [ ] DeltaClient probably only needs StorageManager and ConfigManager

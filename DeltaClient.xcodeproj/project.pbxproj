@@ -61,14 +61,8 @@
 		7842784B268F288300FF16C2 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427849268F288300FF16C2 /* Config.swift */; };
 		78427854268FB42500FF16C2 /* CacheError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427853268FB42500FF16C2 /* CacheError.swift */; };
 		78427855268FB42500FF16C2 /* CacheError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427853268FB42500FF16C2 /* CacheError.swift */; };
-		78427859268FB67C00FF16C2 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427858268FB67C00FF16C2 /* AssetManager.swift */; };
-		7842785A268FB67C00FF16C2 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427858268FB67C00FF16C2 /* AssetManager.swift */; };
-		7842785E268FB91F00FF16C2 /* VersionsManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842785D268FB91F00FF16C2 /* VersionsManifest.swift */; };
-		7842785F268FB91F00FF16C2 /* VersionsManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842785D268FB91F00FF16C2 /* VersionsManifest.swift */; };
 		78427863268FBA2200FF16C2 /* AssetError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427862268FBA2200FF16C2 /* AssetError.swift */; };
 		78427864268FBA2200FF16C2 /* AssetError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427862268FBA2200FF16C2 /* AssetError.swift */; };
-		7842786F268FBCEF00FF16C2 /* VersionManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842786E268FBCEF00FF16C2 /* VersionManifest.swift */; };
-		78427870268FBCEF00FF16C2 /* VersionManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7842786E268FBCEF00FF16C2 /* VersionManifest.swift */; };
 		7845DDC5269A4DDE008FC70E /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7845DDC4269A4DDE008FC70E /* PrimaryButtonStyle.swift */; };
 		7845DDC6269A4DDE008FC70E /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7845DDC4269A4DDE008FC70E /* PrimaryButtonStyle.swift */; };
 		7845DDCA269A4E00008FC70E /* SecondaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7845DDC9269A4E00008FC70E /* SecondaryButtonStyle.swift */; };
@@ -153,10 +147,7 @@
 		78427844268F275A00FF16C2 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
 		78427849268F288300FF16C2 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		78427853268FB42500FF16C2 /* CacheError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheError.swift; sourceTree = "<group>"; };
-		78427858268FB67C00FF16C2 /* AssetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
-		7842785D268FB91F00FF16C2 /* VersionsManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionsManifest.swift; sourceTree = "<group>"; };
 		78427862268FBA2200FF16C2 /* AssetError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetError.swift; sourceTree = "<group>"; };
-		7842786E268FBCEF00FF16C2 /* VersionManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionManifest.swift; sourceTree = "<group>"; };
 		7845DDC4269A4DDE008FC70E /* PrimaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonStyle.swift; sourceTree = "<group>"; };
 		7845DDC9269A4E00008FC70E /* SecondaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonStyle.swift; sourceTree = "<group>"; };
 		7845DDCE269A5350008FC70E /* DisabledButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledButtonStyle.swift; sourceTree = "<group>"; };
@@ -306,8 +297,6 @@
 			children = (
 				78427849268F288300FF16C2 /* Config.swift */,
 				78AA801F2699329300664150 /* VideoConfig.swift */,
-				7842785D268FB91F00FF16C2 /* VersionsManifest.swift */,
-				7842786E268FBCEF00FF16C2 /* VersionManifest.swift */,
 			);
 			path = JSON;
 			sourceTree = "<group>";
@@ -406,7 +395,6 @@
 				78233231267EC54300694E76 /* StorageManager.swift */,
 				7837265126991A1E00E39326 /* KeyMapping.swift */,
 				78427844268F275A00FF16C2 /* ConfigManager.swift */,
-				78427858268FB67C00FF16C2 /* AssetManager.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -546,7 +534,6 @@
 			files = (
 				78D2EECB26BF729200E16274 /* LoadedResources.swift in Sources */,
 				782F369D267D803E0034380E /* ServerListItem.swift in Sources */,
-				7842786F268FBCEF00FF16C2 /* VersionManifest.swift in Sources */,
 				78050DF926958F2D0024C049 /* EditableList.swift in Sources */,
 				78E18832267D966E0069E701 /* PlayServerView.swift in Sources */,
 				78050DE82695151C0024C049 /* EditServerListView.swift in Sources */,
@@ -568,7 +555,6 @@
 				7842784A268F288300FF16C2 /* Config.swift in Sources */,
 				78B6B1B12687DCE20041B1E1 /* WarningView.swift in Sources */,
 				78ABBBCE2696540C00475BFE /* AddressField.swift in Sources */,
-				78427859268FB67C00FF16C2 /* AssetManager.swift in Sources */,
 				78050DED269588520024C049 /* IconButton.swift in Sources */,
 				7837265226991A1E00E39326 /* KeyMapping.swift in Sources */,
 				78B4B71B2696714300DF28B2 /* AccountLoginView.swift in Sources */,
@@ -576,7 +562,6 @@
 				78427854268FB42500FF16C2 /* CacheError.swift in Sources */,
 				78203EB526970CD300D97A93 /* InGameSettingsView.swift in Sources */,
 				78427845268F275A00FF16C2 /* ConfigManager.swift in Sources */,
-				7842785E268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
 				78B6B1C42687E3440041B1E1 /* StorageError.swift in Sources */,
 				7845DDCA269A4E00008FC70E /* SecondaryButtonStyle.swift in Sources */,
 				7806A8A226968B1C002F4115 /* EmailField.swift in Sources */,
@@ -605,7 +590,6 @@
 			files = (
 				78D2EECC26BF729200E16274 /* LoadedResources.swift in Sources */,
 				782F369E267D803E0034380E /* ServerListItem.swift in Sources */,
-				78427870268FBCEF00FF16C2 /* VersionManifest.swift in Sources */,
 				78050DFA26958F2D0024C049 /* EditableList.swift in Sources */,
 				78E18833267D966E0069E701 /* PlayServerView.swift in Sources */,
 				78050DE92695151C0024C049 /* EditServerListView.swift in Sources */,
@@ -627,7 +611,6 @@
 				7842784B268F288300FF16C2 /* Config.swift in Sources */,
 				78B6B1B22687DCE20041B1E1 /* WarningView.swift in Sources */,
 				78ABBBCF2696540C00475BFE /* AddressField.swift in Sources */,
-				7842785A268FB67C00FF16C2 /* AssetManager.swift in Sources */,
 				78050DEE269588520024C049 /* IconButton.swift in Sources */,
 				7837265326991A1E00E39326 /* KeyMapping.swift in Sources */,
 				78B4B71C2696714300DF28B2 /* AccountLoginView.swift in Sources */,
@@ -635,7 +618,6 @@
 				78427855268FB42500FF16C2 /* CacheError.swift in Sources */,
 				78203EB626970CD300D97A93 /* InGameSettingsView.swift in Sources */,
 				78427846268F275A00FF16C2 /* ConfigManager.swift in Sources */,
-				7842785F268FB91F00FF16C2 /* VersionsManifest.swift in Sources */,
 				78B6B1C52687E3440041B1E1 /* StorageError.swift in Sources */,
 				7845DDCB269A4E00008FC70E /* SecondaryButtonStyle.swift in Sources */,
 				7806A8A326968B1C002F4115 /* EmailField.swift in Sources */,

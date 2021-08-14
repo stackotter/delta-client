@@ -15,8 +15,12 @@ class StorageManager {
   
   /// Whether this is the first time the app has been launched or not.
   public let isFirstLaunch: Bool
-  ///
-  private var storageDirectory: URL
+  /// The directory to store all of the client's persistent data.
+  public var storageDirectory: URL
+  /// The directory within the storage directory to store the vanilla assets.
+  public var vanillaAssetsDirectory: URL { storageDirectory.appendingPathComponent("assets") }
+  /// The directory within the storage directory to store pixlyzer data.
+  public var pixlyzerDirectory: URL { storageDirectory.appendingPathComponent("pixlyzer") }
   
   private init() {
     // Get the url of the storage directory
