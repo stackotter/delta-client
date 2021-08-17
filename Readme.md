@@ -125,6 +125,10 @@ First, create an issue on this GitHub repository for the error. To find the logs
 
 If the error is in app startup you can also try running `rm ~/Library/Containers/dev.stackotter.delta-client/Data/Library/Application Support/dev.stackotter.delta-client/.haslaunched` in Terminal to perform a fresh install. Next time the app starts it will backup all your current configuration before performing the fresh install.
 
+## Issue reporting
+
+If you find an issue with Delta Client please create an issue on the Github repository. The root cause of the issue will likely actually be code in the Delta Core repository but for simplicity we report the issues on this repository. If you find the issue while using Delta Core in your own project create the issue on the Delta Core repository not here.
+
 ## Screenshots
 
 ![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/ui.png?raw=true)
