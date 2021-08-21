@@ -2,6 +2,10 @@
 
 - [ ] Rewrite roadmap
 
+## Other
+
+- [ ] Discord rich presence
+
 ## UI
 
 - [x] Change ping message to 'Server Offline' instead of pinging when server has responded to ping and is offline
@@ -15,6 +19,8 @@
 - [x] Login prompt if no accounts are selected
 - [x] Pixlyzer data downloader
 - [ ] § colour code support
+- [ ] Basic f3 screen with fps and position information
+- [x] Fix ok buttons
 
 ## Settings
 

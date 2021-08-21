@@ -16,7 +16,7 @@ struct WarningView: View {
   var body: some View {
     VStack {
       Text(message)
-      Button("Ok") {
+      Button("OK") {
         modalState.update(to: .none)
       }
       .buttonStyle(PrimaryButtonStyle())

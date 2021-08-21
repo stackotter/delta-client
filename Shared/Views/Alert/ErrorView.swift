@@ -17,7 +17,7 @@ struct ErrorView: View {
   var body: some View {
     VStack {
       Text(message)
-      Button("Ok") {
+      Button("OK") {
         if let nextState = safeState {
           appState.update(to: nextState)
         }
