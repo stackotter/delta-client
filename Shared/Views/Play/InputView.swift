@@ -38,7 +38,7 @@ struct InputView<Content: View>: View {
       .onAppear {
         #if os(macOS)
         if !monitorsAdded {
-          NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved, .scrollWheel], handler: { event in
+          NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged], handler: { event in
             if !enabled {
               return event
             }
