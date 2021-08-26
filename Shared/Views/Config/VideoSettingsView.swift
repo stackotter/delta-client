@@ -40,15 +40,15 @@ struct VideoSettingsView: View {
   
   var body: some View {
     ScrollView {
-//      HStack {
-//        Text("Render distance: \(Int(renderDistance))")
-//        Spacer()
-//        Slider(value: $renderDistance.onChange { newValue in
-//          let event = ChangeRenderDistanceEvent(renderDistance: Int(newValue))
-//          eventBus.dispatch(event)
-//        }, in: 1...10, step: 1, onEditingChanged: onEditingChanged)
-//          .frame(width: 220)
-//      }
+      HStack {
+        Text("Render distance: \(Int(renderDistance))")
+        Spacer()
+        Slider(value: $renderDistance.onChange { newValue in
+          let event = ChangeRenderDistanceEvent(renderDistance: Int(newValue))
+          eventBus?.dispatch(event)
+        }, in: 1...20, step: 1, onEditingChanged: onEditingChanged)
+          .frame(width: 220)
+      }
       
       HStack {
         Text("FOV: \(Int(fov.rounded()))")

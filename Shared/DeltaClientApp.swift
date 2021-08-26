@@ -81,6 +81,7 @@ struct DeltaClientApp: App {
         .environmentObject(Self.modalState)
         .environmentObject(Self.appState)
         .environmentObject(Self.loadingState)
+        .navigationTitle("Delta Client")
     }
     
     #if os(macOS)

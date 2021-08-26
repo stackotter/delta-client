@@ -99,6 +99,7 @@ struct PlayServerView: View {
           }
         case .playing:
           ZStack {
+            // Renderer
             MetalView(client: client)
               .opacity(cursorCaptured ? 1 : 0.2)
               .onAppear {
@@ -108,12 +109,22 @@ struct PlayServerView: View {
                     overlayState.update(to: .menu)
                   }
                 })
+                
                 // TODO: make a way to pass initial render config to metal view
                 client.eventBus.dispatch(ChangeFOVEvent(fovDegrees: ConfigManager.default.config.video.fov))
+                client.renderDistance = ConfigManager.default.config.video.renderDistance
                 
                 inputDelegate.captureCursor()
               }
             
+            // Cross hair
+            if cursorCaptured {
+              Image(systemName: "plus")
+                .font(.system(size: 20))
+                .blendMode(.difference)
+            }
+            
+            // In-game menu overlay
             if !cursorCaptured {
               switch overlayState.current {
                 case .menu:
