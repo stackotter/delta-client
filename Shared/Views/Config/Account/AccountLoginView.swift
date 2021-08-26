@@ -52,6 +52,9 @@ struct AccountLoginView: EditorView {
       case .offline:
         let account = OfflineAccount(username: username)
         completionHandler(account)
+      case .microsoft:
+        print("microsoft login")
+        cancelationHandler?()
     }
   }
   
@@ -73,6 +76,8 @@ struct AccountLoginView: EditorView {
               SecureField("Password", text: $password)
             case .offline:
               TextField("Username", text: $username)
+            case .microsoft:
+              MicrosoftAuthView()
           }
         }
         
