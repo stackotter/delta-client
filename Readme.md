@@ -2,11 +2,9 @@
 
 An open source rewrite of Minecraft Java Edition written in Swift for macOS.
 
-## Tl;dr
+## Disclaimer
 
 This client is not at all useable yet. If you're looking for a client to use to play Minecraft today, then this is not for you. But hopefully one day it does get to a useable state.
-
-## Disclaimer
 
 **I am NOT responsible for anti-cheat bans, the client has not been thoroughly tested yet and is still deep in development.**
 
@@ -17,19 +15,6 @@ The main focus of this project is to create a highly efficient Java Edition comp
 ## Discord [![Discord](https://img.shields.io/discord/851058836776419368.svg?label=&logo=discord&logoColor=ffffff&color=5C5C5C&labelColor=6A7EC2)](https://discord.gg/xZPyDbmR6k)
 
 If you want to have a say in the development of the client or have any questions, feel free to join the community on [Discord](https://discord.gg/xZPyDbmR6k).
-
-## Metrics (outdated)
-
-Here's how the client currently performs when run on my 2020 dual-core Intel i5 MacBook Air with 8gb of ram (yeah it's not powerful whatsoever);
-
-- launch time: 0.85s avg
-  - vanilla minecraft: 40s (47x slower)
-- first launch time: 35s avg
-  - highly dependent on internet speed
-- ram usage on home screen: 40mb avg
-  - about the same as vanilla minecraft
-- ram usage in game: just under 100mb
-- app size: 5.2mb
 
 ## Features
 
