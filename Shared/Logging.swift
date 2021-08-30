@@ -9,11 +9,6 @@ import Foundation
 import DeltaLogger
 import Logging
 
-fileprivate func createLogger() -> Logger {
-  LoggingSystem.bootstrap(DeltaLogHandler.init)
-  var logger = Logger(label: "DeltaClient")
-  logger.logLevel = Logger.Level.debug
-  return logger
+var log = Logger(label: "DeltaClient") { label in
+  DeltaLogHandler(label: label)
 }
-
-let log = createLogger()
