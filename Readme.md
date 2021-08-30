@@ -94,7 +94,7 @@ Not every version will be perfectly supported but we will try and have the most 
 
 ## Test servers
 
-We now have an official test server made by @ninjadev64! The address is `delta.stackotter.dev`. To run it cheaply, the server goes to sleep. To join it click play and you'll get a message telling you that it's starting up. Wait around 10 seconds and then click play again and you should be good to go. Alternatively, you can run your own server on your computer (see below).
+We now have an official test server made by @ninjadev64! The address is `play.stackotter.dev`. To run it cheaply, the server goes to sleep. To join it click play and you'll get a message telling you that it's starting up. Wait around 10 seconds and then click play again and you should be good to go. Alternatively, you can run your own server on your computer (see below).
 
 To start a test server, download a 1.16.1 server jar from [here](https://mcversions.net/download/1.16.1). Then in Terminal type `java -jar ` and then drag the download .jar file onto the terminal window and then hit enter. Wait for the server to start up. Now add a new server with the address `127.0.0.1` in Delta Client and you should be able to connect to it. The Minecraft server jar does take up a lot of ram and cpu so people have reported that that has made their laptop fans really loud. It is most likely not Delta Client making the fans spin like a helicopter.
 
