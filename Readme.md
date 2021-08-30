@@ -1,3 +1,5 @@
+[![Discord](https://img.shields.io/discord/851058836776419368.svg?label=&logo=discord&logoColor=ffffff&color=5C5C5C&labelColor=6A7EC2)](https://discord.gg/xZPyDbmR6k)
+
 # Minecraft Delta Client - Changing the meaning of speed
 
 An open source rewrite of Minecraft Java Edition written in Swift for macOS.
@@ -12,7 +14,7 @@ This client is not at all useable yet. If you're looking for a client to use to 
 
 The main focus of this project is to create a highly efficient Java Edition compatible client written in Swift for macOS. Using Swift means that in the future the client may be able to run on iOS, iPadOS and maybe tvOS. This would allow playing on Java Edition servers, on platforms normally limited to Bedrock Edition.
 
-If you want to have a say in the development of the client or have any questions, feel free to join the community on [Discord](https://discord.gg/xZPyDbmR6k). [![Discord](https://img.shields.io/discord/851058836776419368.svg?label=&logo=discord&logoColor=ffffff&color=5C5C5C&labelColor=6A7EC2)](https://discord.gg/xZPyDbmR6k)
+If you want to have a say in the development of the client or have any questions, feel free to join the community on [Discord](https://discord.gg/xZPyDbmR6k).
 
 ## Installation
 
@@ -112,7 +114,7 @@ If the error is in app startup you can also try running `rm ~/Library/Containers
 
 If you find an issue with Delta Client please create an issue on the Github repository. The root cause of the issue will likely actually be code in the Delta Core repository but for simplicity we report the issues on this repository. If you find the issue while using Delta Core in your own project create the issue on the Delta Core repository not here.
 
-## Screenshots
+## Screenshots (outdated, better screenshots coming soon)
 
 ![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/ui.png?raw=true)
 
