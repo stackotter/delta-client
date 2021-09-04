@@ -54,7 +54,7 @@
 		7837265A26991DAF00E39326 /* ClientInputDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7837265826991DAF00E39326 /* ClientInputDelegate.swift */; };
 		7839921326911DCD005E93FD /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7839921226911DCD005E93FD /* MetalView.swift */; };
 		7839921426911DCD005E93FD /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7839921226911DCD005E93FD /* MetalView.swift */; };
-		7839E378267EBE9200D9C591 /* DeltaLogger in Frameworks */ = {isa = PBXBuildFile; productRef = 7839E377267EBE9200D9C591 /* DeltaLogger */; };
+		783DAB1126E1DA35009FC089 /* DeltaLogger in Frameworks */ = {isa = PBXBuildFile; productRef = 783DAB1026E1DA35009FC089 /* DeltaLogger */; };
 		78427845268F275A00FF16C2 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427844268F275A00FF16C2 /* ConfigManager.swift */; };
 		78427846268F275A00FF16C2 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427844268F275A00FF16C2 /* ConfigManager.swift */; };
 		7842784A268F288300FF16C2 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78427849268F288300FF16C2 /* Config.swift */; };
@@ -195,7 +195,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				78D73B9D267D4D9A00B460E8 /* DeltaCoreC in Frameworks */,
-				7839E378267EBE9200D9C591 /* DeltaLogger in Frameworks */,
+				783DAB1126E1DA35009FC089 /* DeltaLogger in Frameworks */,
 				78233229267EC31100694E76 /* Logging in Frameworks */,
 				78D73B9B267D4D9A00B460E8 /* DeltaCore in Frameworks */,
 			);
@@ -468,8 +468,8 @@
 			packageProductDependencies = (
 				78D73B9A267D4D9A00B460E8 /* DeltaCore */,
 				78D73B9C267D4D9A00B460E8 /* DeltaCoreC */,
-				7839E377267EBE9200D9C591 /* DeltaLogger */,
 				78233228267EC31100694E76 /* Logging */,
+				783DAB1026E1DA35009FC089 /* DeltaLogger */,
 			);
 			productName = "DeltaClient (macOS)";
 			productReference = 7800028C267A1AC5003C1685 /* DeltaClient.app */;
@@ -503,8 +503,8 @@
 			mainGroup = 78000277267A1AB7003C1685;
 			packageReferences = (
 				78D73B99267D4D9A00B460E8 /* XCRemoteSwiftPackageReference "delta-core" */,
-				7839E376267EBE9200D9C591 /* XCRemoteSwiftPackageReference "delta-logger" */,
 				78233227267EC31100694E76 /* XCRemoteSwiftPackageReference "swift-log" */,
+				783DAB0F26E1DA35009FC089 /* XCRemoteSwiftPackageReference "delta-logger" */,
 			);
 			productRefGroup = 78000285267A1AC5003C1685 /* Products */;
 			projectDirPath = "";
@@ -786,7 +786,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.stackotter.DeltaClient;
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.stackotter.delta-client";
 				PRODUCT_NAME = DeltaClient;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -808,7 +808,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.stackotter.DeltaClient;
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.stackotter.delta-client";
 				PRODUCT_NAME = DeltaClient;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -912,7 +912,7 @@
 				kind = branch;
 			};
 		};
-		7839E376267EBE9200D9C591 /* XCRemoteSwiftPackageReference "delta-logger" */ = {
+		783DAB0F26E1DA35009FC089 /* XCRemoteSwiftPackageReference "delta-logger" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stackotter/delta-logger";
 			requirement = {
@@ -936,9 +936,9 @@
 			package = 78233227267EC31100694E76 /* XCRemoteSwiftPackageReference "swift-log" */;
 			productName = Logging;
 		};
-		7839E377267EBE9200D9C591 /* DeltaLogger */ = {
+		783DAB1026E1DA35009FC089 /* DeltaLogger */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 7839E376267EBE9200D9C591 /* XCRemoteSwiftPackageReference "delta-logger" */;
+			package = 783DAB0F26E1DA35009FC089 /* XCRemoteSwiftPackageReference "delta-logger" */;
 			productName = DeltaLogger;
 		};
 		78D73B9A267D4D9A00B460E8 /* DeltaCore */ = {
