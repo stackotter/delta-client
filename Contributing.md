@@ -1,6 +1,6 @@
 # Contributing
 
-Delta Client is completely open source and I welcome contributions of all kinds. If you're interested in contributing, I've provided a list of features, fixes and general improvements that I'd loves other people to help out with (I don't have the time for all the interesting features I want to implement). Some of the tasks don't even require Swift! But before you get too excited, make sure that you've read the contributing guidelines, and make sure that your contributions follow them. If you need any help with a contribution, feel free to join the [Discord](https://discord.gg/xZPyDbmR6k) and chat :)
+Delta Client is completely open source and I welcome contributions of all kinds. If you're interested in contributing, I've provided a list of features, fixes and general improvements that I'd love other people to help out with (I don't have the time for all the interesting features I want to implement). Some of the tasks don't even require Swift! You can also checkout the [project boards](https://github.com/stackotter/delta-client/projects) on GitHub for some more tasks. But before you get too excited, make sure that you've read the contributing guidelines, and make sure that your contributions follow them. If you need any help with a contribution, feel free to join the [Discord](https://discord.gg/xZPyDbmR6k) and chat :)
 
 ## Guidelines
 
