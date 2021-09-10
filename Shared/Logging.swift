@@ -9,6 +9,12 @@ import Foundation
 import DeltaLogger
 import Logging
 
-var log = Logger(label: "DeltaClient") { label in
-  DeltaLogHandler(label: label)
+fileprivate func createLogger() -> Logger {
+  var log = Logger(label: "DeltaCore") { label in
+    DeltaLogHandler(label: label)
+  }
+  log.logLevel = .debug
+  return log
 }
+
+var log = createLogger()

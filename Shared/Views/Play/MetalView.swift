@@ -29,8 +29,8 @@ final class MetalView: NSViewRepresentable {
     }
     mtkView.delegate = context.coordinator
     mtkView.preferredFramesPerSecond = 60
-    mtkView.framebufferOnly = false
-    mtkView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
+    mtkView.framebufferOnly = true
+    mtkView.clearColor = MTLClearColorMake(0.65, 0.8, 1, 1) // Sky colour
     mtkView.drawableSize = mtkView.frame.size
     mtkView.depthStencilPixelFormat = .depth32Float
     mtkView.clearDepth = 1.0
