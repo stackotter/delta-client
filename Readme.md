@@ -10,6 +10,8 @@ This client is not at all useable yet. If you're looking for a client to use to 
 
 **I am NOT responsible for anti-cheat bans, the client has not been thoroughly tested yet and is still deep in development.**
 
+**This software is not affiliated with Mojang AB, the original developer of Minecraft.**
+
 ## Overview
 
 The main focus of this project is to create a highly efficient Java Edition compatible client written in Swift for macOS. Using Swift means that in the future the client may be able to run on iOS, iPadOS and maybe tvOS. This would allow playing on Java Edition servers, on platforms normally limited to Bedrock Edition.
