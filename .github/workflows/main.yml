@@ -1,4 +1,4 @@
-name: xcodebuild
+name: Build
 
 on:
   push:
@@ -19,9 +19,11 @@ jobs:
         run: sh ./Setup.sh
       - name: Build
         run: ./swift-bundler build -c release -o . -u
+      - name: Zip .app
+        run: zip -r DeltaClient.zip DeltaClient.app
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: DeltaClient.app
-          path: ./DeltaClient.app
+          name: Delta Client
+          path: ./DeltaClient.zip
              
