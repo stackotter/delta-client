@@ -1,0 +1,7 @@
+{
+  "buildNumber" : 9,
+  "bundleIdentifier" : "dev.stackotter.delta-client",
+  "category" : "public.app-category.games",
+  "minOSVersion" : "11.0",
+  "versionString" : "0.1.0"
+}

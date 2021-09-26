@@ -8,7 +8,6 @@
 import SwiftUI
 import DeltaCore
 
-@main
 struct DeltaClientApp: App {
   @ObservedObject static var modalState = StateWrapper<ModalState>(initial: .none)
   @ObservedObject static var appState = StateWrapper<AppState>(initial: .serverList)

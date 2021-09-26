@@ -41,9 +41,9 @@
         "package": "swift-log",
         "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
-          "branch": "main",
-          "revision": "d8af258aecd93cd8604e74ade3c0fe438bac13f8",
-          "version": null
+          "branch": null,
+          "revision": "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
+          "version": "1.4.2"
         }
       },
       {
@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "8da5c5a4e6c5084c296b9f39dc54f00be146e0fa",
-          "version": "1.14.2"
+          "revision": "546610d52b19be3e19935e0880bb06b9c03f5cef",
+          "version": "1.14.4"
         }
       },
       {
