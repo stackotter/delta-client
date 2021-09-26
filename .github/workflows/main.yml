@@ -12,8 +12,9 @@ jobs:
       - name: checkout delta-client
         uses: actions/checkout@v2
       - name: download swift-bundler
-        run: curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v1.0.0/swift-bundler |
-             chmod +x ./swift-bundler
+        run: |
+          curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v1.0.0/swift-bundler
+          chmod +x ./swift-bundler
       - name: checkout delta-core
         run: sh ./Setup.sh
       - name: build
