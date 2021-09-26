@@ -77,6 +77,12 @@ struct PlayServerView: View {
         DeltaClientApp.modalError("Failed to handle packet with id 0x\(String(packetError.packetId, radix: 16)):\n\n\(packetError.error)", safeState: .serverList)
       case let packetError as PacketDecodingErrorEvent:
         DeltaClientApp.modalError("Failed to decode packet with id 0x\(String(packetError.packetId, radix: 16)):\n\n\(packetError.error)", safeState: .serverList)
+      case let generalError as ErrorEvent:
+        if let message = generalError.message {
+          DeltaClientApp.modalError("\(message); \(generalError.error)")
+        } else {
+          DeltaClientApp.modalError("\(generalError.error)")
+        }
       default:
         break
     }

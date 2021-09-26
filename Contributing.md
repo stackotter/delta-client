@@ -40,7 +40,7 @@ git clone https://github.com/stackotter/delta-core
 
 To run Delta Client, you can now run `swift bundler run` in the root directory of Delta Client. See the [swift-bundler repo](https://github.com/stackotter/swift-bundler) for more commands and options.
 
-If you are using Xcode as your IDE run `swift bundler generate-xcodeproj` and open then open the generated `DeltaClient.xcodeproj` file. You'll want to generate the xcodeproj again each time you pull just in case.
+If you are using Xcode as your IDE run `swift bundler generate-xcodeproj` and open then open the generated `DeltaClient.xcodeproj` file. You'll want to generate the xcodeproj again each time you pull, edit `Package.swift` or edit `Bundle.json` just in case. You can edit either the DeltaCore in the root of the file navigator or the one in the 'Dependencies' group, they both point to the exact same folder in the file system, it's just Xcode being silly. Also keep in mind, that for some reason, autocomplete is broken from Delta Core to Delta Client, when editing Delta Client code you won't get autocompletions from Delta Core.
 
 ### Website
 
