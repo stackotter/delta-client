@@ -11,10 +11,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - uses: mxcl/xcodebuild@v1
-        with:
-          xcode: 12
-          platform: macOS
-          action: build
-          configuration: release
-          code-sign-identity: '-'
+      - run: curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v1.0.0/swift-bundler |
+             chmod +x ./swift-bundler |
+             sh ./Setup.sh
+             ./swift-bundler build -c release -o .
