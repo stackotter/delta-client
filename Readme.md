@@ -28,6 +28,20 @@ If you want to have a say in the development of the client or have any questions
 6. Wait for it to download and process the required assets (this only has to happen once and should take around 40s with a mediocre internet speed)
 7. You can move Delta Client to your Applications folder for ease of use if you want
 
+## Building
+
+To build Delta Client you'll first need to install Xcode and [swift-bundler](https://github.com/stackotter/swift-bundler). Once you've installed both of those, run the following commands in terminal;
+
+```sh
+# Clone Delta Client
+git clone https://github.com/stackotter/delta-client
+cd delta-client
+sh ./Setup.sh
+
+# Perform a release build, output the .app to the current directory, and show a fancy progress bar in a pop-up window
+swift bundler build -c release -o . -p
+```
+
 ## Minecraft version support
 
 At the moment the client only supports joining 1.16.1 servers. However, another developer is working on creating a way for us to easily add support for more Minecraft versions.
@@ -96,21 +110,21 @@ Not every version will be perfectly supported but we will try and have the most 
   - [x] Input system
   - [ ] Collision system
 
-## Test servers
+## Servers
 
 We now have an official test server made by @ninjadev64! The address is `play.stackotter.dev`. To run it cheaply, the server goes to sleep. To join it click play and you'll get a message telling you that it's starting up. Wait around 10 seconds and then click play again and you should be good to go. Alternatively, you can run your own server on your computer (see below).
 
-To start a test server, download a 1.16.1 server jar from [here](https://mcversions.net/download/1.16.1). Then in Terminal type `java -jar ` and then drag the download .jar file onto the terminal window and then hit enter. Wait for the server to start up. Now add a new server with the address `127.0.0.1` in Delta Client and you should be able to connect to it. The Minecraft server jar does take up a lot of ram and cpu so people have reported that that has made their laptop fans really loud. It is most likely not Delta Client making the fans spin like a helicopter.
+To start a test server, download a 1.16.1 server jar from [here](https://mcversions.net/download/1.16.1). Then in Terminal type `java -jar ` and then drag the download .jar file onto the terminal window and then hit enter. Wait for the server to start up. Now add a new server with the address `127.0.0.1` in Delta Client and you should be able to connect to it. Keep in mind the server may use a significant amount of resources and slow down Delta Client.
 
-To run Delta Client from terminal you can run `/path/to/DeltaClient.app/Contents/MacOS/DeltaClient` in terminal. This allows you to see the pretty coloured logs as the app is running :)
+To run Delta Client from terminal you can run `/path/to/DeltaClient.app/Contents/MacOS/DeltaClient` in terminal. This allows you to see the logs as the app is running.
 
 ## Troubleshooting
 
 As Delta Client is still in development it is expected that you will probably run into some errors. Here are the basic troubleshooting steps you should take if you run into any errors;
 
-First, create an issue on this GitHub repository for the error. To find the logs hit cmd+shift+g and enter in `~/Library/Containers/dev.stackotter.delta-client/Data/Library/Application Support/log`. The relevant logs are likely in `latest.log` in that folder. **File logging is currently not working, ignore this**
+First, create an issue on this GitHub repository for the error.
 
-If the error is in app startup you can also try running `rm ~/Library/Containers/dev.stackotter.delta-client/Data/Library/Application Support/dev.stackotter.delta-client/.haslaunched` in Terminal to perform a fresh install. Next time the app starts it will backup all your current configuration before performing the fresh install.
+If the error is in app startup you can also try running `rm ~/Library/Application Support/dev.stackotter.delta-client/.haslaunched` in Terminal to perform a fresh install. Next time the app starts it will perform a fresh install. Your configuration gets wiped but it is backed up in a zip archive in the same folder as .haslauncher
 
 ## Issue reporting
 
