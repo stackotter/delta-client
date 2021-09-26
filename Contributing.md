@@ -9,42 +9,38 @@ If your contributions follow these guidelines, they'll be much more likely to ge
 1. Make sure your indent size matches the repository (in the case of delta-core and delta-client that's 2 spaces)
 2. Be conscious of copyright and don't include any files distributed by Mojang in these repositories
 3. Be concise, only make changes that are required to achieve your end goal. The smaller your pull request, the faster I'll get around to reviewing it
-4. Use `log` for logging
-5. If in doubt, consult [Google's Swift style guide](https://google.github.io/swift/#function-declarations) because that's the one I try to follow
-6. Add documentation comments for any methods or properties you create unless their usage is completely self-evident. Be sure to also document potentially unexpected side-effects or non-obvious requirements of methods. (I'm not gonna be too strict about documentation at the moment so don't worry too much about following this guideline perfectly).
-
-## Xcode (don't worry if you don't have enough space)
-
-If you want to make a contribution but you don't have space for Xcode (it's 30gb), don't stress! I've made a version of Xcode that is only 5gb (by deleting parts that Delta Client doesn't require). The caveat is that I can't publicly distribute it because I don't think Apple would like that, but message me on Discord and I'll add you to the private GitHub repo that I store it in so that you can download it :)
-
-**Note**: the minified version of Xcode I've made doesn't include iOS or tvOS support, so you'll probably just want to find the space to install actual Xcode if you need to do stuff with iOS or tvOS.
+4. Remove file headers from all files you create, I've decided they're not necessary and I'll be removing them all soon. `swift-bundler` will soon support removing them automatically
+5. Use `log` for logging (not just print statements everywhere)
+6. If in doubt, consult [Google's Swift style guide](https://google.github.io/swift/#function-declarations) because that's the one I try to follow
+7. Add documentation comments for any methods or properties you create unless their usage is completely self-evident. Be sure to also document potentially unexpected side-effects or non-obvious requirements of methods. (I'm not gonna be too strict about documentation at the moment so don't worry too much about following this guideline perfectly).
 
 ## Getting setup
 
 ### Delta Client
 
-If you only need to change code in Delta Client, just fork Delta Client and start coding.
+[Delta Client](https://github.com/stackotter/delta-client) uses the `swift-bundler` build system. The first step is to install that on your machine;
 
-### Delta Core
+```sh
+git clone https://github.com/stackotter/swift-bundler
+cd swift-bundler
+sh ./build_and_install.sh
+```
 
-If you only need to make changes to Delta Core, follow these steps;
+You can use any ide you want to work on Delta Client (vscode and xcode are the best supported), but you'll need Xcode installed anyway because sadly that's currently the only way to get Metal and SwiftUI build support.
 
-1. Fork Delta Core
-2. Clone Delta Client and your fork of Delta Core
-3. Open Delta Client in Xcode
-4. Make sure that the root folder of your clone of Delta Core is called `delta-core` (it should be already) and then drag the `delta-core` folder from Finder into Xcode's file navigator
-5. When you build Delta Client, it will now use your local copy of Delta Core and you will be able to edit Delta Core from within the Delta Client workspace
+Next, fork Delta Client and/or Delta Core depending on where you need to make changes.
 
-### Both Delta Client and Delta Core
+```sh
+# Clone your fork of Delta Client instead if you made one
+git clone https://github.com/stackotter/delta-client
+cd delta-client
+# Clone your fork of Delta Core instead if you made one
+git clone https://github.com/stackotter/delta-core
+```
 
-It simplifies the pull request process if you only work on one repository at a time, but if it's absolutely necessary for changes to be made in both Delta Client and Delta Core such as when making API changes, these are the steps to follow;
+To run Delta Client, you can now run `swift bundler run` in the root directory of Delta Client. See the [swift-bundler repo](https://github.com/stackotter/swift-bundler) for more commands and options.
 
-1. Fork Delta Client and clone that
-2. Follow the steps listed in the Delta Core section above, making sure to clone your Delta Client fork in step 2
-3. Update your Delta Client fork's dependencies to point to your fork of Delta Core
-   1. Click on the `DeltaClient` in the file navigator (the root item)
-   2. Select `DeltaClient` in the drop down in the top left of the file editor
-   3. Under the `Swift Packages` tab remove the delta-core dependency and then add your own (choosing branch: main as the rule when prompted)
+If you are using Xcode as your IDE run `swift bundler generate-xcodeproj` and open then open the generated `DeltaClient.xcodeproj` file. You'll want to generate the xcodeproj again each time you pull just in case.
 
 ### Website
 
@@ -60,10 +56,10 @@ The [website](https://delta.stackotter.dev) is built with svelte. Just follow th
 
 - **First launch loading screen**: Currently the messages shown while the client is downloading necessary assets on the first launch aren't very descriptive. It'd also be great if the client could show a progress bar for certain tasks such as downloading and unzipping the client jar. And the loading system could just do with an all around clean up probably.
 - **First launch speed**: For some reason unzipping the client jar takes a ridiculous amount of time, this could be a somewhat straightforward first contribution (just make a benchmark, try out a few different swift zip libraries, and see which is fastest).
-- **Caching**: At the moment the client caches the block model palette because it's otherwise quite slow to load. The loading time of the client could probably be halved if we also cached the block registry (the client currently has it stored as json exactly how it was downloaded from pixlyzer). Caching is also currently a bit tedious to implement and there's a library called [sticky-encoding](https://github.com/stickytools/sticky-encoding) that caught my eye. It allows `Codable` structs to be serialized into a supposedly fast binary format, but I don't quite believe that it can be fast cause `Codable` seems convenient but slow. If it's any slower than protobuf we won't use it because startup time is one of Delta Client's priorities.
+- **Caching**: At the moment the client caches the block model palette because it's otherwise quite slow to load. The loading time of the client could probably be halved if we also cached the block registry (the client currently has it stored as json exactly how it was downloaded from pixlyzer). Caching is also currently a bit tedious to implement with Protobufs so if you've got a better idea, feel free to give it a go!
 - **iOS support**: Due to the fact that the client uses SwiftUI, almost the entire client could be ported to iOS almost effortlessly. There are just a few things such as file storage, input, and the way the renderer is integrated into SwiftUI that would need iOS specific implementations.
 - **Themable UI**: Having a themable UI is a feature that some users want, and with SwiftUI this could be sort of annoying to make (theming would be quite limited to what parameters we link to a theming system). One idea I've had for making a more themable UI is to use WebViews along with html/css (not too far from what Electron apps do). This would mean loading a theme would be as simple as including a CSS file. The WebView-based UI would most likely be offered as an alternative to the SwiftUI UI, because WebViews would only really make sense on desktop (for example, on tvOS there are a lot of constraints designs should follow due to the controller, and SwiftUI will automatically restyle our SwiftUI UI to fit right in).
-- **Tests**: We're really getting the fun stuff now. At the moment Delta Client and Delta Core don't contain any tests, and they're getting to the size were tests would probably help in detecting performance regressions and such. When I started Delta Client I had no experience with Swift so I just ignored tests, and now I still have none, so it'd be extremely appreciated if someone with knowledge of how tests work could setup someone basic tests for Delta Client and/or Delta Core
+- **Tests**: We're really getting to the fun stuff now. At the moment Delta Client and Delta Core don't contain any tests, and they're getting to the size were tests would probably help in detecting performance regressions and such. When I started Delta Client I had no experience with Swift so I just ignored tests, and now I still have none, so it'd be extremely appreciated if someone with knowledge of how tests work in Swift packages could setup some basic tests for Delta Client and/or Delta Core.
 
 ### Website 
 
