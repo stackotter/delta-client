@@ -9,9 +9,13 @@ jobs:
   build:
     runs-on: macos-latest
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - run: curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v1.0.0/swift-bundler |
-             chmod +x ./swift-bundler |
-             sh ./Setup.sh
-             ./swift-bundler build -c release -o .
+      - name: checkout delta-client
+        uses: actions/checkout@v2
+      - name: download swift-bundler
+        run: curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v1.0.0/swift-bundler |
+             chmod +x ./swift-bundler
+      - name: checkout delta-core
+        run: sh ./Setup.sh
+      - name: build
+        run: ./swift-bundler build -c release -o .
+             
