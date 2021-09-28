@@ -1,0 +1,22 @@
+//
+//  HeldItemChangePacket.swift
+//  DeltaCore
+//
+//  Created by Rohan van Klinken on 3/1/21.
+//
+
+import Foundation
+
+public struct HeldItemChangePacket: ClientboundPacket {
+  public static let id: Int = 0x3f
+  
+  public var slot: Int8
+  
+  public init(from packetReader: inout PacketReader) {
+    slot = packetReader.readByte()
+  }
+  
+  public func handle(for client: Client) throws {
+    client.server?.player.selectHotbarSlot(Int(slot))
+  }
+}

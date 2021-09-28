@@ -28,19 +28,19 @@ sh ./build_and_install.sh
 
 You can use any ide you want to work on Delta Client (vscode and xcode are the best supported), but you'll need Xcode installed anyway because sadly that's currently the only way to get Metal and SwiftUI build support.
 
-Next, fork Delta Client and/or Delta Core depending on where you need to make changes.
+Next, fork Delta Client and then clone it.
 
 ```sh
-# Clone your fork of Delta Client instead if you made one
-git clone https://github.com/stackotter/delta-client
+# 
+git clone [url of your delta-client fork]
 cd delta-client
-# Clone your fork of Delta Core instead if you made one
-git clone https://github.com/stackotter/delta-core
 ```
 
-To run Delta Client, you can now run `swift bundler run` in the root directory of Delta Client. See the [swift-bundler repo](https://github.com/stackotter/swift-bundler) for more commands and options.
+To run Delta Client, you can now run `swift bundler run`. See the [swift-bundler repo](https://github.com/stackotter/swift-bundler) for more commands and options.
 
-If you are using Xcode as your IDE run `swift bundler generate-xcodeproj` and open then open the generated `DeltaClient.xcodeproj` file. You'll want to generate the xcodeproj again each time you pull, edit `Package.swift` or edit `Bundle.json` just in case. You can edit either the DeltaCore in the root of the file navigator or the one in the 'Dependencies' group, they both point to the exact same folder in the file system, it's just Xcode being silly. Also keep in mind, that for some reason, autocomplete is broken from Delta Core to Delta Client, when editing Delta Client code you won't get autocompletions from Delta Core.
+If you are using Xcode as your IDE run `swift bundler generate-xcode-support` and then open Package.swift with Xcode (`open Package.swift` should work unless you've changed your default program for opening swift files).
+
+You can now make changes and when you're done, just open a pull request on GitHub.
 
 ### Website
 
@@ -57,7 +57,7 @@ The [website](https://delta.stackotter.dev) is built with svelte. Just follow th
 - **First launch loading screen**: Currently the messages shown while the client is downloading necessary assets on the first launch aren't very descriptive. It'd also be great if the client could show a progress bar for certain tasks such as downloading and unzipping the client jar. And the loading system could just do with an all around clean up probably.
 - **First launch speed**: For some reason unzipping the client jar takes a ridiculous amount of time, this could be a somewhat straightforward first contribution (just make a benchmark, try out a few different swift zip libraries, and see which is fastest).
 - **Caching**: At the moment the client caches the block model palette because it's otherwise quite slow to load. The loading time of the client could probably be halved if we also cached the block registry (the client currently has it stored as json exactly how it was downloaded from pixlyzer). Caching is also currently a bit tedious to implement with Protobufs so if you've got a better idea, feel free to give it a go!
-- **iOS support**: Due to the fact that the client uses SwiftUI, almost the entire client could be ported to iOS almost effortlessly. There are just a few things such as file storage, input, and the way the renderer is integrated into SwiftUI that would need iOS specific implementations.
+- **iOS support**: Due to the fact that the client uses SwiftUI, almost the entire client could be ported to iOS almost effortlessly. There are just a few things such as file storage, input, and the way the renderer is integrated into SwiftUI that would need iOS specific implementations. `swift-bundler` would also need to have iOS build support added. The easiest way to do this would be to use [Xcodegen](https://github.com/yonaskolb/XcodeGen) or a similar tool to generate an xcodeproj containing an iOS target for building. If you wanna try implementing this one you can hop on the Discord server and we can chat about how best to integrate iOS builds into `swift-bundler`. We could possibly even build using swiftpm and another custom bundling phase if iOS app files aren't too difficult to create (haven't really looked into this much yet).
 - **Themable UI**: Having a themable UI is a feature that some users want, and with SwiftUI this could be sort of annoying to make (theming would be quite limited to what parameters we link to a theming system). One idea I've had for making a more themable UI is to use WebViews along with html/css (not too far from what Electron apps do). This would mean loading a theme would be as simple as including a CSS file. The WebView-based UI would most likely be offered as an alternative to the SwiftUI UI, because WebViews would only really make sense on desktop (for example, on tvOS there are a lot of constraints designs should follow due to the controller, and SwiftUI will automatically restyle our SwiftUI UI to fit right in).
 - **Tests**: We're really getting to the fun stuff now. At the moment Delta Client and Delta Core don't contain any tests, and they're getting to the size were tests would probably help in detecting performance regressions and such. When I started Delta Client I had no experience with Swift so I just ignored tests, and now I still have none, so it'd be extremely appreciated if someone with knowledge of how tests work in Swift packages could setup some basic tests for Delta Client and/or Delta Core.
 

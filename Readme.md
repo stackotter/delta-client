@@ -36,7 +36,6 @@ To build Delta Client you'll first need to install Xcode and [swift-bundler](htt
 # Clone Delta Client
 git clone https://github.com/stackotter/delta-client
 cd delta-client
-sh ./Setup.sh
 
 # Perform a release build, output the .app to the current directory, and show a fancy progress bar in a pop-up window
 swift bundler build -c release -o . -p
