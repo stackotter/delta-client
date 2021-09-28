@@ -18,9 +18,11 @@ The main focus of this project is to create a highly efficient Java Edition comp
 
 If you want to have a say in the development of the client or have any questions, feel free to join the community on [Discord](https://discord.gg/xZPyDbmR6k).
 
+![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/hypixel-1.png?raw=true)
+
 ## Installation
 
-1. Download the latest release from the releases page
+1. Download the latest release from the releases page (or if you like living on the edge, download a CI build from the latest GitHub action run)
 2. Unzip the download (if it doesn't automatically do so) and open the app inside
 3. You will get a security alert, click ok
 4. Right click the app and click open
@@ -121,20 +123,12 @@ To run Delta Client from terminal you can run `/path/to/DeltaClient.app/Contents
 
 As Delta Client is still in development it is expected that you will probably run into some errors. Here are the basic troubleshooting steps you should take if you run into any errors;
 
-First, create an issue on this GitHub repository for the error.
+First, create an issue on GitHub for the error.
 
-If the error is in app startup you can also try running `rm ~/Library/Application Support/dev.stackotter.delta-client/.haslaunched` in Terminal to perform a fresh install. Next time the app starts it will perform a fresh install. Your configuration gets wiped but it is backed up in a zip archive in the same folder as .haslauncher
+If the error is in app startup, you can try running `rm ~/Library/Application Support/dev.stackotter.delta-client/.haslaunched` in Terminal to perform a fresh install. Next time the app starts it will perform a fresh install. Your configuration gets wiped but it is backed up in a zip archive in the same folder as .haslauncher
 
-## Issue reporting
+## More screenshots
 
-If you find an issue with Delta Client please create an issue on the Github repository. The root cause of the issue will likely actually be code in the Delta Core repository but for simplicity we report the issues on this repository. If you find the issue while using Delta Core in your own project create the issue on the Delta Core repository not here.
-
-## Screenshots (outdated, better screenshots coming soon)
+![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/hypixel-2.png?raw=true)
 
 ![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/ui.png?raw=true)
-
-![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/from-ground.png?raw=true)
-
-![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/aerial.png?raw=true)
-
-![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/hypixel.png?raw=true)
