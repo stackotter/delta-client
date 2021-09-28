@@ -13,6 +13,7 @@ struct SettingsView: View {
       List {
         NavigationLink("Accounts", destination: AccountSettingsView().padding())
         NavigationLink("Video", destination: VideoSettingsView().padding())
+        NavigationLink("Update", destination: UpdateView().padding())
       }
       .listStyle(SidebarListStyle())
     }

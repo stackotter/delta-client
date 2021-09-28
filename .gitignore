@@ -4,4 +4,4 @@
 /*.xcodeproj
 xcuserdata/
 /delta-core
-/.swiftpm
+*.xcworkspace
