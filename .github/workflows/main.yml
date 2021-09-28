@@ -15,6 +15,7 @@ jobs:
         run: |
           curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v1.2.0/swift-bundler
           chmod +x ./swift-bundler
+          cp ./swift-bundler /usr/local/bin
       - name: Build
         run: ./swift-bundler build -c release -o . -u
       - name: Zip .app
