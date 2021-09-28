@@ -15,8 +15,6 @@ jobs:
         run: |
           curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v1.1.0/swift-bundler
           chmod +x ./swift-bundler
-      - name: Checkout delta-core
-        run: sh ./Setup.sh
       - name: Build
         run: ./swift-bundler build -c release -o . -u
       - name: Zip .app
@@ -25,5 +23,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Delta Client
-          path: ./DeltaClient.zip
+          path: ./DeltaClient.app
              
