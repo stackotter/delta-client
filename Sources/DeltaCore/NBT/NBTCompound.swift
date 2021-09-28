@@ -1,10 +1,3 @@
-//
-//  NBTCompound.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 15/12/20.
-//
-
 import Foundation
 
 public enum NBTError: LocalizedError {

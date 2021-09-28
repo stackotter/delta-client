@@ -1,10 +1,3 @@
-//
-//  NetworkStack.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 31/3/21.
-//
-
 import Foundation
 
 // TODO: get rid of successor and predecessor, use a list instead, this means layers can be structs

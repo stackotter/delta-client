@@ -1,10 +1,3 @@
-//
-//  vertex_shader.metal
-//  DeltaClient
-//
-//  Created by Rohan van Klinken on 6/3/21.
-//
-
 #include <metal_stdlib>
 using namespace metal;
 

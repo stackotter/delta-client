@@ -1,10 +1,3 @@
-//
-//  LightingEngine.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 10/9/21.
-//
-
 import Foundation
 import Collections
 

@@ -1,10 +1,3 @@
-//
-//  DeltaClientApp.swift
-//  Shared
-//
-//  Created by Rohan van Klinken on 16/6/21.
-//
-
 import SwiftUI
 import DeltaCore
 

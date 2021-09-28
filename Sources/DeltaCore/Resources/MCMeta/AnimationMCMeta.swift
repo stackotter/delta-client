@@ -1,10 +1,3 @@
-//
-//  AnimationMCMeta.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 16/7/21.
-//
-
 import Foundation
 
 /// The format of an mcmeta file describing a block texture's animation.

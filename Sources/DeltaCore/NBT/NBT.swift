@@ -1,10 +1,3 @@
-//
-//  NBT.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 27/6/21.
-//
-
 /**
  NBT is essentially Mojang's take on protocol buffers.
  

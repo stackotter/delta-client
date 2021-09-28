@@ -1,10 +1,3 @@
-//
-//  HeightMap.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 15/9/21.
-//
-
 import Foundation
 
 /// The height map for a chunk.

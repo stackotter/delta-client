@@ -1,10 +1,3 @@
-//
-//  ServerConnection.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 12/12/20.
-//
-
 import Foundation
 import Network
 import NioDNS

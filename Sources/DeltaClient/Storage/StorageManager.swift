@@ -1,10 +1,3 @@
-//
-//  StorageManager.swift
-//  DeltaClient
-//
-//  Created by Rohan van Klinken on 20/6/21.
-//
-
 import Foundation
 import ZIPFoundation
 

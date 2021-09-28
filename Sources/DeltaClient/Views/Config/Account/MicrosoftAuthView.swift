@@ -1,10 +1,3 @@
-//
-//  MicrosoftAuthView.swift
-//  DeltaClient
-//
-//  Created by Rohan van Klinken on 27/8/21.
-//
-
 import SwiftUI
 import DeltaCore
 

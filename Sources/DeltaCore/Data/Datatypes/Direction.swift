@@ -1,10 +1,3 @@
-//
-//  Direction.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 27/3/21.
-//
-
 import Foundation
 import simd
 

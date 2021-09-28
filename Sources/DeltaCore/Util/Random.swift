@@ -1,10 +1,3 @@
-//
-//  Random.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 12/4/21.
-//
-
 import Foundation
 
 /// A Java compatible linear conguential generator.

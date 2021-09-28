@@ -1,10 +1,3 @@
-//
-//  JSONBlockModelFaceName.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 3/7/21.
-//
-
 import Foundation
 
 /// An enum used when decoding Mojang formatted block models from JSON.

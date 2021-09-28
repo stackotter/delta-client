@@ -1,10 +1,3 @@
-//
-//  ChunkLightingUpdateData.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 13/6/21.
-//
-
 import Foundation
 
 // TODO: just use the packet instead of this thing

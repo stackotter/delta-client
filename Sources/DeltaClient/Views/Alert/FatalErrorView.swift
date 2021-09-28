@@ -1,10 +1,3 @@
-//
-//  FatalErrorView.swift
-//  DeltaClient
-//
-//  Created by Rohan van Klinken on 19/6/21.
-//
-
 import SwiftUI
 
 struct FatalErrorView: View {

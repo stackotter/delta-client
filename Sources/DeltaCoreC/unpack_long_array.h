@@ -1,10 +1,3 @@
-//
-//  unpack_long_array.h
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 1/3/21.
-//
-
 #ifndef unpack_long_array_h
 #define unpack_long_array_h
 

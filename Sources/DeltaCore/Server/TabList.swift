@@ -1,10 +1,3 @@
-//
-//  TabList.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 27/2/21.
-//
-
 import Foundation
 
 /// A list of all players currently connected to a server.

@@ -1,10 +1,3 @@
-//
-//  ChunkPosition.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 13/1/21.
-//
-
 import Foundation
 
 /// The position of a chunk.

@@ -1,10 +1,3 @@
-//
-//  Server.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 13/12/20.
-//
-
 import Foundation
 
 /// A type representing everything the client knows about a server.

@@ -1,10 +1,3 @@
-//
-//  TagsPacket.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 13/1/21.
-//
-
 import Foundation
 
 // TODO_LATER: fill this out more as needed

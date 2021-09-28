@@ -1,10 +1,3 @@
-//
-//  JSONBlockModelElement.swift
-//  DeltaClient
-//
-//  Created by Rohan van Klinken on 3/7/21.
-//
-
 import Foundation
 
 /// A block model element as read from a Mojang formatted block model file.

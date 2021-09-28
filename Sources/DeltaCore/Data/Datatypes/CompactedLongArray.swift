@@ -1,10 +1,3 @@
-//
-//  CompactedLongArray.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 13/1/21.
-//
-
 import Foundation
 
 // NOTE: this format of compacted long array is new in 1.16.1, entries no longer get split across two longs

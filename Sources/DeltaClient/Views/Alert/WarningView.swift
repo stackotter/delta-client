@@ -1,10 +1,3 @@
-//
-//  WarningView.swift
-//  DeltaClient
-//
-//  Created by Rohan van Klinken on 27/6/21.
-//
-
 import SwiftUI
 
 struct WarningView: View {

@@ -1,10 +1,3 @@
-//
-//  ProtocolVersion.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 8/8/21.
-//
-
 import Foundation
 
 // Protocol version numbers can be found at https://wiki.vg/Protocol_version_numbers

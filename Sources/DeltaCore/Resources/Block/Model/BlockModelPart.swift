@@ -1,10 +1,3 @@
-//
-//  BlockModelPart.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 3/7/21.
-//
-
 import Foundation
 
 /// This is what Mojang calls a block model, I use the word block model to refer the models for each block state which can be made of multiple parts.

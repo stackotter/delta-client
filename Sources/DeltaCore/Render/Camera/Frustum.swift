@@ -1,10 +1,3 @@
-//
-//  Frustum.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 14/4/21.
-//
-
 import Foundation
 import simd
 

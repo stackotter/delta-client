@@ -1,10 +1,3 @@
-//
-//  EventBatch.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 5/6/21.
-//
-
 import Foundation
 
 public struct EventBatch {

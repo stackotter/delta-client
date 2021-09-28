@@ -1,10 +1,3 @@
-//
-//  DirectConnectView.swift
-//  DeltaClient
-//
-//  Created by Rohan van Klinken on 9/8/21.
-//
-
 import SwiftUI
 import DeltaCore
 

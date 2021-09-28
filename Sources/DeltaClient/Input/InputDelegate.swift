@@ -1,10 +1,3 @@
-//
-//  InputDelegate.swift
-//  DeltaClient
-//
-//  Created by Rohan van Klinken on 10/7/21.
-//
-
 import Foundation
 
 protocol InputDelegate: AnyObject {

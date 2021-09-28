@@ -1,10 +1,3 @@
-//
-//  JSONBlockModel.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 3/7/21.
-//
-
 import Foundation
 
 /// The structure of a block model as read from a resource pack.

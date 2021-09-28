@@ -1,10 +1,3 @@
-//
-//  DisabledButtonStyle.swift
-//  DeltaClient
-//
-//  Created by Rohan van Klinken on 11/7/21.
-//
-
 import SwiftUI
 
 struct DisabledButtonStyle: ButtonStyle {

@@ -1,10 +1,3 @@
-//
-//  RenderError.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 17/7/21.
-//
-
 import Foundation
 
 public enum RenderError: LocalizedError {

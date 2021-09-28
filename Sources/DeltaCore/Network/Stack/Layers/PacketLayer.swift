@@ -1,10 +1,3 @@
-//
-//  PacketLayer.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 31/3/21.
-//
-
 import Foundation
 
 // TODO: this could do with some refactoring

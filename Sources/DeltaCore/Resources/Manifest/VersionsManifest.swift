@@ -1,10 +1,3 @@
-//
-//  VersionsManifest.swift
-//  DeltaClient
-//
-//  Created by Rohan van Klinken on 3/7/21.
-//
-
 import Foundation
 
 /// The structure of Mojang's version manifest. I call it the versions manifest because it contains info on all versions not just one.

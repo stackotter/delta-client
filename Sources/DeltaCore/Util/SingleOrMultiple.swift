@@ -1,10 +1,3 @@
-//
-//  SingleOrMultiple.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 4/7/21.
-//
-
 import Foundation
 
 /// A type container for Mojang and Pixlyzer's weird JSON formats. The formats sometimes have

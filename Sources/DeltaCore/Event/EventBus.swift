@@ -1,10 +1,3 @@
-//
-//  EventBus.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 20/12/20.
-//
-
 import Foundation
 
 /// A simple yet flexible subscriber-based event system.

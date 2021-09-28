@@ -1,10 +1,3 @@
-//
-//  BlockModel.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 21/8/21.
-//
-
 import Foundation
 
 public struct BlockModel {

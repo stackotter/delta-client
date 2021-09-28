@@ -1,10 +1,3 @@
-//
-//  CubeGeometry.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 10/6/21.
-//
-
 import Foundation
 import simd
 

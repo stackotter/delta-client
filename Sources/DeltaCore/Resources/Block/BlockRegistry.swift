@@ -1,10 +1,3 @@
-//
-//  BlockRegistry.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 17/7/21.
-//
-
 import Foundation
 
 /// A registry containing all the static information about blocks (not affected by resource packs).

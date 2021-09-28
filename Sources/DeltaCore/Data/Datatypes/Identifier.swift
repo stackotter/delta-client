@@ -1,10 +1,3 @@
-//
-//  Identifier.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 3/1/21.
-//
-
 import Foundation
 
 /// An identifier consists of a namespace and a name, they are used by Mojang a lot.

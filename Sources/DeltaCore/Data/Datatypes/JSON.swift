@@ -1,10 +1,3 @@
-//
-//  JSON.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 16/12/20.
-//
-
 import Foundation
 
 public enum JSONError: LocalizedError {

@@ -1,10 +1,3 @@
-//
-//  ConfigError.swift
-//  DeltaClient
-//
-//  Created by Rohan van Klinken on 8/7/21.
-//
-
 import Foundation
 
 public enum ConfigError: LocalizedError {

@@ -1,10 +1,3 @@
-//
-//  ChunkLighting.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 17/4/21.
-//
-
 import Foundation
 import simd
 

@@ -1,10 +1,3 @@
-//
-//  NBTList.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 27/6/21.
-//
-
 import Foundation
 
 // TODO: figure out how to not use Any

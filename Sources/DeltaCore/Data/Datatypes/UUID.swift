@@ -1,10 +1,3 @@
-//
-//  UUID.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 29/12/20.
-//
-
 import Foundation
 
 // adding a convenience method to more consistently get a UUID from a string (cause minecraft randomly gives you ones without hyphens)

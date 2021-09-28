@@ -1,10 +1,3 @@
-//
-//  UpdateView.swift
-//  DeltaClient
-//
-//  Created by Rohan van Klinken on 26/9/21.
-//
-
 import SwiftUI
 import ZIPFoundation
 import DeltaCore

@@ -1,10 +1,3 @@
-//
-//  UpdateViewPositionPacket.swift
-//  DeltaCore
-//
-//  Created by Rohan van Klinken on 18/1/21.
-//
-
 import Foundation
 
 public struct UpdateViewPositionPacket: ClientboundPacket {
