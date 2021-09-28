@@ -41,6 +41,10 @@ cd delta-client
 
 # Perform a release build, output the .app to the current directory, and show a fancy progress bar in a pop-up window
 swift bundler build -c release -o . -p
+
+# If you want to work on it in Xcode
+swift bundler generate-xcode-support
+# And then open Package.swift with Xcode and you'll be able to build it from Xcode too
 ```
 
 ## Minecraft version support

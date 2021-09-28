@@ -3,5 +3,5 @@
 /Packages
 /*.xcodeproj
 xcuserdata/
-/delta-core
 *.xcworkspace
+/.swiftpm
