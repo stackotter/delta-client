@@ -1,12 +1,31 @@
 import SwiftUI
+import DeltaCore
 
 struct SettingsView: View {
+  var isInGame: Bool
+  var eventBus: EventBus?
+  var done: () -> Void
+  
+  init(isInGame: Bool, eventBus: EventBus?, onDone done: @escaping () -> Void) {
+    self.isInGame = isInGame
+    self.eventBus = eventBus
+    self.done = done
+  }
+  
   var body: some View {
     NavigationView {
       List {
-        NavigationLink("Accounts", destination: AccountSettingsView().padding())
-        NavigationLink("Video", destination: VideoSettingsView().padding())
-        NavigationLink("Update", destination: UpdateView().padding())
+        if !isInGame {
+          NavigationLink("Accounts", destination: AccountSettingsView().padding())
+          NavigationLink("Update", destination: UpdateView().padding())
+        }
+        
+        NavigationLink("Video", destination: VideoSettingsView(eventBus: eventBus).padding())
+        
+        Button("Done", action: done)
+          .buttonStyle(BorderlessButtonStyle())
+          .padding(.top, 8)
+          .keyboardShortcut(.escape, modifiers: [])
       }
       .listStyle(SidebarListStyle())
     }

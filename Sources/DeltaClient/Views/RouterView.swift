@@ -58,6 +58,10 @@ struct RouterView: View {
                   }
                 case .fatalError(let message):
                   FatalErrorView(message: message)
+                case .settings:
+                  SettingsView(isInGame: false, eventBus: nil, onDone: {
+                    appState.pop()
+                  })
               }
           }
         case .warning(let message):

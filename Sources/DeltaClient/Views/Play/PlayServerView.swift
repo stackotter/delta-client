@@ -142,7 +142,7 @@ struct PlayServerView: View {
                   }
                   .frame(width: 200)
                 case .settings:
-                  InGameSettingsView(eventBus: client.eventBus, onDone: {
+                  SettingsView(isInGame: true, eventBus: client.eventBus, onDone: {
                     overlayState.update(to: .menu)
                   })
               }

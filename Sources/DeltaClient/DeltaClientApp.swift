@@ -75,13 +75,22 @@ struct DeltaClientApp: App {
         .environmentObject(Self.loadingState)
         .navigationTitle("Delta Client")
     }
-    
-    #if os(macOS)
-    Settings {
-      SettingsView()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .commands {
+      CommandGroup(after: .appSettings, addition: {
+        Button("Preferences") {
+          // Check if it makes sense to open settings right now, open it
+          if case .none = Self.modalState.current, case .done(_) = Self.loadingState.current {
+            switch Self.appState.current {
+              case .serverList, .editServerList, .accounts, .login, .directConnect:
+                Self.appState.update(to: .settings)
+              case .playServer(_), .settings, .fatalError(_):
+                break
+            }
+          }
+        }
+        .keyboardShortcut(KeyboardShortcut(KeyEquivalent(","), modifiers: [.command]))
+      })
     }
-    #endif
   }
   
   /// Display a dismissible warning.
