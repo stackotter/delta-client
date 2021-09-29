@@ -23,22 +23,33 @@ public struct IntermediateBlockModelElementRotation {
     degrees = degrees - (degrees.truncatingRemainder(dividingBy: 22.5))
     radians = MathUtil.radians(from: Float(degrees))
     
-    // For some reason in our renderer we need x rotation to be reversed but only
+    // TODO: fix element rotation direction
+    
+    // For some reason in our renderer we need x and y rotation to be reversed but only
     // for rotations from mojang block model files everything else is fine?
     switch axis {
-      case .x:
+      case .x, .y:
         radians = -radians
-      case .y, .z:
+      case .z:
         break
     }
   }
   
-  /// Returns a transformation matrix representing this rotation. Rescale is not implemented.
+  /// Returns a transformation matrix representing this rotation.
   var matrix: matrix_float4x4 {
     var matrix = MatrixUtil.translationMatrix(-origin)
+    
     matrix *= MatrixUtil.rotationMatrix(radians, around: axis)
+    if rescale {
+      let scale = 1/cos(radians)
+      print("scale: \(scale), angle: \(MathUtil.degrees(from: radians))")
+      matrix *= MatrixUtil.scalingMatrix(
+        axis == .x ? 1 : scale,
+        axis == .y ? 1 : scale,
+        axis == .z ? 1 : scale)
+    }
+    
     matrix *= MatrixUtil.translationMatrix(origin)
-    // TODO: rescale
     return matrix
   }
 }
