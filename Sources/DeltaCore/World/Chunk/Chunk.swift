@@ -26,7 +26,7 @@ public final class Chunk {
   
   public var heightMap: HeightMap
   
-  private var blockRegistry: BlockRegistry
+  public var blockRegistry: BlockRegistry
   
   /// Creates a new chunk from the data contained within a chunk data packet.
   public init(_ packet: ChunkDataPacket, blockRegistry: BlockRegistry) {

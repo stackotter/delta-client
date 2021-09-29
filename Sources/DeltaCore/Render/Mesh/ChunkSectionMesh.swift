@@ -97,7 +97,7 @@ public class ChunkSectionMesh: Mesh {
 //    stopwatch.stopMeasurement("calculate neighbour indices")
     
 //    stopwatch.startMeasurement("get culling neighbours")
-    let cullFaces = getCullingNeighbours(ofBlockAt: position, neighbourIndices: neighbourIndices)
+    let cullFaces = getCullingNeighbours(ofBlockAt: position, withState: Int(state), neighbourIndices: neighbourIndices)
 //    stopwatch.stopMeasurement("get culling neighbours")
     
 //    stopwatch.startMeasurement("calculate face visibility")
@@ -323,14 +323,34 @@ public class ChunkSectionMesh: Mesh {
   /// - Parameter position: The position of the block relative to `sectionPosition`.
   ///
   /// - Returns: The set of directions of neighbours that can possibly cull a face.
-  func getCullingNeighbours(ofBlockAt position: Position, neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> Set<Direction> {
+  func getCullingNeighbours(ofBlockAt position: Position, withState state: Int, neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> Set<Direction> {
     let neighbouringBlockStates = getNeighbouringBlockStates(neighbourIndices: neighbourIndices)
     
     var cullingNeighbours = Set<Direction>(minimumCapacity: 6)
+    guard let block = chunk.blockRegistry.getBlockForState(withId: state) else {
+      log.warning("Block has non-existent id: \(state), returning no culling neighbours")
+      return cullingNeighbours
+    }
+    
+    let isLeaves = block.className == "LeavesBlock"
+    
     for (direction, neighbourBlockState) in neighbouringBlockStates where neighbourBlockState != 0 {
       // We assume that block model variants always have the same culling faces as eachother
-      guard let blockModel = resources.blockModelPalette.getModel(for: Int(neighbourBlockState), at: nil) else {
-        log.trace("Skipping neighbour with no block models.")
+      let neighbourState = Int(neighbourBlockState)
+      
+      guard let neighbourBlock = chunk.blockRegistry.getBlockForState(withId: neighbourState) else {
+        log.warning("Skipping neighbour with non-existent block state id: \(neighbourState), returning no cull faces")
+        continue
+      }
+      
+      // Cull the faces between two leaves blocks of the same type
+      if isLeaves && block.id == neighbourBlock.id {
+        cullingNeighbours.insert(direction)
+        continue
+      }
+      
+      guard let blockModel = resources.blockModelPalette.getModel(for: neighbourState, at: nil) else {
+        log.debug("Skipping neighbour with no block models.")
         continue
       }
       

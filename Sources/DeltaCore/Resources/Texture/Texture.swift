@@ -39,7 +39,7 @@ public struct Texture {
   public var animation: Animation?
   
   /// Read the texture contained in the given image file. Must be a PNG.
-  public init(from image: CGImage, withAnimationFile animationMetadataFile: URL, scaledToWidth targetWidth: Int, colorSpace: CGColorSpace, bitmapInfo: UInt32) throws {
+  public init(from image: CGImage, withAnimationFile animationMetadataFile: URL, scaledToWidth targetWidth: Int, colorSpace: CGColorSpace, bitmapInfo: UInt32, isLeaves: Bool = false) throws {
     // The height of the texture must be a multiple of the width
     guard image.height % image.width == 0 else {
       throw TextureError.invalidDimensions(width: image.width, height: image.height)
@@ -78,11 +78,15 @@ public struct Texture {
       throw TextureError.failedToGetTextureBytes(error)
     }
     
+    // TODO: don't hardcode the behaviour of leaves like that, make texture palette loading more flexible somehow
     // Figure out what type of texture this is
-    type = Self.typeOfTexture(withBytes: bytes, width: width, height: height, bytesPerPixel: image.bitsPerPixel / 8)
-    
-    if type != .opaque {
-      fixTransparentPixels()
+    if isLeaves {
+      type = .opaque
+    } else {
+      type = Self.typeOfTexture(withBytes: bytes, width: width, height: height, bytesPerPixel: image.bitsPerPixel / 8)
+      if type != .opaque {
+        fixTransparentPixels()
+      }
     }
   }
   

@@ -93,7 +93,13 @@ public struct TexturePalette {
       let name = identifier.name.split(separator: "/")[1]
       let animationMetadataFile = directory.appendingPathComponent("\(name).png.mcmeta")
       do {
-        let texture = try Texture(from: image, withAnimationFile: animationMetadataFile, scaledToWidth: maxWidth, colorSpace: colorSpace, bitmapInfo: bitmapInfo)
+        let texture = try Texture(
+          from: image,
+          withAnimationFile: animationMetadataFile,
+          scaledToWidth: maxWidth,
+          colorSpace: colorSpace,
+          bitmapInfo: bitmapInfo,
+          isLeaves: identifier.name.hasSuffix("leaves"))
         textures.append((identifier, texture))
       } catch {
         throw ResourcePackError.failedToLoadTexture(identifier, error)
