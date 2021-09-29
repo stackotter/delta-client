@@ -82,8 +82,14 @@ public class ChunkSectionMesh: Mesh {
     indexToNeighbourIndices: [[(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]]
   ) {
 //    stopwatch.startMeasurement("get block models")
-    guard let blockModel = resources.blockModelPalette.getModel(for: Int(state), at: position) else {
-      log.debug("Skipping block with no block models")
+    let state = Int(state)
+    guard let blockModel = resources.blockModelPalette.getModel(for: state, at: position) else {
+      log.warning("Skipping block with no block models")
+      return
+    }
+    
+    guard let block = chunk.blockRegistry.getBlockForState(withId: state) else {
+      log.warning("Skipping block with non-existent id \(state)")
       return
     }
 //    stopwatch.stopMeasurement("get block models")
@@ -97,7 +103,7 @@ public class ChunkSectionMesh: Mesh {
 //    stopwatch.stopMeasurement("calculate neighbour indices")
     
 //    stopwatch.startMeasurement("get culling neighbours")
-    let cullFaces = getCullingNeighbours(ofBlockAt: position, withState: Int(state), neighbourIndices: neighbourIndices)
+    let cullFaces = getCullingNeighbours(ofBlock: block, at: position, neighbourIndices: neighbourIndices)
 //    stopwatch.stopMeasurement("get culling neighbours")
     
 //    stopwatch.startMeasurement("calculate face visibility")
@@ -132,7 +138,8 @@ public class ChunkSectionMesh: Mesh {
 //    stopwatch.stopMeasurement("get neighbour light levels")
     
 //    stopwatch.startMeasurement("add block models")
-    let modelToWorld = MatrixUtil.translationMatrix(position.relativeToChunkSection.floatVector)
+    let offset = block.getModelOffset(at: position)
+    let modelToWorld = MatrixUtil.translationMatrix(position.relativeToChunkSection.floatVector + offset)
     for part in blockModel.parts {
       addModelPart(part, transformedBy: modelToWorld, cullFaces: cullFaces, lightLevel: lightLevel, neighbourLightLevels: neighbourLightLevels)
     }
@@ -323,14 +330,10 @@ public class ChunkSectionMesh: Mesh {
   /// - Parameter position: The position of the block relative to `sectionPosition`.
   ///
   /// - Returns: The set of directions of neighbours that can possibly cull a face.
-  func getCullingNeighbours(ofBlockAt position: Position, withState state: Int, neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> Set<Direction> {
+  func getCullingNeighbours(ofBlock block: Block, at position: Position, neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> Set<Direction> {
     let neighbouringBlockStates = getNeighbouringBlockStates(neighbourIndices: neighbourIndices)
     
     var cullingNeighbours = Set<Direction>(minimumCapacity: 6)
-    guard let block = chunk.blockRegistry.getBlockForState(withId: state) else {
-      log.warning("Block has non-existent id: \(state), returning no culling neighbours")
-      return cullingNeighbours
-    }
     
     let isLeaves = block.className == "LeavesBlock"
     

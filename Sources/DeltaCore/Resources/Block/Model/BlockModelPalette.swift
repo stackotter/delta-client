@@ -33,7 +33,7 @@ public struct BlockModelPalette {
     if let position = position {
       let modelCount = variants.count
       if modelCount > 1 {
-        var random = Random(getPositionRandom(position))
+        var random = Random(Block.getPositionRandom(position))
         let value = Int32(truncatingIfNeeded: random.nextLong())
         let absValue = value.signum() * value
         let index = absValue % Int32(modelCount)
@@ -46,13 +46,6 @@ public struct BlockModelPalette {
     } else {
       return variants.first
     }
-  }
-  
-  /// Returns the seed to use for choosing block models. Identical behaviour to vanilla.
-  public func getPositionRandom(_ position: Position) -> Int64 {
-    var seed = Int64(position.x &* 3129871) ^ (Int64(position.z) &* 116129781) ^ Int64(position.y);
-    seed = (seed &* seed &* 42317861) &+ (seed &* 11);
-    return seed >> 16;
   }
   
   // MARK: Loading
