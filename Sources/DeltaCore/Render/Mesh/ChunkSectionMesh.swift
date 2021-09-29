@@ -124,7 +124,7 @@ public class ChunkSectionMesh: Mesh {
     }
     
 //    stopwatch.startMeasurement("get light level")
-    let lightLevel = chunk.lighting.getLightLevel(at: position, inSectionAt: sectionPosition.sectionY)
+    let lightLevel = chunk.lighting.getLightLevel(at: position.relativeToChunkSection, inSectionAt: sectionPosition.sectionY)
 //    stopwatch.stopMeasurement("get light level")
     
 //    stopwatch.startMeasurement("get neighbour light levels")
@@ -134,14 +134,14 @@ public class ChunkSectionMesh: Mesh {
 //    stopwatch.startMeasurement("add block models")
     let modelToWorld = MatrixUtil.translationMatrix(position.relativeToChunkSection.floatVector)
     for part in blockModel.parts {
-      addModel(part, transformedBy: modelToWorld, cullFaces: cullFaces, lightLevel: lightLevel, neighbourLightLevels: neighbourLightLevels)
+      addModelPart(part, transformedBy: modelToWorld, cullFaces: cullFaces, lightLevel: lightLevel, neighbourLightLevels: neighbourLightLevels)
     }
 //    stopwatch.stopMeasurement("add block models")
   }
   
   /// Adds the given block model to the mesh, positioned by the given model to world matrix.
-  private func addModel(
-    _ blockModel: BlockModelPart, // TODO: either rename to addModelPart or make another function for this
+  private func addModelPart(
+    _ blockModel: BlockModelPart,
     transformedBy modelToWorld: matrix_float4x4,
     cullFaces: Set<Direction>,
     lightLevel: LightLevel,
@@ -167,7 +167,7 @@ public class ChunkSectionMesh: Mesh {
         continue
       }
       var faceLightLevel = neighbourLightLevels[face.actualDirection] ?? LightLevel()
-      faceLightLevel = LightLevel(sky: max(faceLightLevel.sky, lightLevel.sky), block: max(faceLightLevel.block, lightLevel.block))
+      faceLightLevel = LightLevel.max(faceLightLevel, lightLevel)
       addFace(face, transformedBy: vertexToWorld, shouldShade: element.shade, lightLevel: faceLightLevel)
     }
   }
@@ -179,14 +179,14 @@ public class ChunkSectionMesh: Mesh {
     shouldShade: Bool,
     lightLevel: LightLevel
   ) {
-    // add face winding
-    let offset = UInt32(vertices.count) // the index of the first vertex of face
+    // Add face winding
+    let offset = UInt32(vertices.count) // The index of the first vertex of face
     for index in CubeGeometry.faceWinding {
       indices.append(index &+ offset)
     }
     
     // swiftlint:disable force_unwrapping
-    // this lookup will never be nil cause every direction is included in the static lookup table
+    // This lookup will never be nil cause every direction is included in the static lookup table
     let faceVertexPositions = CubeGeometry.faceVertices[face.direction]!
     // swiftlint:enable force_unwrapping
     
@@ -201,12 +201,12 @@ public class ChunkSectionMesh: Mesh {
     }
     shade *= Float(lightLevel) / 15
     
-    // add vertices to mesh
+    // Add vertices to mesh
     let textureIndex = UInt16(face.texture)
     let isTinted = face.tintIndex == 0
     let tint = (isTinted ? simd_float3(0.53, 0.75, 0.38) : simd_float3(1, 1, 1)) * shade
     
-    // add vertices to mesh
+    // Add vertices to mesh
     for (uvIndex, vertexPosition) in faceVertexPositions.enumerated() {
       let position = simd_make_float3(simd_float4(vertexPosition, 1) * transformation)
       let uv = face.uvs[uvIndex]
@@ -233,7 +233,7 @@ public class ChunkSectionMesh: Mesh {
   ///
   /// - Returns: A mapping from each possible direction to a corresponding block state.
   func getNeighbouringBlockStates(neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> [(Direction, UInt16)] {
-    // convert a section relative index to a chunk relative index
+    // Convert a section relative index to a chunk relative index
     var neighbouringBlockStates: [(Direction, UInt16)] = []
     neighbouringBlockStates.reserveCapacity(6)
     
@@ -334,7 +334,6 @@ public class ChunkSectionMesh: Mesh {
         continue
       }
       
-      // TODO: make block model into a container containing common information and then it can have a list of 'block model parts'
       if blockModel.cullingFaces.contains(direction.opposite) {
         cullingNeighbours.insert(direction)
       }
