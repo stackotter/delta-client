@@ -1,5 +1,6 @@
 import Foundation
 
+/// Block data from pixlyzer.
 public struct PixlyzerBlock: Decodable {
   public var id: Int
   public var explosionResistance: Double

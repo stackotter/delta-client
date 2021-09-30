@@ -11,57 +11,40 @@ struct DeltaClientApp: App {
 
     // Load the registry
     taskQueue.async {
+      func updateLoadingMessage(_ message: String) {
+        Self.loadingState.update(to: .loadingWithMessage(message))
+        log.info(message)
+      }
+      
       do {
-        // TODO: handle asset downloading in delta core so that people using delta core can take advantage of it
-        var stopwatch = Stopwatch(mode: .summary, name: "Startup")
-        stopwatch.startMeasurement("Full startup")
-        
         if !StorageManager.default.directoryExists(at: StorageManager.default.vanillaAssetsDirectory) {
-          Self.loadingState.update(to: .loadingWithMessage("Downloading vanilla assets (might take a little while)"))
+          updateLoadingMessage("Downloading vanilla assets (might take a little while)")
           try ResourcePack.downloadVanillaAssets(forVersion: Constants.versionString, to: StorageManager.default.vanillaAssetsDirectory)
         }
         
-        if !StorageManager.default.directoryExists(at: StorageManager.default.pixlyzerDirectory) {
-          Self.loadingState.update(to: .loadingWithMessage("Downloading pixlyzer data"))
-          try ResourcePack.downloadPixlyzerData(forVersion: Constants.versionString, to: StorageManager.default.pixlyzerDirectory)
-        }
+        updateLoadingMessage("Loading registries")
+        try Registry.populate(from: StorageManager.default.pixlyzerDirectory)
         
-        Self.loadingState.update(to: .loadingWithMessage("Loading block registry"))
-        stopwatch.startMeasurement("Load block registry")
-        let blockRegistry = try BlockRegistry.load(fromPixlyzerDataDirectory: StorageManager.default.pixlyzerDirectory)
-        stopwatch.stopMeasurement("Load block registry")
-        
-        Self.loadingState.update(to: .loadingWithMessage("Loading resource pack"))
-        stopwatch.startMeasurement("Load resource pack")
+        updateLoadingMessage("Loading resource pack")
         let packCache = StorageManager.default.absoluteFromRelative("cache/vanilla.rpcache/")
         let cacheExists = StorageManager.default.directoryExists(at: packCache)
-        let resourcePack = try ResourcePack.load(from: StorageManager.default.vanillaAssetsDirectory, blockRegistry: blockRegistry, cacheDirectory: cacheExists ? packCache : nil)
-        stopwatch.stopMeasurement("Load resource pack")
+        let resourcePack = try ResourcePack.load(from: StorageManager.default.vanillaAssetsDirectory, cacheDirectory: cacheExists ? packCache : nil)
         if !cacheExists {
-          stopwatch.startMeasurement("Cache resource pack")
           do {
             try resourcePack.cache(to: packCache)
           } catch {
             log.warning("Failed to cache vanilla resource pack")
           }
-          stopwatch.stopMeasurement("Cache resource pack")
         }
-
-        stopwatch.startMeasurement("Create registry")
-        let registry = Registry(blockRegistry: blockRegistry)
-        stopwatch.stopMeasurement("Create registry")
         
         if ConfigManager.default.config.accounts.isEmpty {
           Self.appState.update(to: .login)
         }
         
-        stopwatch.startMeasurement("Finish loading")
-        Self.loadingState.update(to: .done(LoadedResources(resourcePack: resourcePack, registry: registry)))
-        stopwatch.stopMeasurement("Finish loading")
-        
-        stopwatch.stopMeasurement("Full startup")
+        log.info("Done")
+        Self.loadingState.update(to: .done(LoadedResources(resourcePack: resourcePack)))
       } catch {
-        Self.loadingState.update(to: .error("Failed to create registry: \(error)"))
+        Self.loadingState.update(to: .error("Failed to load: \(error)"))
       }
     }
   }

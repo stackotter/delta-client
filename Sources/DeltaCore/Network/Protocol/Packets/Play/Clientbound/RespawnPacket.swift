@@ -33,7 +33,7 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
     if let world = client.server?.world {
       world.update(with: self)
     } else {
-      client.server?.world = World(from: self, blockRegistry: client.registry.blockRegistry)
+      client.server?.world = World(from: self)
     }
     
     client.server?.player.update(with: self)

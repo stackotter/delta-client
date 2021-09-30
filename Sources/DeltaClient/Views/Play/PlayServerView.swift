@@ -21,11 +21,11 @@ struct PlayServerView: View {
   var client: Client
   var inputDelegate: ClientInputDelegate
   
-  init(serverDescriptor: ServerDescriptor, registry: Registry, resourcePack: ResourcePack, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
+  init(serverDescriptor: ServerDescriptor, resourcePack: ResourcePack, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
     // Link whether the cursor is captured to whether input gets sent to delegate
     _cursorCaptured = inputCaptureEnabled
     
-    client = Client(registry: registry, resourcePack: resourcePack)
+    client = Client(resourcePack: resourcePack)
     inputDelegate = ClientInputDelegate(for: client)
     setDelegate(inputDelegate)
     

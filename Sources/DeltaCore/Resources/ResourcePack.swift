@@ -71,7 +71,9 @@ public struct ResourcePack {
   // MARK: Loading
   
   /// Loads the resource pack in the given directory. If provided, cached resources are loaded from the given cache directory if present. To create a resource pack cache use `cache(to:)`. Resource pack caches do not cache the whole pack yet, only the most resource intensive parts to load.
-  public static func load(from directory: URL, blockRegistry: BlockRegistry, cacheDirectory: URL?) throws -> ResourcePack {
+  ///
+  /// ``Registry`` must be populated for this to work.
+  public static func load(from directory: URL, cacheDirectory: URL?) throws -> ResourcePack {
     // Check resource pack exists
     guard FileManager.default.directoryExists(at: directory) else {
       throw ResourcePackError.noSuchDirectory
@@ -89,7 +91,7 @@ public struct ResourcePack {
     var namespacedResources: [String: ResourcePack.Resources] = [:]
     for directory in contents where FileManager.default.directoryExists(at: directory) {
       let namespace = directory.lastPathComponent
-      let resources = try loadResources(from: directory, inNamespace: namespace, blockRegistry: blockRegistry, cacheDirectory: cacheDirectory?.appendingPathComponent(namespace))
+      let resources = try loadResources(from: directory, inNamespace: namespace, cacheDirectory: cacheDirectory?.appendingPathComponent(namespace))
       namespacedResources[namespace] = resources
     }
     
@@ -101,7 +103,7 @@ public struct ResourcePack {
   }
   
   /// Loads the resources in the given directory and gives them the specified namespace.
-  public static func loadResources(from directory: URL, inNamespace namespace: String, blockRegistry: BlockRegistry, cacheDirectory: URL?) throws -> ResourcePack.Resources {
+  public static func loadResources(from directory: URL, inNamespace namespace: String, cacheDirectory: URL?) throws -> ResourcePack.Resources {
     log.debug("Loading resources from '\(namespace)' namespace")
     var resources = Resources()
     
@@ -150,7 +152,6 @@ public struct ResourcePack {
           resources.blockModelPalette = try BlockModelPalette.load(
             from: blockModelDirectory,
             namespace: namespace,
-            blockRegistry: blockRegistry,
             blockTexturePalette: resources.blockTexturePalette)
         }
       }
@@ -252,28 +253,6 @@ public struct ResourcePack {
       try data.write(to: directory.appendingPathComponent("pack.mcmeta"))
     } catch {
       log.error("Failed to write pack.mcmeta file to vanilla assets")
-    }
-  }
-  
-  public static func downloadPixlyzerData(forVersion version: String, to directory: URL) throws {
-    // swiftlint:disable force_unwrap
-    let pixlyzerBlockPaletteURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/blocks.min.json")!
-    // swiftlint:enable force_unwrap
-    
-    let pixlyzerBlockPaletteFile = directory.appendingPathComponent("blocks.min.json")
-    
-    let data: Data
-    do {
-      data = try Data(contentsOf: pixlyzerBlockPaletteURL)
-    } catch {
-      throw ResourcePackError.failedToDownloadPixlyzerData(error)
-    }
-    
-    do {
-      try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
-      try data.write(to: pixlyzerBlockPaletteFile)
-    } catch {
-      throw ResourcePackError.failedToDownloadPixlyzerData(error)
     }
   }
   

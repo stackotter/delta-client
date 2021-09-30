@@ -13,14 +13,14 @@ public class Client {
   public var server: Server?
   /// The event bus for this client instance.
   public var eventBus = EventBus()
-  /// Information about recipes, blocks, items, etc.
-  public var registry: Registry
   /// The resource pack to use.
   public var resourcePack: ResourcePack
   /// The account this client uses to join servers.
   public var account: Account?
   /// The most recent time this client joined a server (specifically, when the join game packet was received). Used to calculate client tick.
   public var joinServerTime: CFAbsoluteTime?
+  
+  // TODO: ABOLISH world update batching, it's confusing and annoying
   /// Whether to batch world updates or not.
   private var _batchWorldUpdates = true
   public var batchWorldUpdates: Bool {
@@ -43,8 +43,7 @@ public class Client {
   
   // MARK: Init
   
-  public init(registry: Registry, resourcePack: ResourcePack) {
-    self.registry = registry
+  public init(resourcePack: ResourcePack) {
     self.resourcePack = resourcePack
     
     eventBus.registerHandler(handleEvent)

@@ -3,10 +3,8 @@ import DeltaCore
 
 class LoadedResources {
   var resourcePack: ResourcePack
-  var registry: Registry
   
-  init(resourcePack: ResourcePack, registry: Registry) {
+  init(resourcePack: ResourcePack) {
     self.resourcePack = resourcePack
-    self.registry = registry
   }
 }

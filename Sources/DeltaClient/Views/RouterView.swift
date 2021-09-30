@@ -51,7 +51,6 @@ struct RouterView: View {
                   InputView { inputCaptureEnabled, setDelegate in
                     PlayServerView(
                       serverDescriptor: descriptor,
-                      registry: loadedResources.registry,
                       resourcePack: loadedResources.resourcePack,
                       inputCaptureEnabled: inputCaptureEnabled,
                       delegateSetter: setDelegate)

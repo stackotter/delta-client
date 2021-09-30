@@ -4,8 +4,8 @@ import DeltaCore
 struct ServerListItem: View {
   @StateObject var pinger: Pinger
   
-  var indicatorColor: Color {
-    let color: Color
+  var indicatorColor: SwiftUI.Color {
+    let color: SwiftUI.Color
     if let result = pinger.pingResult {
       switch result {
         case let .success(info):

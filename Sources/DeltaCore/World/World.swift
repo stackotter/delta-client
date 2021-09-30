@@ -1,7 +1,9 @@
 import Foundation
 import simd
 
-/// A type for holding all of a world's data such as chunks and lighting.
+/// Holds all of the world data.
+///
+/// Includes chunks, lighting and some other metadata.
 public class World {
   /// The name of this world
   public var name: Identifier
@@ -22,11 +24,11 @@ public class World {
   }
   
   /// The world's age.
-  public private(set) var age: Int = 0
+  public var age: Int = 0
   /// The time of day.
-  public private(set) var timeOfDay: Int = 0
+  public var timeOfDay: Int = 0
   /// Whether this world is still downloading terrain.
-  public private(set) var downloadingTerrain = true
+  public var downloadingTerrain = true
   
   /// Lighting data that arrived before its respective chunk or was sent for a non-existent chunk.
   private var chunklessLightingData: [ChunkPosition: ChunkLightingUpdateData] = [:]
@@ -36,20 +38,21 @@ public class World {
   /// The current batch of world updates.
   public var eventBatch = EventBatch()
   
-  private var blockRegistry: BlockRegistry
-  
   private var lightingEngine = LightingEngine()
   
+  // MARK: Init
+  
   /// Creates a new `World` from `World.Info`.
-  public init(from descriptor: WorldDescriptor, blockRegistry: BlockRegistry, batching: Bool = false) {
+  public init(from descriptor: WorldDescriptor, batching: Bool = false) {
     name = descriptor.worldName
     dimension = descriptor.dimension
     hashedSeed = descriptor.hashedSeed
     isFlat = descriptor.isFlat
     isDebug = descriptor.isDebug
-    self.blockRegistry = blockRegistry
     self.batchingEnabled = batching
   }
+  
+  // MARK: Update
   
   /// Updates the world's properties to match the supplied descriptor.
   public func update(with descriptor: WorldDescriptor) {
@@ -79,9 +82,7 @@ public class World {
     batchingEnabled = false
   }
   
-  /// Process the current batch of events. Events that are filtered
-  /// out are not processed and are put into the next batch.
-  ///
+  /// Process the current batch of events. Events that are filtered out are not processed and are put into the next batch.
   /// - Returns: All accepted events after processing them.
   public func processBatch(filter: ((DeltaCore.Event) -> Bool)? = nil) -> [DeltaCore.Event] {
     // Copy and clear current batch
@@ -142,7 +143,10 @@ public class World {
     }
   }
   
-  /// Returns the block state id of the block at the specified position.
+  
+  /// Get the block state id of a block.
+  /// - Parameter position: A block position in world coordinates.
+  /// - Returns: A block state id. If `position` is in a chunk that isn't loaded, air (0) is returned.
   public func getBlockStateId(at position: Position) -> UInt16 {
     if let chunk = chunk(at: position.chunk), Self.isValidBlockPosition(position) {
       return chunk.getBlockStateId(at: position.relativeToChunk)
@@ -153,22 +157,34 @@ public class World {
   
   /// Returns information about the type of block at the specified position.
   public func getBlock(at position: Position) -> Block {
-    return blockRegistry.getBlock(withId: Int(getBlockStateId(at: position))) ?? Block.missing
+    return Registry.blockRegistry.block(withId: Int(getBlockStateId(at: position))) ?? Block.missing
   }
   
-  /// Returns information about the state of the block at the specified position.
+  /// Get information about the state of a block.
+  /// - Parameter position: A block position in world coordinates.
+  /// - Returns: Information about a block's state. If the block is in a chunk that isn't loaded,
+  ///   air (0) is returned. If the block state is invalid for whatever reason, ``BlockState.missing`` is returned.
   public func getBlockState(at position: Position) -> BlockState {
-    return blockRegistry.getBlockState(withId: Int(getBlockStateId(at: position))) ?? BlockState.missing
+    return Registry.blockRegistry.blockState(withId: Int(getBlockStateId(at: position))) ?? BlockState.missing
   }
   
   // MARK: Lighting (no batching)
   
-  /// Sets the block light level for the given block. Does not batch, does not propagate the change and does not verify the level is valid.
+  
+  /// Sets the block light level of a block. Does not batch, does not propagate the change and does not verify the level is valid.
+  ///
+  /// If `position` is in a chunk that isn't loaded or is above y=255 or below y=0, nothing happens.
+  ///
+  /// - Parameters:
+  ///   - position: A block position relative to the world.
+  ///   - level: The new light level. Should be from 0 to 15 inclusive. Not validated.
   public func setBlockLightLevel(at position: Position, to level: Int) {
     if let chunk = self.chunk(at: position.chunk) {
       chunk.lighting.setBlockLightLevel(at: position.relativeToChunk, to: level)
     }
   }
+  
+  // TODO: Finish fixing documentation for World
   
   /// Returns the block light level for the given block.
   public func getBlockLightLevel(at position: Position) -> Int {

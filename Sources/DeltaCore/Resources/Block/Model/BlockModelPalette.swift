@@ -53,7 +53,6 @@ public struct BlockModelPalette {
   public static func load(
     from modelDirectory: URL,
     namespace: String,
-    blockRegistry: BlockRegistry,
     blockTexturePalette: TexturePalette
   ) throws -> BlockModelPalette {
     // Load block models from the pack into an intermediate format
@@ -61,11 +60,11 @@ public struct BlockModelPalette {
     let intermediateBlockModelPalette = try IntermediateBlockModelPalette(from: jsonBlockModels)
     
     // Convert intermediate block models to final format
-    var blockModels = [[BlockModel]](repeating: [], count: blockRegistry.renderDescriptors.count)
-    for (stateId, variants) in blockRegistry.renderDescriptors {
+    var blockModels = [[BlockModel]](repeating: [], count: Registry.blockRegistry.renderDescriptors.count)
+    for (stateId, variants) in Registry.blockRegistry.renderDescriptors {
       let blockModelVariants: [BlockModel] = try variants.map { variant in
         do {
-          let blockState = blockRegistry.getBlockState(withId: stateId) ?? BlockState.missing
+          let blockState = Registry.blockRegistry.blockState(withId: stateId) ?? BlockState.missing
           return try blockModel(
             for: variant,
             from: intermediateBlockModelPalette,

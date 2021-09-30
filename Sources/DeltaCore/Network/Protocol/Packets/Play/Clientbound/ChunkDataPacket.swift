@@ -9,7 +9,7 @@ public struct ChunkDataPacket: ClientboundPacket {
   public var primaryBitMask: Int
   public var heightMap: HeightMap
   public var ignoreOldData: Bool
-  public var biomes: [UInt8]
+  public var biomeIds: [UInt8]
   public var sections: [Chunk.Section]
   public var blockEntities: [BlockEntity]
   
@@ -35,14 +35,13 @@ public struct ChunkDataPacket: ClientboundPacket {
       let skyLightBlockingHeightMap = Self.unpackHeightMap(skyLightBlockingHeightMapCompact)
       self.heightMap = HeightMap(heightMap: heightMap, skyLightBlockingHeightMap: skyLightBlockingHeightMap)
       
-      // TODO: properly unpack biomes
-      biomes = []
+      biomeIds = []
       if fullChunk {
-        // HACK: this could cause issues down the line because it assumes no biome id is greater than 256
-        // every fourth byte of this is a biome id (biome ids are
-        // stored as big endian ints but are actually never bigger than an int)
-        // will have to write wrapper over it to access only all the fourth bytes
-        biomes = packetReader.readByteArray(length: 1024 * 4)
+        // Biomes are stored as big endian ints but biome ids are never bigger than a UInt8, so it's easy to
+        let packedBiomes = packetReader.readByteArray(length: 1024 * 4)
+        for i in 0..<1024 {
+          biomeIds.append(packedBiomes[i * 4 + 3])
+        }
       }
       
       _ = packetReader.readVarInt() // Data length (not used)
@@ -59,18 +58,16 @@ public struct ChunkDataPacket: ClientboundPacket {
           let y: Int = try blockEntityNBT.get("y")
           let z: Int = try blockEntityNBT.get("z")
           let position = Position(x: x, y: y, z: z)
-          // TODO: make identifier not throwing, make it just return the placeholder
-          let identifierString: String = (try? blockEntityNBT.get("id")) ?? "deltacore:placeholder"
-          let placeholder = Identifier(namespace: "deltacore", name: "placeholder")
-          let identifier = (try? Identifier(identifierString)) ?? placeholder
+          let identifierString: String = try blockEntityNBT.get("id")
+          let identifier = try Identifier(identifierString)
           let blockEntity = BlockEntity(position: position, identifier: identifier, nbt: blockEntityNBT)
           blockEntities.append(blockEntity)
         } catch {
-          log.warning("Error decoding block entities: \(error.localizedDescription)")
+          log.warning("Error decoding block entities: \(error)")
         }
       }
     } catch {
-      log.warning("Failed to unpack chunk: \(error.localizedDescription)")
+      log.warning("Failed to unpack chunk: \(error)")
       throw error
     }
     
@@ -83,7 +80,7 @@ public struct ChunkDataPacket: ClientboundPacket {
       existingChunk.update(with: self)
       client.server?.world.eventBatch.add(World.Event.UpdateChunk(position: position))
     } else {
-      let chunk = Chunk(self, blockRegistry: client.registry.blockRegistry)
+      let chunk = Chunk(self)
       client.server?.world.addChunk(chunk, at: position)
     }
   }

@@ -125,7 +125,7 @@ public struct ChunkLighting {
     }
   }
   
-  // TODO: properly initialise sky light sections when creating new onesß
+  // TODO: properly initialise sky light sections when creating new ones
   
   public mutating func setBlockLightLevel(at position: Position, to newLevel: Int) {
     guard Self.isValidPosition(position) else {

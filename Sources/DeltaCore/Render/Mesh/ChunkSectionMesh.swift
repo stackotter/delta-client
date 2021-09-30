@@ -2,6 +2,7 @@ import Foundation
 import MetalKit
 import simd
 
+// TODO: document meshing
 // TODO: why is this a class
 public class ChunkSectionMesh: Mesh {
   /// A lookup to quickly convert block index to block position
@@ -88,7 +89,7 @@ public class ChunkSectionMesh: Mesh {
       return
     }
     
-    guard let block = chunk.blockRegistry.getBlockForState(withId: state) else {
+    guard let block = Registry.blockRegistry.blockForState(withId: state) else {
       log.warning("Skipping block with non-existent id \(state)")
       return
     }
@@ -341,7 +342,7 @@ public class ChunkSectionMesh: Mesh {
       // We assume that block model variants always have the same culling faces as eachother
       let neighbourState = Int(neighbourBlockState)
       
-      guard let neighbourBlock = chunk.blockRegistry.getBlockForState(withId: neighbourState) else {
+      guard let neighbourBlock = Registry.blockRegistry.blockForState(withId: neighbourState) else {
         log.warning("Skipping neighbour with non-existent block state id: \(neighbourState), returning no cull faces")
         continue
       }

@@ -48,7 +48,7 @@ public struct Server {
     isHardcore = packet.isHardcore
     
     player = Player(from: packet)
-    world = World(from: packet, blockRegistry: client.registry.blockRegistry, batching: client.batchWorldUpdates)
+    world = World(from: packet, batching: client.batchWorldUpdates)
   }
   
   /// Update the server's difficulty with a `ServerDifficultyPacket`.
