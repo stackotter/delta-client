@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macOS-11
     steps:
       - name: Checkout delta-client
         uses: actions/checkout@v2
