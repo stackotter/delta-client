@@ -110,7 +110,7 @@ public struct BlockModelPalette {
       var rotatedCullingFaces: Set<Direction> = []
       let elements: [BlockModelElement] = try intermediateModel.elements.map { intermediateElement in
         // Identify any faces of the elements that can fill a whole side of a block
-        if blockState.isOpaque || block.className != "LeavesBlock" { // TODO: don't hardcode leaves' rendering behaviour
+        if blockState.isOpaque || block.className == "LeavesBlock" { // TODO: don't hardcode leaves' rendering behaviour
           rotatedCullingFaces.formUnion(intermediateElement.getCullingFaces())
         }
         
