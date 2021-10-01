@@ -63,6 +63,8 @@ public struct TexturePalette {
       throw ResourcePackError.failedToEnumerateTextures(error)
     }
     
+    // Textures are loaded in two phases so that we know what the widest texture is before we do work scaling them all to the right widths.
+    
     // Load the images
     var maxWidth = 0 // The width of the widest texture in the palette
     var images: [(Identifier, CGImage)] = []
@@ -70,13 +72,7 @@ public struct TexturePalette {
       let name = file.deletingPathExtension().lastPathComponent
       let identifier = Identifier(namespace: namespace, name: "\(type)/\(name)")
       
-      guard let dataProvider = CGDataProvider(url: file as CFURL) else {
-        throw ResourcePackError.failedToCreateImageProvider(for: identifier)
-      }
-      
-      guard let image = CGImage(pngDataProviderSource: dataProvider, decode: nil, shouldInterpolate: false, intent: .relativeColorimetric) else {
-        throw ResourcePackError.failedToReadTextureImage(for: identifier)
-      }
+      let image = try CGImage(pngFile: file)
       
       if image.width > maxWidth {
         maxWidth = image.width
@@ -87,19 +83,28 @@ public struct TexturePalette {
     
     // Convert the images to textures
     var textures: [(Identifier, Texture)] = []
-    let colorSpace = CGColorSpaceCreateDeviceRGB()
-    let bitmapInfo = UInt32(Int(kColorSyncAlphaPremultipliedFirst.rawValue) | kColorSyncByteOrder32Little)
     for (identifier, image) in images {
       let name = identifier.name.split(separator: "/")[1]
       let animationMetadataFile = directory.appendingPathComponent("\(name).png.mcmeta")
       do {
-        let texture = try Texture(
-          from: image,
-          withAnimationFile: animationMetadataFile,
+        // Hardcode leaves as opaque for performance reasons
+        let hardcodeOpaque = identifier.name.hasSuffix("leaves")
+        
+        var texture = try Texture(
+          image: image,
+          type: hardcodeOpaque ? .opaque : nil,
           scaledToWidth: maxWidth,
-          colorSpace: colorSpace,
-          bitmapInfo: bitmapInfo,
-          isLeaves: identifier.name.hasSuffix("leaves"))
+          checkDimensions: true)
+        
+        if texture.type != .opaque {
+          // Change the color of transparent pixels to make mipmaps look more natural
+          texture.fixTransparentPixels()
+        }
+        
+        if FileManager.default.fileExists(atPath: animationMetadataFile.path) {
+          try texture.setAnimation(file: animationMetadataFile)
+        }
+        
         textures.append((identifier, texture))
       } catch {
         throw ResourcePackError.failedToLoadTexture(identifier, error)

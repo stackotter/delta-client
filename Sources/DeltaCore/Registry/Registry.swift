@@ -40,7 +40,7 @@ public enum Registry {
       }
     }
     
-    let registry = try T.load(from: url)
+    let registry = try T.load(from: file)
     return registry
   }
 }

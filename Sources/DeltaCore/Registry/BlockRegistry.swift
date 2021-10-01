@@ -14,6 +14,9 @@ public struct BlockRegistry {
   
   // MARK: Init
   
+  /// Creates an empty block registry.
+  public init() {}
+  
   /// Creates a populated block registry.
   public init(
     identifierToBlockId: [Identifier : Int],
@@ -46,7 +49,7 @@ public struct BlockRegistry {
   /// Get information about the block containing the specified block state.
   /// - Parameter stateId: A block state id.
   /// - Returns: Information about a block. `nil` if block state is invalid or parent block doesn't exist.
-  public func blockForState(withId stateId: Int) -> Block? {
+  public func block(forStateWithId stateId: Int) -> Block? {
     if let blockId = states[stateId]?.blockId {
       return blocks[blockId]
     } else {
@@ -63,8 +66,6 @@ public struct BlockRegistry {
 }
 
 extension BlockRegistry: PixlyzerRegistry {
-  public init() {}
-  
   public static func load(from pixlyzerBlockPaletteFile: URL) throws -> BlockRegistry {
     // Read global block palette from the pixlyzer block palette
     let data = try Data(contentsOf: pixlyzerBlockPaletteFile)
@@ -77,7 +78,7 @@ extension BlockRegistry: PixlyzerRegistry {
     var renderDescriptors: [Int: [[BlockModelRenderDescriptor]]] = [:]
     for (identifierString, pixlyzerBlock) in pixlyzerPalette {
       let identifier = try Identifier(identifierString)
-      let block = Block(from: pixlyzerBlock)
+      let block = Block(from: pixlyzerBlock, identifier: identifier)
       identifierToBlockId[identifier] = block.id
       blocks[block.id] = block
       

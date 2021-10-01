@@ -1,7 +1,7 @@
 import Foundation
 
 extension CGImage {
-  public func getBytes(with colorSpace: CGColorSpace, and bitmapInfo: UInt32, scaledBy scaleFactor: Int) throws -> [UInt8] {
+  public func getBytes(with colorSpace: CGColorSpace, and bitmapInfo: UInt32, scaledBy scaleFactor: Int = 1) throws -> [UInt8] {
     let scaledWidth = width * scaleFactor
     let scaledHeight = height * scaleFactor
     
@@ -37,5 +37,28 @@ extension CGImage {
     // Convert the bytes from a pointer to an array of UInt8
     let buffer = UnsafeBufferPointer(start: bytes.assumingMemoryBound(to: UInt8.self), count: scaledWidth * scaledHeight * bytesPerPixel)
     return Array(buffer)
+  }
+}
+
+// A really weird hack to wrap an optional initializer with a throwing one. https://stackoverflow.com/a/67781426
+// Apparently it's the way the stdlib gets around this missing functionality too, so I guess it's the way
+
+protocol CGImageFromPNGFile {
+  init?(pngDataProviderSource: CGDataProvider, decode: UnsafePointer<CGFloat>?, shouldInterpolate: Bool, intent: CGColorRenderingIntent)
+}
+
+extension CGImage: CGImageFromPNGFile {}
+
+extension CGImageFromPNGFile {
+  init(pngFile: URL) throws {
+    guard let dataProvider = CGDataProvider(url: pngFile as CFURL) else {
+      throw ResourcePackError.failedToCreateImageProvider
+    }
+    
+    guard let image = Self.init(pngDataProviderSource: dataProvider, decode: nil, shouldInterpolate: false, intent: .relativeColorimetric) else {
+      throw ResourcePackError.failedToReadTextureImage
+    }
+    
+    self = image
   }
 }

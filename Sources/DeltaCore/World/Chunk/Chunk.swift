@@ -66,7 +66,7 @@ public final class Chunk {
   /// - Returns: Information about block. Returns ``Block.missing`` if block state id is invalid.
   public func getBlock(at position: Position) -> Block {
     let stateId = Int(getBlockStateId(at: position))
-    return Registry.blockRegistry.blockForState(withId: stateId) ?? Block.missing
+    return Registry.blockRegistry.block(forStateWithId: stateId) ?? Block.missing
   }
   
   /// Get information about a block's state.
@@ -89,7 +89,7 @@ public final class Chunk {
   /// - Parameter index: Can be obtained using ``Position.blockIndex``. Relative to the chunk.
   /// - Returns: Block state id of block. Returns 0 (air) if `index` is invalid (outside chunk).
   public func getBlockStateId(at index: Int) -> UInt16 {
-    if Self.isValidBlockIndex(index) {
+    if !Self.isValidBlockIndex(index) {
       log.warning("Invalid block index passed to Chunk.getBlockStateId(at:), index=\(index), returning block id 0 (air)")
       return 0
     }
@@ -122,17 +122,17 @@ public final class Chunk {
   /// Get the biome of the block at the given position.
   /// - Parameter position: Position of block in chunk relative coordinates.
   /// - Returns: Data about the biome.
-  public func getBiomeId(at position: Position) -> Int {
-    let index = position.blockIndex / 4
+  public func biomeId(at position: Position) -> Int {
+    let index = position.biomeIndex
     return Int(biomeIds[index])
   }
   
   /// Get the biome of the block at the given position.
   /// - Parameter position: Position of block in chunk relative coordinates.
   /// - Returns: Data about the biome.
-  public func getBiome(at position: Position) -> Biome {
-    let biomeId = getBiomeId(at: position)
-    return Registry.biomeRegistry.biomes[biomeId]
+  public func biome(at position: Position) -> Biome? {
+    let biomeId = biomeId(at: position)
+    return Registry.biomeRegistry.biome(withId: biomeId)
   }
   
   // MARK: Sections

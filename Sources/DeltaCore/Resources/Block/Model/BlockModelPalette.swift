@@ -27,7 +27,7 @@ public struct BlockModelPalette {
   /// If `position` is nil the first block model is returned. This is used to skip
   /// random number generation in finding culling faces. We assume that the block
   /// model variants all have the same general shape.
-  public func getModel(for stateId: Int, at position: Position?) -> BlockModel? {
+  public func model(for stateId: Int, at position: Position?) -> BlockModel? {
     // TODO: correctly select weighted models (not doing that only affects chorus fruit so not a big deal)
     let variants = models[stateId]
     if let position = position {
@@ -64,11 +64,13 @@ public struct BlockModelPalette {
     for (stateId, variants) in Registry.blockRegistry.renderDescriptors {
       let blockModelVariants: [BlockModel] = try variants.map { variant in
         do {
+          let block = Registry.blockRegistry.block(forStateWithId: stateId) ?? Block.missing
           let blockState = Registry.blockRegistry.blockState(withId: stateId) ?? BlockState.missing
           return try blockModel(
             for: variant,
             from: intermediateBlockModelPalette,
             with: blockTexturePalette,
+            block: block,
             blockState: blockState)
         } catch {
           log.error("Failed to create block model for state \(stateId): \(error)")
@@ -89,6 +91,7 @@ public struct BlockModelPalette {
     for partDescriptors: [BlockModelRenderDescriptor],
     from intermediateBlockModelPalette: IntermediateBlockModelPalette,
     with blockTexturePalette: TexturePalette,
+    block: Block,
     blockState: BlockState
   ) throws -> BlockModel {
     var cullingFaces: Set<Direction> = []
@@ -107,7 +110,7 @@ public struct BlockModelPalette {
       var rotatedCullingFaces: Set<Direction> = []
       let elements: [BlockModelElement] = try intermediateModel.elements.map { intermediateElement in
         // Identify any faces of the elements that can fill a whole side of a block
-        if blockState.isOpaque {
+        if blockState.isOpaque || block.className != "LeavesBlock" { // TODO: don't hardcode leaves' rendering behaviour
           rotatedCullingFaces.formUnion(intermediateElement.getCullingFaces())
         }
         
@@ -186,7 +189,7 @@ public struct BlockModelPalette {
         uvs: uvs,
         texture: textureIndex,
         cullface: cullface,
-        tintIndex: flatFace.tintIndex)
+        isTinted: flatFace.isTinted)
     }
     
     return BlockModelElement(

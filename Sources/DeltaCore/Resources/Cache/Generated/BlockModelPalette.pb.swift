@@ -98,7 +98,7 @@ struct ProtobufBlockModelFace {
   /// Clears the value of `cullface`. Subsequent reads from it will return its default value.
   mutating func clearCullface() {self._cullface = nil}
 
-  var tintIndex: Int32 = 0
+  var isTinted: Bool = false
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -239,7 +239,7 @@ extension ProtobufBlockModelFace: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     3: .same(proto: "uvs"),
     4: .same(proto: "texture"),
     5: .same(proto: "cullface"),
-    6: .standard(proto: "tint_index"),
+    6: .standard(proto: "is_tinted"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -253,7 +253,7 @@ extension ProtobufBlockModelFace: SwiftProtobuf.Message, SwiftProtobuf._MessageI
       case 3: try { try decoder.decodeRepeatedFloatField(value: &self.uvs) }()
       case 4: try { try decoder.decodeSingularInt32Field(value: &self.texture) }()
       case 5: try { try decoder.decodeSingularEnumField(value: &self._cullface) }()
-      case 6: try { try decoder.decodeSingularInt32Field(value: &self.tintIndex) }()
+      case 6: try { try decoder.decodeSingularBoolField(value: &self.isTinted) }()
       default: break
       }
     }
@@ -275,8 +275,8 @@ extension ProtobufBlockModelFace: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     if let v = self._cullface {
       try visitor.visitSingularEnumField(value: v, fieldNumber: 5)
     }
-    if self.tintIndex != 0 {
-      try visitor.visitSingularInt32Field(value: self.tintIndex, fieldNumber: 6)
+    if self.isTinted != false {
+      try visitor.visitSingularBoolField(value: self.isTinted, fieldNumber: 6)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -287,7 +287,7 @@ extension ProtobufBlockModelFace: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     if lhs.uvs != rhs.uvs {return false}
     if lhs.texture != rhs.texture {return false}
     if lhs._cullface != rhs._cullface {return false}
-    if lhs.tintIndex != rhs.tintIndex {return false}
+    if lhs.isTinted != rhs.isTinted {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

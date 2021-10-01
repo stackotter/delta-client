@@ -10,7 +10,7 @@ public struct PixlyzerBlock: Decodable {
   public var jumpVelocityMultiplier: Double?
   public var defaultState: Int
   public var hasDynamicShape: Bool?
-  public var `class`: String
+  public var className: String
   public var stillFluid: Int?
   public var flowFluid: Int?
   public var fluid: Int?
@@ -18,7 +18,7 @@ public struct PixlyzerBlock: Decodable {
   public var maxModelOffset: Float?
   public var lavaParticles: Bool?
   public var flameParticle: Int?
-  public var tint: Identifier?
+  public var tint: Block.TintType?
   public var tintColor: Int?
   public var states: [Int: PixlyzerBlockState]
   
@@ -31,7 +31,7 @@ public struct PixlyzerBlock: Decodable {
     case jumpVelocityMultiplier = "jump_velocity_multiplier"
     case defaultState = "default_state"
     case hasDynamicShape = "has_dynamic_shape"
-    case `class`
+    case className = "class"
     case stillFluid = "still_fluid"
     case flowFluid = "flow_fluid"
     case fluid

@@ -2,15 +2,15 @@ import Foundation
 import simd
 
 public struct PixlyzerBiome: Codable {
-  var id: Int
-  var depth: Float
-  var scale: Float
-  var waterColor: Int
-  var waterFogColor: Int
-  var category: Int
-  var precipitation: Float
-  var temperature: Float
-  var downfall: Float
-  var fogColor: Int
-  var skyColor: Int
+  public var id: Int
+  public var depth: Float
+  public var scale: Float
+  public var waterColor: Int
+  public var waterFogColor: Int
+  public var category: Biome.Category
+  public var precipitation: Biome.PrecipitationType
+  public var temperature: Float
+  public var downfall: Float
+  public var fogColor: Int
+  public var skyColor: Int
 }

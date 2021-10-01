@@ -82,81 +82,99 @@ public class ChunkSectionMesh: Mesh {
     with state: UInt16,
     indexToNeighbourIndices: [[(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]]
   ) {
-//    stopwatch.startMeasurement("get block models")
+    // Get block model
     let state = Int(state)
-    guard let blockModel = resources.blockModelPalette.getModel(for: state, at: position) else {
+    guard let blockModel = resources.blockModelPalette.model(for: state, at: position) else {
       log.warning("Skipping block with no block models")
       return
     }
     
-    guard let block = Registry.blockRegistry.blockForState(withId: state) else {
-      log.warning("Skipping block with non-existent id \(state)")
-      return
-    }
-//    stopwatch.stopMeasurement("get block models")
-    
+    // Return early if block model is empty (such as air)
     if blockModel.cullableFaces.isEmpty && blockModel.nonCullableFaces.isEmpty {
       return
     }
     
-//    stopwatch.startMeasurement("calculate neighbour indices")
+    // Get block indices of neighbouring blocks
     let neighbourIndices = indexToNeighbourIndices[blockIndex]
-//    stopwatch.stopMeasurement("calculate neighbour indices")
+
+    // Calculate face visibility
+    let culledFaces = getCullingNeighbours(at: position, neighbourIndices: neighbourIndices)
     
-//    stopwatch.startMeasurement("get culling neighbours")
-    let cullFaces = getCullingNeighbours(ofBlock: block, at: position, neighbourIndices: neighbourIndices)
-//    stopwatch.stopMeasurement("get culling neighbours")
-    
-//    stopwatch.startMeasurement("calculate face visibility")
-    if blockModel.cullableFaces.count == 6 && cullFaces.count == 6 && blockModel.nonCullableFaces.count == 0 {
-//      stopwatch.stopMeasurement("calculate face visibility")
+    // Return early if there can't possibly be any visible faces
+    if blockModel.cullableFaces.count == 6 && culledFaces.count == 6 && blockModel.nonCullableFaces.count == 0 {
       return
     }
     
-    var visibleFaces = blockModel.cullableFaces.subtracting(cullFaces)
+    // Find the cullable faces which are visible
+    var visibleFaces = blockModel.cullableFaces.subtracting(culledFaces)
     
+    // Return early if there are no always visible faces and no non-culled faces
     if blockModel.nonCullableFaces.isEmpty && visibleFaces.isEmpty {
-//      stopwatch.stopMeasurement("calculate face visibility")
       return
     }
     
+    // Add non cullable faces to the visible faces set (they are always rendered)
     if !blockModel.nonCullableFaces.isEmpty {
       visibleFaces = visibleFaces.union(blockModel.nonCullableFaces)
     }
     
-//    stopwatch.stopMeasurement("calculate face visibility")
-    
+    // Return early if no faces are visible
     if visibleFaces.isEmpty {
       return
     }
     
-//    stopwatch.startMeasurement("get light level")
-    let lightLevel = chunk.lighting.getLightLevel(at: position.relativeToChunkSection, inSectionAt: sectionPosition.sectionY)
-//    stopwatch.stopMeasurement("get light level")
-    
-//    stopwatch.startMeasurement("get neighbour light levels")
+    // Get lighting
+    let positionRelativeToChunkSection = position.relativeToChunkSection
+    let lightLevel = chunk.lighting.getLightLevel(at: positionRelativeToChunkSection, inSectionAt: sectionPosition.sectionY)
     let neighbourLightLevels = getNeighbourLightLevels(neighbourIndices: neighbourIndices, visibleFaces: visibleFaces)
-//    stopwatch.stopMeasurement("get neighbour light levels")
     
-//    stopwatch.startMeasurement("add block models")
-    let offset = block.getModelOffset(at: position)
-    let modelToWorld = MatrixUtil.translationMatrix(position.relativeToChunkSection.floatVector + offset)
-    for part in blockModel.parts {
-      addModelPart(part, transformedBy: modelToWorld, cullFaces: cullFaces, lightLevel: lightLevel, neighbourLightLevels: neighbourLightLevels)
+    // Get block
+    guard let block = Registry.blockRegistry.block(forStateWithId: state) else {
+      log.warning("Skipping block with non-existent id \(state)")
+      return
     }
-//    stopwatch.stopMeasurement("add block models")
+    
+    // Get tint color
+    guard let biome = chunk.biome(at: position.relativeToChunk) else {
+      log.warning("Block at \(position) has invalid biome with id \(chunk.biomeId(at: position))")
+      return
+    }
+    
+    let tintColor = resources.biomeColors.color(for: block, at: position, in: biome)
+    
+    // Create model to world transformation matrix
+    let offset = block.getModelOffset(at: position)
+    let modelToWorld = MatrixUtil.translationMatrix(positionRelativeToChunkSection.floatVector + offset)
+    
+    // Add block model to mesh
+    for part in blockModel.parts {
+      addModelPart(
+        part,
+        transformedBy: modelToWorld,
+        culledFaces: culledFaces,
+        lightLevel: lightLevel,
+        neighbourLightLevels: neighbourLightLevels,
+        tintColor: tintColor?.floatVector ?? SIMD3<Float>(1, 1, 1))
+    }
   }
   
   /// Adds the given block model to the mesh, positioned by the given model to world matrix.
   private func addModelPart(
     _ blockModel: BlockModelPart,
     transformedBy modelToWorld: matrix_float4x4,
-    cullFaces: Set<Direction>,
+    culledFaces: Set<Direction>,
     lightLevel: LightLevel,
-    neighbourLightLevels: [Direction: LightLevel]
+    neighbourLightLevels: [Direction: LightLevel],
+    tintColor: SIMD3<Float>
   ) {
     for element in blockModel.elements {
-      addElement(element, transformedBy: modelToWorld, cullFaces: cullFaces, lightLevel: lightLevel, neighbourLightLevels: neighbourLightLevels)
+      addElement(
+        element,
+        transformedBy: modelToWorld,
+        culledFaces: culledFaces,
+        lightLevel: lightLevel,
+        neighbourLightLevels: neighbourLightLevels,
+        tintColor: tintColor)
     }
   }
   
@@ -164,19 +182,25 @@ public class ChunkSectionMesh: Mesh {
   private func addElement(
     _ element: BlockModelElement,
     transformedBy modelToWorld: matrix_float4x4,
-    cullFaces: Set<Direction>,
+    culledFaces: Set<Direction>,
     lightLevel: LightLevel,
-    neighbourLightLevels: [Direction: LightLevel]
+    neighbourLightLevels: [Direction: LightLevel],
+    tintColor: SIMD3<Float>
   ) {
     let vertexToWorld = element.transformation * modelToWorld
-    
     for face in element.faces {
-      if let cullFace = face.cullface, cullFaces.contains(cullFace) {
+      if let cullFace = face.cullface, culledFaces.contains(cullFace) {
         continue
       }
+      
       var faceLightLevel = neighbourLightLevels[face.actualDirection] ?? LightLevel()
       faceLightLevel = LightLevel.max(faceLightLevel, lightLevel)
-      addFace(face, transformedBy: vertexToWorld, shouldShade: element.shade, lightLevel: faceLightLevel)
+      addFace(
+        face,
+        transformedBy: vertexToWorld,
+        shouldShade: element.shade,
+        lightLevel: faceLightLevel,
+        tintColor: tintColor)
     }
   }
   
@@ -185,7 +209,8 @@ public class ChunkSectionMesh: Mesh {
     _ face: BlockModelFace,
     transformedBy transformation: matrix_float4x4,
     shouldShade: Bool,
-    lightLevel: LightLevel
+    lightLevel: LightLevel,
+    tintColor: SIMD3<Float>
   ) {
     // Add face winding
     let offset = UInt32(vertices.count) // The index of the first vertex of face
@@ -209,10 +234,16 @@ public class ChunkSectionMesh: Mesh {
     }
     shade *= Float(lightLevel) / 15
     
-    // Add vertices to mesh
+    // Calculate the tint color to apply to the face
+    let tint: SIMD3<Float>
+    if face.isTinted {
+      tint = tintColor * shade
+    } else {
+      tint = SIMD3<Float>(repeating: shade)
+    }
+    
+    
     let textureIndex = UInt16(face.texture)
-    let isTinted = face.tintIndex == 0
-    let tint = (isTinted ? simd_float3(0.53, 0.75, 0.38) : simd_float3(1, 1, 1)) * shade
     
     // Add vertices to mesh
     for (uvIndex, vertexPosition) in faceVertexPositions.enumerated() {
@@ -331,29 +362,14 @@ public class ChunkSectionMesh: Mesh {
   /// - Parameter position: The position of the block relative to `sectionPosition`.
   ///
   /// - Returns: The set of directions of neighbours that can possibly cull a face.
-  func getCullingNeighbours(ofBlock block: Block, at position: Position, neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> Set<Direction> {
+  func getCullingNeighbours(at position: Position, neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> Set<Direction> {
     let neighbouringBlockStates = getNeighbouringBlockStates(neighbourIndices: neighbourIndices)
     
     var cullingNeighbours = Set<Direction>(minimumCapacity: 6)
     
-    let isLeaves = block.className == "LeavesBlock"
-    
     for (direction, neighbourBlockState) in neighbouringBlockStates where neighbourBlockState != 0 {
-      // We assume that block model variants always have the same culling faces as eachother
-      let neighbourState = Int(neighbourBlockState)
-      
-      guard let neighbourBlock = Registry.blockRegistry.blockForState(withId: neighbourState) else {
-        log.warning("Skipping neighbour with non-existent block state id: \(neighbourState), returning no cull faces")
-        continue
-      }
-      
-      // Cull the faces between two leaves blocks of the same type
-      if isLeaves && block.id == neighbourBlock.id {
-        cullingNeighbours.insert(direction)
-        continue
-      }
-      
-      guard let blockModel = resources.blockModelPalette.getModel(for: neighbourState, at: nil) else {
+      // We assume that block model variants always have the same culling faces as eachother, so no position is passed to getModel.
+      guard let blockModel = resources.blockModelPalette.model(for: Int(neighbourBlockState), at: nil) else {
         log.debug("Skipping neighbour with no block models.")
         continue
       }

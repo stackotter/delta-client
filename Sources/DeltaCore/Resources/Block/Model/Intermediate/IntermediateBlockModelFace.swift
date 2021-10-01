@@ -14,8 +14,8 @@ public struct IntermediateBlockModelFace {
   public var cullface: Direction?
   /// The amount of rotation for the texture (multiples of 90 degrees).
   public var textureRotation: Int
-  /// The index of the tint to use.
-  public var tintIndex: Int
+  /// Whether a tint color should be applied to the face or not.
+  public var isTinted: Bool
   
   /// Returns a neater and flattened version of a Mojang formatted block model face.
   public init(
@@ -26,7 +26,7 @@ public struct IntermediateBlockModelFace {
     uv = jsonFace.uv
     direction = jsonDirection.direction
     cullface = jsonFace.cullface?.direction
-    tintIndex = jsonFace.tintIndex ?? -1
+    isTinted = (jsonFace.tintIndex ?? -1) != -1
     
     // Round textureRotation to the nearest 90
     textureRotation = jsonFace.rotation ?? 0

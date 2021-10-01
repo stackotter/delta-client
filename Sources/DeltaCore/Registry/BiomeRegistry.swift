@@ -1,17 +1,25 @@
 import Foundation
 
+/// An error to do with biome loading most likely.
 public enum BiomeError: LocalizedError {
   /// Failed to load biome data from pixlyzer data.
   case failedToLoadPixlyzerBiomes(Error)
+  /// Failed to load the foliage color map from the resource pack.
+  case failedToLoadFoliageColorMap(Error)
+  /// Failed to load the grass color map from the resource pack.
+  case failedToLoadGrassColorMap(Error)
+  /// Biome colormaps from resourcepacks ('grass.png' and 'foliage.png') must be 256x256.
+  case colorMapNot256By256Pixels
 }
 
 /// Holds information about biomes.
 public struct BiomeRegistry {
-  /// All possible biomes, indexed by biome id.
+  /// All biomes.
   public var biomes: [Biome] = []
-  
-  /// Maps biome identifier to biome id.
-  public var identifierToBiomeId: [Identifier: Int] = [:]
+  /// Used to index `biomes`. Maps a biome id to an index in `biomes`.
+  private var biomeIdToIndex: [Int: Int] = [:]
+  /// Maps biome identifier to an index in `biomes`.
+  private var identifierToIndex: [Identifier: Int] = [:]
   
   // MARK: Init
   
@@ -21,26 +29,20 @@ public struct BiomeRegistry {
   /// Creates a populated ``BiomeRegistry``.
   public init(biomes: [Biome]) {
     self.biomes = biomes
-    for (id, biome) in biomes.enumerated() {
-      identifierToBiomeId[biome.identifier] = id
+    for (index, biome) in biomes.enumerated() {
+      biomeIdToIndex[biome.id] = index
+      identifierToIndex[biome.identifier] = index
     }
   }
   
   // MARK: Access
   
-  /// Get the id of the biome specified.
-  /// - Parameter identifier: Biome identifier.
-  /// - Returns: Biome id. `nil` if biome doesn't exist.
-  public func biomeId(for identifier: Identifier) -> Int? {
-    return identifierToBiomeId[identifier]
-  }
-  
   /// Get information about the biome specified.
   /// - Parameter identifier: Biome identifier.
   /// - Returns: Biome information. `nil` if biome doesn't exist.
   public func biome(for identifier: Identifier) -> Biome? {
-    if let id = biomeId(for: identifier) {
-      return biomes[id]
+    if let index = identifierToIndex[identifier] {
+      return biomes[index]
     } else {
       return nil
     }
@@ -50,8 +52,8 @@ public struct BiomeRegistry {
   /// - Parameter id: A biome id.
   /// - Returns: Biome information. `nil` if biome id is out of range.
   public func biome(withId id: Int) -> Biome? {
-    if id < biomes.count {
-      return biomes[id]
+    if let index = biomeIdToIndex[id] {
+      return biomes[index]
     } else {
       return nil
     }

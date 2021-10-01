@@ -58,4 +58,9 @@ public enum MathUtil {
   public static func checkFloatGreaterThan(value a: Float, compareTo b: Float, absoluteTolerance: Float) -> Bool {
     return b - a < absoluteTolerance
   }
+  
+  @_specialize(exported: true, where T:_Trivial)
+  public static func clamp<T>(_ value: T,  _ minValue: T, _ maxValue: T) -> T where T : Comparable {
+    return min(max(value, minValue), maxValue)
+  }
 }

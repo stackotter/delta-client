@@ -15,7 +15,7 @@ message ProtobufBlockModelFace {
   repeated float uvs = 3;
   int32 texture = 4;
   optional ProtobufDirection cullface = 5;
-  int32 tint_index = 6;
+  bool is_tinted = 6;
 }
 
 message ProtobufBlockModelElement {

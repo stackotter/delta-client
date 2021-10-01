@@ -34,63 +34,148 @@ public struct Texture {
   public var type: TextureType
   /// The texture's byte representation.
   public var bytes: [UInt8]
-  
-  /// A description of how to animate this texture.
+  /// The animation to use when rendering this texture.
   public var animation: Animation?
   
-  /// Read the texture contained in the given image file. Must be a PNG.
-  public init(from image: CGImage, withAnimationFile animationMetadataFile: URL, scaledToWidth targetWidth: Int, colorSpace: CGColorSpace, bitmapInfo: UInt32, isLeaves: Bool = false) throws {
-    // The height of the texture must be a multiple of the width
-    guard image.height % image.width == 0 else {
-      throw TextureError.invalidDimensions(width: image.width, height: image.height)
-    }
-    
-    // The width must be a power of two
-    guard image.width.isPowerOfTwo else {
-      throw TextureError.widthNotPowerOfTwo(width: image.width)
-    }
-    
-    guard targetWidth.isPowerOfTwo else {
-      throw TextureError.targetWidthNotPowerOfTwo(targetWidth: targetWidth)
-    }
-    
-    // Calculate new dimensions
-    let scaleFactor = targetWidth / image.width
-    width = scaleFactor * image.width
-    height = scaleFactor * image.height
-    
-    // Load animation metadata if necessary
-    let numFrames = height / width
-    if numFrames > 1 {
-      do {
-        let data = try Data(contentsOf: animationMetadataFile)
-        let animationMCMeta = try JSONDecoder().decode(AnimationMCMeta.self, from: data)
-        animation = Animation(from: animationMCMeta, maxFrameIndex: numFrames)
-      } catch {
-        throw TextureError.failedToLoadTextureAnimation(error)
+  /// Loads a texture.
+  /// - Parameters:
+  ///   - pngFile: The png file containing the texture.
+  ///   - type: The type of the texture. Calculated if not specified.
+  ///   - targetWidth: Scales the image to this width.
+  ///   - checkDimensions: If `true`, the texture's width must be a power of two, and the height must be a multiple of the width. `targetWidth` must also be a power of two if present.
+  public init(pngFile: URL, type: TextureType? = nil, scaledToWidth targetWidth: Int? = nil, checkDimensions: Bool = false) throws {
+    let image = try CGImage(pngFile: pngFile)
+    try self.init(image: image, type: type, scaledToWidth: targetWidth, checkDimensions: checkDimensions)
+  }
+  
+  /// Loads a texture.
+  /// - Parameters:
+  ///   - image: The image containing the texture.
+  ///   - type: The type of the texture. Calculated if not specified.
+  ///   - targetWidth: Scales the image to this width.
+  ///   - checkDimensions: If `true`, the texture's width must be a power of two, and the height must be a multiple of the width. `targetWidth` must also be a power of two if present.
+  public init(image: CGImage, type: TextureType? = nil, scaledToWidth targetWidth: Int? = nil, checkDimensions: Bool = false) throws {
+    if checkDimensions {
+      // The height of the texture must be a multiple of the width
+      guard image.height % image.width == 0 else {
+        throw TextureError.invalidDimensions(width: image.width, height: image.height)
+      }
+      
+      // The width must be a power of two
+      guard image.width.isPowerOfTwo else {
+        throw TextureError.widthNotPowerOfTwo(width: image.width)
+      }
+      
+      // The target width must be a power of two
+      if let targetWidth = targetWidth {
+        guard targetWidth.isPowerOfTwo else {
+          throw TextureError.targetWidthNotPowerOfTwo(targetWidth: targetWidth)
+        }
       }
     }
     
-    // Load texture data
-    do {
-      bytes = try image.getBytes(with: colorSpace, and: bitmapInfo, scaledBy: scaleFactor)
-    } catch {
-      throw TextureError.failedToGetTextureBytes(error)
+    let colorSpace = CGColorSpaceCreateDeviceRGB()
+    let bitmapInfo = UInt32(Int(kColorSyncAlphaPremultipliedFirst.rawValue) | kColorSyncByteOrder32Little)
+    
+    // Calculate new dimensions
+    let scaleFactor: Int
+    if let targetWidth = targetWidth {
+      scaleFactor = targetWidth / image.width
+    } else {
+      scaleFactor = 1
     }
     
-    // TODO: don't hardcode the behaviour of leaves like that, make texture palette loading more flexible somehow
-    // Figure out what type of texture this is
-    if isLeaves {
-      type = .opaque
-    } else {
-      type = Self.typeOfTexture(withBytes: bytes, width: width, height: height, bytesPerPixel: image.bitsPerPixel / 8)
-      if type != .opaque {
-        fixTransparentPixels()
+    width = scaleFactor * image.width
+    height = scaleFactor * image.height
+    
+    bytes = try image.getBytes(with: colorSpace, and: bitmapInfo, scaledBy: scaleFactor)
+    self.type = type ?? Self.typeOfTexture(withBytes: bytes, width: width, height: height, bytesPerPixel: image.bitsPerPixel / 8)
+  }
+  
+  /// Loads a texture animation from a json file in a resource pack, and then sets is as this texture's animation
+  /// - Parameter animationMetadataFile: The animation descriptor file.
+  public mutating func setAnimation(file animationMetadataFile: URL) throws {
+    let numFrames = height / width
+    do {
+      let data = try Data(contentsOf: animationMetadataFile)
+      let animationMCMeta = try JSONDecoder().decode(AnimationMCMeta.self, from: data)
+      animation = Animation(from: animationMCMeta, maxFrameIndex: numFrames)
+    } catch {
+      throw TextureError.failedToLoadTextureAnimation(error)
+    }
+  }
+  
+  /// Fixes the colour values of transparent pixels to vaguely represent the colours of the pixels around them to help with mipmapping.
+  /// This function is probably really slow, I haven't checked yet. Nope, it doesn't seem to be too slow.
+  public mutating func fixTransparentPixels() {
+    for x in 0..<width {
+      // For each transparent pixel copy the color values from above
+      for y in 0..<height {
+        var pixel = pixel(atX: x, y: y)
+        if pixel.a == 0 && y != 0 {
+          pixel = self.pixel(atX: x, y: y - 1)
+          pixel.a = 0
+          setPixel(atX: x, y: y, to: pixel)
+        }
+      }
+      
+      // Do the same but the other way
+      for y in 1...height {
+        let y = height - y
+        var pixel = pixel(atX: x, y: y)
+        if pixel.a == 0 && y != height - 1 {
+          pixel = self.pixel(atX: x, y: y + 1)
+          pixel.a = 0
+          setPixel(atX: x, y: y, to: pixel)
+        }
+      }
+    }
+    
+    // Do the whole thing again but horizontally
+    for y in 0..<height {
+      // For each transparent pixel copy the color values from the left
+      for x in 0..<width {
+        var pixel = pixel(atX: x, y: y)
+        if pixel.a == 0 && x != 0 {
+          pixel = self.pixel(atX: x - 1, y: y)
+          pixel.a = 0
+          setPixel(atX: x, y: y, to: pixel)
+        }
+      }
+      
+      // Do the same but the other way
+      for x in 1...width {
+        let x = width - x
+        var pixel = pixel(atX: x, y: y)
+        if pixel.a == 0 && x != width - 1 {
+          pixel = self.pixel(atX: x + 1, y: y)
+          pixel.a = 0
+          setPixel(atX: x, y: y, to: pixel)
+        }
       }
     }
   }
   
-  /// Returns the type of a texture.
+  /// Returns the pixel at the given location. Does not check bounds.
+  public func pixel(atX x: Int, y: Int) -> Pixel {
+    let index = (y * width + x) * 4 // 4 is the number of bytes per pixel
+    let b = bytes[index]
+    let g = bytes[index + 1]
+    let r = bytes[index + 2]
+    let a = bytes[index + 3]
+    return Pixel(r: r, g: g, b: b, a: a)
+  }
+  
+  /// Sets the pixel at the given coordinates to the given pixel data.
+  public mutating func setPixel(atX x: Int, y: Int, to pixel: Pixel) {
+    let index = (y * width + x) * 4 // 4 is the number of bytes per pixel
+    bytes[index] = pixel.b
+    bytes[index + 1] = pixel.g
+    bytes[index + 2] = pixel.r
+    bytes[index + 3] = pixel.a
+  }
+  
+  /// Finds the type of a texture by inspecting its pixels.
   private static func typeOfTexture(withBytes bytes: [UInt8], width: Int, height: Int, bytesPerPixel: Int) -> TextureType {
     var type = TextureType.opaque
     
@@ -108,80 +193,11 @@ public struct Texture {
     
     return type
   }
-  
-  /// Fixes the colour values of transparent pixels to vaguely represent the colours of the pixels around them to help with mipmapping.
-  /// This function is probably really slow, I haven't checked yet.
-  private mutating func fixTransparentPixels() {
-    for x in 0..<width {
-      // For each transparent pixel copy the color values from above
-      for y in 0..<height {
-        var pixel = getPixelAt(x: x, y: y)
-        if pixel.a == 0 && y != 0 {
-          pixel = getPixelAt(x: x, y: y - 1)
-          pixel.a = 0
-          setPixelAt(x: x, y: y, to: pixel)
-        }
-      }
-      
-      // Do the same but the other way
-      for y in 1...height {
-        let y = height - y
-        var pixel = getPixelAt(x: x, y: y)
-        if pixel.a == 0 && y != height - 1 {
-          pixel = getPixelAt(x: x, y: y + 1)
-          pixel.a = 0
-          setPixelAt(x: x, y: y, to: pixel)
-        }
-      }
-    }
-    
-    // Do the whole thing again but horizontally
-    for y in 0..<height {
-      // For each transparent pixel copy the color values from the left
-      for x in 0..<width {
-        var pixel = getPixelAt(x: x, y: y)
-        if pixel.a == 0 && x != 0 {
-          pixel = getPixelAt(x: x - 1, y: y)
-          pixel.a = 0
-          setPixelAt(x: x, y: y, to: pixel)
-        }
-      }
-      
-      // Do the same but the other way
-      for x in 1...width {
-        let x = width - x
-        var pixel = getPixelAt(x: x, y: y)
-        if pixel.a == 0 && x != width - 1 {
-          pixel = getPixelAt(x: x + 1, y: y)
-          pixel.a = 0
-          setPixelAt(x: x, y: y, to: pixel)
-        }
-      }
-    }
-  }
-  
-  /// Returns the pixel at the given location. Does not check bounds.
-  private func getPixelAt(x: Int, y: Int) -> Pixel {
-    let index = (y * width + x) * 4 // 4 is the number of bytes per pixel
-    let b = bytes[index]
-    let g = bytes[index + 1]
-    let r = bytes[index + 2]
-    let a = bytes[index + 3]
-    return Pixel(r: r, g: g, b: b, a: a)
-  }
-  
-  /// Sets the pixel at the given coordinates to the given pixel data.
-  private mutating func setPixelAt(x: Int, y: Int, to pixel: Pixel) {
-    let index = (y * width + x) * 4 // 4 is the number of bytes per pixel
-    bytes[index] = pixel.b
-    bytes[index + 1] = pixel.g
-    bytes[index + 2] = pixel.r
-    bytes[index + 3] = pixel.a
-  }
 }
 
 extension Texture {
-  private struct Pixel {
+  /// A texture pixel.
+  public struct Pixel {
     var r: UInt8
     var g: UInt8
     var b: UInt8

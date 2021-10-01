@@ -3,6 +3,7 @@ import simd
 
 public struct Block {
   public var id: Int
+  public var identifier: Identifier
   public var explosionResistance: Double
   public var item: Int
   public var friction: Double
@@ -17,14 +18,15 @@ public struct Block {
   public var offsetType: String?
   public var lavaParticles: Bool
   public var flameParticle: Int?
-  public var tint: Identifier?
-  public var tintColor: Int?
+  public var tintType: TintType?
+  public var tintColor: RGBColor?
   public var states: [Int]
 }
 
 extension Block {
   /// Creates a block from pixlyzer data.
-  public init(from pixlyzerBlock: PixlyzerBlock) {
+  public init(from pixlyzerBlock: PixlyzerBlock, identifier: Identifier) {
+    self.identifier = identifier
     id = pixlyzerBlock.id
     explosionResistance = pixlyzerBlock.explosionResistance
     item = pixlyzerBlock.item
@@ -33,21 +35,24 @@ extension Block {
     jumpVelocityMultiplier = pixlyzerBlock.jumpVelocityMultiplier ?? 1.0
     defaultState = pixlyzerBlock.defaultState
     hasDynamicShape = pixlyzerBlock.hasDynamicShape ?? false
-    className = pixlyzerBlock.class
+    className = pixlyzerBlock.className
     stillFluid = pixlyzerBlock.stillFluid
     flowFluid = pixlyzerBlock.flowFluid
     fluid = pixlyzerBlock.fluid
     offsetType = pixlyzerBlock.offsetType
     lavaParticles = pixlyzerBlock.lavaParticles ?? false
     flameParticle = pixlyzerBlock.flameParticle
-    tint = pixlyzerBlock.tint
-    tintColor = pixlyzerBlock.tintColor
+    tintType = pixlyzerBlock.tint
+    if let hexCode = pixlyzerBlock.tintColor {
+      tintColor = RGBColor(hexCode: hexCode)
+    }
     states = [Int](pixlyzerBlock.states.keys)
   }
   
   /// Used in place of missing blocks.
   public static let missing = Block(
     id: -1,
+    identifier: Identifier(name: "missing"),
     explosionResistance: 0,
     item: -1,
     friction: 0,
@@ -62,22 +67,22 @@ extension Block {
     offsetType: nil,
     lavaParticles: false,
     flameParticle: nil,
-    tint: nil,
+    tintType: nil,
     tintColor: nil,
     states: [])
 }
 
 extension Block {
   /// Returns the offset to apply to the given block at the given position when rendering.
-  public func getModelOffset(at position: Position) -> simd_float3 {
+  public func getModelOffset(at position: Position) -> SIMD3<Float> {
     if let offsetType = offsetType {
       let seed = Self.getPositionRandom(Position(x: position.x, y: 0, z: position.z))
-      return simd_float3(
+      return SIMD3<Float>(
         x: Float(seed & 15) / 30 - 0.25,
         y: offsetType == "xyz" ? Float((seed >> 4) & 15) / 75 - 0.2 : 0,
         z: Float((seed >> 8) & 15) / 30 - 0.25)
     } else {
-      return simd_float3()
+      return SIMD3<Float>()
     }
   }
   

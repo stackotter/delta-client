@@ -90,7 +90,6 @@ class Updater: ObservableObject {
     let response: [GitHubReleasesAPIResponse]
     do {
       data = try Data(contentsOf: apiURL)
-      try data.write(to: URL(fileURLWithPath: "/Users/rohanvanklinken/Desktop/response.json"))
       response = try decoder.decode([GitHubReleasesAPIResponse].self, from: data)
     } catch {
       throw UpdateError.failedToGetGitHubAPIResponse(error)

@@ -15,9 +15,9 @@ enum ResourcePackError: LocalizedError {
   /// Failed to convert an image into a texture.
   case failedToLoadTexture(Identifier, Error)
   /// Failed to read the image for the given texture from a file.
-  case failedToReadTextureImage(for: Identifier)
+  case failedToReadTextureImage
   /// Failed to create a `CGDataProvider` for the given image file.
-  case failedToCreateImageProvider(for: Identifier)
+  case failedToCreateImageProvider
   /// Failed to read the contents of the given pixlyzer block palette file.
   case failedToReadPixlyzerBlockPalette
   /// The given pixlyzer block palette was of an invalid format.
@@ -57,7 +57,7 @@ public struct ResourcePack {
   // MARK: Access
   
   public func getBlockModel(for stateId: Int, at position: Position) -> BlockModel? {
-    return vanillaResources.blockModelPalette.getModel(for: stateId, at: position)
+    return vanillaResources.blockModelPalette.model(for: stateId, at: position)
   }
   
   public func getBlockTexturePalette() -> TexturePalette {
@@ -103,13 +103,16 @@ public struct ResourcePack {
   }
   
   /// Loads the resources in the given directory and gives them the specified namespace.
-  public static func loadResources(from directory: URL, inNamespace namespace: String, cacheDirectory: URL?) throws -> ResourcePack.Resources {
+  public static func loadResources(
+    from directory: URL,
+    inNamespace namespace: String,
+    cacheDirectory: URL?
+  ) throws -> ResourcePack.Resources {
     log.debug("Loading resources from '\(namespace)' namespace")
     var resources = Resources()
     
-    log.debug("Loading textures")
-    
     // Load textures if the pack contains any
+    log.debug("Loading textures")
     let textureDirectory = directory.appendingPathComponent("textures")
     if FileManager.default.directoryExists(at: textureDirectory) {
       // Load block textures if pack contains any
@@ -119,9 +122,17 @@ public struct ResourcePack {
       }
     }
     
-    var loadedFromCache = false
+    // Load biome colors
+    log.debug("Loading biome colors")
+    let colorMapDirectory = textureDirectory.appendingPathComponent("colormap")
+    if FileManager.default.directoryExists(at: colorMapDirectory) {
+      let biomeColors = try BiomeColors(from: colorMapDirectory)
+      resources.biomeColors = biomeColors
+    }
+    
     
     // Attempt to load block model palette from the resource pack cache if it exists
+    var loadedFromCache = false
     if let modelCacheFile = cacheDirectory?.appendingPathComponent("block-models.cache") {
       log.debug("Loading cached block models")
       if FileManager.default.fileExists(atPath: modelCacheFile.path) {
@@ -140,9 +151,9 @@ public struct ResourcePack {
       }
     }
     
-    // Load models if present
+    // Load models if present and not loaded from cache
     if !loadedFromCache {
-      log.debug("Loading block models from pack (not cached)")
+      log.debug("Loading block models from resourcepack")
       let modelDirectory = directory.appendingPathComponent("models")
       if FileManager.default.directoryExists(at: modelDirectory) {
         // Load block models if present

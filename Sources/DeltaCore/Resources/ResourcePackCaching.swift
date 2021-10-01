@@ -139,7 +139,7 @@ extension BlockModelFace {
       uvs: uvs,
       texture: Int(cache.texture),
       cullface: cache.hasCullface ? Direction(from: cache.cullface) : nil,
-      tintIndex: Int(cache.tintIndex))
+      isTinted: cache.isTinted)
   }
 }
 
@@ -214,6 +214,6 @@ extension ProtobufBlockModelFace {
     if let cullface = face.cullface {
       self.cullface = ProtobufDirection(from: cullface)
     }
-    tintIndex = Int32(face.tintIndex)
+    isTinted = face.isTinted
   }
 }
