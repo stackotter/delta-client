@@ -7,7 +7,6 @@ class WorldRenderer {
   var pipelineState: MTLRenderPipelineState
   var depthState: MTLDepthStencilState
   
-  var resourcePack: ResourcePack
   var resources: ResourcePack.Resources
   var blockArrayTexture: MTLTexture
   var blockTexturePaletteAnimationState: TexturePaletteAnimationState
@@ -23,7 +22,7 @@ class WorldRenderer {
   /// A set containing all chunks which are currently preparing.
   var preparingChunks: Set<ChunkPosition> = []
   
-  init(device: MTLDevice, world: World, client: Client, resourcePack: ResourcePack, commandQueue: MTLCommandQueue) throws {
+  init(device: MTLDevice, world: World, client: Client, resources: ResourcePack.Resources, commandQueue: MTLCommandQueue) throws {
     // Load shaders
     log.info("Loading shaders")
     guard let bundle = Bundle(url: Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/DeltaClient_DeltaCore.bundle")) else {
@@ -49,10 +48,9 @@ class WorldRenderer {
     
     self.world = world
     self.client = client
-    self.resourcePack = resourcePack
-    self.resources = resourcePack.vanillaResources
+    self.resources = resources
     
-    let blockTexturePalette = resourcePack.getBlockTexturePalette()
+    let blockTexturePalette = resources.blockTexturePalette
     blockTexturePaletteAnimationState = TexturePaletteAnimationState(for: blockTexturePalette)
     blockArrayTexture = try Self.createArrayTexture(palette: blockTexturePalette, animationState: blockTexturePaletteAnimationState, device: device, commandQueue: commandQueue)
     pipelineState = try Self.createRenderPipelineState(vertex: vertex, fragment: fragment, device: device)
@@ -161,7 +159,7 @@ class WorldRenderer {
             for: neighbour,
             at: position,
             withNeighbours: neighbours,
-            with: resourcePack)
+            with: resources)
           chunkRenderers[position] = chunkRenderer
           log.debug("Created chunk renderer for chunk at \(position)")
         }

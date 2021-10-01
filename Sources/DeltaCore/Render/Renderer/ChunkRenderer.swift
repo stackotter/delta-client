@@ -10,14 +10,10 @@ class ChunkRenderer {
   public var neighbourChunks: [CardinalDirection: Chunk] = [:]
   
   public var requiresPreparing = true
-  public var hasCompletedInitialPrepare: Bool {
-    return sectionMeshesAccessQueue.sync {
-      numSectionsPreparing == 0
-    }
-  }
+  public var hasCompletedInitialPrepare = true
   
   /// The meshes for the sections of the chunk being rendered, indexed by section Y. Section Y is from 0-15 (inclusive).
-  private var sectionMeshes: [Int: ChunkSectionMesh] = [:]
+  private var sectionMeshes: [Int: Mesh] = [:]
   /// Indices of sections that block updates are currently frozen for.
   private var frozenSections: Set<Int> = []
   
@@ -26,13 +22,10 @@ class ChunkRenderer {
   /// A serial queue for safely accessing and modifying `sectionMeshes`.
   private var sectionMeshesAccessQueue = DispatchQueue(label: "dev.stackotter.sectionMeshesAccessQueue")
   /// A concurrent queue for asynchronously preparing section meshes.
-  private var meshPreparationQueue = DispatchQueue(
-    label: "dev.stackotter.meshPreparationQueue")
+  private var meshPreparationQueue = DispatchQueue(label: "dev.stackotter.meshPreparationQueue")
   
-  /// The resource pack to render chunks with.
-  private let resourcePack: ResourcePack
-  
-  private var numSectionsPreparing = 0
+  /// The resources to use when rendering chunks.
+  private let resources: ResourcePack.Resources
   
   var frozenSectionCount: Int {
     frozenSectionsAccessQueue.sync {
@@ -44,12 +37,12 @@ class ChunkRenderer {
     for chunk: Chunk,
     at position: ChunkPosition,
     withNeighbours neighbours: [CardinalDirection: Chunk],
-    with resourcePack: ResourcePack
+    with resources: ResourcePack.Resources
   ) {
     self.chunkPosition = position
     self.chunk = chunk
     self.neighbourChunks = neighbours
-    self.resourcePack = resourcePack
+    self.resources = resources
   }
   
   /// Prepare all `Chunk.Section`s in this renderer's `Chunk`
@@ -65,33 +58,32 @@ class ChunkRenderer {
       return index
     }
     
-    numSectionsPreparing = nonEmptySections.count
-    
     for sectionIndex in nonEmptySections {
-      prepareSectionAsync(at: sectionIndex, isInitialPrepare: true)
+      prepareSectionAsync(at: sectionIndex)
+    }
+    
+    meshPreparationQueue.async {
+      self.hasCompletedInitialPrepare = true
     }
   }
   
-  /**
-   Prepare a mesh for the chunk section specified.
-   
-   - Parameter isLastInitialSection: If true, `hasCompletedInitialPrepare` is set to true once the mesh is prepared
-   */
-  private func prepareSectionAsync(at sectionY: Int, isInitialPrepare: Bool = false) {
+  /// Prepare a mesh for the chunk section specified.
+  private func prepareSectionAsync(at sectionY: Int) {
     let sectionPosition = ChunkSectionPosition(chunkPosition, sectionY: sectionY)
     freezeSection(at: sectionY)
+    
     meshPreparationQueue.async {
-      let mesh = ChunkSectionMesh(
+      let builder = ChunkSectionMeshBuilder(
         forSectionAt: sectionPosition,
         in: self.chunk,
         withNeighbours: self.neighbourChunks,
-        resourcePack: self.resourcePack)
-      mesh.prepare()
+        resources: self.resources)
+      let mesh = builder.build()
+      
       self.sectionMeshesAccessQueue.async {
-        self.sectionMeshes[sectionY] = mesh
-        self.unfreezeSection(at: sectionY)
-        if isInitialPrepare {
-          self.numSectionsPreparing -= 1
+        if let mesh = mesh {
+          self.sectionMeshes[sectionY] = mesh
+          self.unfreezeSection(at: sectionY)
         }
       }
     }
@@ -107,10 +99,12 @@ class ChunkRenderer {
     if !hasCompletedInitialPrepare {
       return
     }
+    
     if sectionFrozen(at: sectionY) {
       log.warning("Block update received for frozen section at index \(sectionY) in Chunk at \(chunkPosition)")
       return
     }
+    
     prepareSectionAsync(at: sectionY)
   }
   
@@ -140,23 +134,18 @@ class ChunkRenderer {
   /// Renders this renderer's chunk
   func render(to encoder: MTLRenderCommandEncoder, with device: MTLDevice, and camera: Camera, commandQueue: MTLCommandQueue) {
     sectionMeshesAccessQueue.sync {
-      for (sectionY, sectionMesh) in sectionMeshes where !sectionMesh.isEmpty {
-        if !camera.isChunkSectionVisible(at: ChunkSectionPosition(chunkPosition, sectionY: sectionY)) {
-          continue
+      sectionMeshes.mutatingEach { sectionY, mesh in
+        // Don't need to check if mesh is empty because the mesh builder never returns empty meshes
+        
+        let sectionPosition = ChunkSectionPosition(chunkPosition, sectionY: sectionY)
+        if !camera.isChunkSectionVisible(at: sectionPosition) {
+          return
         }
 
-        if let buffers = try? sectionMesh.getBuffers(for: device, commandQueue: commandQueue) {
-          encoder.setVertexBuffer(buffers.vertexBuffer, offset: 0, index: 0)
-          encoder.setVertexBuffer(buffers.uniformsBuffer, offset: 0, index: 2)
-          encoder.drawIndexedPrimitives(
-            type: .triangle,
-            indexCount: buffers.indexBuffer.length / 4,
-            indexType: .uint32,
-            indexBuffer: buffers.indexBuffer,
-            indexBufferOffset: 0)
-        } else {
-          let sectionPosition = ChunkSectionPosition(chunkPosition, sectionY: sectionY)
-          log.error("Failed to prepare buffers for Chunk.Section at \(sectionPosition)")
+        do {
+          try mesh.render(into: encoder, with: device, commandQueue: commandQueue)
+        } catch {
+          log.error("Failed to render chunk section at \(sectionPosition); \(error)")
         }
       }
     }

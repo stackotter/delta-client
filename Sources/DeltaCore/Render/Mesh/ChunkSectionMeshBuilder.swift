@@ -2,43 +2,48 @@ import Foundation
 import MetalKit
 import simd
 
-// TODO: document meshing
-// TODO: why is this a class
-public class ChunkSectionMesh: Mesh {
-  /// A lookup to quickly convert block index to block position
+/// Builds renderable meshes from chunk sections.
+public struct ChunkSectionMeshBuilder {
+  /// A lookup to quickly convert block index to block position.
   private static let indexToPosition = generateIndexLookup()
-  
+  /// A lookup tp quickly get the block indices for blocks' neighbours.
   private static let indexToNeighbourIndicesLookup = (0..<Chunk.numSections).map { generateNeighbourIndices(sectionIndex: $0) }
   
-  /// The `Chunk` containing the `Chunk.Section` to prepare
+  /// The chunk containing the section to prepare.
   public var chunk: Chunk
-  /// The position of the `Chunk.Section` to prepare
+  /// The position of the section to prepare.
   public var sectionPosition: ChunkSectionPosition
-  /// The chunks surrounding `chunk`
+  /// The chunks surrounding ``chunk``.
   public var neighbourChunks: [CardinalDirection: Chunk]
   
-  private let resourcePack: ResourcePack
+  /// The resources containing the textures and block models for the builds to use.
   private let resources: ResourcePack.Resources
-  public var stopwatch = Stopwatch(mode: .summary, name: "ChunkSectionMesh")
   
+  var stopwatch = Stopwatch(mode: .summary, name: "ChunkSectionMeshBuilder")
+  
+  /// Create a new mesh builder.
+  ///
+  /// - Parameters:
+  ///   - sectionPosition: The position of the section in the world.
+  ///   - chunk: The chunk the section is in.
+  ///   - neighbourChunks: The chunks surrounding the chunk the section is in. Used for face culling on the edge of the chunk.
+  ///   - resourcePack: The resource pack to use for block models.
   public init(
     forSectionAt sectionPosition: ChunkSectionPosition,
     in chunk: Chunk,
     withNeighbours neighbourChunks: [CardinalDirection: Chunk],
-    resourcePack: ResourcePack
+    resources: ResourcePack.Resources
   ) {
     self.sectionPosition = sectionPosition
     self.chunk = chunk
     self.neighbourChunks = neighbourChunks
-    self.resourcePack = resourcePack
-    self.resources = resourcePack.vanillaResources
-    super.init()
+    self.resources = resources
   }
   
-  /// Prepares the `Chunk.Section` at `sectionPosition` into the mesh
-  public func prepare() {
-    vertices = []
-    indices = []
+  /// Builds a mesh for the section at ``sectionPosition`` in ``chunk``.
+  /// - Returns: A mesh. `nil` if the mesh would be empty.
+  public func build() -> Mesh? {
+    var mesh = Mesh()
     
     // add the section's blocks to the mesh
     let section = chunk.sections[sectionPosition.sectionY]
@@ -57,29 +62,36 @@ public class ChunkSectionMesh: Mesh {
           position.x += xOffset
           position.y += yOffset
           position.z += zOffset
-          addBlock(at: position, atBlockIndex: blockIndex, with: state, indexToNeighbourIndices: indexToNeighbourIndices)
+          addBlock(at: position, atBlockIndex: blockIndex, with: state, to: &mesh, indexToNeighbourIndices: indexToNeighbourIndices)
         }
       }
       let elapsed = CFAbsoluteTimeGetCurrent() - startTime
-      log.debug("Prepared ChunkSectionMesh for Chunk.Section at \(sectionPosition) in \(elapsed) seconds")
+      log.trace("Prepared mesh for Chunk.Section at \(sectionPosition) in \(elapsed) seconds")
     }
     
-    // generate model to world transformation matrix
+    // Return early if the mesh contains no geometry.
+    if mesh.isEmpty {
+      return nil
+    }
+    
+    // Create uniforms
     let position = simd_float3(
       Float(sectionPosition.sectionX) * 16,
       Float(sectionPosition.sectionY) * 16,
       Float(sectionPosition.sectionZ) * 16)
     let modelToWorldMatrix = MatrixUtil.translationMatrix(position)
+    let uniforms = Uniforms(transformation: modelToWorldMatrix)
+    mesh.uniforms = uniforms
     
-    // set the mesh uniforms
-    uniforms = Uniforms(transformation: modelToWorldMatrix)
+    return mesh
   }
   
-  /// Adds a block to the mesh at `position` with block state `state`.
+  /// Adds a block to the mesh.
   private func addBlock(
     at position: Position,
     atBlockIndex blockIndex: Int,
     with state: UInt16,
+    to mesh: inout Mesh,
     indexToNeighbourIndices: [[(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]]
   ) {
     // Get block model
@@ -151,6 +163,7 @@ public class ChunkSectionMesh: Mesh {
       addModelPart(
         part,
         transformedBy: modelToWorld,
+        to: &mesh,
         culledFaces: culledFaces,
         lightLevel: lightLevel,
         neighbourLightLevels: neighbourLightLevels,
@@ -162,6 +175,7 @@ public class ChunkSectionMesh: Mesh {
   private func addModelPart(
     _ blockModel: BlockModelPart,
     transformedBy modelToWorld: matrix_float4x4,
+    to mesh: inout Mesh,
     culledFaces: Set<Direction>,
     lightLevel: LightLevel,
     neighbourLightLevels: [Direction: LightLevel],
@@ -171,6 +185,7 @@ public class ChunkSectionMesh: Mesh {
       addElement(
         element,
         transformedBy: modelToWorld,
+        to: &mesh,
         culledFaces: culledFaces,
         lightLevel: lightLevel,
         neighbourLightLevels: neighbourLightLevels,
@@ -182,6 +197,7 @@ public class ChunkSectionMesh: Mesh {
   private func addElement(
     _ element: BlockModelElement,
     transformedBy modelToWorld: matrix_float4x4,
+    to mesh: inout Mesh,
     culledFaces: Set<Direction>,
     lightLevel: LightLevel,
     neighbourLightLevels: [Direction: LightLevel],
@@ -198,24 +214,33 @@ public class ChunkSectionMesh: Mesh {
       addFace(
         face,
         transformedBy: vertexToWorld,
+        to: &mesh,
         shouldShade: element.shade,
         lightLevel: faceLightLevel,
         tintColor: tintColor)
     }
   }
   
-  /// Adds the face described by `face` to the mesh, facing in `direction` and transformed by `transformation`.
+  /// Adds a face to a mesh.
+  /// - Parameters:
+  ///   - face: A face to add to the mesh.
+  ///   - transformation: A transformation to apply to each vertex of the face.
+  ///   - mesh: A mesh to add the face to.
+  ///   - shouldShade: If `false`, the face will not be shaded based on the direction it faces. It'll still be affected by light levels.
+  ///   - lightLevel: The light level to render the face at.
+  ///   - tintColor: The color to tint the face as a float vector where each component has a maximum of 1. Supplying white will leave the face unaffected.
   private func addFace(
     _ face: BlockModelFace,
     transformedBy transformation: matrix_float4x4,
+    to mesh: inout Mesh,
     shouldShade: Bool,
     lightLevel: LightLevel,
     tintColor: SIMD3<Float>
   ) {
     // Add face winding
-    let offset = UInt32(vertices.count) // The index of the first vertex of face
+    let offset = UInt32(mesh.vertices.count) // The index of the first vertex of face
     for index in CubeGeometry.faceWinding {
-      indices.append(index &+ offset)
+      mesh.indices.append(index &+ offset)
     }
     
     // swiftlint:disable force_unwrapping
@@ -260,7 +285,7 @@ public class ChunkSectionMesh: Mesh {
         b: tint.z,
         textureIndex: textureIndex,
         isTransparent: isTextureTransparent)
-      vertices.append(vertex)
+      mesh.vertices.append(vertex)
     }
   }
   

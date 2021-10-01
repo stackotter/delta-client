@@ -4,6 +4,7 @@ import MetalKit
 // TODO: remove when not needed anymore
 var stopwatch = Stopwatch(mode: .summary)
 
+// TODO: document render coordinator
 public class RenderCoordinator: NSObject, MTKViewDelegate {
   private var client: Client
   
@@ -31,7 +32,7 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
     self.commandQueue = commandQueue
     
     // Setup physics engine
-    // TODO: put physics engine in the client instead of the renderer
+    // TODO: put physics engine in the client instead of the renderer, (ECS perhaps?)
     physicsEngine = PhysicsEngine(client: client)
     
     // Setup camera
@@ -45,7 +46,7 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
     // Create world renderer
     if let world = client.server?.world {
       do {
-        worldRenderer = try WorldRenderer(device: device, world: world, client: client, resourcePack: client.resourcePack, commandQueue: commandQueue)
+        worldRenderer = try WorldRenderer(device: device, world: world, client: client, resources: client.resourcePack.vanillaResources, commandQueue: commandQueue)
       } catch {
         log.critical("Failed to create world renderer")
         client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to create world renderer"))
@@ -115,7 +116,7 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
             device: device,
             world: event.world,
             client: client,
-            resourcePack: client.resourcePack,
+            resources: client.resourcePack.vanillaResources,
             commandQueue: commandQueue)
         } catch {
           log.critical("Failed to create world renderer")
