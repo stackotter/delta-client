@@ -3,11 +3,16 @@ import SwiftUI
 import DeltaCore
 
 /// Used to update the client to either the latest successful CI build or the latest GitHub release.
-class Updater: ObservableObject {
-  var updateType: UpdateType
+public class Updater: ObservableObject {
+  /// The branch used for unstable updates.
+  public static var unstableBranch = "dev"
+  /// The type of update this updater will perform.
+  public var updateType: UpdateType
   
-  enum UpdateType {
+  public enum UpdateType {
+    /// Update from GitHub releases.
     case stable
+    /// Update from latest CI build.
     case unstable
   }
   
@@ -15,24 +20,30 @@ class Updater: ObservableObject {
   private var queue: OperationQueue
   private var observations: [NSKeyValueObservation] = []
   
-  @Published var fractionCompleted: Double? = nil
-  @Published var stepDescription = ""
-  @Published var version: String?
-  @Published var canCancel = true
+  // MARK: SwiftUI
   
-  convenience init() {
+  @Published public var fractionCompleted: Double? = nil
+  @Published public var stepDescription = ""
+  @Published public var version: String?
+  @Published public var canCancel = true
+  
+  // MARK: Init
+  
+  public convenience init() {
     self.init(.stable)
   }
   
-  init(_ updateType: UpdateType) {
+  public init(_ updateType: UpdateType) {
     self.updateType = updateType
     queue = OperationQueue()
     queue.name = "dev.stackotter.delta-client.update"
     queue.maxConcurrentOperationCount = 1
   }
   
+  // MARK: Perform update
+  
   /// Starts the requested update asynchronously.
-  func startUpdate() {
+  public func startUpdate() {
     reset()
     queue.addOperation {
       self.updateStep("Getting download URL")
@@ -57,8 +68,86 @@ class Updater: ObservableObject {
     }
   }
   
+  /// The completion handler for the download task. Unzips the downloaded file and performs the swap and restart.
+  private func finishUpdate(_ data: Data?, _ response: URLResponse?, _ error: Error?) {
+    let temp = FileManager.default.temporaryDirectory
+    let zipFile = temp.appendingPathComponent("DeltaClient.zip")
+    let temp2 = temp.appendingPathComponent("DeltaClient-\(UUID().uuidString)")
+    
+    queue.addOperation {
+      if let data = data {
+        do {
+          try data.write(to: zipFile)
+        } catch {
+          DeltaClientApp.modalError("Failed to write download to disk; \(error)", safeState: .serverList)
+        }
+      }
+    }
+    
+    queue.addOperation {
+      self.updateStep("Unzipping DeltaClient.zip")
+      self.progress.completedUnitCount = 0
+      
+      let queue = self.queue
+      do {
+        try FileManager.default.unzipItem(at: zipFile, to: temp2, progress: self.progress)
+        
+        if self.updateType == .unstable {
+          // Builds downloaded from workflow runs (through nightly.link) have two layers of zip
+          self.updateStep("Unzipping a second layer of zip")
+          self.progress.completedUnitCount = 0
+          try FileManager.default.unzipItem(at: temp2.appendingPathComponent("DeltaClient.zip"), to: temp2, progress: self.progress)
+        }
+      } catch {
+        // Just a workaround because somehow this job unsuspends as when the a subsequent update attempt writes to DeltaClient.zip
+        if !queue.isSuspended {
+          DeltaClientApp.modalError("Failed to unzip DeltaClient.zip; \(error)", safeState: .serverList)
+        }
+      }
+    }
+    
+    // Delete the cache to avoid common issues when updating
+    queue.addOperation {
+      let queue = self.queue
+      self.updateStep("Deleting cache")
+      sleep(1) // Delay so people have a chance of seeing the message
+      do {
+        try FileManager.default.removeItem(at: StorageManager.default.cacheDirectory)
+      } catch {
+        if !queue.isSuspended {
+          DeltaClientApp.modalError("Failed to delete cache directory; \(error)", safeState: .serverList)
+        }
+      }
+    }
+    
+    queue.addOperation {
+      self.updateStep("Restarting app in 3")
+      sleep(1)
+      self.updateStep("Restarting app in 2")
+      sleep(1)
+      self.updateStep("Restarting app in 1")
+      sleep(1)
+    }
+    
+    // Create a background task to replace the app and relaunch
+    queue.addOperation {
+      ThreadUtil.runInMain {
+        self.canCancel = false
+      }
+    }
+    
+    queue.addOperation {
+      let newApp = temp2.appendingPathComponent("DeltaClient.app")
+      let currentApp = Bundle.main.bundlePath
+      if !self.queue.isSuspended {
+        Utils.shell(#"nohup sh -c 'sleep 3; rm -rf \#(currentApp); mv \#(newApp.path) \#(currentApp); open \#(currentApp); open \#(currentApp)' >/dev/null 2>&1 &"#)
+        Foundation.exit(0)
+      }
+    }
+  }
+  
   /// Cancels the update if `canCancel` is true.
-  func cancel() {
+  public func cancel() {
     queue.cancelAllOperations()
     queue.isSuspended = true
     for observation in observations {
@@ -67,8 +156,10 @@ class Updater: ObservableObject {
     observations = []
   }
   
+  // MARK: Helper
+  
   /// - Returns: A download URL and a version string
-  static func getDownloadURL(_ type: UpdateType) throws -> (URL, String) {
+  public static func getDownloadURL(_ type: UpdateType) throws -> (URL, String) {
     switch type {
       case .stable:
         return try getLatestStableDownloadURL()
@@ -124,7 +215,7 @@ class Updater: ObservableObject {
     
     // Get the latest relevant run
     guard let run = response.workflowRuns.first(where: {
-      $0.event == "push" && $0.headBranch == "main" && $0.conclusion == "success" && $0.name == "Build" && $0.status == "completed"
+      $0.event == "push" && $0.headBranch == Self.unstableBranch && $0.conclusion == "success" && $0.name == "Build" && $0.status == "completed"
     }) else {
       throw UpdateError.failedToGetLatestSuccessfulWorkflowRun(branch: "main")
     }
@@ -142,72 +233,6 @@ class Updater: ObservableObject {
     let url = URL(string: "https://nightly.link/stackotter/delta-client/suites/\(run.checkSuiteId)/artifacts/\(artifact.id)")!
     return (url, "commit \(run.headSha)")
   }
-  
-  /// The completion handler for the download task. Unzips the downloaded file and performs the swap and restart.
-  private func finishUpdate(_ data: Data?, _ response: URLResponse?, _ error: Error?) {
-    let temp = FileManager.default.temporaryDirectory
-    let zipFile = temp.appendingPathComponent("DeltaClient.zip")
-    let temp2 = temp.appendingPathComponent("DeltaClient-\(UUID().uuidString)")
-    
-    queue.addOperation {
-      if let data = data {
-        do {
-          try data.write(to: zipFile)
-        } catch {
-          DeltaClientApp.modalError("Failed to write download to disk; \(error)", safeState: .serverList)
-        }
-      }
-    }
-    
-    queue.addOperation {
-      self.updateStep("Unzipping DeltaClient.zip")
-      self.progress.completedUnitCount = 0
-      
-      let queue = self.queue
-      do {
-        try FileManager.default.unzipItem(at: zipFile, to: temp2, progress: self.progress)
-        
-        if self.updateType == .unstable {
-          // Builds downloaded from workflow runs (through nightly.link) have two layers of zip
-          self.updateStep("Unzipping a second layer of zip")
-          self.progress.completedUnitCount = 0
-          try FileManager.default.unzipItem(at: temp2.appendingPathComponent("DeltaClient.zip"), to: temp2, progress: self.progress)
-        }
-      } catch {
-        // Just a workaround because somehow this job unsuspends as when the a subsequent update attempt writes to DeltaClient.zip
-        if !queue.isSuspended {
-          DeltaClientApp.modalError("Failed to unzip DeltaClient.zip; \(error)", safeState: .serverList)
-        }
-      }
-    }
-    
-    queue.addOperation {
-      self.updateStep("Restarting app in 3")
-      sleep(1)
-      self.updateStep("Restarting app in 2")
-      sleep(1)
-      self.updateStep("Restarting app in 1")
-      sleep(1)
-    }
-    
-    // Create a background task to replace the app and relaunch
-    queue.addOperation {
-      ThreadUtil.runInMain {
-        self.canCancel = false
-      }
-    }
-    
-    queue.addOperation {
-      let newApp = temp2.appendingPathComponent("DeltaClient.app")
-      let currentApp = Bundle.main.bundlePath
-      if !self.queue.isSuspended {
-        Utils.shell(#"nohup sh -c 'sleep 3; rm -rf \#(currentApp); mv \#(newApp.path) \#(currentApp); open \#(currentApp); open \#(currentApp)' >/dev/null 2>&1 &"#)
-        Foundation.exit(0)
-      }
-    }
-  }
-  
-  // MARK: Helper
   
   /// Resets the updater back to its initial state
   private func reset() {

@@ -26,7 +26,7 @@ struct DeltaClientApp: App {
         try Registry.populate(from: StorageManager.default.pixlyzerDirectory)
         
         updateLoadingMessage("Loading resource pack")
-        let packCache = StorageManager.default.absoluteFromRelative("cache/vanilla.rpcache/")
+        let packCache = StorageManager.default.cacheDirectory.appendingPathComponent("vanilla.rpcache/")
         let cacheExists = StorageManager.default.directoryExists(at: packCache)
         let resourcePack = try ResourcePack.load(from: StorageManager.default.vanillaAssetsDirectory, cacheDirectory: cacheExists ? packCache : nil)
         if !cacheExists {

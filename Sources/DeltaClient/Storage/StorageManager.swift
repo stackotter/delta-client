@@ -15,6 +15,11 @@ class StorageManager {
   /// The directory within the storage directory to store pixlyzer data.
   public var pixlyzerDirectory: URL { storageDirectory.appendingPathComponent("pixlyzer") }
   
+  /// Directory that should be used for caching.
+  public var cacheDirectory: URL {
+    return storageDirectory.appendingPathComponent("cache")
+  }
+  
   private init() {
     // Get the url of the storage directory
     if let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
