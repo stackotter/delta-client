@@ -59,7 +59,7 @@ public enum MathUtil {
     return b - a < absoluteTolerance
   }
   
-  @_specialize(exported: true, where T:_Trivial)
+  @_specialize(where T:_Trivial)
   public static func clamp<T>(_ value: T,  _ minValue: T, _ maxValue: T) -> T where T : Comparable {
     return min(max(value, minValue), maxValue)
   }

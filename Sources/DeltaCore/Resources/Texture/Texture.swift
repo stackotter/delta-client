@@ -111,7 +111,7 @@ public struct Texture {
     for x in 0..<width {
       // For each transparent pixel copy the color values from above
       for y in 0..<height {
-        var pixel = pixel(atX: x, y: y)
+        var pixel = self.pixel(atX: x, y: y)
         if pixel.a == 0 && y != 0 {
           pixel = self.pixel(atX: x, y: y - 1)
           pixel.a = 0
@@ -122,7 +122,7 @@ public struct Texture {
       // Do the same but the other way
       for y in 1...height {
         let y = height - y
-        var pixel = pixel(atX: x, y: y)
+        var pixel = self.pixel(atX: x, y: y)
         if pixel.a == 0 && y != height - 1 {
           pixel = self.pixel(atX: x, y: y + 1)
           pixel.a = 0
@@ -135,7 +135,7 @@ public struct Texture {
     for y in 0..<height {
       // For each transparent pixel copy the color values from the left
       for x in 0..<width {
-        var pixel = pixel(atX: x, y: y)
+        var pixel = self.pixel(atX: x, y: y)
         if pixel.a == 0 && x != 0 {
           pixel = self.pixel(atX: x - 1, y: y)
           pixel.a = 0
@@ -146,7 +146,7 @@ public struct Texture {
       // Do the same but the other way
       for x in 1...width {
         let x = width - x
-        var pixel = pixel(atX: x, y: y)
+        var pixel = self.pixel(atX: x, y: y)
         if pixel.a == 0 && x != width - 1 {
           pixel = self.pixel(atX: x + 1, y: y)
           pixel.a = 0

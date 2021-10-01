@@ -131,7 +131,7 @@ public final class Chunk {
   /// - Parameter position: Position of block in chunk relative coordinates.
   /// - Returns: Data about the biome.
   public func biome(at position: Position) -> Biome? {
-    let biomeId = biomeId(at: position)
+    let biomeId = self.biomeId(at: position)
     return Registry.biomeRegistry.biome(withId: biomeId)
   }
   
