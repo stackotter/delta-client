@@ -64,7 +64,7 @@ Not every version will be perfectly supported but we will try and have the most 
   - [x] Server list ping
   - [x] Encryption (for non-offline mode servers)
     - [x] Mojang accounts
-    - [ ] Microsoft accounts (if you have a Microsoft account and are willing to test logging on for me I can implement this)
+    - [ ] Microsoft accounts
   - [ ] LAN server detection
 - [x] Basic config system
   - [x] Multi-accounting
@@ -78,10 +78,11 @@ Not every version will be perfectly supported but we will try and have the most 
     - [x] Multiple chunks
     - [x] Lighting
     - [x] Animated textures (e.g. lava)
-    - [ ] Translucency
+    - [x] Translucency
     - [ ] Fluids (lava and water)
     - [ ] Block entities (e.g. chests)
-    - [x] Chunk culling
+    - [x] Chunk frustum culling
+    - [x] Biome blending (mostly)
   - [ ] HUD
     - [ ] Basic text
     - [ ] Chat
