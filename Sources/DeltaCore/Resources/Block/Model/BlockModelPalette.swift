@@ -1,19 +1,19 @@
 import Foundation
 import simd
 
+/// Contains block models loaded from a resource pack.
 public struct BlockModelPalette {
   /// Block models indexed by block state id. Each is an array of block model variants. Each variant is an array of block models (required for multi-part block models).
-  public var models: [[BlockModel]]
+  public var models: [[BlockModel]] = []
   /// The transforms to use when displaying blocks in different places. Block models specify an index into this array.
-  public var displayTransforms: [BlockModelDisplayTransforms]
+  public var displayTransforms: [BlockModelDisplayTransforms] = []
   
   // MARK: Init
   
-  public init() {
-    models = []
-    displayTransforms = []
-  }
+  /// Create an empty palette.
+  public init() {}
   
+  /// Create a populated palette.
   public init(models: [[BlockModel]], displayTransforms: [BlockModelDisplayTransforms]) {
     self.models = models
     self.displayTransforms = displayTransforms

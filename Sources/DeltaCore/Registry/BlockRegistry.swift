@@ -12,22 +12,40 @@ public struct BlockRegistry {
   /// Maps block state id to an array containing an array for each variant. The array for each variant contains the models to render.
   public var renderDescriptors: [Int: [[BlockModelRenderDescriptor]]] = [:]
   
+  /// Contains the block state ids of all blocks that cull the faces of blocks with the same id that aren't opaque (e.g. glass blocks).
+  public var selfCullingBlockStates: Set<Int> = []
+  
   // MARK: Init
   
-  /// Creates an empty block registry.
+  /// Creates an empty block registry. It's best to use the other initializer unless you really know what you're doing.
   public init() {}
   
   /// Creates a populated block registry.
+  /// - Parameters:
+  ///   - identifierToBlockId: Maps block identifier to block id.
+  ///   - blocks: Maps block id to block.
+  ///   - states: Maps block state id to block state.
+  ///   - renderDescriptors: Descriptions of what to render for each block.
+  ///   - selfCullingBlockClassesOverrides: Block classes of blocks that cull blocks of the same state id. If `nil`, the vanilla overrides are used.
   public init(
     identifierToBlockId: [Identifier : Int],
     blocks: [Int : Block],
     states: [Int : BlockState],
-    renderDescriptors: [Int : [[BlockModelRenderDescriptor]]]
+    renderDescriptors: [Int : [[BlockModelRenderDescriptor]]],
+    selfCullingBlockClasses: Set<String>? = nil
   ) {
     self.identifierToBlockId = identifierToBlockId
     self.blocks = blocks
     self.states = states
     self.renderDescriptors = renderDescriptors
+    
+    // I'm really struggling to find a good name for this value and everything else around this stuff. Its basically just a way to hardcode certain blocks that cull the faces of their own kind (e.g. glass blocks).
+    let selfCullingBlockClasses = selfCullingBlockClasses ?? ["StainedGlassBlock", "GlassBlock", "LeavesBlock"]
+    for (_, block) in blocks {
+      if selfCullingBlockClasses.contains(block.className) {
+        selfCullingBlockStates.formUnion(Set(block.states))
+      }
+    }
   }
   
   // MARK: Access

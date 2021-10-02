@@ -119,7 +119,7 @@ public struct ChunkSectionMeshBuilder {
     let neighbourIndices = indexToNeighbourIndices[blockIndex]
 
     // Calculate face visibility
-    let culledFaces = getCullingNeighbours(at: position, neighbourIndices: neighbourIndices)
+    let culledFaces = getCullingNeighbours(at: position, state: state, neighbourIndices: neighbourIndices)
     
     // Return early if there can't possibly be any visible faces
     if blockModel.cullableFaces.count == 6 && culledFaces.count == 6 && blockModel.nonCullableFaces.count == 0 {
@@ -443,14 +443,17 @@ public struct ChunkSectionMeshBuilder {
   /// has multiple variations. Both `sectionIndex` and `position` are required for performance reasons as this
   /// function is the main bottleneck during mesh preparing.
   ///
-  /// - Parameter sectionIndex: The sectionIndex of the block in `chunk`.
-  /// - Parameter position: The position of the block relative to `sectionPosition`.
-  ///
+  /// - Parameters:
+  ///   - sectionIndex: The sectionIndex of the block in `chunk`.
+  ///   - position: The position of the block relative to `sectionPosition`.
+  ///   - state: The block state of the block at the given position.
+  ///   - neighbourIndices: The neighbour indices lookup table to use.
   /// - Returns: The set of directions of neighbours that can possibly cull a face.
-  func getCullingNeighbours(at position: Position, neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> Set<Direction> {
+  func getCullingNeighbours(at position: Position, state: Int, neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> Set<Direction> {
     let neighbouringBlockStates = getNeighbouringBlockStates(neighbourIndices: neighbourIndices)
     
     var cullingNeighbours = Set<Direction>(minimumCapacity: 6)
+    let blockCullsSameKind = Registry.blockRegistry.selfCullingBlockStates.contains(state)
     
     for (direction, neighbourBlockState) in neighbouringBlockStates where neighbourBlockState != 0 {
       // We assume that block model variants always have the same culling faces as eachother, so no position is passed to getModel.
@@ -459,7 +462,7 @@ public struct ChunkSectionMeshBuilder {
         continue
       }
       
-      if blockModel.cullingFaces.contains(direction.opposite) {
+      if blockModel.cullingFaces.contains(direction.opposite) || (blockCullsSameKind && state == neighbourBlockState) {
         cullingNeighbours.insert(direction)
       }
     }
