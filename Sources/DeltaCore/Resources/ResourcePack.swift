@@ -236,7 +236,7 @@ public struct ResourcePack {
     let extractedClientJarDirectory = temporaryDirectory.appendingPathComponent("client", isDirectory: true)
     try? FileManager.default.removeItem(at: extractedClientJarDirectory)
     do {
-      try FileManager.default.unzipItem(at: clientJarTempFile, to: extractedClientJarDirectory)
+      try FileManager.default.unzipItem(at: clientJarTempFile, to: extractedClientJarDirectory, skipCRC32: true)
     } catch {
       log.error("Failed to extract client jar: \(error)")
       throw ResourcePackError.clientJarExtractionFailure

@@ -90,13 +90,13 @@ public class Updater: ObservableObject {
       
       let queue = self.queue
       do {
-        try FileManager.default.unzipItem(at: zipFile, to: temp2, progress: self.progress)
+        try FileManager.default.unzipItem(at: zipFile, to: temp2, skipCRC32: true, progress: self.progress)
         
         if self.updateType == .unstable {
           // Builds downloaded from workflow runs (through nightly.link) have two layers of zip
           self.updateStep("Unzipping a second layer of zip")
           self.progress.completedUnitCount = 0
-          try FileManager.default.unzipItem(at: temp2.appendingPathComponent("DeltaClient.zip"), to: temp2, progress: self.progress)
+          try FileManager.default.unzipItem(at: temp2.appendingPathComponent("DeltaClient.zip"), to: temp2, skipCRC32: true, progress: self.progress)
         }
       } catch {
         // Just a workaround because somehow this job unsuspends as when the a subsequent update attempt writes to DeltaClient.zip
