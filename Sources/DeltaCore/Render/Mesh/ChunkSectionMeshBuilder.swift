@@ -43,8 +43,9 @@ public struct ChunkSectionMeshBuilder {
   }
   
   /// Builds a mesh for the section at ``sectionPosition`` in ``chunk``.
+  /// - Parameter existingMesh: If present, the builder will attempt to reuse existing buffers if possible.
   /// - Returns: A mesh. `nil` if the mesh would be empty.
-  public func build() -> ChunkSectionMesh? {
+  public func build(reusing existingMesh: ChunkSectionMesh? = nil) -> ChunkSectionMesh? {
     // Create uniforms
     let position = simd_float3(
       Float(sectionPosition.sectionX) * 16,
@@ -52,7 +53,9 @@ public struct ChunkSectionMeshBuilder {
       Float(sectionPosition.sectionZ) * 16)
     let modelToWorldMatrix = MatrixUtil.translationMatrix(position)
     let uniforms = Uniforms(transformation: modelToWorldMatrix)
-    var mesh = ChunkSectionMesh(uniforms)
+    
+    var mesh = existingMesh ?? ChunkSectionMesh(uniforms)
+    mesh.clearGeometry()
     
     // Populate mesh with geometry
     let section = chunk.sections[sectionPosition.sectionY]

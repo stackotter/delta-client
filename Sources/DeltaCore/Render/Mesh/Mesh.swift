@@ -95,7 +95,7 @@ public struct Mesh {
     encoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 2)
     encoder.drawIndexedPrimitives(
       type: .triangle,
-      indexCount: indexBuffer.length / 4,
+      indexCount: indices.count,
       indexType: .uint32,
       indexBuffer: indexBuffer,
       indexBufferOffset: 0)
@@ -115,10 +115,11 @@ public struct Mesh {
     uniformsBufferIsValid = keepUniformsBuffer
   }
   
-  /// Clears the mesh's geometry.
-  public mutating func clear() {
+  /// Clears the mesh's geometry and invalidates its buffers.
+  public mutating func clearGeometry() {
     vertices = []
     indices = []
+    invalidateBuffers(keepUniformsBuffer: true)
   }
   
   /// Creates a buffer on the GPU containing a given array. Reuses the supplied private buffer if it's big enough.

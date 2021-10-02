@@ -25,6 +25,13 @@ public struct SortableMesh {
     underlyingMesh.uniforms = uniforms
   }
   
+  /// Removes all elements from the mesh.
+  public mutating func clear() {
+    elements = []
+    underlyingMesh.clearGeometry()
+    underlyingMesh.invalidateBuffers(keepUniformsBuffer: true)
+  }
+  
   /// Add an element to the mesh.
   public mutating func add(_ element: SortableMeshElement) {
     elements.append(element)
@@ -49,7 +56,7 @@ public struct SortableMesh {
     }
     
     if sort || underlyingMesh.isEmpty {
-      underlyingMesh.clear()
+      underlyingMesh.clearGeometry()
       // TODO: reuse vertices from mesh and just recreate winding
       // Sort elements by distance in descending order.
       elements = elements.sorted(by: {

@@ -8,6 +8,10 @@ public struct ChunkSectionMesh {
   /// The mesh containing translucent blocks. Requires sorting when the player moves (clever stuff is done to minimise sorts in ``WorldRenderer``).
   public var translucentMesh: SortableMesh
   
+  public var isEmpty: Bool {
+    return transparentAndOpaqueMesh.isEmpty && translucentMesh.isEmpty
+  }
+  
   /// Create a new chunk section mesh.
   public init(_ uniforms: Uniforms) {
     transparentAndOpaqueMesh = Mesh()
@@ -15,8 +19,10 @@ public struct ChunkSectionMesh {
     translucentMesh = SortableMesh(uniforms: uniforms)
   }
   
-  public var isEmpty: Bool {
-    return transparentAndOpaqueMesh.isEmpty && translucentMesh.isEmpty
+  /// Clear the mesh's geometry and invalidate its buffers. Leaves GPU buffers intact for reuse.
+  public mutating func clearGeometry() {
+    transparentAndOpaqueMesh.clearGeometry()
+    translucentMesh.clear()
   }
   
   /// Encode the render commands for this chunk section.

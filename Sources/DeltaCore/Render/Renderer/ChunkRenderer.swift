@@ -72,13 +72,20 @@ class ChunkRenderer {
     let sectionPosition = ChunkSectionPosition(chunkPosition, sectionY: sectionY)
     freezeSection(at: sectionY)
     
+    var existingMesh: ChunkSectionMesh? = nil
+    sectionMeshesAccessQueue.sync {
+      if let mesh = sectionMeshes[sectionY] {
+        existingMesh = mesh
+      }
+    }
+    
     meshPreparationQueue.async {
       let builder = ChunkSectionMeshBuilder(
         forSectionAt: sectionPosition,
         in: self.chunk,
         withNeighbours: self.neighbourChunks,
         resources: self.resources)
-      let mesh = builder.build()
+      let mesh = builder.build(reusing: existingMesh)
       
       self.sectionMeshesAccessQueue.async {
         if let mesh = mesh {
