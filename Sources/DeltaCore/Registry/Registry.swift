@@ -3,7 +3,7 @@ import Foundation
 /// An error to do with the shared registry.
 public enum RegistryError: LocalizedError {
   /// Failed to download data for a registry.
-  case failedDownloadPixlyzerData(name: String)
+  case failedDownloadPixlyzerData(name: String, Error)
 }
 
 /// Holds static Minecraft data such as blocks and biomes. Delta Client populates at launch.
@@ -33,13 +33,16 @@ public enum Registry {
     
     if !FileManager.default.fileExists(atPath: file.path) {
       do {
+        log.info("Downloading pixlyzer data: \(url.lastPathComponent)")
+        try FileManager.default.createDirectory(at: pixlyzerDirectory, withIntermediateDirectories: true, attributes: nil)
         let data = try Data(contentsOf: url)
         try data.write(to: file)
       } catch {
-        throw RegistryError.failedDownloadPixlyzerData(name: "\(T.self)")
+        throw RegistryError.failedDownloadPixlyzerData(name: "\(T.self)", error)
       }
     }
     
+    log.info("Loading \(url.deletingPathExtension().deletingPathExtension().lastPathComponent) registry")
     let registry = try T.load(from: file)
     return registry
   }
