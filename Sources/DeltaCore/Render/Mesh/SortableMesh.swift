@@ -51,11 +51,11 @@ public struct SortableMesh {
     if sort || underlyingMesh.isEmpty {
       underlyingMesh.clear()
       // TODO: reuse vertices from mesh and just recreate winding
-      // Sort elements by distance in ascending order.
+      // Sort elements by distance in descending order.
       elements = elements.sorted(by: {
         let squaredDistance1 = distance_squared(position, $0.centerPosition)
         let squaredDistance2 = distance_squared(position, $1.centerPosition)
-        return squaredDistance1 < squaredDistance2
+        return squaredDistance1 > squaredDistance2
       })
       
       for element in elements {

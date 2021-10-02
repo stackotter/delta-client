@@ -97,15 +97,15 @@ class WorldRenderer {
     pipelineStateDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
     pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float
     
-    // Setup for translucency
     if translucent {
+      // Setup blending operation
       pipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
       pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
-//      pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
+      pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
       pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
-//      pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+      pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .zero
       pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
-//      pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+      pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .zero
     }
     
     do {
