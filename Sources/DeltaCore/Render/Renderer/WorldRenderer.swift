@@ -4,7 +4,11 @@ import simd
 
 /// A renderer that renders a `World`
 class WorldRenderer {
-  var pipelineState: MTLRenderPipelineState
+  /// Render pipeline used for transparent and opaque geometry (non-translucent).
+  var transparentAndOpaquePipelineState: MTLRenderPipelineState
+  /// Render pipeline used for translucent geometry.
+  var translucentPipelineState: MTLRenderPipelineState
+  /// Depth stencil.
   var depthState: MTLDepthStencilState
   
   var resources: ResourcePack.Resources
@@ -53,7 +57,8 @@ class WorldRenderer {
     let blockTexturePalette = resources.blockTexturePalette
     blockTexturePaletteAnimationState = TexturePaletteAnimationState(for: blockTexturePalette)
     blockArrayTexture = try Self.createArrayTexture(palette: blockTexturePalette, animationState: blockTexturePaletteAnimationState, device: device, commandQueue: commandQueue)
-    pipelineState = try Self.createRenderPipelineState(vertex: vertex, fragment: fragment, device: device)
+    transparentAndOpaquePipelineState = try Self.createRenderPipelineState(vertex: vertex, fragment: fragment, device: device, translucent: false)
+    translucentPipelineState = try Self.createRenderPipelineState(vertex: vertex, fragment: fragment, device: device, translucent: true)
     depthState = try Self.createDepthState(device: device)
     worldUniformBuffers = try Self.createWorldUniformBuffers(device: device, count: numWorldUniformBuffers)
   }
@@ -84,13 +89,24 @@ class WorldRenderer {
     return depthState
   }
   
-  private static func createRenderPipelineState(vertex: MTLFunction, fragment: MTLFunction, device: MTLDevice) throws -> MTLRenderPipelineState {
+  private static func createRenderPipelineState(vertex: MTLFunction, fragment: MTLFunction, device: MTLDevice, translucent: Bool) throws -> MTLRenderPipelineState {
     let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
-    pipelineStateDescriptor.label = "Triangle Pipeline"
+    pipelineStateDescriptor.label = "dev.stackotter.delta-client.WorldRenderer\(translucent ? "-translucent" : "")"
     pipelineStateDescriptor.vertexFunction = vertex
     pipelineStateDescriptor.fragmentFunction = fragment
     pipelineStateDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
     pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float
+    
+    // Setup for translucency
+    if translucent {
+      pipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
+      pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
+//      pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
+      pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+//      pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+      pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+//      pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+    }
     
     do {
       return try device.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
@@ -414,7 +430,32 @@ class WorldRenderer {
     return buffer
   }
   
-  func draw(device: MTLDevice, view: MTKView, commandBuffer: MTLCommandBuffer, camera: Camera, commandQueue: MTLCommandQueue) {
+  private static func createRenderEncoder(
+    depthState: MTLDepthStencilState,
+    commandBuffer: MTLCommandBuffer,
+    renderPassDescriptor: MTLRenderPassDescriptor,
+    pipelineState: MTLRenderPipelineState
+  ) throws -> MTLRenderCommandEncoder {
+    guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
+      throw RenderError.failedToCreateRenderEncoder(pipelineState.label ?? "pipeline")
+    }
+    
+    renderEncoder.setRenderPipelineState(pipelineState)
+    renderEncoder.setDepthStencilState(depthState)
+    renderEncoder.setFrontFacing(.clockwise)
+    renderEncoder.setCullMode(.back)
+    
+    return renderEncoder
+  }
+  
+  func draw(
+    device: MTLDevice,
+    view: MTKView,
+    transparentAndOpaqueCommandBuffer: MTLCommandBuffer,
+    translucentCommandBuffer: MTLCommandBuffer,
+    camera: Camera,
+    commandQueue: MTLCommandQueue
+  ) {
     // Update animated textures
     let updatedTextures = blockTexturePaletteAnimationState.update(tick: client.getClientTick())
     stopwatch.startMeasurement("update texture")
@@ -430,42 +471,60 @@ class WorldRenderer {
     // Get the render pass descriptor as late as possible
     guard
       let renderPassDescriptor = view.currentRenderPassDescriptor,
-      let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
+      let drawableTexture = renderPassDescriptor.colorAttachments[0].texture
     else {
-      log.warning("Failed to create render command encoder")
+      log.warning("Failed to get current render pass descriptor and drawable texture")
       return
     }
     
-    // Setup encoder
-    renderEncoder.setRenderPipelineState(pipelineState)
-    renderEncoder.setDepthStencilState(depthState)
-    renderEncoder.setFrontFacing(.clockwise)
-    renderEncoder.setCullMode(.back)
-    renderEncoder.setFragmentTexture(blockArrayTexture, index: 0)
+    let transparentAndOpaqueRenderDescriptor = renderPassDescriptor
+    transparentAndOpaqueRenderDescriptor.colorAttachments[0].loadAction = .clear
+    let translucentRenderDescriptor = MTLRenderPassDescriptor()
+    translucentRenderDescriptor.colorAttachments[0].texture = drawableTexture
+    translucentRenderDescriptor.colorAttachments[0].loadAction = .load
+    translucentRenderDescriptor.colorAttachments[0].storeAction = .store
+    translucentRenderDescriptor.depthAttachment = renderPassDescriptor.depthAttachment
+    translucentRenderDescriptor.depthAttachment.loadAction = .load
     
-    if Constants.renderMode == .wireframe {
-      renderEncoder.setTriangleFillMode(.lines)
-      renderEncoder.setCullMode(.none)
+    // Create encoders
+    let transparentAndOpaqueEncoder: MTLRenderCommandEncoder
+    let translucentEncoder: MTLRenderCommandEncoder
+    do {
+      transparentAndOpaqueEncoder = try Self.createRenderEncoder(
+        depthState: depthState,
+        commandBuffer: transparentAndOpaqueCommandBuffer,
+        renderPassDescriptor: transparentAndOpaqueRenderDescriptor,
+        pipelineState: transparentAndOpaquePipelineState)
+      
+      translucentEncoder = try Self.createRenderEncoder(
+        depthState: depthState,
+        commandBuffer: translucentCommandBuffer,
+        renderPassDescriptor: translucentRenderDescriptor,
+        pipelineState: translucentPipelineState)
+    } catch {
+      log.warning("Failed to create render command encoder; \(error)")
+      return
     }
     
-    // Encode chunks
+    // Encode render pass
     stopwatch.startMeasurement("encode")
-    renderEncoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
+    transparentAndOpaqueEncoder.setFragmentTexture(blockArrayTexture, index: 0)
+    transparentAndOpaqueEncoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
+    
+    translucentEncoder.setFragmentTexture(blockArrayTexture, index: 0)
+    translucentEncoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
+    
     renderersToRender.forEach { chunkRenderer in
-      chunkRenderer.render(to: renderEncoder, with: device, and: camera, commandQueue: commandQueue)
+      chunkRenderer.render(
+        transparentAndOpaqueEncoder: transparentAndOpaqueEncoder,
+        translucentEncoder: translucentEncoder,
+        with: device,
+        and: camera,
+        commandQueue: commandQueue)
     }
-    renderEncoder.endEncoding()
+    
+    transparentAndOpaqueEncoder.endEncoding()
+    translucentEncoder.endEncoding()
     stopwatch.stopMeasurement("encode")
-  }
-}
-
-extension WorldRenderer {
-  enum RenderMode {
-    case normal
-    case wireframe
-  }
-  
-  enum Constants {
-    static let renderMode = RenderMode.normal
   }
 }

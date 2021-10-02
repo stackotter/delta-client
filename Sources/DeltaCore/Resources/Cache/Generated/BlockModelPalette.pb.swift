@@ -76,6 +76,50 @@ extension ProtobufDirection: CaseIterable {
 
 #endif  // swift(>=4.2)
 
+enum ProtobufTextureType: SwiftProtobuf.Enum {
+  typealias RawValue = Int
+  case opaque // = 0
+  case transparent // = 1
+  case translucent // = 2
+  case UNRECOGNIZED(Int)
+
+  init() {
+    self = .opaque
+  }
+
+  init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .opaque
+    case 1: self = .transparent
+    case 2: self = .translucent
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  var rawValue: Int {
+    switch self {
+    case .opaque: return 0
+    case .transparent: return 1
+    case .translucent: return 2
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension ProtobufTextureType: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  static var allCases: [ProtobufTextureType] = [
+    .opaque,
+    .transparent,
+    .translucent,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
 struct ProtobufBlockModelFace {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -161,6 +205,8 @@ struct ProtobufBlockModel {
 
   var nonCullableFaces: [ProtobufDirection] = []
 
+  var textureType: ProtobufTextureType = .opaque
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -228,6 +274,14 @@ extension ProtobufDirection: SwiftProtobuf._ProtoNameProviding {
     3: .same(proto: "SOUTH"),
     4: .same(proto: "WEST"),
     5: .same(proto: "EAST"),
+  ]
+}
+
+extension ProtobufTextureType: SwiftProtobuf._ProtoNameProviding {
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "OPAQUE"),
+    1: .same(proto: "TRANSPARENT"),
+    2: .same(proto: "TRANSLUCENT"),
   ]
 }
 
@@ -388,6 +442,7 @@ extension ProtobufBlockModel: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     2: .standard(proto: "culling_faces"),
     3: .standard(proto: "cullable_faces"),
     4: .standard(proto: "non_cullable_faces"),
+    5: .standard(proto: "texture_type"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -400,6 +455,7 @@ extension ProtobufBlockModel: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
       case 2: try { try decoder.decodeRepeatedEnumField(value: &self.cullingFaces) }()
       case 3: try { try decoder.decodeRepeatedEnumField(value: &self.cullableFaces) }()
       case 4: try { try decoder.decodeRepeatedEnumField(value: &self.nonCullableFaces) }()
+      case 5: try { try decoder.decodeSingularEnumField(value: &self.textureType) }()
       default: break
       }
     }
@@ -418,6 +474,9 @@ extension ProtobufBlockModel: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if !self.nonCullableFaces.isEmpty {
       try visitor.visitPackedEnumField(value: self.nonCullableFaces, fieldNumber: 4)
     }
+    if self.textureType != .opaque {
+      try visitor.visitSingularEnumField(value: self.textureType, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -426,6 +485,7 @@ extension ProtobufBlockModel: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if lhs.cullingFaces != rhs.cullingFaces {return false}
     if lhs.cullableFaces != rhs.cullableFaces {return false}
     if lhs.nonCullableFaces != rhs.nonCullableFaces {return false}
+    if lhs.textureType != rhs.textureType {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

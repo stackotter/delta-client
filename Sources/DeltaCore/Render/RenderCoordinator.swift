@@ -18,6 +18,8 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
   
   private var device: MTLDevice
   
+  // MARK: Init
+  
   public init(client: Client) {
     guard let device = MTLCreateSystemDefaultDevice() else {
       fatalError("failed to get metal device")
@@ -60,6 +62,8 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
     }
   }
   
+  // MARK: Render
+  
   public func draw(in view: MTKView) {
     stopwatch.startMeasurement("whole frame")
     guard
@@ -73,12 +77,22 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
     updatePhysics()
     updateCamera(player, view)
     
-    guard let commandBuffer = commandQueue.makeCommandBuffer() else {
+    guard
+      let transparentAndOpaqueCommandBuffer = commandQueue.makeCommandBuffer(),
+      let translucentCommandBuffer = commandQueue.makeCommandBuffer()
+    else {
+      log.warning("Failed to create render command buffers")
       return
     }
     
     stopwatch.startMeasurement("world renderer")
-    worldRenderer.draw(device: device, view: view, commandBuffer: commandBuffer, camera: camera, commandQueue: commandQueue)
+    worldRenderer.draw(
+      device: device,
+      view: view,
+      transparentAndOpaqueCommandBuffer: transparentAndOpaqueCommandBuffer,
+      translucentCommandBuffer: translucentCommandBuffer,
+      camera: camera,
+      commandQueue: commandQueue)
     stopwatch.stopMeasurement("world renderer")
     
     guard let drawable = view.currentDrawable else {
@@ -86,12 +100,15 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
       return
     }
     
-    commandBuffer.present(drawable)
-    commandBuffer.commit()
+    transparentAndOpaqueCommandBuffer.commit()
+    translucentCommandBuffer.present(drawable)
+    translucentCommandBuffer.commit()
     
     logFrame()
     stopwatch.stopMeasurement("whole frame")
   }
+  
+  // MARK: Helper
   
   public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) { }
   

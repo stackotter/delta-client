@@ -35,6 +35,7 @@ extension BlockModelPalette {
         cachedVariant.cullingFaces = model.cullingFaces.map { ProtobufDirection(from: $0) }
         cachedVariant.cullableFaces = model.cullableFaces.map { ProtobufDirection(from: $0) }
         cachedVariant.nonCullableFaces = model.nonCullableFaces.map { ProtobufDirection(from: $0) }
+        cachedVariant.textureType = ProtobufTextureType(rawValue: model.textureType.rawValue)!
         return cachedVariant
       }
       var cache = ProtobufVariants()
@@ -89,12 +90,14 @@ extension BlockModel {
     let cullingFaces = Set(cache.cullingFaces.map { Direction(rawValue: $0.rawValue)! })
     let cullableFaces = Set(cache.cullableFaces.map { Direction(rawValue: $0.rawValue)! })
     let nonCullableFaces = Set(cache.nonCullableFaces.map { Direction(rawValue: $0.rawValue)! })
+    let textureType = TextureType(rawValue: cache.textureType.rawValue)!
     
     self.init(
       parts: parts,
       cullingFaces: cullingFaces,
       cullableFaces: cullableFaces,
-      nonCullableFaces: nonCullableFaces)
+      nonCullableFaces: nonCullableFaces,
+      textureType: textureType)
   }
 }
 

@@ -9,4 +9,9 @@ public struct BlockModel {
   public var cullableFaces: Set<Direction>
   /// The set of all sides this model has faces that can never be culled.
   public var nonCullableFaces: Set<Direction>
+  /// The type of texture that the block has.
+  ///
+  /// If the block has any translucent faces, the type is translucent. If the block has no translucent faces but
+  /// at least one transparent face, the type is transparent. If all of the faces are opaque, the type is opaque.
+  public var textureType: TextureType
 }

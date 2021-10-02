@@ -97,6 +97,7 @@ public struct BlockModelPalette {
     var cullingFaces: Set<Direction> = []
     var cullableFaces: Set<Direction> = []
     var nonCullableFaces: Set<Direction> = []
+    var textureType = TextureType.opaque
     
     let parts: [BlockModelPart] = try partDescriptors.map { renderDescriptor in
       // Get the block model data in its intermediate 'flattened' format
@@ -121,6 +122,13 @@ public struct BlockModelPalette {
           renderDescriptor: renderDescriptor)
         
         for face in element.faces {
+          let texture = blockTexturePalette.textures[face.texture]
+          if textureType == .opaque && texture.type != .opaque {
+            textureType = texture.type
+          } else if textureType == .transparent && texture.type == .translucent {
+            textureType = .translucent
+          }
+                
           if let cullFace = face.cullface {
             cullableFaces.insert(cullFace)
           } else {
@@ -146,7 +154,8 @@ public struct BlockModelPalette {
       parts: parts,
       cullingFaces: cullingFaces,
       cullableFaces: cullableFaces,
-      nonCullableFaces: nonCullableFaces)
+      nonCullableFaces: nonCullableFaces,
+      textureType: textureType)
   }
   
   /// Converts a flattened block model element to a block model element format ready for rendering.

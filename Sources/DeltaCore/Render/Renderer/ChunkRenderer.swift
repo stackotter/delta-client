@@ -13,7 +13,7 @@ class ChunkRenderer {
   public var hasCompletedInitialPrepare = true
   
   /// The meshes for the sections of the chunk being rendered, indexed by section Y. Section Y is from 0-15 (inclusive).
-  private var sectionMeshes: [Int: Mesh] = [:]
+  private var sectionMeshes: [Int: ChunkSectionMesh] = [:]
   /// Indices of sections that block updates are currently frozen for.
   private var frozenSections: Set<Int> = []
   
@@ -132,7 +132,7 @@ class ChunkRenderer {
   }
   
   /// Renders this renderer's chunk
-  func render(to encoder: MTLRenderCommandEncoder, with device: MTLDevice, and camera: Camera, commandQueue: MTLCommandQueue) {
+  func render(transparentAndOpaqueEncoder: MTLRenderCommandEncoder, translucentEncoder: MTLRenderCommandEncoder, with device: MTLDevice, and camera: Camera, commandQueue: MTLCommandQueue) {
     sectionMeshesAccessQueue.sync {
       sectionMeshes.mutatingEach { sectionY, mesh in
         // Don't need to check if mesh is empty because the mesh builder never returns empty meshes
@@ -143,7 +143,13 @@ class ChunkRenderer {
         }
 
         do {
-          try mesh.render(into: encoder, with: device, commandQueue: commandQueue)
+          try mesh.render(
+            viewedFrom: camera.position,
+            sortTranslucent: true,
+            transparentAndOpaqueEncoder: transparentAndOpaqueEncoder,
+            translucentEncoder: translucentEncoder,
+            device: device,
+            commandQueue: commandQueue)
         } catch {
           log.error("Failed to render chunk section at \(sectionPosition); \(error)")
         }

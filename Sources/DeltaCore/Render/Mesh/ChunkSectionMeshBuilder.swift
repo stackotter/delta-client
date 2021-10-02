@@ -2,6 +2,8 @@ import Foundation
 import MetalKit
 import simd
 
+// TODO: update chunk section mesh builder documentation
+
 /// Builds renderable meshes from chunk sections.
 public struct ChunkSectionMeshBuilder {
   /// A lookup to quickly convert block index to block position.
@@ -42,10 +44,17 @@ public struct ChunkSectionMeshBuilder {
   
   /// Builds a mesh for the section at ``sectionPosition`` in ``chunk``.
   /// - Returns: A mesh. `nil` if the mesh would be empty.
-  public func build() -> Mesh? {
-    var mesh = Mesh()
+  public func build() -> ChunkSectionMesh? {
+    // Create uniforms
+    let position = simd_float3(
+      Float(sectionPosition.sectionX) * 16,
+      Float(sectionPosition.sectionY) * 16,
+      Float(sectionPosition.sectionZ) * 16)
+    let modelToWorldMatrix = MatrixUtil.translationMatrix(position)
+    let uniforms = Uniforms(transformation: modelToWorldMatrix)
+    var mesh = ChunkSectionMesh(uniforms)
     
-    // add the section's blocks to the mesh
+    // Populate mesh with geometry
     let section = chunk.sections[sectionPosition.sectionY]
     let indexToNeighbourIndices = Self.indexToNeighbourIndicesLookup[sectionPosition.sectionY]
     
@@ -54,6 +63,7 @@ public struct ChunkSectionMeshBuilder {
     let zOffset = sectionPosition.sectionZ * Chunk.Section.depth
     
     if section.blockCount != 0 {
+      var transparentAndOpaqueGeometry = Geometry()
       let startTime = CFAbsoluteTimeGetCurrent()
       for blockIndex in 0..<Chunk.Section.numBlocks {
         let state = section.getBlockState(at: blockIndex)
@@ -62,26 +72,24 @@ public struct ChunkSectionMeshBuilder {
           position.x += xOffset
           position.y += yOffset
           position.z += zOffset
-          addBlock(at: position, atBlockIndex: blockIndex, with: state, to: &mesh, indexToNeighbourIndices: indexToNeighbourIndices)
+          addBlock(
+            at: position,
+            atBlockIndex: blockIndex,
+            with: state,
+            transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
+            translucentMesh: &mesh.translucentMesh,
+            indexToNeighbourIndices: indexToNeighbourIndices)
         }
       }
       let elapsed = CFAbsoluteTimeGetCurrent() - startTime
       log.trace("Prepared mesh for Chunk.Section at \(sectionPosition) in \(elapsed) seconds")
+      mesh.transparentAndOpaqueMesh.vertices = transparentAndOpaqueGeometry.vertices
+      mesh.transparentAndOpaqueMesh.indices = transparentAndOpaqueGeometry.indices
     }
     
-    // Return early if the mesh contains no geometry.
     if mesh.isEmpty {
       return nil
     }
-    
-    // Create uniforms
-    let position = simd_float3(
-      Float(sectionPosition.sectionX) * 16,
-      Float(sectionPosition.sectionY) * 16,
-      Float(sectionPosition.sectionZ) * 16)
-    let modelToWorldMatrix = MatrixUtil.translationMatrix(position)
-    let uniforms = Uniforms(transformation: modelToWorldMatrix)
-    mesh.uniforms = uniforms
     
     return mesh
   }
@@ -91,7 +99,8 @@ public struct ChunkSectionMeshBuilder {
     at position: Position,
     atBlockIndex blockIndex: Int,
     with state: UInt16,
-    to mesh: inout Mesh,
+    transparentAndOpaqueGeometry: inout Geometry,
+    translucentMesh: inout SortableMesh,
     indexToNeighbourIndices: [[(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]]
   ) {
     // Get block model
@@ -142,7 +151,7 @@ public struct ChunkSectionMeshBuilder {
     
     // Get block
     guard let block = Registry.blockRegistry.block(forStateWithId: state) else {
-      log.warning("Skipping block with non-existent id \(state)")
+      log.warning("Skipping block with non-existent state id \(state), failed to get block information")
       return
     }
     
@@ -159,15 +168,23 @@ public struct ChunkSectionMeshBuilder {
     let modelToWorld = MatrixUtil.translationMatrix(positionRelativeToChunkSection.floatVector + offset)
     
     // Add block model to mesh
+    var translucentGeometry = Geometry()
     for part in blockModel.parts {
       addModelPart(
         part,
         transformedBy: modelToWorld,
-        to: &mesh,
+        transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
+        translucentGeometry: &translucentGeometry,
         culledFaces: culledFaces,
         lightLevel: lightLevel,
         neighbourLightLevels: neighbourLightLevels,
         tintColor: tintColor?.floatVector ?? SIMD3<Float>(1, 1, 1))
+    }
+    
+    if !translucentGeometry.isEmpty {
+      log.debug("Adding translucent block")
+      let element = SortableMeshElement(geometry: translucentGeometry, centerPosition: position.floatVector + SIMD3<Float>(0.5, 0.5, 0.5))
+      translucentMesh.add(element)
     }
   }
   
@@ -175,7 +192,8 @@ public struct ChunkSectionMeshBuilder {
   private func addModelPart(
     _ blockModel: BlockModelPart,
     transformedBy modelToWorld: matrix_float4x4,
-    to mesh: inout Mesh,
+    transparentAndOpaqueGeometry: inout Geometry,
+    translucentGeometry: inout Geometry,
     culledFaces: Set<Direction>,
     lightLevel: LightLevel,
     neighbourLightLevels: [Direction: LightLevel],
@@ -185,7 +203,8 @@ public struct ChunkSectionMeshBuilder {
       addElement(
         element,
         transformedBy: modelToWorld,
-        to: &mesh,
+        transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
+        translucentGeometry: &translucentGeometry,
         culledFaces: culledFaces,
         lightLevel: lightLevel,
         neighbourLightLevels: neighbourLightLevels,
@@ -193,11 +212,12 @@ public struct ChunkSectionMeshBuilder {
     }
   }
   
-  /// Adds the given blok model element to the mesh, positioned by the given model to world matrix.
+  /// Adds the given block model element to the mesh, positioned by the given model to world matrix.
   private func addElement(
     _ element: BlockModelElement,
     transformedBy modelToWorld: matrix_float4x4,
-    to mesh: inout Mesh,
+    transparentAndOpaqueGeometry: inout Geometry,
+    translucentGeometry: inout Geometry,
     culledFaces: Set<Direction>,
     lightLevel: LightLevel,
     neighbourLightLevels: [Direction: LightLevel],
@@ -214,9 +234,50 @@ public struct ChunkSectionMeshBuilder {
       addFace(
         face,
         transformedBy: vertexToWorld,
-        to: &mesh,
+        transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
+        translucentGeometry: &translucentGeometry,
         shouldShade: element.shade,
         lightLevel: faceLightLevel,
+        tintColor: tintColor)
+    }
+  }
+  
+  /// Adds a face to some geometry.
+  /// - Parameters:
+  ///   - face: A face to add to the mesh.
+  ///   - transformation: A transformation to apply to each vertex of the face.
+  ///   - transparentAndOpaqueGeometry: The geometry to add the face to if it's not translucent.
+  ///   - translucentGeometry: The geometry to add the face to if it's translucent.
+  ///   - shouldShade: If `false`, the face will not be shaded based on the direction it faces. It'll still be affected by light levels.
+  ///   - lightLevel: The light level to render the face at.
+  ///   - tintColor: The color to tint the face as a float vector where each component has a maximum of 1. Supplying white will leave the face unaffected.
+  private func addFace(
+    _ face: BlockModelFace,
+    transformedBy transformation: matrix_float4x4,
+    transparentAndOpaqueGeometry: inout Geometry,
+    translucentGeometry: inout Geometry,
+    shouldShade: Bool,
+    lightLevel: LightLevel,
+    tintColor: SIMD3<Float>
+  ) {
+    let textureType = resources.blockTexturePalette.textures[face.texture].type
+    if textureType == .translucent {
+      addFace(
+        face,
+        transformedBy: transformation,
+        geometry: &translucentGeometry,
+        textureType: textureType,
+        shouldShade: shouldShade,
+        lightLevel: lightLevel,
+        tintColor: tintColor)
+    } else {
+      addFace(
+        face,
+        transformedBy: transformation,
+        geometry: &transparentAndOpaqueGeometry,
+        textureType: textureType,
+        shouldShade: shouldShade,
+        lightLevel: lightLevel,
         tintColor: tintColor)
     }
   }
@@ -225,30 +286,29 @@ public struct ChunkSectionMeshBuilder {
   /// - Parameters:
   ///   - face: A face to add to the mesh.
   ///   - transformation: A transformation to apply to each vertex of the face.
-  ///   - mesh: A mesh to add the face to.
+  ///   - geometry: The geometry to add the face to.
   ///   - shouldShade: If `false`, the face will not be shaded based on the direction it faces. It'll still be affected by light levels.
   ///   - lightLevel: The light level to render the face at.
   ///   - tintColor: The color to tint the face as a float vector where each component has a maximum of 1. Supplying white will leave the face unaffected.
   private func addFace(
     _ face: BlockModelFace,
     transformedBy transformation: matrix_float4x4,
-    to mesh: inout Mesh,
+    geometry: inout Geometry,
+    textureType: TextureType,
     shouldShade: Bool,
     lightLevel: LightLevel,
     tintColor: SIMD3<Float>
   ) {
     // Add face winding
-    let offset = UInt32(mesh.vertices.count) // The index of the first vertex of face
+    let offset = UInt32(geometry.vertices.count) // The index of the first vertex of face
     for index in CubeGeometry.faceWinding {
-      mesh.indices.append(index &+ offset)
+      geometry.indices.append(index &+ offset)
     }
     
     // swiftlint:disable force_unwrapping
     // This lookup will never be nil cause every direction is included in the static lookup table
     let faceVertexPositions = CubeGeometry.faceVertices[face.direction]!
     // swiftlint:enable force_unwrapping
-    
-    let isTextureTransparent = resources.blockTexturePalette.textures[face.texture].type == .transparent
     
     // Calculate shade of face
     let lightLevel = max(lightLevel.block, lightLevel.sky)
@@ -267,8 +327,8 @@ public struct ChunkSectionMeshBuilder {
       tint = SIMD3<Float>(repeating: shade)
     }
     
-    
     let textureIndex = UInt16(face.texture)
+    let isTransparent = textureType == .transparent
     
     // Add vertices to mesh
     for (uvIndex, vertexPosition) in faceVertexPositions.enumerated() {
@@ -284,8 +344,8 @@ public struct ChunkSectionMeshBuilder {
         g: tint.y,
         b: tint.z,
         textureIndex: textureIndex,
-        isTransparent: isTextureTransparent)
-      mesh.vertices.append(vertex)
+        isTransparent: isTransparent)
+      geometry.vertices.append(vertex)
     }
   }
   

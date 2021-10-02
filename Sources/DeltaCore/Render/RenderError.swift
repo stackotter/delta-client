@@ -19,4 +19,6 @@ public enum RenderError: LocalizedError {
   case failedToCreateWorldDepthStencilState
   /// Failed to create the block texture array.
   case failedToCreateBlockTextureArray(Error)
+  /// Failed to create render encoder for a render pipeline.
+  case failedToCreateRenderEncoder(String)
 }

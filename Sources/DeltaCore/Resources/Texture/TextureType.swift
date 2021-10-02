@@ -1,7 +1,7 @@
 import Foundation
 
 /// The possible texture types.
-public enum TextureType {
+public enum TextureType: Int {
   /// The texture only contains opaque pixels.
   case opaque
   /// The texture contains some fully transparent pixels but no translucent pictures.
