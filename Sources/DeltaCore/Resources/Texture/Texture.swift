@@ -74,9 +74,6 @@ public struct Texture {
       }
     }
     
-    let colorSpace = CGColorSpaceCreateDeviceRGB()
-    let bitmapInfo = UInt32(Int(kColorSyncAlphaPremultipliedFirst.rawValue) | kColorSyncByteOrder32Little)
-    
     // Calculate new dimensions
     let scaleFactor: Int
     if let targetWidth = targetWidth {
@@ -88,8 +85,15 @@ public struct Texture {
     width = scaleFactor * image.width
     height = scaleFactor * image.height
     
+    let colorSpace = CGColorSpaceCreateDeviceRGB()
+    let bitmapInfo = UInt32(Int(kColorSyncAlphaPremultipliedFirst.rawValue) | kColorSyncByteOrder32Little)
+    
     bytes = try image.getBytes(with: colorSpace, and: bitmapInfo, scaledBy: scaleFactor)
     self.type = type ?? Self.typeOfTexture(withBytes: bytes, width: width, height: height, bytesPerPixel: image.bitsPerPixel / 8)
+    
+    if self.type == .translucent {
+      unpremultiply()
+    }
   }
   
   /// Loads a texture animation from a json file in a resource pack, and then sets is as this texture's animation
@@ -111,9 +115,9 @@ public struct Texture {
     for x in 0..<width {
       // For each transparent pixel copy the color values from above
       for y in 0..<height {
-        var pixel = self.pixel(atX: x, y: y)
+        var pixel = getPixel(atX: x, y: y)
         if pixel.a == 0 && y != 0 {
-          pixel = self.pixel(atX: x, y: y - 1)
+          pixel = getPixel(atX: x, y: y - 1)
           pixel.a = 0
           setPixel(atX: x, y: y, to: pixel)
         }
@@ -122,9 +126,9 @@ public struct Texture {
       // Do the same but the other way
       for y in 1...height {
         let y = height - y
-        var pixel = self.pixel(atX: x, y: y)
+        var pixel = getPixel(atX: x, y: y)
         if pixel.a == 0 && y != height - 1 {
-          pixel = self.pixel(atX: x, y: y + 1)
+          pixel = getPixel(atX: x, y: y + 1)
           pixel.a = 0
           setPixel(atX: x, y: y, to: pixel)
         }
@@ -135,9 +139,9 @@ public struct Texture {
     for y in 0..<height {
       // For each transparent pixel copy the color values from the left
       for x in 0..<width {
-        var pixel = self.pixel(atX: x, y: y)
+        var pixel = getPixel(atX: x, y: y)
         if pixel.a == 0 && x != 0 {
-          pixel = self.pixel(atX: x - 1, y: y)
+          pixel = getPixel(atX: x - 1, y: y)
           pixel.a = 0
           setPixel(atX: x, y: y, to: pixel)
         }
@@ -146,9 +150,9 @@ public struct Texture {
       // Do the same but the other way
       for x in 1...width {
         let x = width - x
-        var pixel = self.pixel(atX: x, y: y)
+        var pixel = getPixel(atX: x, y: y)
         if pixel.a == 0 && x != width - 1 {
-          pixel = self.pixel(atX: x + 1, y: y)
+          pixel = getPixel(atX: x + 1, y: y)
           pixel.a = 0
           setPixel(atX: x, y: y, to: pixel)
         }
@@ -157,7 +161,7 @@ public struct Texture {
   }
   
   /// Returns the pixel at the given location. Does not check bounds.
-  public func pixel(atX x: Int, y: Int) -> Pixel {
+  public func getPixel(atX x: Int, y: Int) -> Pixel {
     let index = (y * width + x) * 4 // 4 is the number of bytes per pixel
     let b = bytes[index]
     let g = bytes[index + 1]
@@ -173,6 +177,29 @@ public struct Texture {
     bytes[index + 1] = pixel.g
     bytes[index + 2] = pixel.r
     bytes[index + 3] = pixel.a
+  }
+  
+  /// Divides the rgb components by the alpha component to unpremultiply the alpha.
+  public mutating func unpremultiply() {
+    for x in 0..<width {
+      for y in 0..<height {
+        let pixel = getPixel(atX: x, y: y)
+        if pixel.a == 0 {
+          continue
+        }
+        
+        let a = Float(pixel.a) / 255
+        let r = Float(pixel.r) / a
+        let g = Float(pixel.g) / a
+        let b = Float(pixel.b) / a
+        let newPixel = Pixel(
+          r: UInt8(r),
+          g: UInt8(g),
+          b: UInt8(b),
+          a: pixel.a)
+        setPixel(atX: x, y: y, to: newPixel)
+      }
+    }
   }
   
   /// Finds the type of a texture by inspecting its pixels.

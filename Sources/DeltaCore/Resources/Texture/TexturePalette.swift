@@ -2,11 +2,6 @@ import Foundation
 import MetalKit
 
 public struct TexturePalette {
-  /// The color space to use.
-  static let colorSpace = CGColorSpaceCreateDeviceRGB()
-  /// Information about pixel format.
-  static let bitmapInfo = UInt32(Int(kColorSyncAlphaPremultipliedFirst.rawValue) | kColorSyncByteOrder32Little)
-  
   /// The width of the textures in this palette. The heights will be multiples of this number.
   public var width: Int
   
