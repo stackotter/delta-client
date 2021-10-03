@@ -230,7 +230,7 @@ public struct BlockModelPalette {
     _ face: IntermediateBlockModelFace,
     on element: IntermediateBlockModelElement,
     from renderDescriptor: BlockModelRenderDescriptor
-  ) throws -> [simd_float2] {
+  ) throws -> [SIMD2<Float>] {
     let direction = face.direction
     let minimumPoint = element.from
     let maximumPoint = element.to
@@ -293,10 +293,10 @@ public struct BlockModelPalette {
     
     // The uv coordinates for each corner of the face starting at top left going clockwise
     var coordinates = [
-      simd_float2(uvs[2], uvs[1]),
-      simd_float2(uvs[2], uvs[3]),
-      simd_float2(uvs[0], uvs[3]),
-      simd_float2(uvs[0], uvs[1])]
+      SIMD2<Float>(uvs[2], uvs[1]),
+      SIMD2<Float>(uvs[2], uvs[3]),
+      SIMD2<Float>(uvs[0], uvs[3]),
+      SIMD2<Float>(uvs[0], uvs[1])]
     
     // Rotate the array of coordinates (samples the same part of the texture just changes the rotation of the sampled region on the face
     let rotation = face.textureRotation
@@ -334,28 +334,28 @@ public struct BlockModelPalette {
   /// Rotates each of the texture coordinates by the specified amount around the center of the texture (clockwise).
   /// The angle should be a positive multiple of 90 degrees. Used for UV locking (works different to texture rotation).
   private static func rotateTextureCoordinates(
-    _ coordinates: [simd_float2],
+    _ coordinates: [SIMD2<Float>],
     by degrees: Int
-  ) -> [simd_float2] {
+  ) -> [SIMD2<Float>] {
     // Check if any rotation is required
     let angle = MathUtil.mod(degrees, 360)
     if angle == 0 {
       return coordinates
     }
     
-    let center = simd_float2(0.5, 0.5)
+    let center = SIMD2<Float>(0.5, 0.5)
     // The rotation rounded to nearest 90 degrees
     let rotation = angle - angle % 90
-    let rotatedCoordinates: [simd_float2] = coordinates.map { point in
+    let rotatedCoordinates: [SIMD2<Float>] = coordinates.map { point in
       let centerRelativePoint = point - center
-      let rotatedPoint: simd_float2
+      let rotatedPoint: SIMD2<Float>
       switch rotation {
         case 90:
-          rotatedPoint = simd_float2(centerRelativePoint.y, -centerRelativePoint.x)
+          rotatedPoint = SIMD2<Float>(centerRelativePoint.y, -centerRelativePoint.x)
         case 180:
           rotatedPoint = -centerRelativePoint
         case 270:
-          rotatedPoint = simd_float2(-centerRelativePoint.y, centerRelativePoint.x)
+          rotatedPoint = SIMD2<Float>(-centerRelativePoint.y, centerRelativePoint.x)
         default:
           rotatedPoint = centerRelativePoint
       }

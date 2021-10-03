@@ -13,8 +13,8 @@ public struct EntityPosition {
     return ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
   }
   
-  public var vector: simd_float3 {
-    return simd_float3(
+  public var vector: SIMD3<Float> {
+    return SIMD3<Float>(
       Float(x),
       Float(y),
       Float(z)

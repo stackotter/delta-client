@@ -18,12 +18,12 @@ public enum MathUtil {
   }
   
   /// Converts the given angle to radians from degrees.
-  public static func radians(from degrees: simd_float3) -> simd_float3 {
+  public static func radians(from degrees: SIMD3<Float>) -> SIMD3<Float> {
     return .pi * degrees / 180
   }
   
   /// Converts the given angle to degrees from radians.
-  public static func degrees(from radians: simd_float3) -> simd_float3 {
+  public static func degrees(from radians: SIMD3<Float>) -> SIMD3<Float> {
     return 180 * radians / .pi
   }
   
@@ -38,12 +38,12 @@ public enum MathUtil {
   }
   
   /// Converts an array of doubles to a 3d vector. Throws if the array doesn't have exactly 3 elements.
-  public static func vectorFloat3(from doubleArray: [Double]) throws -> simd_float3 {
+  public static func vectorFloat3(from doubleArray: [Double]) throws -> SIMD3<Float> {
     guard doubleArray.count == 3 else {
       throw MathError.invalidVector
     }
     
-    return simd_float3(doubleArray.map { Float($0) })
+    return SIMD3<Float>(doubleArray.map { Float($0) })
   }
   
   // TODO: use swift numerics package instead

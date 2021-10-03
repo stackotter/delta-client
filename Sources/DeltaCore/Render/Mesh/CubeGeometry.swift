@@ -4,17 +4,17 @@ import simd
 struct CubeGeometry {
   static let faceWinding: [UInt32] = [0, 1, 2, 2, 3, 0]
   
-  static let cubeVertices: [simd_float3] = [
-    simd_float3([0, 1, 0]),
-    simd_float3([0, 0, 0]),
-    simd_float3([1, 0, 0]),
-    simd_float3([1, 1, 0]),
-    simd_float3([0, 1, 1]),
-    simd_float3([0, 0, 1]),
-    simd_float3([1, 0, 1]),
-    simd_float3([1, 1, 1])]
+  static let cubeVertices: [SIMD3<Float>] = [
+    SIMD3<Float>([0, 1, 0]),
+    SIMD3<Float>([0, 0, 0]),
+    SIMD3<Float>([1, 0, 0]),
+    SIMD3<Float>([1, 1, 0]),
+    SIMD3<Float>([0, 1, 1]),
+    SIMD3<Float>([0, 0, 1]),
+    SIMD3<Float>([1, 0, 1]),
+    SIMD3<Float>([1, 1, 1])]
   
-  static let faceVertices: [Direction: [simd_float3]] = [
+  static let faceVertices: [Direction: [SIMD3<Float>]] = [
     .up: CubeGeometry.generateFaceVertices(facing: .up),
     .down: CubeGeometry.generateFaceVertices(facing: .down),
     .east: CubeGeometry.generateFaceVertices(facing: .east),
@@ -29,7 +29,7 @@ struct CubeGeometry {
     0.7, 0.7  // east, west
   ]
   
-  static func generateFaceVertices(facing: Direction) -> [simd_float3] {
+  static func generateFaceVertices(facing: Direction) -> [SIMD3<Float>] {
     let vertexIndices: [Int]
     switch facing {
       case .up: vertexIndices = [3, 7, 4, 0]

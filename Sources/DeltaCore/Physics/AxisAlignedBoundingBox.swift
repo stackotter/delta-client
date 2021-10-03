@@ -2,10 +2,10 @@ import Foundation
 import simd
 
 public struct AxisAlignedBoundingBox {
-  public var position: simd_float3
-  public var size: simd_float3
+  public var position: SIMD3<Float>
+  public var size: SIMD3<Float>
   
-  public init(position: simd_float3, size: simd_float3) {
+  public init(position: SIMD3<Float>, size: SIMD3<Float>) {
     self.position = position
     self.size = size
   }
@@ -32,16 +32,16 @@ public struct AxisAlignedBoundingBox {
       Float(Chunk.Section.depth)]
   }
   
-  public func getVertices() -> [simd_float3] {
+  public func getVertices() -> [SIMD3<Float>] {
     let bfl = position
-    let bfr = position + simd_float3(size.x, 0, 0)
-    let tfl = position + simd_float3(0, size.y, 0)
-    let tfr = position + simd_float3(size.x, size.y, 0)
+    let bfr = position + SIMD3<Float>(size.x, 0, 0)
+    let tfl = position + SIMD3<Float>(0, size.y, 0)
+    let tfr = position + SIMD3<Float>(size.x, size.y, 0)
     
-    let bbl = position + simd_float3(0, 0, size.z)
-    let bbr = position + simd_float3(size.x, 0, size.z)
-    let tbl = position + simd_float3(0, size.y, size.z)
-    let tbr = position + simd_float3(size.x, size.y, size.z)
+    let bbl = position + SIMD3<Float>(0, 0, size.z)
+    let bbr = position + SIMD3<Float>(size.x, 0, size.z)
+    let tbl = position + SIMD3<Float>(0, size.y, size.z)
+    let tbr = position + SIMD3<Float>(size.x, size.y, size.z)
     
     return [
       bfl,

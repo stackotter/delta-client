@@ -131,10 +131,10 @@ extension BlockModelElement {
 extension BlockModelFace {
   init(from cache: ProtobufBlockModelFace) {
     let uvs = [
-      simd_float2(cache.uvs[0], cache.uvs[1]),
-      simd_float2(cache.uvs[2], cache.uvs[3]),
-      simd_float2(cache.uvs[4], cache.uvs[5]),
-      simd_float2(cache.uvs[6], cache.uvs[7])]
+      SIMD2<Float>(cache.uvs[0], cache.uvs[1]),
+      SIMD2<Float>(cache.uvs[2], cache.uvs[3]),
+      SIMD2<Float>(cache.uvs[4], cache.uvs[5]),
+      SIMD2<Float>(cache.uvs[6], cache.uvs[7])]
     
     self.init(
       direction: Direction(from: cache.direction)!,

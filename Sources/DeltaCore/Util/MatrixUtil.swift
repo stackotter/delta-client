@@ -4,7 +4,7 @@ import simd
 public enum MatrixUtil {
   public static var identity = matrix_float4x4(1)
   
-  public static func translationMatrix(_ translation: simd_float3) -> matrix_float4x4 {
+  public static func translationMatrix(_ translation: SIMD3<Float>) -> matrix_float4x4 {
     var matrix = matrix_float4x4(1)
     matrix.columns.0[3] = translation.x
     matrix.columns.1[3] = translation.y
@@ -17,11 +17,11 @@ public enum MatrixUtil {
   }
   
   public static func scalingMatrix(_ x: Float, _ y: Float, _ z: Float) -> matrix_float4x4 {
-    return scalingMatrix(simd_float3(x, y, z))
+    return scalingMatrix(SIMD3<Float>(x, y, z))
   }
   
-  public static func scalingMatrix(_ vector: simd_float3) -> matrix_float4x4 {
-    return matrix_float4x4(diagonal: simd_float4(vector, 1))
+  public static func scalingMatrix(_ vector: SIMD3<Float>) -> matrix_float4x4 {
+    return matrix_float4x4(diagonal: SIMD4<Float>(vector, 1))
   }
   
   public static func projectionMatrix(near: Float, far: Float, aspect: Float, fieldOfViewY: Float) -> matrix_float4x4 {
@@ -30,15 +30,15 @@ public enum MatrixUtil {
     let scaleZ = -far / (far - near)
     let scaleW = -far * near / (far - near)
     return matrix_float4x4(columns: (
-      simd_float4([scaleX, 0, 0, 0]),
-      simd_float4([0, scaleY, 0, 0]),
-      simd_float4([0, 0, scaleZ, scaleW]),
-      simd_float4([0, 0, -1, 0])
+      SIMD4<Float>([scaleX, 0, 0, 0]),
+      SIMD4<Float>([0, scaleY, 0, 0]),
+      SIMD4<Float>([0, 0, scaleZ, scaleW]),
+      SIMD4<Float>([0, 0, -1, 0])
     ))
   }
   
   /// Returns the rotation matrix applying the rotations in the order of x, then y and then z.
-  public static func rotationMatrix(_ rotation: simd_float3) -> matrix_float4x4 {
+  public static func rotationMatrix(_ rotation: SIMD3<Float>) -> matrix_float4x4 {
     let matrix = rotationMatrix(x: rotation.x)
       * rotationMatrix(y: rotation.y)
       * rotationMatrix(z: rotation.z)

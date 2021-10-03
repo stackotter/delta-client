@@ -4,9 +4,9 @@ import simd
 /// Flattened mojang block model element format.
 public struct IntermediateBlockModelElement {
   /// The minimum vertex of the element. For a dirt block this would be (0, 0, 0).
-  public var from: simd_float3
+  public var from: SIMD3<Float>
   /// The maximum vertex of the element. For a dirt block this would be (1, 1, 1).
-  public var to: simd_float3
+  public var to: SIMD3<Float>
   /// The rotation matrix for this block model.
   public var rotation: IntermediateBlockModelElementRotation?
   /// Whether to render shadows or not.
@@ -76,7 +76,7 @@ public struct IntermediateBlockModelElement {
     var cullFaces: Set<Direction> = []
     
     // Checking north, down and west faces (negative directions)
-    if from == simd_float3(repeating: 0) {
+    if from == SIMD3<Float>(repeating: 0) {
       if to.x == 1 && to.y == 1 {
         cullFaces.insert(.north)
       }
@@ -89,7 +89,7 @@ public struct IntermediateBlockModelElement {
     }
     
     // Checking south, up and east faces (positive directions)
-    if to == simd_float3(repeating: 1) {
+    if to == SIMD3<Float>(repeating: 1) {
       if from.x == 0 && from.y == 0 {
         cullFaces.insert(.south)
       }

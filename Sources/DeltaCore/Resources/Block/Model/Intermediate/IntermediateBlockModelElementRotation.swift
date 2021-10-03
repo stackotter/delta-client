@@ -4,7 +4,7 @@ import simd
 /// A neatened format for `JSONBlockModelElementRotation`.
 public struct IntermediateBlockModelElementRotation {
   /// The point to rotate around.
-  var origin: simd_float3
+  var origin: SIMD3<Float>
   /// The axis of the rotation.
   var axis: Axis
   /// The angle of the rotation in radians.

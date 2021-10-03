@@ -4,12 +4,12 @@ import simd
 // method from: http://web.archive.org/web/20120531231005/http://crazyjoke.free.fr/doc/3D/plane%20extraction.pdf
 public struct Frustum {
   public var worldToClip: matrix_float4x4
-  public var left: simd_float4
-  public var right: simd_float4
-  public var top: simd_float4
-  public var bottom: simd_float4
-  public var near: simd_float4
-  public var far: simd_float4
+  public var left: SIMD4<Float>
+  public var right: SIMD4<Float>
+  public var top: SIMD4<Float>
+  public var bottom: SIMD4<Float>
+  public var near: SIMD4<Float>
+  public var far: SIMD4<Float>
   
   public init(worldToClip: matrix_float4x4) {
     self.worldToClip = worldToClip
@@ -24,9 +24,9 @@ public struct Frustum {
   public func approximatelyContains(_ boundingBox: AxisAlignedBoundingBox) -> Bool {
     let vertices = boundingBox.getVertices()
     
-    var homogenousVertices: [simd_float4] = []
+    var homogenousVertices: [SIMD4<Float>] = []
     for vertex in vertices {
-      let homogenousVertex = simd_float4(vertex, 1)
+      let homogenousVertex = SIMD4<Float>(vertex, 1)
       homogenousVertices.append(homogenousVertex)
     }
     

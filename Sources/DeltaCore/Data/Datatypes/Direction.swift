@@ -80,20 +80,20 @@ public enum Direction: Int {
   }
   
   /// Returns a normalized vector representing this direction.
-  public var vector: simd_float3 {
+  public var vector: SIMD3<Float> {
     switch self {
       case .down:
-        return simd_float3(0, -1, 0)
+        return SIMD3<Float>(0, -1, 0)
       case .up:
-        return simd_float3(0, 1, 0)
+        return SIMD3<Float>(0, 1, 0)
       case .north:
-        return simd_float3(0, 0, -1)
+        return SIMD3<Float>(0, 0, -1)
       case .south:
-        return simd_float3(0, 0, 1)
+        return SIMD3<Float>(0, 0, 1)
       case .west:
-        return simd_float3(-1, 0, 0)
+        return SIMD3<Float>(-1, 0, 0)
       case .east:
-        return simd_float3(1, 0, 0)
+        return SIMD3<Float>(1, 0, 0)
     }
   }
   

@@ -47,7 +47,7 @@ public struct ChunkSectionMeshBuilder {
   /// - Returns: A mesh. `nil` if the mesh would be empty.
   public func build(reusing existingMesh: ChunkSectionMesh? = nil) -> ChunkSectionMesh? {
     // Create uniforms
-    let position = simd_float3(
+    let position = SIMD3<Float>(
       Float(sectionPosition.sectionX) * 16,
       Float(sectionPosition.sectionY) * 16,
       Float(sectionPosition.sectionZ) * 16)
@@ -335,7 +335,7 @@ public struct ChunkSectionMeshBuilder {
     
     // Add vertices to mesh
     for (uvIndex, vertexPosition) in faceVertexPositions.enumerated() {
-      let position = simd_make_float3(simd_float4(vertexPosition, 1) * transformation)
+      let position = simd_make_float3(SIMD4<Float>(vertexPosition, 1) * transformation)
       let uv = face.uvs[uvIndex]
       let vertex = Vertex(
         x: position.x,

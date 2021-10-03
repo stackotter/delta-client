@@ -368,12 +368,12 @@ class WorldRenderer {
     }
     
     // Sort chunks by distance from player
-    let cameraPosition2d = simd_float2(camera.position.x, camera.position.z)
+    let cameraPosition2d = SIMD2<Float>(camera.position.x, camera.position.z)
     var sortedChunkRenderers = chunkRenderersInRenderDistance.sorted {
-      let point1 = simd_float2(
+      let point1 = SIMD2<Float>(
         Float($0.chunkPosition.chunkX) * Float(Chunk.width),
         Float($0.chunkPosition.chunkZ) * Float(Chunk.depth))
-      let point2 = simd_float2(
+      let point2 = SIMD2<Float>(
         Float($1.chunkPosition.chunkX) * Float(Chunk.width),
         Float($1.chunkPosition.chunkZ) * Float(Chunk.depth))
       let distance1 = simd_distance_squared(cameraPosition2d, point1)

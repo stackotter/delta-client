@@ -13,7 +13,7 @@ public struct Camera {
   /// The aspect ratio.
   private(set) var aspect: Float = 1
   /// This camera's position.
-  private(set) var position: simd_float3 = [0, 0, 0]
+  private(set) var position: SIMD3<Float> = [0, 0, 0]
   
   /// This camera's rotation around the x axis (pitch).
   private(set) var xRot: Float = 0
@@ -42,7 +42,7 @@ public struct Camera {
   }
   
   /// Sets this camera's position in world coordinates.
-  public mutating func setPosition(_ position: simd_float3) {
+  public mutating func setPosition(_ position: SIMD3<Float>) {
     self.position = position
     frustum = nil
   }

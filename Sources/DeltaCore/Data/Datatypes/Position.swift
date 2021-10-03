@@ -52,8 +52,8 @@ public struct Position {
   }
   
   /// This position as a float vector
-  public var floatVector: simd_float3 {
-    return simd_float3(
+  public var floatVector: SIMD3<Float> {
+    return SIMD3<Float>(
       Float(x),
       Float(y),
       Float(z))
