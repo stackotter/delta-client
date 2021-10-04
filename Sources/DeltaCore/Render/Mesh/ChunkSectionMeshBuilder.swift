@@ -234,10 +234,10 @@ public struct ChunkSectionMeshBuilder {
     }
     
     let uvs: [SIMD2<Float>] = [
-      [1, 0],
+      [0.5, 0],
       [0, 0],
-      [0, 1],
-      [1, 1]]
+      [0, 0.5],
+      [0.5, 0.5]]
     
     let neighbouringBlockStates = getNeighbouringBlockStates(neighbourIndices: indexToNeighbourIndices[blockIndex])
     var cullingNeighbours = getCullingNeighbours(at: position.relativeToChunkSection, state: state, neighbouringBlockStates: neighbouringBlockStates)
@@ -280,6 +280,9 @@ public struct ChunkSectionMeshBuilder {
           break
         case .north, .east, .south, .west:
           let cornerIndices = Self.directionCorners[direction]!
+          var uvs = uvs
+          uvs[0][1] += (1 - heights[cornerIndices[0]]) / 2
+          uvs[1][1] += (1 - heights[cornerIndices[1]]) / 2
           var positions = cornerIndices.map { topCornerPositions[$0] }
           let offsets = cornerIndices.map { Self.cornerDirections[$0] }.reversed()
           for offset in offsets {
@@ -374,15 +377,13 @@ public struct ChunkSectionMeshBuilder {
         let upperNeighbourBlock = world.getBlock(at: neighbourPosition + Direction.up.intVector)
         if block.id == upperNeighbourBlock.id {
           heights[index] = 1
-          break
+          continue
         }
         
         let neighbourBlock = world.getBlock(at: neighbourPosition)
-        log.debug("neighbour position: \(neighbourPosition), neighbour block id: \(neighbourBlock.id), neighbour block identifier: \(neighbourBlock.identifier)")
         if block.id == neighbourBlock.id {
           let neighbourBlockState = world.getBlockState(at: neighbourPosition)
           let neighbourHeight = getFluidLevel(neighbourBlockState)
-          log.debug("neighbour height: \(neighbourHeight), neighbour position: \(neighbourPosition)")
           if neighbourHeight > maxHeight {
             maxHeight = neighbourHeight
           }
