@@ -60,11 +60,8 @@ public struct Position {
   }
   
   /// This position as an int vector
-  public var intVector: simd_int3 {
-    return simd_int3(
-      Int32(x),
-      Int32(y),
-      Int32(z))
+  public var intVector: SIMD3<Int> {
+    return SIMD3<Int>(x, y, z)
   }
   
   /// The positions neighbouring this position.
@@ -72,7 +69,7 @@ public struct Position {
     Direction.allDirections.map { self + $0.intVector }
   }
   
-  public static func + (lhs: Position, rhs: simd_int3) -> Position {
+  public static func + (lhs: Position, rhs: SIMD3<Int>) -> Position {
     return Position(x: lhs.x &+ Int(rhs.x), y: lhs.y &+ Int(rhs.y), z: lhs.z &+ Int(rhs.z))
   }
   

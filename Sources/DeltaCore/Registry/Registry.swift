@@ -10,6 +10,7 @@ public enum RegistryError: LocalizedError {
 public enum Registry {
   public static var blockRegistry = BlockRegistry()
   public static var biomeRegistry = BiomeRegistry()
+  public static var fluidRegistry = FluidRegistry()
   
   /// Populates the shared registry with the pixlyzer data in a specified directory.
   ///
@@ -19,6 +20,7 @@ public enum Registry {
   public static func populate(from pixlyzerDirectory: URL) throws {
     blockRegistry = try loadRegistry(from: pixlyzerDirectory)
     biomeRegistry = try loadRegistry(from: pixlyzerDirectory)
+    fluidRegistry = try loadRegistry(from: pixlyzerDirectory)
   }
   
   

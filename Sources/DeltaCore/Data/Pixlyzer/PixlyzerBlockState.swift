@@ -2,6 +2,10 @@ import Foundation
 
 /// Block state data from pixlyzer.
 public struct PixlyzerBlockState: Decodable {
+  public struct Properties: Codable {
+    public var level: Int?
+  }
+  
   public var luminance: Int?
   public var isRandomlyTicking: Bool?
   public var hasSidedTransparency: Bool?
@@ -16,6 +20,7 @@ public struct PixlyzerBlockState: Decodable {
   public var hardness: Double
   public var isOpaque: Bool?
   public var material: Identifier
+  public var properties: Properties?
   public var tintColor: Int?
   /// Information about what to render for this block state. It is either a single model or an array of variants.
   /// Each variant is always an array even if it only has one model. Effectively, the only two possible types
@@ -52,6 +57,7 @@ public struct PixlyzerBlockState: Decodable {
     case fallSound = "fall_sound_type"
     case requiresTool = "requires_tool"
     case hardness
+    case properties
     case isOpaque = "is_opaque"
     case material
     case tintColor = "tint_color"

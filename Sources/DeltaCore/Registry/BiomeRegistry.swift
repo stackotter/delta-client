@@ -24,7 +24,7 @@ public struct BiomeRegistry {
   // MARK: Init
   
   /// Creates an empty ``BiomeRegistry``.
-  public init() { }
+  public init() {}
   
   /// Creates a populated ``BiomeRegistry``.
   public init(biomes: [Biome]) {

@@ -13,7 +13,6 @@ public struct PixlyzerBlock: Decodable {
   public var className: String
   public var stillFluid: Int?
   public var flowFluid: Int?
-  public var fluid: Int?
   public var offsetType: String?
   public var maxModelOffset: Float?
   public var lavaParticles: Bool?
@@ -34,7 +33,6 @@ public struct PixlyzerBlock: Decodable {
     case className = "class"
     case stillFluid = "still_fluid"
     case flowFluid = "flow_fluid"
-    case fluid
     case offsetType = "offset_type"
     case lavaParticles = "lava_particles"
     case flameParticle = "flame_particle"

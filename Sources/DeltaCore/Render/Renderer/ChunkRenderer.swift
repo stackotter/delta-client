@@ -2,6 +2,8 @@ import Foundation
 import MetalKit
 
 class ChunkRenderer {
+  /// The world the chunk that this renders is in.
+  public var world: World
   /// The position of the chunk this renders.
   public var chunkPosition: ChunkPosition
   /// The chunk this renders.
@@ -37,12 +39,14 @@ class ChunkRenderer {
     for chunk: Chunk,
     at position: ChunkPosition,
     withNeighbours neighbours: [CardinalDirection: Chunk],
-    with resources: ResourcePack.Resources
+    with resources: ResourcePack.Resources,
+    world: World
   ) {
     self.chunkPosition = position
     self.chunk = chunk
     self.neighbourChunks = neighbours
     self.resources = resources
+    self.world = world
   }
   
   /// Prepare all `Chunk.Section`s in this renderer's `Chunk`
@@ -84,6 +88,7 @@ class ChunkRenderer {
         forSectionAt: sectionPosition,
         in: self.chunk,
         withNeighbours: self.neighbourChunks,
+        world: self.world,
         resources: self.resources)
       let mesh = builder.build(reusing: existingMesh)
       

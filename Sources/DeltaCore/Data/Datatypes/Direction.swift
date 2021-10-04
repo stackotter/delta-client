@@ -11,13 +11,32 @@ public enum Direction: Int {
   case east = 5
   
   /// The array of all directions.
-  public static var allDirections: [Direction] = [
+  public static let allDirections: [Direction] = [
     .down,
     .up,
     .north,
     .south,
     .west,
     .east]
+  
+  /// All directions excluding up and down.
+  public static let sides: [Direction] = [
+    .north,
+    .east,
+    .south,
+    .west]
+  
+  /// Returns the directions on the xz plane that are perpendicular to a direction.
+  public var perpendicularXZ: [Direction] {
+    switch self {
+      case .north, .south:
+        return [.east, .west]
+      case .east, .west:
+        return [.north, .south]
+      case .up, .down:
+        return [.north, .east, .south, .west]
+    }
+  }
   
   /// The axis this direction lies on.
   public var axis: Axis {
@@ -98,20 +117,20 @@ public enum Direction: Int {
   }
   
   /// Returns a normalized vector representing this direction.
-  public var intVector: simd_int3 {
+  public var intVector: SIMD3<Int> {
     switch self {
       case .down:
-        return simd_int3(0, -1, 0)
+        return SIMD3<Int>(0, -1, 0)
       case .up:
-        return simd_int3(0, 1, 0)
+        return SIMD3<Int>(0, 1, 0)
       case .north:
-        return simd_int3(0, 0, -1)
+        return SIMD3<Int>(0, 0, -1)
       case .south:
-        return simd_int3(0, 0, 1)
+        return SIMD3<Int>(0, 0, 1)
       case .west:
-        return simd_int3(-1, 0, 0)
+        return SIMD3<Int>(-1, 0, 0)
       case .east:
-        return simd_int3(1, 0, 0)
+        return SIMD3<Int>(1, 0, 0)
     }
   }
   
