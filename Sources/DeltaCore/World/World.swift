@@ -157,7 +157,7 @@ public class World {
   
   /// Returns information about the type of block at the specified position.
   public func getBlock(at position: Position) -> Block {
-    return Registry.blockRegistry.block(withId: Int(getBlockStateId(at: position))) ?? Block.missing
+    return Registry.blockRegistry.block(forStateWithId: Int(getBlockStateId(at: position))) ?? Block.missing
   }
   
   /// Get information about the state of a block.

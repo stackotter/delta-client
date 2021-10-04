@@ -378,9 +378,11 @@ public struct ChunkSectionMeshBuilder {
         }
         
         let neighbourBlock = world.getBlock(at: neighbourPosition)
+        log.debug("neighbour position: \(neighbourPosition), neighbour block id: \(neighbourBlock.id), neighbour block identifier: \(neighbourBlock.identifier)")
         if block.id == neighbourBlock.id {
           let neighbourBlockState = world.getBlockState(at: neighbourPosition)
           let neighbourHeight = getFluidLevel(neighbourBlockState)
+          log.debug("neighbour height: \(neighbourHeight), neighbour position: \(neighbourPosition)")
           if neighbourHeight > maxHeight {
             maxHeight = neighbourHeight
           }
