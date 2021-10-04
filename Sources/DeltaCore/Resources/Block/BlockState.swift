@@ -21,6 +21,7 @@ public struct BlockState {
   public var collisionShape: Int?
   public var outlineShape: Int?
   public var solidRender: Bool?
+  public var level: Int?
   public var translucent: Bool
   public var opacity: Int
   public var largeCollisionShape: Bool
@@ -55,6 +56,7 @@ extension BlockState {
     opacity = pixlyzerBlockState.lightBlock ?? 0
     largeCollisionShape = pixlyzerBlockState.largeCollisionShape ?? false
     isCollisionShapeFullBlock = pixlyzerBlockState.isCollisionShapeFullBlock ?? true
+    level = pixlyzerBlockState.properties?.level
     
     if let occlusion = pixlyzerBlockState.occlusionShape {
       switch occlusion {
@@ -97,6 +99,7 @@ extension BlockState {
     collisionShape: nil,
     outlineShape: nil,
     solidRender: nil,
+    level: nil,
     translucent: false,
     opacity: 1,
     largeCollisionShape: false,

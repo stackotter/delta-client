@@ -175,7 +175,8 @@ class WorldRenderer {
             for: neighbour,
             at: position,
             withNeighbours: neighbours,
-            with: resources)
+            with: resources,
+            world: world)
           chunkRenderers[position] = chunkRenderer
           log.debug("Created chunk renderer for chunk at \(position)")
         }

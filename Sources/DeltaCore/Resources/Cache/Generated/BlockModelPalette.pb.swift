@@ -207,6 +207,8 @@ struct ProtobufBlockModel {
 
   var textureType: ProtobufTextureType = .opaque
 
+  var isFluid: Bool = false
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -443,6 +445,7 @@ extension ProtobufBlockModel: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     3: .standard(proto: "cullable_faces"),
     4: .standard(proto: "non_cullable_faces"),
     5: .standard(proto: "texture_type"),
+    6: .standard(proto: "is_fluid"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -456,6 +459,7 @@ extension ProtobufBlockModel: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
       case 3: try { try decoder.decodeRepeatedEnumField(value: &self.cullableFaces) }()
       case 4: try { try decoder.decodeRepeatedEnumField(value: &self.nonCullableFaces) }()
       case 5: try { try decoder.decodeSingularEnumField(value: &self.textureType) }()
+      case 6: try { try decoder.decodeSingularBoolField(value: &self.isFluid) }()
       default: break
       }
     }
@@ -477,6 +481,9 @@ extension ProtobufBlockModel: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if self.textureType != .opaque {
       try visitor.visitSingularEnumField(value: self.textureType, fieldNumber: 5)
     }
+    if self.isFluid != false {
+      try visitor.visitSingularBoolField(value: self.isFluid, fieldNumber: 6)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -486,6 +493,7 @@ extension ProtobufBlockModel: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if lhs.cullableFaces != rhs.cullableFaces {return false}
     if lhs.nonCullableFaces != rhs.nonCullableFaces {return false}
     if lhs.textureType != rhs.textureType {return false}
+    if lhs.isFluid != rhs.isFluid {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

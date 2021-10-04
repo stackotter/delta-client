@@ -14,7 +14,6 @@ public struct Block {
   public var className: String
   public var stillFluid: Int?
   public var flowFluid: Int?
-  public var fluid: Int?
   public var offsetType: String?
   public var lavaParticles: Bool
   public var flameParticle: Int?
@@ -38,7 +37,6 @@ extension Block {
     className = pixlyzerBlock.className
     stillFluid = pixlyzerBlock.stillFluid
     flowFluid = pixlyzerBlock.flowFluid
-    fluid = pixlyzerBlock.fluid
     offsetType = pixlyzerBlock.offsetType
     lavaParticles = pixlyzerBlock.lavaParticles ?? false
     flameParticle = pixlyzerBlock.flameParticle
@@ -63,7 +61,6 @@ extension Block {
     className: "",
     stillFluid: nil,
     flowFluid: nil,
-    fluid: nil,
     offsetType: nil,
     lavaParticles: false,
     flameParticle: nil,

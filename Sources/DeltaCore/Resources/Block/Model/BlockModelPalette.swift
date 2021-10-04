@@ -155,7 +155,8 @@ public struct BlockModelPalette {
       cullingFaces: cullingFaces,
       cullableFaces: cullableFaces,
       nonCullableFaces: nonCullableFaces,
-      textureType: textureType)
+      textureType: textureType,
+      isFluid: block.className == "FluidBlock")
   }
   
   /// Converts a flattened block model element to a block model element format ready for rendering.

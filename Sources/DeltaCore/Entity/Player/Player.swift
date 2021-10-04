@@ -8,7 +8,7 @@ public struct Player {
   /// The player's position.
   public private(set) var position = EntityPosition(x: 0, y: 0, z: 0)
   /// The player's velocity.
-  public private(set) var velocity = simd_double3(repeating: 0)
+  public private(set) var velocity = SIMD3<Double>(repeating: 0)
   /// The player's rotation.
   public private(set) var look = PlayerRotation(yaw: 0, pitch: 0)
   
@@ -193,7 +193,7 @@ public struct Player {
 
     // adjust to real velocity (using yaw)
     let yawRadians = Double(look.yaw * .pi / 180)
-    var xz = simd_double2(velocity.x, velocity.z)
+    var xz = SIMD2<Double>(velocity.x, velocity.z)
     // swiftlint:disable shorthand_operator
     xz = xz * MatrixUtil.rotationMatrix2dDouble(yawRadians)
     // swiftlint:enable shorthand_operator
