@@ -103,6 +103,8 @@ public struct ChunkSectionMeshBuilder {
     return mesh
   }
   
+  // MARK: Block mesh building
+  
   /// Adds a block to the mesh.
   private func addBlock(
     at position: Position,
@@ -201,9 +203,170 @@ public struct ChunkSectionMeshBuilder {
     }
   }
   
-  // MARK: Start Minosoft code
+  /// Adds the given block model to the mesh, positioned by the given model to world matrix.
+  private func addModelPart(
+    _ blockModel: BlockModelPart,
+    transformedBy modelToWorld: matrix_float4x4,
+    transparentAndOpaqueGeometry: inout Geometry,
+    translucentGeometry: inout Geometry,
+    culledFaces: Set<Direction>,
+    lightLevel: LightLevel,
+    neighbourLightLevels: [Direction: LightLevel],
+    tintColor: SIMD3<Float>
+  ) {
+    for element in blockModel.elements {
+      addElement(
+        element,
+        transformedBy: modelToWorld,
+        transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
+        translucentGeometry: &translucentGeometry,
+        culledFaces: culledFaces,
+        lightLevel: lightLevel,
+        neighbourLightLevels: neighbourLightLevels,
+        tintColor: tintColor)
+    }
+  }
   
-  // TODO: This code is pretty much just copying what Minosoft does, clean it up and make it better. Not exactly vanilla behaviour either
+  /// Adds the given block model element to the mesh, positioned by the given model to world matrix.
+  private func addElement(
+    _ element: BlockModelElement,
+    transformedBy modelToWorld: matrix_float4x4,
+    transparentAndOpaqueGeometry: inout Geometry,
+    translucentGeometry: inout Geometry,
+    culledFaces: Set<Direction>,
+    lightLevel: LightLevel,
+    neighbourLightLevels: [Direction: LightLevel],
+    tintColor: SIMD3<Float>
+  ) {
+    let vertexToWorld = element.transformation * modelToWorld
+    for face in element.faces {
+      if let cullFace = face.cullface, culledFaces.contains(cullFace) {
+        continue
+      }
+      
+      var faceLightLevel = neighbourLightLevels[face.actualDirection] ?? LightLevel()
+      faceLightLevel = LightLevel.max(faceLightLevel, lightLevel)
+      addFace(
+        face,
+        transformedBy: vertexToWorld,
+        transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
+        translucentGeometry: &translucentGeometry,
+        shouldShade: element.shade,
+        lightLevel: faceLightLevel,
+        tintColor: tintColor)
+    }
+  }
+  
+  /// Adds a face to some geometry.
+  /// - Parameters:
+  ///   - face: A face to add to the mesh.
+  ///   - transformation: A transformation to apply to each vertex of the face.
+  ///   - transparentAndOpaqueGeometry: The geometry to add the face to if it's not translucent.
+  ///   - translucentGeometry: The geometry to add the face to if it's translucent.
+  ///   - shouldShade: If `false`, the face will not be shaded based on the direction it faces. It'll still be affected by light levels.
+  ///   - lightLevel: The light level to render the face at.
+  ///   - tintColor: The color to tint the face as a float vector where each component has a maximum of 1. Supplying white will leave the face unaffected.
+  private func addFace(
+    _ face: BlockModelFace,
+    transformedBy transformation: matrix_float4x4,
+    transparentAndOpaqueGeometry: inout Geometry,
+    translucentGeometry: inout Geometry,
+    shouldShade: Bool,
+    lightLevel: LightLevel,
+    tintColor: SIMD3<Float>
+  ) {
+    let textureType = resources.blockTexturePalette.textures[face.texture].type
+    if textureType == .translucent {
+      addFace(
+        face,
+        transformedBy: transformation,
+        geometry: &translucentGeometry,
+        textureType: textureType,
+        shouldShade: shouldShade,
+        lightLevel: lightLevel,
+        tintColor: tintColor)
+    } else {
+      addFace(
+        face,
+        transformedBy: transformation,
+        geometry: &transparentAndOpaqueGeometry,
+        textureType: textureType,
+        shouldShade: shouldShade,
+        lightLevel: lightLevel,
+        tintColor: tintColor)
+    }
+  }
+  
+  /// Adds a face to a mesh.
+  /// - Parameters:
+  ///   - face: A face to add to the mesh.
+  ///   - transformation: A transformation to apply to each vertex of the face.
+  ///   - geometry: The geometry to add the face to.
+  ///   - shouldShade: If `false`, the face will not be shaded based on the direction it faces. It'll still be affected by light levels.
+  ///   - lightLevel: The light level to render the face at.
+  ///   - tintColor: The color to tint the face as a float vector where each component has a maximum of 1. Supplying white will leave the face unaffected.
+  private func addFace(
+    _ face: BlockModelFace,
+    transformedBy transformation: matrix_float4x4,
+    geometry: inout Geometry,
+    textureType: TextureType,
+    shouldShade: Bool,
+    lightLevel: LightLevel,
+    tintColor: SIMD3<Float>
+  ) {
+    // Add face winding
+    let offset = UInt32(geometry.vertices.count) // The index of the first vertex of face
+    for index in CubeGeometry.faceWinding {
+      geometry.indices.append(index &+ offset)
+    }
+    
+    // swiftlint:disable force_unwrapping
+    // This lookup will never be nil cause every direction is included in the static lookup table
+    let faceVertexPositions = CubeGeometry.faceVertices[face.direction]!
+    // swiftlint:enable force_unwrapping
+    
+    // Calculate shade of face
+    let lightLevel = max(lightLevel.block, lightLevel.sky)
+    let faceDirection = face.actualDirection.rawValue
+    var shade: Float = 1.0
+    if shouldShade {
+      shade = CubeGeometry.shades[faceDirection]
+    }
+    shade *= Float(lightLevel) / 15
+    
+    // Calculate the tint color to apply to the face
+    let tint: SIMD3<Float>
+    if face.isTinted {
+      tint = tintColor * shade
+    } else {
+      tint = SIMD3<Float>(repeating: shade)
+    }
+    
+    let textureIndex = UInt16(face.texture)
+    let isTransparent = textureType == .transparent
+    
+    // Add vertices to mesh
+    for (uvIndex, vertexPosition) in faceVertexPositions.enumerated() {
+      let position = simd_make_float3(SIMD4<Float>(vertexPosition, 1) * transformation)
+      let uv = face.uvs[uvIndex]
+      let vertex = Vertex(
+        x: position.x,
+        y: position.y,
+        z: position.z,
+        u: uv.x,
+        v: uv.y,
+        r: tint.x,
+        g: tint.y,
+        b: tint.z,
+        textureIndex: textureIndex,
+        isTransparent: isTransparent)
+      geometry.vertices.append(vertex)
+    }
+  }
+  
+  // MARK: Fluid rendering (please refactor)
+  
+  // TODO: Clean this up (maybe make a FluidMeshBuilder?). This also isn't fully vanilla behaviour. But it's close enough for now.
   
   /// Adds a fluid block to the mesh.
   /// - Parameters:
@@ -241,6 +404,11 @@ public struct ChunkSectionMeshBuilder {
       tint = tintColor
     }
     
+    // Lighting
+    let lightLevel = chunk.lighting.getLightLevel(atIndex: blockIndex, inSectionAt: sectionPosition.sectionY)
+    let neighbourLightLevels = getNeighbourLightLevels(neighbourIndices: indexToNeighbourIndices[blockIndex], visibleFaces: [.up, .down, .north, .east, .south, .west])
+    
+    // UVs
     let flowingUVs: [SIMD2<Float>] = [
       [0.75, 0.25],
       [0.25, 0.25],
@@ -291,6 +459,11 @@ public struct ChunkSectionMeshBuilder {
     // Create faces
     let basePosition = position.relativeToChunkSection.floatVector + SIMD3<Float>(0.5, 0, 0.5)
     for direction in Direction.allDirections where !cullingNeighbours.contains(direction) {
+      let lightLevel = LightLevel.max(lightLevel, neighbourLightLevels[direction] ?? LightLevel())
+      var shade = CubeGeometry.shades[direction.rawValue]
+      shade *= Float(max(lightLevel.block, lightLevel.sky)) / 15
+      let tint = tint * shade
+      
       var geometry = Geometry()
       switch direction {
         case .up:
@@ -512,168 +685,7 @@ public struct ChunkSectionMeshBuilder {
     }
   }
   
-  // MARK: End Minosoft code
-  
-  /// Adds the given block model to the mesh, positioned by the given model to world matrix.
-  private func addModelPart(
-    _ blockModel: BlockModelPart,
-    transformedBy modelToWorld: matrix_float4x4,
-    transparentAndOpaqueGeometry: inout Geometry,
-    translucentGeometry: inout Geometry,
-    culledFaces: Set<Direction>,
-    lightLevel: LightLevel,
-    neighbourLightLevels: [Direction: LightLevel],
-    tintColor: SIMD3<Float>
-  ) {
-    for element in blockModel.elements {
-      addElement(
-        element,
-        transformedBy: modelToWorld,
-        transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
-        translucentGeometry: &translucentGeometry,
-        culledFaces: culledFaces,
-        lightLevel: lightLevel,
-        neighbourLightLevels: neighbourLightLevels,
-        tintColor: tintColor)
-    }
-  }
-  
-  /// Adds the given block model element to the mesh, positioned by the given model to world matrix.
-  private func addElement(
-    _ element: BlockModelElement,
-    transformedBy modelToWorld: matrix_float4x4,
-    transparentAndOpaqueGeometry: inout Geometry,
-    translucentGeometry: inout Geometry,
-    culledFaces: Set<Direction>,
-    lightLevel: LightLevel,
-    neighbourLightLevels: [Direction: LightLevel],
-    tintColor: SIMD3<Float>
-  ) {
-    let vertexToWorld = element.transformation * modelToWorld
-    for face in element.faces {
-      if let cullFace = face.cullface, culledFaces.contains(cullFace) {
-        continue
-      }
-      
-      var faceLightLevel = neighbourLightLevels[face.actualDirection] ?? LightLevel()
-      faceLightLevel = LightLevel.max(faceLightLevel, lightLevel)
-      addFace(
-        face,
-        transformedBy: vertexToWorld,
-        transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
-        translucentGeometry: &translucentGeometry,
-        shouldShade: element.shade,
-        lightLevel: faceLightLevel,
-        tintColor: tintColor)
-    }
-  }
-  
-  /// Adds a face to some geometry.
-  /// - Parameters:
-  ///   - face: A face to add to the mesh.
-  ///   - transformation: A transformation to apply to each vertex of the face.
-  ///   - transparentAndOpaqueGeometry: The geometry to add the face to if it's not translucent.
-  ///   - translucentGeometry: The geometry to add the face to if it's translucent.
-  ///   - shouldShade: If `false`, the face will not be shaded based on the direction it faces. It'll still be affected by light levels.
-  ///   - lightLevel: The light level to render the face at.
-  ///   - tintColor: The color to tint the face as a float vector where each component has a maximum of 1. Supplying white will leave the face unaffected.
-  private func addFace(
-    _ face: BlockModelFace,
-    transformedBy transformation: matrix_float4x4,
-    transparentAndOpaqueGeometry: inout Geometry,
-    translucentGeometry: inout Geometry,
-    shouldShade: Bool,
-    lightLevel: LightLevel,
-    tintColor: SIMD3<Float>
-  ) {
-    let textureType = resources.blockTexturePalette.textures[face.texture].type
-    if textureType == .translucent {
-      addFace(
-        face,
-        transformedBy: transformation,
-        geometry: &translucentGeometry,
-        textureType: textureType,
-        shouldShade: shouldShade,
-        lightLevel: lightLevel,
-        tintColor: tintColor)
-    } else {
-      addFace(
-        face,
-        transformedBy: transformation,
-        geometry: &transparentAndOpaqueGeometry,
-        textureType: textureType,
-        shouldShade: shouldShade,
-        lightLevel: lightLevel,
-        tintColor: tintColor)
-    }
-  }
-  
-  /// Adds a face to a mesh.
-  /// - Parameters:
-  ///   - face: A face to add to the mesh.
-  ///   - transformation: A transformation to apply to each vertex of the face.
-  ///   - geometry: The geometry to add the face to.
-  ///   - shouldShade: If `false`, the face will not be shaded based on the direction it faces. It'll still be affected by light levels.
-  ///   - lightLevel: The light level to render the face at.
-  ///   - tintColor: The color to tint the face as a float vector where each component has a maximum of 1. Supplying white will leave the face unaffected.
-  private func addFace(
-    _ face: BlockModelFace,
-    transformedBy transformation: matrix_float4x4,
-    geometry: inout Geometry,
-    textureType: TextureType,
-    shouldShade: Bool,
-    lightLevel: LightLevel,
-    tintColor: SIMD3<Float>
-  ) {
-    // Add face winding
-    let offset = UInt32(geometry.vertices.count) // The index of the first vertex of face
-    for index in CubeGeometry.faceWinding {
-      geometry.indices.append(index &+ offset)
-    }
-    
-    // swiftlint:disable force_unwrapping
-    // This lookup will never be nil cause every direction is included in the static lookup table
-    let faceVertexPositions = CubeGeometry.faceVertices[face.direction]!
-    // swiftlint:enable force_unwrapping
-    
-    // Calculate shade of face
-    let lightLevel = max(lightLevel.block, lightLevel.sky)
-    let faceDirection = face.actualDirection.rawValue
-    var shade: Float = 1.0
-    if shouldShade {
-      shade = CubeGeometry.shades[faceDirection]
-    }
-    shade *= Float(lightLevel) / 15
-    
-    // Calculate the tint color to apply to the face
-    let tint: SIMD3<Float>
-    if face.isTinted {
-      tint = tintColor * shade
-    } else {
-      tint = SIMD3<Float>(repeating: shade)
-    }
-    
-    let textureIndex = UInt16(face.texture)
-    let isTransparent = textureType == .transparent
-    
-    // Add vertices to mesh
-    for (uvIndex, vertexPosition) in faceVertexPositions.enumerated() {
-      let position = simd_make_float3(SIMD4<Float>(vertexPosition, 1) * transformation)
-      let uv = face.uvs[uvIndex]
-      let vertex = Vertex(
-        x: position.x,
-        y: position.y,
-        z: position.z,
-        u: uv.x,
-        v: uv.y,
-        r: tint.x,
-        g: tint.y,
-        b: tint.z,
-        textureIndex: textureIndex,
-        isTransparent: isTransparent)
-      geometry.vertices.append(vertex)
-    }
-  }
+  // MARK: Helper
   
   /// Gets the block state of each block neighbouring the block at `sectionIndex`.
   ///

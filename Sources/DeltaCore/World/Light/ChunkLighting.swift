@@ -63,6 +63,12 @@ public struct ChunkLighting {
     return LightLevel(sky: skyLightLevel, block: blockLightLevel)
   }
   
+  public func getLightLevel(atIndex index: Int, inSectionAt sectionIndex: Int) -> LightLevel {
+    let skyLightLevel = getSkyLightLevel(atIndex: index, inSectionAt: sectionIndex)
+    let blockLightLevel = getBlockLightLevel(atIndex: index, inSectionAt: sectionIndex)
+    return LightLevel(sky: skyLightLevel, block: blockLightLevel)
+  }
+  
   public func getLightLevel(at index: Int) -> LightLevel {
     let skyLightLevel = getSkyLightLevel(atIndex: index)
     let blockLightLevel = getBlockLightLevel(atIndex: index)
