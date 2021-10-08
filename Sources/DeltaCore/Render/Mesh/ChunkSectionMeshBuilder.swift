@@ -376,8 +376,8 @@ public struct ChunkSectionMeshBuilder {
         // If any of the surrounding blocks have the fluid above them, this corner should have a height of 1
         let upperNeighbourBlock = world.getBlock(at: neighbourPosition + Direction.up.intVector)
         if block.id == upperNeighbourBlock.id {
-          heights[index] = 1
-          continue
+          maxHeight = 1
+          break
         }
         
         let neighbourBlock = world.getBlock(at: neighbourPosition)
