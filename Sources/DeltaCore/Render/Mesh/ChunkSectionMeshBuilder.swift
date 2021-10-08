@@ -233,11 +233,17 @@ public struct ChunkSectionMeshBuilder {
       return
     }
     
-    let uvs: [SIMD2<Float>] = [
-      [0.5, 0],
+    let flowingUVs: [SIMD2<Float>] = [
+      [0.75, 0.25],
+      [0.25, 0.25],
+      [0.25, 0.75],
+      [0.75, 0.75]]
+    
+    let stillUVs: [SIMD2<Float>] = [
+      [1, 0],
       [0, 0],
-      [0, 0.5],
-      [0.5, 0.5]]
+      [0, 1],
+      [1, 1]]
     
     let neighbouringBlockStates = getNeighbouringBlockStates(neighbourIndices: indexToNeighbourIndices[blockIndex])
     var cullingNeighbours = getCullingNeighbours(at: position.relativeToChunkSection, state: state, neighbouringBlockStates: neighbouringBlockStates)
@@ -264,12 +270,15 @@ public struct ChunkSectionMeshBuilder {
     
     // Get textures
     guard
-      let flowingTexture = resources.blockTexturePalette.textureIndex(for: Identifier(name: "block/water_flow")),
-      let stillTexture = resources.blockTexturePalette.textureIndex(for: Identifier(name: "block/water_still"))
+      let flowingTextureIndex = resources.blockTexturePalette.textureIndex(for: Identifier(name: "block/water_flow")),
+      let stillTextureIndex = resources.blockTexturePalette.textureIndex(for: Identifier(name: "block/water_still"))
     else {
       log.warning("Failed to get textures for fluid")
       return
     }
+    
+    let flowingTexture = UInt16(flowingTextureIndex)
+    let stillTexture = UInt16(stillTextureIndex)
     
     // Create faces
     let basePosition = position.relativeToChunkSection.floatVector + SIMD3<Float>(0.5, 0, 0.5)
@@ -277,10 +286,81 @@ public struct ChunkSectionMeshBuilder {
       var geometry = Geometry()
       switch direction {
         case .up:
-          break
+          var positions: [SIMD3<Float>]
+          var uvs: [SIMD2<Float>]
+          var texture: UInt16
+          if isFlowing {
+            var lowestCornerHeight: Float = 1
+            var lowestCornerIndex = 0
+            var lowestCornersCount = 0 // The number of corners at the lowest height
+            for (index, height) in heights.enumerated() {
+              if height < lowestCornerHeight {
+                lowestCornersCount = 1
+                lowestCornerHeight = height
+                lowestCornerIndex = index
+              } else if height == lowestCornerHeight {
+                lowestCornersCount += 1
+              }
+            }
+            
+            texture = flowingTexture
+            uvs = flowingUVs
+            
+            let previousCornerIndex = (lowestCornerIndex - 1) & 0x3
+            if lowestCornersCount == 2 {
+              // If there are two lowest corners next to eachother, take the first (when going anticlockwise)
+              if heights[previousCornerIndex] == lowestCornerHeight {
+                lowestCornerIndex = previousCornerIndex
+              }
+            } else if lowestCornersCount == 3 {
+              // If there are three lowest corners, take the last (when going anticlockwise)
+              let nextCornerIndex = (lowestCornerIndex + 1) & 0x3
+              if heights[previousCornerIndex] == lowestCornerHeight && heights[nextCornerIndex] == lowestCornerHeight {
+                lowestCornerIndex = nextCornerIndex
+              } else if heights[nextCornerIndex] == lowestCornerHeight {
+                lowestCornerIndex = (lowestCornerIndex + 2) & 0x3
+              }
+            }
+            
+            // Rotate UVs 45 degrees if necessary
+            if lowestCornersCount == 1 || lowestCornersCount == 3 {
+              let uvRotation = MatrixUtil.rotationMatrix2d(lowestCornersCount == 1 ? .pi / 4 : 3 * .pi / 4)
+              let center = SIMD2<Float>(repeating: 0.5)
+              for (index, uv) in uvs.enumerated() {
+                uvs[index] = (uv - center) * uvRotation + center
+              }
+            }
+            
+            // Rotate corner positions so that the lowest and the opposite from the lowest are on both triangles
+            positions = []
+            for i in 0..<4 {
+              positions.append(topCornerPositions[(i + lowestCornerIndex) & 0x3]) // & 0x3 performs mod 4
+            }
+          } else {
+            positions = topCornerPositions
+            uvs = stillUVs
+            texture = stillTexture
+          }
+          
+          for (index, position) in positions.reversed().enumerated() {
+            let vertex = Vertex(
+              x: position.x,
+              y: position.y,
+              z: position.z,
+              u: uvs[index].x,
+              v: uvs[index].y,
+              r: tint.x,
+              g: tint.y,
+              b: tint.z,
+              textureIndex: texture,
+              isTransparent: false)
+            geometry.vertices.append(vertex)
+          }
+          
+          geometry.indices.append(contentsOf: CubeGeometry.faceWinding)
         case .north, .east, .south, .west:
           let cornerIndices = Self.directionCorners[direction]!
-          var uvs = uvs
+          var uvs = flowingUVs
           uvs[0][1] += (1 - heights[cornerIndices[0]]) / 2
           uvs[1][1] += (1 - heights[cornerIndices[1]]) / 2
           var positions = cornerIndices.map { topCornerPositions[$0] }
@@ -299,14 +379,32 @@ public struct ChunkSectionMeshBuilder {
               r: tint.x,
               g: tint.y,
               b: tint.z,
-              textureIndex: UInt16(flowingTexture),
+              textureIndex: flowingTexture,
               isTransparent: false)
             geometry.vertices.append(vertex)
           }
           
           geometry.indices.append(contentsOf: CubeGeometry.faceWinding)
         case .down:
-          break
+          let uvs = [SIMD2<Float>](stillUVs.reversed())
+          for i in 0..<4 {
+            var position = topCornerPositions[(i - 1) & 0x3] // & 0x3 is mod 4
+            position.y = basePosition.y
+            let vertex = Vertex(
+              x: position.x,
+              y: position.y,
+              z: position.z,
+              u: uvs[i].x,
+              v: uvs[i].y,
+              r: tint.x,
+              g: tint.y,
+              b: tint.z,
+              textureIndex: stillTexture,
+              isTransparent: false)
+            geometry.vertices.append(vertex)
+          }
+          
+          geometry.indices.append(contentsOf: CubeGeometry.faceWinding)
       }
       
       translucentMesh.add(SortableMeshElement(
