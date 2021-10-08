@@ -221,16 +221,24 @@ public struct ChunkSectionMeshBuilder {
   ) {
     guard
       let block = Registry.blockRegistry.block(forStateWithId: state),
-      let blockState = Registry.blockRegistry.blockState(withId: state)
+      let blockState = Registry.blockRegistry.blockState(withId: state),
+      let flowingFluidId = block.flowFluid,
+      let stillFluidId = block.stillFluid,
+      let flowingFluid = Registry.fluidRegistry.fluid(withId: flowingFluidId),
+      let stillFluid = Registry.fluidRegistry.fluid(withId: stillFluidId)
     else {
       log.warning("Failed to get fluid block with block state id \(state)")
       return
     }
     
-    guard let tint = chunk.biome(at: position.relativeToChunk)?.waterColor.floatVector else {
-      // TODO: use a fallback color instead
-      log.warning("Failed to get water tint")
-      return
+    var tint = SIMD3<Float>(1, 1, 1)
+    if flowingFluid.type == .flowingWater || stillFluid.type == .stillWater {
+      guard let tintColor = chunk.biome(at: position.relativeToChunk)?.waterColor.floatVector else {
+        // TODO: use a fallback color instead
+        log.warning("Failed to get water tint")
+        return
+      }
+      tint = tintColor
     }
     
     let flowingUVs: [SIMD2<Float>] = [
@@ -270,8 +278,8 @@ public struct ChunkSectionMeshBuilder {
     
     // Get textures
     guard
-      let flowingTextureIndex = resources.blockTexturePalette.textureIndex(for: Identifier(name: "block/water_flow")),
-      let stillTextureIndex = resources.blockTexturePalette.textureIndex(for: Identifier(name: "block/water_still"))
+      let flowingTextureIndex = resources.blockTexturePalette.textureIndex(for: flowingFluid.texture),
+      let stillTextureIndex = resources.blockTexturePalette.textureIndex(for: stillFluid.texture)
     else {
       log.warning("Failed to get textures for fluid")
       return
