@@ -1,7 +1,7 @@
 import Foundation
 
-open class PluginEnvironment {
-	open var plugins: Dictionary<String, Plugin>
+open class PluginEnvironment: ObservableObject {
+	@Published public var plugins: Dictionary<String, Plugin>
 	
 	public init() {
 		plugins = [:]
