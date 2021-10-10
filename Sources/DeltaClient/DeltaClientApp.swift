@@ -36,6 +36,12 @@ struct DeltaClientApp: App {
             log.warning("Failed to cache vanilla resource pack")
           }
         }
+				
+				updateLoadingMessage("Loading plugins")
+				PluginManager.shared.addPlugins()
+				for error in PluginManager.shared.pluginErrors {
+					log.error("Error loading \(error.pluginDirectoryName): \(error.error.localizedDescription)")
+				}
         
         if ConfigManager.default.config.accounts.isEmpty {
           Self.appState.update(to: .login)
