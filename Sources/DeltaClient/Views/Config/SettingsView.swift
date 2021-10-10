@@ -18,6 +18,7 @@ struct SettingsView: View {
         if !isInGame {
           NavigationLink("Accounts", destination: AccountSettingsView().padding())
           NavigationLink("Update", destination: UpdateView().padding())
+					NavigationLink("Plugins", destination: PluginView().padding())
         }
         
         NavigationLink("Video", destination: VideoSettingsView(eventBus: eventBus).padding())
