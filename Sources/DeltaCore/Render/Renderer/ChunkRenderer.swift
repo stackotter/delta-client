@@ -1,41 +1,41 @@
 import Foundation
 import MetalKit
 
-class ChunkRenderer {
+open class ChunkRenderer {
   /// The world the chunk that this renders is in.
-  public var world: World
+  open var world: World
   /// The position of the chunk this renders.
-  public var chunkPosition: ChunkPosition
+	open var chunkPosition: ChunkPosition
   /// The chunk this renders.
-  public var chunk: Chunk
+	open var chunk: Chunk
   /// The chunks neighbouring the chunk this renders.
-  public var neighbourChunks: [CardinalDirection: Chunk] = [:]
+	open var neighbourChunks: [CardinalDirection: Chunk] = [:]
   
-  public var requiresPreparing = true
-  public var hasCompletedInitialPrepare = true
+	open var requiresPreparing = true
+	open var hasCompletedInitialPrepare = true
   
   /// The meshes for the sections of the chunk being rendered, indexed by section Y. Section Y is from 0-15 (inclusive).
-  private var sectionMeshes: [Int: ChunkSectionMesh] = [:]
+	open var sectionMeshes: [Int: ChunkSectionMesh] = [:]
   /// Indices of sections that block updates are currently frozen for.
-  private var frozenSections: Set<Int> = []
+	open var frozenSections: Set<Int> = []
   
   /// A serial queue for safely accessing and modifying `frozenSections`.
-  private var frozenSectionsAccessQueue = DispatchQueue(label: "dev.stackotter.frozenSectionsAccessQueue")
+	open var frozenSectionsAccessQueue = DispatchQueue(label: "dev.stackotter.frozenSectionsAccessQueue")
   /// A serial queue for safely accessing and modifying `sectionMeshes`.
-  private var sectionMeshesAccessQueue = DispatchQueue(label: "dev.stackotter.sectionMeshesAccessQueue")
+	open var sectionMeshesAccessQueue = DispatchQueue(label: "dev.stackotter.sectionMeshesAccessQueue")
   /// A concurrent queue for asynchronously preparing section meshes.
-  private var meshPreparationQueue = DispatchQueue(label: "dev.stackotter.meshPreparationQueue")
+	open var meshPreparationQueue = DispatchQueue(label: "dev.stackotter.meshPreparationQueue")
   
   /// The resources to use when rendering chunks.
-  private let resources: ResourcePack.Resources
+	public let resources: ResourcePack.Resources
   
-  var frozenSectionCount: Int {
+	open var frozenSectionCount: Int {
     frozenSectionsAccessQueue.sync {
       return frozenSections.count
     }
   }
   
-  init(
+  public required init(
     for chunk: Chunk,
     at position: ChunkPosition,
     withNeighbours neighbours: [CardinalDirection: Chunk],
@@ -50,7 +50,7 @@ class ChunkRenderer {
   }
   
   /// Prepare all `Chunk.Section`s in this renderer's `Chunk`
-  func prepareAsync() {
+	open func prepareAsync() {
     log.debug("Preparing all sections in chunk at \(chunkPosition)")
     
     // set before preparing to prevent getting double prepared
@@ -72,7 +72,7 @@ class ChunkRenderer {
   }
   
   /// Prepare a mesh for the chunk section specified.
-  private func prepareSectionAsync(at sectionY: Int) {
+	open func prepareSectionAsync(at sectionY: Int) {
     let sectionPosition = ChunkSectionPosition(chunkPosition, sectionY: sectionY)
     freezeSection(at: sectionY)
     
@@ -102,12 +102,12 @@ class ChunkRenderer {
   }
   
   /// Forces all of the chunk's meshes to be re-generated. Existing meshes are not deleted until the new ones are ready.
-  func invalidateMeshes() {
+	open func invalidateMeshes() {
     requiresPreparing = true
   }
   
   /// Updates the appropriate section mesh for a section update.
-  func handleSectionUpdate(at sectionY: Int) {
+	open func handleSectionUpdate(at sectionY: Int) {
     if !hasCompletedInitialPrepare {
       return
     }
@@ -121,7 +121,7 @@ class ChunkRenderer {
   }
   
   /// Disables block updates for a section
-  private func freezeSection(at sectionY: Int) {
+	open func freezeSection(at sectionY: Int) {
     frozenSectionsAccessQueue.sync {
       log.trace("Freezing section at index \(sectionY) in chunk at \(chunkPosition)")
       _ = self.frozenSections.insert(sectionY)
@@ -129,7 +129,7 @@ class ChunkRenderer {
   }
   
   /// Re-enables block updates for a section
-  private func unfreezeSection(at sectionY: Int) {
+	open func unfreezeSection(at sectionY: Int) {
     frozenSectionsAccessQueue.sync {
       log.trace("Unfreezing section at index \(sectionY) in chunk at \(chunkPosition)")
       _ = self.frozenSections.remove(sectionY)
@@ -137,14 +137,14 @@ class ChunkRenderer {
   }
   
   /// Checks whether block updates are enabled for the section at `sectionY`
-  func sectionFrozen(at sectionY: Int) -> Bool {
+	open func sectionFrozen(at sectionY: Int) -> Bool {
     return frozenSectionsAccessQueue.sync {
       return frozenSections.contains(sectionY)
     }
   }
   
   /// Renders this renderer's chunk
-  func render(transparentAndOpaqueEncoder: MTLRenderCommandEncoder, translucentEncoder: MTLRenderCommandEncoder, with device: MTLDevice, and camera: Camera, commandQueue: MTLCommandQueue) {
+	open func render(transparentAndOpaqueEncoder: MTLRenderCommandEncoder, translucentEncoder: MTLRenderCommandEncoder, with device: MTLDevice, and camera: Camera, commandQueue: MTLCommandQueue) {
     sectionMeshesAccessQueue.sync {
       sectionMeshes.mutatingEach { sectionY, mesh in
         // Don't need to check if mesh is empty because the mesh builder never returns empty meshes

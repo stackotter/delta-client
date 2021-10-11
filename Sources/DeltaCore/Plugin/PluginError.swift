@@ -6,6 +6,7 @@ public enum PluginError: LocalizedError {
 	case wrongAPIVersion
 	case alreadyExists
 	case invalidManifest
+	case alternateRenderConflict
 	
 	public var errorDescription: String? {
 		switch self {
@@ -19,6 +20,8 @@ public enum PluginError: LocalizedError {
 			return "A plugin with this name has already been loaded"
 		case .invalidManifest:
 			return "The plugin's manifest file is invalid"
+		case .alternateRenderConflict:
+			return "This plugin has an alternate render coordinator which conflicts with another plugin's alternate render system."
 		}
 	}
 }

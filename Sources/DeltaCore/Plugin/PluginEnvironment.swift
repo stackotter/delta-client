@@ -7,6 +7,15 @@ open class PluginEnvironment: ObservableObject {
 		plugins = [:]
 	}
 	
+	public var alternateRenderCoordinator: RenderCoordinator.Type? {
+		for plugin in self.plugins.values {
+			if let alternateRenderCoordinator = plugin.alternateRenderCoordinator {
+				return alternateRenderCoordinator
+			}
+		}
+		return nil
+	}
+	
 	public func handle(event: Event) {
 		for (_, plugin) in plugins {
 			plugin.handle(event: event)
@@ -70,6 +79,9 @@ open class PluginEnvironment: ObservableObject {
 		
 		guard plugins[pluginMetadata.name] == nil else {
 			throw PluginError.alreadyExists
+		}
+		guard plugin.alternateRenderCoordinator == nil || self.alternateRenderCoordinator == nil else {
+			throw PluginError.alternateRenderConflict
 		}
 		plugins[pluginMetadata.name] = plugin
 		plugin.handle(event: PluginLoadedEvent())

@@ -11,6 +11,9 @@ final class MetalView: NSViewRepresentable {
   }
   
   func makeCoordinator() -> RenderCoordinator {
+		if let alternateRenderCoordinator = PluginManager.shared.pluginEnvironment.alternateRenderCoordinator {
+			return alternateRenderCoordinator.init(client: client)
+		}
     return RenderCoordinator(client: client)
   }
   

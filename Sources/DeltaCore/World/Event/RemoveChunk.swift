@@ -1,7 +1,7 @@
 import Foundation
 
 extension World.Event {
-  struct RemoveChunk: Event {
+  public struct RemoveChunk: Event {
     let position: ChunkPosition
   }
 }

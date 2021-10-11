@@ -5,22 +5,22 @@ import MetalKit
 var stopwatch = Stopwatch(mode: .summary)
 
 // TODO: document render coordinator
-public class RenderCoordinator: NSObject, MTKViewDelegate {
-  private var client: Client
+open class RenderCoordinator: NSObject, MTKViewDelegate {
+  open var client: Client
   
-  private var camera: Camera
-  private var physicsEngine: PhysicsEngine
-  private var worldRenderer: WorldRenderer?
+  open var camera: Camera
+  open var physicsEngine: PhysicsEngine
+  open var worldRenderer: WorldRenderer?
   
-  private var commandQueue: MTLCommandQueue
+  open var commandQueue: MTLCommandQueue
   
-  private var frame = 0
+  open var frame = 0
   
-  private var device: MTLDevice
+  open var device: MTLDevice
   
   // MARK: Init
   
-  public init(client: Client) {
+  public required init(client: Client) {
     guard let device = MTLCreateSystemDefaultDevice() else {
       fatalError("failed to get metal device")
     }
@@ -64,7 +64,7 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
   
   // MARK: Render
   
-  public func draw(in view: MTKView) {
+  open func draw(in view: MTKView) {
     stopwatch.startMeasurement("whole frame")
     guard
       client.server?.world != nil,
@@ -110,14 +110,14 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
   
   // MARK: Helper
   
-  public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) { }
+  open func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) { }
   
-  private func updatePhysics() {
+  open func updatePhysics() {
     client.server?.player.updateVelocity()
     physicsEngine.update()
   }
   
-  private func updateCamera(_ player: Player, _ view: MTKView) {
+  open func updateCamera(_ player: Player, _ view: MTKView) {
     let aspect = Float(view.drawableSize.width / view.drawableSize.height)
     camera.setAspect(aspect)
     camera.setPosition(player.eyePositon.vector)
@@ -125,7 +125,7 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
     camera.cacheFrustum()
   }
   
-  private func handleClientEvent(_ event: Event) {
+  open func handleClientEvent(_ event: Event) {
     switch event {
       case let event as JoinWorldEvent:
         do {
@@ -147,7 +147,7 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
     }
   }
   
-  private func logFrame() {
+  open func logFrame() {
     frame += 1
     if frame % 100 == 0 {
       stopwatch.summary(repeats: 100)

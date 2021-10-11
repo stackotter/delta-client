@@ -3,30 +3,30 @@ import MetalKit
 import simd
 
 /// A renderer that renders a `World`
-class WorldRenderer {
+open class WorldRenderer {
   /// Render pipeline used for transparent and opaque geometry (non-translucent).
-  var transparentAndOpaquePipelineState: MTLRenderPipelineState
+  open var transparentAndOpaquePipelineState: MTLRenderPipelineState
   /// Render pipeline used for translucent geometry.
-  var translucentPipelineState: MTLRenderPipelineState
+  open var translucentPipelineState: MTLRenderPipelineState
   /// Depth stencil.
-  var depthState: MTLDepthStencilState
+  open var depthState: MTLDepthStencilState
   
-  var resources: ResourcePack.Resources
-  var blockArrayTexture: MTLTexture
-  var blockTexturePaletteAnimationState: TexturePaletteAnimationState
+  open var resources: ResourcePack.Resources
+  open var blockArrayTexture: MTLTexture
+  open var blockTexturePaletteAnimationState: TexturePaletteAnimationState
   
-  var world: World
-  var client: Client
-  var chunkRenderers: [ChunkPosition: ChunkRenderer] = [:]
+  open var world: World
+  open var client: Client
+  open var chunkRenderers: [ChunkPosition: ChunkRenderer] = [:]
   
-  var worldUniformBuffers: [MTLBuffer] = []
-  var numWorldUniformBuffers = 3
-  var worldUniformBufferIndex = 0
+  open var worldUniformBuffers: [MTLBuffer] = []
+  open var numWorldUniformBuffers = 3
+  open var worldUniformBufferIndex = 0
   
   /// A set containing all chunks which are currently preparing.
-  var preparingChunks: Set<ChunkPosition> = []
+  open var preparingChunks: Set<ChunkPosition> = []
   
-  init(device: MTLDevice, world: World, client: Client, resources: ResourcePack.Resources, commandQueue: MTLCommandQueue) throws {
+	public required init(device: MTLDevice, world: World, client: Client, resources: ResourcePack.Resources, commandQueue: MTLCommandQueue) throws {
     // Load shaders
     log.info("Loading shaders")
     guard let bundle = Bundle(url: Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/DeltaClient_DeltaCore.bundle")) else {
@@ -63,7 +63,7 @@ class WorldRenderer {
     worldUniformBuffers = try Self.createWorldUniformBuffers(device: device, count: numWorldUniformBuffers)
   }
   
-  private static func createWorldUniformBuffers(device: MTLDevice, count: Int) throws -> [MTLBuffer] {
+	public static func createWorldUniformBuffers(device: MTLDevice, count: Int) throws -> [MTLBuffer] {
     var buffers: [MTLBuffer] = []
     for _ in 0..<count {
       guard let uniformBuffer = device.makeBuffer(length: MemoryLayout<Uniforms>.stride, options: []) else {
@@ -76,7 +76,7 @@ class WorldRenderer {
     return buffers
   }
   
-  private static func createDepthState(device: MTLDevice) throws -> MTLDepthStencilState {
+	public static func createDepthState(device: MTLDevice) throws -> MTLDepthStencilState {
     let depthDescriptor = MTLDepthStencilDescriptor()
     depthDescriptor.depthCompareFunction = .lessEqual
     depthDescriptor.isDepthWriteEnabled = true
@@ -89,7 +89,7 @@ class WorldRenderer {
     return depthState
   }
   
-  private static func createRenderPipelineState(vertex: MTLFunction, fragment: MTLFunction, device: MTLDevice, translucent: Bool) throws -> MTLRenderPipelineState {
+	public static func createRenderPipelineState(vertex: MTLFunction, fragment: MTLFunction, device: MTLDevice, translucent: Bool) throws -> MTLRenderPipelineState {
     let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
     pipelineStateDescriptor.label = "dev.stackotter.delta-client.WorldRenderer\(translucent ? "-translucent" : "")"
     pipelineStateDescriptor.vertexFunction = vertex
@@ -116,7 +116,7 @@ class WorldRenderer {
     }
   }
   
-  private static func createArrayTexture(palette: TexturePalette, animationState: TexturePaletteAnimationState, device: MTLDevice, commandQueue: MTLCommandQueue) throws -> MTLTexture {
+	public static func createArrayTexture(palette: TexturePalette, animationState: TexturePaletteAnimationState, device: MTLDevice, commandQueue: MTLCommandQueue) throws -> MTLTexture {
     do {
       return try palette.createTextureArray(
         device: device,
@@ -129,7 +129,7 @@ class WorldRenderer {
   }
   
   /// Handles a batch of world events.
-  func handle(_ events: [Event]) {
+  open func handle(_ events: [Event]) {
     var sectionsToUpdate: Set<ChunkSectionPosition> = []
     
     events.forEach { event in
@@ -164,7 +164,7 @@ class WorldRenderer {
   }
   
   /// Creates renderers for all chunks that are renderable after the given update.
-  func handleAddChunk(_ event: World.Event.AddChunk) {
+  open func handleAddChunk(_ event: World.Event.AddChunk) {
     let affectedPositions = event.position.andNeighbours
     for position in affectedPositions {
       if canRenderChunk(at: position) && !chunkRenderers.keys.contains(position) {
@@ -185,7 +185,7 @@ class WorldRenderer {
   }
   
   /// Removes all renderers made invalid by a given chunk removal.
-  func handleRemoveChunk(_ event: World.Event.RemoveChunk) {
+  open func handleRemoveChunk(_ event: World.Event.RemoveChunk) {
     let affectedChunks = event.position.andNeighbours
     for chunkPosition in affectedChunks {
       chunkRenderers.removeValue(forKey: chunkPosition)
@@ -193,7 +193,7 @@ class WorldRenderer {
   }
   
   /// Handles a chunk lighting update.
-  func handleLightingUpdate(_ event: World.Event.UpdateChunkLighting) {
+  open func handleLightingUpdate(_ event: World.Event.UpdateChunkLighting) {
     if let chunk = world.chunk(at: event.position) {
       if let renderer = chunkRenderers[event.position] {
         // TODO: only update sections affected by the lighting update
@@ -210,7 +210,7 @@ class WorldRenderer {
   /// Returns whether a chunk is ready to be rendered or not.
   ///
   /// To be renderable, a chunk must be complete and so must its neighours.
-  func canRenderChunk(at position: ChunkPosition) -> Bool {
+  open func canRenderChunk(at position: ChunkPosition) -> Bool {
     let chunkPositions = position.andNeighbours
     for chunkPosition in chunkPositions {
       if !world.chunkComplete(at: chunkPosition) {
@@ -221,7 +221,7 @@ class WorldRenderer {
   }
   
   /// Returns the sections that require re-meshing after the specified block update.
-  func sectionsAffected(by blockUpdate: World.Event.SetBlock) -> [ChunkSectionPosition] {
+  open func sectionsAffected(by blockUpdate: World.Event.SetBlock) -> [ChunkSectionPosition] {
     var affectedSections: [ChunkSectionPosition] = [blockUpdate.position.chunkSection]
     
     let updateRelativeToChunk = blockUpdate.position.relativeToChunk
@@ -261,7 +261,7 @@ class WorldRenderer {
   }
   
   /// Returns the positions of all valid chunk sections that neighbour the specific chunk section.
-  func sectionsNeighbouring(sectionAt sectionPosition: ChunkSectionPosition) -> [ChunkSectionPosition] {
+  open func sectionsNeighbouring(sectionAt sectionPosition: ChunkSectionPosition) -> [ChunkSectionPosition] {
     var northNeighbour = sectionPosition
     northNeighbour.sectionZ -= 1
     var eastNeighbour = sectionPosition
@@ -288,7 +288,7 @@ class WorldRenderer {
   }
   
   /// Returns a map from each cardinal direction to the given renderer's neighbour in that direction.
-  func getNeighbourRenderers(of renderer: ChunkRenderer) -> [CardinalDirection: ChunkRenderer] {
+  open func getNeighbourRenderers(of renderer: ChunkRenderer) -> [CardinalDirection: ChunkRenderer] {
     var neighbourRenderers: [CardinalDirection: ChunkRenderer] = [:]
     renderer.chunkPosition.allNeighbours.forEach { direction, neighbourPosition in
       if let neighbourRenderer = chunkRenderers[neighbourPosition] {
@@ -308,7 +308,7 @@ class WorldRenderer {
   }
   
   /// Decides whether to process a world event this frame.
-  func shouldProcessWorldEvent(event: Event) -> Bool {
+  open func shouldProcessWorldEvent(event: Event) -> Bool {
     switch event {
       case let blockUpdate as World.Event.SetBlock:
         // Postpone handling of the block update if it affects a frozen chunk section
@@ -354,7 +354,7 @@ class WorldRenderer {
   }
   
   /// Also handles block updates.
-  func getVisibleChunkRenderers(camera: Camera) -> [ChunkRenderer] {
+  open func getVisibleChunkRenderers(camera: Camera) -> [ChunkRenderer] {
     // Filter and handle world events
     let events = world.processBatch(filter: shouldProcessWorldEvent)
     handle(events)
@@ -423,7 +423,7 @@ class WorldRenderer {
     return renderersToRender
   }
   
-  func updateAndGetUniformsBuffer(for camera: Camera) -> MTLBuffer {
+  open func updateAndGetUniformsBuffer(for camera: Camera) -> MTLBuffer {
     var worldUniforms = createWorldUniforms(for: camera)
     var buffer = worldUniformBuffers[worldUniformBufferIndex]
     worldUniformBufferIndex = (worldUniformBufferIndex + 1) % worldUniformBuffers.count
@@ -431,7 +431,7 @@ class WorldRenderer {
     return buffer
   }
   
-  private static func createRenderEncoder(
+	public static func createRenderEncoder(
     depthState: MTLDepthStencilState,
     commandBuffer: MTLCommandBuffer,
     renderPassDescriptor: MTLRenderPassDescriptor,
@@ -449,7 +449,7 @@ class WorldRenderer {
     return renderEncoder
   }
   
-  func draw(
+  open func draw(
     device: MTLDevice,
     view: MTKView,
     transparentAndOpaqueCommandBuffer: MTLCommandBuffer,
