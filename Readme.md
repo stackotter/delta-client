@@ -117,7 +117,7 @@ Not every version will be perfectly supported but we will try and have the most 
 
 ## Contributing
 
-First, please check out the [contributing guidelines](Contributing.md). Then you can checkout the [issues](https://github.com/stackotter/delta-client/issues) for a place to get started.
+First, please check out the [contributing guidelines](Contributing.md). Then you can checkout the [issues](https://github.com/stackotter/delta-client/issues) for a place to get started. Make sure to leave a comment on the issue you choose, so that people know that someone's already working on it.
 
 ## Servers
 
