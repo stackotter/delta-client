@@ -1,6 +1,10 @@
 # Contributing
 
-Delta Client is completely open source and I welcome contributions of all kinds. If you're interested in contributing, you can checkout the [issues](https://github.com/stackotter/delta-client/issues) on GitHub for some tasks. Some of the tasks don't even require Swift! But before you get too excited, make sure that you've read the contributing guidelines, and make sure that your contributions follow them. If you need any help with a contribution, feel free to join the [Discord](https://discord.gg/xZPyDbmR6k) and chat :)
+Delta Client is completely open source and I welcome contributions of all kinds. If you're interested in contributing, you can checkout the [delta client issues](https://github.com/stackotter/delta-client/issues) and [delta client website issues](https://github.com/stackotter/delta-website) ( on GitHub for some tasks. Some of the tasks don't even require Swift! But before you get too excited, make sure that you've read the contributing guidelines, and make sure that your contributions follow them. If you need any help with a contribution, feel free to join the [Discord](https://discord.gg/xZPyDbmR6k) and chat :)
+
+Note: when you've decided on an issue to work on, please leave a comment on it so that everyone else knows not to work on it.
+
+Another note: all changes should either be made on the dev branch or a branch created from the dev branch (if you like branching workflows).
 
 ## Guidelines
 
