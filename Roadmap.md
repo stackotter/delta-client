@@ -101,14 +101,15 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
 - [x] create a physics loop
   - [x] make a loop that runs at a consistent interval
   - [x] add basic physics simulation
-- [ ] add input configuration (mouse sensitivity and keymappings)
 - [x] add basis for multi-accounting
   - [x] config
   - [x] login code
 - [x] add offline account support
 - [x] ui for switching accounts
-- [ ] fix memory usage errors (when leaving a server or starting the app for the first time a lot of memory doesn't get freed for some reason)
-- [ ] fluids
+- [x] fix memory usage errors (when leaving a server or starting the app for the first time a lot of memory doesn't get freed for some reason)
+- [x] fluids
+- [ ] waterlogging
+- [ ] block id refactor (issue #25)
 
 ## Alpha 2 - Creative Mode Without Inventory
 
