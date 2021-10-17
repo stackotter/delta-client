@@ -63,32 +63,24 @@ public final class Chunk {
   
   /// Get information about a block.
   /// - Parameter position: A block position relative to the chunk.
-  /// - Returns: Information about block. Returns ``Block.missing`` if block state id is invalid.
+  /// - Returns: Information about block and its state. Returns ``Block.missing`` if block state id is invalid.
   public func getBlock(at position: Position) -> Block {
-    let stateId = Int(getBlockStateId(at: position))
-    return Registry.blockRegistry.block(forStateWithId: stateId) ?? Block.missing
-  }
-  
-  /// Get information about a block's state.
-  /// - Parameter position: A block position relative to the chunk.
-  /// - Returns: Block state information about block. Returns ``BlockState.missing`` if block state id is invalid.
-  public func getBlockState(at position: Position) -> BlockState {
-    let stateId = Int(getBlockStateId(at: position))
-    return Registry.blockRegistry.blockState(withId: stateId) ?? BlockState.missing
+    let stateId = getBlockId(at: position)
+    return Registry.shared.blockRegistry.block(withId: stateId) ?? Block.missing
   }
   
   /// Get the block state id of the block at a position.
   /// - Parameter position: A block position relative to the chunk.
-  /// - Returns: Block state id of block. Returns 0 (air) if `position` is invalid (outside chunk).
-  public func getBlockStateId(at position: Position) -> UInt16 {
+  /// - Returns: Block id of block. Returns 0 (regular air) if `position` is invalid (outside chunk).
+  public func getBlockId(at position: Position) -> Int {
     let blockIndex = position.blockIndex
-    return getBlockStateId(at: blockIndex)
+    return getBlockId(at: blockIndex)
   }
   
   /// Get the block state id of the block at an index.
   /// - Parameter index: Can be obtained using ``Position.blockIndex``. Relative to the chunk.
-  /// - Returns: Block state id of block. Returns 0 (air) if `index` is invalid (outside chunk).
-  public func getBlockStateId(at index: Int) -> UInt16 {
+  /// - Returns: Block id of block. Returns 0 (air) if `index` is invalid (outside chunk).
+  public func getBlockId(at index: Int) -> Int {
     if !Self.isValidBlockIndex(index) {
       log.warning("Invalid block index passed to Chunk.getBlockStateId(at:), index=\(index), returning block id 0 (air)")
       return 0
@@ -96,9 +88,8 @@ public final class Chunk {
     
     let sectionIndex = index / Section.numBlocks
     let sectionBlockIndex = index % Section.numBlocks
-    return sections[sectionIndex].getBlockState(at: sectionBlockIndex)
+    return sections[sectionIndex].getBlockId(at: sectionBlockIndex)
   }
-  
   
   /// Sets the block at the given position to a new value.
   ///
@@ -107,12 +98,12 @@ public final class Chunk {
   /// - Parameters:
   ///   - position: A position relative to the chunk.
   ///   - newState: A new block state. Not validated.
-  public func setBlockStateId(at position: Position, to newState: UInt16) {
+  public func setBlockId(at position: Position, to state: Int) {
     // TODO: Validate block state
     let blockIndex = position.blockIndex
     let sectionIndex = blockIndex / Section.numBlocks
     let sectionBlockIndex = blockIndex % Section.numBlocks
-    sections[sectionIndex].setBlockState(at: sectionBlockIndex, to: newState)
+    sections[sectionIndex].setBlockId(at: sectionBlockIndex, to: state)
     
     heightMap.handleBlockUpdate(at: position, in: self)
   }
@@ -132,7 +123,7 @@ public final class Chunk {
   /// - Returns: Data about the biome.
   public func biome(at position: Position) -> Biome? {
     let biomeId = self.biomeId(at: position)
-    return Registry.biomeRegistry.biome(withId: biomeId)
+    return Registry.shared.biomeRegistry.biome(withId: biomeId)
   }
   
   // MARK: Sections

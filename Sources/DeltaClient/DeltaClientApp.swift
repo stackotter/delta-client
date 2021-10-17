@@ -23,7 +23,7 @@ struct DeltaClientApp: App {
         }
         
         updateLoadingMessage("Loading registries")
-        try Registry.populate(from: StorageManager.default.pixlyzerDirectory)
+        try Registry.populateShared(StorageManager.default.registryDirectory)
         
         updateLoadingMessage("Loading resource pack")
         let packCache = StorageManager.default.cacheDirectory.appendingPathComponent("vanilla.rpcache/")

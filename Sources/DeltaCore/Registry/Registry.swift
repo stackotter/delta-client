@@ -1,51 +1,47 @@
 import Foundation
 
-/// An error to do with the shared registry.
-public enum RegistryError: LocalizedError {
-  /// Failed to download data for a registry.
-  case failedDownloadPixlyzerData(name: String, Error)
-}
-
-/// Holds static Minecraft data such as blocks and biomes. Delta Client populates at launch.
-public enum Registry {
-  public static var blockRegistry = BlockRegistry()
-  public static var biomeRegistry = BiomeRegistry()
-  public static var fluidRegistry = FluidRegistry()
+/// Holds static Minecraft data such as biomes, fluids and blocks. Delta Client populates at launch.
+public struct Registry {
+  public static var shared = Registry()
   
-  /// Populates the shared registry with the pixlyzer data in a specified directory.
-  ///
-  /// If any pixlyzer files are missing they are automatically downloaded.
-  ///
-  /// - Parameter pixlyzerDirectory: A directory containing pixlyzer files.
-  public static func populate(from pixlyzerDirectory: URL) throws {
-    blockRegistry = try loadRegistry(from: pixlyzerDirectory)
-    biomeRegistry = try loadRegistry(from: pixlyzerDirectory)
-    fluidRegistry = try loadRegistry(from: pixlyzerDirectory)
+  // Shoutout to whoever made 'block', 'biome' and 'fluid' the same length. So satisfying!
+  public var blockRegistry = BlockRegistry()
+  public var biomeRegistry = BiomeRegistry()
+  public var fluidRegistry = FluidRegistry()
+  
+  public static func populateShared(_ directory: URL) throws {
+    shared = try loadCached(directory)
   }
   
-  
-  /// Load a registry from pixlyzer data in the given directory.
-  ///
-  /// If the required pixlyzer data is missing it is automatically downloaded.
-  ///
-  /// - Returns: A loaded registry.
-  private static func loadRegistry<T: PixlyzerRegistry>(from pixlyzerDirectory: URL) throws -> T {
-    let url = T.getDownloadURL(for: Constants.versionString)
-    let file = pixlyzerDirectory.appendingPathComponent(url.lastPathComponent)
+  /// Loads the registries cached in a directory. If any registries are missing, they're all redownloaded and cached.
+  /// - Parameter directory: The directory containing the cached registries.
+  /// - Returns: The loaded registry.
+  public static func loadCached(_ directory: URL) throws -> Registry {
+    let blocksFile = directory.appendingPathComponent("blocks.json")
+    let biomesFile = directory.appendingPathComponent("biomes.json")
+    let fluidsFile = directory.appendingPathComponent("fluids.json")
     
-    if !FileManager.default.fileExists(atPath: file.path) {
-      do {
-        log.info("Downloading pixlyzer data: \(url.lastPathComponent)")
-        try FileManager.default.createDirectory(at: pixlyzerDirectory, withIntermediateDirectories: true, attributes: nil)
-        let data = try Data(contentsOf: url)
-        try data.write(to: file)
-      } catch {
-        throw RegistryError.failedDownloadPixlyzerData(name: "\(T.self)", error)
-      }
+    do {
+      let decoder = JSONDecoder()
+      let blockRegistry = try decoder.decode(BlockRegistry.self, from: try Data(contentsOf: blocksFile))
+      let biomeRegistry = try decoder.decode(BiomeRegistry.self, from: try Data(contentsOf: biomesFile))
+      let fluidRegistry = try decoder.decode(FluidRegistry.self, from: try Data(contentsOf: fluidsFile))
+      
+      return Registry(
+        blockRegistry: blockRegistry,
+        biomeRegistry: biomeRegistry,
+        fluidRegistry: fluidRegistry)
+    } catch {
+      let registry = try PixlyzerFormatter.downloadAndFormatRegistries(Constants.versionString)
+      try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
+      let encoder = JSONEncoder()
+      log.info("Caching block registry")
+      try encoder.encode(registry.blockRegistry).write(to: blocksFile)
+      log.info("Caching biome registry")
+      try encoder.encode(registry.biomeRegistry).write(to: biomesFile)
+      log.info("Caching fluid registry")
+      try encoder.encode(registry.fluidRegistry).write(to: fluidsFile)
+      return registry
     }
-    
-    log.info("Loading \(url.deletingPathExtension().deletingPathExtension().lastPathComponent) registry")
-    let registry = try T.load(from: file)
-    return registry
   }
 }

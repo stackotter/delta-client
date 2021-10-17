@@ -2,7 +2,7 @@ import Foundation
 import simd
 
 /// An RGB color, each component is 1 byte (maximum of 255).
-public struct RGBColor {
+public struct RGBColor: Codable {
   public static var white = RGBColor(r: 255, g: 255, b: 255)
   public static var black = RGBColor(r: 0, g: 0, b: 0)
   

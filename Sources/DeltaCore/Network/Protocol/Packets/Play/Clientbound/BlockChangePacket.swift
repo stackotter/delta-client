@@ -4,7 +4,7 @@ public struct BlockChangePacket: ClientboundPacket {
   public static let id: Int = 0x0b
   
   public var location: Position
-  public var blockId: Int // the new block state id
+  public var blockId: Int
   
   public init(from packetReader: inout PacketReader) throws {
     location = packetReader.readPosition()
@@ -12,6 +12,6 @@ public struct BlockChangePacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.server?.world.setBlockStateId(at: location, to: UInt16(blockId))
+    client.server?.world.setBlockId(at: location, to: blockId)
   }
 }

@@ -4,6 +4,7 @@ import Foundation
 public struct PixlyzerBlockState: Decodable {
   public struct Properties: Codable {
     public var level: Int?
+    public var waterlogged: Bool?
   }
   
   public var luminance: Int?

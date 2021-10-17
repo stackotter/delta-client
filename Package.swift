@@ -12,10 +12,7 @@ let package = Package(
       targets: ["DeltaClient"]),
     .library(
       name: "DeltaCore",
-      targets: ["DeltaCore"]),
-    .library(
-      name: "DeltaCoreC",
-      targets: ["DeltaCoreC"])
+      targets: ["DeltaCore", "DeltaCoreC"]),
   ],
   dependencies: [
     // DeltaCore dependencies
@@ -30,7 +27,7 @@ let package = Package(
     .target(
       name: "DeltaClient",
       dependencies: ["DeltaCore"]),
-    // DeltaCore
+    
     .target(
       name: "DeltaCore",
       dependencies: [

@@ -111,7 +111,7 @@ public class World {
   public func handle(_ event: DeltaCore.Event) {
     switch event {
       case let event as Event.SetBlock:
-        setBlockStateId(at: event.position, to: event.newState, bypassBatching: true)
+        setBlockId(at: event.position, to: event.newState, bypassBatching: true)
       case let event as Event.AddChunk:
         addChunk(event.chunk, at: event.position, bypassBatching: true)
       case let event as Event.RemoveChunk:
@@ -125,18 +125,18 @@ public class World {
   
   // MARK: Blocks
   
-  /// Sets the block at the specified position to the specified block state.
+  /// Sets the block at the specified position to the specified block id.
   ///
   /// This will trigger lighting to be updated. If bypassBatching is true then
   /// the event is processed straight away.
-  public func setBlockStateId(at position: Position, to state: UInt16, bypassBatching: Bool = false) {
+  public func setBlockId(at position: Position, to state: Int, bypassBatching: Bool = false) {
     if batchingEnabled && !bypassBatching {
       let event = Event.SetBlock(
         position: position,
         newState: state)
       eventBatch.add(event)
     } else if let chunk = chunk(at: position.chunk) {
-      chunk.setBlockStateId(at: position.relativeToChunk, to: state)
+      chunk.setBlockId(at: position.relativeToChunk, to: state)
       lightingEngine.updateLighting(at: position, in: self)
     } else {
       log.warning("Cannot set block in non-existent chunk, chunkPosition=\(position.chunk)")
@@ -144,32 +144,23 @@ public class World {
   }
   
   
-  /// Get the block state id of a block.
+  /// Get the block id of the block at the specified position..
   /// - Parameter position: A block position in world coordinates.
-  /// - Returns: A block state id. If `position` is in a chunk that isn't loaded, air (0) is returned.
-  public func getBlockStateId(at position: Position) -> UInt16 {
+  /// - Returns: A block state id. If `position` is in a chunk that isn't loaded, `0` (regular air) is returned.
+  public func getBlockId(at position: Position) -> Int {
     if let chunk = chunk(at: position.chunk), Self.isValidBlockPosition(position) {
-      return chunk.getBlockStateId(at: position.relativeToChunk)
+      return chunk.getBlockId(at: position.relativeToChunk)
     } else {
-      return 0 // TODO: do not just default to air
+      return 0
     }
   }
   
   /// Returns information about the type of block at the specified position.
   public func getBlock(at position: Position) -> Block {
-    return Registry.blockRegistry.block(forStateWithId: Int(getBlockStateId(at: position))) ?? Block.missing
-  }
-  
-  /// Get information about the state of a block.
-  /// - Parameter position: A block position in world coordinates.
-  /// - Returns: Information about a block's state. If the block is in a chunk that isn't loaded,
-  ///   air (0) is returned. If the block state is invalid for whatever reason, ``BlockState.missing`` is returned.
-  public func getBlockState(at position: Position) -> BlockState {
-    return Registry.blockRegistry.blockState(withId: Int(getBlockStateId(at: position))) ?? BlockState.missing
+    return Registry.shared.blockRegistry.block(withId: Int(getBlockId(at: position))) ?? Block.missing
   }
   
   // MARK: Lighting (no batching)
-  
   
   /// Sets the block light level of a block. Does not batch, does not propagate the change and does not verify the level is valid.
   ///

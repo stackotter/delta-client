@@ -1,6 +1,6 @@
 import Foundation
 
-enum BlockPaletteError: LocalizedError {
+enum BlockModelPaletteError: LocalizedError {
   /// Block model references non-existent parent.
   case noSuchParent(Identifier)
   /// Failed to flatten the block model with this identifier.

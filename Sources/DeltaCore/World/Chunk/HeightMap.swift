@@ -69,19 +69,18 @@ public struct HeightMap {
     
     // Update skyLightBlockingHeightMap
     let highestLightBlockingBlock = skyLightBlockingHeightMap[columnIndex]
-    let newBlockState = chunk.getBlockState(at: position)
     if position.y > highestLightBlockingBlock {
-      if newBlockState.opacity != 0 {
+      if newBlock.lightMaterial.opacity != 0 {
         skyLightBlockingHeightMap[columnIndex] = Int(position.y)
       }
-    } else if position.y == highestLightBlockingBlock && newBlockState.opacity == 0 {
+    } else if position.y == highestLightBlockingBlock && newBlock.lightMaterial.opacity == 0 {
       // If the highest block has changed and doesn't block direct sky light anymore, find the next highest valid block
       var position = position
       var foundBlock = false
       for _ in 0..<position.y {
         position.y -= 1
-        let blockState = chunk.getBlockState(at: position)
-        if blockState.opacity != 0 {
+        let block = chunk.getBlock(at: position)
+        if block.lightMaterial.opacity != 0 {
           skyLightBlockingHeightMap[columnIndex] = Int(position.y)
           foundBlock = true
           break

@@ -10,4 +10,4 @@ fileprivate func createLogger() -> Logger {
   return log
 }
 
-var log = createLogger()
+public var log = createLogger()

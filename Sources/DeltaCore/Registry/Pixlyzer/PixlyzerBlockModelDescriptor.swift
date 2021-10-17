@@ -19,3 +19,13 @@ public struct PixlyzerBlockModelDescriptor: Decodable {
     case uvLock = "uvlock"
   }
 }
+
+extension BlockModelRenderDescriptor {
+  public init(from pixlyzerDescriptor: PixlyzerBlockModelDescriptor) {
+    self.init(
+      model: pixlyzerDescriptor.model,
+      xRotationDegrees: pixlyzerDescriptor.xRotation ?? 0,
+      yRotationDegrees: pixlyzerDescriptor.yRotation ?? 0,
+      uvLock: pixlyzerDescriptor.uvLock ?? false)
+  }
+}

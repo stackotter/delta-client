@@ -60,25 +60,23 @@ public struct BlockModelPalette {
     let intermediateBlockModelPalette = try IntermediateBlockModelPalette(from: jsonBlockModels)
     
     // Convert intermediate block models to final format
-    var blockModels = [[BlockModel]](repeating: [], count: Registry.blockRegistry.renderDescriptors.count)
-    for (stateId, variants) in Registry.blockRegistry.renderDescriptors {
+    var blockModels = [[BlockModel]](repeating: [], count: Registry.shared.blockRegistry.renderDescriptors.count)
+    for (blockId, variants) in Registry.shared.blockRegistry.renderDescriptors.enumerated() {
       let blockModelVariants: [BlockModel] = try variants.map { variant in
         do {
-          let block = Registry.blockRegistry.block(forStateWithId: stateId) ?? Block.missing
-          let blockState = Registry.blockRegistry.blockState(withId: stateId) ?? BlockState.missing
+          let block = Registry.shared.blockRegistry.block(withId: blockId) ?? Block.missing
           return try blockModel(
             for: variant,
             from: intermediateBlockModelPalette,
             with: blockTexturePalette,
-            block: block,
-            blockState: blockState)
+            block: block)
         } catch {
-          log.error("Failed to create block model for state \(stateId): \(error)")
+          log.error("Failed to create block model for state \(blockId): \(error)")
           throw error
         }
       }
       
-      blockModels[stateId] = blockModelVariants
+      blockModels[blockId] = blockModelVariants
     }
     
     return BlockModelPalette(
@@ -91,8 +89,7 @@ public struct BlockModelPalette {
     for partDescriptors: [BlockModelRenderDescriptor],
     from intermediateBlockModelPalette: IntermediateBlockModelPalette,
     with blockTexturePalette: TexturePalette,
-    block: Block,
-    blockState: BlockState
+    block: Block
   ) throws -> BlockModel {
     var cullingFaces: Set<Direction> = []
     var cullableFaces: Set<Direction> = []
@@ -102,7 +99,7 @@ public struct BlockModelPalette {
     let parts: [BlockModelPart] = try partDescriptors.map { renderDescriptor in
       // Get the block model data in its intermediate 'flattened' format
       guard let intermediateModel = intermediateBlockModelPalette.blockModel(for: renderDescriptor.model) else {
-        throw BlockPaletteError.invalidIdentifier
+        throw BlockModelPaletteError.invalidIdentifier
       }
       
       let modelMatrix = renderDescriptor.transformationMatrix
@@ -111,7 +108,7 @@ public struct BlockModelPalette {
       var rotatedCullingFaces: Set<Direction> = []
       let elements: [BlockModelElement] = try intermediateModel.elements.map { intermediateElement in
         // Identify any faces of the elements that can fill a whole side of a block
-        if blockState.isOpaque || block.className == "LeavesBlock" { // TODO: don't hardcode leaves' rendering behaviour
+        if block.lightMaterial.isOpaque || block.className == "LeavesBlock" { // TODO: don't hardcode leaves' rendering behaviour
           rotatedCullingFaces.formUnion(intermediateElement.getCullingFaces())
         }
         
@@ -171,12 +168,12 @@ public struct BlockModelPalette {
       // Get the index of the face's texture
       guard let textureIdentifier = try? Identifier(flatFace.texture) else {
         log.error("Invalid texture identifier string '\(flatFace.texture)'")
-        throw BlockPaletteError.invalidTexture(flatFace.texture)
+        throw BlockModelPaletteError.invalidTexture(flatFace.texture)
       }
       
       guard let textureIndex = blockTexturePalette.textureIndex(for: textureIdentifier) ?? blockTexturePalette.textureIndex(for: Identifier(name: "block/debug")) else {
         log.error("Failed to get texture for '\(textureIdentifier)' and failed to get debug texture (very sus)")
-        throw BlockPaletteError.invalidTextureIdentifier(textureIdentifier)
+        throw BlockModelPaletteError.invalidTextureIdentifier(textureIdentifier)
       }
       
       // Update the cullface with the block rotation (ignoring element rotation)
@@ -240,7 +237,7 @@ public struct BlockModelPalette {
     var uvs: [Float]
     if let uvArray = face.uv {
       guard uvArray.count == 4 else {
-        throw BlockPaletteError.invalidUVs
+        throw BlockModelPaletteError.invalidUVs
       }
       uvs = uvArray.map { Float($0) / 16 }
     } else {

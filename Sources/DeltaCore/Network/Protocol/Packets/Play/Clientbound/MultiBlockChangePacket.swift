@@ -49,9 +49,10 @@ public struct MultiBlockChangePacket: ClientboundPacket {
       absolutePosition.x += chunkPosition.chunkX * Chunk.width
       absolutePosition.z += chunkPosition.chunkZ * Chunk.depth
       
-      client.server?.world.setBlockStateId(
+      // TODO: Group multiblock changes
+      client.server?.world.setBlockId(
         at: absolutePosition,
-        to: UInt16(record.blockId))
+        to: record.blockId)
     }
   }
 }

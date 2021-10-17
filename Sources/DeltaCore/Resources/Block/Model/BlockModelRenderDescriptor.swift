@@ -2,7 +2,7 @@ import Foundation
 import simd
 
 /// A neater format for `PixlyzerBlockModelDescriptor`.
-public struct BlockModelRenderDescriptor {
+public struct BlockModelRenderDescriptor: Codable {
   public var model: Identifier
   public var xRotationDegrees: Int
   public var yRotationDegrees: Int
@@ -13,13 +13,6 @@ public struct BlockModelRenderDescriptor {
     self.xRotationDegrees = xRotationDegrees
     self.yRotationDegrees = yRotationDegrees
     self.uvLock = uvLock
-  }
-  
-  public init(from pixlyzerDescriptor: PixlyzerBlockModelDescriptor) {
-    model = pixlyzerDescriptor.model
-    xRotationDegrees = pixlyzerDescriptor.xRotation ?? 0
-    yRotationDegrees = pixlyzerDescriptor.yRotation ?? 0
-    uvLock = pixlyzerDescriptor.uvLock ?? false
   }
   
   /// Transformation matrix that rotates around the center of the block (`[0.5, 0.5, 0.5]`).

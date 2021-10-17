@@ -75,8 +75,9 @@ public struct ChunkSectionMeshBuilder {
       var transparentAndOpaqueGeometry = Geometry()
       let startTime = CFAbsoluteTimeGetCurrent()
       for blockIndex in 0..<Chunk.Section.numBlocks {
-        let state = section.getBlockState(at: blockIndex)
-        if state != 0 {
+        let blockId = section.getBlockId(at: blockIndex)
+        if blockId != 0 {
+          // TODO: benchmark whether checking for airblocks.contains(blockId) or blockId == 0 is faster overall (0 is just regular air, there are actually three types of air)
           var position = Self.indexToPosition[blockIndex]
           position.x += xOffset
           position.y += yOffset
@@ -84,7 +85,7 @@ public struct ChunkSectionMeshBuilder {
           addBlock(
             at: position,
             atBlockIndex: blockIndex,
-            with: state,
+            with: blockId,
             transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
             translucentMesh: &mesh.translucentMesh,
             indexToNeighbourIndices: indexToNeighbourIndices)
@@ -109,21 +110,29 @@ public struct ChunkSectionMeshBuilder {
   private func addBlock(
     at position: Position,
     atBlockIndex blockIndex: Int,
-    with state: UInt16,
+    with blockId: Int,
     transparentAndOpaqueGeometry: inout Geometry,
     translucentMesh: inout SortableMesh,
     indexToNeighbourIndices: [[(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]]
   ) {
     // Get block model
-    let state = Int(state)
-    guard let blockModel = resources.blockModelPalette.model(for: state, at: position) else {
+    guard let blockModel = resources.blockModelPalette.model(for: blockId, at: position) else {
       log.warning("Skipping block with no block models")
       return
     }
     
-    if blockModel.isFluid {
-      addFluid(at: position, atBlockIndex: blockIndex, with: state, translucentMesh: &translucentMesh, indexToNeighbourIndices: indexToNeighbourIndices)
+    // Get block
+    guard let block = Registry.shared.blockRegistry.block(withId: blockId) else {
+      log.warning("Skipping block with non-existent state id \(blockId), failed to get block information")
       return
+    }
+    
+    // Render fluid if present
+    if let fluidState = block.fluidState {
+      addFluid(at: position, atBlockIndex: blockIndex, with: blockId, translucentMesh: &translucentMesh, indexToNeighbourIndices: indexToNeighbourIndices)
+      if !fluidState.isWaterlogged {
+        return
+      }
     }
     
     // Return early if block model is empty (such as air)
@@ -135,7 +144,7 @@ public struct ChunkSectionMeshBuilder {
     let neighbourIndices = indexToNeighbourIndices[blockIndex]
 
     // Calculate face visibility
-    let culledFaces = getCullingNeighbours(at: position, state: state, neighbourIndices: neighbourIndices)
+    let culledFaces = getCullingNeighbours(at: position, blockId: blockId, neighbourIndices: neighbourIndices)
     
     // Return early if there can't possibly be any visible faces
     if blockModel.cullableFaces.count == 6 && culledFaces.count == 6 && blockModel.nonCullableFaces.count == 0 {
@@ -164,12 +173,6 @@ public struct ChunkSectionMeshBuilder {
     let positionRelativeToChunkSection = position.relativeToChunkSection
     let lightLevel = chunk.lighting.getLightLevel(at: positionRelativeToChunkSection, inSectionAt: sectionPosition.sectionY)
     let neighbourLightLevels = getNeighbourLightLevels(neighbourIndices: neighbourIndices, visibleFaces: visibleFaces)
-    
-    // Get block
-    guard let block = Registry.blockRegistry.block(forStateWithId: state) else {
-      log.warning("Skipping block with non-existent state id \(state), failed to get block information")
-      return
-    }
     
     // Get tint color
     guard let biome = chunk.biome(at: position.relativeToChunk) else {
@@ -372,30 +375,26 @@ public struct ChunkSectionMeshBuilder {
   /// - Parameters:
   ///   - position: The position of the block in world coordinates.
   ///   - blockIndex: The index of the block in the chunk section.
-  ///   - state: The block's state id.
+  ///   - blockId: The block's id.
   ///   - translucentMesh: The mesh to add the fluid to.
   ///   - indexToNeighbourIndices: The lookup table used to find the block indices of the neighbouring blocks quickly.
   private func addFluid(
     at position: Position,
     atBlockIndex blockIndex: Int,
-    with state: Int,
+    with blockId: Int,
     translucentMesh: inout SortableMesh,
     indexToNeighbourIndices: [[(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]]
   ) {
     guard
-      let block = Registry.blockRegistry.block(forStateWithId: state),
-      let blockState = Registry.blockRegistry.blockState(withId: state),
-      let flowingFluidId = block.flowFluid,
-      let stillFluidId = block.stillFluid,
-      let flowingFluid = Registry.fluidRegistry.fluid(withId: flowingFluidId),
-      let stillFluid = Registry.fluidRegistry.fluid(withId: stillFluidId)
+      let block = Registry.shared.blockRegistry.block(withId: blockId),
+      let fluid = block.fluidState?.fluid
     else {
-      log.warning("Failed to get fluid block with block state id \(state)")
+      log.warning("Failed to get fluid block with block id \(blockId)")
       return
     }
     
     var tint = SIMD3<Float>(1, 1, 1)
-    if flowingFluid.type == .flowingWater || stillFluid.type == .stillWater {
+    if block.fluidState?.fluid.identifier.name == "water" {
       guard let tintColor = chunk.biome(at: position.relativeToChunk)?.waterColor.floatVector else {
         // TODO: use a fallback color instead
         log.warning("Failed to get water tint")
@@ -421,33 +420,34 @@ public struct ChunkSectionMeshBuilder {
       [0, 1],
       [1, 1]]
     
-    let neighbouringBlockStates = getNeighbouringBlockStates(neighbourIndices: indexToNeighbourIndices[blockIndex])
-    var cullingNeighbours = getCullingNeighbours(at: position.relativeToChunkSection, state: state, neighbouringBlockStates: neighbouringBlockStates)
+    let neighbouringBlockIds = getNeighbouringBlockIds(neighbourIndices: indexToNeighbourIndices[blockIndex])
+    var cullingNeighbours = getCullingNeighbours(at: position.relativeToChunkSection, blockId: blockId, neighbouringBlocks: neighbouringBlockIds)
     var neighbourBlocks = [Direction: Block](minimumCapacity: 6)
-    for (direction, neighbourState) in neighbouringBlockStates {
-      let neighbourBlock = Registry.blockRegistry.block(forStateWithId: Int(neighbourState))
+    for (direction, neighbourBlockId) in neighbouringBlockIds {
+      let neighbourBlock = Registry.shared.blockRegistry.block(withId: neighbourBlockId)
       neighbourBlocks[direction] = neighbourBlock
-      if neighbourBlock?.id == block.id {
+      if neighbourBlock?.fluidId == fluid.id {
         cullingNeighbours.insert(direction)
       }
     }
     
     // If block is surrounded by the same fluid on all sides, don't render anything.
-    let neighbourBlocksSet = Set<Int>(neighbourBlocks.values.map { $0.id })
-    if neighbourBlocksSet.count == 1 && neighbourBlocksSet.contains(block.id) {
-      log.debug("Fluid surrounded by same fluid, no need to render it")
-      return
+    if neighbourBlocks.count == 6 {
+      let neighbourFluids = Set<Int?>(neighbourBlocks.values.map { $0.fluidId })
+      if neighbourFluids.count == 1 && neighbourFluids.contains(fluid.id) {
+        log.trace("Fluid surrounded by same fluid, no need to render it")
+        return
+      }
     }
     
-    let heights = calculateHeights(position: position, blockState: blockState, block: block, neighbourBlocks: neighbourBlocks)
+    let heights = calculateHeights(position: position, block: block, neighbourBlocks: neighbourBlocks)
     let isFlowing = Set(heights).count > 1
     let topCornerPositions = calculatePositions(position, heights)
-    log.debug("heights=\(heights), positions=\(topCornerPositions)")
     
     // Get textures
     guard
-      let flowingTextureIndex = resources.blockTexturePalette.textureIndex(for: flowingFluid.texture),
-      let stillTextureIndex = resources.blockTexturePalette.textureIndex(for: stillFluid.texture)
+      let flowingTextureIndex = resources.blockTexturePalette.textureIndex(for: fluid.flowingTexture),
+      let stillTextureIndex = resources.blockTexturePalette.textureIndex(for: fluid.stillTexture)
     else {
       log.warning("Failed to get textures for fluid")
       return
@@ -625,14 +625,14 @@ public struct ChunkSectionMeshBuilder {
   }
   
   /// Calculate the height of each corner of a fluid.
-  private func calculateHeights(position: Position, blockState: BlockState, block: Block, neighbourBlocks: [Direction: Block]) -> [Float] {
+  private func calculateHeights(position: Position, block: Block, neighbourBlocks: [Direction: Block]) -> [Float] {
     // If under a fluid block of the same type, all corners are 1
-    if neighbourBlocks[.up]?.id == block.id {
+    if neighbourBlocks[.up]?.fluidId == block.fluidId {
       return [1, 1, 1, 1]
     }
     
     // Begin with all corners as the height of the current fluid
-    let height = getFluidLevel(blockState)
+    let height = getFluidLevel(block)
     var heights = [height, height, height, height]
     
     // Loop through corners
@@ -654,15 +654,14 @@ public struct ChunkSectionMeshBuilder {
       for neighbourPosition in positions {
         // If any of the surrounding blocks have the fluid above them, this corner should have a height of 1
         let upperNeighbourBlock = world.getBlock(at: neighbourPosition + Direction.up.intVector)
-        if block.id == upperNeighbourBlock.id {
+        if block.fluidId == upperNeighbourBlock.fluidId {
           maxHeight = 1
           break
         }
         
         let neighbourBlock = world.getBlock(at: neighbourPosition)
-        if block.id == neighbourBlock.id {
-          let neighbourBlockState = world.getBlockState(at: neighbourPosition)
-          let neighbourHeight = getFluidLevel(neighbourBlockState)
+        if block.fluidId == neighbourBlock.fluidId {
+          let neighbourHeight = getFluidLevel(neighbourBlock)
           if neighbourHeight > maxHeight {
             maxHeight = neighbourHeight
           }
@@ -675,11 +674,11 @@ public struct ChunkSectionMeshBuilder {
   }
   
   /// Returns the height of a fluid from 0 to 1.
-  /// - Parameter blockState: Block state of the fluid.
+  /// - Parameter block: Block containing the fluid.
   /// - Returns: A height.
-  private func getFluidLevel(_ blockState: BlockState) -> Float {
-    if let level = blockState.level {
-      return 0.9 - Float(level) / 8
+  private func getFluidLevel(_ block: Block) -> Float {
+    if let height = block.fluidState?.height {
+      return 0.9 - Float(7 - height) / 8
     } else {
       return 0.8125
     }
@@ -687,29 +686,29 @@ public struct ChunkSectionMeshBuilder {
   
   // MARK: Helper
   
-  /// Gets the block state of each block neighbouring the block at `sectionIndex`.
+  /// Gets the block id of each block neighbouring a block using the given neighbour indices.
   ///
   /// Blocks in neighbouring chunks are also included. Neighbours in cardinal directions will
   /// always be returned. If the block at `sectionIndex` is at y-level 0 or 255 the down or up neighbours
   /// will be omitted respectively (as there will be none). Otherwise, all neighbours are included.
   ///
-  /// - Returns: A mapping from each possible direction to a corresponding block state.
-  func getNeighbouringBlockStates(neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> [(Direction, UInt16)] {
+  /// - Returns: A mapping from each possible direction to a corresponding block id.
+  func getNeighbouringBlockIds(neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> [(Direction, Int)] {
     // Convert a section relative index to a chunk relative index
-    var neighbouringBlockStates: [(Direction, UInt16)] = []
-    neighbouringBlockStates.reserveCapacity(6)
+    var neighbouringBlocks: [(Direction, Int)] = []
+    neighbouringBlocks.reserveCapacity(6)
     
     for (faceDirection, neighbourChunkDirection, neighbourIndex) in neighbourIndices {
       if let direction = neighbourChunkDirection {
         if let neighbourChunk = neighbourChunks[direction] {
-          neighbouringBlockStates.append((faceDirection, neighbourChunk.getBlockStateId(at: neighbourIndex)))
+          neighbouringBlocks.append((faceDirection, neighbourChunk.getBlockId(at: neighbourIndex)))
         }
       } else {
-        neighbouringBlockStates.append((faceDirection, chunk.getBlockStateId(at: neighbourIndex)))
+        neighbouringBlocks.append((faceDirection, chunk.getBlockId(at: neighbourIndex)))
       }
     }
     
-    return neighbouringBlockStates
+    return neighbouringBlocks
   }
   
   /// Returns a map from each direction to a cardinal direction and a chunk relative block index.
@@ -779,22 +778,25 @@ public struct ChunkSectionMeshBuilder {
     return lightLevels
   }
   
-  /// Gets an array of the direction of all blocks neighbouring the block at `sectionIndex` that have
-  /// full faces facing the block at `sectionIndex`.
-  ///
-  /// See ``ChunkSectionMeshBuilder.getCullingNeighbours(at:state:neighbourIndices:)`` for more detailed documentation.
-  func getCullingNeighbours(at position: Position, state: Int, neighbouringBlockStates: [(Direction, UInt16)]) -> Set<Direction> {
+  /// Gets an array of the direction of all blocks neighbouring the block at `position` that have
+  /// full faces facing the block at `position`.
+  /// - Parameters:
+  ///   - position: The position of the block relative to `sectionPosition`.
+  ///   - blockId: The id of the block at the given position.
+  ///   - neighbouringBlocks: The block ids of neighbouring blocks.
+  /// - Returns: The set of directions of neighbours that can possibly cull a face.
+  func getCullingNeighbours(at position: Position, blockId: Int, neighbouringBlocks: [(Direction, Int)]) -> Set<Direction> {
     var cullingNeighbours = Set<Direction>(minimumCapacity: 6)
-    let blockCullsSameKind = Registry.blockRegistry.selfCullingBlockStates.contains(state)
+    let blockCullsSameKind = Registry.shared.blockRegistry.selfCullingBlocks.contains(blockId)
     
-    for (direction, neighbourBlockState) in neighbouringBlockStates where neighbourBlockState != 0 {
+    for (direction, neighbourBlockId) in neighbouringBlocks where neighbourBlockId != 0 {
       // We assume that block model variants always have the same culling faces as eachother, so no position is passed to getModel.
-      guard let blockModel = resources.blockModelPalette.model(for: Int(neighbourBlockState), at: nil) else {
+      guard let blockModel = resources.blockModelPalette.model(for: neighbourBlockId, at: nil) else {
         log.debug("Skipping neighbour with no block models.")
         continue
       }
       
-      if blockModel.cullingFaces.contains(direction.opposite) || (blockCullsSameKind && state == neighbourBlockState) {
+      if blockModel.cullingFaces.contains(direction.opposite) || (blockCullsSameKind && blockId == neighbourBlockId) {
         cullingNeighbours.insert(direction)
       }
     }
@@ -802,38 +804,16 @@ public struct ChunkSectionMeshBuilder {
     return cullingNeighbours
   }
   
-  /// Gets an array of the direction of all blocks neighbouring the block at `sectionIndex` that have
-  /// full faces facing the block at `sectionIndex`.
-  ///
-  /// `position` is only used to determine which variation of a block model to use when a block model
-  /// has multiple variations. Both `sectionIndex` and `position` are required for performance reasons as this
-  /// function is the main bottleneck during mesh preparing.
-  ///
+  /// Gets an array of the direction of all blocks neighbouring the block at `position` that have
+  /// full faces facing the block at `position`.
   /// - Parameters:
-  ///   - sectionIndex: The sectionIndex of the block in `chunk`.
-  ///   - position: The position of the block relative to `sectionPosition`.
-  ///   - state: The block state of the block at the given position.
+  ///   - position: The position of the block relative to the section.
+  ///   - blockId: The id of the block at the given position.
   ///   - neighbourIndices: The neighbour indices lookup table to use.
   /// - Returns: The set of directions of neighbours that can possibly cull a face.
-  func getCullingNeighbours(at position: Position, state: Int, neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> Set<Direction> {
-    let neighbouringBlockStates = getNeighbouringBlockStates(neighbourIndices: neighbourIndices)
-    
-    var cullingNeighbours = Set<Direction>(minimumCapacity: 6)
-    let blockCullsSameKind = Registry.blockRegistry.selfCullingBlockStates.contains(state)
-    
-    for (direction, neighbourBlockState) in neighbouringBlockStates where neighbourBlockState != 0 {
-      // We assume that block model variants always have the same culling faces as eachother, so no position is passed to getModel.
-      guard let blockModel = resources.blockModelPalette.model(for: Int(neighbourBlockState), at: nil) else {
-        log.debug("Skipping neighbour with no block models.")
-        continue
-      }
-      
-      if blockModel.cullingFaces.contains(direction.opposite) || (blockCullsSameKind && state == neighbourBlockState) {
-        cullingNeighbours.insert(direction)
-      }
-    }
-    
-    return cullingNeighbours
+  func getCullingNeighbours(at position: Position, blockId: Int, neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> Set<Direction> {
+    let neighbouringBlocks = getNeighbouringBlockIds(neighbourIndices: neighbourIndices)
+    return getCullingNeighbours(at: position, blockId: blockId, neighbouringBlocks: neighbouringBlocks)
   }
   
   /// Generates a lookup table to quickly convert from section block index to block position.

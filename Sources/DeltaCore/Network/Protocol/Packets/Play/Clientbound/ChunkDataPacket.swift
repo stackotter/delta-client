@@ -145,7 +145,7 @@ public struct ChunkDataPacket: ClientboundPacket {
         var blocks: [UInt16] = [UInt16](repeating: 0, count: 4096)
         unpack_long_array(&dataArray, Int32(dataArray.count), Int32(bitsPerBlock), &blocks)
         
-        let section = Chunk.Section(blockIds: blocks, palette: palette, blockCount: blockCount)
+        let section = Chunk.Section(blockIds: blocks, palette: palette, blockCount: Int(blockCount))
         sections.append(section)
       } else {
         // TODO: don't initialise empty sections until they are needed

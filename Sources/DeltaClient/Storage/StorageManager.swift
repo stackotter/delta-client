@@ -12,8 +12,8 @@ class StorageManager {
   public var storageDirectory: URL
   /// The directory within the storage directory to store the vanilla assets.
   public var vanillaAssetsDirectory: URL { storageDirectory.appendingPathComponent("assets") }
-  /// The directory within the storage directory to store pixlyzer data.
-  public var pixlyzerDirectory: URL { storageDirectory.appendingPathComponent("pixlyzer") }
+  /// The directory within the storage directory to store registry data.
+  public var registryDirectory: URL { storageDirectory.appendingPathComponent("registries") }
   
   /// Directory that should be used for caching.
   public var cacheDirectory: URL {

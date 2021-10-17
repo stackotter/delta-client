@@ -13,13 +13,11 @@ public enum BiomeError: LocalizedError {
 }
 
 /// Holds information about biomes.
-public struct BiomeRegistry {
-  /// All biomes.
-  public var biomes: [Biome] = []
-  /// Used to index `biomes`. Maps a biome id to an index in `biomes`.
-  private var biomeIdToIndex: [Int: Int] = [:]
-  /// Maps biome identifier to an index in `biomes`.
-  private var identifierToIndex: [Identifier: Int] = [:]
+public struct BiomeRegistry: Codable {
+  /// All biomes. Thanks Mojang for having some missing ids and forcing me to use a dictionary.
+  public var biomes: [Int: Biome] = [:]
+  /// Maps biome identifier to biome id.
+  private var identifierToBiomeId: [Identifier: Int] = [:]
   
   // MARK: Init
   
@@ -27,11 +25,10 @@ public struct BiomeRegistry {
   public init() {}
   
   /// Creates a populated ``BiomeRegistry``.
-  public init(biomes: [Biome]) {
+  public init(biomes: [Int: Biome]) {
     self.biomes = biomes
-    for (index, biome) in biomes.enumerated() {
-      biomeIdToIndex[biome.id] = index
-      identifierToIndex[biome.identifier] = index
+    for (id, biome) in biomes {
+      identifierToBiomeId[biome.identifier] = id
     }
   }
   
@@ -41,8 +38,8 @@ public struct BiomeRegistry {
   /// - Parameter identifier: Biome identifier.
   /// - Returns: Biome information. `nil` if biome doesn't exist.
   public func biome(for identifier: Identifier) -> Biome? {
-    if let index = identifierToIndex[identifier] {
-      return biomes[index]
+    if let id = identifierToBiomeId[identifier] {
+      return biomes[id]
     } else {
       return nil
     }
@@ -52,36 +49,6 @@ public struct BiomeRegistry {
   /// - Parameter id: A biome id.
   /// - Returns: Biome information. `nil` if biome id is out of range.
   public func biome(withId id: Int) -> Biome? {
-    if let index = biomeIdToIndex[id] {
-      return biomes[index]
-    } else {
-      return nil
-    }
-  }
-}
-
-extension BiomeRegistry: PixlyzerRegistry {
-  public static func load(from pixlyzerFile: URL) throws -> BiomeRegistry {
-    let decoder = JSONDecoder()
-    decoder.keyDecodingStrategy = .convertFromSnakeCase
-    
-    let pixlyzerBiomes: [String: PixlyzerBiome]
-    do {
-      let data = try Data(contentsOf: pixlyzerFile)
-      pixlyzerBiomes = try decoder.decode([String: PixlyzerBiome].self, from: data)
-    } catch {
-      throw BiomeError.failedToLoadPixlyzerBiomes(error)
-    }
-    
-    do {
-      let biomes = try pixlyzerBiomes.map { Biome(from: $0.value, identifier: try Identifier($0.key)) }
-      return BiomeRegistry(biomes: biomes)
-    } catch {
-      throw BiomeError.failedToLoadPixlyzerBiomes(error)
-    }
-  }
-  
-  static func getDownloadURL(for version: String) -> URL {
-    return URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/biomes.min.json")!
+    return biomes[id]
   }
 }

@@ -59,7 +59,7 @@ public struct LightingEngine {
         var position = position
         for _ in 0..<position.y {
           position.y -= 1
-          if world.getBlockState(at: position).opacity == 0 && world.getSkyLightLevel(at: position) != 15 {
+          if world.getBlock(at: position).lightMaterial.opacity == 0 && world.getSkyLightLevel(at: position) != 15 {
             world.setSkyLightLevel(at: position, to: 15)
             increaseQueue.append((position, 15, [], [.up, .down]))
           } else {
@@ -72,7 +72,7 @@ public struct LightingEngine {
         for _ in 0..<position.y {
           position.y -= 1
           let currentLightLevel = world.getSkyLightLevel(at: position)
-          if world.getBlockState(at: position).opacity == 0 && currentLightLevel == 15 {
+          if world.getBlock(at: position).lightMaterial.opacity == 0 && currentLightLevel == 15 {
             world.setSkyLightLevel(at: position, to: 0)
             decreaseQueue.append((position, currentLightLevel, []))
           }
@@ -91,8 +91,8 @@ public struct LightingEngine {
   /// Checks an updated block and queues any block light level propagation required.
   private mutating func queueBlockLightUpdate(at position: Position, in world: World) {
     let currentLightLevel = world.getBlockLightLevel(at: position)
-    let block = world.getBlockState(at: position)
-    let emittedLight = block.luminance
+    let block = world.getBlock(at: position)
+    let emittedLight = block.lightMaterial.luminance
     
     world.setBlockLightLevel(at: position, to: emittedLight)
     
@@ -145,8 +145,8 @@ public struct LightingEngine {
           continue
         }
         
-        let neighbourBlock = world.getBlockState(at: neighbourPosition)
-        let opacity = max(neighbourBlock.opacity, 1)
+        let neighbourBlock = world.getBlock(at: neighbourPosition)
+        let opacity = max(neighbourBlock.lightMaterial.opacity, 1)
         let newNeighbourLight = max(light - opacity, 0)
         
         if newNeighbourLight > neighbourLight {
@@ -179,8 +179,8 @@ public struct LightingEngine {
           continue
         }
         
-        let neighbourBlock = world.getBlockState(at: neighbourPosition)
-        let opacity = max(neighbourBlock.opacity, 1)
+        let neighbourBlock = world.getBlock(at: neighbourPosition)
+        let opacity = max(neighbourBlock.lightMaterial.opacity, 1)
         let newNeighbourLight = max(propagatedLight - opacity, 0)
         
         if neighbourLight > newNeighbourLight {
@@ -188,11 +188,12 @@ public struct LightingEngine {
           continue
         }
         
-        if neighbourBlock.luminance != 0 {
-          increaseQueue.append((neighbourPosition, neighbourBlock.luminance, [.writeLevel], []))
+        let neighbourLuminance = neighbourBlock.lightMaterial.luminance
+        if neighbourLuminance != 0 {
+          increaseQueue.append((neighbourPosition, neighbourLuminance, [.writeLevel], []))
         }
         
-        setLightLevel(neighbourPosition, neighbourBlock.luminance)
+        setLightLevel(neighbourPosition, neighbourLuminance)
         
         if newNeighbourLight > 0 {
           decreaseQueue.append((neighbourPosition, newNeighbourLight, [direction.opposite]))

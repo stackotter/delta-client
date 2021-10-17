@@ -1,6 +1,5 @@
 import Foundation
 
-
 public enum MinecraftLocaleError: LocalizedError {
   case unableToParseLocale
 }

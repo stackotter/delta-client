@@ -86,7 +86,7 @@ public struct BiomeColors {
     do {
       foliageColorMap = try BiomeColorMap(
         from: foliageMapFile,
-        biomes: Registry.biomeRegistry.biomes,
+        biomes: Registry.shared.biomeRegistry.biomes,
         fallbackColor: defaultFoliageColor ?? Self.defaultFoliageColor,
         overrides: foliageColorOverrides ?? Self.vanillaFoliageColorOverrides,
         filters: foliageColorFilters ?? Self.vanillaFoliageColorFilters)
@@ -97,7 +97,7 @@ public struct BiomeColors {
     do {
       grassColorMap = try BiomeColorMap(
         from: grassMapFile,
-        biomes: Registry.biomeRegistry.biomes,
+        biomes: Registry.shared.biomeRegistry.biomes,
         fallbackColor: defaultGrassColor ?? Self.defaultGrassColor,
         overrides: grassColorOverrides ?? Self.vanillaGrassColorOverrides,
         filters: grassColorFilters ?? Self.vanillaGrassColorFilters)
@@ -124,16 +124,21 @@ public struct BiomeColors {
       return tintColor
     }
     
-    if let tintType = block.tintType {
-      switch tintType {
-        case .waterTint:
-          return biome.waterColor
-        case .foliageTint:
-          return foliageColorMap.color(for: biome)
-        case .grassTint, .sugarCaneTint, .shearingDoublePlantTint:
-          return grassColorMap.color(for: biome)
-        case .lilyPadTint:
-          return Self.vanillaLilyPadColor
+    if let tint = block.tint {
+      switch tint {
+        case .computed(let computedTintType):
+          switch computedTintType {
+            case .waterTint:
+              return biome.waterColor
+            case .foliageTint:
+              return foliageColorMap.color(for: biome)
+            case .grassTint, .sugarCaneTint, .shearingDoublePlantTint:
+              return grassColorMap.color(for: biome)
+            case .lilyPadTint:
+              return Self.vanillaLilyPadColor
+          }
+        case .hardcoded(let tintColor):
+          return tintColor
       }
     } else {
       return nil

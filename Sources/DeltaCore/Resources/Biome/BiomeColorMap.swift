@@ -9,10 +9,8 @@ public struct BiomeColorMap {
   
   /// The underlying color map.
   private var colorMap = ColorMap()
-  /// Used to index `biomeIdToIndex`.
-  private var biomeIdToIndex: [Int: Int] = [:]
-  /// Precalculated colors for each biome indexed by `biomeIdToIndex`.
-  private var colors: [RGBColor] = []
+  /// Precalculated colors for each biome indexed by biome id.
+  private var colors: [Int: RGBColor] = [:]
   
   // MARK: Init
   
@@ -28,7 +26,7 @@ public struct BiomeColorMap {
   ///   - filters: Color filters to apply to biomes matching certain criteria. Color filters are applied to the calculated color before saving it to `colors`.
   init(
     from colorMapPNG: URL,
-    biomes: [Biome],
+    biomes: [Int: Biome],
     fallbackColor: RGBColor,
     overrides: BiomeModifiers<RGBColor> = [:],
     filters: BiomeModifiers<(RGBColor) -> RGBColor> = [:]
@@ -51,10 +49,10 @@ public struct BiomeColorMap {
   /// - Parameter biome: Biome to get color for.
   /// - Returns: The biome's color. If the look up fails, `nil` is returned.
   public func color(for biome: Biome) -> RGBColor? {
-    if let index = biomeIdToIndex[biome.id] {
-      return colors[index]
+    if let color = colors[biome.id] {
+      return color
     } else {
-      log.warning("Biome color map look up failed, returning nil")
+      log.warning("Biome color map look up failed, returning nil; biome.id=\(biome.id)")
       return nil
     }
   }
@@ -65,10 +63,8 @@ public struct BiomeColorMap {
   /// - Parameters:
   ///   - biomes: Biomes to precalculate colors for.
   ///   - fallback: The color to use when color map look ups fail.
-  public mutating func precalculate(_ biomes: [Biome], fallback: RGBColor) {
-    for (index, biome) in biomes.enumerated() {
-      biomeIdToIndex[biome.id] = index
-      
+  public mutating func precalculate(_ biomes: [Int: Biome], fallback: RGBColor) {
+    for (_, biome) in biomes {
       let overrideColor = overrides[biome]
       
       var color = overrideColor ?? calculateColor(biome, fallback: fallback)
@@ -77,7 +73,7 @@ public struct BiomeColorMap {
         color = filter(color)
       }
       
-      colors.append(color)
+      colors[biome.id] = color
     }
   }
   
