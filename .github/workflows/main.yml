@@ -15,7 +15,7 @@ jobs:
         run: sudo xcode-select -switch /Applications/Xcode_13.0.app
       - name: Download swift-bundler
         run: |
-          curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v1.2.0/swift-bundler
+          curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v1.3.0/swift-bundler
           chmod +x ./swift-bundler
           cp ./swift-bundler /usr/local/bin
       - name: Build
