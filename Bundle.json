@@ -1,4 +1,5 @@
 {
+  "target": "DeltaClient",
   "buildNumber" : 9,
   "bundleIdentifier" : "dev.stackotter.delta-client",
   "category" : "public.app-category.games",
