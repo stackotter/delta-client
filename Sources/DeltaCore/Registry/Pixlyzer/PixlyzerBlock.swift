@@ -74,7 +74,7 @@ extension Block {
     
     let lightMaterial = Block.LightMaterial(
       isTranslucent: pixlyzerState.translucent ?? false,
-      opacity: pixlyzerState.lightBlock ?? 15,
+      opacity: pixlyzerState.lightBlock ?? 1,
       luminance: pixlyzerState.luminance ?? 0,
       isConditionallyTransparent: pixlyzerState.hasSidedTransparency ?? false)
     
