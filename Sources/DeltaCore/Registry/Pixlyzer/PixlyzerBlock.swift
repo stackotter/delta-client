@@ -43,10 +43,9 @@ public struct PixlyzerBlock: Decodable {
 }
 
 extension Block {
-  public init(_ pixlyzerBlock: PixlyzerBlock, _ pixlyzerState: PixlyzerBlockState, stateId: Int, fluid: Fluid?, identifier: Identifier) {
+  public init(_ pixlyzerBlock: PixlyzerBlock, _ pixlyzerState: PixlyzerBlockState, stateId: Int, fluid: Fluid?, isWaterlogged: Bool, identifier: Identifier) {
     let fluidState: FluidState?
     if let fluid = fluid {
-      let isWaterlogged = pixlyzerState.properties?.waterlogged ?? false
       let height = 7 - (pixlyzerState.properties?.level ?? 0)
       fluidState = FluidState(
         fluidId: fluid.id,

@@ -82,8 +82,9 @@ public enum PixlyzerFormatter {
       }
       
       for (stateId, pixlyzerState) in pixlyzerBlock.states {
-        let fluid = pixlyzerState.properties?.waterlogged == true ? water : fluid
-        let block = Block(pixlyzerBlock, pixlyzerState, stateId: stateId, fluid: fluid, identifier: identifier)
+        let isWaterlogged = pixlyzerState.properties?.waterlogged == true || BlockRegistry.waterloggedBlockClasses.contains(pixlyzerBlock.className)
+        let fluid = isWaterlogged ? water : fluid
+        let block = Block(pixlyzerBlock, pixlyzerState, stateId: stateId, fluid: fluid, isWaterlogged: isWaterlogged, identifier: identifier)
         let descriptors = pixlyzerState.blockModelVariantDescriptors.map {
           $0.map {
             BlockModelRenderDescriptor(from: $0)

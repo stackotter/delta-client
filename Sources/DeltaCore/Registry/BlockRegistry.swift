@@ -2,6 +2,9 @@ import Foundation
 
 /// Holds the information about blocks that isn't affected by resource packs.
 public struct BlockRegistry: Codable {
+  /// Blocks that are hardcoded as waterlogged when loading.
+  public static let waterloggedBlockClasses: Set<String> = ["SeagrassBlock", "TallSeagrassBlock", "KelpBlock", "KelpPlantBlock"]
+  
   /// Blocks indexed by block id.
   public var blocks: [Block] = []
   /// Maps block id to an array containing an array for each variant. The array for each variant contains the models to render.
