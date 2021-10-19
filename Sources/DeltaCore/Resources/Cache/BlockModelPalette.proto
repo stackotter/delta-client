@@ -42,7 +42,6 @@ message ProtobufBlockModel {
   repeated ProtobufDirection cullable_faces = 3;
   repeated ProtobufDirection non_cullable_faces = 4;
   ProtobufTextureType texture_type = 5;
-  bool is_fluid = 6;
 }
 
 message ProtobufVariants {

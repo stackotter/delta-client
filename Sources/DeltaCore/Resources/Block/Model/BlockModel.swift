@@ -14,6 +14,4 @@ public struct BlockModel {
   /// If the block has any translucent faces, the type is translucent. If the block has no translucent faces but
   /// at least one transparent face, the type is transparent. If all of the faces are opaque, the type is opaque.
   public var textureType: TextureType
-  /// Whether the block is a fluid or not.
-  public var isFluid: Bool
 }
