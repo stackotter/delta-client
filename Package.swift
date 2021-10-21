@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -24,7 +24,7 @@ let package = Package(
     .package(name: "swift-collections", url: "https://github.com/apple/swift-collections.git", from: "0.0.7"),
   ],
   targets: [
-    .target(
+    .executableTarget(
       name: "DeltaClient",
       dependencies: ["DeltaCore"]),
     

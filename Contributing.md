@@ -18,6 +18,8 @@ If your contributions follow these guidelines, they'll be much more likely to ge
 
 ### Delta Client
 
+**Important**: Only Xcode 13 is supported, Xcode 12 builds don't work because Delta Client uses new automatic `Codable` conformance and there are some weird discrepancies between Xcode 12's swift compiler and Xcode 13's swift compiler
+
 [Delta Client](https://github.com/stackotter/delta-client) uses the `swift-bundler` build system. The first step is to install that on your machine;
 
 ```sh
@@ -31,14 +33,13 @@ You can use any ide you want to work on Delta Client (vscode and xcode are the b
 Next, fork Delta Client and then clone it.
 
 ```sh
-# 
 git clone [url of your delta-client fork]
 cd delta-client
 ```
 
 To run Delta Client, you can now run `swift bundler run`. See the [swift-bundler repo](https://github.com/stackotter/swift-bundler) for more commands and options.
 
-If you are using Xcode as your IDE run `swift bundler generate-xcode-support` and then open Package.swift with Xcode (`open Package.swift` should work unless you've changed your default program for opening swift files).
+If you are using Xcode as your IDE run `swift bundler generate-xcode-support` and then open Package.swift with Xcode (`open Package.swift` should work unless you've changed your default program for opening swift files). **Make sure to choose the `DeltaClient` target in the top bar instead of the `DeltaClient-Package` target.**
 
 You can now make changes and when you're done, just open a pull request on GitHub.
 
