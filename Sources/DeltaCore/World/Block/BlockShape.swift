@@ -1,26 +1,35 @@
 extension Block {
   /// Information about the shape of a block. Used for both occlusion (in lighting) and collisions.
-  ///
-  /// Don't exactly know what all of these mean yet. They're just from pixlyzer.
   public struct Shape: Codable{
+    /// Used for missing blocks.
+    public static var `default` = Shape(
+      isDynamic: false,
+      isLarge: false,
+      collisionShape: [],
+      outlineShape: [],
+      occlusionShape: nil,
+      isSturdy: nil)
+    
     /// Whether the block's shape can change dynamically (with an animation). E.g. pistons extending.
     public var isDynamic: Bool
     /// Whether the collision shape is bigger than a block.
     public var isLarge: Bool
-    /// The id of the shape to use for collisions.
-    public var collisionShape: Int?
-    /// The id of the shape to render as the block outline when targeted.
-    public var outlineShape: Int?
-    /// The id of the shapes to use for occlusion.
-    public var occlusionShape: [Int]?
+    /// The bounding boxes to use as the collision shape for this block.
+    public var collisionShape: [AxisAlignedBoundingBox]
+    /// The bounding boxes that represent the outline to render for this block.
+    public var outlineShape: [AxisAlignedBoundingBox]
+    
+    /// The id of the shapes to use for occlusion. I don't really know how this works or why there are multiple.
+    public var occlusionShapeIds: [Int]?
     /// Don't really know yet what this is.
     public var isSturdy: [Bool]?
     
+    /// Create a new block shape with some properties.
     public init(
       isDynamic: Bool,
       isLarge: Bool,
-      collisionShape: Int? = nil,
-      outlineShape: Int? = nil,
+      collisionShape: [AxisAlignedBoundingBox],
+      outlineShape: [AxisAlignedBoundingBox],
       occlusionShape: [Int]? = nil,
       isSturdy: [Bool]? = nil
     ) {
@@ -28,17 +37,8 @@ extension Block {
       self.isLarge = isLarge
       self.collisionShape = collisionShape
       self.outlineShape = outlineShape
-      self.occlusionShape = occlusionShape
+      self.occlusionShapeIds = occlusionShape
       self.isSturdy = isSturdy
     }
-    
-    /// Used for missing blocks.
-    public static var `default` = Shape(
-      isDynamic: false,
-      isLarge: false,
-      collisionShape: nil,
-      outlineShape: nil,
-      occlusionShape: nil,
-      isSturdy: nil)
   }
 }

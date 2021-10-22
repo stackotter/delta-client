@@ -9,6 +9,8 @@ public struct Registry {
   public var biomeRegistry = BiomeRegistry()
   public var fluidRegistry = FluidRegistry()
   
+  /// Populate the shared registry.
+  /// - Parameter directory: Directory used for caching registries.
   public static func populateShared(_ directory: URL) throws {
     shared = try loadCached(directory)
   }
@@ -23,8 +25,11 @@ public struct Registry {
     
     do {
       let decoder = JSONDecoder()
+      log.info("Loading cached block registry")
       let blockRegistry = try decoder.decode(BlockRegistry.self, from: try Data(contentsOf: blocksFile))
+      log.info("Loading cached biome registry")
       let biomeRegistry = try decoder.decode(BiomeRegistry.self, from: try Data(contentsOf: biomesFile))
+      log.info("Loading cached fluid registry")
       let fluidRegistry = try decoder.decode(FluidRegistry.self, from: try Data(contentsOf: fluidsFile))
       
       return Registry(
@@ -32,6 +37,8 @@ public struct Registry {
         biomeRegistry: biomeRegistry,
         fluidRegistry: fluidRegistry)
     } catch {
+      log.warning("Failed to load cached registries")
+      log.info("Downloading registries")
       let registry = try PixlyzerFormatter.downloadAndFormatRegistries(Constants.versionString)
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
       let encoder = JSONEncoder()

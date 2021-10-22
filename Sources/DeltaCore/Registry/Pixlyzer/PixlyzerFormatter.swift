@@ -3,6 +3,8 @@ import Foundation
 public enum PixlyzerError: LocalizedError {
   /// The block with the specified id is missing.
   case missingBlock(Int)
+  /// An AABB's vertex is of invalid length.
+  case invalidAABBVertex([Float])
 }
 
 public enum PixlyzerFormatter {
@@ -12,6 +14,7 @@ public enum PixlyzerFormatter {
     let fluidsDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/fluids.min.json")!
     let blocksDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/blocks.min.json")!
     let biomesDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/biomes.min.json")!
+    let shapeRegistryDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/shapes.min.json")!
     
     // Load and decode pixlyzer data
     log.info("Downloading and decoding pixlyzer fluids")
@@ -20,6 +23,8 @@ public enum PixlyzerFormatter {
     let pixlyzerBiomes: [String: PixlyzerBiome] = try downloadJSON(biomesDownloadURL, convertSnakeCase: true)
     log.info("Downloading and decoding pixlyzer blocks")
     let pixlyzerBlocks: [String: PixlyzerBlock] = try downloadJSON(blocksDownloadURL, convertSnakeCase: false)
+    log.info("Downloading and decoding pixlyzer shapes")
+    let pixlyzerShapeRegistry: PixlyzerShapeRegistry = try downloadJSON(shapeRegistryDownloadURL, convertSnakeCase: false)
     
     // Process fluids
     log.info("Processing pixlyzer fluid registry")
@@ -62,6 +67,22 @@ public enum PixlyzerFormatter {
       let biome = Biome(from: pixlyzerBiome, identifier: identifier)
       biomes[biome.id] = biome
     }
+    // Process shapes
+    log.info("Processing pixlyzer shape registry")
+    var aabbs: [AxisAlignedBoundingBox] = []
+    for pixlyzerAABB in pixlyzerShapeRegistry.aabbs {
+      aabbs.append(try AxisAlignedBoundingBox(from: pixlyzerAABB))
+    }
+    
+    var shapes: [[AxisAlignedBoundingBox]] = []
+    for shape in pixlyzerShapeRegistry.shapes {
+      let ids = shape.items
+      var boxes: [AxisAlignedBoundingBox] = []
+      for id in ids {
+        boxes.append(aabbs[id])
+      }
+      shapes.append(boxes)
+    }
     
     // Process blocks
     log.info("Processing pixlyzer block registry")
@@ -84,7 +105,7 @@ public enum PixlyzerFormatter {
       for (stateId, pixlyzerState) in pixlyzerBlock.states {
         let isWaterlogged = pixlyzerState.properties?.waterlogged == true || BlockRegistry.waterloggedBlockClasses.contains(pixlyzerBlock.className)
         let fluid = isWaterlogged ? water : fluid
-        let block = Block(pixlyzerBlock, pixlyzerState, stateId: stateId, fluid: fluid, isWaterlogged: isWaterlogged, identifier: identifier)
+        let block = Block(pixlyzerBlock, pixlyzerState, shapes: shapes, stateId: stateId, fluid: fluid, isWaterlogged: isWaterlogged, identifier: identifier)
         let descriptors = pixlyzerState.blockModelVariantDescriptors.map {
           $0.map {
             BlockModelRenderDescriptor(from: $0)

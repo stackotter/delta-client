@@ -43,7 +43,15 @@ public struct PixlyzerBlock: Decodable {
 }
 
 extension Block {
-  public init(_ pixlyzerBlock: PixlyzerBlock, _ pixlyzerState: PixlyzerBlockState, stateId: Int, fluid: Fluid?, isWaterlogged: Bool, identifier: Identifier) {
+  public init(
+    _ pixlyzerBlock: PixlyzerBlock,
+    _ pixlyzerState: PixlyzerBlockState,
+    shapes: [[AxisAlignedBoundingBox]],
+    stateId: Int,
+    fluid: Fluid?,
+    isWaterlogged: Bool,
+    identifier: Identifier
+  ) {
     let fluidState: FluidState?
     if let fluid = fluid {
       let height = 7 - (pixlyzerState.properties?.level ?? 0)
@@ -87,11 +95,21 @@ extension Block {
       hitSound: pixlyzerState.hitSound,
       fallSound: pixlyzerState.fallSound)
     
+    var collisionShape: [AxisAlignedBoundingBox] = []
+    if let collisionShapeId = pixlyzerState.collisionShape {
+      collisionShape = shapes[collisionShapeId]
+    }
+    
+    var outlineShape: [AxisAlignedBoundingBox] = []
+    if let outlineShapeId = pixlyzerState.outlineShape {
+      outlineShape = shapes[outlineShapeId]
+    }
+    
     let shape = Block.Shape(
       isDynamic: pixlyzerBlock.hasDynamicShape ?? false,
       isLarge: pixlyzerState.largeCollisionShape ?? false,
-      collisionShape: pixlyzerState.collisionShape,
-      outlineShape: pixlyzerState.outlineShape,
+      collisionShape: collisionShape,
+      outlineShape: outlineShape,
       occlusionShape: pixlyzerState.occlusionShape?.items,
       isSturdy: pixlyzerState.isSturdy?.items)
     

@@ -93,15 +93,13 @@ public struct Camera {
   
   /// Determine if the specified chunk is visible from this camera.
   public func isChunkVisible(at chunkPosition: ChunkPosition) -> Bool {
-    let chunkAxisAlignedBoundingBox = AxisAlignedBoundingBox(forChunkAt: chunkPosition)
     let frustum = getFrustum()
-    return frustum.approximatelyContains(chunkAxisAlignedBoundingBox)
+    return frustum.approximatelyContains(chunkPosition.axisAlignedBoundingBox)
   }
   
   /// Determine if the specified chunk section is visible from this camera.
   public func isChunkSectionVisible(at chunkSectionPosition: ChunkSectionPosition) -> Bool {
-    let chunkSectionAxisAlignedBoundingBox = AxisAlignedBoundingBox(forChunkSectionAt: chunkSectionPosition)
     let frustum = getFrustum()
-    return frustum.approximatelyContains(chunkSectionAxisAlignedBoundingBox)
+    return frustum.approximatelyContains(chunkSectionPosition.axisAlignedBoundingBox)
   }
 }

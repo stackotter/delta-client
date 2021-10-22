@@ -28,6 +28,21 @@ public struct ChunkPosition {
     return positionAndNeighbours
   }
   
+  /// The axis aligned bounding box for this chunk.
+  public var axisAlignedBoundingBox: AxisAlignedBoundingBox {
+    AxisAlignedBoundingBox(
+      position: [
+        Float(chunkX * Chunk.width),
+        0.0,
+        Float(chunkZ * Chunk.depth)
+      ],
+      size: [
+        Float(Chunk.width),
+        Float(Chunk.height),
+        Float(Chunk.depth)
+      ])
+  }
+  
   /// Gets the position of the chunk that neighbours this chunk in the specified direction.
   public func neighbour(inDirection direction: CardinalDirection) -> ChunkPosition {
     var position = self
