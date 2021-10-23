@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "FirebladeECS",
+        "repositoryURL": "https://github.com/fireblade-engine/ecs.git",
+        "state": {
+          "branch": null,
+          "revision": "fd57037a6df5aa7fb8070d6af105650fb84c340c",
+          "version": "0.17.5"
+        }
+      },
+      {
         "package": "IDZSwiftCommonCrypto",
         "repositoryURL": "https://github.com/iosdevzone/IDZSwiftCommonCrypto",
         "state": {
@@ -35,6 +44,15 @@
           "branch": null,
           "revision": "9d8719c8bebdc79740b6969c912ac706eb721d7a",
           "version": "0.0.7"
+        }
+      },
+      {
+        "package": "Concurrency",
+        "repositoryURL": "https://github.com/uber/swift-concurrency.git",
+        "state": {
+          "branch": null,
+          "revision": "e29e42c41c47c82ec32d3a2b2695719c32415ca9",
+          "version": "0.7.1"
         }
       },
       {

@@ -22,6 +22,8 @@ let package = Package(
     .package(name: "NioDNS", url: "https://github.com/OpenKitten/NioDNS", from: "1.0.2"),
     .package(name: "SwiftProtobuf", url: "https://github.com/apple/swift-protobuf.git", from: "1.6.0"),
     .package(name: "swift-collections", url: "https://github.com/apple/swift-collections.git", from: "0.0.7"),
+    .package(name: "Concurrency", url: "https://github.com/uber/swift-concurrency.git", from: "0.7.1"),
+    .package(name: "FirebladeECS", url: "https://github.com/fireblade-engine/ecs.git", from: "0.17.5"),
   ],
   targets: [
     .executableTarget(
@@ -37,6 +39,8 @@ let package = Package(
         "IDZSwiftCommonCrypto",
         "NioDNS",
         "SwiftProtobuf",
+        "Concurrency",
+        "FirebladeECS",
         .product(name: "Collections", package: "swift-collections")],
       exclude: [
         "Resources/Cache/BlockModelPalette.proto",
