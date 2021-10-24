@@ -160,6 +160,6 @@ public struct DeclareRecipesPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.server?.updateRecipeRegistry(to: recipeRegistry)
+    client.game.recipeRegistry = recipeRegistry
   }
 }

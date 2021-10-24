@@ -50,7 +50,7 @@ public struct MultiBlockChangePacket: ClientboundPacket {
       absolutePosition.z += chunkPosition.chunkZ * Chunk.depth
       
       // TODO: Group multiblock changes
-      client.server?.world.setBlockId(
+      client.game.world.setBlockId(
         at: absolutePosition,
         to: record.blockId)
     }

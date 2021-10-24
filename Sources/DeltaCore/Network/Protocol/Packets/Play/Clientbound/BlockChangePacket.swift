@@ -12,6 +12,6 @@ public struct BlockChangePacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.server?.world.setBlockId(at: location, to: blockId)
+    client.game.world.setBlockId(at: location, to: blockId)
   }
 }

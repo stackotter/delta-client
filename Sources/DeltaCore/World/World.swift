@@ -12,21 +12,17 @@ public class World {
   /// The hashed seed of this world
   public var hashedSeed: Int
   /// Whether this world is a debug world or not
-  public var isDebug: Bool
+  public var isDebug = false
   /// Whether this world is superflat or not.
-  public var isFlat: Bool
+  public var isFlat = false
   
   /// The world's chunks.
   public var chunks: [ChunkPosition: Chunk] = [:]
-  /// The number of currently loaded chunks in this world for this client.
-  public var chunkCount: Int {
-    return chunks.count
-  }
   
   /// The world's age.
-  public var age: Int = 0
+  public var age = 0
   /// The time of day.
-  public var timeOfDay: Int = 0
+  public var timeOfDay = 0
   /// Whether this world is still downloading terrain.
   public var downloadingTerrain = true
   
@@ -34,15 +30,22 @@ public class World {
   private var chunklessLightingData: [ChunkPosition: ChunkLightingUpdateData] = [:]
   
   /// Whether world updates should be handled in batches or as they arrive.
-  private var batchingEnabled: Bool
+  private var batchingEnabled = false
   /// The current batch of world updates.
   public var eventBatch = EventBatch()
-  
+  /// Used to update world lighting.
   private var lightingEngine = LightingEngine()
   
   // MARK: Init
   
-  /// Creates a new `World` from `World.Info`.
+  /// Create an empty world.
+  public init() {
+    name = Identifier.null
+    dimension = Identifier.null
+    hashedSeed = 0
+  }
+  
+  /// Create a new `World` from `World.Info`.
   public init(from descriptor: WorldDescriptor, batching: Bool = false) {
     name = descriptor.worldName
     dimension = descriptor.dimension
@@ -54,7 +57,7 @@ public class World {
   
   // MARK: Update
   
-  /// Updates the world's properties to match the supplied descriptor.
+  /// Update the world's properties to match the supplied descriptor.
   public func update(with descriptor: WorldDescriptor) {
     name = descriptor.worldName
     dimension = descriptor.dimension
@@ -63,7 +66,7 @@ public class World {
     isDebug = descriptor.isDebug
   }
   
-  /// Updates the world's time to match a `TimeUpdatePacket`.
+  /// Update the world's time to match a `TimeUpdatePacket`.
   public func updateTime(with packet: TimeUpdatePacket) {
     age = packet.worldAge
     timeOfDay = packet.timeOfDay

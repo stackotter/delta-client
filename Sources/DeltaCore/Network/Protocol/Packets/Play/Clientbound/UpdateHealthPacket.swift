@@ -14,7 +14,7 @@ public struct UpdateHealthPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.server?.player.update(with: self)
+    client.game.player.update(with: self)
     
     if health == -1 {
       // handle death

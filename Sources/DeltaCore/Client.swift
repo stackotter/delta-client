@@ -1,26 +1,24 @@
 import Foundation
 
-public enum ClientError: LocalizedError {
-  /// Players must login before they can join a server.
-  case loginRequired
-}
-
-/// A client creates and maintains a connection to a server while handling/storing all received data.
+/// A client creates and maintains a connection to a server and handles the received packets.
 public class Client {
-  /// The connection to the current server.
-  public var connection: ServerConnection?
-  /// The current server. Created once a `JoinGamePacket` is received.
-  public var server: Server?
-  /// The event bus for this client instance.
-  public var eventBus = EventBus()
   /// The resource pack to use.
   public var resourcePack: ResourcePack
   /// The account this client uses to join servers.
   public var account: Account?
-  /// The most recent time this client joined a server (specifically, when the join game packet was received). Used to calculate client tick.
-  public var joinServerTime: CFAbsoluteTime?
   
-  // TODO: ABOLISH world update batching, it's confusing and annoying
+  /// The game this client is playing in.
+  public var game = Game()
+  /// The clientside render distance.
+  public var config = ClientConfig()
+  
+  /// The connection to the current server.
+  public var connection: ServerConnection?
+  /// An event bus shared with ``game``.
+  public var eventBus = EventBus()
+  
+  // TODO: Get rid of world update batching, it's confusing and annoying, figure out a better solution
+  
   /// Whether to batch world updates or not.
   private var _batchWorldUpdates = true
   public var batchWorldUpdates: Bool {
@@ -30,34 +28,21 @@ public class Client {
     set(newValue) {
       if newValue != _batchWorldUpdates {
         if newValue {
-          server?.world.enableBatching()
+          game.world.enableBatching()
         } else {
-          server?.world.disableBatching()
+          game.world.disableBatching()
         }
         _batchWorldUpdates = newValue
       }
     }
   }
   
-  public var renderDistance = 1
-  
   // MARK: Init
   
   public init(resourcePack: ResourcePack) {
     self.resourcePack = resourcePack
-    
+    game.setEventBus(eventBus)
     eventBus.registerHandler(handleEvent)
-  }
-  
-  // MARK: Other
-  
-  /// Returns the current client tick (as opposed to the server tick).
-  public func getClientTick() -> Int {
-    if let start = joinServerTime {
-      return Int(((CFAbsoluteTimeGetCurrent() - start) * 20.0).rounded(.down))
-    } else {
-      return 0
-    }
   }
   
   // MARK: Connection lifecycle
@@ -77,7 +62,6 @@ public class Client {
   public func closeConnection() {
     connection?.close()
     connection = nil
-    server = nil
   }
   
   // MARK: Networking
@@ -94,7 +78,7 @@ public class Client {
     } catch {
       closeConnection()
       log.error("Failed to handle packet: \(error)")
-      eventBus.dispatch(PacketHandlingErrorEvent(packetId: type(of: packet).id, error: "\(error)"))
+      game.eventBus.dispatch(PacketHandlingErrorEvent(packetId: type(of: packet).id, error: "\(error)"))
     }
   }
   
@@ -103,11 +87,11 @@ public class Client {
   private func handleEvent(_ event: Event) {
     switch event {
       case let inputEvent as InputEvent:
-        server?.player.updateInputs(with: inputEvent)
+        game.player.updateInputs(with: inputEvent)
       case let mouseEvent as MouseMoveEvent:
-        server?.player.updateLook(with: mouseEvent)
+        game.player.updateLook(with: mouseEvent)
       case let changeRenderDistanceEvent as ChangeRenderDistanceEvent:
-        renderDistance = changeRenderDistanceEvent.renderDistance
+        config.renderDistance = changeRenderDistanceEvent.renderDistance // TODO: don't change render distance using events, just use a method. events should only be emitted by delta core.
       default:
         break
     }

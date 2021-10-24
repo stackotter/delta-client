@@ -41,21 +41,24 @@ public struct Player {
   /// Whether the player is in creative mode or not. This is a weird Mojang quirk. Use `Player.gamemode` instead.
   public private(set) var creativeMode = false // enables insta break?
   /// The player's previous gamemode. Likely used in vanilla by the F3+F4 gamemode switcher.
-  public private(set) var previousGamemode: Gamemode
+  public private(set) var previousGamemode = Gamemode.survival
   /// The player's gamemode.
-  public private(set) var gamemode: Gamemode
+  public private(set) var gamemode = Gamemode.survival
   /// Whether the player is in hardcore mode or not. Affects respawn screen and rendering of hearts.
-  public private(set) var isHardcore: Bool
+  public private(set) var isHardcore = false
   
   /// The current input events acting on the player
   public private(set) var currentInputs = Set<Input>()
   
   /// The player's eye position.
-  public var eyePositon: EntityPosition {
+  public var eyePosition: EntityPosition {
     var eyePosition = position
     eyePosition.y += 1.625
     return eyePosition
   }
+  
+  /// Create a default player.
+  public init() {}
   
   /// Create a new player from a `JoinGamePacket`.
   public init(from packet: JoinGamePacket) {
@@ -64,7 +67,6 @@ public struct Player {
     isHardcore = packet.isHardcore
   }
   
-  // TODO: This method should not exist. All position updates should be done by the player eventually.
   public mutating func setPosition(to position: EntityPosition) {
     self.position = position
   }

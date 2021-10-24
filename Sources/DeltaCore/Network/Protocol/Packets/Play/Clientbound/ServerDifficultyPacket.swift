@@ -15,6 +15,7 @@ public struct ServerDifficultyPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.server?.update(with: self)
+    client.game.difficulty = difficulty
+    client.game.isDifficultyLocked = isLocked
   }
 }

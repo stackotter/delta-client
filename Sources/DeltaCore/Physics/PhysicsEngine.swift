@@ -35,13 +35,11 @@ class PhysicsEngine {
   }
   
   func performStep() {
-    if let player = client.server?.player {
-      var position = player.position
-      position.x += player.velocity.x / PhysicsEngine.clocksPerSecond
-      position.y += player.velocity.y / PhysicsEngine.clocksPerSecond
-      position.z += player.velocity.z / PhysicsEngine.clocksPerSecond
-      
-      client.server?.player.setPosition(to: position)
-    }
+    var position = client.game.player.position
+    position.x += client.game.player.velocity.x / PhysicsEngine.clocksPerSecond
+    position.y += client.game.player.velocity.y / PhysicsEngine.clocksPerSecond
+    position.z += client.game.player.velocity.z / PhysicsEngine.clocksPerSecond
+    
+    client.game.player.setPosition(to: position)
   }
 }

@@ -360,12 +360,12 @@ class WorldRenderer {
     handle(events)
     
     // Filter out chunks outside of render distance
-    let playerChunkPosition = client.server?.player.position.chunkPosition ?? ChunkPosition(chunkX: 0, chunkZ: 0)
+    let playerChunkPosition = client.game.player.position.chunkPosition
     let chunkRenderersInRenderDistance = [ChunkRenderer](chunkRenderers.values).filter { renderer in
       let distance = max(
         abs(playerChunkPosition.chunkX - renderer.chunkPosition.chunkX),
         abs(playerChunkPosition.chunkZ - renderer.chunkPosition.chunkZ))
-      return distance < client.renderDistance
+      return distance < client.config.renderDistance
     }
     
     // Sort chunks by distance from player
@@ -458,7 +458,7 @@ class WorldRenderer {
     commandQueue: MTLCommandQueue
   ) {
     // Update animated textures
-    let updatedTextures = blockTexturePaletteAnimationState.update(tick: client.getClientTick())
+    let updatedTextures = blockTexturePaletteAnimationState.update(tick: client.game.tickScheduler.tickNumber)
     stopwatch.startMeasurement("update texture")
     resources.blockTexturePalette.updateArrayTexture(arrayTexture: blockArrayTexture, device: device, animationState: blockTexturePaletteAnimationState, updatedTextures: updatedTextures, commandQueue: commandQueue)
     stopwatch.stopMeasurement("update texture")

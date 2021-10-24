@@ -10,7 +10,7 @@ public struct SpawnPositionPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.server?.player.update(with: self)
+    client.game.player.update(with: self)
     
     log.info("Finished downloading terrain")
     client.eventBus.dispatch(TerrainDownloadCompletionEvent())

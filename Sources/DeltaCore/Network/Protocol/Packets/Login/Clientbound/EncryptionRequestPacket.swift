@@ -37,52 +37,46 @@ public struct EncryptionRequestPacket: ClientboundPacket {
     ])
     
     // TODO: Clean up EncryptionRequestPacket.handle
-    if let account = client.account {
-      if let mojangAccount = account as? MojangAccount {
-        let accessToken = mojangAccount.accessToken
-        // TODO: when multi accounting is done no force unwrapping should be necessary
-        let selectedProfile = mojangAccount.profileId
-        MojangAPI.join(
-          accessToken: accessToken,
-          selectedProfile: selectedProfile,
-          serverHash: serverHash,
-          onCompletion: {
-            // block inbound thread until encryption is enabled
-            client.connection?.networkStack.inboundThread.sync {
-              do {
-                // send encryption response packet
-                let publicKeyData = Data(publicKey)
-                let encryptedSharedSecret = try CryptoUtil.encryptRSA(
-                  data: Data(sharedSecret),
-                  publicKeyDERData: publicKeyData)
-                let encryptedVerifyToken = try CryptoUtil.encryptRSA(
-                  data: Data(verifyToken),
-                  publicKeyDERData: publicKeyData)
-                let encryptionResponse = EncryptionResponsePacket(
-                  sharedSecret: [UInt8](encryptedSharedSecret),
-                  verifyToken: [UInt8](encryptedVerifyToken))
-                client.sendPacket(encryptionResponse)
-                
-                // wait for packet to send then enable encryption
-                client.connection?.networkStack.outboundThread.sync {
-                  client.connection?.enableEncryption(sharedSecret: sharedSecret)
-                }
-              } catch {
-                log.error("Failed to enable encryption: \(error)")
+    if let mojangAccount = client.account as? MojangAccount {
+      let accessToken = mojangAccount.accessToken
+      let selectedProfile = mojangAccount.profileId
+      MojangAPI.join(
+        accessToken: accessToken,
+        selectedProfile: selectedProfile,
+        serverHash: serverHash,
+        onCompletion: {
+          // block inbound thread until encryption is enabled
+          client.connection?.networkStack.inboundThread.sync {
+            do {
+              // send encryption response packet
+              let publicKeyData = Data(publicKey)
+              let encryptedSharedSecret = try CryptoUtil.encryptRSA(
+                data: Data(sharedSecret),
+                publicKeyDERData: publicKeyData)
+              let encryptedVerifyToken = try CryptoUtil.encryptRSA(
+                data: Data(verifyToken),
+                publicKeyDERData: publicKeyData)
+              let encryptionResponse = EncryptionResponsePacket(
+                sharedSecret: [UInt8](encryptedSharedSecret),
+                verifyToken: [UInt8](encryptedVerifyToken))
+              client.sendPacket(encryptionResponse)
+              
+              // wait for packet to send then enable encryption
+              client.connection?.networkStack.outboundThread.sync {
+                client.connection?.enableEncryption(sharedSecret: sharedSecret)
               }
+            } catch {
+              log.error("Failed to enable encryption: \(error)")
             }
-          },
-          onFailure: { error in
-            log.error("Join request for online server failed: \(error)")
           }
-        )
-      } else {
-        log.error("Cannot join an online server with an offline account")
-        throw EncryptionRequestPacketError.incorrectAccountType
-      }
+        },
+        onFailure: { error in
+          log.error("Join request for online server failed: \(error)")
+        }
+      )
     } else {
-      log.error("Something has gone awefully wrong. Encryption request received and client has no account")
-      throw EncryptionRequestPacketError.noAccount
+      log.error("Cannot join an online server with an offline account")
+      throw EncryptionRequestPacketError.incorrectAccountType
     }
   }
 }

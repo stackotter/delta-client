@@ -56,38 +56,36 @@ public struct UpdateLightPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    if let world = client.server?.world {
-      let skyLightIndices = Self.sectionsPresent(in: skyLightMask)
-      let blockLightIndices = Self.sectionsPresent(in: blockLightMask)
-      
-      guard skyLightIndices.count == skyLightArrays.count else {
-        log.error("Invalid sky light mask sent. \(skyLightIndices.count) bits set but \(skyLightArrays.count) sections received")
-        throw ClientboundPacketError.invalidSkyLightMask
-      }
-      
-      guard blockLightIndices.count == blockLightArrays.count else {
-        log.error("Invalid block light mask sent. \(blockLightIndices.count) bits set but \(blockLightArrays.count) sections received")
-        throw ClientboundPacketError.invalidBlockLightMask
-      }
-      
-      
-      var unpackedSkyLightArrays: [Int: [UInt8]] = [:]
-      for (index, array) in zip(skyLightIndices, skyLightArrays) {
-        unpackedSkyLightArrays[index] = Self.unpackLightingArray(array)
-      }
-      
-      var unpackedBlockLightArrays: [Int: [UInt8]] = [:]
-      for (index, array) in zip(blockLightIndices, blockLightArrays) {
-        unpackedBlockLightArrays[index] = Self.unpackLightingArray(array)
-      }
-      
-      let data = ChunkLightingUpdateData(
-        trustEdges: trustEdges,
-        emptySkyLightSections: Self.sectionsPresent(in: emptySkyLightMask),
-        emptyBlockLightSections: Self.sectionsPresent(in: emptyBlockLightMask),
-        skyLightArrays: unpackedSkyLightArrays,
-        blockLightArrays: unpackedBlockLightArrays)
-      world.updateChunkLighting(at: chunkPosition, with: data)
+    let skyLightIndices = Self.sectionsPresent(in: skyLightMask)
+    let blockLightIndices = Self.sectionsPresent(in: blockLightMask)
+    
+    guard skyLightIndices.count == skyLightArrays.count else {
+      log.error("Invalid sky light mask sent. \(skyLightIndices.count) bits set but \(skyLightArrays.count) sections received")
+      throw ClientboundPacketError.invalidSkyLightMask
     }
+    
+    guard blockLightIndices.count == blockLightArrays.count else {
+      log.error("Invalid block light mask sent. \(blockLightIndices.count) bits set but \(blockLightArrays.count) sections received")
+      throw ClientboundPacketError.invalidBlockLightMask
+    }
+    
+    
+    var unpackedSkyLightArrays: [Int: [UInt8]] = [:]
+    for (index, array) in zip(skyLightIndices, skyLightArrays) {
+      unpackedSkyLightArrays[index] = Self.unpackLightingArray(array)
+    }
+    
+    var unpackedBlockLightArrays: [Int: [UInt8]] = [:]
+    for (index, array) in zip(blockLightIndices, blockLightArrays) {
+      unpackedBlockLightArrays[index] = Self.unpackLightingArray(array)
+    }
+    
+    let data = ChunkLightingUpdateData(
+      trustEdges: trustEdges,
+      emptySkyLightSections: Self.sectionsPresent(in: emptySkyLightMask),
+      emptyBlockLightSections: Self.sectionsPresent(in: emptyBlockLightMask),
+      skyLightArrays: unpackedSkyLightArrays,
+      blockLightArrays: unpackedBlockLightArrays)
+    client.game.world.updateChunkLighting(at: chunkPosition, with: data)
   }
 }
