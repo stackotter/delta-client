@@ -14,6 +14,6 @@ public struct SetExperiencePacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.server?.player.update(with: self)
+    client.game.player.update(with: self)
   }
 }

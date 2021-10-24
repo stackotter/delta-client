@@ -7,6 +7,15 @@ public struct Identifier {
   /// The name of the identifier.
   public var name: String
   
+  public var isNull = false
+  
+  /// An identifier that is never equal to any other identifier.
+  public static var null: Identifier {
+    var identifier = Identifier(namespace: "", name: "")
+    identifier.isNull = true
+    return identifier
+  }
+  
   /// Creates an identifier with the given name (and namespace if specified). The namespace defaults to 'minecraft'.
   public init(namespace: String = "minecraft", name: String) {
     self.namespace = namespace
@@ -57,11 +66,16 @@ extension Identifier: Hashable {
   public func hash(into hasher: inout Hasher) {
     hasher.combine(namespace)
     hasher.combine(name)
+    hasher.combine(isNull)
   }
 }
 
 extension Identifier: Equatable {
   public static func == (lhs: Identifier, rhs: Identifier) -> Bool {
+    if lhs.isNull || rhs.isNull {
+      return false
+    }
+    
     return lhs.namespace == rhs.namespace && lhs.name == rhs.name
   }
 }

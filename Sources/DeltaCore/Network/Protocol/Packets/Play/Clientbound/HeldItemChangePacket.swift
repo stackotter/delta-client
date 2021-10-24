@@ -10,6 +10,6 @@ public struct HeldItemChangePacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.server?.player.selectHotbarSlot(Int(slot))
+    client.game.player.selectHotbarSlot(Int(slot))
   }
 }

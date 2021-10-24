@@ -111,7 +111,7 @@ struct PlayServerView: View {
                 
                 // TODO: make a way to pass initial render config to metal view
                 client.eventBus.dispatch(ChangeFOVEvent(fovDegrees: ConfigManager.default.config.video.fov))
-                client.renderDistance = ConfigManager.default.config.video.renderDistance
+                client.config.renderDistance = ConfigManager.default.config.video.renderDistance
                 
                 inputDelegate.captureCursor()
               }

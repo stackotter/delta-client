@@ -35,6 +35,6 @@ public struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
     let teleportConfirm = TeleportConfirmPacket(teleportId: teleportId)
     client.sendPacket(teleportConfirm)
     
-    client.server?.player.update(with: self)
+    client.game.player.update(with: self)
   }
 }

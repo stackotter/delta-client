@@ -6,6 +6,7 @@ import Darwin
 public class TickScheduler {
   public var jobs: [() -> Void] = []
   public var ticksPerSecond: Double = 20
+  public private(set) var tickNumber = 0
   
   private var shouldCancel: AtomicBool = AtomicBool(initialValue: false)
   private var timebaseInfo = mach_timebase_info_data_t()
@@ -40,6 +41,7 @@ public class TickScheduler {
     for job in jobs {
       job()
     }
+    tickNumber += 1
   }
   
   private func configureThread() {

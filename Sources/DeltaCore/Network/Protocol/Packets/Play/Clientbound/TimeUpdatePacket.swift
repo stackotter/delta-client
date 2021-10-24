@@ -12,6 +12,6 @@ public struct TimeUpdatePacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.server?.world.updateTime(with: self)
+    client.game.world.updateTime(with: self)
   }
 }

@@ -72,15 +72,15 @@ public struct PlayerInfoPacket: ClientboundPacket {
       
       switch action {
         case let .addPlayer(playerInfo: playerInfo):
-          client.server?.tabList.addPlayer(playerInfo)
+          client.game.tabList.addPlayer(playerInfo)
         case let .updateGamemode(gamemode: gamemode):
-          client.server?.tabList.updateGamemode(gamemode, uuid: uuid)
+          client.game.tabList.updateGamemode(gamemode, uuid: uuid)
         case let .updateLatency(ping: ping):
-          client.server?.tabList.updateLatency(ping, uuid: uuid)
+          client.game.tabList.updateLatency(ping, uuid: uuid)
         case let .updateDisplayName(displayName: displayName):
-          client.server?.tabList.updateDisplayName(displayName, uuid: uuid)
+          client.game.tabList.updateDisplayName(displayName, uuid: uuid)
         case .removePlayer:
-          client.server?.tabList.removePlayer(uuid: uuid)
+          client.game.tabList.removePlayer(uuid: uuid)
       }
     }
   }

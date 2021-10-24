@@ -30,13 +30,13 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
   }
   
   public func handle(for client: Client) throws {
-    if let world = client.server?.world {
-      world.update(with: self)
+    if client.game.world.name == worldName {
+      client.game.world.update(with: self)
     } else {
-      client.server?.world = World(from: self)
+      client.game.world = World(from: self)
     }
     
-    client.server?.player.update(with: self)
+    client.game.player.update(with: self)
     
     // TODO: get auto respawn working
     let clientStatus = ClientStatusPacket(action: .performRespawn)

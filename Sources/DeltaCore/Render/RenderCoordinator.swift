@@ -10,7 +10,7 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
   
   private var camera: Camera
   private var physicsEngine: PhysicsEngine
-  private var worldRenderer: WorldRenderer?
+  private var worldRenderer: WorldRenderer
   
   private var commandQueue: MTLCommandQueue
   
@@ -21,12 +21,13 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
   // MARK: Init
   
   public init(client: Client) {
+    // TODO: get rid of fatalErrors in RenderCoordinator
     guard let device = MTLCreateSystemDefaultDevice() else {
-      fatalError("failed to get metal device")
+      fatalError("Failed to get metal device")
     }
     
     guard let commandQueue = device.makeCommandQueue() else {
-      fatalError("failed to make render command queue")
+      fatalError("Failed to make render command queue")
     }
     
     self.client = client
@@ -43,17 +44,14 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
     camera = Camera()
     camera.setFovY(fovRadians)
     
-    super.init()
-    
     // Create world renderer
-    if let world = client.server?.world {
-      do {
-        worldRenderer = try WorldRenderer(device: device, world: world, client: client, resources: client.resourcePack.vanillaResources, commandQueue: commandQueue)
-      } catch {
-        log.critical("Failed to create world renderer")
-        client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to create world renderer"))
-      }
+    do {
+      worldRenderer = try WorldRenderer(device: device, world: client.game.world, client: client, resources: client.resourcePack.vanillaResources, commandQueue: commandQueue)
+    } catch {
+      fatalError("Failed to create world renderer")
     }
+    
+    super.init()
     
     // Register listener for changing worlds
     client.eventBus.registerHandler { [weak self] event in
@@ -66,16 +64,9 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
   
   public func draw(in view: MTKView) {
     stopwatch.startMeasurement("whole frame")
-    guard
-      client.server?.world != nil,
-      let player = client.server?.player,
-      let worldRenderer = worldRenderer
-    else {
-      return
-    }
     
     updatePhysics()
-    updateCamera(player, view)
+    updateCamera(client.game.player, view)
     
     guard
       let transparentAndOpaqueCommandBuffer = commandQueue.makeCommandBuffer(),
@@ -113,14 +104,14 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
   public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) { }
   
   private func updatePhysics() {
-    client.server?.player.updateVelocity()
+    client.game.player.updateVelocity()
     physicsEngine.update()
   }
   
   private func updateCamera(_ player: Player, _ view: MTKView) {
     let aspect = Float(view.drawableSize.width / view.drawableSize.height)
     camera.setAspect(aspect)
-    camera.setPosition(player.eyePositon.vector)
+    camera.setPosition(player.eyePosition.vector)
     camera.setRotation(playerLook: player.look)
     camera.cacheFrustum()
   }
