@@ -36,7 +36,9 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
       client.game.world = World(from: self)
     }
     
-    client.game.player.update(with: self)
+    
+    client.game.player.gamemode.gamemode = gamemode
+    client.game.player.attributes.previousGamemode = previousGamemode
     
     // TODO: get auto respawn working
     let clientStatus = ClientStatusPacket(action: .performRespawn)

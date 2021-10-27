@@ -60,8 +60,8 @@ public struct Camera {
     return Frustum(worldToClip: worldToClip)
   }
   
-  /// Faces this camera in the direction described by a `PlayerRotation`.
-  public mutating func setRotation(playerLook: PlayerRotation) {
+  /// Faces this camera in the direction of an entity's rotation.
+  public mutating func setRotation(playerLook: EntityRotation) {
     xRot = playerLook.pitch / 180 * Float.pi
     yRot = playerLook.yaw / 180 * Float.pi
   }
