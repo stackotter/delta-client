@@ -9,7 +9,6 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
   private var client: Client
   
   private var camera: Camera
-  private var physicsEngine: PhysicsEngine
   private var worldRenderer: WorldRenderer
   
   private var commandQueue: MTLCommandQueue
@@ -33,10 +32,6 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
     self.client = client
     self.device = device
     self.commandQueue = commandQueue
-    
-    // Setup physics engine
-    // TODO: put physics engine in the client instead of the renderer, (ECS perhaps?)
-    physicsEngine = PhysicsEngine(client: client)
     
     // Setup camera
     let fovDegrees: Float = 90
@@ -65,7 +60,6 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
   public func draw(in view: MTKView) {
     stopwatch.startMeasurement("whole frame")
     
-    updatePhysics()
     updateCamera(client.game.player, view)
     
     guard
@@ -103,16 +97,19 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
   
   public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) { }
   
-  private func updatePhysics() {
-    client.game.player.updateVelocity()
-    physicsEngine.update()
-  }
-  
   private func updateCamera(_ player: Player, _ view: MTKView) {
     let aspect = Float(view.drawableSize.width / view.drawableSize.height)
     camera.setAspect(aspect)
-    camera.setPosition(player.eyePosition.vector)
-    camera.setRotation(playerLook: player.look)
+    
+    let currentPosition = player.position.vector
+    let targetPosition = player.targetPosition.position.vector
+    let tickProgress = Float(min(max((CFAbsoluteTimeGetCurrent() - client.game.tickScheduler.mostRecentTick) * 20, 0), 1))
+    let interpolatedPosition = currentPosition + (targetPosition - currentPosition) * tickProgress
+    var eyePosition = interpolatedPosition
+    eyePosition.y += 1.625
+    
+    camera.setPosition(eyePosition)
+    camera.setRotation(playerLook: player.rotation)
     camera.cacheFrustum()
   }
   

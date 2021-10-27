@@ -35,6 +35,40 @@ public struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
     let teleportConfirm = TeleportConfirmPacket(teleportId: teleportId)
     client.sendPacket(teleportConfirm)
     
-    client.game.player.update(with: self)
+    var position = client.game.player.position
+    var rotation = client.game.player.rotation
+    
+    if flags.contains(.x) {
+      position.x += self.position.x
+    } else {
+      position.x = self.position.x
+    }
+    
+    if flags.contains(.y) {
+      position.y += self.position.y
+    } else {
+      position.y = self.position.y
+    }
+    
+    if flags.contains(.z) {
+      position.z += self.position.z
+    } else {
+      position.z = self.position.z
+    }
+    
+    if flags.contains(.yRot) {
+      rotation.yaw += yaw
+    } else {
+      rotation.yaw = yaw
+    }
+    
+    if flags.contains(.xRot) {
+      rotation.pitch += pitch
+    } else {
+      rotation.pitch = pitch
+    }
+    
+    client.game.player.position = position
+    client.game.player.rotation = rotation
   }
 }

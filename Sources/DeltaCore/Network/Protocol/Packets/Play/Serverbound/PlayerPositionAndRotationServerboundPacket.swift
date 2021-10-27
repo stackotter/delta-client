@@ -4,7 +4,7 @@ public struct PlayerPositionAndRotationServerboundPacket: ServerboundPacket {
   public static let id: Int = 0x13
   
   public var position: EntityPosition // y is feet position
-  public var rotation: PlayerRotation
+  public var rotation: EntityRotation
   public var onGround: Bool
   
   public func writePayload(to writer: inout PacketWriter) {

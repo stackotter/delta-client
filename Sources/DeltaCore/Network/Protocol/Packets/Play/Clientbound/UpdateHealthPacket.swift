@@ -14,10 +14,13 @@ public struct UpdateHealthPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.game.player.update(with: self)
+    client.game.player.health.health = health
+    client.game.player.nutrition.food = food
+    client.game.player.nutrition.saturation = foodSaturation
     
-    if health == -1 {
-      // handle death
+    if health <= 0 {
+      // TODO: Handle death
+      log.debug("Died")
     }
   }
 }

@@ -6,7 +6,7 @@ public struct JoinGamePacket: ClientboundPacket, WorldDescriptor {
   public var playerEntityId: Int
   public var isHardcore: Bool
   public var gamemode: Gamemode
-  public var previousGamemode: Gamemode
+  public var previousGamemode: Gamemode?
   public var worldCount: Int
   public var worldNames: [Identifier]
   public var dimensionCodec: NBT.Compound
@@ -24,14 +24,12 @@ public struct JoinGamePacket: ClientboundPacket, WorldDescriptor {
     playerEntityId = packetReader.readInt()
     let gamemodeInt = Int8(packetReader.readUnsignedByte())
     isHardcore = gamemodeInt & 0x8 == 0x8
-    guard
-      let gamemode = Gamemode(rawValue: gamemodeInt),
-      let previousGamemode = Gamemode(rawValue: packetReader.readByte())
-    else {
+    guard let gamemode = Gamemode(rawValue: gamemodeInt) else {
       throw ClientboundPacketError.invalidGamemode
     }
     self.gamemode = gamemode
-    self.previousGamemode = previousGamemode
+    let previousGamemodeInt = packetReader.readByte()
+    previousGamemode = Gamemode(rawValue: previousGamemodeInt)
     worldCount = packetReader.readVarInt()
     worldNames = []
     for _ in 0..<worldCount {
@@ -51,6 +49,7 @@ public struct JoinGamePacket: ClientboundPacket, WorldDescriptor {
   
   public func handle(for client: Client) throws {
     client.game.update(packet: self, client: client)
+    
     // TODO: the event below should be dispatched from game instead of here. Event dispatching should be done in a way that makes it clear what will and what won't emit an event.
     client.eventBus.dispatch(JoinWorldEvent(world: client.game.world))
   }

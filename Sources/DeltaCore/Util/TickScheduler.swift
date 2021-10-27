@@ -1,18 +1,37 @@
 import Concurrency
 import Foundation
 import Darwin
+import FirebladeECS
 
 /// A highly accurate timer used to implement the ticking mechanism.
 public class TickScheduler {
-  public var jobs: [() -> Void] = []
+  /// The ECS nexus to perform operations on.
+  public var nexus: Nexus
+  /// The systems to run each tick. In execution order.
+  public var systems: [System] = []
+  
+  /// The number of ticks to perform per second.
   public var ticksPerSecond: Double = 20
-  public private(set) var tickNumber = 0
+  /// Incremented each tick.
+  public var tickNumber = 0
+  /// The time that the most recent tick began, in unix epoch seconds.
+  public var mostRecentTick: Double = CFAbsoluteTimeGetCurrent()
   
   private var shouldCancel: AtomicBool = AtomicBool(initialValue: false)
   private var timebaseInfo = mach_timebase_info_data_t()
   
-  public func addJob(_ job: @escaping () -> Void) {
-    jobs.append(job)
+  public init(_ nexus: Nexus) {
+    self.nexus = nexus
+  }
+  
+  /// Adds a system to the tick loop. Systems are run in the order they are added.
+  public func addSystem(_ system: System) {
+    systems.append(system)
+  }
+  
+  /// Cancels the scheduler at the start of the next tick.
+  public func cancel() {
+    shouldCancel.value = true
   }
   
   /// Should only be called once on a given tick scheduler.
@@ -21,28 +40,27 @@ public class TickScheduler {
       autoreleasepool {
         self.configureThread()
         
+        self.mostRecentTick = CFAbsoluteTimeGetCurrent()
         let nanosecondsPerTick = UInt64(1 / self.ticksPerSecond * Double(NSEC_PER_SEC))
         var when = mach_absolute_time()
         while !self.shouldCancel.value {
           when += self.nanosToAbs(nanosecondsPerTick)
           mach_wait_until(when)
+          self.mostRecentTick = CFAbsoluteTimeGetCurrent()
           self.tick()
         }
       }
     }
   }
   
-  /// Cancels the scheduler at the start of the next tick.
-  public func cancel() {
-    shouldCancel.value = true
-  }
-  
   private func tick() {
-    for job in jobs {
-      job()
+    for system in systems {
+      system.update(nexus)
     }
     tickNumber += 1
   }
+  
+  // MARK: Thread setup
   
   private func configureThread() {
     mach_timebase_info(&timebaseInfo)

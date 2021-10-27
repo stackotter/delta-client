@@ -35,7 +35,9 @@ public struct PlayerInfoPacket: ClientboundPacket {
             let property = PlayerProperty(name: propertyName, value: value, signature: signature)
             properties.append(property)
           }
-          let gamemode = Gamemode(rawValue: Int8(packetReader.readVarInt())) ?? .none
+          guard let gamemode = Gamemode(rawValue: Int8(packetReader.readVarInt())) else {
+            throw ClientboundPacketError.invalidGamemode
+          }
           let ping = packetReader.readVarInt()
           var displayName: ChatComponent?
           if packetReader.readBool() {
@@ -44,7 +46,9 @@ public struct PlayerInfoPacket: ClientboundPacket {
           let playerInfo = PlayerInfo(uuid: uuid, name: playerName, properties: properties, gamemode: gamemode, ping: ping, displayName: displayName)
           playerAction = .addPlayer(playerInfo: playerInfo)
         case 1: // update gamemode
-          let gamemode = Gamemode(rawValue: Int8(packetReader.readVarInt())) ?? .none
+          guard let gamemode = Gamemode(rawValue: Int8(packetReader.readVarInt())) else {
+            throw ClientboundPacketError.invalidGamemode
+          }
           playerAction = .updateGamemode(gamemode: gamemode)
         case 2: // update latency
           let ping = packetReader.readVarInt()

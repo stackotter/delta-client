@@ -3,15 +3,15 @@ import FirebladeECS
 
 /// Stores all of the game data such as entities, chunks and chat messages.
 public struct Game {
-  /// The container for the game's entities. Strictly only contains what Minecraft counts as entities.
-  public var entities = Nexus()
+  /// The container for the game's entities. Strictly only contains what Minecraft counts as entities. Doesn't include block entities.
+  public let nexus = Nexus()
   /// The scheduler that runs the game's systems every 20th of a second.
-  public var tickScheduler = TickScheduler()
+  public var tickScheduler: TickScheduler
   /// The event bus for emitting events.
   public var eventBus = EventBus()
   
-  /// The currently connected player.
-  public var player = Player()
+  /// The player.
+  public var player: Player
   /// The world the player is currently connected to.
   public var world = World()
   /// The list of all players in the game.
@@ -40,8 +40,18 @@ public struct Game {
   /// Whether the server's difficulty is locked for the player or not.
   public var isDifficultyLocked = true
   
-  /// Creates an empty game with default properties. Starts the tick loop.
+  /// The system that handles entity physics.
+  public var physicsSystem = PhysicsSystem()
+  
+  /// Creates a game with default properties. Creates the player. Starts the tick loop.
   public init() {
+    player = Player(nexus)
+    tickScheduler = TickScheduler(nexus)
+    
+    // Add systems
+    tickScheduler.addSystem(physicsSystem)
+    
+    // Start tick loop
     tickScheduler.ticksPerSecond = 20
     tickScheduler.startTickLoop()
   }
@@ -54,7 +64,10 @@ public struct Game {
     respawnScreenEnabled = packet.enableRespawnScreen
     isHardcore = packet.isHardcore
     
-    player = Player(from: packet)
+    player.attributes.previousGamemode = packet.previousGamemode
+    player.gamemode.gamemode = packet.gamemode
+    player.attributes.isHardcore = packet.isHardcore
+    
     world = World(from: packet, batching: client.batchWorldUpdates)
   }
   

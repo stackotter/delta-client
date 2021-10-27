@@ -1,5 +1,3 @@
-import Foundation
-
 /// An entity's rotation in radians.
 public struct EntityRotation {
   /// Pitch in radians.
@@ -7,6 +5,7 @@ public struct EntityRotation {
   /// Yaw in radians.
   public var yaw: Float
   
+  /// Creates an entity's rotation.
   public init(pitch: Float, yaw: Float) {
     self.pitch = pitch
     self.yaw = yaw

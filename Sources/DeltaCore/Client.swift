@@ -53,6 +53,7 @@ public class Client {
     
     // Create a connection to the server
     let connection = ServerConnection(descriptor: descriptor, locale: resourcePack.getDefaultLocale())
+    connection.eventBus = eventBus
     connection.setPacketHandler(handlePacket(_:))
     connection.login(username: account.username)
     self.connection = connection
@@ -78,7 +79,7 @@ public class Client {
     } catch {
       closeConnection()
       log.error("Failed to handle packet: \(error)")
-      game.eventBus.dispatch(PacketHandlingErrorEvent(packetId: type(of: packet).id, error: "\(error)"))
+      eventBus.dispatch(PacketHandlingErrorEvent(packetId: type(of: packet).id, error: "\(error)"))
     }
   }
   
