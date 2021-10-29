@@ -40,13 +40,15 @@ let package = Package(
       dependencies: [
         .product(name: "DeltaCore", package: "DeltaCore"),
         .product(name: "PluginAPI", package: "PluginAPI"),
-      ]),
+      ],
+      path: "Sources/Exporters/DynamicShim"),
     
     .target(
       name: "StaticShim",
       dependencies: [
         .product(name: "StaticDeltaCore", package: "DeltaCore"),
         .product(name: "StaticPluginAPI", package: "PluginAPI"),
-      ]),
+      ],
+      path: "Sources/Exporters/StaticShim"),
   ]
 )
