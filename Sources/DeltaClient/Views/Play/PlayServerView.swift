@@ -12,6 +12,7 @@ enum OverlayState {
 }
 
 struct PlayServerView: View {
+  @EnvironmentObject var pluginEnvironment: PluginEnvironment
   @EnvironmentObject var appState: StateWrapper<AppState>
   @ObservedObject var state = StateWrapper<PlayState>(initial: .downloadingTerrain)
   @ObservedObject var overlayState = StateWrapper<OverlayState>(initial: .menu)
@@ -35,8 +36,8 @@ struct PlayServerView: View {
     client.eventBus.registerHandler(handleClientEvent)
     
     // Setup plugins
-    DeltaClientApp.pluginEnvironment.addEventBus(client.eventBus)
-    DeltaClientApp.pluginEnvironment.handleWillJoinServer(server: serverDescriptor, client: client)
+    pluginEnvironment.addEventBus(client.eventBus)
+    pluginEnvironment.handleWillJoinServer(server: serverDescriptor, client: client)
     
     joinServer(serverDescriptor)
   }

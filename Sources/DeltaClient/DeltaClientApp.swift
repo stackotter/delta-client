@@ -6,10 +6,10 @@ struct DeltaClientApp: App {
   // MARK: Global state
   // These are static so that they can be used from static functions like `modalError`. And because otherwise they can't be captured by the async startup task.
   
-  @ObservedObject static var modalState = StateWrapper<ModalState>(initial: .none)
-  @ObservedObject static var appState = StateWrapper<AppState>(initial: .serverList)
-  @ObservedObject static var loadingState = StateWrapper<LoadingState>(initial: .loading)
-  @ObservedObject static var pluginEnvironment = PluginEnvironment()
+  @ObservedObject private static var modalState = StateWrapper<ModalState>(initial: .none)
+  @ObservedObject private static var appState = StateWrapper<AppState>(initial: .serverList)
+  @ObservedObject private static var loadingState = StateWrapper<LoadingState>(initial: .loading)
+  @ObservedObject private static var pluginEnvironment = PluginEnvironment()
   
   // MARK: Init
   
@@ -24,6 +24,17 @@ struct DeltaClientApp: App {
       }
       
       do {
+        // Load plugins first
+        updateLoadingMessage("Loading plugins")
+        do {
+          try Self.pluginEnvironment.loadPlugins(from: StorageManager.default.pluginsDirectory)
+          for (pluginBundler, error) in Self.pluginEnvironment.errors {
+            log.error("Error occured when loading plugin '\(pluginBundler.lastPathComponent)': \(error.localizedDescription)")
+          }
+        } catch {
+          Self.modalError("Error occurred during plugin loading, no plugins will be available: \(error)")
+        }
+        
         // Download vanilla assets if they haven't already been downloaded
         if !StorageManager.default.directoryExists(at: StorageManager.default.vanillaAssetsDirectory) {
           updateLoadingMessage("Downloading vanilla assets (might take a little while)")
@@ -45,17 +56,6 @@ struct DeltaClientApp: App {
           } catch {
             log.warning("Failed to cache vanilla resource pack")
           }
-        }
-				
-        // Load plugins
-				updateLoadingMessage("Loading plugins")
-        do {
-          try Self.pluginEnvironment.loadPlugins(from: StorageManager.default.pluginsDirectory)
-          for (pluginBundler, error) in Self.pluginEnvironment.errors {
-            log.error("Error occured when loading plugin '\(pluginBundler.lastPathComponent)': \(error.localizedDescription)")
-          }
-        } catch {
-          Self.modalError("Error occurred during plugin loading, no plugins will be available: \(error)")
         }
         
         // Get user to login if they haven't already
@@ -79,6 +79,7 @@ struct DeltaClientApp: App {
         .environmentObject(Self.modalState)
         .environmentObject(Self.appState)
         .environmentObject(Self.loadingState)
+        .environmentObject(Self.pluginEnvironment)
         .navigationTitle("Delta Client")
     }
     .commands {
