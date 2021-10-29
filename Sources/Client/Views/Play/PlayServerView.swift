@@ -12,7 +12,6 @@ enum OverlayState {
 }
 
 struct PlayServerView: View {
-  @EnvironmentObject var pluginEnvironment: PluginEnvironment
   @EnvironmentObject var appState: StateWrapper<AppState>
   @ObservedObject var state = StateWrapper<PlayState>(initial: .downloadingTerrain)
   @ObservedObject var overlayState = StateWrapper<OverlayState>(initial: .menu)
@@ -21,8 +20,10 @@ struct PlayServerView: View {
   
   var client: Client
   var inputDelegate: ClientInputDelegate
+  var serverDescriptor: ServerDescriptor
   
   init(serverDescriptor: ServerDescriptor, resourcePack: ResourcePack, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
+    self.serverDescriptor = serverDescriptor
     client = Client(resourcePack: resourcePack)
     
     // Disable input when the cursor isn't captured (after player hits escape during play to get to menu)
@@ -36,9 +37,10 @@ struct PlayServerView: View {
     client.eventBus.registerHandler(handleClientEvent)
     
     // Setup plugins
-    pluginEnvironment.addEventBus(client.eventBus)
-    pluginEnvironment.handleWillJoinServer(server: serverDescriptor, client: client)
+    DeltaClientApp.pluginEnvironment.addEventBus(client.eventBus)
+    DeltaClientApp.pluginEnvironment.handleWillJoinServer(server: serverDescriptor, client: client)
     
+    // Connect to server
     joinServer(serverDescriptor)
   }
   

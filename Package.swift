@@ -10,44 +10,43 @@ let package = Package(
     .executable(
       name: "DeltaClient",
       targets: ["DeltaClient"]),
+
+    // Importing DynamicShim as a dependency in your own project will in effect just import DeltaCore, DeltaCoreC and PluginAPI but will use dynamic linking
     .library(
-      name: "DeltaCore",
-      targets: ["DeltaCore", "DeltaCoreC"]),
+      name: "DynamicShim",
+      targets: ["DynamicShim"]),
+    
+    // Importing StaticShim as a dependency in your own project will just import DeltaCore, DeltaCoreC and PluginAPI and will use static linking
+    .library(
+      name: "StaticShim",
+      targets: ["StaticShim"]),
   ],
   dependencies: [
-    // DeltaCore dependencies
-    .package(name: "ZIPFoundation", url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.0"),
-    .package(name: "IDZSwiftCommonCrypto", url: "https://github.com/iosdevzone/IDZSwiftCommonCrypto", from: "0.13.1"),
-    .package(name: "DeltaLogger", url: "https://github.com/stackotter/delta-logger", .branch("main")),
-    .package(name: "NioDNS", url: "https://github.com/OpenKitten/NioDNS", from: "1.0.2"),
-    .package(name: "SwiftProtobuf", url: "https://github.com/apple/swift-protobuf.git", from: "1.6.0"),
-    .package(name: "swift-collections", url: "https://github.com/apple/swift-collections.git", from: "0.0.7"),
-    .package(name: "Concurrency", url: "https://github.com/uber/swift-concurrency.git", from: "0.7.1"),
-    .package(name: "FirebladeECS", url: "https://github.com/fireblade-engine/ecs.git", from: "0.17.5"),
+    // See Notes/PluginSystem.md for more details on the architecture of the project in regards to dependencies, targets and linking
+    // In short, the dependencies for DeltaCore can be found in Sources/Core/Package.swift
+    .package(name: "DeltaCore", path: "./Sources/Core"),
+    .package(name: "PluginAPI", path: "./Sources/PluginAPI"),
   ],
   targets: [
     .executableTarget(
       name: "DeltaClient",
-      dependencies: ["DeltaCore"]),
+      dependencies: [
+        "DynamicShim",
+      ],
+      path: "Sources/Client"),
     
     .target(
-      name: "DeltaCore",
+      name: "DynamicShim",
       dependencies: [
-        "DeltaCoreC",
-        "DeltaLogger",
-        "ZIPFoundation",
-        "IDZSwiftCommonCrypto",
-        "NioDNS",
-        "SwiftProtobuf",
-        "Concurrency",
-        "FirebladeECS",
-        .product(name: "Collections", package: "swift-collections")],
-      exclude: [
-        "Resources/Cache/BlockModelPalette.proto",
-        "Resources/Cache/Compile.sh"],
-      resources: [.process("Render/Renderer/Shader/ChunkShaders.metal")]),
+        .product(name: "DeltaCore", package: "DeltaCore"),
+        .product(name: "PluginAPI", package: "PluginAPI"),
+      ]),
+    
     .target(
-      name: "DeltaCoreC",
-      publicHeadersPath: "."),
+      name: "StaticShim",
+      dependencies: [
+        .product(name: "StaticDeltaCore", package: "DeltaCore"),
+        .product(name: "StaticPluginAPI", package: "PluginAPI"),
+      ]),
   ]
 )

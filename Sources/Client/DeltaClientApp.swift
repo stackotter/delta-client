@@ -9,7 +9,8 @@ struct DeltaClientApp: App {
   @ObservedObject private static var modalState = StateWrapper<ModalState>(initial: .none)
   @ObservedObject private static var appState = StateWrapper<AppState>(initial: .serverList)
   @ObservedObject private static var loadingState = StateWrapper<LoadingState>(initial: .loading)
-  @ObservedObject private static var pluginEnvironment = PluginEnvironment()
+  
+  @ObservedObject public static var pluginEnvironment = PluginEnvironment()
   
   // MARK: Init
   
