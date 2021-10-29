@@ -1,19 +1,19 @@
 import Foundation
 
-open class PhysicsEngine {
-	open class var clocksPerSecond: Double { 60 }
-	open class var stepLength: Double { 1 / clocksPerSecond }
-	open class var playerSpeed: Double { 4 }
+class PhysicsEngine {
+  static var clocksPerSecond: Double = 60
+  static var stepLength: Double = 1 / clocksPerSecond
+  static var playerSpeed: Double = 4
   
-	open var client: Client
+  var client: Client
   
-	open var gameClock = CFAbsoluteTimeGetCurrent()
+  var gameClock = CFAbsoluteTimeGetCurrent()
   
-	public required init(client: Client) {
+  init(client: Client) {
     self.client = client
   }
   
-	open func update() {
+  func update() {
     // calculate time since last update
     let currentTime = CFAbsoluteTimeGetCurrent()
     let deltaTime = currentTime - gameClock
@@ -34,7 +34,7 @@ open class PhysicsEngine {
     gameClock += Double(numSteps) * PhysicsEngine.stepLength
   }
   
-	open func performStep() {
+  func performStep() {
     if let player = client.server?.player {
       var position = player.position
       position.x += player.velocity.x / PhysicsEngine.clocksPerSecond
