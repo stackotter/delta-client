@@ -22,14 +22,21 @@ struct PlayServerView: View {
   var inputDelegate: ClientInputDelegate
   
   init(serverDescriptor: ServerDescriptor, resourcePack: ResourcePack, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
-    // Link whether the cursor is captured to whether input gets sent to delegate
+    client = Client(resourcePack: resourcePack)
+    
+    // Disable input when the cursor isn't captured (after player hits escape during play to get to menu)
     _cursorCaptured = inputCaptureEnabled
     
-    client = Client(resourcePack: resourcePack)
+    // Setup input system
     inputDelegate = ClientInputDelegate(for: client)
     setDelegate(inputDelegate)
     
+    // Register for client events
     client.eventBus.registerHandler(handleClientEvent)
+    
+    // Setup plugins
+    DeltaClientApp.pluginEnvironment.addEventBus(client.eventBus)
+    DeltaClientApp.pluginEnvironment.handleWillJoinServer(server: serverDescriptor, client: client)
     
     joinServer(serverDescriptor)
   }

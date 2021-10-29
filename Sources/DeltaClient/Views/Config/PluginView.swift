@@ -2,65 +2,53 @@ import SwiftUI
 import DeltaCore
 
 struct PluginView: View {
-	@ObservedObject var pluginManager: PluginManager = PluginManager.shared
-	@ObservedObject var pluginEnvironment: PluginEnvironment = PluginManager.shared.pluginEnvironment
-	
 	var body: some View {
 		VStack {
-			Text("Plugins")
-				.font(.title)
+			Text("Plugins").font(.title)
+      
 			HStack {
+        // Loaded plugins
 				VStack {
-					Text("Loaded")
-						.font(.title2)
+					Text("Loaded").font(.title2)
+          
 					ScrollView {
-						ForEach(Array(pluginEnvironment.plugins), id: \.key) { plugin in
+            ForEach(Array(DeltaClientApp.pluginEnvironment.plugins), id: \.key) { (identifier, plugin) in
 							HStack {
-								Text(plugin.key)
+                Text(plugin.1.name)
+                
 								Button("Unload") {
-									plugin.value.handle(event: BeforePluginUnloadedEvent())
-									pluginEnvironment.plugins.removeValue(forKey: plugin.key)
+                  DeltaClientApp.pluginEnvironment.unloadPlugin(identifier)
 								}
-								Button("Force Unload") {
-									pluginEnvironment.plugins.removeValue(forKey: plugin.key)
-								}
-									.foregroundColor(.red)
 							}
 						}
 					}
-				}
-					.frame(maxWidth: .infinity)
+				}.frame(maxWidth: .infinity)
+        
+        // Errors
 				VStack {
-					Text("Errors")
-						.font(.title2)
+					Text("Errors").font(.title2)
+          
 					ScrollView {
-						ForEach(pluginManager.pluginErrors, id: \.pluginDirectoryName) { error in
-							Text("Error loading \(error.pluginDirectoryName): \(error.error.localizedDescription)")
+            ForEach(DeltaClientApp.pluginEnvironment.errors, id: \.0) { (url, error) in
+              Text("Error loading '\(url.lastPathComponent)': \(error.localizedDescription)")
 						}
 					}
-				}
-					.frame(maxWidth: .infinity)
+				}.frame(maxWidth: .infinity)
 			}
+      
+      // Global actions
 			HStack {
-				Button("Reload Loaded") {
-					PluginManager.shared.pluginEnvironment.handle(event: BeforePluginUnloadedEvent())
-					for key in PluginManager.shared.pluginEnvironment.plugins.keys {
-						let type = type(of: PluginManager.shared.pluginEnvironment.plugins[key]!)
-						PluginManager.shared.pluginEnvironment.plugins[key] = type.init()
-					}
+				Button("Unload all") {
+          DeltaClientApp.pluginEnvironment.unloadAll()
 				}
 				Button("Reload All") {
-					PluginManager.shared.pluginEnvironment.handle(event: BeforePluginUnloadedEvent())
-					PluginManager.shared.pluginEnvironment.plugins = [:]
-					PluginManager.shared.pluginErrors = []
-					PluginManager.shared.addPlugins()
+          DeltaClientApp.pluginEnvironment.unloadAll()
+          do {
+            try DeltaClientApp.pluginEnvironment.loadPlugins(from: StorageManager.default.pluginsDirectory)
+          } catch {
+            DeltaClientApp.modalError("Failed to reload plugins after unloading all: \(error)", safeState: .serverList)
+          }
 				}
-				Button("Force Reload All") {
-					PluginManager.shared.pluginEnvironment.plugins = [:]
-					PluginManager.shared.pluginErrors = []
-					PluginManager.shared.addPlugins()
-				}
-					.foregroundColor(.red)
 			}
 		}
 	}
