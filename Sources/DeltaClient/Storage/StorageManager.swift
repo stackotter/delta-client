@@ -10,15 +10,15 @@ class StorageManager {
   public let isFirstLaunch: Bool
   /// The directory to store all of the client's persistent data.
   public var storageDirectory: URL
+  
   /// The directory within the storage directory to store the vanilla assets.
   public var vanillaAssetsDirectory: URL { storageDirectory.appendingPathComponent("assets") }
   /// The directory within the storage directory to store registry data.
   public var registryDirectory: URL { storageDirectory.appendingPathComponent("registries") }
-  
+  /// The directory within the storage directory that plugins are stored in.
+  public var pluginsDirectory: URL { storageDirectory.appendingPathComponent("plugins") }
   /// Directory that should be used for caching.
-  public var cacheDirectory: URL {
-    return storageDirectory.appendingPathComponent("cache")
-  }
+  public var cacheDirectory: URL { storageDirectory.appendingPathComponent("cache") }
   
   private init() {
     // Get the url of the storage directory
@@ -62,6 +62,16 @@ class StorageManager {
         atPath: launchMarker.path,
         contents: nil,
         attributes: nil)
+    }
+    
+    // Create plugins directory if required
+    if !Self.directoryExists(at: pluginsDirectory) {
+      do {
+        log.info("Creating plugins directory")
+        try Self.createDirectory(at: pluginsDirectory)
+      } catch {
+        DeltaClientApp.fatal("Failed to create plugins directory")
+      }
     }
   }
   
