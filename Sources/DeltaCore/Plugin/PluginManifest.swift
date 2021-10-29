@@ -10,11 +10,14 @@ public struct PluginManifest: Codable {
   public var description: String
   /// The plugin's version (not the Delta Client version).
   public var version: String
+  /// The name of your plugin's SwiftPM target.
+  public var target: String
   
-  public init(identifier: String, name: String, description: String, version: String) {
+  public init(identifier: String, name: String, description: String, version: String, target: String) {
     self.identifier = identifier
     self.name = name
     self.description = description
     self.version = version
+    self.target = target
   }
 }

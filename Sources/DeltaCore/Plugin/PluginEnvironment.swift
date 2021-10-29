@@ -21,12 +21,15 @@ public class PluginEnvironment: ObservableObject {
   ///
   /// - Parameter directory: Directory to load plugins from.
   public func loadPlugins(from directory: URL) throws {
+    log.debug("Loading all plugins")
     let contents = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil, options: [])
     for file in contents where file.pathExtension == "deltaplugin" {
       do {
         try loadPlugin(file)
       } catch {
-        errors.append((file, error))
+        ThreadUtil.runInMain {
+          errors.append((file, error))
+        }
       }
     }
   }
@@ -71,7 +74,9 @@ public class PluginEnvironment: ObservableObject {
     let builder = Unmanaged<PluginBuilder>.fromOpaque(buildBuilder()).takeRetainedValue()
     let plugin = builder.build()
     
-    plugins[manifest.identifier] = (plugin, manifest)
+    ThreadUtil.runInMain {
+      plugins[manifest.identifier] = (plugin, manifest)
+    }
     plugin.finishLoading()
   }
   
@@ -91,7 +96,9 @@ public class PluginEnvironment: ObservableObject {
     log.debug("Unloading plugin '\(identifier)'")
     if let plugin = plugins[identifier] {
       plugin.0.willUnload()
-      plugins.removeValue(forKey: identifier)
+      ThreadUtil.runInMain {
+        plugins.removeValue(forKey: identifier)
+      }
     }
   }
   
@@ -101,8 +108,8 @@ public class PluginEnvironment: ObservableObject {
   /// - Parameters:
   ///   - server: The server that the client will connect to.
   ///   - client: The client that is going to connect to the server.
-  func handleWillJoinServer(server: ServerDescriptor, client: Client)
-    for (identifier, plugin) in plugins {
+  public func handleWillJoinServer(server: ServerDescriptor, client: Client) {
+    for (_, plugin) in plugins {
       plugin.0.willJoinServer(server: server, client: client)
     }
   }
