@@ -32,16 +32,15 @@ let package = Package(
         "Concurrency",
         "FirebladeECS",
         .product(name: "Collections", package: "swift-collections")],
-      path: ".",
+      path: "Sources",
       exclude: [
         "Resources/Cache/BlockModelPalette.proto",
         "Resources/Cache/Compile.sh",
-        "C",
-        "Package.swift"],
+        "C"],
       resources: [.process("Render/Renderer/Shader/ChunkShaders.metal")]),
     .target(
       name: "DeltaCoreC",
-      path: "C",
+      path: "Sources/C",
       publicHeadersPath: "."),
   ]
 )
