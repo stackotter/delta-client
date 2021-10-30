@@ -25,7 +25,6 @@ let package = Package(
     // See Notes/PluginSystem.md for more details on the architecture of the project in regards to dependencies, targets and linking
     // In short, the dependencies for DeltaCore can be found in Sources/Core/Package.swift
     .package(name: "DeltaCore", path: "./Sources/Core"),
-    .package(name: "PluginAPI", path: "./Sources/PluginAPI"),
   ],
   targets: [
     .executableTarget(
@@ -39,7 +38,6 @@ let package = Package(
       name: "DynamicShim",
       dependencies: [
         .product(name: "DeltaCore", package: "DeltaCore"),
-        .product(name: "PluginAPI", package: "PluginAPI"),
       ],
       path: "Sources/Exporters/DynamicShim"),
     
@@ -47,7 +45,6 @@ let package = Package(
       name: "StaticShim",
       dependencies: [
         .product(name: "StaticDeltaCore", package: "DeltaCore"),
-        .product(name: "StaticPluginAPI", package: "PluginAPI"),
       ],
       path: "Sources/Exporters/StaticShim"),
   ]

@@ -1,2 +1,2 @@
-@_exported import PluginAPI
 @_exported import DeltaCore
+@_exported import DeltaCoreC
