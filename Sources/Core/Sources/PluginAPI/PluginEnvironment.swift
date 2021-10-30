@@ -46,6 +46,8 @@ public class PluginEnvironment: ObservableObject {
       throw PluginLoadingError.invalidManifest(error)
     }
     
+    log.info("Loading '\(manifest.identifier)' from '\(pluginBundle.lastPathComponent)'")
+    
     // Check that the plugin isn't already loaded
     guard plugins[manifest.identifier] == nil else {
       throw PluginLoadingError.alreadyLoaded

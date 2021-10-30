@@ -12,13 +12,13 @@ class StorageManager {
   public var storageDirectory: URL
   
   /// The directory within the storage directory to store the vanilla assets.
-  public var vanillaAssetsDirectory: URL { storageDirectory.appendingPathComponent("assets") }
+  public var vanillaAssetsDirectory: URL
   /// The directory within the storage directory to store registry data.
-  public var registryDirectory: URL { storageDirectory.appendingPathComponent("registries") }
+  public var registryDirectory: URL
   /// The directory within the storage directory that plugins are stored in.
-  public var pluginsDirectory: URL { storageDirectory.appendingPathComponent("plugins") }
+  public var pluginsDirectory: URL
   /// Directory that should be used for caching.
-  public var cacheDirectory: URL { storageDirectory.appendingPathComponent("cache") }
+  public var cacheDirectory: URL
   
   private init() {
     // Get the url of the storage directory
@@ -30,6 +30,11 @@ class StorageManager {
       let fallback = FileManager.default.temporaryDirectory.appendingPathComponent("dev.stackotter.delta-client.fallback")
       storageDirectory = fallback
     }
+    
+    vanillaAssetsDirectory = storageDirectory.appendingPathComponent("assets")
+    registryDirectory = storageDirectory.appendingPathComponent("registries")
+    pluginsDirectory = storageDirectory.appendingPathComponent("plugins")
+    cacheDirectory = storageDirectory.appendingPathComponent("cache")
     
     let storagePath = storageDirectory.path
     log.trace("Using \(storagePath) as storage directory")
