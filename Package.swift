@@ -25,12 +25,14 @@ let package = Package(
     // See Notes/PluginSystem.md for more details on the architecture of the project in regards to dependencies, targets and linking
     // In short, the dependencies for DeltaCore can be found in Sources/Core/Package.swift
     .package(name: "DeltaCore", path: "./Sources/Core"),
+    .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
   ],
   targets: [
     .executableTarget(
       name: "DeltaClient",
       dependencies: [
         "DynamicShim",
+        .product(name: "ArgumentParser", package: "swift-argument-parser"),
       ],
       path: "Sources/Client"),
     

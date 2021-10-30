@@ -16,8 +16,20 @@ struct DeltaClientApp: App {
   
   init() {
     let taskQueue = DispatchQueue(label: "dev.stackotter.delta-client.startupTasks")
+    
+    // Process command line arguments
+    let arguments = CommandLineArguments.parseOrExit()
+    
+    if arguments.help {
+      print(CommandLineArguments.helpMessage())
+      Foundation.exit(0)
+    }
+    
+    if let pluginsDirectory = arguments.pluginsDirectory {
+      StorageManager.default.pluginsDirectory = pluginsDirectory
+    }
 
-    // Load the registry
+    // Load plugins, registries and resources
     taskQueue.async {
       func updateLoadingMessage(_ message: String) {
         Self.loadingState.update(to: .loadingWithMessage(message))
