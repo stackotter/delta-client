@@ -28,6 +28,10 @@ struct PluginView: View {
 								}
 							}
 						}
+            
+            if pluginEnvironment.plugins.isEmpty {
+              Text("no loaded plugins").italic()
+            }
 					}
 				}.frame(maxWidth: .infinity)
         
@@ -49,6 +53,10 @@ struct PluginView: View {
                   updateConfig()
                 }
               }
+            }
+            
+            if pluginEnvironment.unloadedPlugins.isEmpty {
+              Text("no unloaded plugins").italic()
             }
           }
         }.frame(maxWidth: .infinity)
