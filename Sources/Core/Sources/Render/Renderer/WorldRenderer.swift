@@ -480,6 +480,9 @@ class WorldRenderer {
     
     let transparentAndOpaqueRenderDescriptor = renderPassDescriptor
     transparentAndOpaqueRenderDescriptor.colorAttachments[0].loadAction = .clear
+    // Explicitly tell that depth buffer should be stored.
+    transparentAndOpaqueRenderDescriptor.depthAttachment.storeAction = .store
+      
     let translucentRenderDescriptor = MTLRenderPassDescriptor()
     translucentRenderDescriptor.colorAttachments[0].texture = drawableTexture
     translucentRenderDescriptor.colorAttachments[0].loadAction = .load
