@@ -114,11 +114,12 @@ public struct TexturePalette {
   /// Returns a metal texture array on the given device, containing the first frame of each texture.
   public func createTextureArray(device: MTLDevice, animationState: TexturePaletteAnimationState, commandQueue: MTLCommandQueue) throws -> MTLTexture {
     let textureDescriptor = MTLTextureDescriptor()
-    textureDescriptor.textureType = .type2DArray
-    textureDescriptor.arrayLength = textures.count
-    textureDescriptor.pixelFormat = .bgra8Unorm
     textureDescriptor.width = width
     textureDescriptor.height = width
+    textureDescriptor.storageMode = .shared
+    textureDescriptor.pixelFormat = .bgra8Unorm
+    textureDescriptor.textureType = .type2DArray
+    textureDescriptor.arrayLength = textures.count
     textureDescriptor.mipmapLevelCount = 1 + Int(log2(Double(width)).rounded(.down))
 //    textureDescriptor.resourceOptions = [.]
     

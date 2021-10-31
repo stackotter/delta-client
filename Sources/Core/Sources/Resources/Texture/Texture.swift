@@ -1,4 +1,5 @@
 import Foundation
+import ColorSync
 
 public enum TextureError: LocalizedError {
   /// The texture's height must be a multiple of the width.
