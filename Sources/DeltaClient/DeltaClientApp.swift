@@ -2,9 +2,13 @@ import SwiftUI
 import DeltaCore
 
 struct DeltaClientApp: App {
-  @ObservedObject static var modalState = StateWrapper<ModalState>(initial: .none)
-  @ObservedObject static var appState = StateWrapper<AppState>(initial: .serverList)
-  @ObservedObject static var loadingState = StateWrapper<LoadingState>(initial: .loading)
+  static var modalState = StateWrapper<ModalState>(initial: .none)
+  static var appState = StateWrapper<AppState>(initial: .serverList)
+  static var loadingState = StateWrapper<LoadingState>(initial: .loading)
+  static var popupState = StateWrapper<PopupState>(initial: .hidden)
+  
+  /// Resource pack loaded on startup
+  static var loadedResourcePack: LoadedResources?
   
   init() {
     let taskQueue = DispatchQueue(label: "dev.stackotter.delta-client.startupTasks")
@@ -26,9 +30,11 @@ struct DeltaClientApp: App {
         try Registry.populateShared(StorageManager.default.registryDirectory)
         
         updateLoadingMessage("Loading resource pack")
-        let packCache = StorageManager.default.cacheDirectory.appendingPathComponent("vanilla.rpcache/")
+        let packCache = StorageManager.Cache.vanilla.packCache
         let cacheExists = StorageManager.default.directoryExists(at: packCache)
         let resourcePack = try ResourcePack.load(from: StorageManager.default.vanillaAssetsDirectory, cacheDirectory: cacheExists ? packCache : nil)
+        Self.loadedResourcePack = LoadedResources(resourcePack: resourcePack)
+        
         if !cacheExists {
           do {
             try resourcePack.cache(to: packCache)
@@ -44,7 +50,7 @@ struct DeltaClientApp: App {
         log.info("Done")
         Self.loadingState.update(to: .done(LoadedResources(resourcePack: resourcePack)))
       } catch {
-        Self.loadingState.update(to: .error("Failed to load: \(error)"))
+        Self.fatal("Failed to load: \(error)")
       }
     }
   }
@@ -53,6 +59,7 @@ struct DeltaClientApp: App {
     WindowGroup {
       RouterView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .environmentObject(Self.popupState)
         .environmentObject(Self.modalState)
         .environmentObject(Self.appState)
         .environmentObject(Self.loadingState)
@@ -65,8 +72,8 @@ struct DeltaClientApp: App {
           if case .none = Self.modalState.current, case .done(_) = Self.loadingState.current {
             switch Self.appState.current {
               case .serverList, .editServerList, .accounts, .login, .directConnect:
-                Self.appState.update(to: .settings)
-              case .playServer(_), .settings, .fatalError(_):
+              Self.appState.update(to: .settings(.none))
+              case .playServer(_), .settings:
                 break
             }
           }
@@ -87,9 +94,17 @@ struct DeltaClientApp: App {
     Self.modalState.update(to: .error(message, safeState: safeState))
   }
   
-  /// Logs a fatal error and then fatal errors.
-  static func fatal(_ message: String) -> Never {
+  /// Logs a fatal error and redirects to troubleshooting page.
+  static func fatal(_ message: String) {
     log.critical(message)
-    fatalError(message)
+    loadingState.update(to: .done(nil)) // If loading, removes loading screen
+    Self.appState.update(to: .settings(.troubleshooting))
+    popupState.update(to: .shown(PopupObject(title: "Fatal error",
+                                             subtitle: message,
+                                             image: Image(systemName: "exclamationmark.octagon"))
+                                ))
+    DispatchQueue.main.asyncAfter(deadline: .now() + 3) { // Auto dismissing popup after 3 seconds
+      popupState.update(to: .hidden)
+    }
   }
 }

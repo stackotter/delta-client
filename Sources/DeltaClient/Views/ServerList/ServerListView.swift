@@ -41,19 +41,20 @@ struct ServerListView: View {
           IconButton("square.and.pencil") {
             appState.update(to: .editServerList)
           }
-          
           // Refresh servers
           IconButton("arrow.clockwise") {
             refresh()
           }
-          
           // Direct connect
           IconButton("personalhotspot") {
             appState.update(to: .directConnect)
           }
+          // Settings
+          IconButton("gear") {
+            appState.update(to: .settings(.none))
+          }
         }
       }
-      .listStyle(SidebarListStyle())
     }
   }
 }

@@ -44,10 +44,8 @@ public class ConfigManager {
       DeltaClientApp.modalError("Invalid config.json, overwriting with defaults")
 
       config = Config()
-      let data: Data
       do {
-        data = try JSONEncoder().encode(config)
-        FileManager.default.createFile(atPath: configFile.path, contents: data, attributes: nil)
+        try resetConfig()
       } catch {
         DeltaClientApp.fatal("Failed to encode config: \(error)")
       }
@@ -87,6 +85,15 @@ public class ConfigManager {
         log.error("Failed to write config to file: \(error)")
       }
     }
+  }
+  
+  /// Resets the current config to the default one
+  public func resetConfig() throws {
+    log.info("Resetting config.json")
+    config = Config()
+    let data: Data
+    data = try JSONEncoder().encode(config)
+    FileManager.default.createFile(atPath: configFile.path, contents: data, attributes: nil)
   }
 
   /// Commits the current config to this manager's config file.

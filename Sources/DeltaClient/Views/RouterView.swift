@@ -17,8 +17,6 @@ struct RouterView: View {
             case let .loadingWithMessage(message):
               Text(message)
                 .navigationTitle("Loading")
-            case let .error(message):
-              FatalErrorView(message: message)
             case let .done(loadedResources):
               switch appState.current {
                 case .serverList:
@@ -34,8 +32,7 @@ struct RouterView: View {
                     do {
                       try config.selectAccount(account)
                     } catch {
-                      log.error("Failed to select account")
-                      appState.update(to: .fatalError("Failed to select account (something went very wrong)"))
+                      DeltaClientApp.fatal("Failed to select account (something went very wrong)")
                       return
                     }
                     ConfigManager.default.setConfig(to: config)
@@ -51,16 +48,22 @@ struct RouterView: View {
                   InputView { inputCaptureEnabled, setDelegate in
                     PlayServerView(
                       serverDescriptor: descriptor,
-                      resourcePack: loadedResources.resourcePack,
+                      resourcePack: loadedResources?.resourcePack,
                       inputCaptureEnabled: inputCaptureEnabled,
                       delegateSetter: setDelegate)
                   }
-                case .fatalError(let message):
-                  FatalErrorView(message: message)
-                case .settings:
-                  SettingsView(isInGame: false, eventBus: nil, onDone: {
-                    appState.pop()
-                  })
+                case .settings(let landingPage):
+                /** Simply calling getSettingsView once with the given landingPage doesn't cause States in `SettingsView`
+                    to be properly initialised. A rather reduntant switch statement is needed.
+                 */
+                switch landingPage {
+                case .accounts: getSettingsView(with: .accounts)
+                case .update: getSettingsView(with: .update)
+                case .troubleshooting: getSettingsView(with: .troubleshooting)
+                case .video: getSettingsView(with: .video)
+                case .none: getSettingsView(with: .none)
+                }
+                
               }
           }
         case .warning(let message):
@@ -70,4 +73,15 @@ struct RouterView: View {
       }
     }
   }
+  
+  /// Generates a pre-configured `SettingsView`
+  ///
+  /// - Parameter landingPage: the initial screen in `SettingsView` that should be selected
+  /// - Returns: the configured `SettingsView`
+  @ViewBuilder private func getSettingsView(with landingPage: SettingsState) -> some View {
+    SettingsView(isInGame: false, eventBus: nil, landingPage: landingPage, onDone: {
+      appState.pop()
+    })
+  }
+  
 }

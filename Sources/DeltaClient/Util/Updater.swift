@@ -112,7 +112,7 @@ public class Updater: ObservableObject {
       self.updateStep("Deleting cache")
       sleep(1) // Delay so people have a chance of seeing the message
       do {
-        try FileManager.default.removeItem(at: StorageManager.default.cacheDirectory)
+        try StorageManager.default.clearCache()
       } catch {
         if !queue.isSuspended {
           DeltaClientApp.modalError("Failed to delete cache directory; \(error)", safeState: .serverList)

@@ -9,15 +9,26 @@ class StorageManager {
   /// Whether this is the first time the app has been launched or not.
   public let isFirstLaunch: Bool
   /// The directory to store all of the client's persistent data.
-  public var storageDirectory: URL
+  private(set) var storageDirectory: URL
   /// The directory within the storage directory to store the vanilla assets.
   public var vanillaAssetsDirectory: URL { storageDirectory.appendingPathComponent("assets") }
   /// The directory within the storage directory to store registry data.
   public var registryDirectory: URL { storageDirectory.appendingPathComponent("registries") }
   
-  /// Directory that should be used for caching.
-  public var cacheDirectory: URL {
-    return storageDirectory.appendingPathComponent("cache")
+  
+  enum Cache: String, CaseIterable {
+    /// Directory that should be used for caching.
+    fileprivate static var cacheDirectory: URL {
+      return StorageManager.default.storageDirectory.appendingPathComponent("cache")
+    }
+    
+    /// Cache subpath for vanilla resource pack
+    case vanilla = "vanilla.rpcache/"
+    
+    /// Full cache address directory for the given asset
+    public var packCache: URL {
+      return Self.cacheDirectory.appendingPathComponent(self.rawValue)
+    }
   }
   
   private init() {
@@ -156,6 +167,19 @@ class StorageManager {
     } catch {
       throw StorageError.failedToCreateBackup(error)
     }
+  }
+  
+  /// Clears cache directory
+  public func clearCache() throws {
+    log.info("Clearing cache")
+    guard directoryExists(at: StorageManager.Cache.cacheDirectory) else { return } // No  cache to clear out
+    try FileManager.default.removeItem(at: StorageManager.Cache.cacheDirectory)
+  }
+  
+  /// Will perform a fresh install on next launch
+  public func factoryReset() throws {
+    log.info("Performing factory reset")
+    try FileManager.default.removeItem(at: storageDirectory)
   }
   
   /// Unzips the specified item to the specified directory creating the directory if required.

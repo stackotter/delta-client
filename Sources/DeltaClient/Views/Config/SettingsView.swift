@@ -1,26 +1,50 @@
 import SwiftUI
 import DeltaCore
 
+enum SettingsState {
+  case none, accounts, update, troubleshooting, video
+}
+
 struct SettingsView: View {
   var isInGame: Bool
   var eventBus: EventBus?
   var done: () -> Void
   
-  init(isInGame: Bool, eventBus: EventBus?, onDone done: @escaping () -> Void) {
+  /// The `NavigationLink` to be selected on initializaiton
+  @State private var initialLandingPage: SettingsState? = nil
+  
+  init(isInGame: Bool,
+       eventBus: EventBus?,
+       landingPage: SettingsState? = nil,
+       onDone done: @escaping () -> Void) {
     self.isInGame = isInGame
     self.eventBus = eventBus
     self.done = done
+    self._initialLandingPage = State(initialValue: landingPage)
   }
   
   var body: some View {
     NavigationView {
       List {
         if !isInGame {
-          NavigationLink("Accounts", destination: AccountSettingsView().padding())
-          NavigationLink("Update", destination: UpdateView().padding())
+          NavigationLink("Accounts",
+                         destination: AccountSettingsView().padding(),
+                         tag: SettingsState.accounts,
+                         selection: $initialLandingPage)
+          NavigationLink("Update",
+                         destination: UpdateView().padding(),
+                         tag: SettingsState.update,
+                         selection: $initialLandingPage)
+          NavigationLink("Troubleshooting",
+                         destination: TroubleShootingView(),
+                         tag: SettingsState.troubleshooting,
+                         selection: $initialLandingPage)
         }
         
-        NavigationLink("Video", destination: VideoSettingsView(eventBus: eventBus).padding())
+        NavigationLink("Video",
+                       destination: VideoSettingsView(eventBus: eventBus).padding(),
+                       tag: SettingsState.video,
+                       selection: $initialLandingPage)
         
         Button("Done", action: done)
           .buttonStyle(BorderlessButtonStyle())
@@ -30,5 +54,6 @@ struct SettingsView: View {
       .listStyle(SidebarListStyle())
     }
     .navigationTitle("Settings")
+
   }
 }
