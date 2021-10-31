@@ -41,6 +41,8 @@ To run Delta Client, you can now run `swift bundler run`. See the [swift-bundler
 
 If you are using Xcode as your IDE run `swift bundler generate-xcode-support` and then open Package.swift with Xcode (`open Package.swift` should work unless you've changed your default program for opening swift files). **Make sure to choose the `DeltaClient` target in the top bar instead of the `DeltaClient-Package` target.**
 
+**Note: Xcode puts DeltaCore in the dependencies section of the file navigator instead of at its physical location in the directory structure. This is due to the way the plugin system had to be implemented.**
+
 You can now make changes and when you're done, just open a pull request on GitHub.
 
 ### Website
