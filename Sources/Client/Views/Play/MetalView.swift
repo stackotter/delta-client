@@ -4,14 +4,14 @@ import MetalKit
 import SwiftUI
 
 final class MetalView: NSViewRepresentable {
-  var client: Client
+  var renderCoordinator: RenderCoordinatorProtocol
   
-  init(client: Client) {
-    self.client = client
+  init(renderCoordinator: RenderCoordinatorProtocol) {
+    self.renderCoordinator = renderCoordinator
   }
   
-  func makeCoordinator() -> RenderCoordinator {
-    return RenderCoordinator(client: client)
+  func makeCoordinator() -> RenderCoordinatorProtocol {
+    return renderCoordinator
   }
   
   func makeNSView(context: Context) -> some NSView {
@@ -20,6 +20,7 @@ final class MetalView: NSViewRepresentable {
     if let metalDevice = MTLCreateSystemDefaultDevice() {
       mtkView.device = metalDevice
     }
+    
     mtkView.delegate = context.coordinator
     mtkView.preferredFramesPerSecond = 60
     mtkView.framebufferOnly = true

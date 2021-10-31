@@ -1,7 +1,11 @@
 /// A plugin that modifies the behaviour of the client.
 public protocol Plugin {
+  // MARK: Init
+  
   /// Creates a new instance of the plugin.
   init()
+  
+  // MARK: Lifecycle
   
   /// Called when the plugin has been loaded into the plugin environment.
   func finishLoading()
@@ -11,13 +15,21 @@ public protocol Plugin {
   /// Not called when the client gets closed, only when the plugin is unloaded through the UI.
   func willUnload()
   
+  // MARK: Rendering
+  
+  /// Creates and returns a custom render coordinator if the plugin has one.
+  /// - Parameter client: The client the render coordinator should render.
+  func makeRenderCoordinator(_ client: Client) -> RenderCoordinatorProtocol?
+  
+  // MARK: Event handling
+  
   /// Called when the client is about to join a server.
   /// - Parameters:
   ///   - server: The server that the client will connect to.
   ///   - client: The client that is going to connect to the server.
-  func willJoinServer(server: ServerDescriptor, client: Client)
+  func willJoinServer(_ server: ServerDescriptor, client: Client)
   
   /// Called whenever an event is emitted by the client or another plugin.
   /// - Parameter event: The event that was emitted.
-  func handle(event: Event)
+  func handle(_ event: Event)
 }
