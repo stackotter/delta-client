@@ -5,7 +5,7 @@ import MetalKit
 var stopwatch = Stopwatch(mode: .summary)
 
 // TODO: document render coordinator
-public class RenderCoordinator: NSObject, MTKViewDelegate {
+public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDelegate {
   private var client: Client
   
   private var camera: Camera
@@ -19,7 +19,7 @@ public class RenderCoordinator: NSObject, MTKViewDelegate {
   
   // MARK: Init
   
-  public init(client: Client) {
+  public required init(_ client: Client) {
     // TODO: get rid of fatalErrors in RenderCoordinator
     guard let device = MTLCreateSystemDefaultDevice() else {
       fatalError("Failed to get metal device")

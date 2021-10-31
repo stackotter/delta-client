@@ -4,10 +4,14 @@ import DeltaCore
 struct PluginView: View {
   @EnvironmentObject var pluginEnvironment: PluginEnvironment
   
+  func updateConfig() {
+    var config = ConfigManager.default.config
+    config.unloadedPlugins = [String](pluginEnvironment.unloadedPlugins.keys)
+    ConfigManager.default.setConfig(to: config)
+  }
+  
 	var body: some View {
 		VStack {
-			Text("Plugins").font(.title)
-      
 			HStack {
         // Loaded plugins
 				VStack {
@@ -16,41 +20,74 @@ struct PluginView: View {
 					ScrollView {
             ForEach(Array(pluginEnvironment.plugins), id: \.key) { (identifier, plugin) in
 							HStack {
-                Text(plugin.1.name)
+                Text(plugin.2.name)
                 
 								Button("Unload") {
                   pluginEnvironment.unloadPlugin(identifier)
+                  updateConfig()
 								}
 							}
 						}
 					}
 				}.frame(maxWidth: .infinity)
         
-        // Errors
-				VStack {
-					Text("Errors").font(.title2)
+        // Unloaded plugins
+        VStack {
+          Text("Unloaded").font(.title2)
           
-					ScrollView {
-            ForEach(pluginEnvironment.errors, id: \.0) { (url, error) in
-              Text("Error loading '\(url.lastPathComponent)': \(error.localizedDescription)")
-						}
-					}
-				}.frame(maxWidth: .infinity)
+          ScrollView {
+            ForEach(Array(pluginEnvironment.unloadedPlugins), id: \.key) { (identifier, plugin) in
+              HStack {
+                Text(plugin.1.name)
+                
+                Button("Load") {
+                  do {
+                    try pluginEnvironment.loadPlugin(plugin.0)
+                  } catch {
+                    DeltaClientApp.modalError("Failed to load plugin '\(identifier)': \(error)")
+                  }
+                  updateConfig()
+                }
+              }
+            }
+          }
+        }.frame(maxWidth: .infinity)
+        
+        // Errors
+        if !pluginEnvironment.errors.isEmpty {
+          VStack {
+            HStack {
+              Text("Errors").font(.title2)
+              Button("Clear") {
+                pluginEnvironment.errors = []
+              }
+            }
+            
+            ScrollView {
+              VStack(alignment: .leading) {
+                ForEach(pluginEnvironment.errors, id: \.0) { (bundle, error) in
+                  Text("\(bundle):").font(.title3)
+                  Text(error.localizedDescription)
+                }
+              }
+            }
+          }.frame(maxWidth: .infinity)
+        }
 			}
       
       // Global actions
 			HStack {
 				Button("Unload all") {
           pluginEnvironment.unloadAll()
+          updateConfig()
 				}
 				Button("Reload All") {
-          pluginEnvironment.unloadAll()
-          do {
-            try pluginEnvironment.loadPlugins(from: StorageManager.default.pluginsDirectory)
-          } catch {
-            DeltaClientApp.modalError("Failed to reload plugins after unloading all: \(error)", safeState: .serverList)
-          }
+          pluginEnvironment.reloadAll(StorageManager.default.pluginsDirectory)
+          updateConfig()
 				}
+        Button("Open plugins directory") {
+          NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: StorageManager.default.pluginsDirectory.path)
+        }
 			}
 		}
 	}

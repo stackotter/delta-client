@@ -16,6 +16,8 @@ public struct Config: Codable {
   public var servers: [ServerDescriptor]
   /// Rendering related configuration.
   public var video: VideoConfig
+  /// Plugins that the user has explicitly unloaded.
+  public var unloadedPlugins: [String]
   
   /// All of the user's accounts.
   public var accounts: [Account] {
@@ -48,6 +50,7 @@ public struct Config: Codable {
     offlineAccounts = [:]
     servers = []
     video = VideoConfig()
+    unloadedPlugins = []
   }
   
   /// Returns the type of the given account
