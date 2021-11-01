@@ -116,10 +116,10 @@ public struct TexturePalette {
     let textureDescriptor = MTLTextureDescriptor()
     textureDescriptor.width = width
     textureDescriptor.height = width
-    textureDescriptor.storageMode = .managed
     textureDescriptor.pixelFormat = .bgra8Unorm
     textureDescriptor.textureType = .type2DArray
     textureDescriptor.arrayLength = textures.count
+    textureDescriptor.storageMode = (device.hasUnifiedMemory) ? .shared : .managed
     textureDescriptor.mipmapLevelCount = 1 + Int(log2(Double(width)).rounded(.down))
 //    textureDescriptor.resourceOptions = [.]
     
