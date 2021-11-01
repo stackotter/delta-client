@@ -29,7 +29,7 @@ class WorldRenderer {
   init(device: MTLDevice, world: World, client: Client, resources: ResourcePack.Resources, commandQueue: MTLCommandQueue) throws {
     // Load shaders
     log.info("Loading shaders")
-    guard let bundle = Bundle(url: Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/DeltaClient_DeltaCore.bundle")) else {
+    guard let bundle = Bundle(url: Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/DeltaCore_DeltaCore.bundle")) else {
       throw RenderError.failedToGetBundle
     }
     guard let libraryURL = bundle.url(forResource: "default", withExtension: "metallib") else {
