@@ -116,7 +116,7 @@ public struct TexturePalette {
     let textureDescriptor = MTLTextureDescriptor()
     textureDescriptor.width = width
     textureDescriptor.height = width
-    textureDescriptor.storageMode = .shared
+    textureDescriptor.storageMode = .managed
     textureDescriptor.pixelFormat = .bgra8Unorm
     textureDescriptor.textureType = .type2DArray
     textureDescriptor.arrayLength = textures.count
