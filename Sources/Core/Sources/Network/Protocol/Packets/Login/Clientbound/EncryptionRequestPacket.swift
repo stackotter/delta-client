@@ -23,6 +23,8 @@ public struct EncryptionRequestPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
+	  
+    client.eventBus.dispatch(LoginStartEvent())
     let sharedSecret = try CryptoUtil.generateSharedSecret(16)
     
     guard let serverIdData = serverId.data(using: .ascii) else {
