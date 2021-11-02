@@ -2,7 +2,9 @@ import SwiftUI
 import DeltaCore
 
 enum PlayState {
-  case downloadingTerrain
+  case connecting
+  case loggingIn
+  case downloadingChunks(numberReceived: Int, total: Int)
   case playing
 }
 
@@ -13,7 +15,7 @@ enum OverlayState {
 
 struct PlayServerView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
-  @ObservedObject var state = StateWrapper<PlayState>(initial: .downloadingTerrain)
+  @ObservedObject var state = StateWrapper<PlayState>(initial: .connecting)
   @ObservedObject var overlayState = StateWrapper<OverlayState>(initial: .menu)
   
   @Binding var cursorCaptured: Bool
@@ -82,6 +84,20 @@ struct PlayServerView: View {
   
   func handleClientEvent(_ event: Event) {
     switch event {
+      case _ as LoginStartEvent:
+        state.update(to: .loggingIn)
+      case let joinWorldEvent as JoinWorldEvent:
+        // Approximation of the number of chunks the server will send (used in progress indicator)
+        let totalChunksToReceieve = Int(pow(Double(joinWorldEvent.viewDistance * 2 + 3), 2))
+        state.update(to: .downloadingChunks(numberReceived: 0, total: totalChunksToReceieve))
+      case _ as ChunkReceivedEvent:
+        ThreadUtil.runInMain {
+          if case .downloadingChunks(let numberReceived, let total) = state.current {
+            state.update(to: .downloadingChunks(numberReceived: numberReceived + 1, total: total))
+          } else {
+            state.update(to: .downloadingChunks(numberReceived: 0, total: 1))
+          }
+        }
       case _ as TerrainDownloadCompletionEvent:
         state.update(to: .playing)
       case let disconnectEvent as PlayDisconnectEvent:
@@ -111,9 +127,28 @@ struct PlayServerView: View {
   var body: some View {
     Group {
       switch state.current {
-        case .downloadingTerrain:
+        case .connecting:
           VStack {
-            Text("Downloading terrain..")
+            Text("Establishing connection...")
+            Button("Cancel", action: disconnect)
+              .buttonStyle(SecondaryButtonStyle())
+              .frame(width: 150)
+          }
+        case .loggingIn:
+          VStack {
+            Text("Logging in...")
+            Button("Cancel", action: disconnect)
+              .buttonStyle(SecondaryButtonStyle())
+              .frame(width: 150)
+          }
+        case .downloadingChunks(let numberReceived, let total):
+          VStack {
+            Text("Downloading chunks...")
+            HStack {
+              ProgressView(value: Double(numberReceived) / Double(total))
+              Text("\(numberReceived) of \(total)")
+            }
+            .frame(maxWidth: 200)
             Button("Cancel", action: disconnect)
               .buttonStyle(SecondaryButtonStyle())
               .frame(width: 150)

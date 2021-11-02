@@ -83,6 +83,7 @@ public struct ChunkDataPacket: ClientboundPacket {
       let chunk = Chunk(self)
       client.game.world.addChunk(chunk, at: position)
     }
+    client.eventBus.dispatch(ChunkReceivedEvent())
   }
   
   /// Unpacks a heightmap in the format at https://wiki.vg/Chunk_Format. There are 256 values that are each 9 bits, compacted into longs.

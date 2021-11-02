@@ -13,5 +13,6 @@ public struct LoginSuccessPacket: ClientboundPacket {
   
   public func handle(for client: Client) throws {
     client.connection?.setState(.play)
+    client.eventBus.dispatch(LoginSuccessEvent())
   }
 }
