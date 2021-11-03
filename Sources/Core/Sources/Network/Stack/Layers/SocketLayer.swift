@@ -46,11 +46,13 @@ public class SocketLayer: OutermostNetworkLayer {
       fatalError("failed to create port from int: \(port). this really shouldn't happen")
     }
     
+    // Decrease the TCP timeout from the default
+    let options = NWProtocolTCP.Options()
+    options.connectionTimeout = 10
     self.connection = NWConnection(
       host: NWEndpoint.Host(host),
       port: nwPort,
-      using: .tcp
-    )
+      using: NWParameters(tls: nil, tcp: options))
     
     self.connection.stateUpdateHandler = stateUpdateHandler
   }
@@ -128,8 +130,8 @@ public class SocketLayer: OutermostNetworkLayer {
     }
   }
   
-  // TODO: These errors should go on the event bus.
   private func handleNWError(_ error: NWError) {
+    eventBus.dispatch(ConnectionFailedEvent(networkError: error))
     if error == NWError.posix(.ECONNREFUSED) {
       log.error("Connection refused: '\(self.host):\(self.port)'")
     } else if error == NWError.dns(-65554) {
