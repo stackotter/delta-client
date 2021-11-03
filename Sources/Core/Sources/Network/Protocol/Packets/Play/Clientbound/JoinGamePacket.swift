@@ -51,6 +51,6 @@ public struct JoinGamePacket: ClientboundPacket, WorldDescriptor {
     client.game.update(packet: self, client: client)
     
     // TODO: the event below should be dispatched from game instead of here. Event dispatching should be done in a way that makes it clear what will and what won't emit an event.
-	  client.eventBus.dispatch(JoinWorldEvent(world: client.game.world, viewDistance: viewDistance))
+	  client.eventBus.dispatch(JoinWorldEvent(world: client.game.world))
   }
 }
