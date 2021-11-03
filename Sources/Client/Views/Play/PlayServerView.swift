@@ -97,8 +97,6 @@ struct PlayServerView: View {
         ThreadUtil.runInMain {
           if case .downloadingChunks(let numberReceived, let total) = state.current {
             state.update(to: .downloadingChunks(numberReceived: numberReceived + 1, total: total))
-          } else {
-            state.update(to: .downloadingChunks(numberReceived: 0, total: 1))
           }
         }
       case _ as TerrainDownloadCompletionEvent:

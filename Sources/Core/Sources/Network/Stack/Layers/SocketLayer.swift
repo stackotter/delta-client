@@ -131,11 +131,13 @@ public class SocketLayer: OutermostNetworkLayer {
   }
   
   private func handleNWError(_ error: NWError) {
-    eventBus.dispatch(ConnectionFailedEvent(networkError: error))
-    if error == NWError.posix(.ECONNREFUSED) {
-      log.error("Connection refused: '\(self.host):\(self.port)'")
-    } else if error == NWError.dns(-65554) {
-      log.error("Server at '\(self.host):\(self.port)' possibly uses SRV records (unsupported)")
+    if state != .disconnected {
+      eventBus.dispatch(ConnectionFailedEvent(networkError: error))
+      if error == NWError.posix(.ECONNREFUSED) {
+        log.error("Connection refused: '\(self.host):\(self.port)'")
+      } else if error == NWError.dns(-65554) {
+        log.error("Server at '\(self.host):\(self.port)' possibly uses SRV records (unsupported)")
+      }
     }
   }
 }
