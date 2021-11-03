@@ -79,18 +79,10 @@ Not every version will be perfectly supported but we will try and have the most 
     - [x] Lighting
     - [x] Animated textures (e.g. lava)
     - [x] Translucency
-    - [ ] Fluids (lava and water)
-    - [ ] Block entities (e.g. chests)
+    - [x] Fluids (lava and water)
     - [x] Chunk frustum culling
     - [x] Biome blending (mostly)
-  - [ ] HUD
-    - [ ] Basic text
-    - [ ] Chat
-    - [ ] F3-style stuff
-    - [ ] Bossbars
-    - [ ] Scoreboard
-    - [ ] Health, hunger and experience
-  - [ ] Items (like in the inventory and hotbar)
+    - [ ] Block entities (e.g. chests)
   - [ ] Entities
     - [ ] Basic entity rendering (just coloured cubes)
     - [ ] Render entity models
@@ -101,7 +93,13 @@ Not every version will be perfectly supported but we will try and have the most 
     - [ ] Ambient particles
     - [ ] Hit particles
     - [ ] Particles from server
+  - [ ] Items (like in the inventory and hotbar)
   - [ ] GUI
+    - [ ] Chat
+    - [ ] F3-style stuff
+    - [ ] Bossbars
+    - [ ] Scoreboard
+    - [ ] Health, hunger and experience
     - [ ] Hotbar
     - [ ] Inventory
       - [ ] Basic inventory
