@@ -84,6 +84,9 @@ struct PlayServerView: View {
   
   func handleClientEvent(_ event: Event) {
     switch event {
+      case let connectionFailedEvent as ConnectionFailedEvent:
+        let serverName = serverDescriptor.host + (serverDescriptor.port != nil ? (":" + String(serverDescriptor.port!)) : "")
+        DeltaClientApp.modalError("Connection to \(serverName) failed: \(connectionFailedEvent.networkError.localizedDescription)", safeState: .serverList)
       case _ as LoginStartEvent:
         state.update(to: .loggingIn)
       case let joinWorldEvent as JoinWorldEvent:

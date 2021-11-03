@@ -52,8 +52,7 @@ public class Client {
     self.account = account
     
     // Create a connection to the server
-    let connection = ServerConnection(descriptor: descriptor, locale: resourcePack.getDefaultLocale())
-    connection.eventBus = eventBus
+    let connection = ServerConnection(descriptor: descriptor, locale: resourcePack.getDefaultLocale(), eventBus: eventBus)
     connection.setPacketHandler(handlePacket(_:))
     connection.login(username: account.username)
     self.connection = connection
