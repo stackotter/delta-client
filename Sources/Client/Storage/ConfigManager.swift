@@ -91,8 +91,7 @@ public class ConfigManager {
   public func resetConfig() throws {
     log.info("Resetting config.json")
     config = Config()
-    let data: Data
-    data = try JSONEncoder().encode(config)
+    let data = try JSONEncoder().encode(config)
     FileManager.default.createFile(atPath: configFile.path, contents: data, attributes: nil)
   }
 

@@ -1,6 +1,5 @@
 import SwiftUI
 
-
 protocol TextStyle {
   @ViewBuilder func makeBody(configuration: Text) -> Text
 }

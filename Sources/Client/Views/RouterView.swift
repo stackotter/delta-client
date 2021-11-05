@@ -59,12 +59,12 @@ struct RouterView: View {
                     to be properly initialised. A rather reduntant switch statement is needed.
                  */
                 switch landingPage {
-                case .accounts: getSettingsView(with: .accounts)
-                case .update: getSettingsView(with: .update)
-                case .troubleshooting: getSettingsView(with: .troubleshooting)
-                case .video: getSettingsView(with: .video)
-                case .plugins: getSettingsView(with: .plugins)
-                case .none: getSettingsView(with: .none)
+                  case .accounts: getSettingsView(with: .accounts)
+                  case .update: getSettingsView(with: .update)
+                  case .troubleshooting: getSettingsView(with: .troubleshooting)
+                  case .video: getSettingsView(with: .video)
+                  case .plugins: getSettingsView(with: .plugins)
+                  case .none: getSettingsView(with: .none)
                 }
                 
               }

@@ -19,14 +19,14 @@ struct PaddedButtonStyle: ButtonStyle {
   
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
-    .foregroundColor(textColor)
-    .padding(.horizontal, 8)
-    .padding(.vertical, 5)
-    .background(
-      backgroundColor
-        .brightness(configuration.isPressed ? -0.05 : 0)
-        .cornerRadius(cornerRadius)
-    )
+      .foregroundColor(textColor)
+      .padding(.horizontal, 8)
+      .padding(.vertical, 5)
+      .background(
+        backgroundColor
+          .brightness(configuration.isPressed ? -0.05 : 0)
+          .cornerRadius(cornerRadius)
+      )
   }
   
 }

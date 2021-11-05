@@ -90,17 +90,19 @@ struct TroubleShootingView: View {
   ///   - onConfirm: callback triggered if the user confirms his choice
   private func displayBanner(with title: String, onConfirm: @escaping (() -> Void)) {
     func updateToShown() {
-      popupState.update(to: .shown(PopupObject(title: "Warning",
-                                               subtitle: title,
-                                               image: Image(systemName: "exclamationmark.triangle"),
-                                               action: (confirm: {
-                                                          popupState.update(to: .hidden)
-                                                          onConfirm()
-                                                        },
-                                                        cancel: { popupState.update(to: .hidden) }
-                                                       )
-                                              )
-                                  ))
+      popupState.update(to: .shown(
+        PopupObject(title: "Warning",
+        subtitle: title,
+        image: Image(systemName: "exclamationmark.triangle"),
+        action: (
+          confirm: {
+            popupState.update(to: .hidden)
+            onConfirm()
+          },
+          cancel: { popupState.update(to: .hidden) }
+          )
+        )
+      ))
     }
     
     switch popupState.current {

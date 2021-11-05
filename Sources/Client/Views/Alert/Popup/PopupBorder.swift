@@ -4,8 +4,6 @@ import SwiftUI
 
 
 struct PopupBorder: InsettableShape {
-  
-  
   // MARK: - Properties.UI
   
   public var insetAmount: CGFloat = 0
