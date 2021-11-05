@@ -134,10 +134,11 @@ struct DeltaClientApp: App {
   static func fatal(_ message: String) {
     log.critical(message)
     startupState.update(to: .fatalError)
-    popupState.update(to: .shown(PopupObject(title: "Fatal error",
-                                             subtitle: message,
-                                             image: Image(systemName: "exclamationmark.octagon"))
-                                ))
+    popupState.update(
+      to: .shown(PopupObject(title: "Fatal error",
+        subtitle: message,
+        image: Image(systemName: "exclamationmark.octagon"))
+      ))
     DispatchQueue.main.asyncAfter(deadline: .now() + 3) { // Auto dismissing popup after 3 seconds
       popupState.update(to: .hidden)
     }
