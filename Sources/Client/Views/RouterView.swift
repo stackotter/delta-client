@@ -17,6 +17,8 @@ struct RouterView: View {
             case let .loadingWithMessage(message):
               Text(message)
                 .navigationTitle("Loading")
+            case .fatalError:
+              TroubleShootingView()
             case let .done(loadedResources):
               switch appState.current {
                 case .serverList:
@@ -52,8 +54,6 @@ struct RouterView: View {
                       inputCaptureEnabled: inputCaptureEnabled,
                       delegateSetter: setDelegate)
                   }
-                case .fatalError:
-                  TroubleShootingView()
                 case .settings(let landingPage):
                 /** Simply calling getSettingsView once with the given landingPage doesn't cause States in `SettingsView`
                     to be properly initialised. A rather reduntant switch statement is needed.

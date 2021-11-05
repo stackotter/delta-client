@@ -5,4 +5,5 @@ enum LoadingState {
   case loading
   case loadingWithMessage(String)
   case done(LoadedResources?)
+  case fatalError
 }

@@ -111,7 +111,7 @@ struct DeltaClientApp: App {
             switch Self.appState.current {
               case .serverList, .editServerList, .accounts, .login, .directConnect:
               Self.appState.update(to: .settings(.none))
-            case .playServer(_), .settings, .fatalError:
+            case .playServer(_), .settings:
                 break
             }
           }
@@ -135,8 +135,7 @@ struct DeltaClientApp: App {
   /// Logs a fatal error and redirects to troubleshooting page.
   static func fatal(_ message: String) {
     log.critical(message)
-    loadingState.update(to: .done(nil)) // If loading, removes loading screen
-    Self.appState.update(to: .fatalError)
+    loadingState.update(to: .fatalError) // If loading, removes loading screen
     popupState.update(to: .shown(PopupObject(title: "Fatal error",
                                              subtitle: message,
                                              image: Image(systemName: "exclamationmark.octagon"))
