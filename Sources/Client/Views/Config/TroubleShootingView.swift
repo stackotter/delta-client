@@ -65,14 +65,14 @@ struct TroubleShootingView: View {
       .frame(width: 200)
       
       switch popupState.current {
-      case .shown(let popupObject):
-        PopupView(title: popupObject.title,
-                  subtitle: popupObject.subtitle,
-                  icon: popupObject.image,
-                  action: popupObject.action)
-          .transition(.move(edge: .top))
-          .animation(.easeInOut(duration: popupAnimationDuration))
-      case .hidden: EmptyView()
+        case .shown(let popupObject):
+          PopupView(title: popupObject.title,
+                    subtitle: popupObject.subtitle,
+                    icon: popupObject.image,
+                    action: popupObject.action)
+            .transition(.move(edge: .top))
+            .animation(.easeInOut(duration: popupAnimationDuration))
+        case .hidden: EmptyView()
       }
     }
   }
@@ -91,29 +91,30 @@ struct TroubleShootingView: View {
   private func displayBanner(with title: String, onConfirm: @escaping (() -> Void)) {
     func updateToShown() {
       popupState.update(to: .shown(
-        PopupObject(title: "Warning",
-        subtitle: title,
-        image: Image(systemName: "exclamationmark.triangle"),
-        action: (
-          confirm: {
-            popupState.update(to: .hidden)
-            onConfirm()
-          },
-          cancel: { popupState.update(to: .hidden) }
+        PopupObject(
+          title: "Warning",
+          subtitle: title,
+          image: Image(systemName: "exclamationmark.triangle"),
+          action: (
+            confirm: {
+              popupState.update(to: .hidden)
+              onConfirm()
+            },
+            cancel: { popupState.update(to: .hidden) }
           )
         )
       ))
     }
     
     switch popupState.current {
-    case .hidden:
-      updateToShown()
-    case .shown(_):
-      // Another alert is currently being displayed. Dismissing it first before displaying the new one
-      popupState.update(to: .hidden)
-      DispatchQueue.main.asyncAfter(deadline: .now() + popupAnimationDuration*1.1) {
+      case .hidden:
         updateToShown()
-      }
+      case .shown(_):
+        // Another alert is currently being displayed. Dismissing it first before displaying the new one
+        popupState.update(to: .hidden)
+        DispatchQueue.main.asyncAfter(deadline: .now() + popupAnimationDuration*1.1) {
+          updateToShown()
+        }
     }
   }
   
