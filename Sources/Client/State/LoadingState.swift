@@ -1,9 +1,10 @@
 import Foundation
-import DeltaCore
+
+// MARK: - LoadingState
+
 
 enum LoadingState {
-  case loading
+  case none
   case loadingWithMessage(String)
-  case done(LoadedResources?)
-  case fatalError
+  case done
 }

@@ -27,12 +27,7 @@ struct PlayServerView: View {
   
 
   // Link whether the cursor is captured to whether input gets sent to delegate
-  init?(serverDescriptor: ServerDescriptor, resourcePack: ResourcePack?, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
-    guard let resourcePack = resourcePack else {
-      DeltaClientApp.fatal("Provided resourcePack was nil")
-      return nil
-    }
-    
+  init(serverDescriptor: ServerDescriptor, resourcePack: ResourcePack, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
     self.serverDescriptor = serverDescriptor
     client = Client(resourcePack: resourcePack)
     

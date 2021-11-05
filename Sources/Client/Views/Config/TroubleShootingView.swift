@@ -156,7 +156,7 @@ struct TroubleShootingView: View {
       do {
         try StorageManager.default.clearCache()
         // Cache cleared successfully
-        loadingState.update(to: .done(DeltaClientApp.loadedResourcePack))
+        loadingState.update(to: .done)
         onSuccess()
       } catch let error {
         onFailure(error)
@@ -176,7 +176,7 @@ struct TroubleShootingView: View {
     taskQueue.asyncAfter(deadline: .now() + 1) {
       do {
         try ConfigManager.default.resetConfig()
-        loadingState.update(to: .done(DeltaClientApp.loadedResourcePack))
+        loadingState.update(to: .done)
         onSuccess()
       } catch let error {
         onFailure(error)

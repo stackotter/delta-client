@@ -3,15 +3,13 @@ import DeltaCore
 
 /// The entry-point for Delta Client.
 struct DeltaClientApp: App {
-  /// Resource pack loaded on startup
-  static var loadedResourcePack: LoadedResources?
-  
   // MARK: - Global state
   
   // These are static so that they can be used from static functions like `modalError`. And because otherwise they can't be captured by the async startup task.
   private static var modalState = StateWrapper<ModalState>(initial: .none)
   private static var appState = StateWrapper<AppState>(initial: .serverList)
-  private static var loadingState = StateWrapper<LoadingState>(initial: .loading)
+  private static var startupState = StateWrapper<StartupState>(initial: .loading)
+  private static var loadingState = StateWrapper<LoadingState>(initial: .none)
   private static var popupState = StateWrapper<PopupState>(initial: .hidden)
   public static var pluginEnvironment = PluginEnvironment()
   
@@ -34,7 +32,7 @@ struct DeltaClientApp: App {
     // Load plugins, registries and resources
     taskQueue.async {
       func updateLoadingMessage(_ message: String) {
-        Self.loadingState.update(to: .loadingWithMessage(message))
+        Self.startupState.update(to: .loadingWithMessage(message))
         log.info(message)
       }
       
@@ -67,7 +65,6 @@ struct DeltaClientApp: App {
         let packCache = StorageManager.Cache.vanilla.packCache
         let cacheExists = StorageManager.default.directoryExists(at: packCache)
         let resourcePack = try ResourcePack.load(from: StorageManager.default.vanillaAssetsDirectory, cacheDirectory: cacheExists ? packCache : nil)
-        Self.loadedResourcePack = LoadedResources(resourcePack: resourcePack)
         
         if !cacheExists {
           do {
@@ -84,7 +81,7 @@ struct DeltaClientApp: App {
         
         // Finish loading
         log.info("Done")
-        Self.loadingState.update(to: .done(LoadedResources(resourcePack: resourcePack)))
+        Self.startupState.update(to: .done(LoadedResources(resourcePack: resourcePack)))
       } catch {
         Self.fatal("Failed to load: \(error)")
       }
@@ -98,6 +95,7 @@ struct DeltaClientApp: App {
         .environmentObject(Self.popupState)
         .environmentObject(Self.modalState)
         .environmentObject(Self.appState)
+        .environmentObject(Self.startupState)
         .environmentObject(Self.loadingState)
         .environmentObject(Self.pluginEnvironment)
         .navigationTitle("Delta Client")
@@ -107,7 +105,7 @@ struct DeltaClientApp: App {
       CommandGroup(after: .appSettings, addition: {
         Button("Preferences") {
           // Check if it makes sense to be able to open settings right now
-          if case .none = Self.modalState.current, case .done(_) = Self.loadingState.current {
+          if case .none = Self.modalState.current, case .done(_) = Self.startupState.current {
             switch Self.appState.current {
               case .serverList, .editServerList, .accounts, .login, .directConnect:
               Self.appState.update(to: .settings(.none))
@@ -135,7 +133,7 @@ struct DeltaClientApp: App {
   /// Logs a fatal error and redirects to troubleshooting page.
   static func fatal(_ message: String) {
     log.critical(message)
-    loadingState.update(to: .fatalError) // If loading, removes loading screen
+    startupState.update(to: .fatalError)
     popupState.update(to: .shown(PopupObject(title: "Fatal error",
                                              subtitle: message,
                                              image: Image(systemName: "exclamationmark.octagon"))
