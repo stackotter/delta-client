@@ -124,10 +124,12 @@ struct TroubleShootingView: View {
   ///   - seconds: number of seconds after which the banner should disappear
   ///   - title: banner title
   ///   - subtitle: banner subtitle
-  public func displayBannerWithAutodismiss(after seconds: Double = 3,
-                                           title: String,
-                                           subtitle: String,
-                                           image: Image? = Image(systemName: "checkmark.seal")) {
+  public func displayBannerWithAutodismiss(
+    after seconds: Double = 3,
+    title: String,
+    subtitle: String,
+    image: Image? = Image(systemName: "checkmark.seal")
+  ) {
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
       popupState.update(to: .shown(PopupObject(title: title,
                                                subtitle: subtitle,
