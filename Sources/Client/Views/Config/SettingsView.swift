@@ -27,22 +27,26 @@ struct SettingsView: View {
     NavigationView {
       List {
         if !isInGame {
-          NavigationLink("Accounts",
-                         destination: AccountSettingsView().padding(),
-                         tag: SettingsState.accounts,
-                         selection: $initialLandingPage)
-          NavigationLink("Update",
-                         destination: UpdateView().padding(),
-                         tag: SettingsState.update,
-                         selection: $initialLandingPage)
-          NavigationLink("Troubleshooting",
-                         destination: TroubleShootingView(),
-                         tag: SettingsState.troubleshooting,
-                         selection: $initialLandingPage)
-					NavigationLink("Plugins",
-                         destination: PluginView().padding(),
-                         tag: SettingsState.plugins,
-                         selection: $initialLandingPage)
+          NavigationLink(
+            "Accounts",
+            destination: AccountSettingsView().padding(),
+            tag: SettingsState.accounts,
+            selection: $initialLandingPage)
+          NavigationLink(
+            "Update",
+            destination: UpdateView().padding(),
+            tag: SettingsState.update,
+            selection: $initialLandingPage)
+          NavigationLink(
+            "Troubleshooting",
+            destination: TroubleShootingView(),
+            tag: SettingsState.troubleshooting,
+            selection: $initialLandingPage)
+	    NavigationLink(
+	     "Plugins",
+            destination: PluginView().padding(),
+            tag: SettingsState.plugins,
+            selection: $initialLandingPage)
         }
         
         NavigationLink("Video",
