@@ -10,4 +10,5 @@ indirect enum AppState: Equatable {
   case directConnect
   case playServer(ServerDescriptor)
   case settings(SettingsState)
+  case fatalError
 }

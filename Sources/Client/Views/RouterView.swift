@@ -52,6 +52,8 @@ struct RouterView: View {
                       inputCaptureEnabled: inputCaptureEnabled,
                       delegateSetter: setDelegate)
                   }
+                case .fatalError:
+                  TroubleShootingView()
                 case .settings(let landingPage):
                 /** Simply calling getSettingsView once with the given landingPage doesn't cause States in `SettingsView`
                     to be properly initialised. A rather reduntant switch statement is needed.
