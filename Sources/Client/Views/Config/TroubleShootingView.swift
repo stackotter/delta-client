@@ -81,7 +81,7 @@ struct TroubleShootingView: View {
   // MARK: - Methods.UI
   
   
-  /// Displays a confirmation banner meant for the user to confirm his choice or discard it
+  /// Displays a confirmation banner meant for the user to confirm their choice or discard it
   ///
   /// If the user confirms his choice, the `onConfirm` callback will be triggered, otherwise the banner will simply be dismissed
   /// - Postcondition: `popupState` updated to `.shown`

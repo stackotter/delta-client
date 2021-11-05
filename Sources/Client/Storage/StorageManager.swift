@@ -13,21 +13,6 @@ class StorageManager {
   
   /// The directory within the storage directory to store the vanilla assets.
   public var vanillaAssetsDirectory: URL
-  
-  enum Cache: String, CaseIterable {
-    /// Directory that should be used for caching.
-    fileprivate static var cacheDirectory: URL {
-      return StorageManager.default.storageDirectory.appendingPathComponent("cache")
-    }
-    
-    /// Cache subpath for vanilla resource pack
-    case vanilla = "vanilla.rpcache/"
-    
-    /// Full cache address directory for the given asset
-    public var packCache: URL {
-      return Self.cacheDirectory.appendingPathComponent(self.rawValue)
-    }
-  }
 
   /// The directory within the storage directory to store registry data.
   public var registryDirectory: URL
@@ -192,8 +177,8 @@ class StorageManager {
   /// Clears cache directory
   public func clearCache() throws {
     log.info("Clearing cache")
-    guard directoryExists(at: StorageManager.Cache.cacheDirectory) else { return } // No  cache to clear out
-    try FileManager.default.removeItem(at: StorageManager.Cache.cacheDirectory)
+    guard directoryExists(at: StorageManager.default.cacheDirectory) else { return } // No  cache to clear out
+    try FileManager.default.removeItem(at: StorageManager.default.cacheDirectory)
   }
   
   /// Will perform a fresh install on next launch
