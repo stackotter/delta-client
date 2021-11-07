@@ -17,9 +17,9 @@ struct PopupView: View {
   /// Image displayed to the left of the title and subtitle
   private var icon: Image? = nil
   /// Color of the inner thick border around the banner and of the confirm/cancel buttons
-  private let secondaryColor = Colors.secondaryDarkGray.color
+  private let secondaryColor = Colors.secondaryDarkGray
   /// Banner background color
-  private let backgroundColor = Colors.primaryDarkGray.color
+  private let backgroundColor = Colors.primaryDarkGray
   
   
   // MARK: - Properties.bindings

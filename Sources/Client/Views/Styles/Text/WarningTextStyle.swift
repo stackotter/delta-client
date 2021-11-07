@@ -9,7 +9,7 @@ struct WarningTextStyle: TextStyle {
   // MARK: - Properties.UI
   
   
-  private let warningTextColor = Colors.warningYellow.color
+  private let warningTextColor = Colors.warningYellow
   
   
   // MARK: - Methods.TextStyle
