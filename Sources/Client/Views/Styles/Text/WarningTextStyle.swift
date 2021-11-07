@@ -5,14 +5,7 @@ import SwiftUI
 
 
 struct WarningTextStyle: TextStyle {
-  
-  // MARK: - Properties.UI
-  
-  
   private let warningTextColor = Colors.warningYellow
-  
-  
-  // MARK: - Methods.TextStyle
   
   
   func makeBody(configuration: Text) -> Text {
@@ -20,5 +13,4 @@ struct WarningTextStyle: TextStyle {
       .font(.system(size: 18, weight: .regular))
       .foregroundColor(warningTextColor)
   }
-  
 }

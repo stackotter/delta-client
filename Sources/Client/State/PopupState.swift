@@ -20,7 +20,6 @@ struct PopupObject {
   }
 }
 
-
 // MARK: - PopupState
 
 

@@ -13,10 +13,12 @@ struct SettingsView: View {
   /// The `NavigationLink` to be selected on initializaiton
   @State private var initialLandingPage: SettingsState? = nil
   
-  init(isInGame: Bool,
-       eventBus: EventBus?,
-       landingPage: SettingsState? = nil,
-       onDone done: @escaping () -> Void) {
+  init(
+    isInGame: Bool,
+    eventBus: EventBus?,
+    landingPage: SettingsState? = nil,
+    onDone done: @escaping () -> Void
+  ) {
     self.isInGame = isInGame
     self.eventBus = eventBus
     self.done = done
@@ -42,8 +44,8 @@ struct SettingsView: View {
             destination: TroubleShootingView(),
             tag: SettingsState.troubleshooting,
             selection: $initialLandingPage)
-	    NavigationLink(
-	     "Plugins",
+          NavigationLink(
+            "Plugins",
             destination: PluginView().padding(),
             tag: SettingsState.plugins,
             selection: $initialLandingPage)
@@ -62,6 +64,5 @@ struct SettingsView: View {
       .listStyle(SidebarListStyle())
     }
     .navigationTitle("Settings")
-
   }
 }

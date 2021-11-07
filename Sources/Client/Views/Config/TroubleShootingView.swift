@@ -4,7 +4,6 @@ import SwiftUI
 
 
 struct TroubleShootingView: View {
-  
   // MARK: - Properties.observable
   
   
@@ -224,5 +223,4 @@ struct TroubleShootingView: View {
       }
     }
   }
-  
 }

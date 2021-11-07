@@ -26,7 +26,6 @@ struct PlayServerView: View {
   var renderCoordinator: RenderCoordinatorProtocol
   
 
-  // Link whether the cursor is captured to whether input gets sent to delegate
   init(serverDescriptor: ServerDescriptor, resourcePack: ResourcePack, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
     self.serverDescriptor = serverDescriptor
     client = Client(resourcePack: resourcePack)
