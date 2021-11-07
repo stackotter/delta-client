@@ -18,12 +18,25 @@ struct TroubleShootingView: View {
   
   /// Duration of `PopupView` transition animation
   private var popupAnimationDuration: Double = 0.3
+  /// Content for a never-disappearing error message displayed above the option buttons
+  private let staticErrorMessage: String?
   
   
   // MARK: - Properties.other
   
   
   private let taskQueue = DispatchQueue(label: "dev.stackotter.delta-client.troubleShootingTasks")
+  
+  
+  // MARK: - Inits
+  
+  
+  /// Class init
+  ///
+  /// - Parameter staticErrorMessage: content of the never-disappearing error essage to be displayed, if any
+  init(staticErrorMessage: String? = nil) {
+    self.staticErrorMessage = staticErrorMessage
+  }
   
   
   // MARK: - Methods.View
@@ -33,6 +46,11 @@ struct TroubleShootingView: View {
     ZStack {
       // Troubleshooting options
       VStack {
+        if let errorMessage = staticErrorMessage {
+          Text(errorMessage)
+            .padding(.bottom, 10)
+        }
+        
         Button("Clear cache") { // Clear cache
           displayBanner(with: "Confirm clear cache?") {
             clearCache(onSuccess: {

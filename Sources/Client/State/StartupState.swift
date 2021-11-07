@@ -5,5 +5,5 @@ enum StartupState {
   case loading
   case loadingWithMessage(String)
   case done(LoadedResources)
-  case fatalError
+  case fatalError(String)
 }

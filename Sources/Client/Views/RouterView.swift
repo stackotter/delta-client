@@ -21,8 +21,8 @@ struct RouterView: View {
                 .navigationTitle("Loading")
             case let .loadingWithMessage(message):
               generateLoadingView(with: message)
-            case .fatalError:
-              TroubleShootingView()
+            case .fatalError(let message):
+              TroubleShootingView(staticErrorMessage: message)
             case let .done(loadedResources):
               switch loadingState.current {
                 case let .loadingWithMessage(message):
