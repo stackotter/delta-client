@@ -32,8 +32,10 @@ public struct SortableMesh {
     underlyingMesh.invalidateBuffers(keepUniformsBuffer: true)
   }
   
-  /// Add an element to the mesh.
+  /// Add an element to the mesh. Updates the element's id.
   public mutating func add(_ element: SortableMeshElement) {
+    var element = element
+    element.id = elements.count
     elements.append(element)
   }
   
@@ -56,24 +58,26 @@ public struct SortableMesh {
     }
     
     if sort || underlyingMesh.isEmpty {
-      underlyingMesh.clearGeometry()
       // TODO: reuse vertices from mesh and just recreate winding
       // Sort elements by distance in descending order.
-      elements = elements.sorted(by: {
+      let newElements = elements.sorted(by: {
         let squaredDistance1 = distance_squared(position, $0.centerPosition)
         let squaredDistance2 = distance_squared(position, $1.centerPosition)
         return squaredDistance1 > squaredDistance2
       })
       
-      for element in elements {
-        let windingOffset = UInt32(underlyingMesh.vertices.count)
-        underlyingMesh.vertices.append(contentsOf: element.vertices)
-        for index in element.indices {
-          underlyingMesh.indices.append(index + windingOffset)
+      if underlyingMesh.isEmpty || newElements != elements {
+        elements = newElements
+        
+        underlyingMesh.clearGeometry()
+        for element in elements {
+          let windingOffset = UInt32(underlyingMesh.vertices.count)
+          underlyingMesh.vertices.append(contentsOf: element.vertices)
+          for index in element.indices {
+            underlyingMesh.indices.append(index + windingOffset)
+          }
         }
       }
-      
-      underlyingMesh.invalidateBuffers(keepUniformsBuffer: true)
     }
     
     // Could be reached if all elements contain no geometry

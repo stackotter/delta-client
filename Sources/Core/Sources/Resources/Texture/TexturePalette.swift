@@ -119,9 +119,8 @@ public struct TexturePalette {
     textureDescriptor.pixelFormat = .bgra8Unorm
     textureDescriptor.textureType = .type2DArray
     textureDescriptor.arrayLength = textures.count
-    textureDescriptor.storageMode = (device.hasUnifiedMemory) ? .shared : .managed
+    textureDescriptor.storageMode = .managed
     textureDescriptor.mipmapLevelCount = 1 + Int(log2(Double(width)).rounded(.down))
-//    textureDescriptor.resourceOptions = [.]
     
     guard let arrayTexture = device.makeTexture(descriptor: textureDescriptor) else {
       throw RenderError.failedToCreateTextureArray

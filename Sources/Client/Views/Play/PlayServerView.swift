@@ -89,7 +89,7 @@ struct PlayServerView: View {
         DeltaClientApp.modalError("Connection to \(serverName) failed: \(connectionFailedEvent.networkError.localizedDescription)", safeState: .serverList)
       case _ as LoginStartEvent:
         state.update(to: .loggingIn)
-      case let joinWorldEvent as JoinWorldEvent:
+      case _ as JoinWorldEvent:
         // Approximation of the number of chunks the server will send (used in progress indicator)
         let totalChunksToReceieve = Int(pow(Double(client.game.maxViewDistance * 2 + 3), 2))
         state.update(to: .downloadingChunks(numberReceived: 0, total: totalChunksToReceieve))
