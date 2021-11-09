@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "Socket",
+        "repositoryURL": "https://github.com/Kitura/BlueSocket.git",
+        "state": {
+          "branch": null,
+          "revision": "dd924c3bc2c1c144c42b8dda3896f1a03115ded4",
+          "version": "2.0.2"
+        }
+      },
+      {
         "package": "DeltaLogger",
         "repositoryURL": "https://github.com/stackotter/delta-logger",
         "state": {
@@ -42,8 +51,8 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
           "branch": null,
-          "revision": "d2930e8fcf9c33162b9fcc1d522bc975e2d4179b",
-          "version": "1.0.1"
+          "revision": "6b2aa2748a7881eebb9f84fb10c01293e15b52ca",
+          "version": "0.5.0"
         }
       },
       {
@@ -98,6 +107,15 @@
           "branch": null,
           "revision": "7e2c5f3cbbeea68e004915e3a8961e20bd11d824",
           "version": "1.18.0"
+        }
+      },
+      {
+        "package": "SwordRPC",
+        "repositoryURL": "https://github.com/PKBeam/SwordRPC",
+        "state": {
+          "branch": "master",
+          "revision": "f9831261fcbe6a17243f8839921fb7820e99fa6e",
+          "version": null
         }
       },
       {
