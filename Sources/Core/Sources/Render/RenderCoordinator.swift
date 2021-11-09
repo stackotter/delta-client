@@ -62,9 +62,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     
     updateCamera(client.game.player, view)
     
-    guard
-      let transparentAndOpaqueCommandBuffer = commandQueue.makeCommandBuffer(),
-      let translucentCommandBuffer = commandQueue.makeCommandBuffer()
+    guard let worldRenderCommandBuffer = commandQueue.makeCommandBuffer()
     else {
       log.warning("Failed to create render command buffers")
       return
@@ -74,8 +72,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     worldRenderer.draw(
       device: device,
       view: view,
-      transparentAndOpaqueCommandBuffer: transparentAndOpaqueCommandBuffer,
-      translucentCommandBuffer: translucentCommandBuffer,
+      worldRenderCommandBuffer: worldRenderCommandBuffer,
       camera: camera,
       commandQueue: commandQueue)
     stopwatch.stopMeasurement("world renderer")
@@ -85,9 +82,8 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       return
     }
     
-    transparentAndOpaqueCommandBuffer.commit()
-    translucentCommandBuffer.present(drawable)
-    translucentCommandBuffer.commit()
+    worldRenderCommandBuffer.present(drawable)
+    worldRenderCommandBuffer.commit()
     
     logFrame()
     stopwatch.stopMeasurement("whole frame")

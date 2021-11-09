@@ -144,7 +144,7 @@ class ChunkRenderer {
   }
   
   /// Renders this renderer's chunk
-  func render(transparentAndOpaqueEncoder: MTLRenderCommandEncoder, translucentEncoder: MTLRenderCommandEncoder, with device: MTLDevice, and camera: Camera, commandQueue: MTLCommandQueue) {
+  func render(worldRenderEncoder: MTLRenderCommandEncoder, with device: MTLDevice, and camera: Camera, renderTranslucent: Bool, commandQueue: MTLCommandQueue) {
     sectionMeshesAccessQueue.sync {
       sectionMeshes.mutatingEach { sectionY, mesh in
         // Don't need to check if mesh is empty because the mesh builder never returns empty meshes
@@ -157,9 +157,8 @@ class ChunkRenderer {
         do {
           try mesh.render(
             viewedFrom: camera.position,
-            sortTranslucent: true,
-            transparentAndOpaqueEncoder: transparentAndOpaqueEncoder,
-            translucentEncoder: translucentEncoder,
+            renderTranslucent: renderTranslucent,
+            worldRenderEncoder: worldRenderEncoder,
             device: device,
             commandQueue: commandQueue)
         } catch {

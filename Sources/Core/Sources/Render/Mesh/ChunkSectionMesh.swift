@@ -24,24 +24,25 @@ public struct ChunkSectionMesh {
     transparentAndOpaqueMesh.clearGeometry()
     translucentMesh.clear()
   }
-  
+    
   /// Encode the render commands for this chunk section.
   /// - Parameters:
   ///   - position: Position the mesh is viewed from. Used for sorting.
-  ///   - sortTranslucent: Whether the translucent mesh should be sorted or not.
-  ///   - transparentAndOpaqueEncoder: Encoder for rendering transparent and opaque geometry.
-  ///   - translucentEncoder: Encoder for rendering translucent geometry.
+  ///   - renderTranslucent: Defines whether translucent or transparent and opaque mesh is rendered.
+  ///   - worldRenderEncoder: Encoder for rendering geometry.
   ///   - device: The device to use.
   ///   - commandQueue: The command queue to use for creating buffers.
   public mutating func render(
     viewedFrom position: SIMD3<Float>,
-    sortTranslucent: Bool,
-    transparentAndOpaqueEncoder: MTLRenderCommandEncoder,
-    translucentEncoder: MTLRenderCommandEncoder,
+    renderTranslucent: Bool,
+    worldRenderEncoder: MTLRenderCommandEncoder,
     device: MTLDevice,
     commandQueue: MTLCommandQueue
   ) throws {
-    try transparentAndOpaqueMesh.render(into: transparentAndOpaqueEncoder, with: device, commandQueue: commandQueue)
-    try translucentMesh.render(viewedFrom: position, sort: sortTranslucent, encoder: translucentEncoder, device: device, commandQueue: commandQueue)
+      if renderTranslucent {
+        try translucentMesh.render(viewedFrom: position, sort: renderTranslucent, encoder: worldRenderEncoder, device: device, commandQueue: commandQueue)
+      } else {
+        try transparentAndOpaqueMesh.render(into: worldRenderEncoder, with: device, commandQueue: commandQueue)
+      }
   }
 }
