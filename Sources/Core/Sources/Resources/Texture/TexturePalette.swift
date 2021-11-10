@@ -91,7 +91,9 @@ public struct TexturePalette {
           scaledToWidth: maxWidth,
           checkDimensions: true)
         
-        if texture.type != .opaque {
+        if texture.type == .opaque {
+          texture.setAlpha(255)
+        } else {
           // Change the color of transparent pixels to make mipmaps look more natural
           texture.fixTransparentPixels()
         }
