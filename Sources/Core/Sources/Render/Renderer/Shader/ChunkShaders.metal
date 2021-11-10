@@ -57,7 +57,7 @@ fragment float4 chunkFragmentShader(RasteriserData in [[stage_in]],
   }
     
   if (in.isTransparent) {
-      color.w = 1;
+    color.w = 1;
   }
   
   return color;
