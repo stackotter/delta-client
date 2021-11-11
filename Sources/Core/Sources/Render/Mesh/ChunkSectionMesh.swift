@@ -25,24 +25,33 @@ public struct ChunkSectionMesh {
     translucentMesh.clear()
   }
     
-  /// Encode the render commands for this chunk section.
+  /// Encode the render commands for transparent and opaque mesh of this chunk section.
   /// - Parameters:
-  ///   - position: Position the mesh is viewed from. Used for sorting.
-  ///   - renderTranslucent: Defines whether translucent or transparent and opaque mesh is rendered.
-  ///   - worldRenderEncoder: Encoder for rendering geometry.
+  ///   - renderEncoder: Encoder for rendering geometry.
   ///   - device: The device to use.
   ///   - commandQueue: The command queue to use for creating buffers.
-  public mutating func render(
-    viewedFrom position: SIMD3<Float>,
-    renderTranslucent: Bool,
-    worldRenderEncoder: MTLRenderCommandEncoder,
+  public mutating func renderTransparentOpaque(
+    renderEncoder: MTLRenderCommandEncoder,
     device: MTLDevice,
     commandQueue: MTLCommandQueue
   ) throws {
-      if renderTranslucent {
-        try translucentMesh.render(viewedFrom: position, sort: renderTranslucent, encoder: worldRenderEncoder, device: device, commandQueue: commandQueue)
-      } else {
-        try transparentAndOpaqueMesh.render(into: worldRenderEncoder, with: device, commandQueue: commandQueue)
-      }
+    try transparentAndOpaqueMesh.render(into: renderEncoder, with: device, commandQueue: commandQueue)
+  }
+    
+  /// Encode the render commands for translucent mesh of this chunk section.
+  /// - Parameters:
+  ///   - position: Position the mesh is viewed from. Used for sorting.
+  ///   - sortTranslucent: Indicates whether sorting should be enabled for translucent mesh rendering.
+  ///   - renderEncoder: Encoder for rendering geometry.
+  ///   - device: The device to use.
+  ///   - commandQueue: The command queue to use for creating buffers.
+  public mutating func renderTranslucent(
+    viewedFrom position: SIMD3<Float>,
+    sortTranslucent: Bool,
+    renderEncoder: MTLRenderCommandEncoder,
+    device: MTLDevice,
+    commandQueue: MTLCommandQueue
+  ) throws {
+    try translucentMesh.render(viewedFrom: position, sort: sortTranslucent, encoder: renderEncoder, device: device, commandQueue: commandQueue)
   }
 }

@@ -143,8 +143,8 @@ class ChunkRenderer {
     }
   }
   
-  /// Renders this renderer's chunk
-  func render(worldRenderEncoder: MTLRenderCommandEncoder, with device: MTLDevice, and camera: Camera, renderTranslucent: Bool, commandQueue: MTLCommandQueue) {
+  /// Renders this renderer's transparent and opaque part of the chunk
+  func renderTransparentOpaque(renderEncoder: MTLRenderCommandEncoder, with device: MTLDevice, and camera: Camera, commandQueue: MTLCommandQueue) {
     sectionMeshesAccessQueue.sync {
       sectionMeshes.mutatingEach { sectionY, mesh in
         // Don't need to check if mesh is empty because the mesh builder never returns empty meshes
@@ -155,10 +155,33 @@ class ChunkRenderer {
         }
 
         do {
-          try mesh.render(
+            try mesh.renderTransparentOpaque(
+            renderEncoder: renderEncoder,
+            device: device,
+            commandQueue: commandQueue)
+        } catch {
+          log.error("Failed to render chunk section at \(sectionPosition); \(error)")
+        }
+      }
+    }
+  }
+    
+  /// Renders this renderer's translucent part of the chunk
+  func renderTranslucent(renderEncoder: MTLRenderCommandEncoder, with device: MTLDevice, and camera: Camera, sortTranslucent: Bool, commandQueue: MTLCommandQueue) {
+    sectionMeshesAccessQueue.sync {
+      sectionMeshes.mutatingEach { sectionY, mesh in
+        // Don't need to check if mesh is empty because the mesh builder never returns empty meshes
+  
+        let sectionPosition = ChunkSectionPosition(chunkPosition, sectionY: sectionY)
+        if !camera.isChunkSectionVisible(at: sectionPosition) {
+          return
+        }
+
+        do {
+          try mesh.renderTranslucent(
             viewedFrom: camera.position,
-            renderTranslucent: renderTranslucent,
-            worldRenderEncoder: worldRenderEncoder,
+            sortTranslucent: sortTranslucent,
+            renderEncoder: renderEncoder,
             device: device,
             commandQueue: commandQueue)
         } catch {
