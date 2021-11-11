@@ -68,6 +68,14 @@ struct RouterView: View {
         case .error(let message, let safeState):
           ErrorView(message: message, safeState: safeState)
       }
+    }.onChange(of: appState.current) { newValue in
+      /// Updating discord rich presence based on current app state
+      switch newValue {
+        case .serverList: DiscordManager.shared.updateRichPresence(with: .menu)
+        case .playServer(let descriptor): DiscordManager.shared.updateRichPresence(with: .game(descriptor.host))
+        default: break
+      }
     }
   }
+
 }
