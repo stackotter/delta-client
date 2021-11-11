@@ -13,7 +13,7 @@ enum RichPreset: Equatable {
   /// Rich presence detail
   fileprivate var title: String {
     switch self {
-      case .menu: return "In main menu"
+      case .menu: return "Main menu"
       case .game: return "In game"
     }
   }
