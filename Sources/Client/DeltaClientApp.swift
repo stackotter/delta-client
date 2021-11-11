@@ -37,6 +37,7 @@ struct DeltaClientApp: App {
       }
       
       do {
+        DiscordManager.shared.updateRichPresence(with: .menu)
         // Load plugins first
         updateLoadingMessage("Loading plugins")
         do {
