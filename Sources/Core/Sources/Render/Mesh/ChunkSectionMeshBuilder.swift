@@ -24,7 +24,7 @@ public struct ChunkSectionMeshBuilder {
   /// The resources containing the textures and block models for the builds to use.
   private let resources: ResourcePack.Resources
   
-  var stopwatch = Stopwatch(mode: .summary, name: "ChunkSectionMeshBuilder")
+  public var stopwatch = Stopwatch(mode: .summary, name: "ChunkSectionMeshBuilder")
   
   /// Create a new mesh builder.
   ///

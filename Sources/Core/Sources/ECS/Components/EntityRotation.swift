@@ -1,4 +1,4 @@
-/// An entity's rotation in radians.
+/// A component storing an entity's rotation in radians.
 public struct EntityRotation {
   /// Pitch in radians.
   public var pitch: Float

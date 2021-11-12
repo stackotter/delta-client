@@ -156,10 +156,10 @@ public struct PacketReader {
     }
   }
   
-  // TODO_LATER: figure out the best return type for readAngle
-  public mutating func readAngle() -> UInt8 {
+  /// Reads an angle from the packet and returns it in radians.
+  public mutating func readAngle() -> Float {
     let angle = readUnsignedByte()
-    return angle
+    return Float(angle) / 128 * .pi
   }
   
   public mutating func readUUID() throws -> UUID {
@@ -220,7 +220,7 @@ public struct PacketReader {
   }
   
   public mutating func readEntityRotation(pitchFirst: Bool = false) -> EntityRotation {
-    var pitch: UInt8 = 0
+    var pitch: Float = 0
     if pitchFirst {
       pitch = readAngle()
     }

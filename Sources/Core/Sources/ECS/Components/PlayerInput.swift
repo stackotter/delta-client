@@ -1,4 +1,4 @@
-/// The player's current keyboard inputs.
+/// A component storing the player's current keyboard inputs.
 public struct PlayerInput {
   public var inputs: Set<Input> = []
   

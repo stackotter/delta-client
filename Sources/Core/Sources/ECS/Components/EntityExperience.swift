@@ -1,4 +1,4 @@
-/// An entity's experience level.
+/// A component storing an entity's experience level.
 public struct EntityExperience {
   /// The entity's total xp.
   public var experience: Int

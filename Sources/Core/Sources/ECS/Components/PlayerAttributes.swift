@@ -1,4 +1,4 @@
-/// Attributes specific to the client's player.
+/// A component storing attributes specific to the client's player.
 public struct PlayerAttributes {
   /// The player's spawn position.
   public var spawnPosition = Position(x: 0, y: 0, z: 0)

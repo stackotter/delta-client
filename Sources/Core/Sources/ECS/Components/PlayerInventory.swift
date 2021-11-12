@@ -1,4 +1,4 @@
-/// The player's inventory.
+/// A component storing the player's inventory.
 public struct PlayerInventory {
   /// The player's currently selected hotbar slot.
   public var hotbarSlot: Int

@@ -30,7 +30,7 @@ public class PacketRegistry {
     registry.addClientboundPackets([
       SpawnEntityPacket.self,
       SpawnExperienceOrbPacket.self,
-      SpawnLivingEntity.self,
+      SpawnLivingEntityPacket.self,
       SpawnPaintingPacket.self,
       SpawnPlayerPacket.self,
       EntityAnimationPacket.self,
@@ -111,11 +111,11 @@ public class PacketRegistry {
       SoundEffectPacket.self,
       StopSoundPacket.self,
       PlayerListHeaderAndFooterPacket.self,
-      NBTQueryResponse.self,
+      NBTQueryResponsePacket.self,
       CollectItemPacket.self,
       EntityTeleportPacket.self,
       AdvancementsPacket.self,
-      EntityProperties.self,
+      EntityPropertiesPacket.self,
       EntityEffectPacket.self,
       DeclareRecipesPacket.self,
       TagsPacket.self

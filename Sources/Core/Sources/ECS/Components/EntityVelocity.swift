@@ -1,4 +1,4 @@
-/// An entity's velocity in blocks per tick.
+/// A component storing an entity's velocity in blocks per tick.
 public struct EntityVelocity {
   /// x velocity in blocks per tick.
   public var x: Double

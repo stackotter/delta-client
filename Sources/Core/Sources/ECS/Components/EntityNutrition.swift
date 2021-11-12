@@ -1,4 +1,4 @@
-/// An entity's food and saturation levels.
+/// A component storing an entity's food and saturation levels.
 public struct EntityNutrition {
   public var food: Int
   public var saturation: Float

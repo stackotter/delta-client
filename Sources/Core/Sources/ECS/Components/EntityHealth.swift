@@ -1,4 +1,4 @@
-/// An entity's health (hp).
+/// A component storing an entity's health (hp).
 public struct EntityHealth {
   /// The entity's health measured in half hearts.
   public var health: Float

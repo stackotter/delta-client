@@ -25,4 +25,29 @@ public struct SpawnEntityPacket: ClientboundPacket {
       velocity = packetReader.readEntityVelocity()
     }
   }
+  
+  public func handle(for client: Client) throws {
+    if let velocity = velocity {
+      client.game.nexus.createEntity {
+        Box(NonLivingEntity())
+        Box(EntityId(entityId))
+        Box(ObjectUUID(objectUUID))
+        Box(EntityKindId(type))
+        Box(data)
+        Box(position)
+        Box(rotation)
+        Box(velocity)
+      }
+    } else {
+      client.game.nexus.createEntity {
+        Box(NonLivingEntity())
+        Box(EntityId(entityId))
+        Box(ObjectUUID(objectUUID))
+        Box(EntityKindId(type))
+        Box(data)
+        Box(position)
+        Box(rotation)
+      }
+    }
+  }
 }

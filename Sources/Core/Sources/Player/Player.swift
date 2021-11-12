@@ -74,6 +74,7 @@ public struct Player {
   /// - Parameter nexus: The nexus to create the player's entity in.
   public init(_ nexus: Nexus) {
     entity = nexus.createEntity {
+      Box(LivingEntity()) // Mark it as a living entity
       Box(ClientPlayerEntity()) // Mark it as the current player
       Box(PlayerEntity()) // Mark it as a player
       Box(EntityPosition(x: 0, y: 0, z: 0))

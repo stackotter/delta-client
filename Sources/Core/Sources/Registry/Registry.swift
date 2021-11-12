@@ -9,6 +9,18 @@ public struct Registry {
   public var fluidRegistry = FluidRegistry()
   public var entityRegistry = EntityRegistry()
   
+  public init(
+    blockRegistry: BlockRegistry = BlockRegistry(),
+    biomeRegistry: BiomeRegistry = BiomeRegistry(),
+    fluidRegistry: FluidRegistry = FluidRegistry(),
+    entityRegistry: EntityRegistry = EntityRegistry()
+  ) {
+    self.blockRegistry = blockRegistry
+    self.biomeRegistry = biomeRegistry
+    self.fluidRegistry = fluidRegistry
+    self.entityRegistry = entityRegistry
+  }
+  
   /// Populate the shared registry.
   /// - Parameter directory: Directory used for caching registries.
   public static func populateShared(_ directory: URL) throws {

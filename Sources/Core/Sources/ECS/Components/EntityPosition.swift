@@ -1,7 +1,7 @@
 import Foundation
 import simd
 
-/// An entity's position relative to the world.
+/// A component storing an entity's position relative to the world.
 public struct EntityPosition {
   public var x: Double
   public var y: Double

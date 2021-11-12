@@ -1,6 +1,6 @@
 import Foundation
 
-public struct NBTQueryResponse: ClientboundPacket {
+public struct NBTQueryResponsePacket: ClientboundPacket {
   public static let id: Int = 0x54
   
   public var transactionId: Int

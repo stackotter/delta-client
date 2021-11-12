@@ -1,6 +1,6 @@
 import Foundation
 
-public struct EntityProperties: ClientboundPacket {
+public struct EntityPropertiesPacket: ClientboundPacket {
   public static let id: Int = 0x58
   
   public var entityId: Int
