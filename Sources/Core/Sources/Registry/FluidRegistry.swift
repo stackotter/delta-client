@@ -40,8 +40,8 @@ public struct FluidRegistry: Codable {
   }
   
   /// Get information about the fluid specified.
-  /// - Parameter id: A biome id.
-  /// - Returns: Fluid information. `nil` if biome id is out of range.
+  /// - Parameter id: A fluid id.
+  /// - Returns: Fluid information. `nil` if fluid id is out of range.
   ///
   /// Will fatally crash if the fluid id doesn't exist. Use wisely.
   public func fluid(withId id: Int) -> Fluid {

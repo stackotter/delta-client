@@ -14,6 +14,7 @@ public enum PixlyzerFormatter {
     let fluidsDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/fluids.min.json")!
     let blocksDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/blocks.min.json")!
     let biomesDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/biomes.min.json")!
+    let entitiesDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/entities.min.json")!
     let shapeRegistryDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/shapes.min.json")!
     
     // Load and decode pixlyzer data
@@ -23,6 +24,8 @@ public enum PixlyzerFormatter {
     let pixlyzerBiomes: [String: PixlyzerBiome] = try downloadJSON(biomesDownloadURL, convertSnakeCase: true)
     log.info("Downloading and decoding pixlyzer blocks")
     let pixlyzerBlocks: [String: PixlyzerBlock] = try downloadJSON(blocksDownloadURL, convertSnakeCase: false)
+    log.info("Downloading and decoding pixlyzer entities")
+    let pixlyzerEntities: [String: PixlyzerEntity] = try downloadJSON(entitiesDownloadURL, convertSnakeCase: true)
     log.info("Downloading and decoding pixlyzer shapes")
     let pixlyzerShapeRegistry: PixlyzerShapeRegistry = try downloadJSON(shapeRegistryDownloadURL, convertSnakeCase: false)
     
@@ -67,6 +70,18 @@ public enum PixlyzerFormatter {
       let biome = Biome(from: pixlyzerBiome, identifier: identifier)
       biomes[biome.id] = biome
     }
+    
+    // Process entities
+    log.info("Processing pixlyzer entity registry")
+    var entities: [EntityKind] = []
+    for (identifier, pixlyzerEntity) in pixlyzerEntities {
+      if let identifier = try? Identifier(identifier) {
+        if let entity = EntityKind(pixlyzerEntity, identifier: identifier) {
+          entities.append(entity)
+        }
+      }
+    }
+    
     // Process shapes
     log.info("Processing pixlyzer shape registry")
     var aabbs: [AxisAlignedBoundingBox] = []
@@ -130,11 +145,13 @@ public enum PixlyzerFormatter {
     let fluidRegistry = FluidRegistry(fluids: fluids)
     let biomeRegistry = BiomeRegistry(biomes: biomes)
     let blockRegistry = BlockRegistry(blocks: blockArray, renderDescriptors: renderDescriptors)
+    let entityRegistry = EntityRegistry(entities: entities)
     
     return Registry(
       blockRegistry: blockRegistry,
       biomeRegistry: biomeRegistry,
-      fluidRegistry: fluidRegistry)
+      fluidRegistry: fluidRegistry,
+      entityRegistry: entityRegistry)
   }
   
   private static func downloadJSON<T: Decodable>(_ url: URL, convertSnakeCase: Bool) throws -> T {
