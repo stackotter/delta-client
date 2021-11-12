@@ -26,15 +26,15 @@ let package = Package(
     // In short, the dependencies for DeltaCore can be found in Sources/Core/Package.swift
     .package(name: "DeltaCore", path: "./Sources/Core"),
     .package(url: "https://github.com/apple/swift-argument-parser", from: "0.5.0"),
-    .package(name: "SwordRPC", url: "https://github.com/PKBeam/SwordRPC", .branch("master")),
+    .package(url: "https://github.com/PKBeam/SwordRPC", .revision("f9831261fcbe6a17243f8839921fb7820e99fa6e")),
   ],
   targets: [
     .executableTarget(
       name: "DeltaClient",
       dependencies: [
         "DynamicShim",
+        "SwordRPC",
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
-        .product(name: "SwordRPC", package: "SwordRPC")
       ],
       path: "Sources/Client"),
     

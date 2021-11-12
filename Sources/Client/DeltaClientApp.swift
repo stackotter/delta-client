@@ -28,6 +28,8 @@ struct DeltaClientApp: App {
     if let pluginsDirectory = arguments.pluginsDirectory {
       StorageManager.default.pluginsDirectory = pluginsDirectory
     }
+    
+    DiscordManager.shared.updateRichPresence(to: .menu)
 
     // Load plugins, registries and resources
     taskQueue.async {
@@ -37,7 +39,6 @@ struct DeltaClientApp: App {
       }
       
       do {
-        DiscordManager.shared.updateRichPresence(with: .menu)
         // Load plugins first
         updateLoadingMessage("Loading plugins")
         do {
