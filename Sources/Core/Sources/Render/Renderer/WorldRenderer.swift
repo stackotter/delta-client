@@ -4,10 +4,8 @@ import simd
 
 /// A renderer that renders a `World`
 class WorldRenderer {
-  /// Render pipeline used for transparent and opaque geometry (non-translucent).
-  var transparentAndOpaquePipelineState: MTLRenderPipelineState
-  /// Render pipeline used for translucent geometry.
-  var translucentPipelineState: MTLRenderPipelineState
+  /// Render pipeline used for rendering world geometry.
+  var renderPipelineState: MTLRenderPipelineState
   /// Depth stencil.
   var depthState: MTLDepthStencilState
   
@@ -57,8 +55,7 @@ class WorldRenderer {
     let blockTexturePalette = resources.blockTexturePalette
     blockTexturePaletteAnimationState = TexturePaletteAnimationState(for: blockTexturePalette)
     blockArrayTexture = try Self.createArrayTexture(palette: blockTexturePalette, animationState: blockTexturePaletteAnimationState, device: device, commandQueue: commandQueue)
-    transparentAndOpaquePipelineState = try Self.createRenderPipelineState(vertex: vertex, fragment: fragment, device: device, translucent: false)
-    translucentPipelineState = try Self.createRenderPipelineState(vertex: vertex, fragment: fragment, device: device, translucent: true)
+    renderPipelineState = try Self.createRenderPipelineState(vertex: vertex, fragment: fragment, device: device, blending: true)
     depthState = try Self.createDepthState(device: device)
     worldUniformBuffers = try Self.createWorldUniformBuffers(device: device, count: numWorldUniformBuffers)
   }
@@ -89,15 +86,15 @@ class WorldRenderer {
     return depthState
   }
   
-  private static func createRenderPipelineState(vertex: MTLFunction, fragment: MTLFunction, device: MTLDevice, translucent: Bool) throws -> MTLRenderPipelineState {
+    private static func createRenderPipelineState(vertex: MTLFunction, fragment: MTLFunction, device: MTLDevice, blending: Bool) throws -> MTLRenderPipelineState {
     let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
-    pipelineStateDescriptor.label = "dev.stackotter.delta-client.WorldRenderer\(translucent ? "-translucent" : "")"
+    pipelineStateDescriptor.label = "dev.stackotter.delta-client.WorldRenderer\(blending ? "-blended" : "")"
     pipelineStateDescriptor.vertexFunction = vertex
     pipelineStateDescriptor.fragmentFunction = fragment
     pipelineStateDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
     pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float
     
-    if translucent {
+    if blending {
       // Setup blending operation
       pipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
       pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
@@ -452,8 +449,7 @@ class WorldRenderer {
   func draw(
     device: MTLDevice,
     view: MTKView,
-    transparentAndOpaqueCommandBuffer: MTLCommandBuffer,
-    translucentCommandBuffer: MTLCommandBuffer,
+    renderCommandBuffer: MTLCommandBuffer,
     camera: Camera,
     commandQueue: MTLCommandQueue
   ) {
@@ -470,41 +466,25 @@ class WorldRenderer {
     stopwatch.stopMeasurement("get visible chunks")
     
     // Get the render pass descriptor as late as possible
-    guard
-      let renderPassDescriptor = view.currentRenderPassDescriptor,
-      let drawableTexture = renderPassDescriptor.colorAttachments[0].texture
+    guard let renderPassDescriptor = view.currentRenderPassDescriptor
     else {
-      log.warning("Failed to get current render pass descriptor and drawable texture")
+      log.warning("Failed to get current render pass descriptor")
       return
     }
     
-    let transparentAndOpaqueRenderDescriptor = renderPassDescriptor
-    transparentAndOpaqueRenderDescriptor.colorAttachments[0].loadAction = .clear
-    // Explicitly tell that depth buffer should be stored.
-    transparentAndOpaqueRenderDescriptor.depthAttachment.storeAction = .store
+    // Create descriptor
+    let renderDescriptor = renderPassDescriptor
+    renderDescriptor.colorAttachments[0].loadAction = .clear
+    renderDescriptor.colorAttachments[0].storeAction = .store
       
-    let translucentRenderDescriptor = MTLRenderPassDescriptor()
-    translucentRenderDescriptor.colorAttachments[0].texture = drawableTexture
-    translucentRenderDescriptor.colorAttachments[0].loadAction = .load
-    translucentRenderDescriptor.colorAttachments[0].storeAction = .store
-    translucentRenderDescriptor.depthAttachment = renderPassDescriptor.depthAttachment
-    translucentRenderDescriptor.depthAttachment.loadAction = .load
-    
-    // Create encoders
-    let transparentAndOpaqueEncoder: MTLRenderCommandEncoder
-    let translucentEncoder: MTLRenderCommandEncoder
+    // Create encoder
+    let renderEncoder: MTLRenderCommandEncoder
     do {
-      transparentAndOpaqueEncoder = try Self.createRenderEncoder(
+      renderEncoder = try Self.createRenderEncoder(
         depthState: depthState,
-        commandBuffer: transparentAndOpaqueCommandBuffer,
-        renderPassDescriptor: transparentAndOpaqueRenderDescriptor,
-        pipelineState: transparentAndOpaquePipelineState)
-      
-      translucentEncoder = try Self.createRenderEncoder(
-        depthState: depthState,
-        commandBuffer: translucentCommandBuffer,
-        renderPassDescriptor: translucentRenderDescriptor,
-        pipelineState: translucentPipelineState)
+        commandBuffer: renderCommandBuffer,
+        renderPassDescriptor: renderDescriptor,
+        pipelineState: renderPipelineState)
     } catch {
       log.warning("Failed to create render command encoder; \(error)")
       return
@@ -512,23 +492,29 @@ class WorldRenderer {
     
     // Encode render pass
     stopwatch.startMeasurement("encode")
-    transparentAndOpaqueEncoder.setFragmentTexture(blockArrayTexture, index: 0)
-    transparentAndOpaqueEncoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
-    
-    translucentEncoder.setFragmentTexture(blockArrayTexture, index: 0)
-    translucentEncoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
-    
+    renderEncoder.setFragmentTexture(blockArrayTexture, index: 0)
+    renderEncoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
+      
+    // MARK: - Render opaque and transparent chunk geometry.
     renderersToRender.forEach { chunkRenderer in
-      chunkRenderer.render(
-        transparentAndOpaqueEncoder: transparentAndOpaqueEncoder,
-        translucentEncoder: translucentEncoder,
+      chunkRenderer.renderTransparentOpaque(
+        renderEncoder: renderEncoder,
         with: device,
         and: camera,
         commandQueue: commandQueue)
     }
-    
-    transparentAndOpaqueEncoder.endEncoding()
-    translucentEncoder.endEncoding()
+      
+    // MARK: - Render translucent chunk geometry afterwards (for correct blending).
+    renderersToRender.forEach { chunkRenderer in
+      chunkRenderer.renderTranslucent(
+        renderEncoder: renderEncoder,
+        with: device,
+        and: camera,
+        sortTranslucent: true,
+        commandQueue: commandQueue)
+    }
+      
+    renderEncoder.endEncoding()
     stopwatch.stopMeasurement("encode")
   }
 }

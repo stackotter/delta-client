@@ -179,6 +179,22 @@ public struct Texture {
     bytes[index + 2] = pixel.r
     bytes[index + 3] = pixel.a
   }
+    
+  /// Sets the alpha components of the texutre to a specified value. Alpha value is bound to a range (0...255 inclusive).
+  public mutating func setAlpha(_ alpha: UInt8) {
+    let clampAlpha = min(max(alpha, 0), 255)
+    for x in 0..<width {
+      for y in 0..<height {
+        let pixel = getPixel(atX: x, y: y)
+        let newPixel = Pixel(
+          r: UInt8(pixel.r),
+          g: UInt8(pixel.g),
+          b: UInt8(pixel.b),
+          a: UInt8(clampAlpha))
+        setPixel(atX: x, y: y, to: newPixel)
+      }
+    }
+  }
   
   /// Divides the rgb components by the alpha component to unpremultiply the alpha.
   public mutating func unpremultiply() {
