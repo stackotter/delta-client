@@ -6,16 +6,23 @@ var stopwatch = Stopwatch(mode: .summary)
 
 // TODO: document render coordinator
 public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDelegate {
+  /// The client to render.
   private var client: Client
   
+  /// The renderer for the current world. Only renders blocks.
   private var worldRenderer: WorldRenderer
+  /// The renderer for rendering entities.
   private var entityRenderer: EntityRenderer
 
+  /// The camera that is rendered from.
   private var camera: Camera
+  /// The device used to render.
   private var device: MTLDevice
-  private var commandQueue: MTLCommandQueue
   
-  private var frame = 0
+  /// The depth stencil state. It's the same for every renderer so it's just made once here.
+  private var depthState: MTLDepthStencilState
+  /// The command queue.
+  private var commandQueue: MTLCommandQueue
   
   // MARK: Init
   
@@ -56,6 +63,13 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       fatalError("Failed to create entity renderer: \(error)")
     }
     
+    // Create depth stencil state
+    do {
+      depthState = try Self.createDepthState(device: device)
+    } catch {
+      fatalError("Failed to create depth state: \(error)")
+    }
+    
     super.init()
     
     // Register listener for changing worlds
@@ -68,25 +82,31 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
   // MARK: Render
   
   public func draw(in view: MTKView) {
-    stopwatch.startMeasurement("whole frame")
+    // TODO: Get the render pass descriptor as late as possible
+    guard
+      let commandBuffer = commandQueue.makeCommandBuffer(),
+      let renderPassDescriptor = view.currentRenderPassDescriptor,
+      let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
+    else {
+      log.warning("Failed to create command buffer and render encoder")
+      return
+    }
     
     updateCamera(client.game.player, view)
     let uniformsBuffer = camera.getUniformsBuffer()
     
-    guard let commandBuffer = commandQueue.makeCommandBuffer() else {
-      log.warning("Failed to create render command buffers")
-      return
-    }
+    renderEncoder.setDepthStencilState(depthState)
+    renderEncoder.setFrontFacing(.counterClockwise)
+    renderEncoder.setCullMode(.front)
     
-    stopwatch.startMeasurement("world renderer")
     worldRenderer.draw(
       device: device,
       uniformsBuffer: uniformsBuffer,
       view: view,
+      renderEncoder: renderEncoder,
       renderCommandBuffer: commandBuffer,
       camera: camera,
       commandQueue: commandQueue)
-    stopwatch.stopMeasurement("world renderer")
     
     entityRenderer.render(
       view,
@@ -94,22 +114,32 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       camera: camera,
       nexus: client.game.nexus,
       device: device,
-      commandBuffer: commandBuffer,
-      commandQueue: commandQueue)
+      renderEncoder: renderEncoder)
     
     guard let drawable = view.currentDrawable else {
       log.warning("Failed to get current drawable")
       return
     }
     
+    renderEncoder.endEncoding()
     commandBuffer.present(drawable)
     commandBuffer.commit()
-    
-//    logFrame()
-    stopwatch.stopMeasurement("whole frame")
   }
   
   // MARK: Helper
+  
+  private static func createDepthState(device: MTLDevice) throws -> MTLDepthStencilState {
+    let depthDescriptor = MTLDepthStencilDescriptor()
+    depthDescriptor.depthCompareFunction = .lessEqual
+    depthDescriptor.isDepthWriteEnabled = true
+    
+    guard let depthState = device.makeDepthStencilState(descriptor: depthDescriptor) else {
+      log.critical("Failed to create depth stencil state")
+      throw RenderError.failedToCreateWorldDepthStencilState
+    }
+    
+    return depthState
+  }
   
   public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) { }
   
@@ -148,15 +178,6 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
         camera.setFovY(fov)
       default:
         break
-    }
-  }
-  
-  private func logFrame() {
-    frame += 1
-    if frame % 100 == 0 {
-      stopwatch.summary(repeats: 100)
-      stopwatch.reset()
-      print("")
     }
   }
 }

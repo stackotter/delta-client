@@ -6,8 +6,6 @@ import simd
 class WorldRenderer {
   /// Render pipeline used for rendering world geometry.
   var renderPipelineState: MTLRenderPipelineState
-  /// Depth stencil.
-  var depthState: MTLDepthStencilState
   
   var resources: ResourcePack.Resources
   var blockArrayTexture: MTLTexture
@@ -26,9 +24,11 @@ class WorldRenderer {
     guard let bundle = Bundle(url: Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/DeltaCore_DeltaCore.bundle")) else {
       throw RenderError.failedToGetBundle
     }
+    
     guard let libraryURL = bundle.url(forResource: "default", withExtension: "metallib") else {
       throw RenderError.failedToLocateMetallib
     }
+    
     let library: MTLLibrary
     do {
       library = try device.makeLibrary(URL: libraryURL)
@@ -52,20 +52,6 @@ class WorldRenderer {
     blockTexturePaletteAnimationState = TexturePaletteAnimationState(for: blockTexturePalette)
     blockArrayTexture = try Self.createArrayTexture(palette: blockTexturePalette, animationState: blockTexturePaletteAnimationState, device: device, commandQueue: commandQueue)
     renderPipelineState = try Self.createRenderPipelineState(vertex: vertex, fragment: fragment, device: device)
-    depthState = try Self.createDepthState(device: device)
-  }
-  
-  private static func createDepthState(device: MTLDevice) throws -> MTLDepthStencilState {
-    let depthDescriptor = MTLDepthStencilDescriptor()
-    depthDescriptor.depthCompareFunction = .lessEqual
-    depthDescriptor.isDepthWriteEnabled = true
-    
-    guard let depthState = device.makeDepthStencilState(descriptor: depthDescriptor) else {
-      log.critical("Failed to create depth stencil state")
-      throw RenderError.failedToCreateWorldDepthStencilState
-    }
-    
-    return depthState
   }
   
   private static func createRenderPipelineState(vertex: MTLFunction, fragment: MTLFunction, device: MTLDevice) throws -> MTLRenderPipelineState {
@@ -422,6 +408,7 @@ class WorldRenderer {
     device: MTLDevice,
     uniformsBuffer: MTLBuffer,
     view: MTKView,
+    renderEncoder: MTLRenderCommandEncoder,
     renderCommandBuffer: MTLCommandBuffer,
     camera: Camera,
     commandQueue: MTLCommandQueue
@@ -436,34 +423,9 @@ class WorldRenderer {
     let renderersToRender = getVisibleChunkRenderers(camera: camera)
     stopwatch.stopMeasurement("get visible chunks")
     
-    // Get the render pass descriptor as late as possible
-    guard let renderPassDescriptor = view.currentRenderPassDescriptor
-    else {
-      log.warning("Failed to get current render pass descriptor")
-      return
-    }
-    
-    // Create descriptor
-    let renderDescriptor = renderPassDescriptor
-    renderDescriptor.colorAttachments[0].loadAction = .clear
-    renderDescriptor.colorAttachments[0].storeAction = .store
-    renderDescriptor.depthAttachment.storeAction = .store
-      
-    // Create encoder
-    let renderEncoder: MTLRenderCommandEncoder
-    do {
-      renderEncoder = try Self.createRenderEncoder(
-        depthState: depthState,
-        commandBuffer: renderCommandBuffer,
-        renderPassDescriptor: renderDescriptor,
-        pipelineState: renderPipelineState)
-    } catch {
-      log.warning("Failed to create render command encoder; \(error)")
-      return
-    }
-    
     // Encode render pass
     stopwatch.startMeasurement("encode")
+    renderEncoder.setRenderPipelineState(renderPipelineState)
     renderEncoder.setFragmentTexture(blockArrayTexture, index: 0)
     renderEncoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
       
@@ -485,8 +447,6 @@ class WorldRenderer {
         sortTranslucent: true,
         commandQueue: commandQueue)
     }
-      
-    renderEncoder.endEncoding()
     stopwatch.stopMeasurement("encode")
   }
 }
