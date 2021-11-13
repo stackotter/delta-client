@@ -9,6 +9,8 @@ public struct Game {
   public var tickScheduler: TickScheduler
   /// The event bus for emitting events.
   public var eventBus = EventBus()
+  /// Maps Vanilla entity Ids to identifiers of entities in the ``Nexus``.
+  private var entityIdToEntityIdentifier: [Int: EntityIdentifier] = [:]
   
   /// The player.
   public var player: Player
@@ -45,8 +47,12 @@ public struct Game {
   
   /// Creates a game with default properties. Creates the player. Starts the tick loop.
   public init() {
-    player = Player(nexus)
     tickScheduler = TickScheduler(nexus)
+    
+    player = Player()
+    var player = player
+    player.add(to: &self)
+    self.player = player
     
     // Add systems
     tickScheduler.addSystem(physicsSystem)
@@ -55,6 +61,54 @@ public struct Game {
     tickScheduler.ticksPerSecond = 20
     tickScheduler.startTickLoop()
   }
+  
+  // MARK: Entity
+  
+  /// A custom method for creating entities with value type components.
+  ///
+  /// The builder can handle up to 20 components. This should be enough in most cases but if not, components can be added to the nexus directly, this is just more convenient.
+  /// The builder can only work for up to 20 components because of a limitation regarding result builders.
+  @discardableResult
+  public mutating func createEntity(id: Int, @BoxedComponentsBuilder using builder: () -> [Component]) -> Entity {
+    let entity = nexus.createEntity(with: builder())
+    entityIdToEntityIdentifier[id] = entity.identifier
+    return entity
+  }
+  
+  /// Returns the entity with the given vanilla id if it exists.
+  public func entity(id: Int) -> Entity? {
+    if let identifier = entityIdToEntityIdentifier[id] {
+      return nexus.entity(from: identifier)
+    }
+    return nil
+  }
+  
+  /// Returns the entity with the given vanilla id if it exists.
+  public func component<T>(entityId: Int, _ componentType: T.Type) -> Box<T>? {
+    if let identifier = entityIdToEntityIdentifier[entityId] {
+      return nexus.entity(from: identifier).get(component: Box<T>.self)
+    }
+    return nil
+  }
+  
+  /// Removes the entity with the given vanilla id from the game if it exists.
+  public func removeEntity(id: Int) {
+    if let identifier = entityIdToEntityIdentifier[id] {
+      nexus.destroy(entityId: identifier)
+    }
+  }
+  
+  /// Updates an entity's id if it exists.
+  public mutating func updateEntityId(_ id: Int, to newId: Int) {
+    if let identifier = entityIdToEntityIdentifier.removeValue(forKey: id) {
+      entityIdToEntityIdentifier[newId] = identifier
+      if let idComponent = nexus.entity(from: identifier).get(component: Box<EntityId>.self) {
+        idComponent.value.id = newId
+      }
+    }
+  }
+  
+  // MARK: Lifecycle
   
   /// Updates the game with information received in a ``JoinGamePacket``.
   public mutating func update(packet: JoinGamePacket, client: Client) {
@@ -67,6 +121,7 @@ public struct Game {
     player.attributes.previousGamemode = packet.previousGamemode
     player.gamemode.gamemode = packet.gamemode
     player.attributes.isHardcore = packet.isHardcore
+    updateEntityId(player.entityId.id, to: packet.playerEntityId)
     
     world = World(from: packet, batching: client.batchWorldUpdates)
   }

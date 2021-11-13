@@ -3,9 +3,13 @@ import Foundation
 public struct SpawnPlayerPacket: ClientboundPacket {
   public static let id: Int = 0x04
   
+  /// The player's entity id.
   public var entityId: Int
+  /// The player's UUID.
   public var playerUUID: UUID
+  /// The player's position.
   public var position: EntityPosition
+  /// The player's rotation.
   public var rotation: EntityRotation
   
   public init(from packetReader: inout PacketReader) throws {
@@ -16,10 +20,11 @@ public struct SpawnPlayerPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.game.nexus.createDeltaEntity {
+    client.game.createEntity(id: entityId) {
       PlayerEntity()
       EntityId(entityId)
       EntityUUID(playerUUID)
+      EntityOnGround(true)
       position
       rotation
     }

@@ -8,7 +8,7 @@ public struct SpawnLivingEntityPacket: ClientboundPacket {
   public var type: Int
   public var position: EntityPosition
   public var rotation: EntityRotation
-  public var headPitch: Float
+  public var headYaw: Float
   public var velocity: EntityVelocity
   
   public init(from packetReader: inout PacketReader) throws {
@@ -17,7 +17,7 @@ public struct SpawnLivingEntityPacket: ClientboundPacket {
     type = packetReader.readVarInt()
     position = packetReader.readEntityPosition()
     rotation = packetReader.readEntityRotation()
-    headPitch = packetReader.readAngle()
+    headYaw = packetReader.readAngle()
     velocity = packetReader.readEntityVelocity()
   }
   
@@ -27,15 +27,16 @@ public struct SpawnLivingEntityPacket: ClientboundPacket {
       return
     }
     
-    client.game.nexus.createDeltaEntity {
+    client.game.createEntity(id: entityId) {
       LivingEntity() // Mark it as a living entity
       EntityId(entityId)
       EntityUUID(entityUUID)
       EntityKindId(type)
+      EntityOnGround(true)
       position
       rotation
       velocity
-      EntityHeadPitch(headPitch)
+      EntityHeadYaw(headYaw)
     }
   }
 }

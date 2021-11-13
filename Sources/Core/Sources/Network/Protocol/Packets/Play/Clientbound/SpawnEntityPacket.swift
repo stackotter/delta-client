@@ -29,22 +29,24 @@ public struct SpawnEntityPacket: ClientboundPacket {
   
   public func handle(for client: Client) throws {
     if let velocity = velocity {
-      client.game.nexus.createEntityWithStructComponents {
+      client.game.createEntity(id: entityId) {
         NonLivingEntity()
         EntityId(entityId)
         ObjectUUID(objectUUID)
         EntityKindId(type)
+        EntityOnGround(true)
         data
         position
         rotation
         velocity
       }
     } else {
-      client.game.nexus.createEntityWithStructComponents {
+      client.game.createEntity(id: entityId) {
         NonLivingEntity()
         EntityId(entityId)
         ObjectUUID(objectUUID)
         EntityKindId(type)
+        EntityOnGround(true)
         data
         position
         rotation

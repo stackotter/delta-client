@@ -10,4 +10,10 @@ public struct EntityHeadLookPacket: ClientboundPacket {
     entityId = packetReader.readVarInt()
     headYaw = packetReader.readAngle()
   }
+  
+  public func handle(for client: Client) throws {
+    if let component = client.game.component(entityId: entityId, EntityHeadYaw.self) {
+      component.value.yaw = headYaw
+    }
+  }
 }

@@ -3,7 +3,17 @@ import Foundation
 
 /// Information about the player. Allows easy access to the player's components.
 public struct Player {
-  public var entity: Entity
+  public var entity: Entity!
+  
+  public var entityId: EntityId {
+    get { entity.get(component: Box<EntityId>.self)!.value }
+    set { entity.get(component: Box<EntityId>.self)!.value = newValue }
+  }
+  
+  public var onGround: EntityOnGround {
+    get { entity.get(component: Box<EntityOnGround>.self)!.value }
+    set { entity.get(component: Box<EntityOnGround>.self)!.value = newValue }
+  }
   
   public var experience: EntityExperience {
     get { entity.get(component: Box<EntityExperience>.self)!.value }
@@ -71,12 +81,20 @@ public struct Player {
   }
   
   /// Creates the player.
-  /// - Parameter nexus: The nexus to create the player's entity in.
-  public init(_ nexus: Nexus) {
-    entity = nexus.createDeltaEntity {
+  ///
+  /// ``add(to:)`` must be called before the `Player` is used.
+  public init() {}
+  
+  /// Adds the player to a game.
+  ///
+  /// - Parameter nexus: The game to create the player's entity in.
+  public mutating func add(to game: inout Game) {
+    entity = game.createEntity(id: -1) {
+      EntityId(-1)
       LivingEntity() // Mark it as a living entity
       ClientPlayerEntity() // Mark it as the current player
       PlayerEntity() // Mark it as a player
+      EntityOnGround(true)
       EntityPosition(x: 0, y: 0, z: 0)
       EntityTargetPosition(position: EntityPosition(x: 0, y: 0, z: 0))
       EntityRotation(pitch: 0.0, yaw: 0.0)
