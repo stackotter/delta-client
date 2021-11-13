@@ -17,10 +17,6 @@ class WorldRenderer {
   var client: Client
   var chunkRenderers: [ChunkPosition: ChunkRenderer] = [:]
   
-  var worldUniformBuffers: [MTLBuffer] = []
-  var numWorldUniformBuffers = 3
-  var worldUniformBufferIndex = 0
-  
   /// A set containing all chunks which are currently preparing.
   var preparingChunks: Set<ChunkPosition> = []
   
@@ -57,20 +53,6 @@ class WorldRenderer {
     blockArrayTexture = try Self.createArrayTexture(palette: blockTexturePalette, animationState: blockTexturePaletteAnimationState, device: device, commandQueue: commandQueue)
     renderPipelineState = try Self.createRenderPipelineState(vertex: vertex, fragment: fragment, device: device)
     depthState = try Self.createDepthState(device: device)
-    worldUniformBuffers = try Self.createWorldUniformBuffers(device: device, count: numWorldUniformBuffers)
-  }
-  
-  private static func createWorldUniformBuffers(device: MTLDevice, count: Int) throws -> [MTLBuffer] {
-    var buffers: [MTLBuffer] = []
-    for _ in 0..<count {
-      guard let uniformBuffer = device.makeBuffer(length: MemoryLayout<Uniforms>.stride, options: []) else {
-        throw RenderError.failedtoCreateWorldUniformBuffers
-      }
-      
-      uniformBuffer.label = "worldUniformBuffer"
-      buffers.append(uniformBuffer)
-    }
-    return buffers
   }
   
   private static func createDepthState(device: MTLDevice) throws -> MTLDepthStencilState {
@@ -418,14 +400,6 @@ class WorldRenderer {
     return renderersToRender
   }
   
-  func updateAndGetUniformsBuffer(for camera: Camera) -> MTLBuffer {
-    var worldUniforms = createWorldUniforms(for: camera)
-    var buffer = worldUniformBuffers[worldUniformBufferIndex]
-    worldUniformBufferIndex = (worldUniformBufferIndex + 1) % worldUniformBuffers.count
-    populateWorldUniformBuffer(&buffer, with: &worldUniforms)
-    return buffer
-  }
-  
   private static func createRenderEncoder(
     depthState: MTLDepthStencilState,
     commandBuffer: MTLCommandBuffer,
@@ -446,6 +420,7 @@ class WorldRenderer {
   
   func draw(
     device: MTLDevice,
+    uniformsBuffer: MTLBuffer,
     view: MTKView,
     renderCommandBuffer: MTLCommandBuffer,
     camera: Camera,
@@ -456,8 +431,6 @@ class WorldRenderer {
     stopwatch.startMeasurement("update texture")
     resources.blockTexturePalette.updateArrayTexture(arrayTexture: blockArrayTexture, device: device, animationState: blockTexturePaletteAnimationState, updatedTextures: updatedTextures, commandQueue: commandQueue)
     stopwatch.stopMeasurement("update texture")
-    
-    let uniformsBuffer = updateAndGetUniformsBuffer(for: camera)
     
     stopwatch.startMeasurement("get visible chunks")
     let renderersToRender = getVisibleChunkRenderers(camera: camera)

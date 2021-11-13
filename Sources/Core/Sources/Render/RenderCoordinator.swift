@@ -36,20 +36,24 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     // Setup camera
     let fovDegrees: Float = 90
     let fovRadians = fovDegrees / 180 * Float.pi
-    camera = Camera()
-    camera.setFovY(fovRadians)
+    do {
+      camera = try Camera(device)
+      camera.setFovY(fovRadians)
+    } catch {
+      fatalError("Failed to create camera: \(error)")
+    }
     
     // Create world renderer
     do {
       worldRenderer = try WorldRenderer(device: device, world: client.game.world, client: client, resources: client.resourcePack.vanillaResources, commandQueue: commandQueue)
     } catch {
-      fatalError("Failed to create world renderer")
+      fatalError("Failed to create world renderer: \(error)")
     }
     
     do {
       entityRenderer = try EntityRenderer(device, commandQueue)
     } catch {
-      fatalError("Failed to create entity renderer")
+      fatalError("Failed to create entity renderer: \(error)")
     }
     
     super.init()
@@ -67,6 +71,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     stopwatch.startMeasurement("whole frame")
     
     updateCamera(client.game.player, view)
+    let uniformsBuffer = camera.getUniformsBuffer()
     
     guard let commandBuffer = commandQueue.makeCommandBuffer() else {
       log.warning("Failed to create render command buffers")
@@ -76,6 +81,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     stopwatch.startMeasurement("world renderer")
     worldRenderer.draw(
       device: device,
+      uniformsBuffer: uniformsBuffer,
       view: view,
       renderCommandBuffer: commandBuffer,
       camera: camera,
@@ -84,6 +90,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     
     entityRenderer.render(
       view,
+      uniformsBuffer: uniformsBuffer,
       camera: camera,
       nexus: client.game.nexus,
       device: device,

@@ -115,7 +115,7 @@ public class EntityRenderer {
     indexCount = indices.count
   }
   
-  public func render(_ view: MTKView, camera: Camera, nexus: Nexus, device: MTLDevice, commandBuffer: MTLCommandBuffer, commandQueue: MTLCommandQueue) {
+  public func render(_ view: MTKView, uniformsBuffer: MTLBuffer, camera: Camera, nexus: Nexus, device: MTLDevice, commandBuffer: MTLCommandBuffer, commandQueue: MTLCommandQueue) {
     let entities = nexus.family(requiresAll: Box<EntityPosition>.self, Box<EntityKindId>.self, excludesAll: Box<ClientPlayerEntity>.self)
     guard !entities.isEmpty else {
       return
@@ -147,9 +147,6 @@ public class EntityRenderer {
       log.error("Failed to create entity render encoder")
       return
     }
-    
-    var uniforms = Uniforms(transformation: camera.getFrustum().worldToClip)
-    uniformsBuffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<Uniforms>.stride)
     
     let instanceUniformsBuffer = device.makeBuffer(bytes: &entityUniforms, length: entityUniforms.count * MemoryLayout<Uniforms>.stride, options: .storageModeShared)
     

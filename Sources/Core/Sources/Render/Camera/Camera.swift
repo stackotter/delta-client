@@ -1,28 +1,58 @@
 import Foundation
 import simd
+import Metal
 
 /// Holds information about a camera to render from.
 public struct Camera {
   /// The vertical FOV.
-  private(set) var fovY: Float = 0.5 * .pi // 90deg
+  public private(set) var fovY: Float = 0.5 * .pi // 90deg
   /// The near clipping plane.
-  private(set) var nearDistance: Float = 0.01
+  public private(set) var nearDistance: Float = 0.01
   /// The far clipping plant.
-  private(set) var farDistance: Float = 1000
+  public private(set) var farDistance: Float = 1000
   
   /// The aspect ratio.
-  private(set) var aspect: Float = 1
+  public private(set) var aspect: Float = 1
   /// This camera's position.
-  private(set) var position: SIMD3<Float> = [0, 0, 0]
+  public private(set) var position: SIMD3<Float> = [0, 0, 0]
   
   /// This camera's rotation around the x axis (pitch).
-  private(set) var xRot: Float = 0
+  public private(set) var xRot: Float = 0
   /// This camera's rotation aroudn the y axis (yaw).
-  private(set) var yRot: Float = 0
+  public private(set) var yRot: Float = 0
   
   private var frustum: Frustum?
   
-  /// Sets this camera's vertical FOV. Horizontal FOV is calculated from vertical FOV and aspect ratio.
+  private var uniformsBuffers: [MTLBuffer] = []
+  private var uniformsIndex = 0
+  private var uniformsCount = 3
+  
+  public init(_ device: MTLDevice) throws {
+    for i in 0..<uniformsCount {
+      guard let buffer = device.makeBuffer(length: MemoryLayout<Uniforms>.stride, options: .storageModeShared) else {
+        throw RenderError.failedtoCreateWorldUniformBuffers
+      }
+      buffer.label = "dev.stackotter.Camera.uniforms-\(i)"
+      uniformsBuffers.append(buffer)
+    }
+  }
+  
+  /// Update a buffer to contain the current world to clip uniforms.
+  public mutating func getUniformsBuffer() -> MTLBuffer {
+    let buffer = uniformsBuffers[uniformsIndex]
+    uniformsIndex = (uniformsIndex + 1) % uniformsCount
+    var uniforms = getUniforms()
+    buffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<Uniforms>.stride)
+    return buffer
+  }
+  
+  /// Get the world to clip uniforms.
+  public mutating func getUniforms() -> Uniforms {
+    let transformation = getFrustum().worldToClip
+    return Uniforms(transformation: transformation)
+  }
+  
+  /// Sets this camera's vertical FOV. Horizontal FOV is calculated from vertical FOV and aspect ratio.
   public mutating func setFovY(_ fovY: Float) {
     self.fovY = fovY
     frustum = nil
