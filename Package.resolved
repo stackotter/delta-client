@@ -113,7 +113,7 @@
         "package": "SwordRPC",
         "repositoryURL": "https://github.com/PKBeam/SwordRPC",
         "state": {
-          "branch": "master",
+          "branch": null,
           "revision": "f9831261fcbe6a17243f8839921fb7820e99fa6e",
           "version": null
         }

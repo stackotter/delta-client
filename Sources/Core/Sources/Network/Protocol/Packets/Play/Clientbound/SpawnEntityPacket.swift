@@ -1,4 +1,5 @@
 import Foundation
+import FirebladeECS
 
 public struct SpawnEntityPacket: ClientboundPacket {
   public static let id: Int = 0x00
@@ -28,25 +29,25 @@ public struct SpawnEntityPacket: ClientboundPacket {
   
   public func handle(for client: Client) throws {
     if let velocity = velocity {
-      client.game.nexus.createEntity {
-        Box(NonLivingEntity())
-        Box(EntityId(entityId))
-        Box(ObjectUUID(objectUUID))
-        Box(EntityKindId(type))
-        Box(data)
-        Box(position)
-        Box(rotation)
-        Box(velocity)
+      client.game.nexus.createEntityWithStructComponents {
+        NonLivingEntity()
+        EntityId(entityId)
+        ObjectUUID(objectUUID)
+        EntityKindId(type)
+        data
+        position
+        rotation
+        velocity
       }
     } else {
-      client.game.nexus.createEntity {
-        Box(NonLivingEntity())
-        Box(EntityId(entityId))
-        Box(ObjectUUID(objectUUID))
-        Box(EntityKindId(type))
-        Box(data)
-        Box(position)
-        Box(rotation)
+      client.game.nexus.createEntityWithStructComponents {
+        NonLivingEntity()
+        EntityId(entityId)
+        ObjectUUID(objectUUID)
+        EntityKindId(type)
+        data
+        position
+        rotation
       }
     }
   }

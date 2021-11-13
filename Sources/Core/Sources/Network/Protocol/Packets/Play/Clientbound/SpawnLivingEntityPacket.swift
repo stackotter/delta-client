@@ -22,21 +22,20 @@ public struct SpawnLivingEntityPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) {
-    let entityKind: EntityKind
     guard type < Registry.shared.entityRegistry.entities.count && type >= 0 else {
       log.warning("Entity spawned with invalid type id: \(type)")
       return
     }
     
-    let entity = client.game.nexus.createEntity {
-      Box(LivingEntity()) // Mark it as a living entity
-      Box(EntityId(entityId))
-      Box(EntityUUID(entityUUID))
-      Box(EntityKindId(type))
-      Box(position)
-      Box(rotation)
-      Box(velocity)
-      Box(EntityHeadPitch(headPitch))
+    client.game.nexus.createDeltaEntity {
+      LivingEntity() // Mark it as a living entity
+      EntityId(entityId)
+      EntityUUID(entityUUID)
+      EntityKindId(type)
+      position
+      rotation
+      velocity
+      EntityHeadPitch(headPitch)
     }
   }
 }

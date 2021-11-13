@@ -14,4 +14,14 @@ public struct SpawnPlayerPacket: ClientboundPacket {
     position = packetReader.readEntityPosition()
     rotation = packetReader.readEntityRotation()
   }
+  
+  public func handle(for client: Client) throws {
+    client.game.nexus.createDeltaEntity {
+      PlayerEntity()
+      EntityId(entityId)
+      EntityUUID(playerUUID)
+      position
+      rotation
+    }
+  }
 }

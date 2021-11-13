@@ -73,22 +73,22 @@ public struct Player {
   /// Creates the player.
   /// - Parameter nexus: The nexus to create the player's entity in.
   public init(_ nexus: Nexus) {
-    entity = nexus.createEntity {
-      Box(LivingEntity()) // Mark it as a living entity
-      Box(ClientPlayerEntity()) // Mark it as the current player
-      Box(PlayerEntity()) // Mark it as a player
-      Box(EntityPosition(x: 0, y: 0, z: 0))
-      Box(EntityTargetPosition(position: EntityPosition(x: 0, y: 0, z: 0)))
-      Box(EntityRotation(pitch: 0.0, yaw: 0.0))
-      Box(EntityVelocity(x: 0.0, y: 0.0, z: 0.0))
-      Box(EntityExperience())
-      Box(EntityFlying())
-      Box(EntityHealth())
-      Box(EntityNutrition())
-      Box(PlayerAttributes())
-      Box(PlayerGamemode())
-      Box(PlayerInventory())
-      Box(PlayerInput())
+    entity = nexus.createDeltaEntity {
+      LivingEntity() // Mark it as a living entity
+      ClientPlayerEntity() // Mark it as the current player
+      PlayerEntity() // Mark it as a player
+      EntityPosition(x: 0, y: 0, z: 0)
+      EntityTargetPosition(position: EntityPosition(x: 0, y: 0, z: 0))
+      EntityRotation(pitch: 0.0, yaw: 0.0)
+      EntityVelocity(x: 0.0, y: 0.0, z: 0.0)
+      EntityExperience()
+      EntityFlying()
+      EntityHealth()
+      EntityNutrition()
+      PlayerAttributes()
+      PlayerGamemode()
+      PlayerInventory()
+      PlayerInput()
     }
   }
   
