@@ -8,7 +8,7 @@ public enum MeshError: LocalizedError {
 /// Holds and renders geometry data.
 public struct Mesh {
   /// The vertices in the mesh.
-  public var vertices: [Vertex] = []
+  public var vertices: [BlockVertex] = []
   /// The vertex windings.
   public var indices: [UInt32] = []
   /// The mesh's model to world transformation matrix.
@@ -37,7 +37,7 @@ public struct Mesh {
   public init() {}
   
   /// Create a new populated mesh.
-  public init(vertices: [Vertex], indices: [UInt32], uniforms: Uniforms) {
+  public init(vertices: [BlockVertex], indices: [UInt32], uniforms: Uniforms) {
     self.vertices = vertices
     self.indices = indices
     self.uniforms = uniforms

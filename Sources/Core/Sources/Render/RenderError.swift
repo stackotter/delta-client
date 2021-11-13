@@ -17,8 +17,14 @@ public enum RenderError: LocalizedError {
   case failedToCreateWorldRenderPipelineState(Error)
   /// Failed to create the depth stencil state for the world renderer.
   case failedToCreateWorldDepthStencilState
+  /// Failed to create the render pipeline state for the entity renderer.
+  case failedToCreateEntityRenderPipelineState(Error)
+  /// Failed to create the depth stencil state for the entity renderer.
+  case failedToCreateEntityDepthStencilState
   /// Failed to create the block texture array.
   case failedToCreateBlockTextureArray(Error)
   /// Failed to create render encoder for a render pipeline.
   case failedToCreateRenderEncoder(String)
+  /// Failed to create geometry buffers for the entity renderer.
+  case failedToCreateEntityGeometryBuffers
 }

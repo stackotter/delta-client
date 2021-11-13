@@ -35,7 +35,7 @@ public struct Player {
     set { entity.get(component: Box<EntityNutrition>.self)!.value = newValue }
   }
   
-  /// The player's position, updated once per tick.
+  /// The player's position.
   public var position: EntityPosition {
     get { entity.get(component: Box<EntityPosition>.self)!.value }
     set {
@@ -94,6 +94,7 @@ public struct Player {
       LivingEntity() // Mark it as a living entity
       ClientPlayerEntity() // Mark it as the current player
       PlayerEntity() // Mark it as a player
+      EntityKindId(Registry.shared.entityRegistry.identifierToEntityId[Identifier(name: "player")]!)
       EntityOnGround(true)
       EntityPosition(x: 0, y: 0, z: 0)
       EntityTargetPosition(position: EntityPosition(x: 0, y: 0, z: 0))

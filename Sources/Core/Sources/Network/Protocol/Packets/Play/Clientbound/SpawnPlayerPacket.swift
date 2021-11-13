@@ -23,6 +23,7 @@ public struct SpawnPlayerPacket: ClientboundPacket {
     client.game.createEntity(id: entityId) {
       PlayerEntity()
       EntityId(entityId)
+      EntityKindId(Registry.shared.entityRegistry.identifierToEntityId[Identifier(name: "player")]!)
       EntityUUID(playerUUID)
       EntityOnGround(true)
       position

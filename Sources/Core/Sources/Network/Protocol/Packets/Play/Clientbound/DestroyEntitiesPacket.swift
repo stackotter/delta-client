@@ -1,5 +1,4 @@
-import Foundation
-
+/// Removes entities from the game (either dead or disconnected or outside render distance).
 public struct DestroyEntitiesPacket: ClientboundPacket {
   public static let id: Int = 0x37
   
@@ -11,6 +10,12 @@ public struct DestroyEntitiesPacket: ClientboundPacket {
     for _ in 0..<count {
       let entityId = packetReader.readVarInt()
       entityIds.append(entityId)
+    }
+  }
+  
+  public func handle(for client: Client) throws {
+    for entityId in entityIds {
+      client.game.removeEntity(id: entityId)
     }
   }
 }

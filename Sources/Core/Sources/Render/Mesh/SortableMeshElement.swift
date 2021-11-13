@@ -5,14 +5,14 @@ public struct SortableMeshElement {
   /// The element's unique id within its mesh.
   public var id: Int
   /// The vertex data.
-  public var vertices: [Vertex] = []
+  public var vertices: [BlockVertex] = []
   /// The vertex windings.
   public var indices: [UInt32] = []
   /// The position of the center of the mesh.
   public var centerPosition: SIMD3<Float>
   
   /// Create a new element.
-  public init(id: Int = 0, vertices: [Vertex] = [], indices: [UInt32] = [], centerPosition: SIMD3<Float>) {
+  public init(id: Int = 0, vertices: [BlockVertex] = [], indices: [UInt32] = [], centerPosition: SIMD3<Float>) {
     self.id = id
     self.vertices = vertices
     self.indices = indices

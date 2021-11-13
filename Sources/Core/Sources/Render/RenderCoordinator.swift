@@ -8,14 +8,14 @@ var stopwatch = Stopwatch(mode: .summary)
 public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDelegate {
   private var client: Client
   
-  private var camera: Camera
   private var worldRenderer: WorldRenderer
-  
+  private var entityRenderer: EntityRenderer
+
+  private var camera: Camera
+  private var device: MTLDevice
   private var commandQueue: MTLCommandQueue
   
   private var frame = 0
-  
-  private var device: MTLDevice
   
   // MARK: Init
   
@@ -44,6 +44,12 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       worldRenderer = try WorldRenderer(device: device, world: client.game.world, client: client, resources: client.resourcePack.vanillaResources, commandQueue: commandQueue)
     } catch {
       fatalError("Failed to create world renderer")
+    }
+    
+    do {
+      entityRenderer = try EntityRenderer(device, commandQueue)
+    } catch {
+      fatalError("Failed to create entity renderer")
     }
     
     super.init()
@@ -76,6 +82,14 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       commandQueue: commandQueue)
     stopwatch.stopMeasurement("world renderer")
     
+    entityRenderer.render(
+      view,
+      camera: camera,
+      nexus: client.game.nexus,
+      device: device,
+      commandBuffer: commandBuffer,
+      commandQueue: commandQueue)
+    
     guard let drawable = view.currentDrawable else {
       log.warning("Failed to get current drawable")
       return
@@ -84,7 +98,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     commandBuffer.present(drawable)
     commandBuffer.commit()
     
-    logFrame()
+//    logFrame()
     stopwatch.stopMeasurement("whole frame")
   }
   

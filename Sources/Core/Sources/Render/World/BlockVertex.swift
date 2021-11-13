@@ -2,7 +2,7 @@ import Foundation
 import simd
 
 /// The vertex format used by the chunk block shader.
-public struct Vertex {
+public struct BlockVertex {
   let x: Float
   let y: Float
   let z: Float

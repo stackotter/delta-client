@@ -55,7 +55,7 @@ class WorldRenderer {
     let blockTexturePalette = resources.blockTexturePalette
     blockTexturePaletteAnimationState = TexturePaletteAnimationState(for: blockTexturePalette)
     blockArrayTexture = try Self.createArrayTexture(palette: blockTexturePalette, animationState: blockTexturePaletteAnimationState, device: device, commandQueue: commandQueue)
-    renderPipelineState = try Self.createRenderPipelineState(vertex: vertex, fragment: fragment, device: device, blending: true)
+    renderPipelineState = try Self.createRenderPipelineState(vertex: vertex, fragment: fragment, device: device)
     depthState = try Self.createDepthState(device: device)
     worldUniformBuffers = try Self.createWorldUniformBuffers(device: device, count: numWorldUniformBuffers)
   }
@@ -86,24 +86,22 @@ class WorldRenderer {
     return depthState
   }
   
-    private static func createRenderPipelineState(vertex: MTLFunction, fragment: MTLFunction, device: MTLDevice, blending: Bool) throws -> MTLRenderPipelineState {
+  private static func createRenderPipelineState(vertex: MTLFunction, fragment: MTLFunction, device: MTLDevice) throws -> MTLRenderPipelineState {
     let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
-    pipelineStateDescriptor.label = "dev.stackotter.delta-client.WorldRenderer\(blending ? "-blended" : "")"
+    pipelineStateDescriptor.label = "dev.stackotter.delta-client.WorldRenderer"
     pipelineStateDescriptor.vertexFunction = vertex
     pipelineStateDescriptor.fragmentFunction = fragment
     pipelineStateDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
     pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float
     
-    if blending {
-      // Setup blending operation
-      pipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
-      pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
-      pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
-      pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
-      pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .zero
-      pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
-      pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .zero
-    }
+    // Setup blending operation
+    pipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
+    pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
+    pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
+    pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+    pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .zero
+    pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+    pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .zero
     
     do {
       return try device.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
@@ -476,6 +474,7 @@ class WorldRenderer {
     let renderDescriptor = renderPassDescriptor
     renderDescriptor.colorAttachments[0].loadAction = .clear
     renderDescriptor.colorAttachments[0].storeAction = .store
+    renderDescriptor.depthAttachment.storeAction = .store
       
     // Create encoder
     let renderEncoder: MTLRenderCommandEncoder
@@ -495,7 +494,7 @@ class WorldRenderer {
     renderEncoder.setFragmentTexture(blockArrayTexture, index: 0)
     renderEncoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
       
-    // MARK: - Render opaque and transparent chunk geometry.
+    // Render opaque and transparent chunk geometry.
     renderersToRender.forEach { chunkRenderer in
       chunkRenderer.renderTransparentOpaque(
         renderEncoder: renderEncoder,
@@ -504,7 +503,7 @@ class WorldRenderer {
         commandQueue: commandQueue)
     }
       
-    // MARK: - Render translucent chunk geometry afterwards (for correct blending).
+    // Render translucent chunk geometry afterwards (for correct blending).
     renderersToRender.forEach { chunkRenderer in
       chunkRenderer.renderTranslucent(
         renderEncoder: renderEncoder,

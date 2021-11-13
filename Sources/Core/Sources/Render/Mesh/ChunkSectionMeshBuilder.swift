@@ -352,7 +352,7 @@ public struct ChunkSectionMeshBuilder {
     for (uvIndex, vertexPosition) in faceVertexPositions.enumerated() {
       let position = simd_make_float3(SIMD4<Float>(vertexPosition, 1) * transformation)
       let uv = face.uvs[uvIndex]
-      let vertex = Vertex(
+      let vertex = BlockVertex(
         x: position.x,
         y: position.y,
         z: position.z,
@@ -524,7 +524,7 @@ public struct ChunkSectionMeshBuilder {
           }
           
           for (index, position) in positions.reversed().enumerated() {
-            let vertex = Vertex(
+            let vertex = BlockVertex(
               x: position.x,
               y: position.y,
               z: position.z,
@@ -551,7 +551,7 @@ public struct ChunkSectionMeshBuilder {
           }
           
           for (index, position) in positions.enumerated() {
-            let vertex = Vertex(
+            let vertex = BlockVertex(
               x: position.x,
               y: position.y,
               z: position.z,
@@ -571,7 +571,7 @@ public struct ChunkSectionMeshBuilder {
           for i in 0..<4 {
             var position = topCornerPositions[(i - 1) & 0x3] // & 0x3 is mod 4
             position.y = basePosition.y
-            let vertex = Vertex(
+            let vertex = BlockVertex(
               x: position.x,
               y: position.y,
               z: position.z,

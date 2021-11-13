@@ -37,7 +37,9 @@ let package = Package(
         "Resources/Cache/BlockModelPalette.proto",
         "Resources/Cache/Compile.sh",
         "C"],
-      resources: [.process("Render/Renderer/Shader/ChunkShaders.metal")]),
+      resources: [
+        .process("Render/Shader/"),
+      ]),
     .target(
       name: "DeltaCoreC",
       path: "Sources/C",

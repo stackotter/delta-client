@@ -14,7 +14,7 @@ struct Vertex {
   bool isTransparent;
 };
 
-struct RasteriserData {
+struct RasterizerData {
   float4 position [[position]];
   float2 uv;
   float4 tint;
@@ -29,11 +29,11 @@ struct Uniforms {
 // Also used for translucent textures for now
 constexpr sampler textureSampler (mag_filter::nearest, min_filter::nearest, mip_filter::linear);
 
-vertex RasteriserData chunkVertexShader(uint vertexId [[vertex_id]], constant Vertex *vertices [[buffer(0)]],
+vertex RasterizerData chunkVertexShader(uint vertexId [[vertex_id]], constant Vertex *vertices [[buffer(0)]],
                                         constant Uniforms &worldUniforms [[buffer(1)]],
                                         constant Uniforms &chunkUniforms [[buffer(2)]]) {
   Vertex in = vertices[vertexId];
-  RasteriserData out;
+  RasterizerData out;
   
   out.position = float4(in.x, in.y, in.z, 1.0) * chunkUniforms.transformation * worldUniforms.transformation;
   out.uv = float2(in.u, in.v);
@@ -44,7 +44,7 @@ vertex RasteriserData chunkVertexShader(uint vertexId [[vertex_id]], constant Ve
   return out;
 }
 
-fragment float4 chunkFragmentShader(RasteriserData in [[stage_in]],
+fragment float4 chunkFragmentShader(RasterizerData in [[stage_in]],
                                     texture2d_array<float, access::sample> textureArray [[texture(0)]]) {
   // sample the relevant texture slice
   float4 color;

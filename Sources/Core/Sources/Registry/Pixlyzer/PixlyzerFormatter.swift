@@ -73,11 +73,11 @@ public enum PixlyzerFormatter {
     
     // Process entities
     log.info("Processing pixlyzer entity registry")
-    var entities: [EntityKind] = []
+    var entities: [Int: EntityKind] = [:]
     for (identifier, pixlyzerEntity) in pixlyzerEntities {
       if let identifier = try? Identifier(identifier) {
         if let entity = EntityKind(pixlyzerEntity, identifier: identifier) {
-          entities.append(entity)
+          entities[entity.id] = entity
         }
       }
     }
