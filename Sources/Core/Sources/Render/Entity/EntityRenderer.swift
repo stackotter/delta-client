@@ -6,12 +6,12 @@ import MetalKit
 public class EntityRenderer {
   public static let hitBoxColor = RGBColor(hexCode: 0xe3c28d)
   
-  public var renderPipelineState: MTLRenderPipelineState
-  public var depthState: MTLDepthStencilState
+  private var renderPipelineState: MTLRenderPipelineState
+  private var vertexBuffer: MTLBuffer
+  private var indexBuffer: MTLBuffer
+  private var indexCount: Int
   
-  public var vertexBuffer: MTLBuffer
-  public var indexBuffer: MTLBuffer
-  public var indexCount: Int
+  private var instanceUniformsBuffer: MTLBuffer?
   
   public init(_ device: MTLDevice, _ commandQueue: MTLCommandQueue) throws {
     log.info("Loading entity shaders")
@@ -39,18 +39,6 @@ public class EntityRenderer {
       log.critical("Failed to load entity shaders")
       throw RenderError.failedToLoadShaders
     }
-    
-    // Create depth stencil state
-    let depthDescriptor = MTLDepthStencilDescriptor()
-    depthDescriptor.depthCompareFunction = .lessEqual
-    depthDescriptor.isDepthWriteEnabled = true
-    
-    guard let depthState = device.makeDepthStencilState(descriptor: depthDescriptor) else {
-      log.critical("Failed to create depth stencil state")
-      throw RenderError.failedToCreateEntityDepthStencilState
-    }
-    
-    self.depthState = depthState
     
     // Create render pipeline state
     let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
@@ -108,8 +96,25 @@ public class EntityRenderer {
       // TODO: make hitbox dimensions a component
     }
     
-    // Create uniforms buffer for each entity
-    let instanceUniformsBuffer = device.makeBuffer(bytes: &entityUniforms, length: entityUniforms.count * MemoryLayout<Uniforms>.stride, options: .storageModeShared)
+    // Create buffer for instance uniforms. If the current buffer is big enough, use it unless it is more than 64 entities too big.
+    // The maximum size limit is imposed so that the buffer isn't too much bigger than necessary. New buffers are always created with
+    // room for 32 more entities so that a new buffer isn't created each time an entity is added.
+    let minimumBufferSize = entityUniforms.count * MemoryLayout<Uniforms>.stride
+    let maximumBufferSize = minimumBufferSize + 64 * MemoryLayout<Uniforms>.stride
+    var instanceUniformsBuffer: MTLBuffer
+    if let buffer = self.instanceUniformsBuffer, buffer.length >= minimumBufferSize, buffer.length <= maximumBufferSize {
+      buffer.contents().copyMemory(from: &entityUniforms, byteCount: minimumBufferSize)
+      instanceUniformsBuffer = buffer
+    } else {
+      log.debug("Creating new instance uniforms buffer")
+      guard let buffer = device.makeBuffer(length: minimumBufferSize + MemoryLayout<Uniforms>.stride * 32, options: .storageModeShared) else {
+        log.warning("Failed to create new instance uniforms buffer")
+        return
+      }
+      buffer.contents().copyMemory(from: &entityUniforms, byteCount: minimumBufferSize)
+      instanceUniformsBuffer = buffer
+      self.instanceUniformsBuffer = instanceUniformsBuffer
+    }
     
     // Render all the hitboxes using instancing
     renderEncoder.setRenderPipelineState(renderPipelineState)
