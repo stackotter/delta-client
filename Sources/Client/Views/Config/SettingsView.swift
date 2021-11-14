@@ -16,9 +16,10 @@ struct SettingsView: View {
     NavigationView {
       List {
         if !isInGame {
+          NavigationLink("Controls", destination: ControlsView().padding())
           NavigationLink("Accounts", destination: AccountSettingsView().padding())
           NavigationLink("Update", destination: UpdateView().padding())
-					NavigationLink("Plugins", destination: PluginView().padding())
+          NavigationLink("Plugins", destination: PluginView().padding())
         }
         
         NavigationLink("Video", destination: VideoSettingsView(eventBus: eventBus).padding())
