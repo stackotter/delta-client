@@ -14,10 +14,9 @@ public struct SetExperiencePacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    var experience = client.game.player.experience
+    let experience = client.game.player.experience
     experience.experienceBarProgress = experienceBar
     experience.experienceLevel = level
     experience.experience = totalExperience
-    client.game.player.experience = experience
   }
 }

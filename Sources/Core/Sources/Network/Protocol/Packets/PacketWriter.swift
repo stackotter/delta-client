@@ -1,4 +1,5 @@
 import Foundation
+import simd
 
 public struct PacketWriter {
   public var buffer = Buffer([])
@@ -98,9 +99,9 @@ public struct PacketWriter {
     buffer.writeLong(val, endian: .big)
   }
   
-  public mutating func writeEntityPosition(_ entityPosition: EntityPosition) {
-    writeDouble(entityPosition.x)
-    writeDouble(entityPosition.y)
-    writeDouble(entityPosition.z)
+  public mutating func writeEntityPosition(_ position: SIMD3<Double>) {
+    writeDouble(position.x)
+    writeDouble(position.y)
+    writeDouble(position.z)
   }
 }

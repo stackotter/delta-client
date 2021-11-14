@@ -4,7 +4,7 @@ public struct FacePlayerPacket: ClientboundPacket {
   public static let id: Int = 0x34
 
   public var feetOrEyes: Int
-  public var targetPosition: EntityPosition
+  public var targetPosition: SIMD3<Double>
   public var isEntity: Bool
   public var entityId: Int?
   public var entityFeetOrEyes: Int?

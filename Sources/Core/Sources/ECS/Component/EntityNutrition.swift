@@ -1,5 +1,7 @@
+import FirebladeECS
+
 /// A component storing an entity's food and saturation levels.
-public struct EntityNutrition {
+public class EntityNutrition: Component {
   public var food: Int
   public var saturation: Float
   

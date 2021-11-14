@@ -1,20 +1,11 @@
 import Foundation
 import simd
+import FirebladeECS
 
 /// A component storing an entity's position relative to the world.
 ///
-/// Use ``smoothVector`` to get a position that smoothly changes from one position to the next.
-/// The time taken to move to a new position is set by ``smoothingDelay``.
-///
-/// Modify the position by setting the respective components (``x``, ``y`` or ``z``), by setting
-/// ``vector``, or by using ``move(to:)-7n5jq``, ``move(to:)-h7ig`` or ``move(by:)``. Do not directly set a
-/// variable of type ``EntityPosition`` to a new value because that will break smoothing.
-public struct EntityPosition {
-  // MARK: Static properties
-  
-  /// How long to take to move to a new position.
-  public static var smoothingDelay: Double = 1 / 15
-  
+/// Use ``smoothVector`` to get a vector that changes smoothly (positions are usually only updated once per tick).
+public class EntityPosition: Component {
   // MARK: Public properties
   
   /// The raw position (not smoothed).
@@ -27,14 +18,17 @@ public struct EntityPosition {
     }
   }
   
-  /// The position but smoothly interpolated from a previous position to a new position over the course of a tick (20th of a second).
+  /// The amount of time taken (in seconds) for ``smoothVector`` to transition from one position to the next.
+  public var smoothingAmount: Double
+  
+  /// A vector that smoothly interpolates from the previous position to the next position in an amount of time described by ``smoothingAmount``.
   public var smoothVector: SIMD3<Double> {
     let delta = CFAbsoluteTimeGetCurrent() - lastUpdated
-    let tickProgress = min(max(delta / Self.smoothingDelay, 0), 1)
+    let tickProgress = min(max(delta / smoothingAmount, 0), 1)
     return tickProgress * (_vector - previousVector) + previousVector
   }
   
-  /// The raw x coordinate (not smoothed).
+  /// The raw x component (not smoothed).
   public var x: Double {
     get { vector.x }
     set {
@@ -44,7 +38,7 @@ public struct EntityPosition {
     }
   }
   
-  /// The raw y coordinate (not smoothed).
+  /// The raw y component (not smoothed).
   public var y: Double {
     get { vector.y }
     set {
@@ -54,7 +48,7 @@ public struct EntityPosition {
     }
   }
   
-  /// The raw z coordinate (not smoothed).
+  /// The raw z component (not smoothed).
   public var z: Double {
     get { vector.z }
     set {
@@ -83,31 +77,40 @@ public struct EntityPosition {
   // MARK: Init
   
   /// Creates an entity position from a vector.
-  public init(_ vector: SIMD3<Double>) {
+  /// - Parameters:
+  ///   - vector: A vector representing the position.
+  ///   - smoothingAmount: The amount of time (in seconds) for ``smoothVector`` to transition from one position to the next. Defaults to one 15th of a second.
+  public init(_ vector: SIMD3<Double>, smoothingAmount: Double = 1 / 15) {
     _vector = vector
     previousVector = vector
     lastUpdated = CFAbsoluteTimeGetCurrent()
+    self.smoothingAmount = smoothingAmount
   }
   
   /// Creates an entity position from coordinates.
-  public init(x: Double, y: Double, z: Double) {
-    self.init(SIMD3<Double>(x, y, z))
+  /// - Parameters:
+  ///   - x: x coordinate.
+  ///   - y: y coordinate.
+  ///   - z: z coordinate.
+  ///   - smoothingAmount: The amount of time (in seconds) for ``smoothVector`` to transition from one position to the next. Defaults to one 15th of a second.
+  public convenience init(_ x: Double, _ y: Double, _ z: Double, smoothingAmount: Double = 1 / 15) {
+    self.init(SIMD3<Double>(x, y, z), smoothingAmount: smoothingAmount)
   }
   
   // MARK: Updating
   
   /// Moves the position to a new specified smoothing and will interpolate the position between the two over the course of a ``smoothingDelay``.
-  public mutating func move(to position: EntityPosition) {
+  public func move(to position: EntityPosition) {
     vector = position.vector
   }
   
   /// Moves the position to a new specified smoothing and will interpolate the position between the two over the course of a ``smoothingDelay``.
-  public mutating func move(to position: SIMD3<Double>) {
+  public func move(to position: SIMD3<Double>) {
     vector = position
   }
   
   /// Offsets the position by a specified amount. This will smoothly transition to the new position over the course of a ``smoothingDelay``.
-  public mutating func move(by offset: SIMD3<Double>) {
+  public func move(by offset: SIMD3<Double>) {
     vector += offset
   }
 }

@@ -1,5 +1,7 @@
+import FirebladeECS
+
 /// A component storing a player's gamemode.
-public struct PlayerGamemode {
+public class PlayerGamemode: Component {
   /// The player's gamemode.
   public var gamemode: Gamemode
   

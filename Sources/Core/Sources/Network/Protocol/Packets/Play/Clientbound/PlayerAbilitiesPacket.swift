@@ -14,13 +14,12 @@ public struct PlayerAbilitiesPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    var attributes = client.game.player.attributes
+    let attributes = client.game.player.attributes
     attributes.flyingSpeed = flyingSpeed
     attributes.fovModifier = fovModifier
     attributes.isInvulnerable = flags.contains(.invulnerable)
     attributes.canFly = flags.contains(.canFly)
     attributes.canInstantBreak = flags.contains(.instantBreak)
-    client.game.player.attributes = attributes
     
     client.game.player.flying.isFlying = flags.contains(.flying)
   }

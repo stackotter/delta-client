@@ -1,5 +1,7 @@
+import FirebladeECS
+
 /// A component storing whether an entity is flying.
-public struct EntityFlying {
+public class EntityFlying: Component {
   /// Whether the entity is flying or not.
   public var isFlying: Bool
   

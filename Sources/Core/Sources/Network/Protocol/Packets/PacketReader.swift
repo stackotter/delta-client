@@ -219,7 +219,7 @@ public struct PacketReader {
     )
   }
   
-  public mutating func readEntityRotation(pitchFirst: Bool = false) -> EntityRotation {
+  public mutating func readEntityRotation(pitchFirst: Bool = false) -> (pitch: Float, yaw: Float) {
     var pitch: Float = 0
     if pitchFirst {
       pitch = readAngle()
@@ -228,22 +228,20 @@ public struct PacketReader {
     if !pitchFirst {
       pitch = readAngle()
     }
-    return EntityRotation(pitch: pitch, yaw: yaw)
+    return (pitch: pitch, yaw: yaw)
   }
   
-  public mutating func readEntityPosition() -> EntityPosition {
+  public mutating func readEntityPosition() -> SIMD3<Double> {
     let x = readDouble()
     let y = readDouble()
     let z = readDouble()
-    return EntityPosition(x: x, y: y, z: z)
+    return SIMD3<Double>(x, y, z)
   }
   
-  public mutating func readEntityVelocity() -> EntityVelocity {
-    let x = readShort()
-    let y = readShort()
-    let z = readShort()
-    return EntityVelocity(x: x, y: y, z: z)
+  public mutating func readEntityVelocity() -> SIMD3<Double> {
+    let x = Double(readShort()) / 8000
+    let y = Double(readShort()) / 8000
+    let z = Double(readShort()) / 8000
+    return SIMD3<Double>(x, y, z)
   }
-  
-  // TODO_LATER: implement readEntityMetadata
 }

@@ -69,7 +69,7 @@ public struct Game {
   /// The builder can handle up to 20 components. This should be enough in most cases but if not, components can be added to the nexus directly, this is just more convenient.
   /// The builder can only work for up to 20 components because of a limitation regarding result builders.
   @discardableResult
-  public mutating func createEntity(id: Int, @BoxedComponentsBuilder using builder: () -> [Component]) -> Entity {
+  public mutating func createEntity(id: Int, @ComponentsBuilder using builder: () -> [Component]) -> Entity {
     let entity = nexus.createEntity(with: builder())
     entityIdToEntityIdentifier[id] = entity.identifier
     return entity
@@ -84,9 +84,9 @@ public struct Game {
   }
   
   /// Returns the entity with the given vanilla id if it exists.
-  public func component<T>(entityId: Int, _ componentType: T.Type) -> Box<T>? {
+  public func component<T: Component>(entityId: Int, _ componentType: T.Type) -> T? {
     if let identifier = entityIdToEntityIdentifier[entityId] {
-      return nexus.entity(from: identifier).get(component: Box<T>.self)
+      return nexus.entity(from: identifier).get(component: T.self)
     }
     return nil
   }
@@ -102,8 +102,8 @@ public struct Game {
   public mutating func updateEntityId(_ id: Int, to newId: Int) {
     if let identifier = entityIdToEntityIdentifier.removeValue(forKey: id) {
       entityIdToEntityIdentifier[newId] = identifier
-      if let idComponent = nexus.entity(from: identifier).get(component: Box<EntityId>.self) {
-        idComponent.value.id = newId
+      if let component = nexus.entity(from: identifier).get(component: EntityId.self) {
+        component.id = newId
       }
     }
   }

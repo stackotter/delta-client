@@ -6,17 +6,18 @@ public struct SpawnLivingEntityPacket: ClientboundPacket {
   public var entityId: Int
   public var entityUUID: UUID
   public var type: Int
-  public var position: EntityPosition
-  public var rotation: EntityRotation
+  public var position: SIMD3<Double>
+  public var pitch: Float
+  public var yaw: Float
   public var headYaw: Float
-  public var velocity: EntityVelocity
+  public var velocity: SIMD3<Double>
   
   public init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     entityUUID = try packetReader.readUUID()
     type = packetReader.readVarInt()
     position = packetReader.readEntityPosition()
-    rotation = packetReader.readEntityRotation()
+    (pitch, yaw) = packetReader.readEntityRotation()
     headYaw = packetReader.readAngle()
     velocity = packetReader.readEntityVelocity()
   }
@@ -29,13 +30,13 @@ public struct SpawnLivingEntityPacket: ClientboundPacket {
     
     client.game.createEntity(id: entityId) {
       LivingEntity() // Mark it as a living entity
+      EntityKindId(type)
       EntityId(entityId)
       EntityUUID(entityUUID)
-      EntityKindId(type)
       EntityOnGround(true)
-      position
-      rotation
-      velocity
+      EntityPosition(position)
+      EntityVelocity(velocity)
+      EntityRotation(pitch: pitch, yaw: yaw)
       EntityHeadYaw(headYaw)
     }
   }

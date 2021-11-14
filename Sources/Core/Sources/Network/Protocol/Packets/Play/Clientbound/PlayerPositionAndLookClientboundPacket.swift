@@ -3,7 +3,7 @@ import Foundation
 public struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
   public static let id: Int = 0x35
   
-  public var position: EntityPosition
+  public var position: SIMD3<Double>
   public var yaw: Float
   public var pitch: Float
   public var flags: PositionAndLookFlags
@@ -35,8 +35,8 @@ public struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
     let teleportConfirm = TeleportConfirmPacket(teleportId: teleportId)
     client.sendPacket(teleportConfirm)
     
-    var position = client.game.player.position
-    var rotation = client.game.player.rotation
+    let position = client.game.player.position
+    let rotation = client.game.player.rotation
     
     if flags.contains(.x) {
       position.x += self.position.x
@@ -67,8 +67,5 @@ public struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
     } else {
       rotation.pitch = pitch
     }
-    
-    client.game.player.position = position
-    client.game.player.rotation = rotation
   }
 }

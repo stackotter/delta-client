@@ -5,29 +5,32 @@ public struct EntityRotationPacket: ClientboundPacket {
 
   /// The entity's id.
   public var entityId: Int
-  /// The entity's new rotation.
-  public var rotation: EntityRotation
+  /// The entity's new pitch.
+  public var pitch: Float
+  /// The entity's new yaw.
+  public var yaw: Float
   /// Whether the entity is on the ground or not. See ``EntityOnGround``.
   public var onGround: Bool
   
   public init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
-    rotation = packetReader.readEntityRotation()
+    (pitch, yaw) = packetReader.readEntityRotation()
     onGround = packetReader.readBool()
   }
   
   public func handle(for client: Client) throws {
-    if let component = client.game.component(entityId: entityId, EntityRotation.self) {
-      component.value = rotation
+    if let rotation = client.game.component(entityId: entityId, EntityRotation.self) {
+      rotation.pitch = pitch
+      rotation.yaw = yaw
     }
     
-    if let component = client.game.component(entityId: entityId, EntityOnGround.self) {
-      component.value.onGround = onGround
+    if let onGroundComponent = client.game.component(entityId: entityId, EntityOnGround.self) {
+      onGroundComponent.onGround = onGround
     }
     
-    if let component = client.game.component(entityId: entityId, EntityVelocity.self) {
+    if let velocity = client.game.component(entityId: entityId, EntityVelocity.self) {
       if onGround {
-        component.value.y = 0
+        velocity.y = 0
       }
     }
   }

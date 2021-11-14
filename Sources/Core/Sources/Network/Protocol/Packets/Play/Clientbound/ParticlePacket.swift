@@ -5,7 +5,7 @@ public struct ParticlePacket: ClientboundPacket {
   
   public var particleId: Int
   public var isLongDistance: Bool
-  public var position: EntityPosition
+  public var position: SIMD3<Double>
   public var offsetX: Float
   public var offsetY: Float
   public var offsetZ: Float

@@ -28,16 +28,16 @@ public struct EntityPositionPacket: ClientboundPacket {
     let z = Double(deltaZ) / 4096
     
     if let position = client.game.component(entityId: entityId, EntityPosition.self) {
-      position.value.move(by: SIMD3<Double>(x, y, z))
+      position.move(by: SIMD3<Double>(x, y, z))
     }
     
-    if let component = client.game.component(entityId: entityId, EntityOnGround.self) {
-      component.value.onGround = onGround
+    if let onGroundComponent = client.game.component(entityId: entityId, EntityOnGround.self) {
+      onGroundComponent.onGround = onGround
     }
     
-    if let component = client.game.component(entityId: entityId, EntityVelocity.self) {
+    if let velocity = client.game.component(entityId: entityId, EntityVelocity.self) {
       if onGround {
-        component.value.y = 0
+        velocity.y = 0
       }
     }
   }

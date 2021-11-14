@@ -1,5 +1,7 @@
+import FirebladeECS
+
 /// A component storing an entity's health (hp).
-public struct EntityHealth {
+public class EntityHealth: Component {
   /// The entity's health measured in half hearts.
   public var health: Float
   

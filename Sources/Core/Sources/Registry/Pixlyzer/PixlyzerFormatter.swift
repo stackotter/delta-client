@@ -5,6 +5,8 @@ public enum PixlyzerError: LocalizedError {
   case missingBlock(Int)
   /// An AABB's vertex is of invalid length.
   case invalidAABBVertex([Float])
+  /// The entity registry does not contain the player entity.
+  case entityRegistryMissingPlayer
 }
 
 public enum PixlyzerFormatter {
@@ -145,7 +147,7 @@ public enum PixlyzerFormatter {
     let fluidRegistry = FluidRegistry(fluids: fluids)
     let biomeRegistry = BiomeRegistry(biomes: biomes)
     let blockRegistry = BlockRegistry(blocks: blockArray, renderDescriptors: renderDescriptors)
-    let entityRegistry = EntityRegistry(entities: entities)
+    let entityRegistry = try EntityRegistry(entities: entities)
     
     return Registry(
       blockRegistry: blockRegistry,

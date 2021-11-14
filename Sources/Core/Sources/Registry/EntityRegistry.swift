@@ -6,18 +6,30 @@ public struct EntityRegistry: Codable {
   public var entities: [Int: EntityKind] = [:]
   /// Maps entity identifier to an entity kind id.
   public var identifierToEntityId: [Identifier: Int] = [:]
+  /// The kind id of player entities.
+  public var playerEntityKindId: Int
   
   // MARK: Init
   
   /// Creates an empty entity registry.
-  public init() {}
+  public init() {
+    playerEntityKindId = -1
+  }
   
   /// Creates a populated entity registry.
-  public init(entities: [Int: EntityKind]) {
+  ///
+  /// Throws an error if `entities` does not contain the player entity.
+  public init(entities: [Int: EntityKind]) throws {
     self.entities = entities
     for (_, entity) in entities {
       identifierToEntityId[entity.identifier] = entity.id
     }
+    
+    guard let playerEntityKindId = identifierToEntityId[Identifier(name: "player")] else {
+      throw PixlyzerError.entityRegistryMissingPlayer
+    }
+    
+    self.playerEntityKindId = playerEntityKindId
   }
   
   // MARK: Access

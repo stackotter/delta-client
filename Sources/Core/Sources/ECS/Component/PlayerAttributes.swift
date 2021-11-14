@@ -1,5 +1,7 @@
+import FirebladeECS
+
 /// A component storing attributes specific to the client's player.
-public struct PlayerAttributes {
+public class PlayerAttributes: Component {
   /// The player's spawn position.
   public var spawnPosition = Position(x: 0, y: 0, z: 0)
   /// The player's maximum flying speed (set by server).

@@ -1,5 +1,7 @@
+import FirebladeECS
+
 /// A component storing an entity's id.
-public struct EntityId {
+public class EntityId: Component {
   public var id: Int
   
   public init(_ id: Int) {

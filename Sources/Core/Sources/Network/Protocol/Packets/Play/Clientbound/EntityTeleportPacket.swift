@@ -6,36 +6,37 @@ public struct EntityTeleportPacket: ClientboundPacket {
   /// The entity's id.
   public var entityId: Int
   /// The entity's new position.
-  public var position: EntityPosition
-  /// The entity's new rotation.
-  public var rotation: EntityRotation
+  public var position: SIMD3<Double>
+  /// The entity's new pitch.
+  public var pitch: Float
+  /// The entity's new yaw.
+  public var yaw: Float
   /// Whether the entity is on the ground or not. See ``EntityOnGround``.
   public var onGround: Bool
 
   public init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     position = packetReader.readEntityPosition()
-    rotation = packetReader.readEntityRotation()
+    (pitch, yaw) = packetReader.readEntityRotation()
     onGround = packetReader.readBool()
   }
   
   public func handle(for client: Client) throws {
-    if let component = client.game.component(entityId: entityId, EntityPosition.self) {
-      component.value.move(to: position)
+    if let positionComponent = client.game.component(entityId: entityId, EntityPosition.self) {
+      positionComponent.move(to: position)
     }
     
-    if let component = client.game.component(entityId: entityId, EntityRotation.self) {
-      component.value = rotation
+    if let rotation = client.game.component(entityId: entityId, EntityRotation.self) {
+      rotation.pitch = pitch
+      rotation.yaw = yaw
     }
     
-    if let component = client.game.component(entityId: entityId, EntityOnGround.self) {
-      component.value.onGround = onGround
+    if let onGroundComponent = client.game.component(entityId: entityId, EntityOnGround.self) {
+      onGroundComponent.onGround = onGround
     }
     
-    if let component = client.game.component(entityId: entityId, EntityVelocity.self) {
-      component.value.x = 0
-      component.value.y = 0
-      component.value.z = 0
+    if let velocity = client.game.component(entityId: entityId, EntityVelocity.self) {
+      velocity.vector = SIMD3<Double>.zero
     }
   }
 }

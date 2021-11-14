@@ -13,14 +13,13 @@ public struct PhysicsSystem: System {
   
   /// Runs a physics update for all entities in the given Nexus.
   public func update(_ nexus: Nexus) {
-    // Update the player's velocity
-    let currentPlayerEntities = nexus.family(requiresAll: Box<EntityVelocity>.self, Box<EntityRotation>.self, Box<PlayerInput>.self, Box<ClientPlayerEntity>.self)
+    // Update the player's velocity.
+    let currentPlayerEntities = nexus.family(requiresAll: EntityVelocity.self, EntityRotation.self, PlayerInput.self, ClientPlayerEntity.self)
     for (velocity, rotation, input, _) in currentPlayerEntities {
-      let inputs = input.value.inputs
+      let inputs = input.inputs
       
-      // TODO: update in physics system
-      // update velocity relative to yaw
-      var velocityVector = EntityVelocity(x: 0.0, y: 0.0, z: 0.0).vector
+      // Update velocity relative to yaw
+      var velocityVector = SIMD3<Double>(0, 0, 0)
       if inputs.contains(.forward) {
         velocityVector.z = playerSpeed
       } else if inputs.contains(.backward) {
@@ -43,21 +42,21 @@ public struct PhysicsSystem: System {
         velocityVector *= 2
       }
       
-      // adjust to real velocity (using yaw)
-      let yawRadians = Double(rotation.value.yaw * .pi / 180)
+      // Adjust velocity to point in the right direction (using yaw)
+      let yawRadians = Double(rotation.yaw * .pi / 180)
       var xz = SIMD2<Double>(velocityVector.x, velocityVector.z)
       // swiftlint:disable shorthand_operator
       xz = xz * MatrixUtil.rotationMatrix2dDouble(yawRadians)
       // swiftlint:enable shorthand_operator
       velocityVector.x = xz.x
       velocityVector.z = xz.y // z is the 2nd component of xz (aka y)
-      velocity.value = EntityVelocity(velocityVector)
+      velocity.vector = velocityVector
     }
     
-    // Update all generic entities
-    let physicsEntities = nexus.family(requiresAll: Box<EntityPosition>.self, Box<EntityVelocity>.self)
+    // Apply velocity to all moving entities.
+    let physicsEntities = nexus.family(requiresAll: EntityPosition.self, EntityVelocity.self)
     for (position, velocity) in physicsEntities {
-      position.value.move(by: velocity.value.vector)
+      position.move(by: velocity.vector)
     }
   }
 }

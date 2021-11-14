@@ -8,29 +8,30 @@ public struct SpawnPlayerPacket: ClientboundPacket {
   /// The player's UUID.
   public var playerUUID: UUID
   /// The player's position.
-  public var position: EntityPosition
-  /// The player's rotation.
-  public var rotation: EntityRotation
+  public var position: SIMD3<Double>
+  /// The player's pitch.
+  public var pitch: Float
+  /// The player's yaw.
+  public var yaw: Float
   
   public init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
     playerUUID = try packetReader.readUUID()
     position = packetReader.readEntityPosition()
-    rotation = packetReader.readEntityRotation()
+    (pitch, yaw) = packetReader.readEntityRotation()
   }
   
   public func handle(for client: Client) throws {
     client.game.createEntity(id: entityId) {
+      LivingEntity()
       PlayerEntity()
-      EntityKindId(Registry.shared.entityRegistry.identifierToEntityId[Identifier(name: "player")]!)
-      
+      EntityKindId(Registry.shared.entityRegistry.playerEntityKindId)
       EntityId(entityId)
       EntityUUID(playerUUID)
-      
       EntityOnGround(true)
-      position
-      EntityVelocity(x: 0.0, y: 0.0, z: 0.0)
-      rotation
+      EntityPosition(position)
+      EntityVelocity(0, 0, 0)
+      EntityRotation(pitch: pitch, yaw: yaw)
     }
   }
 }

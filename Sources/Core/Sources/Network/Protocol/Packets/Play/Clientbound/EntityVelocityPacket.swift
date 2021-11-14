@@ -6,7 +6,7 @@ public struct EntityVelocityPacket: ClientboundPacket {
   /// The entity's id.
   public var entityId: Int
   /// The entity's new velocity.
-  public var velocity: EntityVelocity
+  public var velocity: SIMD3<Double>
 
   public init(from packetReader: inout PacketReader) throws {
     entityId = packetReader.readVarInt()
@@ -14,8 +14,8 @@ public struct EntityVelocityPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    if let component = client.game.component(entityId: entityId, EntityVelocity.self) {
-      component.value = velocity
+    if let velocityComponent = client.game.component(entityId: entityId, EntityVelocity.self) {
+      velocityComponent.vector = velocity
     }
   }
 }

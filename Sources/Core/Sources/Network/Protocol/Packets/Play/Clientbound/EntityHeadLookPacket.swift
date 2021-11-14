@@ -12,8 +12,8 @@ public struct EntityHeadLookPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    if let component = client.game.component(entityId: entityId, EntityHeadYaw.self) {
-      component.value.yaw = headYaw
+    if let headYawComponent = client.game.component(entityId: entityId, EntityHeadYaw.self) {
+      headYawComponent.yaw = headYaw
     }
   }
 }

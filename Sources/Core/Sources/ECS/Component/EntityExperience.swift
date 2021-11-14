@@ -1,5 +1,7 @@
+import FirebladeECS
+
 /// A component storing an entity's experience level.
-public struct EntityExperience {
+public class EntityExperience: Component {
   /// The entity's total xp.
   public var experience: Int
   /// The entity's xp level (displayed above the xp bar).

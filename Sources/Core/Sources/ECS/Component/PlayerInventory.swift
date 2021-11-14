@@ -1,5 +1,7 @@
+import FirebladeECS
+
 /// A component storing the player's inventory.
-public struct PlayerInventory {
+public class PlayerInventory: Component {
   /// The player's currently selected hotbar slot.
   public var hotbarSlot: Int
   

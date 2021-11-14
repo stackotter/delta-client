@@ -77,7 +77,7 @@ public class EntityRenderer {
   /// Renders all entity hitboxes using instancing.
   public func renderHitBoxes(_ view: MTKView, uniformsBuffer: MTLBuffer, camera: Camera, nexus: Nexus, device: MTLDevice, renderEncoder: MTLRenderCommandEncoder) {
     // Get all renderable entities
-    let entities = nexus.family(requiresAll: Box<EntityPosition>.self, Box<EntityKindId>.self, excludesAll: Box<ClientPlayerEntity>.self)
+    let entities = nexus.family(requiresAll: EntityPosition.self, EntityKindId.self, excludesAll: ClientPlayerEntity.self)
     guard !entities.isEmpty else {
       return
     }
@@ -85,9 +85,9 @@ public class EntityRenderer {
     // Create uniforms for each entity
     var entityUniforms: [Uniforms] = []
     for (position, kindId) in entities {
-      if let kind = Registry.shared.entityRegistry.entity(withId: kindId.value.id) {
+      if let kind = Registry.shared.entityRegistry.entity(withId: kindId.id) {
         let size = SIMD3<Float>(kind.width, kind.height, kind.width)
-        var position = SIMD3<Float>(position.value.smoothVector)
+        var position = SIMD3<Float>(position.smoothVector)
         position -= SIMD3<Float>(kind.width, 0, kind.width) * 0.5
         
         let uniforms = Uniforms(transformation: MatrixUtil.scalingMatrix(size) * MatrixUtil.translationMatrix(position))

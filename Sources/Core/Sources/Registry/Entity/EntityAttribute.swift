@@ -9,6 +9,8 @@ public enum EntityAttribute: String, Codable {
   case movementSpeed = "minecraft:generic.movement_speed"
   case flyingSpeed = "minecraft:generic.flying_speed"
   case followRange = "minecraft:generic.follow_range"
+  case attackSpeed = "minecraft:generic.attack_speed"
+  case luck = "minecraft:generic.luck"
   case horseJumpStrength = "minecraft:horse.jump_strength"
   case zombieSpawnReinforcement = "minecraft:zombie.spawn_reinforcements"
 }
