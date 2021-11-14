@@ -75,14 +75,15 @@ public class EntityRenderer {
     for direction in Direction.allDirections {
       let faceVertices = CubeGeometry.faceVertices[direction]
       for position in faceVertices! {
+        let color = SIMD3<Float>(0.9, 0.9, 0.9) * CubeGeometry.shades[direction.rawValue]
         vertices.append(
           EntityVertex(
             x: position.x,
             y: position.y,
             z: position.z,
-            r: 1,
-            g: 1,
-            b: 1
+            r: color.x,
+            g: color.y,
+            b: color.z
           ))
       }
       
