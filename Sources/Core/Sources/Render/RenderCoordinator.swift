@@ -147,12 +147,8 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     let aspect = Float(view.drawableSize.width / view.drawableSize.height)
     camera.setAspect(aspect)
     
-    let currentPosition = player.position.vector
-    let targetPosition = player.targetPosition.position.vector
-    let tickProgress = Float(min(max((CFAbsoluteTimeGetCurrent() - client.game.tickScheduler.mostRecentTick) * 20, 0), 1))
-    let interpolatedPosition = currentPosition + (targetPosition - currentPosition) * tickProgress
-    var eyePosition = interpolatedPosition
-    eyePosition.y += 1.625
+    var eyePosition = SIMD3<Float>(player.position.smoothVector)
+    eyePosition.y += 1.625 // TODO: don't hardcode this, use the player's hitbox
     
     camera.setPosition(eyePosition)
     camera.setRotation(playerLook: player.rotation)

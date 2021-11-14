@@ -55,12 +55,9 @@ public struct PhysicsSystem: System {
     }
     
     // Update all generic entities
-    let physicsEntities = nexus.family(requiresAll: Box<EntityPosition>.self, Box<EntityTargetPosition>.self, Box<EntityVelocity>.self)
-    for (position, targetPosition, velocity) in physicsEntities {
-      position.value = targetPosition.value.position
-      targetPosition.value.position.x += velocity.value.x
-      targetPosition.value.position.y += velocity.value.y
-      targetPosition.value.position.z += velocity.value.z
+    let physicsEntities = nexus.family(requiresAll: Box<EntityPosition>.self, Box<EntityVelocity>.self)
+    for (position, velocity) in physicsEntities {
+      position.value.move(by: velocity.value.vector)
     }
   }
 }

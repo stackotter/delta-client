@@ -323,11 +323,11 @@ class WorldRenderer {
     handle(events)
     
     // Filter out chunks outside of render distance
-    let playerChunkPosition = client.game.player.position.chunkPosition
+    let playerChunk = client.game.player.position.chunk
     let chunkRenderersInRenderDistance = [ChunkRenderer](chunkRenderers.values).filter { renderer in
       let distance = max(
-        abs(playerChunkPosition.chunkX - renderer.chunkPosition.chunkX),
-        abs(playerChunkPosition.chunkZ - renderer.chunkPosition.chunkZ))
+        abs(playerChunk.chunkX - renderer.chunkPosition.chunkX),
+        abs(playerChunk.chunkZ - renderer.chunkPosition.chunkZ))
       return distance < client.config.renderDistance
     }
     

@@ -35,19 +35,9 @@ public struct Player {
     set { entity.get(component: Box<EntityNutrition>.self)!.value = newValue }
   }
   
-  /// The player's position.
   public var position: EntityPosition {
     get { entity.get(component: Box<EntityPosition>.self)!.value }
-    set {
-      entity.get(component: Box<EntityPosition>.self)!.value = newValue
-      targetPosition = EntityTargetPosition(position: newValue)
-    }
-  }
-  
-  /// The position the player will be at next tick.
-  public var targetPosition: EntityTargetPosition {
-    get { entity.get(component: Box<EntityTargetPosition>.self)!.value }
-    set { entity.get(component: Box<EntityTargetPosition>.self)!.value = newValue }
+    set { entity.get(component: Box<EntityPosition>.self)!.value = newValue }
   }
   
   public var rotation: EntityRotation {
@@ -97,7 +87,6 @@ public struct Player {
       EntityKindId(Registry.shared.entityRegistry.identifierToEntityId[Identifier(name: "player")]!)
       EntityOnGround(true)
       EntityPosition(x: 0, y: 0, z: 0)
-      EntityTargetPosition(position: EntityPosition(x: 0, y: 0, z: 0))
       EntityRotation(pitch: 0.0, yaw: 0.0)
       EntityVelocity(x: 0.0, y: 0.0, z: 0.0)
       EntityExperience()

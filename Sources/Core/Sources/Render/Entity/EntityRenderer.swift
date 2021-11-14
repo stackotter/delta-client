@@ -87,7 +87,7 @@ public class EntityRenderer {
     for (position, kindId) in entities {
       if let kind = Registry.shared.entityRegistry.entity(withId: kindId.value.id) {
         let size = SIMD3<Float>(kind.width, kind.height, kind.width)
-        var position = position.value.vector
+        var position = SIMD3<Float>(position.value.smoothVector)
         position -= SIMD3<Float>(kind.width, 0, kind.width) * 0.5
         
         let uniforms = Uniforms(transformation: MatrixUtil.scalingMatrix(size) * MatrixUtil.translationMatrix(position))

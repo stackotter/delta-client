@@ -24,5 +24,11 @@ public struct EntityRotationPacket: ClientboundPacket {
     if let component = client.game.component(entityId: entityId, EntityOnGround.self) {
       component.value.onGround = onGround
     }
+    
+    if let component = client.game.component(entityId: entityId, EntityVelocity.self) {
+      if onGround {
+        component.value.y = 0
+      }
+    }
   }
 }

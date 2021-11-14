@@ -21,7 +21,7 @@ public struct EntityTeleportPacket: ClientboundPacket {
   
   public func handle(for client: Client) throws {
     if let component = client.game.component(entityId: entityId, EntityPosition.self) {
-      component.value = position
+      component.value.move(to: position)
     }
     
     if let component = client.game.component(entityId: entityId, EntityRotation.self) {
@@ -30,6 +30,12 @@ public struct EntityTeleportPacket: ClientboundPacket {
     
     if let component = client.game.component(entityId: entityId, EntityOnGround.self) {
       component.value.onGround = onGround
+    }
+    
+    if let component = client.game.component(entityId: entityId, EntityVelocity.self) {
+      component.value.x = 0
+      component.value.y = 0
+      component.value.z = 0
     }
   }
 }
