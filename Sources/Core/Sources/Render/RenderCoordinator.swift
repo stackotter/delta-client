@@ -108,7 +108,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       camera: camera,
       commandQueue: commandQueue)
     
-    entityRenderer.render(
+    entityRenderer.renderHitBoxes(
       view,
       uniformsBuffer: uniformsBuffer,
       camera: camera,

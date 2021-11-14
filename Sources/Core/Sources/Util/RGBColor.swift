@@ -14,7 +14,7 @@ public struct RGBColor: Codable {
     return SIMD3<Float>(vector) / 255
   }
   
-  /// The integer representation of the hexcode of this color.
+  /// The integer representation of the hexcode of this color. 1 byte per component.
   public var hexCode: Int {
     return (r << 16) | (g << 8) | b
   }
