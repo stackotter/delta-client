@@ -77,23 +77,20 @@ public class EntityRenderer {
   /// Renders all entity hitboxes using instancing.
   public func renderHitBoxes(_ view: MTKView, uniformsBuffer: MTLBuffer, camera: Camera, nexus: Nexus, device: MTLDevice, renderEncoder: MTLRenderCommandEncoder) {
     // Get all renderable entities
-    let entities = nexus.family(requiresAll: EntityPosition.self, EntityKindId.self, excludesAll: ClientPlayerEntity.self)
+    let entities = nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self, excludesAll: ClientPlayerEntity.self)
     guard !entities.isEmpty else {
       return
     }
     
     // Create uniforms for each entity
     var entityUniforms: [Uniforms] = []
-    for (position, kindId) in entities {
-      if let kind = Registry.shared.entityRegistry.entity(withId: kindId.id) {
-        let size = SIMD3<Float>(kind.width, kind.height, kind.width)
-        var position = SIMD3<Float>(position.smoothVector)
-        position -= SIMD3<Float>(kind.width, 0, kind.width) * 0.5
-        
-        let uniforms = Uniforms(transformation: MatrixUtil.scalingMatrix(size) * MatrixUtil.translationMatrix(position))
-        entityUniforms.append(uniforms)
-      }
-      // TODO: make hitbox dimensions a component
+    for (position, hitBox) in entities {
+      let size = hitBox.size
+      var position = SIMD3<Float>(position.smoothVector)
+      position -= SIMD3<Float>(hitBox.width, 0, hitBox.width) * 0.5
+      
+      let uniforms = Uniforms(transformation: MatrixUtil.scalingMatrix(size) * MatrixUtil.translationMatrix(position))
+      entityUniforms.append(uniforms)
     }
     
     // Create buffer for instance uniforms. If the current buffer is big enough, use it unless it is more than 64 entities too big.
@@ -106,7 +103,7 @@ public class EntityRenderer {
       buffer.contents().copyMemory(from: &entityUniforms, byteCount: minimumBufferSize)
       instanceUniformsBuffer = buffer
     } else {
-      log.debug("Creating new instance uniforms buffer")
+      log.trace("Creating new instance uniforms buffer")
       guard let buffer = device.makeBuffer(length: minimumBufferSize + MemoryLayout<Uniforms>.stride * 32, options: .storageModeShared) else {
         log.warning("Failed to create new instance uniforms buffer")
         return

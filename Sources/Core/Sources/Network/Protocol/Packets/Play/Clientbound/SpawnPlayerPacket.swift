@@ -22,12 +22,14 @@ public struct SpawnPlayerPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
+    let playerEntity = Registry.shared.entityRegistry.playerEntityKind
     client.game.createEntity(id: entityId) {
       LivingEntity()
       PlayerEntity()
-      EntityKindId(Registry.shared.entityRegistry.playerEntityKindId)
+      EntityKindId(playerEntity.id)
       EntityId(entityId)
       EntityUUID(playerUUID)
+      EntityHitBox(width: playerEntity.width, height: playerEntity.height)
       EntityOnGround(true)
       EntityPosition(position)
       EntityVelocity(0, 0, 0)

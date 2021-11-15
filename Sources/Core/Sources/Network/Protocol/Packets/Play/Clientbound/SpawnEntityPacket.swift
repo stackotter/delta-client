@@ -22,13 +22,17 @@ public struct SpawnEntityPacket: ClientboundPacket {
     (pitch, yaw) = packetReader.readEntityRotation(pitchFirst: true)
     data = packetReader.readInt()
     
-    velocity = nil
     if data > 0 {
       velocity = packetReader.readEntityVelocity()
     }
   }
   
   public func handle(for client: Client) throws {
+    guard let entityKind = Registry.shared.entityRegistry.entity(withId: type) else {
+      log.warning("Ignored entity received with unknown type: \(type)")
+      return
+    }
+    
     if let velocity = velocity {
       client.game.createEntity(id: entityId) {
         NonLivingEntity()
@@ -36,6 +40,7 @@ public struct SpawnEntityPacket: ClientboundPacket {
         EntityId(entityId)
         ObjectUUID(objectUUID)
         ObjectData(data)
+        EntityHitBox(width: entityKind.width, height: entityKind.height)
         EntityOnGround(true)
         EntityPosition(position)
         EntityVelocity(velocity)
@@ -48,6 +53,7 @@ public struct SpawnEntityPacket: ClientboundPacket {
         EntityId(entityId)
         ObjectUUID(objectUUID)
         ObjectData(data)
+        EntityHitBox(width: entityKind.width, height: entityKind.height)
         EntityOnGround(true)
         EntityPosition(position)
         EntityRotation(pitch: pitch, yaw: yaw)

@@ -3,29 +3,44 @@ import simd
 
 /// An axis aligned bounding box used for efficient collisions and visibility checks.
 public struct AxisAlignedBoundingBox: Codable {
-  /// The minimum vertex of the bounding box.
-  public var minimum: SIMD3<Float>
-  /// The maximum vertex of the bounding box.
-  public var maximum: SIMD3<Float>
+  // MARK: Public properties
   
-  /// Create a new axis aligned bounding box with given minimum and maximum vertices.
-  /// - Parameters:
-  ///   - minimum: The minimum vertex.
-  ///   - maximum: The maximum vertex.
-  public init(minimum: SIMD3<Float>, maximum: SIMD3<Float>) {
-    self.minimum = minimum
-    self.maximum = maximum
+  /// The position of the minimum vertex of the bounding box.
+  public var position: SIMD3<Float>
+  /// The size of the bounding box.
+  public var size: SIMD3<Float>
+  
+  /// The minimum vertex of the bounding box.
+  public var minimum: SIMD3<Float> {
+    position
   }
+  
+  /// The maximum vertex of the bounding box.
+  public var maximum: SIMD3<Float> {
+    position + size
+  }
+  
+  // MARK: Init
   
   /// Create a new axis aligned bounding box at a position with a given size.
   /// - Parameters:
   ///   - position: The position of the bounding box.
   ///   - size: The size of the bounding box. Must be positive. The absolute value is taken just in case.
   public init(position: SIMD3<Float>, size: SIMD3<Float>) {
-    self.minimum = position
-    self.maximum = position + abs(size)
+    self.position = position
+    self.size = abs(size)
   }
   
+  /// Create a new axis aligned bounding box with given minimum and maximum vertices.
+  /// - Parameters:
+  ///   - minimum: The minimum vertex.
+  ///   - maximum: The maximum vertex.
+  public init(minimum: SIMD3<Float>, maximum: SIMD3<Float>) {
+    position = minimum
+    size = abs(maximum - minimum)
+  }
+  
+  // MARK: Methods
   
   /// Get an array containing all 8 of this bounding box's vertices.
   /// - Returns: This bounding box's vertices.

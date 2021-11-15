@@ -21,6 +21,8 @@ public struct Player {
   public private(set) var position: EntityPosition
   /// The component storing the player's velocity.
   public private(set) var velocity: EntityVelocity
+  /// The component storing the plyaer's hit box.
+  public private(set) var hitBox: EntityHitBox
   /// The component storing the player's rotation.
   public private(set) var rotation: EntityRotation
   /// The component storing the player's miscellaneous attributes.
@@ -34,11 +36,13 @@ public struct Player {
   
   /// Creates a player.
   public init() {
+    let playerEntity = Registry.shared.entityRegistry.playerEntityKind
     entityId = EntityId(-1) // Temporary value until the actual id is received from the server.
     onGround = EntityOnGround(true)
     position = EntityPosition(0, 0, 0, smoothingAmount: 1 / 18) // Having it set to slightly more than a tick smooths out any hick ups caused by late ticks
     rotation = EntityRotation(pitch: 0.0, yaw: 0.0)
     velocity = EntityVelocity(0, 0.0, 0)
+    hitBox = EntityHitBox(width: playerEntity.width, height: playerEntity.height)
     experience = EntityExperience()
     flying = EntityFlying()
     health = EntityHealth()
@@ -62,6 +66,7 @@ public struct Player {
       position
       rotation
       velocity
+      hitBox
       experience
       flying
       health
