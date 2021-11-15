@@ -3,81 +3,80 @@ import FirebladeECS
 import Metal
 import MetalKit
 
-public class EntityRenderer {
-  public static let hitBoxColor = RGBColor(hexCode: 0xe3c28d)
+/// Renders all entities in the world the client is currently connected to.
+public struct EntityRenderer: Renderer {
+  /// The color to render hit boxes as. Defaults to 0xe3c28d (light cream colour).
+  public var hitBoxColor = RGBColor(hexCode: 0xe3c28d)
   
+  /// The render pipeline state for rendering entities. Does not have blending enabled.
   private var renderPipelineState: MTLRenderPipelineState
+  /// The buffer containing the uniforms for all rendered entities.
+  private var instanceUniformsBuffer: MTLBuffer?
+  /// The buffer containing the hit box vertices. They form a basic cube and instanced rendering is used to render the cube once for each entity.
   private var vertexBuffer: MTLBuffer
+  /// The buffer containing the index windings for the template hit box (see ``vertexBuffer``.
   private var indexBuffer: MTLBuffer
+  /// The number of indices in ``indexBuffer``.
   private var indexCount: Int
   
-  private var instanceUniformsBuffer: MTLBuffer?
+  /// The client that entities will be renderer for.
+  private var client: Client
+  /// The device that will be used to render.
+  private var device: MTLDevice
+  /// The command queue used to perform operations outside of the main render loop.
+  private var commandQueue: MTLCommandQueue
   
-  public init(_ device: MTLDevice, _ commandQueue: MTLCommandQueue) throws {
-    log.info("Loading entity shaders")
+  /// Creates a new entity renderer.
+  public init(client: Client, device: MTLDevice, commandQueue: MTLCommandQueue) throws {
+    self.client = client
+    self.device = device
+    self.commandQueue = commandQueue
+    
     // Load library
-    guard let bundle = Bundle(url: Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/DeltaCore_DeltaCore.bundle")) else {
-      throw RenderError.failedToGetBundle
-    }
-    
-    guard let libraryURL = bundle.url(forResource: "default", withExtension: "metallib") else {
-      throw RenderError.failedToLocateMetallib
-    }
-    
-    let library: MTLLibrary
-    do {
-      library = try device.makeLibrary(URL: libraryURL)
-    } catch {
-      throw RenderError.failedToCreateMetallib(error)
-    }
-    
-    // Load shaders
-    guard
-      let vertex = library.makeFunction(name: "entityVertexShader"),
-      let fragment = library.makeFunction(name: "entityFragmentShader")
-    else {
-      log.critical("Failed to load entity shaders")
-      throw RenderError.failedToLoadShaders
-    }
+    log.debug("Loading entity shaders")
+    let library = try MetalUtil.loadDefaultLibrary(device)
+    let vertexFunction = try MetalUtil.loadFunction("entityVertexShader", from: library)
+    let fragmentFunction = try MetalUtil.loadFunction("entityFragmentShader", from: library)
     
     // Create render pipeline state
-    let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
-    pipelineStateDescriptor.label = "dev.stackotter.delta-client.EntityRenderer"
-    pipelineStateDescriptor.vertexFunction = vertex
-    pipelineStateDescriptor.fragmentFunction = fragment
-    pipelineStateDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-    pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float
-    
-    let pipelineState: MTLRenderPipelineState
-    do {
-      pipelineState = try device.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
-    } catch {
-      log.critical("Failed to create render pipeline state: \(error)")
-      throw RenderError.failedToCreateEntityRenderPipelineState(error)
-    }
-    
-    self.renderPipelineState = pipelineState
+    log.debug("Creating entity renderer pipeline state")
+    renderPipelineState = try MetalUtil.makeRenderPipelineState(
+      device: device,
+      label: "dev.stackotter.delta-client.EntityRenderer",
+      vertexFunction: vertexFunction,
+      fragmentFunction: fragmentFunction,
+      blendingEnabled: false)
     
     // Create hitbox geometry (hitboxes are rendered using instancing)
-    var geometry = Self.createHitBoxGeometry(color: Self.hitBoxColor)
-    
-    guard
-      let vertexBuffer = device.makeBuffer(bytes: &geometry.vertices, length: geometry.vertices.count * MemoryLayout<BlockVertex>.stride, options: .storageModeShared),
-      let indexBuffer = device.makeBuffer(bytes: &geometry.indices, length: geometry.indices.count * MemoryLayout<UInt32>.stride, options: .storageModeShared)
-    else {
-      log.error("Failed to create vertex and index buffers for entity renderer")
-      throw RenderError.failedToCreateEntityGeometryBuffers
-    }
-    
-    self.vertexBuffer = vertexBuffer
-    self.indexBuffer = indexBuffer
+    var geometry = Self.createHitBoxGeometry(color: hitBoxColor)
     indexCount = geometry.indices.count
+    
+    vertexBuffer = try MetalUtil.makeBuffer(
+      device,
+      bytes: &geometry.vertices,
+      length: geometry.vertices.count * MemoryLayout<BlockVertex>.stride,
+      options: .storageModeShared,
+      label: "entityHitBoxVertices")
+    
+    indexBuffer = try MetalUtil.makeBuffer(
+      device,
+      bytes: &geometry.indices,
+      length: geometry.indices.count * MemoryLayout<UInt32>.stride,
+      options: .storageModeShared,
+      label: "entityHitBoxIndices")
   }
   
-  /// Renders all entity hitboxes using instancing.
-  public func renderHitBoxes(_ view: MTKView, uniformsBuffer: MTLBuffer, camera: Camera, nexus: Nexus, device: MTLDevice, renderEncoder: MTLRenderCommandEncoder) {
+  /// Renders all entity hit boxes using instancing.
+  public mutating func render(
+    view: MTKView,
+    encoder: MTLRenderCommandEncoder,
+    commandBuffer: MTLCommandBuffer,
+    worldToClipUniformsBuffer: MTLBuffer,
+    camera: Camera
+  ) throws {
     // Get all renderable entities
-    let entities = nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self, excludesAll: ClientPlayerEntity.self)
+    let entities = client.game.nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self, excludesAll: ClientPlayerEntity.self)
+    
     guard !entities.isEmpty else {
       return
     }
@@ -99,26 +98,28 @@ public class EntityRenderer {
     let minimumBufferSize = entityUniforms.count * MemoryLayout<Uniforms>.stride
     let maximumBufferSize = minimumBufferSize + 64 * MemoryLayout<Uniforms>.stride
     var instanceUniformsBuffer: MTLBuffer
+    
     if let buffer = self.instanceUniformsBuffer, buffer.length >= minimumBufferSize, buffer.length <= maximumBufferSize {
       buffer.contents().copyMemory(from: &entityUniforms, byteCount: minimumBufferSize)
       instanceUniformsBuffer = buffer
     } else {
       log.trace("Creating new instance uniforms buffer")
-      guard let buffer = device.makeBuffer(length: minimumBufferSize + MemoryLayout<Uniforms>.stride * 32, options: .storageModeShared) else {
-        log.warning("Failed to create new instance uniforms buffer")
-        return
-      }
-      buffer.contents().copyMemory(from: &entityUniforms, byteCount: minimumBufferSize)
-      instanceUniformsBuffer = buffer
-      self.instanceUniformsBuffer = instanceUniformsBuffer
+      instanceUniformsBuffer = try MetalUtil.makeBuffer(
+        device,
+        length: minimumBufferSize + MemoryLayout<Uniforms>.stride * 32,
+        options: .storageModeShared,
+        label: "entityInstanceUniforms")
+      instanceUniformsBuffer.contents().copyMemory(from: &entityUniforms, byteCount: minimumBufferSize)
     }
     
+    self.instanceUniformsBuffer = instanceUniformsBuffer
+    
     // Render all the hitboxes using instancing
-    renderEncoder.setRenderPipelineState(renderPipelineState)
-    renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-    renderEncoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
-    renderEncoder.setVertexBuffer(instanceUniformsBuffer, offset: 0, index: 2)
-    renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: indexCount, indexType: .uint32, indexBuffer: indexBuffer, indexBufferOffset: 0, instanceCount: entities.count)
+    encoder.setRenderPipelineState(renderPipelineState)
+    encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+    encoder.setVertexBuffer(worldToClipUniformsBuffer, offset: 0, index: 1)
+    encoder.setVertexBuffer(instanceUniformsBuffer, offset: 0, index: 2)
+    encoder.drawIndexedPrimitives(type: .triangle, indexCount: indexCount, indexType: .uint32, indexBuffer: indexBuffer, indexBufferOffset: 0, instanceCount: entities.count)
   }
   
   /// Creates a coloured and shaded cube to be rendered using instancing as entities' hitboxes.

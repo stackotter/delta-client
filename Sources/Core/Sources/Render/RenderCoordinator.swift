@@ -58,7 +58,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     }
     
     do {
-      entityRenderer = try EntityRenderer(device, commandQueue)
+      entityRenderer = try EntityRenderer(client: client, device: device, commandQueue: commandQueue)
     } catch {
       fatalError("Failed to create entity renderer: \(error)")
     }
@@ -88,12 +88,14 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       let renderPassDescriptor = view.currentRenderPassDescriptor,
       let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
     else {
-      log.warning("Failed to create command buffer and render encoder")
+      log.error("Failed to create command buffer and render encoder")
+      client.eventBus.dispatch(ErrorEvent(
+        error: RenderError.failedToCreateRenderEncoder("RenderCoordinator"),
+        message: "RenderCoordinator failed to create command buffer and render encoder"))
       return
     }
     
-    updateCamera(client.game.player, view)
-    let uniformsBuffer = camera.getUniformsBuffer()
+    let uniformsBuffer = getCameraUniforms(view)
     
     renderEncoder.setDepthStencilState(depthState)
     renderEncoder.setFrontFacing(.counterClockwise)
@@ -108,13 +110,18 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       camera: camera,
       commandQueue: commandQueue)
     
-    entityRenderer.renderHitBoxes(
-      view,
-      uniformsBuffer: uniformsBuffer,
-      camera: camera,
-      nexus: client.game.nexus,
-      device: device,
-      renderEncoder: renderEncoder)
+    do {
+      try entityRenderer.render(
+        view: view,
+        encoder: renderEncoder,
+        commandBuffer: commandBuffer,
+        worldToClipUniformsBuffer: uniformsBuffer,
+        camera: camera)
+    } catch {
+      log.error("Failed to render entities: \(error)")
+      client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render entities"))
+      return
+    }
     
     guard let drawable = view.currentDrawable else {
       log.warning("Failed to get current drawable")
@@ -128,6 +135,9 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
   
   // MARK: Helper
   
+  public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) { }
+  
+  /// Creates a simple depth stencil state.
   private static func createDepthState(device: MTLDevice) throws -> MTLDepthStencilState {
     let depthDescriptor = MTLDepthStencilDescriptor()
     depthDescriptor.depthCompareFunction = .lessEqual
@@ -141,8 +151,15 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     return depthState
   }
   
-  public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) { }
+  /// Gets the camera uniforms for the current frame.
+  /// - Parameter view: The view that is being rendered to. Used to get aspect ratio.
+  /// - Returns: A buffer containing the uniforms.
+  private func getCameraUniforms(_ view: MTKView) -> MTLBuffer {
+    updateCamera(client.game.player, view)
+    return camera.getUniformsBuffer()
+  }
   
+  /// Updates the camera according to the player's position and rotation, and a view' aspect ratio.
   private func updateCamera(_ player: Player, _ view: MTKView) {
     let aspect = Float(view.drawableSize.width / view.drawableSize.height)
     camera.setAspect(aspect)

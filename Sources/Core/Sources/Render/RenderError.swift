@@ -27,4 +27,6 @@ public enum RenderError: LocalizedError {
   case failedToCreateRenderEncoder(String)
   /// Failed to create geometry buffers for the entity renderer.
   case failedToCreateEntityGeometryBuffers
+  /// Failed to create a metal buffer.
+  case failedToCreateBuffer(label: String?)
 }
