@@ -114,7 +114,7 @@ public struct TexturePalette {
   // MARK: Metal
   
   /// Returns a metal texture array on the given device, containing the first frame of each texture.
-  public func createTextureArray(device: MTLDevice, animationState: TexturePaletteAnimationState, commandQueue: MTLCommandQueue) throws -> MTLTexture {
+  public func createTextureArray(device: MTLDevice, animationState: ArrayTextureAnimationState, commandQueue: MTLCommandQueue) throws -> MTLTexture {
     let textureDescriptor = MTLTextureDescriptor()
     textureDescriptor.width = width
     textureDescriptor.height = width
@@ -160,7 +160,11 @@ public struct TexturePalette {
     return arrayTexture
   }
   
-  public func updateArrayTexture(arrayTexture: MTLTexture, device: MTLDevice, animationState: TexturePaletteAnimationState, updatedTextures: [Int], commandQueue: MTLCommandQueue) {
+  public func updateArrayTexture(arrayTexture: MTLTexture, device: MTLDevice, animationState: ArrayTextureAnimationState, updatedTextures: [Int], commandQueue: MTLCommandQueue) {
+    guard !updatedTextures.isEmpty else {
+      return
+    }
+    
     let bytesPerPixel = 4
     let bytesPerRow = bytesPerPixel * width
     let bytesPerFrame = bytesPerRow * width

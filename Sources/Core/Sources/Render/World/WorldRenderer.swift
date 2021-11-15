@@ -7,36 +7,33 @@ public struct WorldRenderer: Renderer {
   /// Render pipeline used for rendering world geometry.
   var renderPipelineState: MTLRenderPipelineState
   
+  /// The resources to use for rendering blocks.
   var resources: ResourcePack.Resources
-  var blockArrayTexture: MTLTexture
-  var blockTexturePaletteAnimationState: TexturePaletteAnimationState
+  /// The array texture containing all of the block textures.
+  var arrayTexture: AnimatedArrayTexture
   
-  var device: MTLDevice
-  var world: World
+  /// The client to render for.
   var client: Client
+  
+  /// The device used for rendering.
+  var device: MTLDevice
+  /// The command queue used for rendering.
   var commandQueue: MTLCommandQueue
-  var chunkRenderers: [ChunkPosition: ChunkRenderer] = [:]
   
-  /// A set containing all chunks which are currently preparing.
-  var preparingChunks: Set<ChunkPosition> = []
-  
+  /// Creates a new world renderer.
   public init(client: Client, device: MTLDevice, commandQueue: MTLCommandQueue) throws {
     self.device = device
     self.client = client
     self.commandQueue = commandQueue
-    world = client.game.world
-    resources = client.resourcePack.vanillaResources
     
     // Load shaders
-    log.debug("Loading shaders")
     let library = try MetalUtil.loadDefaultLibrary(device)
     let vertexFunction = try MetalUtil.loadFunction("chunkVertexShader", from: library)
     let fragmentFunction = try MetalUtil.loadFunction("chunkFragmentShader", from: library)
     
     // Create block palette array texture.
-    let blockTexturePalette = resources.blockTexturePalette
-    blockTexturePaletteAnimationState = TexturePaletteAnimationState(for: blockTexturePalette)
-    blockArrayTexture = try Self.createArrayTexture(palette: blockTexturePalette, animationState: blockTexturePaletteAnimationState, device: device, commandQueue: commandQueue)
+    resources = client.resourcePack.vanillaResources
+    arrayTexture = try AnimatedArrayTexture(palette: resources.blockTexturePalette, device: device, commandQueue: commandQueue)
     
     // Create pipeline
     renderPipelineState = try MetalUtil.makeRenderPipelineState(
@@ -47,313 +44,7 @@ public struct WorldRenderer: Renderer {
       blendingEnabled: true)
   }
   
-  private static func createArrayTexture(palette: TexturePalette, animationState: TexturePaletteAnimationState, device: MTLDevice, commandQueue: MTLCommandQueue) throws -> MTLTexture {
-    do {
-      return try palette.createTextureArray(
-        device: device,
-        animationState: animationState,
-        commandQueue: commandQueue)
-    } catch {
-      log.critical("Failed to create texture array: \(error)")
-      throw RenderError.failedToCreateBlockTextureArray(error)
-    }
-  }
-  
-  /// Handles a batch of world events.
-  mutating func handle(_ events: [Event]) {
-    var sectionsToUpdate: Set<ChunkSectionPosition> = []
-    
-    events.forEach { event in
-      switch event {
-        case let event as World.Event.AddChunk:
-          handleAddChunk(event)
-        case let event as World.Event.RemoveChunk:
-          handleRemoveChunk(event)
-        case let chunkLightingUpdate as World.Event.UpdateChunkLighting:
-          handleLightingUpdate(chunkLightingUpdate)
-        case let blockUpdate as World.Event.SetBlock:
-          let affectedSections = sectionsAffected(by: blockUpdate)
-          sectionsToUpdate.formUnion(affectedSections)
-        case let chunkUpdate as World.Event.UpdateChunk:
-          // TODO: only remesh updated chunks
-          for sectionIndex in 0..<16 {
-            let sectionPosition = ChunkSectionPosition(chunkUpdate.position, sectionY: sectionIndex)
-            let neighbours = sectionsNeighbouring(sectionAt: sectionPosition)
-            sectionsToUpdate.formUnion(neighbours)
-          }
-        default:
-          break
-      }
-    }
-    
-    // Update all necessary section meshes
-    sectionsToUpdate.forEach { section in
-      if let chunkRenderer = chunkRenderers[section.chunk] {
-        chunkRenderer.handleSectionUpdate(at: section.sectionY)
-      }
-    }
-  }
-  
-  /// Creates renderers for all chunks that are renderable after the given update.
-  mutating func handleAddChunk(_ event: World.Event.AddChunk) {
-    let affectedPositions = event.position.andNeighbours
-    for position in affectedPositions {
-      if canRenderChunk(at: position) && !chunkRenderers.keys.contains(position) {
-        if let neighbour = world.chunk(at: position) {
-          let neighbours = world.neighbours(ofChunkAt: position)
-          
-          let chunkRenderer = ChunkRenderer(
-            for: neighbour,
-            at: position,
-            withNeighbours: neighbours,
-            with: resources,
-            world: world)
-          chunkRenderers[position] = chunkRenderer
-          log.debug("Created chunk renderer for chunk at \(position)")
-        }
-      }
-    }
-  }
-  
-  /// Removes all renderers made invalid by a given chunk removal.
-  mutating func handleRemoveChunk(_ event: World.Event.RemoveChunk) {
-    let affectedChunks = event.position.andNeighbours
-    for chunkPosition in affectedChunks {
-      chunkRenderers.removeValue(forKey: chunkPosition)
-    }
-  }
-  
-  /// Handles a chunk lighting update.
-  mutating func handleLightingUpdate(_ event: World.Event.UpdateChunkLighting) {
-    if let chunk = world.chunk(at: event.position) {
-      if let renderer = chunkRenderers[event.position] {
-        // TODO: only update sections affected by the lighting update
-        renderer.invalidateMeshes()
-      } else {
-        let addChunkEvent = World.Event.AddChunk(
-          position: event.position,
-          chunk: chunk)
-        handleAddChunk(addChunkEvent)
-      }
-    }
-  }
-  
-  /// Returns whether a chunk is ready to be rendered or not.
-  ///
-  /// To be renderable, a chunk must be complete and so must its neighours.
-  func canRenderChunk(at position: ChunkPosition) -> Bool {
-    let chunkPositions = position.andNeighbours
-    for chunkPosition in chunkPositions {
-      if !world.chunkComplete(at: chunkPosition) {
-        return false
-      }
-    }
-    return true
-  }
-  
-  /// Returns the sections that require re-meshing after the specified block update.
-  func sectionsAffected(by blockUpdate: World.Event.SetBlock) -> [ChunkSectionPosition] {
-    var affectedSections: [ChunkSectionPosition] = [blockUpdate.position.chunkSection]
-    
-    let updateRelativeToChunk = blockUpdate.position.relativeToChunk
-    var affectedNeighbours: [CardinalDirection] = []
-    if updateRelativeToChunk.z == 0 {
-      affectedNeighbours.append(.north)
-    } else if updateRelativeToChunk.z == 15 {
-      affectedNeighbours.append(.south)
-    }
-    if updateRelativeToChunk.x == 15 {
-      affectedNeighbours.append(.east)
-    } else if updateRelativeToChunk.x == 0 {
-      affectedNeighbours.append(.west)
-    }
-    
-    for direction in affectedNeighbours {
-      let neighbourChunk = blockUpdate.position.chunk.neighbour(inDirection: direction)
-      let neighbourSection = ChunkSectionPosition(neighbourChunk, sectionY: updateRelativeToChunk.sectionIndex)
-      affectedSections.append(neighbourSection)
-    }
-    
-    // check whether sections above and below are also affected
-    let updatedSection = blockUpdate.position.chunkSection
-    
-    let sectionHeight = Chunk.Section.height
-    if updateRelativeToChunk.y % sectionHeight == sectionHeight - 1 && updateRelativeToChunk.y != Chunk.height - 1 {
-      var section = updatedSection
-      section.sectionY += 1
-      affectedSections.append(section)
-    } else if updateRelativeToChunk.y % sectionHeight == 0 && updateRelativeToChunk.y != 0 {
-      var section = updatedSection
-      section.sectionY -= 1
-      affectedSections.append(section)
-    }
-    
-    return affectedSections
-  }
-  
-  /// Returns the positions of all valid chunk sections that neighbour the specific chunk section.
-  func sectionsNeighbouring(sectionAt sectionPosition: ChunkSectionPosition) -> [ChunkSectionPosition] {
-    var northNeighbour = sectionPosition
-    northNeighbour.sectionZ -= 1
-    var eastNeighbour = sectionPosition
-    eastNeighbour.sectionX += 1
-    var southNeighbour = sectionPosition
-    southNeighbour.sectionZ += 1
-    var westNeighbour = sectionPosition
-    westNeighbour.sectionX -= 1
-    var upNeighbour = sectionPosition
-    upNeighbour.sectionY += 1
-    var downNeighbour = sectionPosition
-    downNeighbour.sectionY -= 1
-    
-    var neighbours = [northNeighbour, eastNeighbour, southNeighbour, westNeighbour]
-    
-    if upNeighbour.sectionY < Chunk.numSections {
-      neighbours.append(upNeighbour)
-    }
-    if downNeighbour.sectionY >= 0 {
-      neighbours.append(downNeighbour)
-    }
-    
-    return neighbours
-  }
-  
-  /// Returns a map from each cardinal direction to the given renderer's neighbour in that direction.
-  func getNeighbourRenderers(of renderer: ChunkRenderer) -> [CardinalDirection: ChunkRenderer] {
-    var neighbourRenderers: [CardinalDirection: ChunkRenderer] = [:]
-    renderer.chunkPosition.allNeighbours.forEach { direction, neighbourPosition in
-      if let neighbourRenderer = chunkRenderers[neighbourPosition] {
-        neighbourRenderers[direction] = neighbourRenderer
-      }
-    }
-    return neighbourRenderers
-  }
-  
-  func createWorldUniforms(for camera: Camera) -> Uniforms {
-    let worldToClipSpace = camera.getFrustum().worldToClip
-    return Uniforms(transformation: worldToClipSpace)
-  }
-  
-  func populateWorldUniformBuffer(_ buffer: inout MTLBuffer, with uniforms: inout Uniforms) {
-    buffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<Uniforms>.stride)
-  }
-  
-  /// Decides whether to process a world event this frame.
-  func shouldProcessWorldEvent(event: Event) -> Bool {
-    switch event {
-      case let blockUpdate as World.Event.SetBlock:
-        // Postpone handling of the block update if it affects a frozen chunk section
-        let affectedSections = sectionsAffected(by: blockUpdate)
-        for section in affectedSections {
-          if let renderer = chunkRenderers[section.chunk] {
-            if renderer.sectionFrozen(at: section.sectionY) {
-              return false
-            }
-          }
-        }
-        return true
-      case let chunkUpdate as World.Event.UpdateChunk:
-        // Postpone handling of the chunk update if any of the affected sections are are frozen
-        if let renderer = chunkRenderers[chunkUpdate.position] {
-          let neighbourRenderers = getNeighbourRenderers(of: renderer)
-          for index in 0..<16 {
-            if renderer.sectionFrozen(at: index - 1) || renderer.sectionFrozen(at: index + 1) {
-              return false
-            }
-            for (_, renderer) in neighbourRenderers {
-              if renderer.sectionFrozen(at: index) {
-                return false
-              }
-            }
-          }
-        }
-        return true
-      case let chunkLightingUpdate as World.Event.UpdateChunkLighting:
-        // Postpone handling of a lighting update if the chunk of any of its neighbours contain frozen sections
-        let affectedChunks = chunkLightingUpdate.position.andNeighbours
-        for chunkPosition in affectedChunks {
-          if let renderer = chunkRenderers[chunkPosition] {
-            if renderer.frozenSectionCount != 0 {
-              return false
-            }
-          }
-        }
-        return true
-      default:
-        return true
-    }
-  }
-  
-  /// Also handles block updates.
-  mutating func getVisibleChunkRenderers(camera: Camera) -> [ChunkRenderer] {
-    // Filter and handle world events
-    let events = world.processBatch(filter: shouldProcessWorldEvent)
-    handle(events)
-    
-    // Filter out chunks outside of render distance
-    let playerChunk = client.game.player.position.chunk
-    let chunkRenderersInRenderDistance = [ChunkRenderer](chunkRenderers.values).filter { renderer in
-      let distance = max(
-        abs(playerChunk.chunkX - renderer.chunkPosition.chunkX),
-        abs(playerChunk.chunkZ - renderer.chunkPosition.chunkZ))
-      return distance < client.config.renderDistance
-    }
-    
-    // Sort chunks by distance from player
-    let cameraPosition2d = SIMD2<Float>(camera.position.x, camera.position.z)
-    var sortedChunkRenderers = chunkRenderersInRenderDistance.sorted {
-      let point1 = SIMD2<Float>(
-        Float($0.chunkPosition.chunkX) * Float(Chunk.width),
-        Float($0.chunkPosition.chunkZ) * Float(Chunk.depth))
-      let point2 = SIMD2<Float>(
-        Float($1.chunkPosition.chunkX) * Float(Chunk.width),
-        Float($1.chunkPosition.chunkZ) * Float(Chunk.depth))
-      let distance1 = simd_distance_squared(cameraPosition2d, point1)
-      let distance2 = simd_distance_squared(cameraPosition2d, point2)
-      return distance2 > distance1
-    }
-    
-    // Get visible chunks
-    let visibleChunks = sortedChunkRenderers.map { $0.chunkPosition }.filter { chunkPosition in
-      return camera.isChunkVisible(at: chunkPosition)
-    }
-    
-    // Put visible chunks first
-    sortedChunkRenderers.sort {
-      return visibleChunks.contains($0.chunkPosition) && !visibleChunks.contains($1.chunkPosition)
-    }
-    
-    // Remove prepared chunks from preparing chunks
-    preparingChunks.forEach { chunkPosition in
-      if let chunkRenderer = chunkRenderers[chunkPosition] {
-        if chunkRenderer.hasCompletedInitialPrepare {
-          log.trace("Removing prepared chunk at \(chunkPosition) from preparingChunks")
-          preparingChunks.remove(chunkPosition)
-        }
-      }
-    }
-    
-    let chunksToPrepare = sortedChunkRenderers.filter { chunkRenderer in
-      return chunkRenderer.requiresPreparing
-    }
-    
-    // Prepare chunks that require preparing and freeze any updates for them
-    for chunkRenderer in chunksToPrepare {
-      if preparingChunks.count == 3 {
-        break
-      }
-      preparingChunks.insert(chunkRenderer.chunkPosition)
-      chunkRenderer.prepareAsync()
-    }
-    
-    // Get ChunkRenderers which are ready to be rendered
-    let renderersToRender = sortedChunkRenderers.filter { chunkRenderer in
-      return visibleChunks.contains(chunkRenderer.chunkPosition)
-    }
-    
-    return renderersToRender
-  }
-  
+  /// Renders the world's blocks.
   public mutating func render(
     view: MTKView,
     encoder: MTLRenderCommandEncoder,
@@ -362,44 +53,11 @@ public struct WorldRenderer: Renderer {
     camera: Camera
   ) throws {
     // Update animated textures
-    let updatedTextures = blockTexturePaletteAnimationState.update(tick: client.game.tickScheduler.tickNumber)
-    stopwatch.startMeasurement("update texture")
-    resources.blockTexturePalette.updateArrayTexture(
-      arrayTexture: blockArrayTexture,
-      device: device,
-      animationState: blockTexturePaletteAnimationState,
-      updatedTextures: updatedTextures,
-      commandQueue: commandQueue)
-    stopwatch.stopMeasurement("update texture")
-    
-    stopwatch.startMeasurement("get visible chunks")
-    let renderersToRender = getVisibleChunkRenderers(camera: camera)
-    stopwatch.stopMeasurement("get visible chunks")
+    arrayTexture.update(tick: client.game.tickScheduler.tickNumber, device: device, commandQueue: commandQueue)
     
     // Encode render pass
-    stopwatch.startMeasurement("encode")
     encoder.setRenderPipelineState(renderPipelineState)
-    encoder.setFragmentTexture(blockArrayTexture, index: 0)
+    encoder.setFragmentTexture(arrayTexture.texture, index: 0)
     encoder.setVertexBuffer(worldToClipUniformsBuffer, offset: 0, index: 1)
-      
-    // Render opaque and transparent chunk geometry.
-    renderersToRender.forEach { chunkRenderer in
-      chunkRenderer.renderTransparentOpaque(
-        renderEncoder: encoder,
-        with: device,
-        and: camera,
-        commandQueue: commandQueue)
-    }
-      
-    // Render translucent chunk geometry afterwards (for correct blending).
-    renderersToRender.forEach { chunkRenderer in
-      chunkRenderer.renderTranslucent(
-        renderEncoder: encoder,
-        with: device,
-        and: camera,
-        sortTranslucent: true,
-        commandQueue: commandQueue)
-    }
-    stopwatch.stopMeasurement("encode")
   }
 }

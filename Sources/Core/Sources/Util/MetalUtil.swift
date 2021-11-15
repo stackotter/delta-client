@@ -97,4 +97,19 @@ public enum MetalUtil {
     buffer.label = label
     return buffer
   }
+  
+  /// Creates a simple depth stencil state.
+  /// - Parameter device: Device to create the state with.
+  /// - Returns: A depth stencil state.
+  public static func createDepthState(device: MTLDevice) throws -> MTLDepthStencilState {
+    let depthDescriptor = MTLDepthStencilDescriptor()
+    depthDescriptor.depthCompareFunction = .lessEqual
+    depthDescriptor.isDepthWriteEnabled = true
+    
+    guard let depthState = device.makeDepthStencilState(descriptor: depthDescriptor) else {
+      throw RenderError.failedToCreateWorldDepthStencilState
+    }
+    
+    return depthState
+  }
 }

@@ -33,13 +33,11 @@ public struct EntityRenderer: Renderer {
     self.commandQueue = commandQueue
     
     // Load library
-    log.debug("Loading entity shaders")
     let library = try MetalUtil.loadDefaultLibrary(device)
     let vertexFunction = try MetalUtil.loadFunction("entityVertexShader", from: library)
     let fragmentFunction = try MetalUtil.loadFunction("entityFragmentShader", from: library)
     
     // Create render pipeline state
-    log.debug("Creating entity renderer pipeline state")
     renderPipelineState = try MetalUtil.makeRenderPipelineState(
       device: device,
       label: "dev.stackotter.delta-client.EntityRenderer",

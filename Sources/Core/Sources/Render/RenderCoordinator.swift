@@ -1,10 +1,7 @@
 import Foundation
 import MetalKit
 
-// TODO: remove when not needed anymore
-var stopwatch = Stopwatch(mode: .summary)
-
-// TODO: document render coordinator
+/// Coordinates the rendering of the game (e.g. blocks and entities).
 public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDelegate {
   /// The client to render.
   private var client: Client
@@ -26,6 +23,8 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
   
   // MARK: Init
   
+  /// Creates a render coordinator.
+  /// - Parameter client: The client to render for.
   public required init(_ client: Client) {
     // TODO: get rid of fatalErrors in RenderCoordinator
     guard let device = MTLCreateSystemDefaultDevice() else {
@@ -64,11 +63,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     }
     
     // Create depth stencil state
-    do {
-      depthState = try Self.createDepthState(device: device)
-    } catch {
-      fatalError("Failed to create depth state: \(error)")
-    }
+    depthState = try! MetalUtil.createDepthState(device: device)
     
     super.init()
     
@@ -82,7 +77,12 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
   // MARK: Render
   
   public func draw(in view: MTKView) {
+    // Create world to clip uniforms buffer
+    let uniformsBuffer = getCameraUniforms(view)
+    
     // TODO: Get the render pass descriptor as late as possible
+    
+    // Create render encoder
     guard
       let commandBuffer = commandQueue.makeCommandBuffer(),
       let renderPassDescriptor = view.currentRenderPassDescriptor,
@@ -95,12 +95,11 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       return
     }
     
-    let uniformsBuffer = getCameraUniforms(view)
-    
     renderEncoder.setDepthStencilState(depthState)
     renderEncoder.setFrontFacing(.counterClockwise)
     renderEncoder.setCullMode(.front)
     
+    // Render world
     do {
       try worldRenderer.render(
         view: view,
@@ -114,6 +113,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       return
     }
     
+    // Render entities
     do {
       try entityRenderer.render(
         view: view,
@@ -127,6 +127,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       return
     }
     
+    // Finish encoding the frame
     guard let drawable = view.currentDrawable else {
       log.warning("Failed to get current drawable")
       return
@@ -141,51 +142,28 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
   
   public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) { }
   
-  /// Creates a simple depth stencil state.
-  private static func createDepthState(device: MTLDevice) throws -> MTLDepthStencilState {
-    let depthDescriptor = MTLDepthStencilDescriptor()
-    depthDescriptor.depthCompareFunction = .lessEqual
-    depthDescriptor.isDepthWriteEnabled = true
-    
-    guard let depthState = device.makeDepthStencilState(descriptor: depthDescriptor) else {
-      log.critical("Failed to create depth stencil state")
-      throw RenderError.failedToCreateWorldDepthStencilState
-    }
-    
-    return depthState
-  }
-  
   /// Gets the camera uniforms for the current frame.
   /// - Parameter view: The view that is being rendered to. Used to get aspect ratio.
   /// - Returns: A buffer containing the uniforms.
   private func getCameraUniforms(_ view: MTKView) -> MTLBuffer {
-    updateCamera(client.game.player, view)
-    return camera.getUniformsBuffer()
-  }
-  
-  /// Updates the camera according to the player's position and rotation, and a view' aspect ratio.
-  private func updateCamera(_ player: Player, _ view: MTKView) {
     let aspect = Float(view.drawableSize.width / view.drawableSize.height)
     camera.setAspect(aspect)
     
+    let player = client.game.player
     var eyePosition = SIMD3<Float>(player.position.smoothVector)
     eyePosition.y += 1.625 // TODO: don't hardcode this, use the player's hitbox
     
     camera.setPosition(eyePosition)
     camera.setRotation(playerLook: player.rotation)
     camera.cacheFrustum()
+    return camera.getUniformsBuffer()
   }
   
+  /// Handle events received from the client.
   private func handleClientEvent(_ event: Event) {
     switch event {
-      case let event as JoinWorldEvent:
-        do {
-          worldRenderer = try WorldRenderer(client: client, device: device, commandQueue: commandQueue)
-        } catch {
-          log.critical("Failed to create world renderer")
-          client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to create world renderer"))
-        }
       case let event as ChangeFOVEvent:
+        // TODO: don't use events to update the fov
         let fov = MathUtil.radians(from: Float(event.fovDegrees))
         camera.setFovY(fov)
       default:

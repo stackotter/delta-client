@@ -1,6 +1,6 @@
 import Foundation
 
-public struct TexturePaletteAnimationState {
+public struct ArrayTextureAnimationState {
   /// The last tick processed.
   public var lastTick: Int?
   /// The states of all animated textures.
