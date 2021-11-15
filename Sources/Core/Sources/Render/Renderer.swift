@@ -8,7 +8,7 @@ public protocol Renderer {
   
   /// Renders a frame.
   ///
-  /// Should not call `encoder.endEncoding()` of `commandBuffer.commit()`.
+  /// Should not call `renderEncoder.endEncoding()` of `commandBuffer.commit()`.
   /// A render coordinator should manage the encoder and command buffer.
   mutating func render(
     view: MTKView,

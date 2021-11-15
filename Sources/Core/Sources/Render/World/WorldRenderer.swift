@@ -3,7 +3,7 @@ import MetalKit
 import simd
 
 /// A renderer that renders a `World`
-class WorldRenderer {
+public struct WorldRenderer: Renderer {
   /// Render pipeline used for rendering world geometry.
   var renderPipelineState: MTLRenderPipelineState
   
@@ -11,72 +11,40 @@ class WorldRenderer {
   var blockArrayTexture: MTLTexture
   var blockTexturePaletteAnimationState: TexturePaletteAnimationState
   
+  var device: MTLDevice
   var world: World
   var client: Client
+  var commandQueue: MTLCommandQueue
   var chunkRenderers: [ChunkPosition: ChunkRenderer] = [:]
   
   /// A set containing all chunks which are currently preparing.
   var preparingChunks: Set<ChunkPosition> = []
   
-  init(device: MTLDevice, world: World, client: Client, resources: ResourcePack.Resources, commandQueue: MTLCommandQueue) throws {
-    // Load shaders
-    log.info("Loading shaders")
-    guard let bundle = Bundle(url: Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/DeltaCore_DeltaCore.bundle")) else {
-      throw RenderError.failedToGetBundle
-    }
-    
-    guard let libraryURL = bundle.url(forResource: "default", withExtension: "metallib") else {
-      throw RenderError.failedToLocateMetallib
-    }
-    
-    let library: MTLLibrary
-    do {
-      library = try device.makeLibrary(URL: libraryURL)
-    } catch {
-      throw RenderError.failedToCreateMetallib(error)
-    }
-
-    guard
-      let vertex = library.makeFunction(name: "chunkVertexShader"),
-      let fragment = library.makeFunction(name: "chunkFragmentShader")
-    else {
-      log.critical("Failed to load chunk shaders")
-      throw RenderError.failedToLoadShaders
-    }
-    
-    self.world = world
+  public init(client: Client, device: MTLDevice, commandQueue: MTLCommandQueue) throws {
+    self.device = device
     self.client = client
-    self.resources = resources
+    self.commandQueue = commandQueue
+    world = client.game.world
+    resources = client.resourcePack.vanillaResources
     
+    // Load shaders
+    log.debug("Loading shaders")
+    let library = try MetalUtil.loadDefaultLibrary(device)
+    let vertexFunction = try MetalUtil.loadFunction("chunkVertexShader", from: library)
+    let fragmentFunction = try MetalUtil.loadFunction("chunkFragmentShader", from: library)
+    
+    // Create block palette array texture.
     let blockTexturePalette = resources.blockTexturePalette
     blockTexturePaletteAnimationState = TexturePaletteAnimationState(for: blockTexturePalette)
     blockArrayTexture = try Self.createArrayTexture(palette: blockTexturePalette, animationState: blockTexturePaletteAnimationState, device: device, commandQueue: commandQueue)
-    renderPipelineState = try Self.createRenderPipelineState(vertex: vertex, fragment: fragment, device: device)
-  }
-  
-  private static func createRenderPipelineState(vertex: MTLFunction, fragment: MTLFunction, device: MTLDevice) throws -> MTLRenderPipelineState {
-    let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
-    pipelineStateDescriptor.label = "dev.stackotter.delta-client.WorldRenderer"
-    pipelineStateDescriptor.vertexFunction = vertex
-    pipelineStateDescriptor.fragmentFunction = fragment
-    pipelineStateDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-    pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float
     
-    // Setup blending operation
-    pipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
-    pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
-    pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
-    pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
-    pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .zero
-    pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
-    pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .zero
-    
-    do {
-      return try device.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
-    } catch {
-      log.critical("Failed to create render pipeline state")
-      throw RenderError.failedToCreateWorldRenderPipelineState(error)
-    }
+    // Create pipeline
+    renderPipelineState = try MetalUtil.makeRenderPipelineState(
+      device: device,
+      label: "dev.stackotter.delta-client.WorldRenderer",
+      vertexFunction: vertexFunction,
+      fragmentFunction: fragmentFunction,
+      blendingEnabled: true)
   }
   
   private static func createArrayTexture(palette: TexturePalette, animationState: TexturePaletteAnimationState, device: MTLDevice, commandQueue: MTLCommandQueue) throws -> MTLTexture {
@@ -92,7 +60,7 @@ class WorldRenderer {
   }
   
   /// Handles a batch of world events.
-  func handle(_ events: [Event]) {
+  mutating func handle(_ events: [Event]) {
     var sectionsToUpdate: Set<ChunkSectionPosition> = []
     
     events.forEach { event in
@@ -127,7 +95,7 @@ class WorldRenderer {
   }
   
   /// Creates renderers for all chunks that are renderable after the given update.
-  func handleAddChunk(_ event: World.Event.AddChunk) {
+  mutating func handleAddChunk(_ event: World.Event.AddChunk) {
     let affectedPositions = event.position.andNeighbours
     for position in affectedPositions {
       if canRenderChunk(at: position) && !chunkRenderers.keys.contains(position) {
@@ -148,7 +116,7 @@ class WorldRenderer {
   }
   
   /// Removes all renderers made invalid by a given chunk removal.
-  func handleRemoveChunk(_ event: World.Event.RemoveChunk) {
+  mutating func handleRemoveChunk(_ event: World.Event.RemoveChunk) {
     let affectedChunks = event.position.andNeighbours
     for chunkPosition in affectedChunks {
       chunkRenderers.removeValue(forKey: chunkPosition)
@@ -156,7 +124,7 @@ class WorldRenderer {
   }
   
   /// Handles a chunk lighting update.
-  func handleLightingUpdate(_ event: World.Event.UpdateChunkLighting) {
+  mutating func handleLightingUpdate(_ event: World.Event.UpdateChunkLighting) {
     if let chunk = world.chunk(at: event.position) {
       if let renderer = chunkRenderers[event.position] {
         // TODO: only update sections affected by the lighting update
@@ -317,7 +285,7 @@ class WorldRenderer {
   }
   
   /// Also handles block updates.
-  func getVisibleChunkRenderers(camera: Camera) -> [ChunkRenderer] {
+  mutating func getVisibleChunkRenderers(camera: Camera) -> [ChunkRenderer] {
     // Filter and handle world events
     let events = world.processBatch(filter: shouldProcessWorldEvent)
     handle(events)
@@ -386,37 +354,22 @@ class WorldRenderer {
     return renderersToRender
   }
   
-  private static func createRenderEncoder(
-    depthState: MTLDepthStencilState,
-    commandBuffer: MTLCommandBuffer,
-    renderPassDescriptor: MTLRenderPassDescriptor,
-    pipelineState: MTLRenderPipelineState
-  ) throws -> MTLRenderCommandEncoder {
-    guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
-      throw RenderError.failedToCreateRenderEncoder(pipelineState.label ?? "pipeline")
-    }
-    
-    renderEncoder.setRenderPipelineState(pipelineState)
-    renderEncoder.setDepthStencilState(depthState)
-    renderEncoder.setFrontFacing(.clockwise)
-    renderEncoder.setCullMode(.back)
-    
-    return renderEncoder
-  }
-  
-  func draw(
-    device: MTLDevice,
-    uniformsBuffer: MTLBuffer,
+  public mutating func render(
     view: MTKView,
-    renderEncoder: MTLRenderCommandEncoder,
-    renderCommandBuffer: MTLCommandBuffer,
-    camera: Camera,
-    commandQueue: MTLCommandQueue
-  ) {
+    encoder: MTLRenderCommandEncoder,
+    commandBuffer: MTLCommandBuffer,
+    worldToClipUniformsBuffer: MTLBuffer,
+    camera: Camera
+  ) throws {
     // Update animated textures
     let updatedTextures = blockTexturePaletteAnimationState.update(tick: client.game.tickScheduler.tickNumber)
     stopwatch.startMeasurement("update texture")
-    resources.blockTexturePalette.updateArrayTexture(arrayTexture: blockArrayTexture, device: device, animationState: blockTexturePaletteAnimationState, updatedTextures: updatedTextures, commandQueue: commandQueue)
+    resources.blockTexturePalette.updateArrayTexture(
+      arrayTexture: blockArrayTexture,
+      device: device,
+      animationState: blockTexturePaletteAnimationState,
+      updatedTextures: updatedTextures,
+      commandQueue: commandQueue)
     stopwatch.stopMeasurement("update texture")
     
     stopwatch.startMeasurement("get visible chunks")
@@ -425,14 +378,14 @@ class WorldRenderer {
     
     // Encode render pass
     stopwatch.startMeasurement("encode")
-    renderEncoder.setRenderPipelineState(renderPipelineState)
-    renderEncoder.setFragmentTexture(blockArrayTexture, index: 0)
-    renderEncoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
+    encoder.setRenderPipelineState(renderPipelineState)
+    encoder.setFragmentTexture(blockArrayTexture, index: 0)
+    encoder.setVertexBuffer(worldToClipUniformsBuffer, offset: 0, index: 1)
       
     // Render opaque and transparent chunk geometry.
     renderersToRender.forEach { chunkRenderer in
       chunkRenderer.renderTransparentOpaque(
-        renderEncoder: renderEncoder,
+        renderEncoder: encoder,
         with: device,
         and: camera,
         commandQueue: commandQueue)
@@ -441,7 +394,7 @@ class WorldRenderer {
     // Render translucent chunk geometry afterwards (for correct blending).
     renderersToRender.forEach { chunkRenderer in
       chunkRenderer.renderTranslucent(
-        renderEncoder: renderEncoder,
+        renderEncoder: encoder,
         with: device,
         and: camera,
         sortTranslucent: true,

@@ -52,7 +52,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     
     // Create world renderer
     do {
-      worldRenderer = try WorldRenderer(device: device, world: client.game.world, client: client, resources: client.resourcePack.vanillaResources, commandQueue: commandQueue)
+      worldRenderer = try WorldRenderer(client: client, device: device, commandQueue: commandQueue)
     } catch {
       fatalError("Failed to create world renderer: \(error)")
     }
@@ -101,14 +101,18 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     renderEncoder.setFrontFacing(.counterClockwise)
     renderEncoder.setCullMode(.front)
     
-    worldRenderer.draw(
-      device: device,
-      uniformsBuffer: uniformsBuffer,
-      view: view,
-      renderEncoder: renderEncoder,
-      renderCommandBuffer: commandBuffer,
-      camera: camera,
-      commandQueue: commandQueue)
+    do {
+      try worldRenderer.render(
+        view: view,
+        encoder: renderEncoder,
+        commandBuffer: commandBuffer,
+        worldToClipUniformsBuffer: uniformsBuffer,
+        camera: camera)
+    } catch {
+      log.error("Failed to render world: \(error)")
+      client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render world"))
+      return
+    }
     
     do {
       try entityRenderer.render(
@@ -176,12 +180,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     switch event {
       case let event as JoinWorldEvent:
         do {
-          worldRenderer = try WorldRenderer(
-            device: device,
-            world: event.world,
-            client: client,
-            resources: client.resourcePack.vanillaResources,
-            commandQueue: commandQueue)
+          worldRenderer = try WorldRenderer(client: client, device: device, commandQueue: commandQueue)
         } catch {
           log.critical("Failed to create world renderer")
           client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to create world renderer"))
