@@ -5,6 +5,7 @@ import Carbon
 #if os(macOS)
 class ClientInputDelegate: InputDelegate {
   let keyMapping = ConfigManager.default.config.keybinds
+  let sensitivity = ConfigManager.default.config.sensitivity
   
   var client: Client
   
@@ -41,7 +42,7 @@ class ClientInputDelegate: InputDelegate {
   }
   
   func onMouseMove(_ deltaX: Float, _ deltaY: Float) {
-    let event = MouseMoveEvent(deltaX: deltaX, deltaY: deltaY)
+    let event = MouseMoveEvent(deltaX: sensitivity * deltaX, deltaY: sensitivity * deltaY)
     client.eventBus.dispatch(event)
   }
   

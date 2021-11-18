@@ -20,6 +20,8 @@ public struct Config: Codable {
   public var unloadedPlugins: [String]
   /// The user's keybindings
   public var keybinds: KeyMapping
+  /// The in game mouse sensitivity
+  public var sensitivity: Float
   
   /// All of the user's accounts.
   public var accounts: [Account] {
@@ -62,6 +64,7 @@ public struct Config: Codable {
       .shift: .modifier(.leftShift),
       .sprint: .modifier(.leftControl)
     ])
+    sensitivity = 1
   }
   
   /// Returns the type of the given account
