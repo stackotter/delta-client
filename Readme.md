@@ -84,7 +84,7 @@ Not every version will be perfectly supported but we will try and have the most 
     - [x] Biome blending (mostly)
     - [ ] Block entities (e.g. chests)
   - [ ] Entities
-    - [ ] Basic entity rendering (just coloured cubes)
+    - [x] Basic entity rendering (just coloured cubes)
     - [ ] Render entity models
     - [ ] Entity animations
   - [ ] Particles
@@ -113,6 +113,11 @@ Not every version will be perfectly supported but we will try and have the most 
   - [x] Physics loop
   - [x] Input system
   - [ ] Collision system
+- [ ] Interaction
+  - [ ] Block placing
+  - [ ] Block breaking
+  - [ ] Block entity interaction
+  - [ ] Entity interaction
 
 ## Servers
 
