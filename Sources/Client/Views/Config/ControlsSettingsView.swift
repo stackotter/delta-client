@@ -1,12 +1,14 @@
 import SwiftUI
 
-struct ControlsView: View {
+struct ControlsSettingsView: View {
   @State var sensitivity: Float = ConfigManager.default.config.sensitivity
+  
   var body: some View {
-    VStack {
+    ScrollView {
       HStack {
         Text("Sensitivity: \(Self.formatPercentage(sensitivity))")
           .frame(width: 150)
+        
         Slider(value: $sensitivity, in: 0...10, onEditingChanged: { isEditing in
           if !isEditing {
             var config = ConfigManager.default.config
@@ -15,9 +17,10 @@ struct ControlsView: View {
           }
         })
       }
-        .frame(width: 450)
+      .frame(width: 450)
+      
       InputView { inputCaptured, delegateSetter in
-        ControlsEditorView(
+        KeyMappingEditorView(
           inputCaptured: inputCaptured,
           inputDelegateSetter: delegateSetter)
       }

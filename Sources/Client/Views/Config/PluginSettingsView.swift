@@ -1,7 +1,7 @@
 import SwiftUI
 import DeltaCore
 
-struct PluginView: View {
+struct PluginSettingsView: View {
   @EnvironmentObject var pluginEnvironment: PluginEnvironment
   
   func updateConfig() {

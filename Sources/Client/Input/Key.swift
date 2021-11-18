@@ -10,23 +10,23 @@ public enum Key: Hashable, Codable {
       case .modifier(let modifier):
         switch modifier {
           case .leftShift:
-            return "LShift"
+            return "Left shift"
           case .rightShift:
-            return "RShift"
+            return "Right shift"
           case .leftControl:
-            return "LCtrl"
+            return "Left control"
           case .rightControl:
-            return "RCtrl"
+            return "Right control"
           case .leftOption:
-            return "LOpt"
+            return "Left option"
           case .rightOption:
-            return "ROpt"
+            return "Right option"
           case .leftCommand:
-            return "LCmd"
+            return "Left command"
           case .rightCommand:
-            return "RCmd"
+            return "Right command"
           case .function:
-            return "Fn"
+            return "Function"
         }
       case .code(let code):
         return Self.keyCodeStrings[code] ?? "Key \(code)"
@@ -74,7 +74,7 @@ public enum Key: Hashable, Codable {
     0x27: "'",
     0x28: "K",
     0x29: ";",
-    0x2A: "\"\\\"",
+    0x2A: "\\",
     0x2B: ",",
     0x2C: "/",
     0x2D: "N",
@@ -102,8 +102,8 @@ public enum Key: Hashable, Codable {
     0x24: "Enter",
     0x30: "Tab",
     0x31: "Space",
-    0x33: "Del",
-    0x35: "ESC",
+    0x33: "Delete",
+    0x35: "Escape",
     0x40: "F17",
     0x4F: "F18",
     0x50: "F19",
@@ -123,16 +123,16 @@ public enum Key: Hashable, Codable {
     0x71: "F15",
     0x72: "Ins",
     0x73: "Home",
-    0x74: "PGUp",
+    0x74: "Page up",
     0x75: "FDel",
     0x76: "F4",
-    0x77: "END",
+    0x77: "End",
     0x78: "F2",
-    0x79: "PGDwn",
+    0x79: "Page down",
     0x7A: "F1",
-    0x7B: "LeftArrow",
-    0x7C: "RightArrow",
-    0x7D: "DownArrow",
-    0x7E: "UpArrow",
+    0x7B: "Left arrow",
+    0x7C: "Right arrow",
+    0x7D: "Down arrow",
+    0x7E: "Up arrow",
   ]
 }
