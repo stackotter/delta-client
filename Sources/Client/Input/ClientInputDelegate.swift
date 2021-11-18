@@ -4,17 +4,8 @@ import Carbon
 
 #if os(macOS)
 class ClientInputDelegate: InputDelegate {
-  // TODO: read key mapping from config
-  let keyMapping = KeyMapping(
-    mapping: [
-      Input.left: Key.code(0),
-      Input.backward: Key.code(1),
-      Input.right: Key.code(2),
-      Input.forward: Key.code(13),
-      Input.sprint: Key.modifier(.leftControl),
-      Input.jump: Key.code(kVK_Space),
-      Input.shift: Key.modifier(.leftShift)
-    ])
+  let keyMapping = ConfigManager.default.config.keybinds
+  let sensitivity = ConfigManager.default.config.sensitivity
   
   var client: Client
   
@@ -51,7 +42,7 @@ class ClientInputDelegate: InputDelegate {
   }
   
   func onMouseMove(_ deltaX: Float, _ deltaY: Float) {
-    let event = MouseMoveEvent(deltaX: deltaX, deltaY: deltaY)
+    let event = MouseMoveEvent(deltaX: sensitivity * deltaX, deltaY: sensitivity * deltaY)
     client.eventBus.dispatch(event)
   }
   
