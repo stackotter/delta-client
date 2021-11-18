@@ -20,7 +20,11 @@ class KeymapEditorInputDelegate: InputDelegate {
       return
     }
     
-    editorState.keymap[selectedInput] = key
+    if key == .code(53) {
+      editorState.keymap.removeValue(forKey: selectedInput)
+    } else {
+      editorState.keymap[selectedInput] = key
+    }
     
     var config = ConfigManager.default.config
     config.keymap.bindings = editorState.keymap
