@@ -13,6 +13,7 @@ class ClientInputDelegate: InputDelegate {
   var client: Client
   
   @Binding var cursorCaptured: Bool
+  var pressedKeys: Set<Key> = []
   
   init(for client: Client) {
     self.client = client
@@ -26,7 +27,9 @@ class ClientInputDelegate: InputDelegate {
   }
   
   func onKeyDown(_ key: Key) {
-    // Release
+    pressedKeys.insert(key)
+    
+    // Release cursor when escape is pressed
     if key == .code(53) {
       releaseCursor()
     }
@@ -38,6 +41,8 @@ class ClientInputDelegate: InputDelegate {
   }
   
   func onKeyUp(_ key: Key) {
+    pressedKeys.remove(key)
+    
     if let input = keymap.getInput(for: key) {
       let event = InputEvent(type: .release, input: input)
       client.eventBus.dispatch(event)
@@ -51,6 +56,15 @@ class ClientInputDelegate: InputDelegate {
   }
   
   func releaseCursor() {
+    for key in pressedKeys {
+      if let input = keyMapping.getEvent(for: key) {
+        let event = InputEvent(type: .release, input: input)
+        client.eventBus.dispatch(event)
+      }
+    }
+    
+    pressedKeys = []
+    
     if cursorCaptured {
       CGAssociateMouseAndMouseCursorPosition(1)
       NSCursor.unhide()
