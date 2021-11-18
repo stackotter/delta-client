@@ -18,6 +18,10 @@ public struct Config: Codable {
   public var video: VideoConfig
   /// Plugins that the user has explicitly unloaded.
   public var unloadedPlugins: [String]
+  /// The user's keybindings
+  public var keybinds: KeyMapping
+  /// The in game mouse sensitivity
+  public var sensitivity: Float
   
   /// All of the user's accounts.
   public var accounts: [Account] {
@@ -51,6 +55,16 @@ public struct Config: Codable {
     servers = []
     video = VideoConfig()
     unloadedPlugins = []
+    keybinds = KeyMapping(mapping: [
+      .forward: .code(13),
+      .backward: .code(1),
+      .left: .code(0),
+      .right: .code(2),
+      .jump: .code(49),
+      .shift: .modifier(.leftShift),
+      .sprint: .modifier(.leftControl)
+    ])
+    sensitivity = 1
   }
   
   /// Returns the type of the given account
