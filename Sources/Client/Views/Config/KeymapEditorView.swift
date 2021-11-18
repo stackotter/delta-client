@@ -1,35 +1,37 @@
 import SwiftUI
 import DeltaCore
 
-struct KeyMappingEditorView: View {
+struct KeymapEditorView: View {
   /// Whether key inputs are being captured by the view
   @Binding var inputCaptured: Bool
   
-  /// A wrapper for the current key mapping and the currently selected input
-  @ObservedObject var state: KeyMappingEditorState
+  /// A wrapper for the current keymap and the currently selected input
+  @ObservedObject var state: KeymapEditorState
   
   init(inputCaptured: Binding<Bool>, inputDelegateSetter setInputDelegate: (InputDelegate) -> Void) {
     _inputCaptured = inputCaptured
-    state = KeyMappingEditorState(keyMapping: ConfigManager.default.config.keybinds.mapping)
-    let inputDelegate = ControlsEditorInputDelegate(controlsState: state, inputCaptured: _inputCaptured)
+    state = KeymapEditorState(keymap: ConfigManager.default.config.keymap.bindings)
+    let inputDelegate = KeymapEditorInputDelegate(editorState: state, inputCaptured: _inputCaptured)
     setInputDelegate(inputDelegate)
   }
   
   var body: some View {
     VStack {
       ForEach(Input.allCases, id: \.self) { input in
-        let key = state.keyMapping[input]
-        let isUnique = key == nil ? true : state.keyMapping.values.filter({ $0 == key }).count == 1
-        let isBound = state.keyMapping[input] != nil
+        let key = state.keymap[input]
+        let isUnique = key == nil ? true : state.keymap.values.filter({ $0 == key }).count == 1
+        let isBound = state.keymap[input] != nil
         let isSelected = state.selectedInput == input
         
         let labelColor = Self.labelColor(isUnique: isUnique, isBound: isBound, isSelected: isSelected)
         
         HStack {
+          // Input name (e.g. 'Sneak')
           Text(input.humanReadableLabel)
             .frame(width: 150)
           
-          let keyName = state.keyMapping[input]?.humanReadableLabel ?? "Unbound"
+          // Button to set a new binding
+          let keyName = state.keymap[input]?.humanReadableLabel ?? "Unbound"
           Button(action: {
             if isSelected {
               state.selectedInput = nil
@@ -44,8 +46,12 @@ struct KeyMappingEditorView: View {
           })
           .buttonStyle(SecondaryButtonStyle())
           
+          // Button to unbind an input
           IconButton("xmark", isDisabled: !isBound || isSelected) {
-            state.keyMapping[input] = nil
+            state.keymap.removeValue(forKey: input)
+            var config = ConfigManager.default.config
+            config.keymap.bindings = state.keymap
+            ConfigManager.default.setConfig(to: config)
           }
         }
         .frame(width: 400)

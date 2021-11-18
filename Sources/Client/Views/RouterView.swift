@@ -49,7 +49,7 @@ struct RouterView: View {
                   DirectConnectView()
                 case .playServer(let descriptor):
                   InputView { inputCaptureEnabled, setDelegate in
-                    PlayServerView(
+                    GameView(
                       serverDescriptor: descriptor,
                       resourcePack: loadedResources.resourcePack,
                       inputCaptureEnabled: inputCaptureEnabled,

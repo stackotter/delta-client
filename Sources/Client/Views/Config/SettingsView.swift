@@ -15,14 +15,14 @@ struct SettingsView: View {
   var body: some View {
     NavigationView {
       List {
+        NavigationLink("Video", destination: VideoSettingsView(eventBus: eventBus).padding())
+        NavigationLink("Controls", destination: ControlsSettingsView().padding())
+        
         if !isInGame {
-          NavigationLink("Controls", destination: ControlsSettingsView().padding())
           NavigationLink("Accounts", destination: AccountSettingsView().padding())
           NavigationLink("Update", destination: UpdateView().padding())
           NavigationLink("Plugins", destination: PluginSettingsView().padding())
         }
-        
-        NavigationLink("Video", destination: VideoSettingsView(eventBus: eventBus).padding())
         
         Button("Done", action: done)
           .buttonStyle(BorderlessButtonStyle())
