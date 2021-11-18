@@ -57,7 +57,7 @@ class ClientInputDelegate: InputDelegate {
   
   func releaseCursor() {
     for key in pressedKeys {
-      if let input = keyMapping.getEvent(for: key) {
+      if let input = keymap.getInput(for: key) {
         let event = InputEvent(type: .release, input: input)
         client.eventBus.dispatch(event)
       }
