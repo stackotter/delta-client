@@ -24,7 +24,9 @@ struct SettingsView: View {
           NavigationLink("Plugins", destination: PluginSettingsView().padding())
         }
         
-        Button("Done", action: done)
+        Button("Done", action: {
+          withAnimation(nil) { done() }
+        })
           .buttonStyle(BorderlessButtonStyle())
           .padding(.top, 8)
           .keyboardShortcut(.escape, modifiers: [])
