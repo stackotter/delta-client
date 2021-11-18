@@ -27,5 +27,4 @@ public enum Input: Codable, CaseIterable {
       return "Sneak"
     }
   }
-  
 }

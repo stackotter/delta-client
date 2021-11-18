@@ -2,10 +2,10 @@ import SwiftUI
 import DeltaCore
 
 class ControlsEditorInputDelegate: InputDelegate {
-  let controlsState: ControlsState
+  let controlsState: KeyMappingEditorState
   @Binding var inputCaptured: Bool
   
-  init(controlsState: ControlsState, inputCaptured: Binding<Bool>) {
+  init(controlsState: KeyMappingEditorState, inputCaptured: Binding<Bool>) {
 	  self.controlsState = controlsState
     _inputCaptured = inputCaptured
   }

@@ -1,7 +1,7 @@
 import SwiftUI
 import DeltaCore
 
-class ControlsState: ObservableObject {
+class KeyMappingEditorState: ObservableObject {
   @Published var keyMapping: [Input: Key]
   @Published var selectedInput: Input?
   
