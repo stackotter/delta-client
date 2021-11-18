@@ -5,7 +5,7 @@ import Foundation
 /// Sometimes referred to as a chunk column online. It is a column of ``Chunk.Section``s with
 /// some extra information about block entities, biomes, lighting and heightmaps.
 public final class Chunk {
-  // MARK: Constants
+  // MARK: Static properties
   
   /// The width of a chunk in the x direction.
   public static let width = 16
@@ -20,7 +20,7 @@ public final class Chunk {
   /// The total number of sections per chunk.
   public static let numSections = 16
   
-  // MARK: Chunk data
+  // MARK: Public properties
   
   /// Blocks are stored in chunk sections corresponding to 16x16x16 sections of the chunk from lowest to highest.
   public var sections: [Chunk.Section]

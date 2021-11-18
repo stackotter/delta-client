@@ -20,7 +20,7 @@ public class Client {
   // TODO: Get rid of world update batching, it's confusing and annoying, figure out a better solution
   
   /// Whether to batch world updates or not.
-  private var _batchWorldUpdates = true
+  private var _batchWorldUpdates = false
   public var batchWorldUpdates: Bool {
     get {
       _batchWorldUpdates

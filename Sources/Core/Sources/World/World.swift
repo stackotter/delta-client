@@ -213,8 +213,8 @@ public class World {
   }
   
   /// Returns the chunks neighbouring the specified chunk with their respective directions.
-  public func neighbours(ofChunkAt chunkPosition: ChunkPosition) -> [CardinalDirection: Chunk] {
-    let neighbourPositions = chunkPosition.allNeighbours
+  public func neighbours(ofChunkAt position: ChunkPosition) -> [CardinalDirection: Chunk] {
+    let neighbourPositions = position.allNeighbours
     var neighbourChunks: [CardinalDirection: Chunk] = [:]
     for (direction, neighbourPosition) in neighbourPositions {
       if let neighbour = chunk(at: neighbourPosition) {
@@ -222,6 +222,29 @@ public class World {
       }
     }
     return neighbourChunks
+  }
+  
+  /// Gets all four neighbours of a chunk. Returns `nil` if any of the neighbours are not present.
+  public func allNeighbours(ofChunkAt chunkPosition: ChunkPosition) -> ChunkNeighbours? {
+    let northPosition = chunkPosition.neighbour(inDirection: .north)
+    let eastPosition = chunkPosition.neighbour(inDirection: .east)
+    let southPosition = chunkPosition.neighbour(inDirection: .south)
+    let westPosition = chunkPosition.neighbour(inDirection: .west)
+    
+    guard
+      let northNeighbour = chunk(at: northPosition),
+      let eastNeighbour = chunk(at: eastPosition),
+      let southNeighbour = chunk(at: southPosition),
+      let westNeighbour = chunk(at: westPosition)
+    else {
+      return nil
+    }
+    
+    return ChunkNeighbours(
+      north: northNeighbour,
+      east: eastNeighbour,
+      south: southNeighbour,
+      west: westNeighbour)
   }
   
   /// Adds a chunk to the world. If bypassBatching is true then the event is processed straight away.

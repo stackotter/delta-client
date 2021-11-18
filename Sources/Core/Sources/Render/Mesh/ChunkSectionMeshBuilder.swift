@@ -19,7 +19,7 @@ public struct ChunkSectionMeshBuilder {
   /// The position of the section to prepare.
   public var sectionPosition: ChunkSectionPosition
   /// The chunks surrounding ``chunk``.
-  public var neighbourChunks: [CardinalDirection: Chunk]
+  public var neighbourChunks: ChunkNeighbours
   
   /// The resources containing the textures and block models for the builds to use.
   private let resources: ResourcePack.Resources
@@ -37,7 +37,7 @@ public struct ChunkSectionMeshBuilder {
   public init(
     forSectionAt sectionPosition: ChunkSectionPosition,
     in chunk: Chunk,
-    withNeighbours neighbourChunks: [CardinalDirection: Chunk],
+    withNeighbours neighbourChunks: ChunkNeighbours,
     world: World,
     resources: ResourcePack.Resources
   ) {
@@ -700,9 +700,8 @@ public struct ChunkSectionMeshBuilder {
     
     for (faceDirection, neighbourChunkDirection, neighbourIndex) in neighbourIndices {
       if let direction = neighbourChunkDirection {
-        if let neighbourChunk = neighbourChunks[direction] {
-          neighbouringBlocks.append((faceDirection, neighbourChunk.getBlockId(at: neighbourIndex)))
-        }
+        let neighbourChunk = neighbourChunks.neighbour(in: direction)
+        neighbouringBlocks.append((faceDirection, neighbourChunk.getBlockId(at: neighbourIndex)))
       } else {
         neighbouringBlocks.append((faceDirection, chunk.getBlockId(at: neighbourIndex)))
       }
@@ -769,7 +768,7 @@ public struct ChunkSectionMeshBuilder {
     for (direction, neighbourChunkDirection, neighbourIndex) in neighbourIndices {
       if visibleFaces.contains(direction) {
         if let chunkDirection = neighbourChunkDirection {
-          lightLevels[direction] = neighbourChunks[chunkDirection]?.lighting.getLightLevel(at: neighbourIndex) ?? LightLevel()
+          lightLevels[direction] = neighbourChunks.neighbour(in: chunkDirection).lighting.getLightLevel(at: neighbourIndex)
         } else {
           lightLevels[direction] = chunk.lighting.getLightLevel(at: neighbourIndex)
         }

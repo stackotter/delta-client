@@ -13,7 +13,8 @@ public struct SortableMesh {
     return elements.isEmpty
   }
   
-  private var underlyingMesh: Mesh
+  /// The mesh that is updated each time this mesh is sorted.
+  public var underlyingMesh: Mesh
   
   /// Creates a new sortable mesh.
   /// - Parameters:
