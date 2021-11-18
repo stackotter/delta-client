@@ -127,9 +127,11 @@ struct GameView: View {
   }
   
   func closeMenu() {
-    inputDelegate.keymap = ConfigManager.default.config.keymap
-    inputDelegate.mouseSensitivity = ConfigManager.default.config.mouseSensitivity
-    inputDelegate.captureCursor()
+    withAnimation(nil) {
+      inputDelegate.keymap = ConfigManager.default.config.keymap
+      inputDelegate.mouseSensitivity = ConfigManager.default.config.mouseSensitivity
+      inputDelegate.captureCursor()
+    }
   }
   
   var body: some View {
