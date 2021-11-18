@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ControlsSettingsView: View {
-  @State var sensitivity: Float = ConfigManager.default.config.sensitivity
+  @State var sensitivity: Float = ConfigManager.default.config.mouseSensitivity
   
   var body: some View {
     ScrollView {
@@ -12,7 +12,7 @@ struct ControlsSettingsView: View {
         Slider(value: $sensitivity, in: 0...10, onEditingChanged: { isEditing in
           if !isEditing {
             var config = ConfigManager.default.config
-            config.sensitivity = sensitivity
+            config.mouseSensitivity = sensitivity
             ConfigManager.default.setConfig(to: config)
           }
         })
@@ -20,7 +20,7 @@ struct ControlsSettingsView: View {
       .frame(width: 450)
       
       InputView { inputCaptured, delegateSetter in
-        KeyMappingEditorView(
+        KeymapEditorView(
           inputCaptured: inputCaptured,
           inputDelegateSetter: delegateSetter)
       }

@@ -1,7 +1,7 @@
 import SwiftUI
 import DeltaCore
 
-enum PlayState {
+enum GameState {
   case connecting
   case loggingIn
   case downloadingChunks(numberReceived: Int, total: Int)
@@ -13,9 +13,10 @@ enum OverlayState {
   case settings
 }
 
-struct PlayServerView: View {
+struct GameView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
-  @ObservedObject var state = StateWrapper<PlayState>(initial: .connecting)
+  
+  @ObservedObject var state = StateWrapper<GameState>(initial: .connecting)
   @ObservedObject var overlayState = StateWrapper<OverlayState>(initial: .menu)
   
   @Binding var cursorCaptured: Bool
@@ -125,6 +126,12 @@ struct PlayServerView: View {
     appState.update(to: .serverList)
   }
   
+  func closeMenu() {
+    inputDelegate.keymap = ConfigManager.default.config.keymap
+    inputDelegate.mouseSensitivity = ConfigManager.default.config.mouseSensitivity
+    inputDelegate.captureCursor()
+  }
+  
   var body: some View {
     Group {
       switch state.current {
@@ -186,7 +193,7 @@ struct PlayServerView: View {
               switch overlayState.current {
                 case .menu:
                   // Invisible button for escape to exit menu. Because keyboard shortcuts aren't working with my custom button styles
-                  Button("Back to game", action: inputDelegate.captureCursor)
+                  Button("Back to game", action: closeMenu)
                     .keyboardShortcut(.escape, modifiers: [])
                     .opacity(0)
                   

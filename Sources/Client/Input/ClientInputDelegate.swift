@@ -4,8 +4,11 @@ import Carbon
 
 #if os(macOS)
 class ClientInputDelegate: InputDelegate {
-  let keyMapping = ConfigManager.default.config.keybinds
-  let sensitivity = ConfigManager.default.config.sensitivity
+  /// ``mouseSensitivity`` is multiplied by this factor before use.
+  let sensitivityAdjustmentFactor: Float = 0.2
+  
+  var keymap = ConfigManager.default.config.keymap
+  var mouseSensitivity = ConfigManager.default.config.mouseSensitivity
   
   var client: Client
   
@@ -28,20 +31,21 @@ class ClientInputDelegate: InputDelegate {
       releaseCursor()
     }
     
-    if let input = keyMapping.getEvent(for: key) {
+    if let input = keymap.getInput(for: key) {
       let event = InputEvent(type: .press, input: input)
       client.eventBus.dispatch(event)
     }
   }
   
   func onKeyUp(_ key: Key) {
-    if let input = keyMapping.getEvent(for: key) {
+    if let input = keymap.getInput(for: key) {
       let event = InputEvent(type: .release, input: input)
       client.eventBus.dispatch(event)
     }
   }
   
   func onMouseMove(_ deltaX: Float, _ deltaY: Float) {
+    let sensitivity = sensitivityAdjustmentFactor * mouseSensitivity
     let event = MouseMoveEvent(deltaX: sensitivity * deltaX, deltaY: sensitivity * deltaY)
     client.eventBus.dispatch(event)
   }
