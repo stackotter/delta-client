@@ -18,8 +18,6 @@ public struct ChunkDataPacket: ClientboundPacket {
   }
   
   public init(from packetReader: inout PacketReader) throws {
-    var stopwatch = Stopwatch(mode: .summary)
-    stopwatch.startMeasurement("chunk unpack")
     let chunkX = Int(packetReader.readInt())
     let chunkZ = Int(packetReader.readInt())
     position = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
@@ -70,20 +68,16 @@ public struct ChunkDataPacket: ClientboundPacket {
       log.warning("Failed to unpack chunk: \(error)")
       throw error
     }
-    
-    stopwatch.stopMeasurement("chunk unpack")
-    stopwatch.summary()
   }
   
   public func handle(for client: Client) throws {
     if let existingChunk = client.game.world.chunk(at: position) {
       existingChunk.update(with: self)
-      client.game.world.eventBatch.add(World.Event.UpdateChunk(position: position))
+      client.eventBus.dispatch(World.Event.UpdateChunk(position: position))
     } else {
       let chunk = Chunk(self)
       client.game.world.addChunk(chunk, at: position)
     }
-    client.eventBus.dispatch(ChunkReceivedEvent())
   }
   
   /// Unpacks a heightmap in the format at https://wiki.vg/Chunk_Format. There are 256 values that are each 9 bits, compacted into longs.

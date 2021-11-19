@@ -5,6 +5,9 @@ import simd
 ///
 /// Includes chunks, lighting and some other metadata.
 public class World {
+  /// The bus the world will emit events to.
+  public var eventBus: EventBus
+  
   /// The name of this world
   public var name: Identifier
   /// The dimension data for this world
@@ -29,30 +32,27 @@ public class World {
   /// Lighting data that arrived before its respective chunk or was sent for a non-existent chunk.
   private var chunklessLightingData: [ChunkPosition: ChunkLightingUpdateData] = [:]
   
-  /// Whether world updates should be handled in batches or as they arrive.
-  private var batchingEnabled = false
-  /// The current batch of world updates.
-  public var eventBatch = EventBatch()
   /// Used to update world lighting.
   private var lightingEngine = LightingEngine()
   
   // MARK: Init
   
   /// Create an empty world.
-  public init() {
+  public init(eventBus: EventBus) {
+    self.eventBus = eventBus
     name = Identifier.null
     dimension = Identifier.null
     hashedSeed = 0
   }
   
   /// Create a new `World` from `World.Info`.
-  public init(from descriptor: WorldDescriptor, batching: Bool = false) {
+  public init(from descriptor: WorldDescriptor, eventBus: EventBus) {
+    self.eventBus = eventBus
     name = descriptor.worldName
     dimension = descriptor.dimension
     hashedSeed = descriptor.hashedSeed
     isFlat = descriptor.isFlat
     isDebug = descriptor.isDebug
-    self.batchingEnabled = batching
   }
   
   // MARK: Update
@@ -72,73 +72,17 @@ public class World {
     timeOfDay = packet.timeOfDay
   }
   
-  // MARK: Batching
-  
-  /// Enable handling updates in batches.
-  public func enableBatching() {
-    batchingEnabled = true
-    eventBatch = EventBatch()
-  }
-  
-  /// Enable handling updates as they arrive.
-  public func disableBatching() {
-    batchingEnabled = false
-  }
-  
-  /// Process the current batch of events. Events that are filtered out are not processed and are put into the next batch.
-  /// - Returns: All accepted events after processing them.
-  public func processBatch(filter: ((DeltaCore.Event) -> Bool)? = nil) -> [DeltaCore.Event] {
-    // Copy and clear current batch
-    let batch = eventBatch
-    eventBatch = EventBatch()
-    
-    // Filter events if a filter was specified
-    var acceptedEvents: [DeltaCore.Event] = batch.events
-    if let filter = filter {
-      acceptedEvents = acceptedEvents.filter(filter)
-      
-      // Add rejected events to next batch
-      let rejectedEvents = batch.events.filter({ !filter($0) })
-      rejectedEvents.forEach { eventBatch.add($0) }
-    }
-    
-    // Process accepted events
-    acceptedEvents.forEach { event in
-      handle(event)
-    }
-    
-    return acceptedEvents
-  }
-  
-  /// Handles a world event.
-  public func handle(_ event: DeltaCore.Event) {
-    switch event {
-      case let event as Event.SetBlock:
-        setBlockId(at: event.position, to: event.newState, bypassBatching: true)
-      case let event as Event.AddChunk:
-        addChunk(event.chunk, at: event.position, bypassBatching: true)
-      case let event as Event.RemoveChunk:
-        removeChunk(at: event.position, bypassBatching: true)
-      case let event as Event.UpdateChunkLighting:
-        updateChunkLighting(at: event.position, with: event.data, bypassBatching: true)
-      default:
-        break
-    }
-  }
-  
   // MARK: Blocks
   
   /// Sets the block at the specified position to the specified block id.
   ///
-  /// This will trigger lighting to be updated. If bypassBatching is true then
-  /// the event is processed straight away.
-  public func setBlockId(at position: Position, to state: Int, bypassBatching: Bool = false) {
-    if batchingEnabled && !bypassBatching {
-      let event = Event.SetBlock(
-        position: position,
-        newState: state)
-      eventBatch.add(event)
-    } else if let chunk = chunk(at: position.chunk) {
+  /// This will trigger lighting to be updated.
+  public func setBlockId(at position: Position, to state: Int) {
+    eventBus.dispatch(Event.SetBlock(
+      position: position,
+      newState: state))
+    
+    if let chunk = chunk(at: position.chunk) {
       chunk.setBlockId(at: position.relativeToChunk, to: state)
       lightingEngine.updateLighting(at: position, in: self)
     } else {
@@ -147,7 +91,7 @@ public class World {
   }
   
   
-  /// Get the block id of the block at the specified position..
+  /// Get the block id of the block at the specified position.
   /// - Parameter position: A block position in world coordinates.
   /// - Returns: A block state id. If `position` is in a chunk that isn't loaded, `0` (regular air) is returned.
   public func getBlockId(at position: Position) -> Int {
@@ -163,9 +107,9 @@ public class World {
     return Registry.shared.blockRegistry.block(withId: Int(getBlockId(at: position))) ?? Block.missing
   }
   
-  // MARK: Lighting (no batching)
+  // MARK: Lighting
   
-  /// Sets the block light level of a block. Does not batch, does not propagate the change and does not verify the level is valid.
+  /// Sets the block light level of a block. Does not propagate the change and does not verify the level is valid.
   ///
   /// If `position` is in a chunk that isn't loaded or is above y=255 or below y=0, nothing happens.
   ///
@@ -174,7 +118,7 @@ public class World {
   ///   - level: The new light level. Should be from 0 to 15 inclusive. Not validated.
   public func setBlockLightLevel(at position: Position, to level: Int) {
     if let chunk = self.chunk(at: position.chunk) {
-      chunk.lighting.setBlockLightLevel(at: position.relativeToChunk, to: level)
+      chunk.setBlockLightLevel(at: position.relativeToChunk, to: level)
     }
   }
   
@@ -183,23 +127,23 @@ public class World {
   /// Returns the block light level for the given block.
   public func getBlockLightLevel(at position: Position) -> Int {
     if let chunk = self.chunk(at: position.chunk) {
-      return chunk.lighting.getBlockLightLevel(at: position.relativeToChunk)
+      return chunk.blockLightLevel(at: position.relativeToChunk)
     } else {
       return LightLevel.defaultBlockLightLevel
     }
   }
   
-  /// Sets the sky light level for the given block. Does not batch, does not propagate the change and does not verify the level is valid.
+  /// Sets the sky light level for the given block. Does not propagate the change and does not verify the level is valid.
   public func setSkyLightLevel(at position: Position, to level: Int) {
     if let chunk = self.chunk(at: position.chunk) {
-      chunk.lighting.setSkyLightLevel(at: position.relativeToChunk, to: level)
+      chunk.setSkyLightLevel(at: position.relativeToChunk, to: level)
     }
   }
   
   /// Returns the sky light level for the given block.
   public func getSkyLightLevel(at position: Position) -> Int {
     if let chunk = self.chunk(at: position.chunk) {
-      return chunk.lighting.getSkyLightLevel(at: position.relativeToChunk)
+      return chunk.skyLightLevel(at: position.relativeToChunk)
     } else {
       return LightLevel.defaultSkyLightLevel
     }
@@ -247,27 +191,25 @@ public class World {
       west: westNeighbour)
   }
   
-  /// Adds a chunk to the world. If bypassBatching is true then the event is processed straight away.
-  public func addChunk(_ chunk: Chunk, at position: ChunkPosition, bypassBatching: Bool = false) {
-    if batchingEnabled && !bypassBatching {
-      let event = Event.AddChunk(position: position, chunk: chunk)
-      eventBatch.add(event)
-    } else {
-      if let lightingData = chunklessLightingData.removeValue(forKey: position) {
-        chunk.lighting.update(with: lightingData)
-      }
-      chunks[position] = chunk
+  /// Adds a chunk to the world.
+  public func addChunk(_ chunk: Chunk, at position: ChunkPosition) {
+    eventBus.dispatch(Event.AddChunk(position: position))
+    
+    if let lightingData = chunklessLightingData.removeValue(forKey: position) {
+      chunk.updateLighting(with: lightingData)
     }
+    
+    chunks[position] = chunk
   }
   
   /// Updates a chunk's lighting with lighting data received from the server.
-  /// If bypassBatching is true then the event is processed straight away.
-  public func updateChunkLighting(at position: ChunkPosition, with data: ChunkLightingUpdateData, bypassBatching: Bool = false) {
-    if batchingEnabled && !bypassBatching {
-      let event = Event.UpdateChunkLighting(position: position, data: data)
-      eventBatch.add(event)
-    } else if let chunk = chunk(at: position) {
-      chunk.lighting.update(with: data)
+  public func updateChunkLighting(at position: ChunkPosition, with data: ChunkLightingUpdateData) {
+    eventBus.dispatch(Event.UpdateChunkLighting(
+      position: position,
+      data: data))
+                      
+    if let chunk = chunk(at: position) {
+      chunk.updateLighting(with: data)
     } else {
       // Most likely the chunk just hasn't unpacked yet so wait for that
       chunklessLightingData[position] = data // TODO: concurrent access happens here, fix it
@@ -275,20 +217,16 @@ public class World {
   }
   
   /// Removes the chunk at the specified position if present.
-  /// If bypassBatching is true then the event is processed straight away.
-  public func removeChunk(at position: ChunkPosition, bypassBatching: Bool = false) {
-    let event = Event.RemoveChunk(position: position)
-    if batchingEnabled && !bypassBatching {
-      eventBatch.add(event)
-    } else {
-      self.chunks.removeValue(forKey: position)
-    }
+  public func removeChunk(at position: ChunkPosition) {
+    eventBus.dispatch(Event.RemoveChunk(position: position))
+    
+    chunks.removeValue(forKey: position)
   }
   
   /// Returns whether a chunk is present and has its lighting or not.
   public func chunkComplete(at position: ChunkPosition) -> Bool {
     if let chunk = chunk(at: position) {
-      return chunk.lighting.isPopulated
+      return chunk.hasLighting
     }
     return false
   }

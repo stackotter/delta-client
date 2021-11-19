@@ -3,19 +3,21 @@ import FirebladeECS
 
 /// Stores all of the game data such as entities, chunks and chat messages.
 public struct Game {
+  // MARK: Public properties
+  
   /// The container for the game's entities. Strictly only contains what Minecraft counts as entities. Doesn't include block entities.
   public let nexus = Nexus()
   /// The scheduler that runs the game's systems every 20th of a second.
   public var tickScheduler: TickScheduler
   /// The event bus for emitting events.
-  public var eventBus = EventBus()
+  public var eventBus: EventBus
   /// Maps Vanilla entity Ids to identifiers of entities in the ``Nexus``.
   private var entityIdToEntityIdentifier: [Int: EntityIdentifier] = [:]
   
   /// The player.
   public var player: Player
   /// The world the player is currently connected to.
-  public var world = World()
+  public var world: World
   /// The list of all players in the game.
   public var tabList = TabList()
   /// The names of all worlds in this game
@@ -45,9 +47,15 @@ public struct Game {
   /// The system that handles entity physics.
   public var physicsSystem = PhysicsSystem()
   
+  // MARK: Init
+  
   /// Creates a game with default properties. Creates the player. Starts the tick loop.
-  public init() {
+  public init(eventBus: EventBus) {
+    self.eventBus = eventBus
+    
     tickScheduler = TickScheduler(nexus)
+    
+    world = World(eventBus: eventBus)
     
     player = Player()
     var player = player
@@ -123,11 +131,12 @@ public struct Game {
     player.attributes.isHardcore = packet.isHardcore
     updateEntityId(player.entityId.id, to: packet.playerEntityId)
     
-    world = World(from: packet, batching: client.batchWorldUpdates)
+    world = World(from: packet, eventBus: client.eventBus)
   }
   
   /// Sets the game's event bus. This is a method in case the game ever needs to listen to the event bus, this way means that the listener can be added again.
   public mutating func setEventBus(_ eventBus: EventBus) {
     self.eventBus = eventBus
+    self.world.eventBus = eventBus
   }
 }

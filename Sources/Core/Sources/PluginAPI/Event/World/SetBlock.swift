@@ -1,8 +1,13 @@
 import Foundation
 
 extension World.Event {
-  struct SetBlock: Event {
-    let position: Position
-    let newState: Int
+  public struct SetBlock: Event {
+    public let position: Position
+    public let newState: Int
+    
+    public init(position: Position, newState: Int) {
+      self.position = position
+      self.newState = newState
+    }
   }
 }

@@ -91,9 +91,11 @@ public class WorldMeshWorker {
     log.debug("Starting execution loop")
     
     executionQueue.async {
-      if !self.executeNextJob() {
-        self.isExecuting.value = false
-        return
+      while true {
+        if !self.executeNextJob() {
+          self.isExecuting.value = false
+          return
+        }
       }
     }
   }
@@ -132,7 +134,7 @@ public class WorldMeshWorker {
     for (position, mesh) in meshes {
       updatedMeshes[position] = mesh
     }
-    updatedMeshesLock.acquireReadLock()
+    updatedMeshesLock.unlock()
     
     return true
   }

@@ -33,9 +33,8 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
     if client.game.world.name == worldName {
       client.game.world.update(with: self)
     } else {
-      client.game.world = World(from: self)
+      client.game.world = World(from: self, eventBus: client.eventBus)
     }
-    
     
     client.game.player.gamemode.gamemode = gamemode
     client.game.player.attributes.previousGamemode = previousGamemode

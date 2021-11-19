@@ -6,6 +6,8 @@ import SwiftUI
 // TODO: update chunk section mesh builder documentation
 
 /// Builds renderable meshes from chunk sections.
+///
+/// Assumes that all relevant chunks have already been locked.
 public struct ChunkSectionMeshBuilder {
   /// A lookup to quickly convert block index to block position.
   private static let indexToPosition = generateIndexLookup()
@@ -64,7 +66,7 @@ public struct ChunkSectionMeshBuilder {
     mesh.clearGeometry()
     
     // Populate mesh with geometry
-    let section = chunk.sections[sectionPosition.sectionY]
+    let section = chunk.getSections(acquireLock: false)[sectionPosition.sectionY]
     let indexToNeighbourIndices = Self.indexToNeighbourIndicesLookup[sectionPosition.sectionY]
     
     let xOffset = sectionPosition.sectionX * Chunk.Section.width
@@ -171,7 +173,7 @@ public struct ChunkSectionMeshBuilder {
     
     // Get lighting
     let positionRelativeToChunkSection = position.relativeToChunkSection
-    let lightLevel = chunk.lighting.getLightLevel(at: positionRelativeToChunkSection, inSectionAt: sectionPosition.sectionY)
+    let lightLevel = chunk.getLighting(acquireLock: false).getLightLevel(at: positionRelativeToChunkSection, inSectionAt: sectionPosition.sectionY)
     let neighbourLightLevels = getNeighbourLightLevels(neighbourIndices: neighbourIndices, visibleFaces: visibleFaces)
     
     // Get tint color
@@ -404,7 +406,7 @@ public struct ChunkSectionMeshBuilder {
     }
     
     // Lighting
-    let lightLevel = chunk.lighting.getLightLevel(atIndex: blockIndex, inSectionAt: sectionPosition.sectionY)
+    let lightLevel = chunk.getLighting(acquireLock: false).getLightLevel(atIndex: blockIndex, inSectionAt: sectionPosition.sectionY)
     let neighbourLightLevels = getNeighbourLightLevels(neighbourIndices: indexToNeighbourIndices[blockIndex], visibleFaces: [.up, .down, .north, .east, .south, .west])
     
     // UVs
@@ -768,9 +770,9 @@ public struct ChunkSectionMeshBuilder {
     for (direction, neighbourChunkDirection, neighbourIndex) in neighbourIndices {
       if visibleFaces.contains(direction) {
         if let chunkDirection = neighbourChunkDirection {
-          lightLevels[direction] = neighbourChunks.neighbour(in: chunkDirection).lighting.getLightLevel(at: neighbourIndex)
+          lightLevels[direction] = neighbourChunks.neighbour(in: chunkDirection).getLighting(acquireLock: false).getLightLevel(at: neighbourIndex)
         } else {
-          lightLevels[direction] = chunk.lighting.getLightLevel(at: neighbourIndex)
+          lightLevels[direction] = chunk.getLighting(acquireLock: false).getLightLevel(at: neighbourIndex)
         }
       }
     }

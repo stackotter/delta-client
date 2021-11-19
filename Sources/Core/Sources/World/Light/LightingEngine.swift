@@ -49,7 +49,8 @@ public struct LightingEngine {
   /// All positions provided must be in existent chunks.
   private mutating func updateSkyLight(at positions: [Position], in world: World) {
     for position in positions {
-      guard let highest = world.chunk(at: position.chunk)?.heightMap.getHighestLightBlocking(position.relativeToChunk) else {
+      let chunkRelativePosition = position.relativeToChunk
+      guard let highest = world.chunk(at: position.chunk)?.highestLightBlockingBlock(atX: chunkRelativePosition.x, andZ: chunkRelativePosition.z) else {
         log.error("Sky light update attempted in non-existent chunk")
         return
       }

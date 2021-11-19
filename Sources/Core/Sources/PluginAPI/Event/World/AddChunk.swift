@@ -1,8 +1,11 @@
 import Foundation
 
 extension World.Event {
-  struct AddChunk: Event {
-    let position: ChunkPosition
-    let chunk: Chunk
+  public struct AddChunk: Event {
+    public let position: ChunkPosition
+    
+    public init(position: ChunkPosition) {
+      self.position = position
+    }
   }
 }

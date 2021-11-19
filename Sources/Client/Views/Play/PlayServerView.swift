@@ -93,7 +93,7 @@ struct PlayServerView: View {
         // Approximation of the number of chunks the server will send (used in progress indicator)
         let totalChunksToReceieve = Int(pow(Double(client.game.maxViewDistance * 2 + 3), 2))
         state.update(to: .downloadingChunks(numberReceived: 0, total: totalChunksToReceieve))
-      case _ as ChunkReceivedEvent:
+      case _ as World.Event.AddChunk:
         ThreadUtil.runInMain {
           if case .downloadingChunks(let numberReceived, let total) = state.current {
             state.update(to: .downloadingChunks(numberReceived: numberReceived + 1, total: total))

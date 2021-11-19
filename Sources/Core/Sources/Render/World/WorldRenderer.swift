@@ -90,14 +90,13 @@ public final class WorldRenderer: Renderer {
   // MARK: Private methods
   
   private func handle(_ event: Event) {
-    log.debug("Handling event: \(event)")
     switch event {
       case let event as World.Event.AddChunk:
         log.debug("Handling chunk add event")
-        worldMesh.addChunk(event.chunk, at: event.position)
-      case let event as JoinWorldEvent:
+        worldMesh.handleChunkAdded(at: event.position)
+      case _ as JoinWorldEvent:
         log.debug("Creating new world mesh")
-        worldMesh = WorldMesh(event.world, resources: resources)
+        worldMesh = WorldMesh(client.game.world, resources: resources)
       default:
         return
     }

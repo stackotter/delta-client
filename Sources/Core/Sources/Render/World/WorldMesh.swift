@@ -69,7 +69,8 @@ public struct WorldMesh {
       return
     }
     
-    for (sectionY, section) in chunk.sections.enumerated() where section.blockCount != 0 {
+    // TODO: lock chunks while their meshes are being prepared
+    for (sectionY, section) in chunk.getSections(acquireLock: false).enumerated() where section.blockCount != 0 {
       meshWorker.createMeshAsync(
         at: ChunkSectionPosition(position, sectionY: sectionY),
         in: chunk,

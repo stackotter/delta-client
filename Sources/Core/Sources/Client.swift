@@ -8,7 +8,7 @@ public class Client {
   public var account: Account?
   
   /// The game this client is playing in.
-  public var game = Game()
+  public var game: Game
   /// The clientside render distance.
   public var config = ClientConfig()
   
@@ -17,31 +17,11 @@ public class Client {
   /// An event bus shared with ``game``.
   public var eventBus = EventBus()
   
-  // TODO: Get rid of world update batching, it's confusing and annoying, figure out a better solution
-  
-  /// Whether to batch world updates or not.
-  private var _batchWorldUpdates = false
-  public var batchWorldUpdates: Bool {
-    get {
-      _batchWorldUpdates
-    }
-    set(newValue) {
-      if newValue != _batchWorldUpdates {
-        if newValue {
-          game.world.enableBatching()
-        } else {
-          game.world.disableBatching()
-        }
-        _batchWorldUpdates = newValue
-      }
-    }
-  }
-  
   // MARK: Init
   
   public init(resourcePack: ResourcePack) {
     self.resourcePack = resourcePack
-    game.setEventBus(eventBus)
+    game = Game(eventBus: eventBus)
     eventBus.registerHandler(handleEvent)
   }
   
