@@ -30,12 +30,7 @@ struct UpdateView: View {
             state.update(to: .performUpdate)
           }
           .buttonStyle(PrimaryButtonStyle())
-          Button("Update to latest unstable") {
-            updater.updateType = .unstable
-            state.update(to: .performUpdate)
-          }
-          .buttonStyle(SecondaryButtonStyle())
-          .disabled(updater.branches == nil)
+          .padding(.bottom, 25)
           Menu {
             if updater.branches != nil {
               ForEach(updater.branches!, id: \.self) { branch in
@@ -47,6 +42,13 @@ struct UpdateView: View {
             Text(updater.branches == nil ? "Loading branches..." : "Selected branch: \(updater.unstableBranch)")
           }
           .disabled(updater.branches == nil)
+          Button("Update to latest unstable") {
+            updater.updateType = .unstable
+            state.update(to: .performUpdate)
+          }
+          .buttonStyle(SecondaryButtonStyle())
+          .disabled(updater.branches == nil)
+          
         }
         .frame(width: 200)
         .onAppear {
