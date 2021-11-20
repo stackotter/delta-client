@@ -12,6 +12,7 @@ public struct TimeUpdatePacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.game.world.updateTime(with: self)
+    client.game.world.setAge(worldAge)
+    client.game.world.setTimeOfDay(timeOfDay)
   }
 }

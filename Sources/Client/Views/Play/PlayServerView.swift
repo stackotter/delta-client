@@ -23,22 +23,10 @@ struct PlayServerView: View {
   var client: Client
   var inputDelegate: ClientInputDelegate
   var serverDescriptor: ServerDescriptor
-  var renderCoordinator: RenderCoordinatorProtocol
   
   init(serverDescriptor: ServerDescriptor, resourcePack: ResourcePack, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
     self.serverDescriptor = serverDescriptor
     client = Client(resourcePack: resourcePack)
-    
-    // Create the render coordinator
-    var pluginRenderCoordinator: RenderCoordinatorProtocol? = nil
-    for (plugin, _, _) in DeltaClientApp.pluginEnvironment.plugins.values {
-      if let renderCoordinator = plugin.makeRenderCoordinator(client) {
-        pluginRenderCoordinator = renderCoordinator
-        break
-      }
-    }
-    
-    renderCoordinator = pluginRenderCoordinator ?? RenderCoordinator(client)
     
     // Disable input when the cursor isn't captured (after player hits escape during play to get to menu)
     _cursorCaptured = inputCaptureEnabled
@@ -56,6 +44,18 @@ struct PlayServerView: View {
     
     // Connect to server
     joinServer(serverDescriptor)
+  }
+  
+  func makeRenderCoordinator() -> RenderCoordinatorProtocol {
+    var pluginRenderCoordinator: RenderCoordinatorProtocol? = nil
+    for (plugin, _, _) in DeltaClientApp.pluginEnvironment.plugins.values {
+      if let renderCoordinator = plugin.makeRenderCoordinator(client) {
+        pluginRenderCoordinator = renderCoordinator
+        break
+      }
+    }
+    
+    return pluginRenderCoordinator ?? RenderCoordinator(client)
   }
   
   func joinServer(_ descriptor: ServerDescriptor) {
@@ -157,7 +157,7 @@ struct PlayServerView: View {
         case .playing:
           ZStack {
             // Renderer
-            MetalView(renderCoordinator: renderCoordinator)
+            MetalView(renderCoordinator: makeRenderCoordinator())
               .opacity(cursorCaptured ? 1 : 0.2)
               .onAppear {
                 inputDelegate.bind($cursorCaptured.onChange { newValue in

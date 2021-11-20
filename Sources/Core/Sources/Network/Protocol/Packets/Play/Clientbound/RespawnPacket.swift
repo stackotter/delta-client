@@ -30,11 +30,8 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
   }
   
   public func handle(for client: Client) throws {
-    if client.game.world.name == worldName {
-      client.game.world.update(with: self)
-    } else {
-      client.game.world = World(from: self, eventBus: client.eventBus)
-    }
+    // TODO: check if the discussion at https://wiki.vg/Protocol#Respawn about respawning to the same dimension applies or if it's just a java edition bug
+    client.game.world = World(from: self, eventBus: client.eventBus)
     
     client.game.player.gamemode.gamemode = gamemode
     client.game.player.attributes.previousGamemode = previousGamemode

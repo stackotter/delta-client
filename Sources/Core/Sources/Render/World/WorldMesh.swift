@@ -9,14 +9,20 @@ public struct WorldMesh {
   
   /// All chunk section meshes.
   private var meshes: [ChunkSectionMesh] = []
-  /// A lock for reading and writing `meshes`, `meshPositionToIndex`, `chunkToMeshIndices` and `chunks`.
+  /// A lock for reading and writing `meshes`, `meshPositionToIndex` and `chunkToMeshIndices`.
   private var meshesLock = ReadWriteLock()
   /// Maps chunk section position to an index in `meshes`.
   private var meshPositionToIndex: [ChunkSectionPosition: Int] = [:]
   /// Maps chunk position to indices of all of that chunk's meshes.
   private var chunkToMeshIndices: [ChunkPosition: [Int]] = [:]
+  
+  /// A lock for reading and writing `chunks`.
+  private var chunksLock = ReadWriteLock()
   /// Positions of all chunks that currently have meshes prepared.
   private var chunks: Set<ChunkPosition> = []
+  
+  /// A lock for reading and writing `chunkLockCounts`.
+  private var chunkLockCountsLock = ReadWriteLock()
   /// How many times each chunk is currently locked.
   private var chunkLockCounts: [ChunkPosition: Int] = [:]
   
@@ -27,7 +33,7 @@ public struct WorldMesh {
     self.world = world
     meshWorker = WorldMeshWorker(world: world, resources: resources)
     
-    for (position, _) in world.chunks {
+    for position in world.loadedChunkPositions {
       handleChunkAdded(at: position)
     }
   }
@@ -68,8 +74,6 @@ public struct WorldMesh {
     // Adding this chunk may have made some of the chunks that require it preparable so here we check if any of
     // those can now by prepared. `chunksRequiredToPrepare` includes the chunk itself as well.
     for position in chunksRequiredToPrepare(chunkAt: position) {
-      // TODO: check if all neighbours are also complete
-      // TODO: lock in a 3x3 ring around the chunk being prepared
       if !hasPreparedChunk(at: position) && canPrepareChunk(at: position) {
         prepareChunk(at: position)
       }
@@ -82,28 +86,29 @@ public struct WorldMesh {
       return
     }
     
-    meshesLock.acquireWriteLock()
+    chunksLock.acquireWriteLock()
     chunks.insert(position)
-    meshesLock.unlock()
+    chunksLock.unlock()
     
+    let nonEmptySectionCount = chunk.getSections().filter({ !$0.isEmpty }).count
     for position in chunksRequiredToPrepare(chunkAt: position) {
-      lockChunk(at: position)
+      lockChunk(at: position, numberOfTimes: nonEmptySectionCount)
     }
-    
-    var sections: [ChunkSectionPosition: (Chunk, ChunkNeighbours)] = [:]
     
     for (sectionY, section) in chunk.getSections(acquireLock: false).enumerated() where section.blockCount != 0 {
-      sections[ChunkSectionPosition(position, sectionY: sectionY)] = (chunk, neighbours)
+      meshWorker.createMeshAsync(
+        at: ChunkSectionPosition(position, sectionY: sectionY),
+        in: chunk,
+        neighbours: neighbours,
+        priority: .chunkLoad)
     }
-    
-    meshWorker.createMeshesAsync(sections, priority: .chunkLoad)
   }
   
   // MARK: Private helper methods
   
   private func hasPreparedChunk(at position: ChunkPosition) -> Bool {
-    meshesLock.acquireReadLock()
-    defer { meshesLock.unlock() }
+    chunksLock.acquireReadLock()
+    defer { chunksLock.unlock() }
     return chunks.contains(position)
   }
   
@@ -135,33 +140,53 @@ public struct WorldMesh {
       position.neighbour(inDirection: .north).neighbour(inDirection: .west)]
   }
   
-  private mutating func lockChunk(at position: ChunkPosition) {
+  /// Acquires a read lock for the chunk if the world mesh doesn't already have one.
+  ///
+  /// Updates the count of how many times `unlockChunk` should be called before it as actually unlocked.
+  /// There should be one unlock for every lock and when they even out the lock is released.
+  ///
+  /// - Parameters:
+  ///   - position: Position of chunk to lock.
+  ///   - count: Number of unlocks to expect for this lock call.
+  private mutating func lockChunk(at position: ChunkPosition, numberOfTimes count: Int = 1) {
     if let chunk = world.chunk(at: position) {
-      chunk.acquireReadLock()
-      meshesLock.acquireWriteLock()
-      chunkLockCounts[position] = (chunkLockCounts[position] ?? 0) + 1
-      meshesLock.unlock()
+      chunkLockCountsLock.acquireWriteLock()
+      defer { chunkLockCountsLock.unlock() }
+      
+      if let lockCount = chunkLockCounts[position] {
+        chunkLockCounts[position] = lockCount + count
+      } else {
+        chunk.acquireReadLock()
+        chunkLockCounts[position] = count
+      }
     } else {
       log.warning("WorldMesh attempted to lock non-existent chunk at \(position).")
     }
   }
   
+  /// Unlocks the chunk if there have been the same number of locks as unlocks.
+  /// - Parameter position: Chunk to unlock.
   private mutating func unlockChunk(at position: ChunkPosition) {
-    meshesLock.acquireWriteLock()
-    defer { meshesLock.unlock() }
+    chunkLockCountsLock.acquireWriteLock()
+    defer { chunkLockCountsLock.unlock() }
     
-    if let lockCount = chunkLockCounts[position] {
-      if lockCount == 0 {
-        chunkLockCounts.removeValue(forKey: position)
-      } else if lockCount == 1 {
-        world.chunk(at: position)?.unlock()
-        chunkLockCounts.removeValue(forKey: position)
-      } else {
-        world.chunk(at: position)?.unlock()
-        chunkLockCounts[position] = lockCount - 1
-      }
-    } else {
+    guard let lockCount = chunkLockCounts[position] else {
       log.warning("Chunk at \(position) double unlocked")
+      return
+    }
+  
+    if lockCount == 0 {
+      chunkLockCounts.removeValue(forKey: position)
+    } else if lockCount == 1 {
+      guard let chunk = world.chunk(at: position) else {
+        log.warning("WorldMesh attempted to unlock non-existent chunk at \(position).")
+        return
+      }
+      
+      chunk.unlock()
+      chunkLockCounts.removeValue(forKey: position)
+    } else {
+      chunkLockCounts[position] = lockCount - 1
     }
   }
 }

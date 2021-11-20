@@ -89,11 +89,8 @@ public final class WorldRenderer: Renderer {
   
   private func handle(_ event: Event) {
     switch event {
-      case let event as World.Event.AddChunk:
-        log.debug("Handling chunk add event")
-        worldMesh.handleChunkAdded(at: event.position)
-      case let event as World.Event.UpdateChunkLighting:
-        log.debug("Handling lighting update")
+      case let event as World.Event.ChunkComplete:
+        log.debug("Handling chunk complete event")
         worldMesh.handleChunkAdded(at: event.position)
       case _ as JoinWorldEvent:
         log.debug("Creating new world mesh")

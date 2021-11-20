@@ -1,5 +1,5 @@
 extension World.Event {
-  public struct AddChunk: Event {
+  public struct ChunkComplete: Event {
     public let position: ChunkPosition
     
     public init(position: ChunkPosition) {

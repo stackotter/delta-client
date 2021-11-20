@@ -33,6 +33,19 @@ public final class Chunk {
     return lighting.isPopulated
   }
   
+  public var nonEmptySectionCount: Int {
+    lock.acquireReadLock()
+    defer { lock.unlock() }
+    
+    var count = 0
+    for section in sections {
+      if !section.isEmpty {
+        count += 1
+      }
+    }
+    return count
+  }
+  
   // MARK: Private properties
   
   /// Blocks are stored in chunk sections corresponding to 16x16x16 sections of the chunk from lowest to highest.

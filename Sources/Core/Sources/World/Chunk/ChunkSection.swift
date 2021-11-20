@@ -1,7 +1,7 @@
 import Foundation
 
 extension Chunk {
-  /// A 16x16x16 section of a chunk. Just stores an array of block ids.
+  /// A 16x16x16 section of a chunk. Just stores an array of block ids. Not thread-safe.
   public struct Section {
     /// The number of blocks wide a chunk section is (x axis).
     public static let width = Chunk.width
@@ -16,6 +16,11 @@ extension Chunk {
     public var blocks: [UInt16]
     /// The number of non-air blocks in the chunk section.
     public var blockCount: Int
+    
+    /// Whether the section is all air or not.
+    public var isEmpty: Bool {
+      blockCount == 0
+    }
     
     /// Create an empty chunk section.
     public init() {

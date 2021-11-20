@@ -44,27 +44,10 @@ public class WorldMeshWorker {
     neighbours: ChunkNeighbours,
     priority: JobPriority
   ) {
-    let job = SingleJob(
+    let job = Job(
       chunk: chunk,
       position: position,
       neighbours: neighbours)
-    jobQueue.add(job, priority: priority)
-    startExecutionLoop()
-  }
-  
-  /// Creates a new mesh for each of the specified chunk sections and ensures they are all updated at the same time.
-  public func createMeshesAsync(
-    _ sections: [ChunkSectionPosition: (Chunk, ChunkNeighbours)],
-    priority: JobPriority
-  ) {
-    var jobs: [SingleJob] = []
-    for (position, (chunk, neighbours)) in sections {
-      jobs.append(SingleJob(
-        chunk: chunk,
-        position: position,
-        neighbours: neighbours))
-    }
-    let job = JobGroup(jobs: jobs)
     jobQueue.add(job, priority: priority)
     startExecutionLoop()
   }
@@ -107,33 +90,17 @@ public class WorldMeshWorker {
       return false
     }
     
-    var jobs: [SingleJob] = []
-    switch job {
-      case let job as SingleJob:
-        jobs.append(job)
-      case let job as JobGroup:
-        jobs.append(contentsOf: job.jobs)
-      default:
-        return true
-    }
-    
-    var meshes: [ChunkSectionPosition: ChunkSectionMesh] = [:]
-    for job in jobs {
-      let meshBuilder = ChunkSectionMeshBuilder(
-        forSectionAt: job.position,
-        in: job.chunk,
-        withNeighbours: job.neighbours,
-        world: world,
-        resources: resources)
-      // TODO: implement buffer recycling
-      let mesh = meshBuilder.build()
-      meshes[job.position] = mesh
-    }
+    let meshBuilder = ChunkSectionMeshBuilder(
+      forSectionAt: job.position,
+      in: job.chunk,
+      withNeighbours: job.neighbours,
+      world: world,
+      resources: resources)
+    // TODO: implement buffer recycling
+    let mesh = meshBuilder.build()
     
     updatedMeshesLock.acquireWriteLock()
-    for (position, mesh) in meshes {
-      updatedMeshes[position] = mesh
-    }
+    updatedMeshes[job.position] = mesh
     updatedMeshesLock.unlock()
     
     return true
