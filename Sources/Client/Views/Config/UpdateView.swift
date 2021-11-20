@@ -28,13 +28,32 @@ struct UpdateView: View {
           Button("Update to latest stable") {
             updater.updateType = .stable
             state.update(to: .performUpdate)
-          }.buttonStyle(PrimaryButtonStyle())
+          }
+          .buttonStyle(PrimaryButtonStyle())
           Button("Update to latest unstable") {
             updater.updateType = .unstable
             state.update(to: .performUpdate)
-          }.buttonStyle(SecondaryButtonStyle())
+          }
+          .buttonStyle(SecondaryButtonStyle())
+          .disabled(updater.branches == nil)
+          Menu {
+            if updater.branches != nil {
+              ForEach(updater.branches!, id: \.self) { branch in
+                BranchButton(branch: branch)
+              }
+              .environmentObject(updater)
+            }
+          } label: {
+            Text(updater.branches == nil ? "Loading branches..." : "Selected branch: \(updater.unstableBranch)")
+          }
+          .disabled(updater.branches == nil)
         }
         .frame(width: 200)
+        .onAppear {
+          if updater.branches == nil {
+            updater.getUniqueBranches()
+          }
+        }
         
       case .performUpdate:
         // Shows the progress of an update

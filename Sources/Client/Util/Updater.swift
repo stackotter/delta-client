@@ -4,8 +4,7 @@ import DeltaCore
 
 /// Used to update the client to either the latest successful CI build or the latest GitHub release.
 public class Updater: ObservableObject {
-  /// The branch used for unstable updates.
-  public static var unstableBranch = "dev"
+
   /// The type of update this updater will perform.
   public var updateType: UpdateType
   
@@ -26,6 +25,10 @@ public class Updater: ObservableObject {
   @Published public var stepDescription = ""
   @Published public var version: String?
   @Published public var canCancel = true
+  @Published public var branches: [String]?
+  
+  /// The branch used for unstable updates.
+  @Published public var unstableBranch = "dev"
   
   // MARK: Init
   
@@ -50,7 +53,7 @@ public class Updater: ObservableObject {
       let downloadURL: URL
       let downloadVersion: String
       do {
-        (downloadURL, downloadVersion) = try Self.getDownloadURL(self.updateType)
+        (downloadURL, downloadVersion) = try self.getDownloadURL(self.updateType)
       } catch {
         DeltaClientApp.modalError("Failed to get download URL", safeState: .serverList)
         return
@@ -159,10 +162,10 @@ public class Updater: ObservableObject {
   // MARK: Helper
   
   /// - Returns: A download URL and a version string
-  public static func getDownloadURL(_ type: UpdateType) throws -> (URL, String) {
+  public func getDownloadURL(_ type: UpdateType) throws -> (URL, String) {
     switch type {
       case .stable:
-        return try getLatestStableDownloadURL()
+      return try Self.getLatestStableDownloadURL()
       case .unstable:
         return try getLatestUnstableDownloadURL()
     }
@@ -200,22 +203,15 @@ public class Updater: ObservableObject {
   /// Get the download URL for the artifact uploaded by the latest successful GitHub action run.
   ///
   /// - Returns: A download URL and a version string
-  private static func getLatestUnstableDownloadURL() throws -> (URL, String) {
+  private func getLatestUnstableDownloadURL() throws -> (URL, String) {
     let decoder = JSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
     
-    // Get a list of all workflow runs
-    let apiURL = URL(string: "https://api.github.com/repos/stackotter/delta-client/actions/workflows/main.yml/runs")!
-    guard
-      let data = try? Data(contentsOf: apiURL),
-      let response = try? decoder.decode(GitHubWorkflowAPIResponse.self, from: data)
-    else {
-      throw UpdateError.failedToGetWorkflowRuns
-    }
+    let response = try Self.getWorkflowRuns()
     
     // Get the latest relevant run
     guard let run = response.workflowRuns.first(where: {
-      $0.event == "push" && $0.headBranch == Self.unstableBranch && $0.conclusion == "success" && $0.name == "Build" && $0.status == "completed"
+      $0.event == "push" && $0.headBranch == self.unstableBranch && $0.conclusion == "success" && $0.name == "Build" && $0.status == "completed"
     }) else {
       throw UpdateError.failedToGetLatestSuccessfulWorkflowRun(branch: "main")
     }
@@ -232,6 +228,43 @@ public class Updater: ObservableObject {
     // nightly.link exposes public download links to artifacts, because for whatever reason, GitHub requires you to login with a GitHub account to download artifacts
     let url = URL(string: "https://nightly.link/stackotter/delta-client/suites/\(run.checkSuiteId)/artifacts/\(artifact.id)")!
     return (url, "commit \(run.headSha)")
+  }
+  
+  /// Gets list of unique branches from GitHub action runs
+  public func getUniqueBranches() {
+    queue.addOperation {
+      do {
+        let response = try Self.getWorkflowRuns()
+        
+        let branches = response.workflowRuns.reduce(into: [String]()) { partialResult, workflowRun in
+          if !(partialResult.contains(workflowRun.headBranch)) {
+            partialResult.append(workflowRun.headBranch)
+          }
+        }
+        
+        self.branches = branches
+      } catch {
+        DeltaClientApp.modalError("Failed to get list of branches from workflow runs; \(error)", safeState: .serverList)
+      }
+    }
+  }
+  
+  /// Geta a list of all workflow runs
+  ///
+  /// - Returns: A GitHubWorkflowAPIResponse containing all workflow runs
+  private static func getWorkflowRuns() throws -> GitHubWorkflowAPIResponse {
+    let decoder = JSONDecoder()
+    decoder.keyDecodingStrategy = .convertFromSnakeCase
+    
+    let apiURL = URL(string: "https://api.github.com/repos/stackotter/delta-client/actions/workflows/main.yml/runs")!
+    guard
+      let data = try? Data(contentsOf: apiURL),
+      let response = try? decoder.decode(GitHubWorkflowAPIResponse.self, from: data)
+    else {
+      throw UpdateError.failedToGetWorkflowRuns
+    }
+    
+    return response
   }
   
   /// Resets the updater back to its initial state
