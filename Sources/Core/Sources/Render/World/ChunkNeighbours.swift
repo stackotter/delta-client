@@ -11,6 +11,16 @@ public struct ChunkNeighbours {
   /// The neighbour chunk to the West.
   public var west: Chunk
   
+  /// All four neighbouring chunks.
+  public var all: [CardinalDirection: Chunk] {
+    return [
+      .north: north,
+      .east: east,
+      .south: south,
+      .west: west
+    ]
+  }
+  
   public init(north: Chunk, east: Chunk, south: Chunk, west: Chunk) {
     self.north = north
     self.east = east

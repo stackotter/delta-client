@@ -95,7 +95,7 @@ struct PlayServerView: View {
         state.update(to: .downloadingChunks(numberReceived: 0, total: totalChunksToReceieve))
       case _ as World.Event.AddChunk:
         ThreadUtil.runInMain {
-          if case .downloadingChunks(let numberReceived, let total) = state.current {
+          if case let .downloadingChunks(numberReceived, total) = state.current {
             state.update(to: .downloadingChunks(numberReceived: numberReceived + 1, total: total))
           }
         }

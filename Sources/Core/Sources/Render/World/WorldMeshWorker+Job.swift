@@ -42,7 +42,7 @@ extension WorldMeshWorker {
     mutating func add(_ job: Job, priority: JobPriority) {
       lock.acquireWriteLock()
       jobs[priority]!.append(job)
-      lock.acquireWriteLock()
+      lock.unlock()
     }
     
     /// Returns the next job to complete.

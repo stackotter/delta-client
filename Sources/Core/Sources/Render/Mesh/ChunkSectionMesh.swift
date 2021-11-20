@@ -30,7 +30,7 @@ public struct ChunkSectionMesh {
   ///   - renderEncoder: Encoder for rendering geometry.
   ///   - device: The device to use.
   ///   - commandQueue: The command queue to use for creating buffers.
-  public mutating func renderTransparentOpaque(
+  public mutating func renderTransparentAndOpaque(
     renderEncoder: MTLRenderCommandEncoder,
     device: MTLDevice,
     commandQueue: MTLCommandQueue

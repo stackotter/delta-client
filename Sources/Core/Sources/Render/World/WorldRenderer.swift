@@ -66,24 +66,22 @@ public final class WorldRenderer: Renderer {
     worldToClipUniformsBuffer: MTLBuffer,
     camera: Camera
   ) throws {
-    var meshes = worldMesh.getMeshes()
-    
-    log.debug("meshes.count: \(meshes.count)")
-    
-    // Update animated textures
-    arrayTexture.update(tick: client.game.tickScheduler.tickNumber, device: device, commandQueue: commandQueue)
-    
-    // Encode render pass
-    encoder.setRenderPipelineState(renderPipelineState)
-    encoder.setFragmentTexture(arrayTexture.texture, index: 0)
-    encoder.setVertexBuffer(worldToClipUniformsBuffer, offset: 0, index: 1)
-    
-    for i in 0..<meshes.count {
-      try meshes[i].renderTransparentOpaque(renderEncoder: encoder, device: device, commandQueue: commandQueue)
-    }
-    
-    for i in 0..<meshes.count {
-      try meshes[i].renderTranslucent(viewedFrom: camera.position, sortTranslucent: true, renderEncoder: encoder, device: device, commandQueue: commandQueue)
+    try worldMesh.mutateMeshes { meshes in
+      // Update animated textures
+      arrayTexture.update(tick: client.game.tickScheduler.tickNumber, device: device, commandQueue: commandQueue)
+      
+      // Encode render pass
+      encoder.setRenderPipelineState(renderPipelineState)
+      encoder.setFragmentTexture(arrayTexture.texture, index: 0)
+      encoder.setVertexBuffer(worldToClipUniformsBuffer, offset: 0, index: 1)
+      
+      for i in 0..<meshes.count {
+        try meshes[i].renderTransparentAndOpaque(renderEncoder: encoder, device: device, commandQueue: commandQueue)
+      }
+      
+      for i in 0..<meshes.count {
+        try meshes[i].renderTranslucent(viewedFrom: camera.position, sortTranslucent: true, renderEncoder: encoder, device: device, commandQueue: commandQueue)
+      }
     }
   }
   
@@ -93,6 +91,9 @@ public final class WorldRenderer: Renderer {
     switch event {
       case let event as World.Event.AddChunk:
         log.debug("Handling chunk add event")
+        worldMesh.handleChunkAdded(at: event.position)
+      case let event as World.Event.UpdateChunkLighting:
+        log.debug("Handling lighting update")
         worldMesh.handleChunkAdded(at: event.position)
       case _ as JoinWorldEvent:
         log.debug("Creating new world mesh")

@@ -5,8 +5,8 @@ public class EventBus {
   /// The array of registered event handlers.
   private var handlers: [(Event) -> Void] = []
   
-  /// The dispatch queue for concurrently dispatching events.
-  private var eventThread = DispatchQueue(label: "events", attributes: .concurrent)
+  /// The dispatch queue for dispatching events. It's serial, not concurrent.
+  private var eventThread = DispatchQueue(label: "events")
   
   /// Registers a handler to receive updates.
   public func registerHandler(_ handler: @escaping (Event) -> Void) {
