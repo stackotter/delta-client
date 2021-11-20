@@ -127,9 +127,10 @@ struct GameView: View {
   }
   
   func closeMenu() {
+    inputDelegate.keymap = ConfigManager.default.config.keymap
+    inputDelegate.mouseSensitivity = ConfigManager.default.config.mouseSensitivity
+    
     withAnimation(nil) {
-      inputDelegate.keymap = ConfigManager.default.config.keymap
-      inputDelegate.mouseSensitivity = ConfigManager.default.config.mouseSensitivity
       inputDelegate.captureCursor()
     }
   }
@@ -194,13 +195,9 @@ struct GameView: View {
             if !cursorCaptured {
               switch overlayState.current {
                 case .menu:
-                  // Invisible button for escape to exit menu. Because keyboard shortcuts aren't working with my custom button styles
-                  Button("Back to game", action: closeMenu)
-                    .keyboardShortcut(.escape, modifiers: [])
-                    .opacity(0)
-                  
                   VStack {
-                    Button("Back to game", action: inputDelegate.captureCursor)
+                    Button("Back to game", action: closeMenu)
+                      .keyboardShortcut(.escape, modifiers: [])
                       .buttonStyle(PrimaryButtonStyle())
                     Button("Settings", action: { overlayState.update(to: .settings) })
                       .buttonStyle(SecondaryButtonStyle())
