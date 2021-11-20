@@ -25,12 +25,13 @@ struct UpdateView: View {
       case .selectUpdate:
         // Gives user a choice of which latest version to update to (stable or unstable), and which branch the unstable version is from
         VStack {
+          Spacer()
           Button("Update to latest stable") {
             updater.updateType = .stable
             state.update(to: .performUpdate)
           }
           .buttonStyle(PrimaryButtonStyle())
-          .padding(.bottom, 25)
+          Spacer()
           Menu {
             if updater.branches != nil {
               ForEach(updater.branches!, id: \.self) { branch in
@@ -48,7 +49,7 @@ struct UpdateView: View {
           }
           .buttonStyle(SecondaryButtonStyle())
           .disabled(updater.branches == nil)
-          
+          Spacer()
         }
         .frame(width: 200)
         .onAppear {
