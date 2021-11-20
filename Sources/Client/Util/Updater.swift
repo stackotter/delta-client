@@ -236,6 +236,7 @@ public class Updater: ObservableObject {
       do {
         let response = try Self.getWorkflowRuns()
         
+        // Get list of unique branches from the workflow runs
         let branches = response.workflowRuns.reduce(into: [String]()) { partialResult, workflowRun in
           if !(partialResult.contains(workflowRun.headBranch)) {
             partialResult.append(workflowRun.headBranch)

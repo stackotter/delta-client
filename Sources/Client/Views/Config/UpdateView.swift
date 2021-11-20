@@ -23,7 +23,7 @@ struct UpdateView: View {
   var body: some View {
     switch state.current {
       case .selectUpdate:
-        // Gives user a choice of which latest version to update to (stable or unstable)
+        // Gives user a choice of which latest version to update to (stable or unstable), and which branch the unstable version is from
         VStack {
           Button("Update to latest stable") {
             updater.updateType = .stable
