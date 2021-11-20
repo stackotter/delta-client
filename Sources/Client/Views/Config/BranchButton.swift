@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct BranchButton: View {
-    
     @EnvironmentObject var updater: Updater
     
     let branch: String

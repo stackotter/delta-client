@@ -165,7 +165,7 @@ public class Updater: ObservableObject {
   public func getDownloadURL(_ type: UpdateType) throws -> (URL, String) {
     switch type {
       case .stable:
-      return try Self.getLatestStableDownloadURL()
+        return try Self.getLatestStableDownloadURL()
       case .unstable:
         return try getLatestUnstableDownloadURL()
     }
@@ -250,7 +250,7 @@ public class Updater: ObservableObject {
     }
   }
   
-  /// Geta a list of all workflow runs
+  /// Gets a list of all workflow runs
   ///
   /// - Returns: A GitHubWorkflowAPIResponse containing all workflow runs
   private static func getWorkflowRuns() throws -> GitHubWorkflowAPIResponse {
