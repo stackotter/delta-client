@@ -143,7 +143,7 @@ public class Updater: ObservableObject {
       let newApp = temp2.appendingPathComponent("DeltaClient.app")
       let currentApp = Bundle.main.bundlePath
       if !self.queue.isSuspended {
-        Utils.shell(#"nohup sh -c 'sleep 3; rm -rf \#(currentApp); mv \#(newApp.path) \#(currentApp); open \#(currentApp); open \#(currentApp)' >/dev/null 2>&1 &"#)
+        Utils.shell(#"nohup sh -c 'sleep 3; rm -rf "\#(currentApp)"; mv "\#(newApp.path)" "\#(currentApp)"; open "\#(currentApp)"; open "\#(currentApp)"' >/dev/null 2>&1 &"#)
         Foundation.exit(0)
       }
     }
