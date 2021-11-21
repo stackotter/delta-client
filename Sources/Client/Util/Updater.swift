@@ -213,21 +213,26 @@ public class Updater: ObservableObject {
     guard let run = response.workflowRuns.first(where: {
       $0.event == "push" && $0.headBranch == self.unstableBranch && $0.conclusion == "success" && $0.name == "Build" && $0.status == "completed"
     }) else {
-      throw UpdateError.failedToGetLatestSuccessfulWorkflowRun(branch: "main")
+      throw UpdateError.failedToGetLatestSuccessfulWorkflowRun(branch: self.unstableBranch)
     }
     
-    // Get the list of artifacts
-    guard
-      let artifactsData = try? Data(contentsOf: run.artifactsUrl),
-      let artifactsResponse = try? decoder.decode(GitHubArtifactsAPIResponse.self, from: artifactsData),
-      let artifact = artifactsResponse.artifacts.first
-    else {
-      throw UpdateError.failedToGetWorkflowArtifact
+    do {
+      // Get the list of artifacts
+      let artifactsData = try Data(contentsOf: run.artifactsUrl)
+      let artifactsResponse = try decoder.decode(GitHubArtifactsAPIResponse.self, from: artifactsData)
+      
+      guard let artifact = artifactsResponse.artifacts.first else {
+        throw UpdateError.noArtifactsInResponse
+      }
+      
+      // nightly.link exposes public download links to artifacts, because for whatever reason, GitHub requires you to login with a GitHub account to download artifacts
+      let url = URL(string: "https://nightly.link/stackotter/delta-client/suites/\(run.checkSuiteId)/artifacts/\(artifact.id)")!
+      return (url, "commit \(run.headSha)")
+    } catch {
+      throw UpdateError.failedToGetWorkflowArtifact(error)
     }
     
-    // nightly.link exposes public download links to artifacts, because for whatever reason, GitHub requires you to login with a GitHub account to download artifacts
-    let url = URL(string: "https://nightly.link/stackotter/delta-client/suites/\(run.checkSuiteId)/artifacts/\(artifact.id)")!
-    return (url, "commit \(run.headSha)")
+
   }
   
   /// Gets list of unique branches from GitHub action runs

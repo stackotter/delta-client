@@ -10,10 +10,11 @@ enum UpdateViewState {
 enum UpdateError: LocalizedError {
   case failedToGetWorkflowRuns
   case failedToGetLatestSuccessfulWorkflowRun(branch: String)
-  case failedToGetWorkflowArtifact
+  case failedToGetWorkflowArtifact(Error)
   case failedToGetDownloadURL
   case failedToGetDownloadURLFromGitHubReleases
   case failedToGetGitHubAPIResponse(Error)
+  case noArtifactsInResponse
 }
 
 struct UpdateView: View {
