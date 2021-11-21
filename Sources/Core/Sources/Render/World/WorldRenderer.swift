@@ -50,7 +50,7 @@ public final class WorldRenderer: Renderer {
       blendingEnabled: true)
     
     // Create world mesh
-    worldMesh = WorldMesh(client.game.world, resources: resources)
+    worldMesh = WorldMesh(client.game.world, cameraChunk: client.game.player.position.chunk, resources: resources)
     
     // Register event handler
     client.eventBus.registerHandler(handle(_:))
@@ -66,6 +66,9 @@ public final class WorldRenderer: Renderer {
     worldToClipUniformsBuffer: MTLBuffer,
     camera: Camera
   ) throws {
+    // TODO: update camera chunk
+    // TODO: prioritise chunks inside frustum
+    // TODO: allow world renderer to register a function that calculates chunk priority
     try worldMesh.mutateMeshes { meshes in
       // Update animated textures
       arrayTexture.update(tick: client.game.tickScheduler.tickNumber, device: device, commandQueue: commandQueue)
@@ -94,7 +97,7 @@ public final class WorldRenderer: Renderer {
         worldMesh.handleChunkAdded(at: event.position)
       case _ as JoinWorldEvent:
         log.debug("Creating new world mesh")
-        worldMesh = WorldMesh(client.game.world, resources: resources)
+        worldMesh = WorldMesh(client.game.world, cameraChunk: client.game.player.position.chunk, resources: resources)
       default:
         return
     }

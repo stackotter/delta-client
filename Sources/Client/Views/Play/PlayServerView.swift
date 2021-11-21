@@ -13,6 +13,10 @@ enum OverlayState {
   case settings
 }
 
+class RenderCoordinatorWrapper {
+  var renderCoordinator: RenderCoordinatorProtocol?
+}
+
 struct PlayServerView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
   @ObservedObject var state = StateWrapper<PlayState>(initial: .connecting)
@@ -23,6 +27,7 @@ struct PlayServerView: View {
   var client: Client
   var inputDelegate: ClientInputDelegate
   var serverDescriptor: ServerDescriptor
+  var renderCoordinatorWrapper = RenderCoordinatorWrapper()
   
   init(serverDescriptor: ServerDescriptor, resourcePack: ResourcePack, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
     self.serverDescriptor = serverDescriptor
@@ -47,6 +52,10 @@ struct PlayServerView: View {
   }
   
   func makeRenderCoordinator() -> RenderCoordinatorProtocol {
+    if let renderCoordinator = renderCoordinatorWrapper.renderCoordinator {
+      return renderCoordinator
+    }
+    
     var pluginRenderCoordinator: RenderCoordinatorProtocol? = nil
     for (plugin, _, _) in DeltaClientApp.pluginEnvironment.plugins.values {
       if let renderCoordinator = plugin.makeRenderCoordinator(client) {
@@ -55,7 +64,9 @@ struct PlayServerView: View {
       }
     }
     
-    return pluginRenderCoordinator ?? RenderCoordinator(client)
+    let renderCoordinator = pluginRenderCoordinator ?? RenderCoordinator(client)
+    renderCoordinatorWrapper.renderCoordinator = renderCoordinator
+    return renderCoordinator
   }
   
   func joinServer(_ descriptor: ServerDescriptor) {

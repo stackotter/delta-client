@@ -2,15 +2,14 @@ import Foundation
 
 /// The position of a chunk.
 public struct ChunkPosition {
+  // MARK: Public properties
+  
   /// The chunk's world x divided by 16 and rounded down.
   public var chunkX: Int
   /// The chunk's world z divided by 16 and rounded down.
   public var chunkZ: Int
   
-  public init(chunkX: Int, chunkZ: Int) {
-    self.chunkX = chunkX
-    self.chunkZ = chunkZ
-  }
+  // MARK: Public computed properties
   
   /// A map from each cardinal direction to each of this position's neighbours.
   public var allNeighbours: [CardinalDirection: ChunkPosition] {
@@ -42,6 +41,20 @@ public struct ChunkPosition {
         Float(Chunk.depth)
       ])
   }
+  
+  /// A vector representing this position.
+  public var vector: SIMD2<Int> {
+    SIMD2(chunkX, chunkZ)
+  }
+  
+  // MARK: Init
+  
+  public init(chunkX: Int, chunkZ: Int) {
+    self.chunkX = chunkX
+    self.chunkZ = chunkZ
+  }
+  
+  // MARK: Public methods
   
   /// Gets the position of the chunk that neighbours this chunk in the specified direction.
   public func neighbour(inDirection direction: CardinalDirection) -> ChunkPosition {

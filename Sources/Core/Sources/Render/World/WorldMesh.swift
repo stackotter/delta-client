@@ -1,3 +1,5 @@
+import simd
+
 /// Holds all the meshes for a world.
 public struct WorldMesh {
   // MARK: Private properties
@@ -29,11 +31,26 @@ public struct WorldMesh {
   // MARK: Init
   
   /// Creates a new world mesh. Prepares any chunks already loaded in the world.
-  public init(_ world: World, resources: ResourcePack.Resources) {
+  public init(_ world: World, cameraChunk: ChunkPosition, resources: ResourcePack.Resources) {
     self.world = world
     meshWorker = WorldMeshWorker(world: world, resources: resources)
     
-    for position in world.loadedChunkPositions {
+    var chunks = world.loadedChunkPositions
+    let camera = cameraChunk.vector
+    
+    func distanceSquared(_ vector1: SIMD2<Int>, _ vector2: SIMD2<Int>) -> Int {
+      let x = (vector1.x - vector2.x)
+      let z = (vector1.y - vector2.y)
+      return x * x + z * z
+    }
+    
+    chunks.sort { first, second in
+      let firstDistance = distanceSquared(first.vector, camera)
+      let secondDistance = distanceSquared(second.vector, camera)
+      return secondDistance >= firstDistance
+    }
+    
+    for position in chunks {
       handleChunkAdded(at: position)
     }
   }
