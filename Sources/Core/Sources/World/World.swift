@@ -144,21 +144,25 @@ public class World {
   
   
   /// Get the block id of the block at the specified position.
-  /// - Parameter position: A block position in world coordinates.
+  /// - Parameters:
+  ///   - position: A block position in world coordinates.
+  ///   - acquireLock: Whether to acquire a lock or not before reading the value. Don't touch this unless you know what you're doing.
   /// - Returns: A block state id. If `position` is in a chunk that isn't loaded, `0` (regular air) is returned.
-  public func getBlockId(at position: Position) -> Int {
+  public func getBlockId(at position: Position, acquireLock: Bool = true) -> Int {
     if Self.isValidBlockPosition(position), let chunk = chunk(at: position.chunk) {
-      return chunk.getBlockId(at: position.relativeToChunk)
+      return chunk.getBlockId(at: position.relativeToChunk, acquireLock: acquireLock)
     } else {
       return 0
     }
   }
   
   /// Returns information about the type of block at the specified position.
-  /// - Parameter position: Position of block.
+  /// - Parameters:
+  ///   - position: Position of block.
+  ///   - acquireLock: Whether to acquire a lock or not before reading the value. Don't touch this unless you know what you're doing.
   /// - Returns: The block at the given position. `Block.missing` if the block doesn't exist.
-  public func getBlock(at position: Position) -> Block {
-    return Registry.shared.blockRegistry.block(withId: Int(getBlockId(at: position))) ?? Block.missing
+  public func getBlock(at position: Position, acquireLock: Bool = true) -> Block {
+    return Registry.shared.blockRegistry.block(withId: Int(getBlockId(at: position, acquireLock: acquireLock))) ?? Block.missing
   }
   
   // MARK: Lighting

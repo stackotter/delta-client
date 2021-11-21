@@ -655,13 +655,13 @@ public struct ChunkSectionMeshBuilder {
       var maxHeight = height
       for neighbourPosition in positions {
         // If any of the surrounding blocks have the fluid above them, this corner should have a height of 1
-        let upperNeighbourBlock = world.getBlock(at: neighbourPosition + Direction.up.intVector)
+        let upperNeighbourBlock = world.getBlock(at: neighbourPosition + Direction.up.intVector, acquireLock: false)
         if block.fluidId == upperNeighbourBlock.fluidId {
           maxHeight = 1
           break
         }
         
-        let neighbourBlock = world.getBlock(at: neighbourPosition)
+        let neighbourBlock = world.getBlock(at: neighbourPosition, acquireLock: false)
         if block.fluidId == neighbourBlock.fluidId {
           let neighbourHeight = getFluidLevel(neighbourBlock)
           if neighbourHeight > maxHeight {
@@ -703,9 +703,9 @@ public struct ChunkSectionMeshBuilder {
     for (faceDirection, neighbourChunkDirection, neighbourIndex) in neighbourIndices {
       if let direction = neighbourChunkDirection {
         let neighbourChunk = neighbourChunks.neighbour(in: direction)
-        neighbouringBlocks.append((faceDirection, neighbourChunk.getBlockId(at: neighbourIndex)))
+        neighbouringBlocks.append((faceDirection, neighbourChunk.getBlockId(at: neighbourIndex, acquireLock: false)))
       } else {
-        neighbouringBlocks.append((faceDirection, chunk.getBlockId(at: neighbourIndex)))
+        neighbouringBlocks.append((faceDirection, chunk.getBlockId(at: neighbourIndex, acquireLock: false)))
       }
     }
     

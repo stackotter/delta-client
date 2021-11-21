@@ -1,7 +1,7 @@
 import Foundation
 import simd
 
-/// An object for storing and accessing chunk lighting data.
+/// An object for storing and accessing chunk lighting data. Not thread-safe.
 public struct ChunkLighting {
   /// Sky light levels for each chunk section. Each array is indexed by block index.
   public private(set) var skyLightData: [Int: [UInt8]] = [:]

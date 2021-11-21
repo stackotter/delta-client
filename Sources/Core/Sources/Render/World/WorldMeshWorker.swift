@@ -6,8 +6,6 @@ import Metal
 public class WorldMeshWorker {
   // MARK: Public properties
   
-  // TODO: make it so that world is not necessary to have
-  
   /// World that chunks are in.
   public var world: World
   /// Resources to prepare chunks with.
@@ -23,9 +21,11 @@ public class WorldMeshWorker {
   /// Mesh creation jobs.
   private var jobQueue = JobQueue()
   /// Serial dispatch queue for executing jobs on.
-  private var executionQueue = DispatchQueue(label: "dev.stackotter.delta-client.WorldMeshWorker")
+  private var executionQueue = DispatchQueue(label: "dev.stackotter.delta-client.WorldMeshWorker", attributes: [.concurrent])
   /// Whether the execution loop is currently running or not.
-  private var isExecuting = AtomicBool(initialValue: false)
+  private var executingThreadsCount = AtomicInt(initialValue: 0)
+  /// The maximum number of execution loops allowed to run at once (for performance reasons).
+  private let maxExecutingThreadsCount = 2
   
   // MARK: Init
   
@@ -41,14 +41,13 @@ public class WorldMeshWorker {
   public func createMeshAsync(
     at position: ChunkSectionPosition,
     in chunk: Chunk,
-    neighbours: ChunkNeighbours,
-    priority: JobPriority
+    neighbours: ChunkNeighbours
   ) {
     let job = Job(
       chunk: chunk,
       position: position,
       neighbours: neighbours)
-    jobQueue.add(job, priority: priority)
+    jobQueue.add(job)
     startExecutionLoop()
   }
   
@@ -67,16 +66,31 @@ public class WorldMeshWorker {
   private func startExecutionLoop() {
     log.debug("Attempting to start execution loop")
     
-    if isExecuting.getAndSet(newValue: true) {
+    if executingThreadsCount.value >= maxExecutingThreadsCount {
       return
     }
     
-    log.debug("Starting execution loop")
+    let count = executingThreadsCount.incrementAndGet()
+    
+    log.debug("Starting WorldMeshWorker execution thread number \(count)")
     
     executionQueue.async {
+      var stopwatch = Stopwatch(mode: .summary, name: "Execution loop \(count)")
+      defer {
+        stopwatch.summary()
+        log.debug("Stopping WorldMeshWorker execution thread number \(count)")
+      }
+      
       while true {
-        if !self.executeNextJob() {
-          self.isExecuting.value = false
+        stopwatch.startMeasurement("executeNextJob")
+        let jobWasExecuted = self.executeNextJob()
+        stopwatch.stopMeasurement("executeNextJob")
+        
+        // If no job was executed, the job queue is empty and this execution loop can stop
+        if !jobWasExecuted {
+          if self.executingThreadsCount.decrementAndGet() < 0 {
+            log.warning("Error in WorldMeshWorker thread management, number of executing threads is below 0 (whoops)")
+          }
           return
         }
       }

@@ -116,8 +116,7 @@ public struct WorldMesh {
       meshWorker.createMeshAsync(
         at: ChunkSectionPosition(position, sectionY: sectionY),
         in: chunk,
-        neighbours: neighbours,
-        priority: .chunkLoad)
+        neighbours: neighbours)
     }
   }
   
