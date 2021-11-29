@@ -1,6 +1,6 @@
 import Foundation
 
-/// A simple yet flexible thread-safe subscriber-based event system.
+/// A simple yet flexible thread-safe subscriber-based event system. Events are dispatched concurrently.
 public class EventBus {
   /// The array of registered event handlers.
   private var handlers: [(Event) -> Void] = []
@@ -17,7 +17,7 @@ public class EventBus {
     handlers.append(handler)
   }
   
-  /// Sends an event to all registered handlers.
+  /// Concurrently sends an event to all registered handlers.
   public func dispatch(_ event: Event) {
     handlersLock.acquireReadLock()
     defer { handlersLock.unlock() }

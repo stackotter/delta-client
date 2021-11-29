@@ -17,6 +17,9 @@ extension Chunk {
     /// The number of non-air blocks in the chunk section.
     public var blockCount: Int
     
+    /// Stores which faces are connected to each other face through the section (visibility-wise). See ``ChunkSectionVoxelGraph``.
+    public var connectivity: [Direction: Set<Direction>] = [:]
+    
     /// Whether the section is all air or not.
     public var isEmpty: Bool {
       blockCount == 0
@@ -26,35 +29,42 @@ extension Chunk {
     public init() {
       blocks = [UInt16](repeating: 0, count: Section.numBlocks)
       blockCount = 0
+      connectivity = Self.emptyConnectivity()
     }
     
     /// Create a chunk section populated with blocks.
     /// - Parameters:
-    ///   - blocks: An array of block ids with length `Section.width * Section.height * Section.depth`.
+    ///   - blocks: An array of block ids. Length must be equal to ``numBlocks``.
     ///   - blockCount: The number of non-air blocks in the array.
     public init(blocks: [UInt16], blockCount: Int) {
+      assert(blocks.count == Self.numBlocks, "Attempted to initialize Chunk.Section with \(blocks.count) blocks but it must have \(Self.numBlocks) blocks")
+      
       self.blocks = blocks
       self.blockCount = blockCount
     }
     
     /// Create a chunk section populated with blocks.
     /// - Parameters:
-    ///   - blockIds: Block ids or indices into the palette if the palette isn't empty.
+    ///   - blockIds: Block ids or indices into the palette if the palette isn't empty. Length must be equal to ``numBlocks``.
     ///   - palette: Used as a look up table to convert palette ids to block ids. If empty, the palette is ignored.
     ///   - blockCount: The number of non-air blocks in the array.
     public init(blockIds: [UInt16], palette: [UInt16], blockCount: Int) {
-      if !palette.isEmpty { // indirect palette
-        self.blocks = blockIds.map {
+      assert(blockIds.count == Self.numBlocks, "Attempted to initialize Chunk.Section with \(blockIds.count) blocks but it must have \(Self.numBlocks) blocks")
+      
+      // See https://wiki.vg/Chunk_Format
+      if !palette.isEmpty {
+        self.blocks = []
+        blocks.reserveCapacity(blockIds.count)
+        for blockId in blockIds {
           if $0 >= palette.count {
-            log.warning("Indirect palette lookup failed: \($0) out of bounds for palette of length \(palette.count)")
-            return 0
+            log.warning("Indirect palette lookup failed: \($0) out of bounds for palette of length \(palette.count), defaulting to 0 (air)")
+            blocks.append(0)
           }
-          return palette[Int($0)]
+          blocks.append(palette[Int(blockId)])
         }
       } else {
         self.blocks = blockIds
       }
-      self.blockCount = blockCount
     }
     
     /// Get the id of the block at the specified position.
@@ -112,6 +122,17 @@ extension Chunk {
       if Registry.shared.blockRegistry.isAir(id) {
         blockCount -= 1
       }
+    }
+    
+    /// Creates the connectivity information for an empty chunk.
+    /// - Returns: Connectivity information that says all faces are connected to each other.
+    private static func emptyConnectivity() -> [Direction: Set<Direction>] {
+      let connectivity: [Direction: Set<Direction>] = [:]
+      let allFaces = Set(Direction.allDirections)
+      for face in Direction.allDirections {
+        connectivity[face] = allFaces
+      }
+      return connectivity
     }
   }
 }

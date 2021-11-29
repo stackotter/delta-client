@@ -1,12 +1,16 @@
 import Foundation
 import simd
 
+// TODO: For plugin API make the block model palette api safe and easy to use (for adding/editing models)
+
 /// Contains block models loaded from a resource pack.
 public struct BlockModelPalette {
   /// Block models indexed by block state id. Each is an array of block model variants. Each variant is an array of block models (required for multi-part block models).
   public var models: [[BlockModel]] = []
   /// The transforms to use when displaying blocks in different places. Block models specify an index into this array.
   public var displayTransforms: [BlockModelDisplayTransforms] = []
+  /// The set of all blocks that have full block models (fill an entire voxel, e.g. dirt blocks and not oak slabs).
+  public var fullBlocks: Set<Int> = []
   
   // MARK: Init
   
@@ -17,6 +21,16 @@ public struct BlockModelPalette {
   public init(models: [[BlockModel]], displayTransforms: [BlockModelDisplayTransforms]) {
     self.models = models
     self.displayTransforms = displayTransforms
+    
+  outerLoop:
+    for (index, model) in models.enumerated() {
+      for part in model {
+        if part.cullingFaces.count == 6 {
+          fullBlocks.insert(index)
+          continue outerLoop
+        }
+      }
+    }
   }
   
   // MARK: Access

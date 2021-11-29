@@ -48,6 +48,34 @@ public struct ChunkSectionPosition {
     self.sectionY = sectionY
     sectionZ = chunkPosition.chunkZ
   }
+  
+  /// Gets the position of the section that neighbours this section in the specified direction.
+  /// - Parameter direction: Direction to find neighbour in.
+  /// - Returns: The position of the neighbour unless the neighbour in that direction would be above or below the world assuming that the original section is inside the world.
+  public func neighbour(inDirection direction: Direction) -> ChunkSectionPosition? {
+    var position = self
+    switch direction {
+      case .north:
+        position.sectionZ -= 1
+      case .east:
+        position.sectionX += 1
+      case .south:
+        position.sectionZ += 1
+      case .west:
+        position.sectionX -= 1
+      case .up:
+        position.sectionY += 1
+        if position.sectionY >= Chunk.numSections {
+          return nil
+        }
+      case .down:
+        if position.sectionY < 0 {
+          return nil
+        }
+        position.sectionY -= 1
+    }
+    return position
+  }
 }
 
 extension ChunkSectionPosition: Hashable {

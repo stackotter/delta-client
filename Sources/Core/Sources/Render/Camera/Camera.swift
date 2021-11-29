@@ -13,13 +13,19 @@ public struct Camera {
   
   /// The aspect ratio.
   public private(set) var aspect: Float = 1
-  /// This camera's position.
+  /// The camera's position.
   public private(set) var position: SIMD3<Float> = [0, 0, 0]
   
-  /// This camera's rotation around the x axis (pitch).
+  /// The camera's rotation around the x axis (pitch). -pi/2 radians is straight up, 0 is straight ahead, and pi/2 radians is straight up.
   public private(set) var xRot: Float = 0
-  /// This camera's rotation aroudn the y axis (yaw).
+  /// The camera's rotation around the y axis measured counter-clockwise from the positive z axis when looking down from above (yaw).
   public private(set) var yRot: Float = 0
+  
+  public var directionVector: SIMD3<Float> {
+    let rotationMatrix = MatrixUtil.rotationMatrix(y: Float.pi + yRot) * MatrixUtil.rotationMatrix(x: xRot)
+    let unitVector = SIMD4<Float>(0, 0, 1, 0)
+    return = simd_make_float3(unitVector * rotationMatrix)
+  }
   
   private var frustum: Frustum?
   

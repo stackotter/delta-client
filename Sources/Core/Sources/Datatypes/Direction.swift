@@ -1,7 +1,7 @@
 import Foundation
 import simd
 
-/// A direction enum where the raw value is the same as in some as Minecraft packets.
+/// A direction enum where the raw value is the same as in some of the Minecraft packets.
 public enum Direction: Int {
   case down = 0
   case up = 1
