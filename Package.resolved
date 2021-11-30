@@ -38,6 +38,24 @@
         }
       },
       {
+        "package": "IkigaJSON",
+        "repositoryURL": "https://github.com/Ikiga/IkigaJSON.git",
+        "state": {
+          "branch": null,
+          "revision": "885d4f4b62b659880dd1e1db3e1c8da3e88139c0",
+          "version": "1.2.8"
+        }
+      },
+      {
+        "package": "JJLISO8601DateFormatter",
+        "repositoryURL": "https://github.com/michaeleisel/JJLISO8601DateFormatter",
+        "state": {
+          "branch": null,
+          "revision": "99fadf2e6425a0f827b1b485ea60bc2b7ecdd22c",
+          "version": "0.1.4"
+        }
+      },
+      {
         "package": "NioDNS",
         "repositoryURL": "https://github.com/OpenKitten/NioDNS",
         "state": {
@@ -125,6 +143,24 @@
           "branch": null,
           "revision": "cf10bbff6ac3b873e97b36b9784c79866a051a8e",
           "version": "0.9.12"
+        }
+      },
+      {
+        "package": "ZippyJSON",
+        "repositoryURL": "https://github.com/michaeleisel/ZippyJSON",
+        "state": {
+          "branch": null,
+          "revision": "1ab389998592d038a60a3ca71aa7554d0e84ab4a",
+          "version": "1.2.4"
+        }
+      },
+      {
+        "package": "ZippyJSONCFamily",
+        "repositoryURL": "https://github.com/michaeleisel/ZippyJSONCFamily",
+        "state": {
+          "branch": null,
+          "revision": "c55123b23f0faa898b22bf1b967e72a2df51fdb4",
+          "version": "1.2.4"
         }
       }
     ]
