@@ -13,9 +13,7 @@ public enum BiomeError: LocalizedError {
 }
 
 /// Holds information about biomes.
-public struct BiomeRegistry: JSONRegistry {
-  public static var cacheFile = "biomes.json"
-  
+public struct BiomeRegistry: Codable {
   /// All biomes. Thanks Mojang for having some missing ids and forcing me to use a dictionary.
   public var biomes: [Int: Biome] = [:]
   /// Maps biome identifier to biome id.

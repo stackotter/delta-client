@@ -21,4 +21,10 @@ enum BlockRegistryError: LocalizedError {
   case invalidDirectionString(String)
   /// A texture had an invalid identifier string (likely a texture variable).
   case invalidTexture(String)
+  /// Invalid computed tint type in cached protobuf message.
+  case invalidComputedTintType(Int)
+  /// Invalid block tint in cached protobuf message.
+  case invalidBlockTint
+  /// Invalid block offset in cached protobuf message.
+  case invalidBlockOffset
 }

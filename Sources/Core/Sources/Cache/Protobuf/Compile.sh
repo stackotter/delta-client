@@ -1,1 +1,1 @@
-protoc --swift_out=./Generated BlockModelPalette.proto BlockRegistry.proto
+protoc --swift_opt=Visibility=Public --swift_out=./Generated BlockRegistry.proto BlockModelPalette.proto

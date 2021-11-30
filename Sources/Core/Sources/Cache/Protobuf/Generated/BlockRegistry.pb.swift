@@ -20,8 +20,8 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-enum ProtobufBlockComputedTintType: SwiftProtobuf.Enum {
-  typealias RawValue = Int
+public enum ProtobufBlockComputedTintType: SwiftProtobuf.Enum {
+  public typealias RawValue = Int
   case water // = 0
   case foliage // = 1
   case grass // = 2
@@ -30,11 +30,11 @@ enum ProtobufBlockComputedTintType: SwiftProtobuf.Enum {
   case shearingDoublePlant // = 5
   case UNRECOGNIZED(Int)
 
-  init() {
+  public init() {
     self = .water
   }
 
-  init?(rawValue: Int) {
+  public init?(rawValue: Int) {
     switch rawValue {
     case 0: self = .water
     case 1: self = .foliage
@@ -46,7 +46,7 @@ enum ProtobufBlockComputedTintType: SwiftProtobuf.Enum {
     }
   }
 
-  var rawValue: Int {
+  public var rawValue: Int {
     switch self {
     case .water: return 0
     case .foliage: return 1
@@ -64,7 +64,7 @@ enum ProtobufBlockComputedTintType: SwiftProtobuf.Enum {
 
 extension ProtobufBlockComputedTintType: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  static var allCases: [ProtobufBlockComputedTintType] = [
+  public static var allCases: [ProtobufBlockComputedTintType] = [
     .water,
     .foliage,
     .grass,
@@ -76,410 +76,449 @@ extension ProtobufBlockComputedTintType: CaseIterable {
 
 #endif  // swift(>=4.2)
 
-struct ProtobufBlockFluidState {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
+public enum ProtobufBlockOffset: SwiftProtobuf.Enum {
+  public typealias RawValue = Int
+  case xyz // = 0
+  case xz // = 1
+  case UNRECOGNIZED(Int)
 
-  var fluidID: Int32 = 0
+  public init() {
+    self = .xyz
+  }
 
-  var height: Int32 = 0
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .xyz
+    case 1: self = .xz
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
 
-  var isWaterlogged: Bool = false
+  public var rawValue: Int {
+    switch self {
+    case .xyz: return 0
+    case .xz: return 1
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
 }
 
-struct ProtobufBlockTintRGBColor {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
+#if swift(>=4.2)
 
-  var r: Int32 = 0
-
-  var g: Int32 = 0
-
-  var b: Int32 = 0
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
+extension ProtobufBlockOffset: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [ProtobufBlockOffset] = [
+    .xyz,
+    .xz,
+  ]
 }
 
-struct ProtobufBlockTint {
+#endif  // swift(>=4.2)
+
+public struct ProtobufBlockFluidState {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var computedTint: ProtobufBlockComputedTintType {
+  public var fluidID: Int32 = 0
+
+  public var height: Int32 = 0
+
+  public var isWaterlogged: Bool = false
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct ProtobufBlockTintRGBColor {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var r: Int32 = 0
+
+  public var g: Int32 = 0
+
+  public var b: Int32 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct ProtobufBlockTint {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var computedTint: ProtobufBlockComputedTintType {
     get {return _computedTint ?? .water}
     set {_computedTint = newValue}
   }
   /// Returns true if `computedTint` has been explicitly set.
-  var hasComputedTint: Bool {return self._computedTint != nil}
+  public var hasComputedTint: Bool {return self._computedTint != nil}
   /// Clears the value of `computedTint`. Subsequent reads from it will return its default value.
-  mutating func clearComputedTint() {self._computedTint = nil}
+  public mutating func clearComputedTint() {self._computedTint = nil}
 
-  var hardcodedTint: ProtobufBlockTintRGBColor {
+  public var hardcodedTint: ProtobufBlockTintRGBColor {
     get {return _hardcodedTint ?? ProtobufBlockTintRGBColor()}
     set {_hardcodedTint = newValue}
   }
   /// Returns true if `hardcodedTint` has been explicitly set.
-  var hasHardcodedTint: Bool {return self._hardcodedTint != nil}
+  public var hasHardcodedTint: Bool {return self._hardcodedTint != nil}
   /// Clears the value of `hardcodedTint`. Subsequent reads from it will return its default value.
-  mutating func clearHardcodedTint() {self._hardcodedTint = nil}
+  public mutating func clearHardcodedTint() {self._hardcodedTint = nil}
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 
   fileprivate var _computedTint: ProtobufBlockComputedTintType? = nil
   fileprivate var _hardcodedTint: ProtobufBlockTintRGBColor? = nil
 }
 
-struct ProtobufBlockPhysicalMaterial {
+public struct ProtobufBlockPhysicalMaterial {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var explosionResistance: Double = 0
+  public var explosionResistance: Double = 0
 
-  var slipperiness: Double = 0
+  public var slipperiness: Double = 0
 
-  var velocityMultiplier: Double = 0
+  public var velocityMultiplier: Double = 0
 
-  var jumpVelocityMultiplier: Double = 0
+  public var jumpVelocityMultiplier: Double = 0
 
-  var requiresTool: Bool = false
+  public var requiresTool: Bool = false
 
-  var hardness: Double = 0
+  public var hardness: Double = 0
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 }
 
-struct ProtobufBlockLightMaterial {
+public struct ProtobufBlockLightMaterial {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var isTranslucent: Bool = false
+  public var isTranslucent: Bool = false
 
-  var opacity: Int32 = 0
+  public var opacity: Int32 = 0
 
-  var luminance: Int32 = 0
+  public var luminance: Int32 = 0
 
-  var isConditionallyTransparent: Bool = false
+  public var isConditionallyTransparent: Bool = false
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 }
 
-struct ProtobufBlockSoundMaterial {
+public struct ProtobufBlockSoundMaterial {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var volume: Double = 0
+  public var volume: Double = 0
 
-  var pitch: Double = 0
+  public var pitch: Double = 0
 
-  var breakSound: Int32 = 0
+  public var breakSound: Int32 = 0
 
-  var stepSound: Int32 = 0
+  public var stepSound: Int32 = 0
 
-  var placeSound: Int32 = 0
+  public var placeSound: Int32 = 0
 
-  var hitSound: Int32 = 0
+  public var hitSound: Int32 = 0
 
-  var fallSound: Int32 = 0
+  public var fallSound: Int32 = 0
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 }
 
-struct ProtobufBlockOcclusionShapeIds {
+public struct ProtobufBlockOcclusionShapeIds {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var ids: [Int32] = []
+  public var ids: [Int32] = []
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 }
 
-struct ProtobufBlockIsSturdy {
+public struct ProtobufBlockIsSturdy {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var values: [Bool] = []
+  public var values: [Bool] = []
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 }
 
-struct ProtobufVec3f {
+public struct ProtobufVec3f {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var x: Float = 0
+  public var x: Float = 0
 
-  var y: Float = 0
+  public var y: Float = 0
 
-  var z: Float = 0
+  public var z: Float = 0
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 }
 
-struct ProtobufAABB {
+public struct ProtobufAABB {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var position: ProtobufVec3f {
+  public var position: ProtobufVec3f {
     get {return _position ?? ProtobufVec3f()}
     set {_position = newValue}
   }
   /// Returns true if `position` has been explicitly set.
-  var hasPosition: Bool {return self._position != nil}
+  public var hasPosition: Bool {return self._position != nil}
   /// Clears the value of `position`. Subsequent reads from it will return its default value.
-  mutating func clearPosition() {self._position = nil}
+  public mutating func clearPosition() {self._position = nil}
 
-  var size: ProtobufVec3f {
+  public var size: ProtobufVec3f {
     get {return _size ?? ProtobufVec3f()}
     set {_size = newValue}
   }
   /// Returns true if `size` has been explicitly set.
-  var hasSize: Bool {return self._size != nil}
+  public var hasSize: Bool {return self._size != nil}
   /// Clears the value of `size`. Subsequent reads from it will return its default value.
-  mutating func clearSize() {self._size = nil}
+  public mutating func clearSize() {self._size = nil}
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 
   fileprivate var _position: ProtobufVec3f? = nil
   fileprivate var _size: ProtobufVec3f? = nil
 }
 
-struct ProtobufBlockShape {
+public struct ProtobufBlockShape {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var isDynamic: Bool = false
+  public var isDynamic: Bool = false
 
-  var isLarge: Bool = false
+  public var isLarge: Bool = false
 
-  var collisionShape: [ProtobufAABB] = []
+  public var collisionShape: [ProtobufAABB] = []
 
-  var outlineShape: [ProtobufAABB] = []
+  public var outlineShape: [ProtobufAABB] = []
 
-  var occlusionShapeIds: ProtobufBlockOcclusionShapeIds {
+  public var occlusionShapeIds: ProtobufBlockOcclusionShapeIds {
     get {return _occlusionShapeIds ?? ProtobufBlockOcclusionShapeIds()}
     set {_occlusionShapeIds = newValue}
   }
   /// Returns true if `occlusionShapeIds` has been explicitly set.
-  var hasOcclusionShapeIds: Bool {return self._occlusionShapeIds != nil}
+  public var hasOcclusionShapeIds: Bool {return self._occlusionShapeIds != nil}
   /// Clears the value of `occlusionShapeIds`. Subsequent reads from it will return its default value.
-  mutating func clearOcclusionShapeIds() {self._occlusionShapeIds = nil}
+  public mutating func clearOcclusionShapeIds() {self._occlusionShapeIds = nil}
 
-  var isSturdy: ProtobufBlockIsSturdy {
+  public var isSturdy: ProtobufBlockIsSturdy {
     get {return _isSturdy ?? ProtobufBlockIsSturdy()}
     set {_isSturdy = newValue}
   }
   /// Returns true if `isSturdy` has been explicitly set.
-  var hasIsSturdy: Bool {return self._isSturdy != nil}
+  public var hasIsSturdy: Bool {return self._isSturdy != nil}
   /// Clears the value of `isSturdy`. Subsequent reads from it will return its default value.
-  mutating func clearIsSturdy() {self._isSturdy = nil}
+  public mutating func clearIsSturdy() {self._isSturdy = nil}
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 
   fileprivate var _occlusionShapeIds: ProtobufBlockOcclusionShapeIds? = nil
   fileprivate var _isSturdy: ProtobufBlockIsSturdy? = nil
 }
 
-struct ProtobufBlock {
+public struct ProtobufBlock {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var id: Int32 {
+  public var id: Int32 {
     get {return _storage._id}
     set {_uniqueStorage()._id = newValue}
   }
 
-  var vanillaParentBlockID: Int32 {
+  public var vanillaParentBlockID: Int32 {
     get {return _storage._vanillaParentBlockID}
     set {_uniqueStorage()._vanillaParentBlockID = newValue}
   }
 
-  var identifierNamespace: String {
+  public var identifierNamespace: String {
     get {return _storage._identifierNamespace}
     set {_uniqueStorage()._identifierNamespace = newValue}
   }
 
-  var identifierName: String {
+  public var identifierName: String {
     get {return _storage._identifierName}
     set {_uniqueStorage()._identifierName = newValue}
   }
 
-  var className: String {
+  public var className: String {
     get {return _storage._className}
     set {_uniqueStorage()._className = newValue}
   }
 
-  var fluidState: ProtobufBlockFluidState {
+  public var fluidState: ProtobufBlockFluidState {
     get {return _storage._fluidState ?? ProtobufBlockFluidState()}
     set {_uniqueStorage()._fluidState = newValue}
   }
   /// Returns true if `fluidState` has been explicitly set.
-  var hasFluidState: Bool {return _storage._fluidState != nil}
+  public var hasFluidState: Bool {return _storage._fluidState != nil}
   /// Clears the value of `fluidState`. Subsequent reads from it will return its default value.
-  mutating func clearFluidState() {_uniqueStorage()._fluidState = nil}
+  public mutating func clearFluidState() {_uniqueStorage()._fluidState = nil}
 
-  var tint: ProtobufBlockTint {
+  public var tint: ProtobufBlockTint {
     get {return _storage._tint ?? ProtobufBlockTint()}
     set {_uniqueStorage()._tint = newValue}
   }
   /// Returns true if `tint` has been explicitly set.
-  var hasTint: Bool {return _storage._tint != nil}
+  public var hasTint: Bool {return _storage._tint != nil}
   /// Clears the value of `tint`. Subsequent reads from it will return its default value.
-  mutating func clearTint() {_uniqueStorage()._tint = nil}
+  public mutating func clearTint() {_uniqueStorage()._tint = nil}
 
-  /// If null then there is no offset, if false the offset is xz, if true the offset is xyz
-  var isOffsetXyz: Bool {
-    get {return _storage._isOffsetXyz ?? false}
-    set {_uniqueStorage()._isOffsetXyz = newValue}
+  public var offset: ProtobufBlockOffset {
+    get {return _storage._offset ?? .xyz}
+    set {_uniqueStorage()._offset = newValue}
   }
-  /// Returns true if `isOffsetXyz` has been explicitly set.
-  var hasIsOffsetXyz: Bool {return _storage._isOffsetXyz != nil}
-  /// Clears the value of `isOffsetXyz`. Subsequent reads from it will return its default value.
-  mutating func clearIsOffsetXyz() {_uniqueStorage()._isOffsetXyz = nil}
+  /// Returns true if `offset` has been explicitly set.
+  public var hasOffset: Bool {return _storage._offset != nil}
+  /// Clears the value of `offset`. Subsequent reads from it will return its default value.
+  public mutating func clearOffset() {_uniqueStorage()._offset = nil}
 
-  var material: ProtobufBlockPhysicalMaterial {
+  public var material: ProtobufBlockPhysicalMaterial {
     get {return _storage._material ?? ProtobufBlockPhysicalMaterial()}
     set {_uniqueStorage()._material = newValue}
   }
   /// Returns true if `material` has been explicitly set.
-  var hasMaterial: Bool {return _storage._material != nil}
+  public var hasMaterial: Bool {return _storage._material != nil}
   /// Clears the value of `material`. Subsequent reads from it will return its default value.
-  mutating func clearMaterial() {_uniqueStorage()._material = nil}
+  public mutating func clearMaterial() {_uniqueStorage()._material = nil}
 
-  var lightMaterial: ProtobufBlockLightMaterial {
+  public var lightMaterial: ProtobufBlockLightMaterial {
     get {return _storage._lightMaterial ?? ProtobufBlockLightMaterial()}
     set {_uniqueStorage()._lightMaterial = newValue}
   }
   /// Returns true if `lightMaterial` has been explicitly set.
-  var hasLightMaterial: Bool {return _storage._lightMaterial != nil}
+  public var hasLightMaterial: Bool {return _storage._lightMaterial != nil}
   /// Clears the value of `lightMaterial`. Subsequent reads from it will return its default value.
-  mutating func clearLightMaterial() {_uniqueStorage()._lightMaterial = nil}
+  public mutating func clearLightMaterial() {_uniqueStorage()._lightMaterial = nil}
 
-  var soundMaterial: ProtobufBlockSoundMaterial {
+  public var soundMaterial: ProtobufBlockSoundMaterial {
     get {return _storage._soundMaterial ?? ProtobufBlockSoundMaterial()}
     set {_uniqueStorage()._soundMaterial = newValue}
   }
   /// Returns true if `soundMaterial` has been explicitly set.
-  var hasSoundMaterial: Bool {return _storage._soundMaterial != nil}
+  public var hasSoundMaterial: Bool {return _storage._soundMaterial != nil}
   /// Clears the value of `soundMaterial`. Subsequent reads from it will return its default value.
-  mutating func clearSoundMaterial() {_uniqueStorage()._soundMaterial = nil}
+  public mutating func clearSoundMaterial() {_uniqueStorage()._soundMaterial = nil}
 
-  var shape: ProtobufBlockShape {
+  public var shape: ProtobufBlockShape {
     get {return _storage._shape ?? ProtobufBlockShape()}
     set {_uniqueStorage()._shape = newValue}
   }
   /// Returns true if `shape` has been explicitly set.
-  var hasShape: Bool {return _storage._shape != nil}
+  public var hasShape: Bool {return _storage._shape != nil}
   /// Clears the value of `shape`. Subsequent reads from it will return its default value.
-  mutating func clearShape() {_uniqueStorage()._shape = nil}
+  public mutating func clearShape() {_uniqueStorage()._shape = nil}
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
-struct ProtobufBlockModelVariantDescriptor {
+public struct ProtobufBlockModelPartDescriptor {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var identifierNamespace: String = String()
+  public var identifierNamespace: String = String()
 
-  var identifierName: String = String()
+  public var identifierName: String = String()
 
-  var xRotationDegrees: Int32 = 0
+  public var xRotationDegrees: Int32 = 0
 
-  var yRotationDegrees: Int32 = 0
+  public var yRotationDegrees: Int32 = 0
 
-  var uvLock: Bool = false
+  public var uvLock: Bool = false
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 }
 
-struct ProtobufBlockModelVariantDescriptors {
+public struct ProtobufBlockModelVariantDescriptor {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var parts: [ProtobufBlockModelVariantDescriptor] = []
+  public var parts: [ProtobufBlockModelPartDescriptor] = []
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 }
 
-struct ProtobufBlockModelDescriptors {
+public struct ProtobufBlockModelDescriptor {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var variants: [ProtobufBlockModelVariantDescriptors] = []
+  public var variants: [ProtobufBlockModelVariantDescriptor] = []
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 }
 
-struct ProtobufBlockRegistry {
+public struct ProtobufBlockRegistry {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var blocks: [ProtobufBlock] = []
+  public var blocks: [ProtobufBlock] = []
 
-  var renderDescriptors: [ProtobufBlockModelDescriptors] = []
+  public var renderDescriptors: [ProtobufBlockModelDescriptor] = []
 
-  var selfCullingBlocks: [Int32] = []
+  public var selfCullingBlocks: [Int32] = []
 
-  var airBlocks: [Int32] = []
+  public var airBlocks: [Int32] = []
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  init() {}
+  public init() {}
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension ProtobufBlockComputedTintType: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "WATER"),
     1: .same(proto: "FOLIAGE"),
     2: .same(proto: "GRASS"),
@@ -489,15 +528,22 @@ extension ProtobufBlockComputedTintType: SwiftProtobuf._ProtoNameProviding {
   ]
 }
 
+extension ProtobufBlockOffset: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "XYZ"),
+    1: .same(proto: "XZ"),
+  ]
+}
+
 extension ProtobufBlockFluidState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlockFluidState"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let protoMessageName: String = "ProtobufBlockFluidState"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "fluid_id"),
     2: .same(proto: "height"),
     3: .standard(proto: "is_waterlogged"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -511,7 +557,7 @@ extension ProtobufBlockFluidState: SwiftProtobuf.Message, SwiftProtobuf._Message
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.fluidID != 0 {
       try visitor.visitSingularInt32Field(value: self.fluidID, fieldNumber: 1)
     }
@@ -524,7 +570,7 @@ extension ProtobufBlockFluidState: SwiftProtobuf.Message, SwiftProtobuf._Message
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlockFluidState, rhs: ProtobufBlockFluidState) -> Bool {
+  public static func ==(lhs: ProtobufBlockFluidState, rhs: ProtobufBlockFluidState) -> Bool {
     if lhs.fluidID != rhs.fluidID {return false}
     if lhs.height != rhs.height {return false}
     if lhs.isWaterlogged != rhs.isWaterlogged {return false}
@@ -534,14 +580,14 @@ extension ProtobufBlockFluidState: SwiftProtobuf.Message, SwiftProtobuf._Message
 }
 
 extension ProtobufBlockTintRGBColor: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlockTintRGBColor"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let protoMessageName: String = "ProtobufBlockTintRGBColor"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "r"),
     2: .same(proto: "g"),
     4: .same(proto: "b"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -555,7 +601,7 @@ extension ProtobufBlockTintRGBColor: SwiftProtobuf.Message, SwiftProtobuf._Messa
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.r != 0 {
       try visitor.visitSingularInt32Field(value: self.r, fieldNumber: 1)
     }
@@ -568,7 +614,7 @@ extension ProtobufBlockTintRGBColor: SwiftProtobuf.Message, SwiftProtobuf._Messa
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlockTintRGBColor, rhs: ProtobufBlockTintRGBColor) -> Bool {
+  public static func ==(lhs: ProtobufBlockTintRGBColor, rhs: ProtobufBlockTintRGBColor) -> Bool {
     if lhs.r != rhs.r {return false}
     if lhs.g != rhs.g {return false}
     if lhs.b != rhs.b {return false}
@@ -578,13 +624,13 @@ extension ProtobufBlockTintRGBColor: SwiftProtobuf.Message, SwiftProtobuf._Messa
 }
 
 extension ProtobufBlockTint: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlockTint"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let protoMessageName: String = "ProtobufBlockTint"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "computed_tint"),
     2: .standard(proto: "hardcoded_tint"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -597,7 +643,7 @@ extension ProtobufBlockTint: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if let v = self._computedTint {
       try visitor.visitSingularEnumField(value: v, fieldNumber: 1)
     }
@@ -607,7 +653,7 @@ extension ProtobufBlockTint: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlockTint, rhs: ProtobufBlockTint) -> Bool {
+  public static func ==(lhs: ProtobufBlockTint, rhs: ProtobufBlockTint) -> Bool {
     if lhs._computedTint != rhs._computedTint {return false}
     if lhs._hardcodedTint != rhs._hardcodedTint {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -616,8 +662,8 @@ extension ProtobufBlockTint: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
 }
 
 extension ProtobufBlockPhysicalMaterial: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlockPhysicalMaterial"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let protoMessageName: String = "ProtobufBlockPhysicalMaterial"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "explosion_resistance"),
     2: .same(proto: "slipperiness"),
     3: .standard(proto: "velocity_multiplier"),
@@ -626,7 +672,7 @@ extension ProtobufBlockPhysicalMaterial: SwiftProtobuf.Message, SwiftProtobuf._M
     6: .same(proto: "hardness"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -643,7 +689,7 @@ extension ProtobufBlockPhysicalMaterial: SwiftProtobuf.Message, SwiftProtobuf._M
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.explosionResistance != 0 {
       try visitor.visitSingularDoubleField(value: self.explosionResistance, fieldNumber: 1)
     }
@@ -665,7 +711,7 @@ extension ProtobufBlockPhysicalMaterial: SwiftProtobuf.Message, SwiftProtobuf._M
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlockPhysicalMaterial, rhs: ProtobufBlockPhysicalMaterial) -> Bool {
+  public static func ==(lhs: ProtobufBlockPhysicalMaterial, rhs: ProtobufBlockPhysicalMaterial) -> Bool {
     if lhs.explosionResistance != rhs.explosionResistance {return false}
     if lhs.slipperiness != rhs.slipperiness {return false}
     if lhs.velocityMultiplier != rhs.velocityMultiplier {return false}
@@ -678,15 +724,15 @@ extension ProtobufBlockPhysicalMaterial: SwiftProtobuf.Message, SwiftProtobuf._M
 }
 
 extension ProtobufBlockLightMaterial: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlockLightMaterial"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let protoMessageName: String = "ProtobufBlockLightMaterial"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "is_translucent"),
     2: .same(proto: "opacity"),
     3: .same(proto: "luminance"),
     4: .standard(proto: "is_conditionally_transparent"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -701,7 +747,7 @@ extension ProtobufBlockLightMaterial: SwiftProtobuf.Message, SwiftProtobuf._Mess
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.isTranslucent != false {
       try visitor.visitSingularBoolField(value: self.isTranslucent, fieldNumber: 1)
     }
@@ -717,7 +763,7 @@ extension ProtobufBlockLightMaterial: SwiftProtobuf.Message, SwiftProtobuf._Mess
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlockLightMaterial, rhs: ProtobufBlockLightMaterial) -> Bool {
+  public static func ==(lhs: ProtobufBlockLightMaterial, rhs: ProtobufBlockLightMaterial) -> Bool {
     if lhs.isTranslucent != rhs.isTranslucent {return false}
     if lhs.opacity != rhs.opacity {return false}
     if lhs.luminance != rhs.luminance {return false}
@@ -728,8 +774,8 @@ extension ProtobufBlockLightMaterial: SwiftProtobuf.Message, SwiftProtobuf._Mess
 }
 
 extension ProtobufBlockSoundMaterial: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlockSoundMaterial"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let protoMessageName: String = "ProtobufBlockSoundMaterial"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "volume"),
     2: .same(proto: "pitch"),
     3: .standard(proto: "break_sound"),
@@ -739,7 +785,7 @@ extension ProtobufBlockSoundMaterial: SwiftProtobuf.Message, SwiftProtobuf._Mess
     7: .standard(proto: "fall_sound"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -757,7 +803,7 @@ extension ProtobufBlockSoundMaterial: SwiftProtobuf.Message, SwiftProtobuf._Mess
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.volume != 0 {
       try visitor.visitSingularDoubleField(value: self.volume, fieldNumber: 1)
     }
@@ -782,7 +828,7 @@ extension ProtobufBlockSoundMaterial: SwiftProtobuf.Message, SwiftProtobuf._Mess
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlockSoundMaterial, rhs: ProtobufBlockSoundMaterial) -> Bool {
+  public static func ==(lhs: ProtobufBlockSoundMaterial, rhs: ProtobufBlockSoundMaterial) -> Bool {
     if lhs.volume != rhs.volume {return false}
     if lhs.pitch != rhs.pitch {return false}
     if lhs.breakSound != rhs.breakSound {return false}
@@ -796,12 +842,12 @@ extension ProtobufBlockSoundMaterial: SwiftProtobuf.Message, SwiftProtobuf._Mess
 }
 
 extension ProtobufBlockOcclusionShapeIds: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlockOcclusionShapeIds"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let protoMessageName: String = "ProtobufBlockOcclusionShapeIds"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "ids"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -813,14 +859,14 @@ extension ProtobufBlockOcclusionShapeIds: SwiftProtobuf.Message, SwiftProtobuf._
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.ids.isEmpty {
       try visitor.visitPackedInt32Field(value: self.ids, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlockOcclusionShapeIds, rhs: ProtobufBlockOcclusionShapeIds) -> Bool {
+  public static func ==(lhs: ProtobufBlockOcclusionShapeIds, rhs: ProtobufBlockOcclusionShapeIds) -> Bool {
     if lhs.ids != rhs.ids {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
@@ -828,12 +874,12 @@ extension ProtobufBlockOcclusionShapeIds: SwiftProtobuf.Message, SwiftProtobuf._
 }
 
 extension ProtobufBlockIsSturdy: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlockIsSturdy"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let protoMessageName: String = "ProtobufBlockIsSturdy"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "values"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -845,14 +891,14 @@ extension ProtobufBlockIsSturdy: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.values.isEmpty {
       try visitor.visitPackedBoolField(value: self.values, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlockIsSturdy, rhs: ProtobufBlockIsSturdy) -> Bool {
+  public static func ==(lhs: ProtobufBlockIsSturdy, rhs: ProtobufBlockIsSturdy) -> Bool {
     if lhs.values != rhs.values {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
@@ -860,14 +906,14 @@ extension ProtobufBlockIsSturdy: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
 }
 
 extension ProtobufVec3f: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufVec3f"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let protoMessageName: String = "ProtobufVec3f"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "x"),
     2: .same(proto: "y"),
     3: .same(proto: "z"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -881,7 +927,7 @@ extension ProtobufVec3f: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.x != 0 {
       try visitor.visitSingularFloatField(value: self.x, fieldNumber: 1)
     }
@@ -894,7 +940,7 @@ extension ProtobufVec3f: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufVec3f, rhs: ProtobufVec3f) -> Bool {
+  public static func ==(lhs: ProtobufVec3f, rhs: ProtobufVec3f) -> Bool {
     if lhs.x != rhs.x {return false}
     if lhs.y != rhs.y {return false}
     if lhs.z != rhs.z {return false}
@@ -904,13 +950,13 @@ extension ProtobufVec3f: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
 }
 
 extension ProtobufAABB: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufAABB"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let protoMessageName: String = "ProtobufAABB"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "position"),
     2: .same(proto: "size"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -923,7 +969,7 @@ extension ProtobufAABB: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if let v = self._position {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     }
@@ -933,7 +979,7 @@ extension ProtobufAABB: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufAABB, rhs: ProtobufAABB) -> Bool {
+  public static func ==(lhs: ProtobufAABB, rhs: ProtobufAABB) -> Bool {
     if lhs._position != rhs._position {return false}
     if lhs._size != rhs._size {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -942,8 +988,8 @@ extension ProtobufAABB: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 }
 
 extension ProtobufBlockShape: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlockShape"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let protoMessageName: String = "ProtobufBlockShape"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "is_dynamic"),
     2: .standard(proto: "is_large"),
     3: .standard(proto: "collision_shape"),
@@ -952,7 +998,7 @@ extension ProtobufBlockShape: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     6: .standard(proto: "is_sturdy"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -969,7 +1015,7 @@ extension ProtobufBlockShape: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.isDynamic != false {
       try visitor.visitSingularBoolField(value: self.isDynamic, fieldNumber: 1)
     }
@@ -991,7 +1037,7 @@ extension ProtobufBlockShape: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlockShape, rhs: ProtobufBlockShape) -> Bool {
+  public static func ==(lhs: ProtobufBlockShape, rhs: ProtobufBlockShape) -> Bool {
     if lhs.isDynamic != rhs.isDynamic {return false}
     if lhs.isLarge != rhs.isLarge {return false}
     if lhs.collisionShape != rhs.collisionShape {return false}
@@ -1004,8 +1050,8 @@ extension ProtobufBlockShape: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
 }
 
 extension ProtobufBlock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlock"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let protoMessageName: String = "ProtobufBlock"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "id"),
     2: .standard(proto: "vanilla_parent_block_id"),
     3: .standard(proto: "identifier_namespace"),
@@ -1013,7 +1059,7 @@ extension ProtobufBlock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     5: .standard(proto: "class_name"),
     6: .standard(proto: "fluid_state"),
     7: .same(proto: "tint"),
-    8: .standard(proto: "is_offset_xyz"),
+    8: .same(proto: "offset"),
     9: .same(proto: "material"),
     10: .standard(proto: "light_material"),
     11: .standard(proto: "sound_material"),
@@ -1028,7 +1074,7 @@ extension ProtobufBlock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     var _className: String = String()
     var _fluidState: ProtobufBlockFluidState? = nil
     var _tint: ProtobufBlockTint? = nil
-    var _isOffsetXyz: Bool? = nil
+    var _offset: ProtobufBlockOffset? = nil
     var _material: ProtobufBlockPhysicalMaterial? = nil
     var _lightMaterial: ProtobufBlockLightMaterial? = nil
     var _soundMaterial: ProtobufBlockSoundMaterial? = nil
@@ -1046,7 +1092,7 @@ extension ProtobufBlock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       _className = source._className
       _fluidState = source._fluidState
       _tint = source._tint
-      _isOffsetXyz = source._isOffsetXyz
+      _offset = source._offset
       _material = source._material
       _lightMaterial = source._lightMaterial
       _soundMaterial = source._soundMaterial
@@ -1061,7 +1107,7 @@ extension ProtobufBlock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     return _storage
   }
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -1076,7 +1122,7 @@ extension ProtobufBlock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
         case 5: try { try decoder.decodeSingularStringField(value: &_storage._className) }()
         case 6: try { try decoder.decodeSingularMessageField(value: &_storage._fluidState) }()
         case 7: try { try decoder.decodeSingularMessageField(value: &_storage._tint) }()
-        case 8: try { try decoder.decodeSingularBoolField(value: &_storage._isOffsetXyz) }()
+        case 8: try { try decoder.decodeSingularEnumField(value: &_storage._offset) }()
         case 9: try { try decoder.decodeSingularMessageField(value: &_storage._material) }()
         case 10: try { try decoder.decodeSingularMessageField(value: &_storage._lightMaterial) }()
         case 11: try { try decoder.decodeSingularMessageField(value: &_storage._soundMaterial) }()
@@ -1087,7 +1133,7 @@ extension ProtobufBlock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if _storage._id != 0 {
         try visitor.visitSingularInt32Field(value: _storage._id, fieldNumber: 1)
@@ -1110,8 +1156,8 @@ extension ProtobufBlock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       if let v = _storage._tint {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
       }
-      if let v = _storage._isOffsetXyz {
-        try visitor.visitSingularBoolField(value: v, fieldNumber: 8)
+      if let v = _storage._offset {
+        try visitor.visitSingularEnumField(value: v, fieldNumber: 8)
       }
       if let v = _storage._material {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
@@ -1129,7 +1175,7 @@ extension ProtobufBlock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlock, rhs: ProtobufBlock) -> Bool {
+  public static func ==(lhs: ProtobufBlock, rhs: ProtobufBlock) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -1141,7 +1187,7 @@ extension ProtobufBlock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
         if _storage._className != rhs_storage._className {return false}
         if _storage._fluidState != rhs_storage._fluidState {return false}
         if _storage._tint != rhs_storage._tint {return false}
-        if _storage._isOffsetXyz != rhs_storage._isOffsetXyz {return false}
+        if _storage._offset != rhs_storage._offset {return false}
         if _storage._material != rhs_storage._material {return false}
         if _storage._lightMaterial != rhs_storage._lightMaterial {return false}
         if _storage._soundMaterial != rhs_storage._soundMaterial {return false}
@@ -1155,9 +1201,9 @@ extension ProtobufBlock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
   }
 }
 
-extension ProtobufBlockModelVariantDescriptor: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlockModelVariantDescriptor"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+extension ProtobufBlockModelPartDescriptor: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "ProtobufBlockModelPartDescriptor"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "identifier_namespace"),
     2: .standard(proto: "identifier_name"),
     3: .standard(proto: "x_rotation_degrees"),
@@ -1165,7 +1211,7 @@ extension ProtobufBlockModelVariantDescriptor: SwiftProtobuf.Message, SwiftProto
     5: .standard(proto: "uv_lock"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -1181,7 +1227,7 @@ extension ProtobufBlockModelVariantDescriptor: SwiftProtobuf.Message, SwiftProto
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.identifierNamespace.isEmpty {
       try visitor.visitSingularStringField(value: self.identifierNamespace, fieldNumber: 1)
     }
@@ -1200,7 +1246,7 @@ extension ProtobufBlockModelVariantDescriptor: SwiftProtobuf.Message, SwiftProto
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlockModelVariantDescriptor, rhs: ProtobufBlockModelVariantDescriptor) -> Bool {
+  public static func ==(lhs: ProtobufBlockModelPartDescriptor, rhs: ProtobufBlockModelPartDescriptor) -> Bool {
     if lhs.identifierNamespace != rhs.identifierNamespace {return false}
     if lhs.identifierName != rhs.identifierName {return false}
     if lhs.xRotationDegrees != rhs.xRotationDegrees {return false}
@@ -1211,13 +1257,13 @@ extension ProtobufBlockModelVariantDescriptor: SwiftProtobuf.Message, SwiftProto
   }
 }
 
-extension ProtobufBlockModelVariantDescriptors: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlockModelVariantDescriptors"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+extension ProtobufBlockModelVariantDescriptor: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "ProtobufBlockModelVariantDescriptor"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "parts"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -1229,27 +1275,27 @@ extension ProtobufBlockModelVariantDescriptors: SwiftProtobuf.Message, SwiftProt
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.parts.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.parts, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlockModelVariantDescriptors, rhs: ProtobufBlockModelVariantDescriptors) -> Bool {
+  public static func ==(lhs: ProtobufBlockModelVariantDescriptor, rhs: ProtobufBlockModelVariantDescriptor) -> Bool {
     if lhs.parts != rhs.parts {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension ProtobufBlockModelDescriptors: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlockModelDescriptors"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+extension ProtobufBlockModelDescriptor: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "ProtobufBlockModelDescriptor"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "variants"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -1261,14 +1307,14 @@ extension ProtobufBlockModelDescriptors: SwiftProtobuf.Message, SwiftProtobuf._M
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.variants.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.variants, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlockModelDescriptors, rhs: ProtobufBlockModelDescriptors) -> Bool {
+  public static func ==(lhs: ProtobufBlockModelDescriptor, rhs: ProtobufBlockModelDescriptor) -> Bool {
     if lhs.variants != rhs.variants {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
@@ -1276,15 +1322,15 @@ extension ProtobufBlockModelDescriptors: SwiftProtobuf.Message, SwiftProtobuf._M
 }
 
 extension ProtobufBlockRegistry: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ProtobufBlockRegistry"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  public static let protoMessageName: String = "ProtobufBlockRegistry"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "blocks"),
     2: .standard(proto: "render_descriptors"),
     3: .standard(proto: "self_culling_blocks"),
     4: .standard(proto: "air_blocks"),
   ]
 
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
@@ -1299,7 +1345,7 @@ extension ProtobufBlockRegistry: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     }
   }
 
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.blocks.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.blocks, fieldNumber: 1)
     }
@@ -1315,7 +1361,7 @@ extension ProtobufBlockRegistry: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: ProtobufBlockRegistry, rhs: ProtobufBlockRegistry) -> Bool {
+  public static func ==(lhs: ProtobufBlockRegistry, rhs: ProtobufBlockRegistry) -> Bool {
     if lhs.blocks != rhs.blocks {return false}
     if lhs.renderDescriptors != rhs.renderDescriptors {return false}
     if lhs.selfCullingBlocks != rhs.selfCullingBlocks {return false}

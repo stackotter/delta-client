@@ -7,9 +7,7 @@ public enum FluidError: LocalizedError {
 }
 
 /// Holds information about fluids.
-public struct FluidRegistry: JSONRegistry {
-  public static var cacheFile = "fluids.json"
-  
+public struct FluidRegistry: Codable {
   /// All fluids. Indexed by fluid id.
   public var fluids: [Fluid] = []
   /// Maps biome identifier to an index in `fluids`.

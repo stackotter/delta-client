@@ -80,6 +80,11 @@ message ProtobufBlockShape {
   optional ProtobufBlockIsSturdy is_sturdy = 6;
 }
 
+enum ProtobufBlockOffset {
+  XYZ = 0;
+  XZ = 1;
+}
+
 message ProtobufBlock {
   int32 id = 1;
   int32 vanilla_parent_block_id = 2;
@@ -88,15 +93,14 @@ message ProtobufBlock {
   string class_name = 5;
   optional ProtobufBlockFluidState fluid_state = 6;
   optional ProtobufBlockTint tint = 7;
-  // If null then there is no offset, if false the offset is xz, if true the offset is xyz
-  optional bool is_offset_xyz = 8;
+  optional ProtobufBlockOffset offset = 8;
   ProtobufBlockPhysicalMaterial material = 9;
   ProtobufBlockLightMaterial light_material = 10;
   ProtobufBlockSoundMaterial sound_material = 11;
   ProtobufBlockShape shape = 12;
 }
 
-message ProtobufBlockModelVariantDescriptor {
+message ProtobufBlockModelPartDescriptor {
   string identifier_namespace = 1;
   string identifier_name = 2;
   int32 x_rotation_degrees = 3;
@@ -104,17 +108,17 @@ message ProtobufBlockModelVariantDescriptor {
   bool uv_lock = 5;
 }
 
-message ProtobufBlockModelVariantDescriptors {
-  repeated ProtobufBlockModelVariantDescriptor parts = 1;
+message ProtobufBlockModelVariantDescriptor {
+  repeated ProtobufBlockModelPartDescriptor parts = 1;
 }
 
-message ProtobufBlockModelDescriptors {
-  repeated ProtobufBlockModelVariantDescriptors variants = 1;
+message ProtobufBlockModelDescriptor {
+  repeated ProtobufBlockModelVariantDescriptor variants = 1;
 }
 
 message ProtobufBlockRegistry {
   repeated ProtobufBlock blocks = 1;
-  repeated ProtobufBlockModelDescriptors render_descriptors = 2;
+  repeated ProtobufBlockModelDescriptor render_descriptors = 2;
   repeated int32 self_culling_blocks = 3;
   repeated int32 air_blocks = 4;
 }
