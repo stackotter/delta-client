@@ -12,7 +12,9 @@ public protocol JSONCachableRegistry: CachableRegistry, Codable {
 }
 
 public enum JSONCachableRegistryError: LocalizedError {
+  /// Failed to load a registry from a JSON cache file.
   case failedToLoadFromCache(JSONCachableRegistry.Type, Error)
+  /// Failed to cache a registry to a JSON cache file.
   case failedToCache(JSONCachableRegistry.Type, Error)
 }
 

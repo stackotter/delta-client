@@ -29,8 +29,6 @@ extension JSONBlockModel {
     from directory: URL,
     namespace: String
   ) throws -> [Identifier: JSONBlockModel] {
-    let start = CFAbsoluteTimeGetCurrent()
-    
     // Constants used when composing JSON object from models
     let doubleQuote = "\"".data(using: .utf8)!
     let doubleQuoteColon = "\":".data(using: .utf8)!
@@ -89,7 +87,6 @@ extension JSONBlockModel {
       let identifier = Identifier(namespace: namespace, name: "block/\(blockName)")
       identifiedModels[identifier] = model
     }
-    print("elapsed: \(CFAbsoluteTimeGetCurrent() - start)")
     
     return identifiedModels
   }

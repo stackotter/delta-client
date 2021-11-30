@@ -130,20 +130,19 @@ public struct ResourcePack {
       resources.biomeColors = biomeColors
     }
     
-    
     // Attempt to load block model palette from the resource pack cache if it exists
     var loadedFromCache = false
-    if let modelCacheFile = cacheDirectory?.appendingPathComponent("block-models.cache") {
+    if let cacheDirectory = cacheDirectory {
+      let modelCacheFile = cacheDirectory.appendingPathComponent("block_models.bin")
       log.debug("Loading cached block models")
       if FileManager.default.fileExists(atPath: modelCacheFile.path) {
         do {
-          let cache = try Data(contentsOf: modelCacheFile)
-          resources.blockModelPalette = try BlockModelPalette(from: cache)
+          resources.blockModelPalette = try BlockModelPalette(fromFile: modelCacheFile)
           loadedFromCache = true
         } catch {
           log.warning("Failed to load block models from cache, deleting cache")
           do {
-            try FileManager.default.removeItem(at: modelCacheFile)
+            try FileManager.default.removeItem(at: cacheDirectory)
           } catch {
             log.warning("Failed to remove invalid block model cache, ignoring anyway")
           }
@@ -204,9 +203,8 @@ public struct ResourcePack {
       try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true, attributes: nil)
       
       // Cache block models
-      let blockModelCacheFile = cacheDirectory.appendingPathComponent("block-models.cache")
-      let blockModelCache = try resources.blockModelPalette.serialize()
-      try blockModelCache.write(to: blockModelCacheFile)
+      let blockModelCacheFile = cacheDirectory.appendingPathComponent("block_models.bin")
+      try resources.blockModelPalette.cache(toFile: blockModelCacheFile)
     }
   }
   

@@ -7,7 +7,9 @@ public protocol ProtobufCachableRegistry: CachableRegistry, ProtobufCachable {
 }
 
 public enum ProtobufCachableRegistryError: LocalizedError {
+  /// Failed to load a registry from a Protobuf cache file.
   case failedToLoadFromCache(Error)
+  /// Failed to cache a registry to a Protobuf cache file.
   case failedToCache(Error)
 }
 

@@ -38,7 +38,7 @@ class StateWrapper<State>: ObservableObject {
         let previousState = history.removeLast()
         update(to: previousState)
       } else {
-        print("failed to pop app state, no previous state to return to") // TODO: proper logger
+        log.warning("failed to pop app state, no previous state to return to")
       }
     }
   }

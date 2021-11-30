@@ -67,8 +67,9 @@ struct DeltaClientApp: App {
         // Load resource pack and cache it if necessary
         updateLoadingMessage("Loading resource pack")
         let packCache = StorageManager.default.cacheDirectory.appendingPathComponent("vanilla.rpcache/")
-        let cacheExists = StorageManager.default.directoryExists(at: packCache)
+        var cacheExists = StorageManager.default.directoryExists(at: packCache)
         let resourcePack = try ResourcePack.load(from: StorageManager.default.vanillaAssetsDirectory, cacheDirectory: cacheExists ? packCache : nil)
+        cacheExists = StorageManager.default.directoryExists(at: packCache)
         if !cacheExists {
           do {
             try resourcePack.cache(to: packCache)

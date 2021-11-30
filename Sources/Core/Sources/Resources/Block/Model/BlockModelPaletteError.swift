@@ -21,4 +21,10 @@ enum BlockModelPaletteError: LocalizedError {
   case invalidDirectionString(String)
   /// A texture had an invalid identifier string (likely a texture variable).
   case invalidTexture(String)
+  /// An invalid direction was found in the Protobuf cache.
+  case invalidDirection
+  /// An invalid texture type was found in the Protobuf cache.
+  case invalidTextureType
+  /// A matrix was stored with an invalid number of bytes in the Protobuf cache. Expected to be 64.
+  case invalidMatrixDataLength(Int)
 }
