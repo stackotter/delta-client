@@ -39,6 +39,8 @@ struct DeltaClientApp: App {
       }
       
       do {
+        let start = CFAbsoluteTimeGetCurrent()
+        
         // Load plugins first
         updateLoadingMessage("Loading plugins")
         do {
@@ -81,7 +83,9 @@ struct DeltaClientApp: App {
         }
         
         // Finish loading
-        log.info("Done")
+        let elapsedMilliseconds = (CFAbsoluteTimeGetCurrent() - start) * 1000
+        let elapsedString = String(format: "%.2f", elapsedMilliseconds)
+        log.info("Done (\(elapsedString)ms)")
         Self.loadingState.update(to: .done(LoadedResources(resourcePack: resourcePack)))
       } catch {
         Self.loadingState.update(to: .error("Failed to load: \(error)"))

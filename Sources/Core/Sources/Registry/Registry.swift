@@ -1,4 +1,5 @@
 import Foundation
+import ZippyJSON
 
 /// Holds static Minecraft data such as biomes, fluids and blocks. Delta Client populates it launch.
 public struct Registry {
@@ -37,7 +38,7 @@ public struct Registry {
     let entitiesFile = directory.appendingPathComponent("entities.json")
     
     do {
-      let decoder = JSONDecoder()
+      let decoder = ZippyJSONDecoder()
       log.info("Loading cached block registry")
       let blockRegistry = try decoder.decode(BlockRegistry.self, from: try Data(contentsOf: blocksFile))
       log.info("Loading cached biome registry")

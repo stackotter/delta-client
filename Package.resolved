@@ -38,15 +38,6 @@
         }
       },
       {
-        "package": "IkigaJSON",
-        "repositoryURL": "https://github.com/Ikiga/IkigaJSON.git",
-        "state": {
-          "branch": null,
-          "revision": "885d4f4b62b659880dd1e1db3e1c8da3e88139c0",
-          "version": "1.2.8"
-        }
-      },
-      {
         "package": "JJLISO8601DateFormatter",
         "repositoryURL": "https://github.com/michaeleisel/JJLISO8601DateFormatter",
         "state": {
