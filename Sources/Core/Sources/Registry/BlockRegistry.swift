@@ -1,7 +1,9 @@
 import Foundation
 
 /// Holds the information about blocks that isn't affected by resource packs.
-public struct BlockRegistry: Codable {
+public struct BlockRegistry: JSONRegistry {
+  public static var cacheFile = "blocks.json"
+  
   /// Blocks that are hardcoded as waterlogged when loading.
   public static let waterloggedBlockClasses: Set<String> = ["SeagrassBlock", "TallSeagrassBlock", "KelpBlock", "KelpPlantBlock"]
   

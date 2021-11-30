@@ -12,7 +12,7 @@ public enum PixlyzerError: LocalizedError {
 public enum PixlyzerFormatter {
   /// Downloads the pixlyzer registries, reformats them, and caches them to an output directory.
   /// - Parameter version: The minecraft version string (e.g. '1.16.1').
-  public static func downloadAndFormatRegistries(_ version: String) throws -> Registry {
+  public static func downloadAndFormatRegistries(_ version: String) throws -> RegistryStore {
     let fluidsDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/fluids.min.json")!
     let blocksDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/blocks.min.json")!
     let biomesDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/biomes.min.json")!
@@ -149,7 +149,7 @@ public enum PixlyzerFormatter {
     let blockRegistry = BlockRegistry(blocks: blockArray, renderDescriptors: renderDescriptors)
     let entityRegistry = try EntityRegistry(entities: entities)
     
-    return Registry(
+    return RegistryStore(
       blockRegistry: blockRegistry,
       biomeRegistry: biomeRegistry,
       fluidRegistry: fluidRegistry,

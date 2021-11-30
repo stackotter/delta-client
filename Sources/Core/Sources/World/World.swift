@@ -160,7 +160,7 @@ public class World {
   
   /// Returns information about the type of block at the specified position.
   public func getBlock(at position: Position) -> Block {
-    return Registry.shared.blockRegistry.block(withId: Int(getBlockId(at: position))) ?? Block.missing
+    return RegistryStore.shared.blockRegistry.block(withId: Int(getBlockId(at: position))) ?? Block.missing
   }
   
   // MARK: Lighting (no batching)

@@ -66,7 +66,7 @@ public final class Chunk {
   /// - Returns: Information about block and its state. Returns ``Block.missing`` if block state id is invalid.
   public func getBlock(at position: Position) -> Block {
     let stateId = getBlockId(at: position)
-    return Registry.shared.blockRegistry.block(withId: stateId) ?? Block.missing
+    return RegistryStore.shared.blockRegistry.block(withId: stateId) ?? Block.missing
   }
   
   /// Get the block state id of the block at a position.
@@ -123,7 +123,7 @@ public final class Chunk {
   /// - Returns: Data about the biome.
   public func biome(at position: Position) -> Biome? {
     let biomeId = self.biomeId(at: position)
-    return Registry.shared.biomeRegistry.biome(withId: biomeId)
+    return RegistryStore.shared.biomeRegistry.biome(withId: biomeId)
   }
   
   // MARK: Sections

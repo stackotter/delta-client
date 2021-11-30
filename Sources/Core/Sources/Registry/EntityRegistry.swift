@@ -1,7 +1,9 @@
 import Foundation
 
 /// Holds information about kinds of entities.
-public struct EntityRegistry: Codable {
+public struct EntityRegistry: JSONRegistry {
+  public static var cacheFile = "entities.json"
+  
   /// Maps entity kind id to information about that kind of entity.
   public var entities: [Int: EntityKind] = [:]
   /// Maps entity identifier to an entity kind id.

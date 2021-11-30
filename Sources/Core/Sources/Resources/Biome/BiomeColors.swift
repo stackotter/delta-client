@@ -86,7 +86,7 @@ public struct BiomeColors {
     do {
       foliageColorMap = try BiomeColorMap(
         from: foliageMapFile,
-        biomes: Registry.shared.biomeRegistry.biomes,
+        biomes: RegistryStore.shared.biomeRegistry.biomes,
         fallbackColor: defaultFoliageColor ?? Self.defaultFoliageColor,
         overrides: foliageColorOverrides ?? Self.vanillaFoliageColorOverrides,
         filters: foliageColorFilters ?? Self.vanillaFoliageColorFilters)
@@ -97,7 +97,7 @@ public struct BiomeColors {
     do {
       grassColorMap = try BiomeColorMap(
         from: grassMapFile,
-        biomes: Registry.shared.biomeRegistry.biomes,
+        biomes: RegistryStore.shared.biomeRegistry.biomes,
         fallbackColor: defaultGrassColor ?? Self.defaultGrassColor,
         overrides: grassColorOverrides ?? Self.vanillaGrassColorOverrides,
         filters: grassColorFilters ?? Self.vanillaGrassColorFilters)

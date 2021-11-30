@@ -62,7 +62,7 @@ struct DeltaClientApp: App {
         
         // Load registries
         updateLoadingMessage("Loading registries")
-        try Registry.populateShared(StorageManager.default.registryDirectory)
+        try RegistryStore.populateShared(StorageManager.default.registryDirectory)
         
         // Load resource pack and cache it if necessary
         updateLoadingMessage("Loading resource pack")

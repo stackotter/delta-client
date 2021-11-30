@@ -60,11 +60,11 @@ public struct BlockModelPalette {
     let intermediateBlockModelPalette = try IntermediateBlockModelPalette(from: jsonBlockModels)
     
     // Convert intermediate block models to final format
-    var blockModels = [[BlockModel]](repeating: [], count: Registry.shared.blockRegistry.renderDescriptors.count)
-    for (blockId, variants) in Registry.shared.blockRegistry.renderDescriptors.enumerated() {
+    var blockModels = [[BlockModel]](repeating: [], count: RegistryStore.shared.blockRegistry.renderDescriptors.count)
+    for (blockId, variants) in RegistryStore.shared.blockRegistry.renderDescriptors.enumerated() {
       let blockModelVariants: [BlockModel] = try variants.map { variant in
         do {
-          let block = Registry.shared.blockRegistry.block(withId: blockId) ?? Block.missing
+          let block = RegistryStore.shared.blockRegistry.block(withId: blockId) ?? Block.missing
           return try blockModel(
             for: variant,
             from: intermediateBlockModelPalette,

@@ -18,7 +18,7 @@ let package = Package(
     .package(name: "swift-collections", url: "https://github.com/apple/swift-collections.git", from: "0.0.7"),
     .package(name: "Concurrency", url: "https://github.com/uber/swift-concurrency.git", from: "0.7.1"),
     .package(name: "FirebladeECS", url: "https://github.com/fireblade-engine/ecs.git", from: "0.17.5"),
-    .package(url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
+    .package(name: "ZippyJSON", url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
   ],
   targets: [
     .target(
@@ -36,8 +36,9 @@ let package = Package(
         .product(name: "Collections", package: "swift-collections")],
       path: "Sources",
       exclude: [
-        "Resources/Cache/BlockModelPalette.proto",
-        "Resources/Cache/Compile.sh",
+        "Cache/Protobuf/BlockModelPalette.proto",
+        "Cache/Protobuf/BlockRegistry.proto",
+        "Cache/Protobuf/Compile.sh",
         "C"],
       resources: [
         .process("Render/Shader/"),

@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+message ProtobufBlockFluidState {
+  int32 fluid_id = 1;
+  int32 height = 2;
+  bool is_waterlogged = 3;
+}
+
+enum ProtobufBlockComputedTintType {
+  WATER = 0;
+  FOLIAGE = 1;
+  GRASS = 2;
+  SUGAR_CANE = 3;
+  LILY_PAD = 4;
+  SHEARING_DOUBLE_PLANT = 5;
+}
+
+message ProtobufBlockTintRGBColor {
+  int32 r = 1;
+  int32 g = 2;
+  int32 b = 4;
+}
+
+message ProtobufBlockTint {
+  optional ProtobufBlockComputedTintType computed_tint = 1;
+  optional ProtobufBlockTintRGBColor hardcoded_tint = 2;
+}
+
+message ProtobufBlockPhysicalMaterial {
+  double explosion_resistance = 1;
+  double slipperiness = 2;
+  double velocity_multiplier = 3;
+  double jump_velocity_multiplier = 4;
+  bool requires_tool = 5;
+  double hardness = 6;
+}
+
+message ProtobufBlockLightMaterial {
+  bool is_translucent = 1;
+  int32 opacity = 2;
+  int32 luminance = 3;
+  bool is_conditionally_transparent = 4;
+}
+
+message ProtobufBlockSoundMaterial {
+  double volume = 1;
+  double pitch = 2;
+  int32 break_sound = 3;
+  int32 step_sound = 4;
+  int32 place_sound = 5;
+  int32 hit_sound = 6;
+  int32 fall_sound = 7;
+}
+
+message ProtobufBlockOcclusionShapeIds {
+  repeated int32 ids = 1;
+}
+
+message ProtobufBlockIsSturdy {
+  repeated bool values = 1;
+}
+
+message ProtobufVec3f {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}
+
+message ProtobufAABB {
+  ProtobufVec3f position = 1;
+  ProtobufVec3f size = 2;
+}
+
+message ProtobufBlockShape {
+  bool is_dynamic = 1;
+  bool is_large = 2;
+  repeated ProtobufAABB collision_shape = 3;
+  repeated ProtobufAABB outline_shape = 4;
+  optional ProtobufBlockOcclusionShapeIds occlusion_shape_ids = 5;
+  optional ProtobufBlockIsSturdy is_sturdy = 6;
+}
+
+message ProtobufBlock {
+  int32 id = 1;
+  int32 vanilla_parent_block_id = 2;
+  string identifier_namespace = 3;
+  string identifier_name = 4;
+  string class_name = 5;
+  optional ProtobufBlockFluidState fluid_state = 6;
+  optional ProtobufBlockTint tint = 7;
+  // If null then there is no offset, if false the offset is xz, if true the offset is xyz
+  optional bool is_offset_xyz = 8;
+  ProtobufBlockPhysicalMaterial material = 9;
+  ProtobufBlockLightMaterial light_material = 10;
+  ProtobufBlockSoundMaterial sound_material = 11;
+  ProtobufBlockShape shape = 12;
+}
+
+message ProtobufBlockModelVariantDescriptor {
+  string identifier_namespace = 1;
+  string identifier_name = 2;
+  int32 x_rotation_degrees = 3;
+  int32 y_rotation_degrees = 4;
+  bool uv_lock = 5;
+}
+
+message ProtobufBlockModelVariantDescriptors {
+  repeated ProtobufBlockModelVariantDescriptor parts = 1;
+}
+
+message ProtobufBlockModelDescriptors {
+  repeated ProtobufBlockModelVariantDescriptors variants = 1;
+}
+
+message ProtobufBlockRegistry {
+  repeated ProtobufBlock blocks = 1;
+  repeated ProtobufBlockModelDescriptors render_descriptors = 2;
+  repeated int32 self_culling_blocks = 3;
+  repeated int32 air_blocks = 4;
+}

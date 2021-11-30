@@ -23,7 +23,7 @@ public struct SpawnLivingEntityPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) {
-    guard let entity = Registry.shared.entityRegistry.entity(withId: type) else {
+    guard let entity = RegistryStore.shared.entityRegistry.entity(withId: type) else {
       log.warning("Entity spawned with invalid type id: \(type)")
       return
     }
