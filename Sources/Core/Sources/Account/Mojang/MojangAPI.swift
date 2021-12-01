@@ -1,4 +1,5 @@
 import Foundation
+import ZippyJSON
 
 public enum MojangAPIError: LocalizedError {
   case failedToSerializeRequest
@@ -36,7 +37,7 @@ public struct MojangAPI {
     request.body = body
     
     RequestUtil.perform(request, onCompletion: { _, data in
-      guard let response = try? JSONDecoder().decode(MojangAuthenticationResponse.self, from: data) else {
+      guard let response = try? ZippyJSONDecoder().decode(MojangAuthenticationResponse.self, from: data) else {
         failure(MojangAPIError.failedToDeserializeResponse)
         return
       }
@@ -106,7 +107,7 @@ public struct MojangAPI {
     request.body = body
     
     RequestUtil.perform(request, onCompletion: { _, data in
-      guard let response = try? JSONDecoder().decode(MojangRefreshTokenResponse.self, from: data) else {
+      guard let response = try? ZippyJSONDecoder().decode(MojangRefreshTokenResponse.self, from: data) else {
         failure(MojangAPIError.failedToDeserializeResponse)
         return
       }

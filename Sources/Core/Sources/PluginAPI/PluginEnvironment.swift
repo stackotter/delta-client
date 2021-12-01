@@ -1,5 +1,6 @@
 import Foundation
 import OrderedCollections
+import ZippyJSON
 
 /// Storage and manager for all currently loaded plugins.
 public class PluginEnvironment: ObservableObject {
@@ -102,7 +103,7 @@ public class PluginEnvironment: ObservableObject {
   public func loadPluginManifest(_ pluginBundle: URL) throws -> PluginManifest {
     do {
       let contents = try Data(contentsOf: pluginBundle.appendingPathComponent("manifest.json"))
-      return try JSONDecoder().decode(PluginManifest.self, from: contents)
+      return try ZippyJSONDecoder().decode(PluginManifest.self, from: contents)
     } catch {
       throw PluginLoadingError.invalidManifest(error)
     }

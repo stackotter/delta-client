@@ -1,5 +1,6 @@
 import Foundation
 import simd
+import ZippyJSON
 
 /// Contains block models loaded from a resource pack.
 public struct BlockModelPalette {
@@ -374,7 +375,7 @@ public struct BlockModelPalette {
       let blockName = file.deletingPathExtension().lastPathComponent
       let identifier = Identifier(name: "block/\(blockName)")
       let data = try Data(contentsOf: file)
-      let mojangBlockModel = try JSONDecoder().decode(JSONBlockModel.self, from: data)
+      let mojangBlockModel = try ZippyJSONDecoder().decode(JSONBlockModel.self, from: data)
       mojangBlockModels[identifier] = mojangBlockModel
     }
     

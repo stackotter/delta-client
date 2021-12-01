@@ -1,8 +1,6 @@
-//
 import Foundation
 import DeltaCore
-
-// TODO: check which managers actually need to be classes
+import ZippyJSON
 
 /// Manages the config stored in a config file.
 public class ConfigManager {
@@ -37,7 +35,7 @@ public class ConfigManager {
     // Read the current config from the config file
     do {
       let data = try Data(contentsOf: configFile)
-      config = try JSONDecoder().decode(Config.self, from: data)
+      config = try ZippyJSONDecoder().decode(Config.self, from: data)
     } catch {
       // Existing config is corrupted, overwrite it with defaults
       log.error("Invalid config.json, overwriting with defaults")

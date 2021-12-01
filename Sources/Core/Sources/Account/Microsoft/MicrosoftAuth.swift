@@ -1,4 +1,5 @@
 import Foundation
+import ZippyJSON
 
 public enum MicrosoftAuthError: LocalizedError {
   case invalidRedirectURL
@@ -56,7 +57,7 @@ public struct MicrosoftAuth {
     request.body = body
     
     RequestUtil.perform(request, onCompletion: { _, data in
-      guard let response = try? JSONDecoder().decode(MicrosoftAccessTokenResponse.self, from: data) else {
+      guard let response = try? ZippyJSONDecoder().decode(MicrosoftAccessTokenResponse.self, from: data) else {
         onFailure(MicrosoftAuthError.failedToDeserializeResponse(String(data: data, encoding: .utf8)!))
         return
       }
@@ -89,7 +90,7 @@ public struct MicrosoftAuth {
     request.body = body
     
     RequestUtil.perform(request, onCompletion: { _, data in
-      guard let response = try? JSONDecoder().decode(XboxLiveAuthenticationResponse.self, from: data) else {
+      guard let response = try? ZippyJSONDecoder().decode(XboxLiveAuthenticationResponse.self, from: data) else {
         onFailure(MicrosoftAuthError.failedToDeserializeResponse(String(data: data, encoding: .utf8)!))
         return
       }
@@ -125,8 +126,8 @@ public struct MicrosoftAuth {
     request.body = body
     
     RequestUtil.perform(request, onCompletion: { _, data in
-      guard let response = try? JSONDecoder().decode(XSTSAuthenticationResponse.self, from: data) else {
-        if let error = try? JSONDecoder().decode(XSTSAuthenticationError.self, from: data) {
+      guard let response = try? ZippyJSONDecoder().decode(XSTSAuthenticationResponse.self, from: data) else {
+        if let error = try? ZippyJSONDecoder().decode(XSTSAuthenticationError.self, from: data) {
           onFailure(MicrosoftAuthError.xstsAuthenticationFailed(error))
         } else {
           onFailure(MicrosoftAuthError.failedToDeserializeResponse(String(data: data, encoding: .utf8)!))
@@ -158,7 +159,7 @@ public struct MicrosoftAuth {
     request.body = body
     
     RequestUtil.perform(request, onCompletion: { _, data in
-      guard let response = try? JSONDecoder().decode(MinecraftXboxAuthenticationResponse.self, from: data) else {
+      guard let response = try? ZippyJSONDecoder().decode(MinecraftXboxAuthenticationResponse.self, from: data) else {
         onFailure(MicrosoftAuthError.failedToDeserializeResponse(String(data: data, encoding: .utf8)!))
         return
       }
@@ -177,7 +178,7 @@ public struct MicrosoftAuth {
     request.headers["Authorization"] = "Bearer \(accessToken)"
     
     RequestUtil.perform(request, onCompletion: { _, data in
-      guard let response = try? JSONDecoder().decode(GameOwnershipResponse.self, from: data) else {
+      guard let response = try? ZippyJSONDecoder().decode(GameOwnershipResponse.self, from: data) else {
         onFailure(MicrosoftAuthError.failedToDeserializeResponse(String(data: data, encoding: .utf8)!))
         return
       }

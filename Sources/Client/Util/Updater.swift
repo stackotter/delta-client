@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import DeltaCore
+import ZippyJSON
 
 /// Used to update the client to either the latest successful CI build or the latest GitHub release.
 public class Updater: ObservableObject {
@@ -172,7 +173,7 @@ public class Updater: ObservableObject {
   ///
   /// - Returns: A download URL and a version string
   private static func getLatestStableDownloadURL() throws -> (URL, String) {
-    let decoder = JSONDecoder()
+    let decoder = ZippyJSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
     
     let apiURL = URL(string: "https://api.github.com/repos/stackotter/delta-client/releases")!
@@ -201,7 +202,7 @@ public class Updater: ObservableObject {
   ///
   /// - Returns: A download URL and a version string
   private static func getLatestUnstableDownloadURL() throws -> (URL, String) {
-    let decoder = JSONDecoder()
+    let decoder = ZippyJSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
     
     // Get a list of all workflow runs
