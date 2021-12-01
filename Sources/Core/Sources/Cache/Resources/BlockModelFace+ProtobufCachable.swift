@@ -11,7 +11,11 @@ extension BlockModelFace: ProtobufCachable {
       SIMD2(cachedUVs[6], cachedUVs[7])]
     
     texture = Int(message.texture)
-    cullface = try Direction(from: message.cullface)
+    
+    if message.hasCullface {
+      cullface = try Direction(from: message.cullface)
+    }
+    
     isTinted = message.isTinted
   }
   
