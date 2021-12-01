@@ -8,6 +8,8 @@ public class EventBus {
   /// The dispatch queue for concurrently dispatching events.
   private var eventThread = DispatchQueue(label: "events", attributes: .concurrent)
   
+  public init() {}
+  
   /// Registers a handler to receive updates.
   public func registerHandler(_ handler: @escaping (Event) -> Void) {
     handlers.append(handler)

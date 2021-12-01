@@ -65,7 +65,7 @@ Not every version will be perfectly supported but we will try and have the most 
   - [x] Encryption (for non-offline mode servers)
     - [x] Mojang accounts
     - [ ] Microsoft accounts
-  - [ ] LAN server detection
+  - [x] LAN server detection
 - [x] Basic config system
   - [x] Multi-accounting
 - [ ] Rendering

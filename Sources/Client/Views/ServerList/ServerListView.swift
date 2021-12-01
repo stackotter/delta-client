@@ -6,21 +6,43 @@ struct ServerListView: View {
   
   @State var pingers: [Pinger]
   
+  var lanServerEnumerator: LANServerEnumerator?
+  
   init() {
+    // Create server pingers
     let servers = ConfigManager.default.config.servers
-    
     _pingers = State(initialValue: servers.map { server in
       Pinger(server)
     })
     
+    // Attempt to create LAN server enumerator
+    let eventBus = EventBus()
+    do {
+      lanServerEnumerator = try LANServerEnumerator(eventBus: eventBus)
+      eventBus.registerHandler { event in
+        switch event {
+          case let event as ErrorEvent:
+            log.warning("\(event.message ?? "Error"): \(event.error)")
+          default:
+            break
+        }
+      }
+    } catch {
+      log.warning("Failed to start LAN server enumerator: \(error)")
+    }
+    
+    // Start pinging and enumerating
     refresh()
+    lanServerEnumerator?.start()
   }
   
-  /// Ping all servers
+  /// Ping all servers again and clear discovered LAN servers.
   func refresh() {
     for pinger in pingers {
       pinger.ping()
     }
+    
+    lanServerEnumerator?.clear()
   }
   
   var body: some View {
@@ -34,6 +56,14 @@ struct ServerListView: View {
           }
         } else {
           Text("no servers").italic()
+        }
+        
+        Divider()
+        
+        if let lanServerEnumerator = lanServerEnumerator {
+          LANServerList(lanServerEnumerator: lanServerEnumerator)
+        } else {
+          Text("LAN scan failed").italic()
         }
         
         HStack {
@@ -54,6 +84,8 @@ struct ServerListView: View {
         }
       }
       .listStyle(SidebarListStyle())
+    }.onDisappear {
+      lanServerEnumerator?.stop()
     }
   }
 }
