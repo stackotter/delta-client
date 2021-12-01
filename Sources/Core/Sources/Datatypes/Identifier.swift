@@ -6,8 +6,11 @@ public struct Identifier {
   public var namespace: String
   /// The name of the identifier.
   public var name: String
-  
+  /// An identifier that is null is never equal to any other identifier (even another null identifier).
   public var isNull = false
+  
+  /// Precompiled regex for parsing identifier strings.
+  private static let regex = try! NSRegularExpression(pattern: "^(([0-9a-z\\-_]+):)?([0-9a-z\\-_/\\.]+)$")
   
   /// An identifier that is never equal to any other identifier.
   public static var null: Identifier {
@@ -24,14 +27,8 @@ public struct Identifier {
   
   /// Creates an identifier from the given string. Throws if the string is not a valid identifier.
   public init(_ string: String) throws {
-    // A nice regex just for you, good luck
-    let pattern = "^(([0-9a-z\\-_]+):)?([0-9a-z\\-_/\\.]+)$"
-    guard let regex = try? NSRegularExpression(pattern: pattern) else {
-      log.critical("Failed to compile a static regex (that really shouldn't happen)")
-      fatalError("Failed to compile a static regex (hmmmm, that really shouldn't happen)")
-    }
-    
-    let result = regex.matches(in: string, range: NSRange(location: 0, length: string.utf8.count))
+    // TODO: This initialiser seems to be a little inefficient, feel free to optimise it a little (by creating a custom parser instead of regex)
+    let result = Self.regex.matches(in: string, range: NSRange(location: 0, length: string.utf8.count))
     if result.isEmpty {
       throw IdentifierError.invalidIdentifierString(string)
     }
@@ -82,13 +79,24 @@ extension Identifier: Equatable {
 
 extension Identifier: Codable {
   public init(from decoder: Decoder) throws {
-    let container = try decoder.singleValueContainer()
-    let string = try container.decode(String.self)
-    try self.init(string)
+    do {
+      // Decode identifiers in the form ["namespace", "name"] (it's a lot faster than string form)
+      var container = try decoder.unkeyedContainer()
+      let namespace = try container.decode(String.self)
+      let name = try container.decode(String.self)
+      self.init(namespace: namespace, name: name)
+    } catch {
+      // If the previous decoding method files the value is likely stored as a single string (of the form "namespace:name")
+      let container = try decoder.singleValueContainer()
+      let string = try container.decode(String.self)
+      try self.init(string)
+    }
   }
   
   public func encode(to encoder: Encoder) throws {
-    var container = encoder.singleValueContainer()
-    try container.encode(description)
+    // Encode the identifier in the form ["namespace", "name"]
+    var container = encoder.unkeyedContainer()
+    try container.encode(namespace)
+    try container.encode(name)
   }
 }
