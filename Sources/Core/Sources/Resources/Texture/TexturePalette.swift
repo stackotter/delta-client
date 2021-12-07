@@ -160,7 +160,7 @@ public struct TexturePalette {
     return arrayTexture
   }
   
-  public func updateArrayTexture(arrayTexture: MTLTexture, device: MTLDevice, animationState: TexturePaletteAnimationState, updatedTextures: [Int], commandQueue: MTLCommandQueue) {
+  public func updateArrayTexture(arrayTexture: MTLTexture, animationState: TexturePaletteAnimationState, updatedTextures: [Int], commandQueue: MTLCommandQueue) {
     let bytesPerPixel = 4
     let bytesPerRow = bytesPerPixel * width
     let bytesPerFrame = bytesPerRow * width

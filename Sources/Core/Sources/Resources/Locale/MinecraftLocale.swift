@@ -6,11 +6,9 @@ public enum MinecraftLocaleError: LocalizedError {
 
 public struct MinecraftLocale {
   var translations: [String: String]
-  var currentLocaleFile: URL?
   
   public init() {
     self.translations = [:]
-    self.currentLocaleFile = nil
   }
   
   public init(localeFile: URL) throws {
@@ -18,7 +16,6 @@ public struct MinecraftLocale {
       let data = try Data(contentsOf: localeFile)
       if let dict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
         self.translations = dict
-        self.currentLocaleFile = localeFile
         return
       }
     } catch {

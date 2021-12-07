@@ -52,7 +52,7 @@ public class EntityRenderer {
     do {
       pipelineState = try device.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
     } catch {
-      log.critical("Failed to create render pipeline state: \(error)")
+      log.critical("Failed to create render pipeline state: \(error.localizedDescription)")
       throw RenderError.failedToCreateEntityRenderPipelineState(error)
     }
     

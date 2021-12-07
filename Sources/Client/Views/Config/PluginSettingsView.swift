@@ -48,7 +48,7 @@ struct PluginSettingsView: View {
                   do {
                     try pluginEnvironment.loadPlugin(plugin.0)
                   } catch {
-                    DeltaClientApp.modalError("Failed to load plugin '\(identifier)': \(error)")
+                    DeltaClientApp.modalError("Failed to load plugin '\(identifier)': \(error.localizedDescription)")
                   }
                   updateConfig()
                 }

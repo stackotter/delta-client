@@ -18,11 +18,11 @@ public struct IntermediateBlockModelPalette {
       // It will already have been flattened if it is the parent of an already flattened block model.
       if !identifierToIndex.keys.contains(identifier) {
         do {
-          let flattened = try flatten(blockModel, with: jsonBlockModelPalette, and: identifier)
+          let flattened = try flatten(blockModel, with: jsonBlockModelPalette)
           append(flattened, as: identifier)
         } catch {
-          log.error("Failed to flatten mojang block model: \(error)")
-          throw BlockRegistryError.failedToFlatten(identifier)
+          log.error("Failed to flatten mojang block model: \(error.localizedDescription)")
+          throw BlockModelPaletteError.failedToFlatten(identifier)
         }
       }
     }
@@ -39,21 +39,20 @@ public struct IntermediateBlockModelPalette {
   /// Flattens a mojang formatted block model. Also flattens any parents of the model and adds them to the palette.
   private mutating func flatten(
     _ jsonBlockModel: JSONBlockModel,
-    with jsonBlockPalette: [Identifier: JSONBlockModel],
-    and identifier: Identifier
+    with jsonBlockPalette: [Identifier: JSONBlockModel]
   ) throws -> IntermediateBlockModel {
     // Flatten the parent first if this model has a parent.
     var parent: IntermediateBlockModel? = nil
     if let parentIdentifier = jsonBlockModel.parent {
       guard let parentJSONBlockModel = jsonBlockPalette[parentIdentifier] else {
-        throw BlockRegistryError.noSuchParent(parentIdentifier)
+        throw BlockModelPaletteError.noSuchParent(parentIdentifier)
       }
       
       // Use a cached version of the parent if it has already been processed, otherwise flatten it normally
       if let flattenedParent = blockModel(for: parentIdentifier) {
         parent = flattenedParent
       } else {
-        let flattened = try flatten(parentJSONBlockModel, with: jsonBlockPalette, and: parentIdentifier)
+        let flattened = try flatten(parentJSONBlockModel, with: jsonBlockPalette)
         append(flattened, as: parentIdentifier)
         parent = flattened
       }

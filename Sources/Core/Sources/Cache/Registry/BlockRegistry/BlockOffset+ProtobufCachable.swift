@@ -6,7 +6,7 @@ extension Block.Offset: ProtobufCachableEnum {
       case .xz:
         self = .xz
       case .UNRECOGNIZED:
-        throw BlockRegistryError.invalidBlockOffset
+        throw BlockModelPaletteError.invalidBlockOffset
     }
   }
   

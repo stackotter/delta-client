@@ -33,13 +33,6 @@ public struct PixlyzerBlock: Decodable {
     case tint
     case states
   }
-  
-  /// A dictionary mapping block state id to an array of block model variant model descriptors.
-  var blockModelDescriptors: [Int: [[PixlyzerBlockModelDescriptor]]] {
-    return states.mapValues { state in
-      state.blockModelVariantDescriptors
-    }
-  }
 }
 
 extension Block {

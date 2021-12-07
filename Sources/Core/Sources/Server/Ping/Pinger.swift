@@ -21,10 +21,12 @@ public class Pinger: ObservableObject {
   
   // MARK: Interface
   
-  private func networkEventHandler(_ event: Event) {
+  private func handleNetworkEvent(_ event: Event) {
     switch event {
       case let event as ConnectionFailedEvent:
-        pingResult = Result.failure(PingError.connectionFailed(event.networkError))
+        ThreadUtil.runInMain {
+          pingResult = Result.failure(PingError.connectionFailed(event.networkError))
+        }
       default:
         break
     }
@@ -52,6 +54,7 @@ public class Pinger: ObservableObject {
       // TODO: resolve dns stuff in server connection async cause it takes a while sometimes?
       let connection = ServerConnection(descriptor: self.descriptor)
       connection.setPacketHandler(self.handlePacket)
+      connection.eventBus.registerHandler(self.handleNetworkEvent)
       self.connection = connection
       self.isConnecting = false
       if self.shouldPing {
@@ -72,7 +75,7 @@ public class Pinger: ObservableObject {
       try packet.handle(for: self)
     } catch {
       closeConnection()
-      log.error("Failed to handle packet: \(error)")
+      log.error("Failed to handle packet: \(error.localizedDescription)")
     }
   }
 }

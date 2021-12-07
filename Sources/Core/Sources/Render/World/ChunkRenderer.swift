@@ -160,7 +160,7 @@ class ChunkRenderer {
             device: device,
             commandQueue: commandQueue)
         } catch {
-          log.error("Failed to render chunk section at \(sectionPosition); \(error)")
+          log.error("Failed to render chunk section at \(sectionPosition); \(error.localizedDescription)")
         }
       }
     }
@@ -185,7 +185,7 @@ class ChunkRenderer {
             device: device,
             commandQueue: commandQueue)
         } catch {
-          log.error("Failed to render chunk section at \(sectionPosition); \(error)")
+          log.error("Failed to render chunk section at \(sectionPosition); \(error.localizedDescription)")
         }
       }
     }

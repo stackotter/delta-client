@@ -27,7 +27,7 @@ public class ConfigManager {
         data = try JSONEncoder().encode(config)
         FileManager.default.createFile(atPath: configFile.path, contents: data, attributes: nil)
       } catch {
-        DeltaClientApp.fatal("Failed to encode config: \(error)")
+        DeltaClientApp.fatal("Failed to encode config: \(error.localizedDescription)")
       }
       return
     }
@@ -47,7 +47,7 @@ public class ConfigManager {
         data = try JSONEncoder().encode(config)
         FileManager.default.createFile(atPath: configFile.path, contents: data, attributes: nil)
       } catch {
-        DeltaClientApp.fatal("Failed to encode config: \(error)")
+        DeltaClientApp.fatal("Failed to encode config: \(error.localizedDescription)")
       }
     }
   }
@@ -82,7 +82,7 @@ public class ConfigManager {
       do {
         try self.commitConfig()
       } catch {
-        log.error("Failed to write config to file: \(error)")
+        log.error("Failed to write config to file: \(error.localizedDescription)")
       }
     }
   }

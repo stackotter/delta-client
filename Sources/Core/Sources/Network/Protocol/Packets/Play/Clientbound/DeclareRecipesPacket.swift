@@ -67,7 +67,7 @@ public struct DeclareRecipesPacket: ClientboundPacket {
             var recipe: HeatRecipe?
             switch type.name {
               case "smelting":
-                recipe = BlastingRecipe(group: group, ingredient: ingredient, result: result, experience: experience, cookingTime: cookingTime)
+                recipe = SmeltingRecipe(group: group, ingredient: ingredient, result: result, experience: experience, cookingTime: cookingTime)
               case "blasting":
                 recipe = BlastingRecipe(group: group, ingredient: ingredient, result: result, experience: experience, cookingTime: cookingTime)
               case "smoking":

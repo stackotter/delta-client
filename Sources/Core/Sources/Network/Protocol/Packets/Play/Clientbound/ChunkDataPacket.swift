@@ -63,11 +63,11 @@ public struct ChunkDataPacket: ClientboundPacket {
           let blockEntity = BlockEntity(position: position, identifier: identifier, nbt: blockEntityNBT)
           blockEntities.append(blockEntity)
         } catch {
-          log.warning("Error decoding block entities: \(error)")
+          log.warning("Error decoding block entities: \(error.localizedDescription)")
         }
       }
     } catch {
-      log.warning("Failed to unpack chunk: \(error)")
+      log.warning("Failed to unpack chunk: \(error.localizedDescription)")
       throw error
     }
     

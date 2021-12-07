@@ -86,7 +86,7 @@ class WorldRenderer {
         animationState: animationState,
         commandQueue: commandQueue)
     } catch {
-      log.critical("Failed to create texture array: \(error)")
+      log.critical("Failed to create texture array: \(error.localizedDescription)")
       throw RenderError.failedToCreateBlockTextureArray(error)
     }
   }
@@ -416,7 +416,7 @@ class WorldRenderer {
     // Update animated textures
     let updatedTextures = blockTexturePaletteAnimationState.update(tick: client.game.tickScheduler.tickNumber)
     stopwatch.startMeasurement("update texture")
-    resources.blockTexturePalette.updateArrayTexture(arrayTexture: blockArrayTexture, device: device, animationState: blockTexturePaletteAnimationState, updatedTextures: updatedTextures, commandQueue: commandQueue)
+    resources.blockTexturePalette.updateArrayTexture(arrayTexture: blockArrayTexture, animationState: blockTexturePaletteAnimationState, updatedTextures: updatedTextures, commandQueue: commandQueue)
     stopwatch.stopMeasurement("update texture")
     
     stopwatch.startMeasurement("get visible chunks")

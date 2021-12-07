@@ -80,7 +80,7 @@ public class Updater: ObservableObject {
         do {
           try data.write(to: zipFile)
         } catch {
-          DeltaClientApp.modalError("Failed to write download to disk; \(error)", safeState: .serverList)
+          DeltaClientApp.modalError("Failed to write download to disk; \(error.localizedDescription)", safeState: .serverList)
         }
       }
     }
@@ -102,7 +102,7 @@ public class Updater: ObservableObject {
       } catch {
         // Just a workaround because somehow this job unsuspends as when the a subsequent update attempt writes to DeltaClient.zip
         if !queue.isSuspended {
-          DeltaClientApp.modalError("Failed to unzip DeltaClient.zip; \(error)", safeState: .serverList)
+          DeltaClientApp.modalError("Failed to unzip DeltaClient.zip; \(error.localizedDescription)", safeState: .serverList)
         }
       }
     }
@@ -116,7 +116,7 @@ public class Updater: ObservableObject {
         try FileManager.default.removeItem(at: StorageManager.default.cacheDirectory)
       } catch {
         if !queue.isSuspended {
-          DeltaClientApp.modalError("Failed to delete cache directory; \(error)", safeState: .serverList)
+          DeltaClientApp.modalError("Failed to delete cache directory; \(error.localizedDescription)", safeState: .serverList)
         }
       }
     }

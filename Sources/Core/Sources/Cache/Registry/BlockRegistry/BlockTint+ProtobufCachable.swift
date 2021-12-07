@@ -5,7 +5,7 @@ extension Block.Tint: ProtobufCachable {
     } else if message.hasHardcodedTint {
       self = .hardcoded(RGBColor(from: message.hardcodedTint))
     } else {
-      throw BlockRegistryError.invalidBlockTint
+      throw BlockModelPaletteError.invalidBlockTint
     }
   }
   

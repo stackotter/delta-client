@@ -72,7 +72,7 @@ public struct BlockModelPalette {
             with: blockTexturePalette,
             block: block)
         } catch {
-          log.error("Failed to create block model for state \(blockId): \(error)")
+          log.error("Failed to create block model for state \(blockId): \(error.localizedDescription)")
           throw error
         }
       }
@@ -361,24 +361,5 @@ public struct BlockModelPalette {
     }
     
     return rotatedCoordinates
-  }
-  
-  /// Returns a dictionary containing all of the block models in the specified directory (in Mojang's format).
-  private static func readJSONBlockModels(from directory: URL) throws -> [Identifier: JSONBlockModel] {
-    var mojangBlockModels: [Identifier: JSONBlockModel] = [:]
-    
-    let files = try FileManager.default.contentsOfDirectory(
-      at: directory,
-      includingPropertiesForKeys: nil,
-      options: .skipsSubdirectoryDescendants)
-    for file in files where file.pathExtension == "json" {
-      let blockName = file.deletingPathExtension().lastPathComponent
-      let identifier = Identifier(name: "block/\(blockName)")
-      let data = try Data(contentsOf: file)
-      let mojangBlockModel = try ZippyJSONDecoder().decode(JSONBlockModel.self, from: data)
-      mojangBlockModels[identifier] = mojangBlockModel
-    }
-    
-    return mojangBlockModels
   }
 }
