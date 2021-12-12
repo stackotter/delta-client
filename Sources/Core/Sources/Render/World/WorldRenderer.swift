@@ -69,6 +69,7 @@ public final class WorldRenderer: Renderer {
     // TODO: update camera chunk
     // TODO: prioritise chunks inside frustum
     // TODO: allow world renderer to register a function that calculates chunk priority
+    worldMesh.update(client.game.player.position.chunkSection, camera: camera)
     try worldMesh.mutateMeshes { meshes in
       // Update animated textures
       arrayTexture.update(tick: client.game.tickScheduler.tickNumber, device: device, commandQueue: commandQueue)
@@ -78,12 +79,12 @@ public final class WorldRenderer: Renderer {
       encoder.setFragmentTexture(arrayTexture.texture, index: 0)
       encoder.setVertexBuffer(worldToClipUniformsBuffer, offset: 0, index: 1)
       
-      for i in 0..<meshes.count {
-        try meshes[i].renderTransparentAndOpaque(renderEncoder: encoder, device: device, commandQueue: commandQueue)
+      for position in meshes.keys {
+        try meshes[position]?.renderTransparentAndOpaque(renderEncoder: encoder, device: device, commandQueue: commandQueue)
       }
       
-      for i in 0..<meshes.count {
-        try meshes[i].renderTranslucent(viewedFrom: camera.position, sortTranslucent: true, renderEncoder: encoder, device: device, commandQueue: commandQueue)
+      for position in meshes.keys {
+        try meshes[position]?.renderTranslucent(viewedFrom: camera.position, sortTranslucent: true, renderEncoder: encoder, device: device, commandQueue: commandQueue)
       }
     }
   }
@@ -94,7 +95,7 @@ public final class WorldRenderer: Renderer {
     switch event {
       case let event as World.Event.ChunkComplete:
         log.debug("Handling chunk complete event")
-        worldMesh.handleChunkAdded(at: event.position)
+        worldMesh.addChunk(at: event.position)
       case _ as JoinWorldEvent:
         log.debug("Creating new world mesh")
         worldMesh = WorldMesh(client.game.world, cameraChunk: client.game.player.position.chunk, resources: resources)

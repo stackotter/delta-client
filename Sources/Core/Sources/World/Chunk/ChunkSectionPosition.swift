@@ -29,6 +29,11 @@ public struct ChunkSectionPosition {
       ])
   }
   
+  /// Checks that the section's Y value is valid.
+  public var isValid: Bool {
+    return sectionY >= 0 && sectionY < Chunk.numSections
+  }
+  
   /// Create a new chunk section position.
   public init(sectionX: Int, sectionY: Int, sectionZ: Int) {
     self.sectionX = sectionX
@@ -51,7 +56,7 @@ public struct ChunkSectionPosition {
   
   /// Gets the position of the section that neighbours this section in the specified direction.
   /// - Parameter direction: Direction to find neighbour in.
-  /// - Returns: The position of the neighbour unless the neighbour in that direction would be above or below the world assuming that the original section is inside the world.
+  /// - Returns: The position of the neighbour unless the neighbour is above or below the world.
   public func neighbour(inDirection direction: Direction) -> ChunkSectionPosition? {
     var position = self
     switch direction {
@@ -65,15 +70,14 @@ public struct ChunkSectionPosition {
         position.sectionX -= 1
       case .up:
         position.sectionY += 1
-        if position.sectionY >= Chunk.numSections {
-          return nil
-        }
       case .down:
-        if position.sectionY < 0 {
-          return nil
-        }
         position.sectionY -= 1
     }
+    
+    if position.sectionY >= Chunk.numSections || position.sectionY < 0 {
+      return nil
+    }
+    
     return position
   }
 }

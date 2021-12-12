@@ -24,7 +24,7 @@ public struct Camera {
   public var directionVector: SIMD3<Float> {
     let rotationMatrix = MatrixUtil.rotationMatrix(y: Float.pi + yRot) * MatrixUtil.rotationMatrix(x: xRot)
     let unitVector = SIMD4<Float>(0, 0, 1, 0)
-    return = simd_make_float3(unitVector * rotationMatrix)
+    return simd_make_float3(unitVector * rotationMatrix)
   }
   
   private var frustum: Frustum?

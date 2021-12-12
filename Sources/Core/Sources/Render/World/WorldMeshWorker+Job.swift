@@ -3,14 +3,19 @@ import Collections
 extension WorldMeshWorker {
   /// A chunk section mesh creation job.
   struct Job {
+    /// The chunk that the section is in.
     var chunk: Chunk
+    /// The position of the section to prepare.
     var position: ChunkSectionPosition
+    /// The neighbouring chunks of `chunk`.
     var neighbours: ChunkNeighbours
   }
   
-  /// Handles queueing jobs and prioritisation.
+  /// Handles queueing jobs and prioritisation. Completely threadsafe.
   struct JobQueue {
+    /// The queue of current jobs.
     private var jobs: Deque<Job> = []
+    /// A lock used to make the job queue threadsafe.
     private var lock = ReadWriteLock()
     
     /// Creates an empty job queue.

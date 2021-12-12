@@ -65,6 +65,14 @@ public class EntityPosition: Component {
       chunkZ: Int((z / 16).rounded(.down)))
   }
   
+  /// The position of the chunk section this position is in.
+  public var chunkSection: ChunkSectionPosition {
+    return ChunkSectionPosition(
+      sectionX: Int((x / 16).rounded(.down)),
+      sectionY: Int((y / 16).rounded(.down)),
+      sectionZ: Int((z / 16).rounded(.down)))
+  }
+  
   // MARK: Private properties
   
   /// The underlying vector.

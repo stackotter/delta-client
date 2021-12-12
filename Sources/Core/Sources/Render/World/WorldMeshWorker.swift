@@ -2,21 +2,20 @@ import Foundation
 import Concurrency
 import Metal
 
-/// A multi-threaded worker that creates and updates the world's meshes.
+/// A multi-threaded worker that creates and updates the world's meshes. Completely threadsafe.
 public class WorldMeshWorker {
-  // MARK: Public properties
+  // MARK: Private properties
   
   /// World that chunks are in.
-  public var world: World
+  private var world: World
   /// Resources to prepare chunks with.
-  public var resources: ResourcePack.Resources
+  private let resources: ResourcePack.Resources
   
-  // MARK: Private properties
+  /// A lock used to make the worker threadsafe.
+  private var lock = ReadWriteLock()
   
   /// Meshes that the worker has created or updated and the `WorldRenderer` hasn't taken back yet.
   private var updatedMeshes: [ChunkSectionPosition: ChunkSectionMesh] = [:]
-  /// A lock to manage reading and writing of `updatedMeshes`.
-  private var updatedMeshesLock = ReadWriteLock()
   
   /// Mesh creation jobs.
   private var jobQueue = JobQueue()
@@ -51,13 +50,17 @@ public class WorldMeshWorker {
     startExecutionLoop()
   }
   
-  /// Returns meshes that have been updated since the last call to this function.
+  /// Gets the meshes that have been updated since the last call to this function.
+  /// - Returns: The updated meshes and their positions.
   public func getUpdatedMeshes() -> [ChunkSectionPosition: ChunkSectionMesh] {
-    updatedMeshesLock.acquireWriteLock()
-    defer { updatedMeshesLock.unlock() }
-    let meshes = updatedMeshes
-    updatedMeshes = [:]
-    return meshes
+    lock.acquireWriteLock()
+    
+    defer {
+      updatedMeshes = [:]
+      lock.unlock()
+    }
+    
+    return updatedMeshes
   }
   
   // MARK: Private methods
@@ -113,9 +116,9 @@ public class WorldMeshWorker {
     // TODO: implement buffer recycling
     let mesh = meshBuilder.build()
     
-    updatedMeshesLock.acquireWriteLock()
+    lock.acquireWriteLock()
     updatedMeshes[job.position] = mesh
-    updatedMeshesLock.unlock()
+    lock.unlock()
     
     return true
   }

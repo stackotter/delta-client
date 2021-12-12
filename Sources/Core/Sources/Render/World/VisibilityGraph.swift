@@ -1,5 +1,19 @@
-import DequeModule
+import Collections
+
+/// A graph structure used to determine which chunk sections are visible from a given camera.
+///
+/// It uses a conservative approach, which means that some chunks will be incorrectly identified as visible, but no chunks will be incorrectly identified as not visible.
 public struct VisibilityGraph {
+  // MARK: Public properties
+  
+  /// Number of sections in the graph.
+  public var sectionCount: Int {
+    lock.acquireReadLock()
+    defer { lock.unlock() }
+    
+    return sectionFaceConnectivity.count
+  }
+  
   // MARK: Private properties
   
   /// Connectivity of faces of each chunk in the graph.
@@ -27,7 +41,7 @@ public struct VisibilityGraph {
   public mutating func addChunk(_ chunk: Chunk, at position: ChunkPosition) {
     var connectivity: [ChunkSectionPosition: [Direction: Set<Direction>]] = [:]
     for (sectionY, section) in chunk.getSections().enumerated() {
-      let connectivityGraph = ChunkSectionVoxelGraph(for: section, modelPalette: blockModelPalette)
+      var connectivityGraph = ChunkSectionVoxelGraph(for: section, blockModelPalette: blockModelPalette)
       connectivity[ChunkSectionPosition(position, sectionY: sectionY)] = connectivityGraph.calculateConnectivity()
     }
     
@@ -55,47 +69,104 @@ public struct VisibilityGraph {
   public func canPass(from entryFace: Direction, to exitFace: Direction, through section: ChunkSectionPosition) -> Bool {
     lock.acquireReadLock()
     defer { lock.unlock() }
-    return sectionFaceConnectivity[section][entryFace]?.contains(exitFace)
+    return sectionFaceConnectivity[section]?[entryFace]?.contains(exitFace) == true
+  }
+  
+  // TODO: move these two structs (DirectionSet and SearchQueueEntry)
+  
+  struct DirectionSet: OptionSet {
+    public let rawValue: UInt8
+    
+    init(rawValue: UInt8) {
+      self.rawValue = rawValue
+    }
+    
+    static let north = DirectionSet(rawValue: 0x01)
+    static let east = DirectionSet(rawValue: 0x02)
+    static let south = DirectionSet(rawValue: 0x04)
+    static let west = DirectionSet(rawValue: 0x08)
+    static let up = DirectionSet(rawValue: 0x16)
+    static let down = DirectionSet(rawValue: 0x32)
+    
+    static func member(_ direction: Direction) -> DirectionSet {
+      switch direction {
+        case .down:
+          return .down
+        case .up:
+          return .up
+        case .north:
+          return .north
+        case .south:
+          return .south
+        case .west:
+          return .west
+        case .east:
+          return .east
+      }
+    }
+  }
+  
+  struct SearchQueueEntry {
+    let position: ChunkSectionPosition
+    let entryFace: Direction?
+    let directions: DirectionSet
   }
   
   /// Gets the positions of all chunk sections that are possibly visible from the given chunk.
-  /// - Parameter position: Position of the chunk that the world is being viewed from.
-  /// - Returns: The positions of all possibly visible chunk sections.
-  public func chunkSectionsVisible(from position: ChunkPosition, camera: Camera) -> [ChunkSectionPosition] {
-    var discovered: Set<ChunkSectionPosition> = [position]
-    var queue: Deque<(ChunkSectionPosition, Direction?, Set<Direction>)> = [(position, nil)]
+  /// - Parameter position: Position of the chunk section that the world is being viewed from.
+  /// - Parameter camera: Used for frustum culling.
+  /// - Returns: The positions of all possibly visible chunk sections. Does not include empty sections.
+  public func chunkSectionsVisible(from position: ChunkSectionPosition, camera: Camera) -> [ChunkSectionPosition] {
+    lock.acquireReadLock()
+    defer { lock.unlock() }
     
-    var visible: [ChunkSectionPosition] = []
+    var visible: [ChunkSectionPosition] = [position]
+    visible.reserveCapacity(sectionCount)
+    var visited = Set<ChunkSectionPosition>(minimumCapacity: sectionCount)
+    var queue: Deque = [SearchQueueEntry(position: position, entryFace: nil, directions: [])]
     
-    var cameraDirectionVector = camera.directionVector
-    
-    while !queue.isEmpty {
-      if let item = queue.popFirst() {
-        let position = item.0
-        let entryFace = item.1
-        let directionsTravelled = item.2
-        
-        // Mark as visible
-        visible.append(position)
-        
-        // Add neighbours to queue
-        for exitFace in Direction.allDirections where exitFace != entryFace {
-          // Make sure the sections don't get processed twice
-          let neighbour = position.neighbour(inDirection: exitFace)
-          if discovered.contains(neighbour) {
-            return
-          }
-          discovered.insert(neighbour)
-          
-          // Check that it is possible to
-          if let entryFace = entryFace {
-            if canPass(from: entryFace, to: exitFace, through: position) {
-              queue.append(neighbour)
-            }
-          } else {
-            queue.append(neighbour)
-          }
+    while let current = queue.popFirst() {
+      let entryFace = current.entryFace
+      let position = current.position
+      
+      for exitFace in Direction.allDirections where exitFace != entryFace {
+        guard let neighbourPosition = position.neighbour(inDirection: exitFace) else {
+          continue
         }
+        
+        // Avoids doubling back. If a chunk has been exited from the top face, any chunks after that shouldn't be exited from the bottom face.
+        if current.directions.contains(DirectionSet.member(exitFace.opposite)) {
+          log.debug("Skip neighbour that would be going backwards")
+          continue
+        }
+        
+        // Don't visit the same section twice
+        guard !visited.contains(neighbourPosition) else {
+          log.debug("Already visited")
+          continue
+        }
+        
+        if let entryFace = entryFace, !canPass(from: entryFace, to: exitFace, through: position) {
+          log.debug("Can't pass to exit face")
+          continue
+        }
+        
+        if !camera.isChunkSectionVisible(at: neighbourPosition) {
+          log.debug("Frustum culled")
+          continue
+        }
+        
+        visited.insert(neighbourPosition)
+        
+        var directions = current.directions
+        directions.insert(DirectionSet.member(exitFace))
+        
+        queue.append(SearchQueueEntry(
+          position: neighbourPosition,
+          entryFace: exitFace,
+          directions: directions))
+        
+        visible.append(neighbourPosition)
       }
     }
     
