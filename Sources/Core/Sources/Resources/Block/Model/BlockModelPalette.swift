@@ -9,8 +9,8 @@ public struct BlockModelPalette {
   public var models: [[BlockModel]] = []
   /// The transforms to use when displaying blocks in different places. Block models specify an index into this array.
   public var displayTransforms: [BlockModelDisplayTransforms] = []
-  /// The set of all blocks that have full block models (fill an entire voxel, e.g. dirt blocks and not oak slabs).
-  public var fullBlocks: Set<Int> = []
+  /// Contains true for each block that is full and opaque (e.g. dirt, but not slabs). Indexed by block state id.
+  public var fullyOpaqueBlocks: [Bool] = []
   
   // MARK: Init
   
@@ -22,14 +22,16 @@ public struct BlockModelPalette {
     self.models = models
     self.displayTransforms = displayTransforms
     
-  outerLoop:
-    for (index, model) in models.enumerated() {
+    fullyOpaqueBlocks.reserveCapacity(models.count)
+    for model in models {
+      var isFull = false
       for part in model {
-        if part.cullingFaces.count == 6 {
-          fullBlocks.insert(index)
-          continue outerLoop
+        if part.cullingFaces.count == 6 && part.textureType == .opaque {
+          isFull = true
+          break
         }
       }
+      fullyOpaqueBlocks.append(isFull)
     }
   }
   
@@ -52,14 +54,19 @@ public struct BlockModelPalette {
         let absValue = value.signum() * value
         let index = absValue % Int32(modelCount)
         return variants[Int(index)]
-      } else if modelCount == 1 {
-        return variants.first.unsafelyUnwrapped
-      } else {
-        return nil
       }
-    } else {
-      return variants.first
     }
+    
+    return variants.first
+  }
+  
+  /// Returns whether the given block is fully opaque (cannot be seen through and takes up a full block).
+  ///
+  /// Does not perform any bounds checks (fatally crashes if `id` is out of range.
+  /// - Parameter id: The id of the block to check.
+  /// - Returns: Whether the given block is fully opaque.
+  public func isBlockFullyOpaque(_ id: Int) -> Bool {
+    return fullyOpaqueBlocks[id]
   }
   
   // MARK: Loading

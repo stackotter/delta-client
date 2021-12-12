@@ -1,3 +1,5 @@
+import Foundation
+
 /// A 3d data structure used for flood filling chunk sections. Each 'voxel' is represented by an integer.
 ///
 /// The graph is initialised with `true` representing voxels that cannot be seen through whatsoever and `false` representing all other voxels.
@@ -36,9 +38,9 @@ public struct ChunkSectionVoxelGraph {
     voxels = []
     voxels.reserveCapacity(section.blocks.count)
     for block in section.blocks {
-      let value = blockModelPalette.fullBlocks.contains(Int(block))
-      voxels.append(value)
-      if value == true {
+      let isFullyOpaque = blockModelPalette.isBlockFullyOpaque(Int(block))
+      voxels.append(isFullyOpaque)
+      if isFullyOpaque {
         initialVoxelCount += 1
       }
     }
@@ -92,7 +94,7 @@ public struct ChunkSectionVoxelGraph {
       // of the section depending on which faces the fill reached.
       if let seedX = seedX, let seedY = seedY, let seedZ = seedZ {
         var group = DirectionSet()
-        recursiveFloodFill(x: seedX, y: seedY, z: seedZ, group: &group)
+        iterativeFloodFill(x: seedX, y: seedY, z: seedZ, group: &group)
         for i in 0..<5 {
           for j in (i+1)..<6 {
             let first = DirectionSet.directions[i]
@@ -135,40 +137,48 @@ public struct ChunkSectionVoxelGraph {
     mutableVoxelsPointer[y &* voxelsPerLayer &+ z &* dimension &+ x] = value
   }
   
-  /// Recursively flood fills all 0 voxels connected to the seed voxel.
+  /// Iteratively flood fills all voxels connected to the seed voxel that are set to `false`.
   /// - Parameters:
   ///   - x: x coordinate of the seed voxel.
   ///   - y: y coordinate of the seed voxel.
   ///   - z: z coordinate of the seed voxel.
   ///   - group: Stores which faces the flood fill has reached. Should be empty to start off.
-  private mutating func recursiveFloodFill(x: Int, y: Int, z: Int, group: inout DirectionSet) {
-    if isInBounds(x: x, y: y, z: z) && getVoxel(x: x, y: y, z: z) == false {
-      if x == 0 {
-        group.insert(.west)
-      } else if x == dimension &- 1 {
-        group.insert(.east)
+  private mutating func iterativeFloodFill(x: Int, y: Int, z: Int, group: inout DirectionSet) {
+    var stack: [(Int, Int, Int)] = [(x, y, z)]
+    
+    while let position = stack.popLast() {
+      let x = position.0
+      let y = position.1
+      let z = position.2
+      
+      if isInBounds(x: x, y: y, z: z) && getVoxel(x: x, y: y, z: z) == false {
+        if x == 0 {
+          group.insert(.west)
+        } else if x == dimension &- 1 {
+          group.insert(.east)
+        }
+        
+        if y == 0 {
+          group.insert(.down)
+        } else if y == dimension &- 1 {
+          group.insert(.up)
+        }
+        
+        if z == 0 {
+          group.insert(.north)
+        } else if z == dimension &- 1 {
+          group.insert(.south)
+        }
+        
+        setVoxel(x: x, y: y, z: z, to: true)
+        
+        stack.append((x &+ 1, y, z))
+        stack.append((x &- 1, y, z))
+        stack.append((x, y &+ 1, z))
+        stack.append((x, y &- 1, z))
+        stack.append((x, y, z &+ 1))
+        stack.append((x, y, z &- 1))
       }
-      
-      if y == 0 {
-        group.insert(.down)
-      } else if y == dimension &- 1 {
-        group.insert(.up)
-      }
-      
-      if z == 0 {
-        group.insert(.north)
-      } else if z == dimension &- 1 {
-        group.insert(.south)
-      }
-      
-      setVoxel(x: x, y: y, z: z, to: true)
-      
-      recursiveFloodFill(x: x &+ 1, y: y, z: z, group: &group)
-      recursiveFloodFill(x: x &- 1, y: y, z: z, group: &group)
-      recursiveFloodFill(x: x, y: y &+ 1, z: z, group: &group)
-      recursiveFloodFill(x: x, y: y &- 1, z: z, group: &group)
-      recursiveFloodFill(x: x, y: y, z: z &+ 1, group: &group)
-      recursiveFloodFill(x: x, y: y, z: z &- 1, group: &group)
     }
   }
   
