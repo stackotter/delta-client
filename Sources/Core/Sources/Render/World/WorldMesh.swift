@@ -37,6 +37,7 @@ public struct WorldMesh {
       addChunk(at: position)
       stopwatch.stopMeasurement("Process chunk")
     }
+    stopwatch.summary()
   }
   
   // MARK: Public methods

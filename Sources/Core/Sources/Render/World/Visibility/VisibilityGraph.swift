@@ -2,7 +2,8 @@ import Collections
 
 /// A graph structure used to determine which chunk sections are visible from a given camera.
 ///
-/// It uses a conservative approach, which means that some chunks will be incorrectly identified as visible, but no chunks will be incorrectly identified as not visible.
+/// It uses a conservative approach, which means that some chunks will be incorrectly identified
+/// as visible, but no chunks will be incorrectly identified as not visible.
 public struct VisibilityGraph {
   // MARK: Public properties
   
@@ -10,17 +11,15 @@ public struct VisibilityGraph {
   public var sectionCount: Int {
     lock.acquireReadLock()
     defer { lock.unlock() }
-    
     return sectionFaceConnectivity.count
   }
   
   // MARK: Private properties
   
-  /// Connectivity of faces of each chunk in the graph.
-  private var sectionFaceConnectivity: [ChunkSectionPosition: [Direction: Set<Direction>]] = [:]
-  /// Used to read and write `sectionFaceConnectivity` in a thread same manner.
+  /// Used to make the graph threadsafe.
   private var lock = ReadWriteLock()
-  
+  /// Stores the connectivity each chunk in the graph (see `ChunkSectionFaceConnectivity`).
+  private var sectionFaceConnectivity: [ChunkSectionPosition: ChunkSectionFaceConnectivity] = [:]
   /// Block model palette used to determine whether blocks are see through or not.
   private let blockModelPalette: BlockModelPalette
   
@@ -39,10 +38,11 @@ public struct VisibilityGraph {
   ///   - chunk: Chunk to add.
   ///   - position: Position of chunk.
   public mutating func addChunk(_ chunk: Chunk, at position: ChunkPosition) {
-    var connectivity: [ChunkSectionPosition: [Direction: Set<Direction>]] = [:]
+    var connectivity: [ChunkSectionPosition: ChunkSectionFaceConnectivity] = [:]
     for (sectionY, section) in chunk.getSections().enumerated() {
       var connectivityGraph = ChunkSectionVoxelGraph(for: section, blockModelPalette: blockModelPalette)
-      connectivity[ChunkSectionPosition(position, sectionY: sectionY)] = connectivityGraph.calculateConnectivity()
+      let sectionPosition = ChunkSectionPosition(position, sectionY: sectionY)
+      connectivity[sectionPosition] = connectivityGraph.calculateConnectivity()
     }
     
     lock.acquireWriteLock()
@@ -69,47 +69,9 @@ public struct VisibilityGraph {
   public func canPass(from entryFace: Direction, to exitFace: Direction, through section: ChunkSectionPosition) -> Bool {
     lock.acquireReadLock()
     defer { lock.unlock() }
-    return sectionFaceConnectivity[section]?[entryFace]?.contains(exitFace) == true
-  }
-  
-  // TODO: move these two structs (DirectionSet and SearchQueueEntry)
-  
-  struct DirectionSet: OptionSet {
-    public let rawValue: UInt8
-    
-    init(rawValue: UInt8) {
-      self.rawValue = rawValue
-    }
-    
-    static let north = DirectionSet(rawValue: 0x01)
-    static let east = DirectionSet(rawValue: 0x02)
-    static let south = DirectionSet(rawValue: 0x04)
-    static let west = DirectionSet(rawValue: 0x08)
-    static let up = DirectionSet(rawValue: 0x16)
-    static let down = DirectionSet(rawValue: 0x32)
-    
-    static func member(_ direction: Direction) -> DirectionSet {
-      switch direction {
-        case .down:
-          return .down
-        case .up:
-          return .up
-        case .north:
-          return .north
-        case .south:
-          return .south
-        case .west:
-          return .west
-        case .east:
-          return .east
-      }
-    }
-  }
-  
-  struct SearchQueueEntry {
-    let position: ChunkSectionPosition
-    let entryFace: Direction?
-    let directions: DirectionSet
+    let first = ChunkSectionFace.forDirection(entryFace)
+    let second = ChunkSectionFace.forDirection(exitFace)
+    return sectionFaceConnectivity[section]?.areConnected(first, second) == true
   }
   
   /// Gets the positions of all chunk sections that are possibly visible from the given chunk.
