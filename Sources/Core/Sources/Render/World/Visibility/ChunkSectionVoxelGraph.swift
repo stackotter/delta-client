@@ -1,5 +1,3 @@
-import Foundation
-
 /// A 3d data structure used for flood filling chunk sections. Each 'voxel' is represented by an integer.
 ///
 /// The graph is initialised with `true` representing voxels that cannot be seen through whatsoever and `false` representing all other voxels.
@@ -145,6 +143,8 @@ public struct ChunkSectionVoxelGraph {
   ///   - group: Stores which faces the flood fill has reached. Should be empty to start off.
   private mutating func iterativeFloodFill(x: Int, y: Int, z: Int, group: inout DirectionSet) {
     var stack: [(Int, Int, Int)] = [(x, y, z)]
+    // 256 is just a rough estimate of how deep the stack might get. In reality the stack actually varies from under 80 to over 20000 depending on the chunk section.
+    stack.reserveCapacity(256)
     
     while let position = stack.popLast() {
       let x = position.0

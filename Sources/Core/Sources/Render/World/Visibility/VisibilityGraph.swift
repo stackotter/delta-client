@@ -38,6 +38,9 @@ public struct VisibilityGraph {
   ///   - chunk: Chunk to add.
   ///   - position: Position of chunk.
   public mutating func addChunk(_ chunk: Chunk, at position: ChunkPosition) {
+    lock.acquireWriteLock()
+    defer { lock.unlock() }
+    
     var connectivity: [ChunkSectionPosition: ChunkSectionFaceConnectivity] = [:]
     for (sectionY, section) in chunk.getSections().enumerated() {
       var connectivityGraph = ChunkSectionVoxelGraph(for: section, blockModelPalette: blockModelPalette)
@@ -45,8 +48,6 @@ public struct VisibilityGraph {
       connectivity[sectionPosition] = connectivityGraph.calculateConnectivity()
     }
     
-    lock.acquireWriteLock()
-    defer { lock.unlock() }
     for (position, sectionConnectivity) in connectivity {
       sectionFaceConnectivity[position] = sectionConnectivity
     }
@@ -65,10 +66,12 @@ public struct VisibilityGraph {
   ///   - entryFace: Face to enter through.
   ///   - exitFace: Face to exit through.
   ///   - section: Section to check for.
+  ///   - acquireLock: Whether to acquire a read lock or not. Only set to `false` if you know what you're doing.
   /// - Returns: Whether is it possibly to see through the section looking through `entryFace` and out `exitFace`.
-  public func canPass(from entryFace: Direction, to exitFace: Direction, through section: ChunkSectionPosition) -> Bool {
-    lock.acquireReadLock()
-    defer { lock.unlock() }
+  public func canPass(from entryFace: Direction, to exitFace: Direction, through section: ChunkSectionPosition, acquireLock: Bool = true) -> Bool {
+    if acquireLock { lock.acquireReadLock() }
+    defer { if acquireLock { lock.unlock() } }
+    
     let first = ChunkSectionFace.forDirection(entryFace)
     let second = ChunkSectionFace.forDirection(exitFace)
     return sectionFaceConnectivity[section]?.areConnected(first, second) == true
