@@ -1,7 +1,7 @@
 import Darwin
 
 /// A wrapper around the rwlock C api (`pthread_rwlock_t`).
-public class ReadWriteLock {
+public final class ReadWriteLock {
   private var lock = pthread_rwlock_t()
   
   public init() {

@@ -3,7 +3,7 @@ import SwiftUI
 import DeltaCore
 
 /// Used to update the client to either the latest successful CI build or the latest GitHub release.
-public class Updater: ObservableObject {
+public final class Updater: ObservableObject {
   /// The branch used for unstable updates.
   public static var unstableBranch = "dev"
   /// The type of update this updater will perform.

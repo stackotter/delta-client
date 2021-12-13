@@ -4,7 +4,7 @@ import Darwin
 import FirebladeECS
 
 /// A highly accurate timer used to implement the ticking mechanism.
-public class TickScheduler {
+public final class TickScheduler {
   /// The ECS nexus to perform operations on.
   public var nexus: Nexus
   /// The systems to run each tick. In execution order.

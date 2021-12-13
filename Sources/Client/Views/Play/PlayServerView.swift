@@ -13,7 +13,7 @@ enum OverlayState {
   case settings
 }
 
-class RenderCoordinatorWrapper {
+final class RenderCoordinatorWrapper {
   var renderCoordinator: RenderCoordinatorProtocol?
 }
 

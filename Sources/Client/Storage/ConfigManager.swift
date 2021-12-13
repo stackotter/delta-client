@@ -5,7 +5,7 @@ import DeltaCore
 // TODO: check which managers actually need to be classes
 
 /// Manages the config stored in a config file.
-public class ConfigManager {
+public final class ConfigManager {
   /// The manager for the default config file.
   public static var `default` = ConfigManager(
     for: StorageManager.default.absoluteFromRelative("config.json"))

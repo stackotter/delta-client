@@ -2,7 +2,7 @@ import Foundation
 import SwordRPC
 
 /// Manages discord interactions
-class DiscordManager {
+final class DiscordManager {
   /// `DiscordManager` shared instance
   public static let shared = DiscordManager()
   

@@ -39,13 +39,13 @@ final class WebView: NSViewRepresentable {
   }
 }
 
-class WebViewDelegate: NSObject, WKNavigationDelegate {
+final class WebViewDelegate: NSObject, WKNavigationDelegate {
   // disable custom url schemes to prevent popup error on auth redirect
   func webView(
     _ webView: WKWebView,
     decidePolicyFor navigationAction: WKNavigationAction,
-    decisionHandler: @escaping (WKNavigationActionPolicy) -> Void)
-  {
+    decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+  ) {
     decisionHandler(.allow)
   }
 }

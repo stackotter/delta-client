@@ -2,7 +2,7 @@ import Foundation
 import DeltaCore
 
 /// An observable wrapper around a state enum for use with SwiftUI
-class StateWrapper<State>: ObservableObject {
+final class StateWrapper<State>: ObservableObject {
   @Published private(set) var current: State
   private var history: [State] = []
   

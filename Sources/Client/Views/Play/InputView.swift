@@ -1,6 +1,6 @@
 import SwiftUI
 
-class InputDelegateWrapper {
+final class InputDelegateWrapper {
   var delegate: InputDelegate?
   
   init(_ delegate: InputDelegate?) {

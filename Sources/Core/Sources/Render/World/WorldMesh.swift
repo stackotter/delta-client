@@ -31,7 +31,7 @@ public struct WorldMesh {
     
     let chunks = world.loadedChunkPositions
     
-    var stopwatch = Stopwatch(mode: .verbose, name: "Visibility graph creation")
+    var stopwatch = Stopwatch(mode: .summary, name: "Visibility graph creation")
     for position in chunks {
       stopwatch.startMeasurement("Process chunk")
       addChunk(at: position)
@@ -56,7 +56,6 @@ public struct WorldMesh {
     
     for section in visibleSections {
       if !hasPreparedChunk(at: section.chunk) {
-        log.debug("Still preparing sections")
         for position in chunksRequiredToPrepare(chunkAt: section.chunk) {
           lockChunk(at: position)
         }

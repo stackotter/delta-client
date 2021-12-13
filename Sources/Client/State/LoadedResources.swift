@@ -1,7 +1,7 @@
 import Foundation
 import DeltaCore
 
-class LoadedResources {
+final class LoadedResources {
   var resourcePack: ResourcePack
   
   init(resourcePack: ResourcePack) {

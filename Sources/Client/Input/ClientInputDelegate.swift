@@ -3,7 +3,7 @@ import DeltaCore
 import Carbon
 
 #if os(macOS)
-class ClientInputDelegate: InputDelegate {
+final class ClientInputDelegate: InputDelegate {
   // TODO: read key mapping from config
   let keyMapping = KeyMapping(
     mapping: [
