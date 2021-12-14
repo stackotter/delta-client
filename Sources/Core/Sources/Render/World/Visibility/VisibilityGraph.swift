@@ -101,23 +101,23 @@ public struct VisibilityGraph {
         
         // Avoids doubling back. If a chunk has been exited from the top face, any chunks after that shouldn't be exited from the bottom face.
         if current.directions.contains(DirectionSet.member(exitFace.opposite)) {
-          log.debug("Skip neighbour that would be going backwards")
+//          log.debug("Skip neighbour that would be going backwards")
           continue
         }
         
         // Don't visit the same section twice
         guard !visited.contains(neighbourPosition) else {
-          log.debug("Already visited")
+//          log.debug("Already visited")
           continue
         }
         
-        if let entryFace = entryFace, !canPass(from: entryFace, to: exitFace, through: position) {
-          log.debug("Can't pass to exit face")
+        if let entryFace = entryFace, !canPass(from: entryFace, to: exitFace, through: position, acquireLock: false) {
+//          log.debug("Can't pass to exit face")
           continue
         }
         
         if !camera.isChunkSectionVisible(at: neighbourPosition) {
-          log.debug("Frustum culled")
+//          log.debug("Frustum culled")
           continue
         }
         

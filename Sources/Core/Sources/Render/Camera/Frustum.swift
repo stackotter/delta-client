@@ -22,14 +22,7 @@ public struct Frustum {
   }
   
   public func approximatelyContains(_ boundingBox: AxisAlignedBoundingBox) -> Bool {
-    let vertices = boundingBox.getVertices()
-    
-    var homogenousVertices: [SIMD4<Float>] = []
-    for vertex in vertices {
-      let homogenousVertex = SIMD4<Float>(vertex, 1)
-      homogenousVertices.append(homogenousVertex)
-    }
-    
+    let homogenousVertices = boundingBox.getHomogenousVertices()
     let planeVectors = [left, right, near, bottom, top]
     
     for planeVector in planeVectors {
@@ -40,6 +33,7 @@ public struct Frustum {
           break
         }
       }
+      
       if boundingBoxLiesOutside {
         return false
       }

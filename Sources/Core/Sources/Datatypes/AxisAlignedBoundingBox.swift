@@ -45,6 +45,9 @@ public struct AxisAlignedBoundingBox: Codable {
   /// Get an array containing all 8 of this bounding box's vertices.
   /// - Returns: This bounding box's vertices.
   public func getVertices() -> [SIMD3<Float>] {
+    let minimum = minimum
+    let maximum = maximum
+    
     let bfl = minimum
     let bfr = SIMD3<Float>(maximum.x, minimum.y, minimum.z)
     let tfl = SIMD3<Float>(minimum.x, maximum.y, minimum.z)
@@ -54,6 +57,25 @@ public struct AxisAlignedBoundingBox: Codable {
     let bbr = SIMD3<Float>(maximum.x, minimum.y, maximum.z)
     let tbl = SIMD3<Float>(minimum.x, maximum.y, maximum.z)
     let tbr = maximum
+    
+    return [bfl, bfr, tfl, tfr, bbl, bbr, tbl, tbr]
+  }
+  
+  /// Get an array containing all 8 of this bounding box's vertices in homogenous form.
+  /// - Returns: This bounding box's vertices in homogenous form.
+  public func getHomogenousVertices() -> [SIMD4<Float>] {
+    let minimum = minimum
+    let maximum = maximum
+    
+    let bfl = SIMD4<Float>(minimum, 1)
+    let bfr = SIMD4<Float>(maximum.x, minimum.y, minimum.z, 1)
+    let tfl = SIMD4<Float>(minimum.x, maximum.y, minimum.z, 1)
+    let tfr = SIMD4<Float>(maximum.x, maximum.y, minimum.z, 1)
+    
+    let bbl = SIMD4<Float>(minimum.x, minimum.y, maximum.z, 1)
+    let bbr = SIMD4<Float>(maximum.x, minimum.y, maximum.z, 1)
+    let tbl = SIMD4<Float>(minimum.x, maximum.y, maximum.z, 1)
+    let tbr = SIMD4<Float>(maximum, 1)
     
     return [bfl, bfr, tfl, tfr, bbl, bbr, tbl, tbr]
   }
