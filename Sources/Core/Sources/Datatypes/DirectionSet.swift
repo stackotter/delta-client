@@ -6,8 +6,8 @@ public struct DirectionSet: OptionSet {
   public static let south = DirectionSet(rawValue: 0x02)
   public static let east = DirectionSet(rawValue: 0x04)
   public static let west = DirectionSet(rawValue: 0x08)
-  public static let up = DirectionSet(rawValue: 0x16)
-  public static let down = DirectionSet(rawValue: 0x32)
+  public static let up = DirectionSet(rawValue: 0x10)
+  public static let down = DirectionSet(rawValue: 0x20)
   
   /// All possible directions. Matches the `allDirections` property of ``Direction``.
   public static let directions: [DirectionSet] = [

@@ -7,7 +7,7 @@
 /// The efficiency of this storage method comes from using a bit field as the underlying storage and
 /// using ``ChunkSectionFace``'s raw values to efficiently identify each pair of faces. See
 /// ``ChunkSectionFace`` for a more detailed explanation.
-public struct ChunkSectionFaceConnectivity {
+public struct ChunkSectionFaceConnectivity: Equatable {
   // MARK: Public properties
   
   /// The connectivity for a fully connected chunk section.
@@ -16,7 +16,7 @@ public struct ChunkSectionFaceConnectivity {
   // MARK: Private properties
   
   /// The underlying storage for the connectivity information.
-  private var bitField = 0
+  private var bitField: UInt32 = 0
   
   // MARK: Init
   
@@ -25,7 +25,7 @@ public struct ChunkSectionFaceConnectivity {
   
   /// Only use if you know what you're doing.
   /// - Parameter bitField: Initial value of the underlying bitfield.
-  private init(bitField: Int) {
+  private init(bitField: UInt32) {
     self.bitField = bitField
   }
   

@@ -122,7 +122,7 @@ public struct ChunkSectionVoxelGraph {
   ///   - z: z coordinate of the voxel.
   /// - Returns: Current value of the voxel.
   private func getVoxel(x: Int, y: Int, z: Int) -> Bool {
-    return voxels.withUnsafeBufferPointer { $0[y &* voxelsPerLayer &+ z &* dimension &+ x] }
+    return voxels.withUnsafeBufferPointer { $0[(y &* dimension &+ z) &* dimension &+ x] }
   }
   
   /// Sets the value of the given voxel.
@@ -132,7 +132,7 @@ public struct ChunkSectionVoxelGraph {
   ///   - z: z coordiante of the voxel.
   ///   - value: New value for the voxel.
   private mutating func setVoxel(x: Int, y: Int, z: Int, to value: Bool) {
-    mutableVoxelsPointer[y &* voxelsPerLayer &+ z &* dimension &+ x] = value
+    mutableVoxelsPointer[(y &* dimension &+ z) &* dimension &+ x] = value
   }
   
   /// Iteratively flood fills all voxels connected to the seed voxel that are set to `false`.

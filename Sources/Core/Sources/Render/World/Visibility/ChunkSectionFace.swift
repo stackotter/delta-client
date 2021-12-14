@@ -17,6 +17,14 @@ public enum ChunkSectionFace: Int, CaseIterable {
   case up = 7
   case down = 12
   
+  public static var faces: [ChunkSectionFace] = [
+    .north,
+    .south,
+    .east,
+    .west,
+    .up,
+    .down]
+  
   public static func forDirection(_ direction: Direction) -> ChunkSectionFace {
     switch direction {
       case .down:

@@ -46,7 +46,6 @@ public struct VisibilityGraph {
       var connectivityGraph = ChunkSectionVoxelGraph(for: section, blockModelPalette: blockModelPalette)
       let sectionPosition = ChunkSectionPosition(position, sectionY: sectionY)
       connectivity[sectionPosition] = connectivityGraph.calculateConnectivity()
-//      if sectionPosition
     }
     
     for (position, sectionConnectivity) in connectivity {
@@ -129,7 +128,7 @@ public struct VisibilityGraph {
         
         queue.append(SearchQueueEntry(
           position: neighbourPosition,
-          entryFace: exitFace,
+          entryFace: exitFace.opposite,
           directions: directions))
         
         visible.append(neighbourPosition)
