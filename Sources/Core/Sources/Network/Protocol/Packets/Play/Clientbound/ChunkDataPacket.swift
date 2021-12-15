@@ -101,7 +101,9 @@ public struct ChunkDataPacket: ClientboundPacket {
       }
     }
     
-    log.warning("Incomplete heightmap received, only \(output.count) values")
+    log.warning("Incomplete heightmap received, only \(output.count) values (expected \(Chunk.blocksPerLayer))")
+    
+    // TODO: this shouldn't be recovered from
     
     // Pad incomplete heightmap to recover
     for _ in 0..<(Chunk.blocksPerLayer - output.count) {

@@ -335,11 +335,19 @@ public class World {
   /// Gets whether a chunk has been fully received.
   ///
   /// To be fully received, a chunk must be present, and must contain lighting data.
-  ///
-  /// - Parameter position: Position of chunk.
+  /// - Parameter position: The position of the chunk to check.
   /// - Returns: Whether the chunk has been fully received.
-  public func chunkComplete(at position: ChunkPosition) -> Bool {
+  public func isChunkComplete(at position: ChunkPosition) -> Bool {
     return chunk(at: position) != nil
+  }
+  
+  /// Gets whether a chunk hasn't got any lighting.
+  /// - Parameter position: The position of the chunk to check.
+  /// - Returns: Whether the chunk hasn't got lighting from the server. Returns `false` if the chunk doesn't exist.
+  public func isChunkUnlit(at position: ChunkPosition) -> Bool {
+    terrainLock.acquireReadLock()
+    defer { terrainLock.unlock() }
+    return unlitChunks[position] != nil
   }
   
   // MARK: Helper
@@ -348,7 +356,7 @@ public class World {
   /// - Parameter position: Position to check.
   /// - Returns: `true` if the position is in a loaded chunk.
   public func isPositionLoaded(_ position: Position) -> Bool {
-    return chunkComplete(at: position.chunk)
+    return isChunkComplete(at: position.chunk)
   }
   
   /// - Parameter position: Position to validate.

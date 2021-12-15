@@ -53,6 +53,17 @@ public struct VisibilityGraph {
     }
   }
   
+  /// Removes the given chunk from the visibility graph.
+  /// - Parameter position: The position of the chunk to remove.
+  public mutating func removeChunk(at position: ChunkPosition) {
+    lock.acquireWriteLock()
+    defer { lock.unlock() }
+    
+    for y in 0..<Chunk.numSections {
+      sectionFaceConnectivity.removeValue(forKey: ChunkSectionPosition(position, sectionY: y))
+    }
+  }
+  
   /// Updates a chunk in the visibility graph.
   /// - Parameters:
   ///   - chunk: Chunk to update.
@@ -69,6 +80,7 @@ public struct VisibilityGraph {
   ///   - acquireLock: Whether to acquire a read lock or not. Only set to `false` if you know what you're doing.
   /// - Returns: Whether is it possibly to see through the section looking through `entryFace` and out `exitFace`.
   public func canPass(from entryFace: Direction, to exitFace: Direction, through section: ChunkSectionPosition, acquireLock: Bool = true) -> Bool {
+    // TODO: return true if section is above or below the world
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
     
@@ -101,23 +113,19 @@ public struct VisibilityGraph {
         
         // Avoids doubling back. If a chunk has been exited from the top face, any chunks after that shouldn't be exited from the bottom face.
         if current.directions.contains(DirectionSet.member(exitFace.opposite)) {
-//          log.debug("Skip neighbour that would be going backwards")
           continue
         }
         
         // Don't visit the same section twice
         guard !visited.contains(neighbourPosition) else {
-//          log.debug("Already visited")
           continue
         }
         
         if let entryFace = entryFace, !canPass(from: entryFace, to: exitFace, through: position, acquireLock: false) {
-//          log.debug("Can't pass to exit face")
           continue
         }
         
         if !camera.isChunkSectionVisible(at: neighbourPosition) {
-//          log.debug("Frustum culled")
           continue
         }
         

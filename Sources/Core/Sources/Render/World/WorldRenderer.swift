@@ -66,9 +66,9 @@ public final class WorldRenderer: Renderer {
     worldToClipUniformsBuffer: MTLBuffer,
     camera: Camera
   ) throws {
-    // TODO: update camera chunk
     // TODO: prioritise chunks inside frustum
     // TODO: allow world renderer to register a function that calculates chunk priority
+    // TODO: only render visible chunks
     worldMesh.update(client.game.player.position.chunkSection, camera: camera)
     try worldMesh.mutateMeshes { meshes in
       // Update animated textures

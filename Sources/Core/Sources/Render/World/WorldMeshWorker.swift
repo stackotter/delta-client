@@ -37,6 +37,8 @@ public class WorldMeshWorker {
   // MARK: Public methods
   
   /// Creates a new mesh for the specified chunk section.
+  ///
+  /// Assumes that the chunk has already been locked.
   public func createMeshAsync(
     at position: ChunkSectionPosition,
     in chunk: Chunk,
