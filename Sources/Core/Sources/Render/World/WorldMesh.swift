@@ -20,6 +20,8 @@ public struct WorldMesh {
   private var chunkSectionsToPrepare: Set<ChunkSectionPosition> = []
   /// How many times each chunk is currently locked.
   private var chunkLockCounts: [ChunkPosition: Int] = [:]
+  /// Positions of all currently visible chunk sections (updated when ``update(_:camera:)`` is called.
+  private var visibleSections: [ChunkSectionPosition] = []
   
   // MARK: Init
   
@@ -82,7 +84,7 @@ public struct WorldMesh {
     lock.acquireWriteLock()
     defer { lock.unlock() }
     
-    let visibleSections = visibilityGraph.chunkSectionsVisible(from: cameraPosition, camera: camera)
+    visibleSections = visibilityGraph.chunkSectionsVisible(from: cameraPosition, camera: camera)
     
     stopwatch.startMeasurement("Prepare sections")
     for section in visibleSections {
@@ -99,9 +101,10 @@ public struct WorldMesh {
     stopwatch.stopMeasurement("Prepare sections")
   }
   
-  /// Perform an arbitrary action that mutates the world's meshes.
-  /// - Parameter action: Action to perform on the meshes.
-  public mutating func mutateMeshes(_ action: (inout [ChunkSectionPosition: ChunkSectionMesh]) throws -> Void) rethrows {
+  /// Perform an arbitrary action that mutates each of the world's visible meshes.
+  /// - Parameter action: Action to perform on each visible mesh.
+  /// - Parameter shouldReverseOrder: If `true`, the sections will be mutated from furthest to closest.
+  public mutating func mutateVisibleMeshes(fromBackToFront shouldReverseOrder: Bool = false, _ action: (ChunkSectionPosition, inout ChunkSectionMesh) throws -> Void) rethrows {
     lock.acquireWriteLock()
     defer { lock.unlock() }
     
@@ -114,7 +117,12 @@ public struct WorldMesh {
       meshes[position] = mesh
     }
     
-    try action(&meshes)
+    let sections = shouldReverseOrder ? visibleSections.reversed() : visibleSections
+    for position in sections {
+      if meshes[position] != nil {
+        try action(position, &meshes[position]!)
+      }
+    }
   }
   
   // MARK: Private methods

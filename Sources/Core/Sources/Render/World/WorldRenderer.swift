@@ -66,26 +66,24 @@ public final class WorldRenderer: Renderer {
     worldToClipUniformsBuffer: MTLBuffer,
     camera: Camera
   ) throws {
-    // TODO: prioritise chunks inside frustum
-    // TODO: allow world renderer to register a function that calculates chunk priority
-    // TODO: only render visible chunks
     worldMesh.update(client.game.player.position.chunkSection, camera: camera)
-    try worldMesh.mutateMeshes { meshes in
-      // Update animated textures
-      arrayTexture.update(tick: client.game.tickScheduler.tickNumber, device: device, commandQueue: commandQueue)
-      
-      // Encode render pass
-      encoder.setRenderPipelineState(renderPipelineState)
-      encoder.setFragmentTexture(arrayTexture.texture, index: 0)
-      encoder.setVertexBuffer(worldToClipUniformsBuffer, offset: 0, index: 1)
-      
-      for position in meshes.keys {
-        try meshes[position]?.renderTransparentAndOpaque(renderEncoder: encoder, device: device, commandQueue: commandQueue)
-      }
-      
-      for position in meshes.keys {
-        try meshes[position]?.renderTranslucent(viewedFrom: camera.position, sortTranslucent: true, renderEncoder: encoder, device: device, commandQueue: commandQueue)
-      }
+    
+    // Update animated textures
+    arrayTexture.update(tick: client.game.tickScheduler.tickNumber, device: device, commandQueue: commandQueue)
+    
+    // Encode render pass
+    encoder.setRenderPipelineState(renderPipelineState)
+    encoder.setFragmentTexture(arrayTexture.texture, index: 0)
+    encoder.setVertexBuffer(worldToClipUniformsBuffer, offset: 0, index: 1)
+    
+    // Render transparent and opaque geometry
+    try worldMesh.mutateVisibleMeshes { _, mesh in
+      try mesh.renderTransparentAndOpaque(renderEncoder: encoder, device: device, commandQueue: commandQueue)
+    }
+    
+    // Render translucent geometry
+    try worldMesh.mutateVisibleMeshes(fromBackToFront: true) { _, mesh in
+      try mesh.renderTranslucent(viewedFrom: camera.position, sortTranslucent: true, renderEncoder: encoder, device: device, commandQueue: commandQueue)
     }
   }
   
