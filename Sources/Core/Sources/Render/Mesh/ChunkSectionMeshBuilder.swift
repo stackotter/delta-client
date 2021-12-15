@@ -51,6 +51,8 @@ public struct ChunkSectionMeshBuilder {
   }
   
   /// Builds a mesh for the section at ``sectionPosition`` in ``chunk``.
+  ///
+  /// Assumes that the chunk has been locked already.
   /// - Parameter existingMesh: If present, the builder will attempt to reuse existing buffers if possible.
   /// - Returns: A mesh. `nil` if the mesh would be empty.
   public func build(reusing existingMesh: ChunkSectionMesh? = nil) -> ChunkSectionMesh? {

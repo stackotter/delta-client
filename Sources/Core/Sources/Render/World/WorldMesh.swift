@@ -16,8 +16,8 @@ public struct WorldMesh {
   private var meshWorker: WorldMeshWorker
   /// All chunk section meshes.
   private var meshes: [ChunkSectionPosition: ChunkSectionMesh] = [:]
-  /// Positions of all chunks that currently have meshes prepared.
-  private var chunks: Set<ChunkPosition> = []
+  /// Positions of all chunk sections that need to have their meshes prepared again when they next become visible.
+  private var chunkSectionsToPrepare: Set<ChunkSectionPosition> = []
   /// How many times each chunk is currently locked.
   private var chunkLockCounts: [ChunkPosition: Int] = [:]
   
@@ -42,6 +42,37 @@ public struct WorldMesh {
   
   // MARK: Public methods
   
+  /// Adds a chunk to the mesh.
+  /// - Parameter position: Position of the newly added chunk.
+  public mutating func addChunk(at position: ChunkPosition) {
+    // `VisibilityGraph` is threadsafe so only a read lock is required.
+    lock.acquireReadLock()
+    defer { lock.unlock() }
+    
+    guard world.isChunkComplete(at: position) else {
+      return
+    }
+    
+    // The chunks required to prepare this chunk is the same as the chunks that require this chunk to prepare.
+    // Adding this chunk may have made some of the chunks that require it preparable so here we check if any of
+    // those can now by prepared. `chunksRequiredToPrepare` includes the chunk itself as well.
+    for position in chunksRequiredToPrepare(chunkAt: position) {
+      if canPrepareChunk(at: position) && !visibilityGraph.containsChunk(at: position) {
+        if let chunk = world.chunk(at: position) {
+          visibilityGraph.addChunk(chunk, at: position)
+          
+          // Mark any non-empty sections of the chunk for preparation. It doesn't actually mutate, that's just the API I had to use.
+          chunk.mutateSections(action: { sections in
+            for (y, section) in sections.enumerated() where !section.isEmpty {
+              let sectionPosition = ChunkSectionPosition(position, sectionY: y)
+              chunkSectionsToPrepare.insert(sectionPosition)
+            }
+          })
+        }
+      }
+    }
+  }
+  
   /// Updates the world mesh (should ideally be called once per frame).
   /// - Parameters:
   ///   - cameraPosition: The current position of the camera.
@@ -55,7 +86,13 @@ public struct WorldMesh {
     
     stopwatch.startMeasurement("Prepare sections")
     for section in visibleSections {
-      if !hasPreparedChunk(at: section.chunk) {
+      if section == ChunkSectionPosition(sectionX: -12, sectionY: 6, sectionZ: -24) {
+        log.debug("Section at (-12, 6, -24) is visible")
+      }
+      if shouldPrepareChunkSection(at: section) {
+        if section == ChunkSectionPosition(sectionX: -12, sectionY: 6, sectionZ: -24) {
+          log.debug("Section at (-12, 6, -24) is getting prepared")
+        }
         prepareChunkSection(at: section, acquireWriteLock: false)
       }
     }
@@ -80,89 +117,27 @@ public struct WorldMesh {
     try action(&meshes)
   }
   
-  /// Adds a chunk to the mesh.
-  /// - Parameter position: Position of the newly added chunk.
-  public mutating func addChunk(at position: ChunkPosition) {
-    // `VisibilityGraph` is threadsafe so only a read lock is required.
-    lock.acquireReadLock()
-    defer { lock.unlock() }
-    
-    guard world.isChunkComplete(at: position) else {
-      return
-    }
-    
-    // The chunks required to prepare this chunk is the same as the chunks that require this chunk to prepare.
-    // Adding this chunk may have made some of the chunks that require it preparable so here we check if any of
-    // those can now by prepared. `chunksRequiredToPrepare` includes the chunk itself as well.
-    for position in chunksRequiredToPrepare(chunkAt: position) {
-      if !hasPreparedChunk(at: position) && canPrepareChunk(at: position) {
-        if let chunk = world.chunk(at: position), world.allNeighbours(ofChunkAt: position) != nil {
-          visibilityGraph.addChunk(chunk, at: position)
-        }
-      }
-    }
-  }
-  
-  /// Prepares the mesh for a chunk.
-  /// - Parameter position: The position of the chunk to prepare.
-  public mutating func prepareChunk(at position: ChunkPosition) {
-    lock.acquireWriteLock()
-    defer { lock.unlock() }
-    
-    guard let chunk = world.chunk(at: position), let neighbours = world.allNeighbours(ofChunkAt: position) else {
-      log.warning("1. Failed to get chunk and neighbours to prepare mesh. They seem to have disappeared.")
-      visibilityGraph.removeChunk(at: position)
-      return
-    }
-    
-    chunks.insert(position)
-    visibilityGraph.updateChunk(chunk, at: position)
-    
-    let nonEmptySectionCount = chunk.getSections().filter({ !$0.isEmpty }).count
-    for position in chunksRequiredToPrepare(chunkAt: position) {
-      lockChunk(at: position, numberOfTimes: nonEmptySectionCount)
-    }
-    
-    for (sectionY, section) in chunk.getSections(acquireLock: false).enumerated() {
-      let sectionPosition = ChunkSectionPosition(position, sectionY: sectionY)
-      if !section.isEmpty {
-        meshWorker.createMeshAsync(
-          at: sectionPosition,
-          in: chunk,
-          neighbours: neighbours)
-      } else {
-        meshes[sectionPosition] = nil
-      }
-    }
-  }
-  
-  /// Prepares the mesh for a chunk section.
-  /// - Parameter position: The position of the section to prepare.
-  public mutating func prepareChunkSection(at position: ChunkSectionPosition) {
-    prepareChunkSection(at: position, acquireWriteLock: true)
-  }
+  // MARK: Private methods
   
   /// Prepares the mesh for a chunk section. Threadsafe.
   /// - Parameters:
   ///   - position: The position of the section to prepare.
   ///   - acquireWriteLock: If false, a write lock for `lock` must be acquired prior to calling this method.
   private mutating func prepareChunkSection(at position: ChunkSectionPosition, acquireWriteLock: Bool) {
+    chunkSectionsToPrepare.remove(position)
+    
     let chunkPosition = position.chunk
-    
-    guard let chunk = world.chunk(at: chunkPosition), let neighbours = world.allNeighbours(ofChunkAt: chunkPosition) else {
-      log.warning("Failed to get chunk and neighbours to prepare mesh. They seem to have disappeared. Chunk is at \(chunkPosition)")
-      visibilityGraph.removeChunk(at: chunkPosition)
-      return
-    }
-    
-    // TODO: this shouldn't be in this function, it should be updated somewhere else instead
-    visibilityGraph.updateChunk(chunk, at: chunkPosition)
     
     if acquireWriteLock {
       lock.acquireWriteLock()
     }
     
-    chunks.insert(chunkPosition)
+    // TODO: This should possibly throw an error instead of failing silently
+    guard let chunk = world.chunk(at: chunkPosition), let neighbours = world.allNeighbours(ofChunkAt: chunkPosition) else {
+      log.warning("Failed to get chunk and neighbours of section at \(position)")
+      visibilityGraph.removeChunk(at: chunkPosition)
+      return
+    }
     
     if acquireWriteLock {
       lock.unlock()
@@ -178,15 +153,13 @@ public struct WorldMesh {
       neighbours: neighbours)
   }
   
-  // MARK: Private methods
-  
-  /// Checks whether a chunk has been prepared (or started to be prepared).
+  /// Checks whether a chunk section should be prepared when it next becomes visible.
   ///
   /// Does not perform any locking (isn't threadsafe).
-  /// - Parameter position: The position of the chunk to check.
-  /// - Returns: Whether the chunk has been prepared or not.
-  private func hasPreparedChunk(at position: ChunkPosition) -> Bool {
-    return chunks.contains(position)
+  /// - Parameter position: The position of the chunk section to check.
+  /// - Returns: Whether the chunk section should be prepared or not.
+  private func shouldPrepareChunkSection(at position: ChunkSectionPosition) -> Bool {
+    return chunkSectionsToPrepare.contains(position)
   }
   
   /// Checks whether a chunk has all the neighbours required to prepare it (including lighting).
@@ -195,8 +168,8 @@ public struct WorldMesh {
   /// - Parameter position: The position of the chunk to check.
   /// - Returns: Whether the chunk can be prepared or not.
   private func canPrepareChunk(at position: ChunkPosition) -> Bool {
-    for chunkPosition in chunksRequiredToPrepare(chunkAt: position) {
-      if !world.isChunkComplete(at: chunkPosition) {
+    for position in chunksRequiredToPrepare(chunkAt: position) {
+      if !world.isChunkComplete(at: position) {
         return false
       }
     }

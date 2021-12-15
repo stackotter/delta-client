@@ -20,6 +20,8 @@ public struct VisibilityGraph {
   private var lock = ReadWriteLock()
   /// Stores the connectivity each chunk in the graph (see `ChunkSectionFaceConnectivity`).
   private var sectionFaceConnectivity: [ChunkSectionPosition: ChunkSectionFaceConnectivity] = [:]
+  /// All of the chunks currently in the visibility graph.
+  private var chunks: Set<ChunkPosition> = []
   /// Block model palette used to determine whether blocks are see through or not.
   private let blockModelPalette: BlockModelPalette
   
@@ -41,15 +43,12 @@ public struct VisibilityGraph {
     lock.acquireWriteLock()
     defer { lock.unlock() }
     
-    var connectivity: [ChunkSectionPosition: ChunkSectionFaceConnectivity] = [:]
-    for (sectionY, section) in chunk.getSections().enumerated() {
-      var connectivityGraph = ChunkSectionVoxelGraph(for: section, blockModelPalette: blockModelPalette)
-      let sectionPosition = ChunkSectionPosition(position, sectionY: sectionY)
-      connectivity[sectionPosition] = connectivityGraph.calculateConnectivity()
-    }
+    chunks.insert(position)
     
-    for (position, sectionConnectivity) in connectivity {
-      sectionFaceConnectivity[position] = sectionConnectivity
+    for (sectionY, section) in chunk.getSections().enumerated() {
+      let sectionPosition = ChunkSectionPosition(position, sectionY: sectionY)
+      var connectivityGraph = ChunkSectionVoxelGraph(for: section, blockModelPalette: blockModelPalette)
+      sectionFaceConnectivity[sectionPosition] = connectivityGraph.calculateConnectivity()
     }
   }
   
@@ -58,6 +57,8 @@ public struct VisibilityGraph {
   public mutating func removeChunk(at position: ChunkPosition) {
     lock.acquireWriteLock()
     defer { lock.unlock() }
+    
+    chunks.remove(position)
     
     for y in 0..<Chunk.numSections {
       sectionFaceConnectivity.removeValue(forKey: ChunkSectionPosition(position, sectionY: y))
@@ -72,6 +73,15 @@ public struct VisibilityGraph {
     addChunk(chunk, at: position)
   }
   
+  /// Gets whether the visibility graph contains the given chunk.
+  /// - Parameter position: The position of the chunk to check.
+  public func containsChunk(at position: ChunkPosition) -> Bool {
+    lock.acquireReadLock()
+    defer { lock.unlock() }
+    
+    return chunks.contains(position)
+  }
+  
   /// Gets whether a ray could possibly pass through the given chunk section, entering through a given face and exiting out another given face.
   /// - Parameters:
   ///   - entryFace: Face to enter through.
@@ -80,7 +90,7 @@ public struct VisibilityGraph {
   ///   - acquireLock: Whether to acquire a read lock or not. Only set to `false` if you know what you're doing.
   /// - Returns: Whether is it possibly to see through the section looking through `entryFace` and out `exitFace`.
   public func canPass(from entryFace: Direction, to exitFace: Direction, through section: ChunkSectionPosition, acquireLock: Bool = true) -> Bool {
-    // TODO: return true if section is above or below the world
+    // TODO: return true if section is 1 section above the world and the player is above the world (and same for below)
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
     

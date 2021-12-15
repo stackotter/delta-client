@@ -263,6 +263,7 @@ public final class Chunk {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
     
+    let sections = sections
     return sections
   }
   
