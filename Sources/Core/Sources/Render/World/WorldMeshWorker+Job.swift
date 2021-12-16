@@ -30,6 +30,8 @@ extension WorldMeshWorker {
     
     /// Returns the next job to complete.
     mutating func next() -> Job? {
+      lock.acquireWriteLock()
+      defer { lock.unlock() }
       if !jobs.isEmpty {
         return jobs.removeFirst()
       } else {

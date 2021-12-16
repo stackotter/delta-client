@@ -41,8 +41,7 @@ public struct WorldMesh {
   /// Adds a chunk to the mesh.
   /// - Parameter position: Position of the newly added chunk.
   public mutating func addChunk(at position: ChunkPosition) {
-    // `VisibilityGraph` is threadsafe so only a read lock is required.
-    lock.acquireReadLock()
+    lock.acquireWriteLock()
     defer { lock.unlock() }
     
     guard world.isChunkComplete(at: position) else {
@@ -201,8 +200,10 @@ public struct WorldMesh {
     ].compactMap { $0 }
     
     for section in potentiallyAffected {
-      if meshes[section]?.containsFluids == true {
-        sections.append(section)
+      if let mesh = meshes[section] {
+        if mesh.containsFluids {
+          sections.append(section)
+        }
       }
     }
     
@@ -232,9 +233,8 @@ public struct WorldMesh {
   ///   - position: The position of the section to prepare.
   ///   - acquireWriteLock: If false, a write lock for `lock` must be acquired prior to calling this method.
   private mutating func prepareChunkSection(at position: ChunkSectionPosition, acquireWriteLock: Bool) {
-    if acquireWriteLock {
-      lock.acquireWriteLock()
-    }
+    if acquireWriteLock { lock.acquireWriteLock() }
+    defer { if acquireWriteLock { lock.unlock() } }
     
     let chunkPosition = position.chunk
     chunkSectionsToPrepare.remove(position)
@@ -244,10 +244,6 @@ public struct WorldMesh {
       log.warning("Failed to get chunk and neighbours of section at \(position)")
       visibilityGraph.removeChunk(at: chunkPosition)
       return
-    }
-    
-    if acquireWriteLock {
-      lock.unlock()
     }
     
     meshWorker.createMeshAsync(

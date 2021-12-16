@@ -22,7 +22,10 @@ public class Client {
   public init(resourcePack: ResourcePack) {
     self.resourcePack = resourcePack
     game = Game(eventBus: eventBus)
-    eventBus.registerHandler(handleEvent)
+    eventBus.registerHandler { [weak self] event in
+      guard let self = self else { return }
+      self.handleEvent(event)
+    }
   }
   
   // MARK: Connection lifecycle

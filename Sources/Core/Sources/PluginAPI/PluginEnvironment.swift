@@ -173,7 +173,10 @@ public class PluginEnvironment: ObservableObject {
   /// Sets up the environment to relay all events from an event bus to all loaded plugins.
   /// - Parameter eventBus: The event bus to listen to.
   public func addEventBus(_ eventBus: EventBus) {
-    eventBus.registerHandler(handle(event:))
+    eventBus.registerHandler { [weak self] event in
+      guard let self = self else { return }
+      self.handle(event: event)
+    }
   }
   
   /// Notifies all loaded plugins of an event.

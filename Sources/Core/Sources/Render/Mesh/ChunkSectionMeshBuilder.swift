@@ -28,6 +28,7 @@ public struct ChunkSectionMeshBuilder {
   
   /// Create a new mesh builder.
   ///
+  /// Assumes that all chunks required to prepare this section have been locked. See ``WorldMesh/chunksRequiredToPrepare(chunkAt:)``.
   /// - Parameters:
   ///   - sectionPosition: The position of the section in the world.
   ///   - chunk: The chunk the section is in.
@@ -179,8 +180,8 @@ public struct ChunkSectionMeshBuilder {
     let neighbourLightLevels = getNeighbourLightLevels(neighbourIndices: neighbourIndices, visibleFaces: visibleFaces)
     
     // Get tint color
-    guard let biome = chunk.biome(at: position.relativeToChunk) else {
-      log.warning("Block at \(position) has invalid biome with id \(chunk.biomeId(at: position))")
+    guard let biome = chunk.biome(at: position.relativeToChunk, acquireLock: false) else {
+      log.warning("Block at \(position) has invalid biome with id \(chunk.biomeId(at: position, acquireLock: false))")
       return
     }
     
@@ -399,7 +400,7 @@ public struct ChunkSectionMeshBuilder {
     
     var tint = SIMD3<Float>(1, 1, 1)
     if block.fluidState?.fluid.identifier.name == "water" {
-      guard let tintColor = chunk.biome(at: position.relativeToChunk)?.waterColor.floatVector else {
+      guard let tintColor = chunk.biome(at: position.relativeToChunk, acquireLock: false)?.waterColor.floatVector else {
         // TODO: use a fallback color instead
         log.warning("Failed to get water tint")
         return

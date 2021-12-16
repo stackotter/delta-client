@@ -37,8 +37,6 @@ public class WorldMeshWorker {
   // MARK: Public methods
   
   /// Creates a new mesh for the specified chunk section.
-  ///
-  /// Assumes that the chunk has already been locked.
   public func createMeshAsync(
     at position: ChunkSectionPosition,
     in chunk: Chunk,
@@ -97,9 +95,12 @@ public class WorldMeshWorker {
       return false
     }
     
+    var affectedChunks: [Chunk] = []
+    
     for position in WorldMesh.chunksRequiredToPrepare(chunkAt: job.position.chunk) {
       if let chunk = world.chunk(at: position) {
         chunk.acquireReadLock()
+        affectedChunks.append(chunk)
       }
     }
     
@@ -112,10 +113,8 @@ public class WorldMeshWorker {
     // TODO: implement buffer recycling
     let mesh = meshBuilder.build()
     
-    for position in WorldMesh.chunksRequiredToPrepare(chunkAt: job.position.chunk) {
-      if let chunk = world.chunk(at: position) {
-        chunk.unlock()
-      }
+    for chunk in affectedChunks {
+      chunk.unlock()
     }
     
     lock.acquireWriteLock()

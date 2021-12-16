@@ -41,7 +41,7 @@ struct PlayServerView: View {
     setDelegate(inputDelegate)
     
     // Register for client events
-    client.eventBus.registerHandler(handleClientEvent)
+    client.eventBus.registerHandler(handleClientEvent(_:))
     
     // Setup plugins
     DeltaClientApp.pluginEnvironment.addEventBus(client.eventBus)

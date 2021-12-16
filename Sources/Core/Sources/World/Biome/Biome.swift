@@ -38,8 +38,8 @@ public struct Biome: Codable {
   /// Creates a default biome.
   ///
   /// `depth`, `scale`, `temperature` and `rainfall` default to 0. `waterColor`, `waterFogColor`,
-  /// `fogColor` and `skyColor` default to ``RGBColor.white``. `category` defaults to ``Category.none``
-  /// and `precipitationType` defaults to ``PrecipitationType.none``.
+  /// `fogColor` and `skyColor` default to ``RGBColor/white``. `category` defaults to ``Category/none``
+  /// and `precipitationType` defaults to ``PrecipitationType/none``.
   ///
   /// - Parameters:
   ///   - id: The biome's unique id.

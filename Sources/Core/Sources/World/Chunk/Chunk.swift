@@ -5,7 +5,7 @@ import Foundation
 /// Most of the public methods have an `acquireLock` parameter. To perform manual locking (for optimisation),
 /// you can use ``acquireWriteLock()``, ``acquireReadLock()`` and ``unlock()``, along with `acquireLock: false`.
 ///
-/// Sometimes referred to as a chunk column online. It is a column of ``Chunk.Section``s with
+/// Sometimes referred to as a chunk column online. It is a column of ``Chunk/Section``s with
 /// some extra information about block entities, biomes, lighting and heightmaps.
 public final class Chunk {
   // MARK: Static properties
@@ -94,7 +94,7 @@ public final class Chunk {
   /// - Parameters:
   ///   - position: A block position relative to the chunk.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
-  /// - Returns: Information about block and its state. Returns ``Block.missing`` if block state id is invalid.
+  /// - Returns: Information about block and its state. Returns ``Block/missing`` if block state id is invalid.
   public func getBlock(at position: Position, acquireLock: Bool = true) -> Block {
     let stateId = getBlockId(at: position, acquireLock: acquireLock)
     return Registry.shared.blockRegistry.block(withId: stateId) ?? Block.missing
@@ -112,7 +112,7 @@ public final class Chunk {
   
   /// Get the block state id of the block at an index.
   /// - Parameters:
-  ///   - index: Can be obtained using ``Position.blockIndex``. Relative to the chunk.
+  ///   - index: Can be obtained using ``Position/blockIndex``. Relative to the chunk.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: Block id of block. Returns 0 (air) if `index` is invalid (outside chunk).
   public func getBlockId(at index: Int, acquireLock: Bool = true) -> Int {
@@ -147,7 +147,7 @@ public final class Chunk {
     let sectionBlockIndex = blockIndex % Section.numBlocks
     sections[sectionIndex].setBlockId(at: sectionBlockIndex, to: state)
     
-    heightMap.handleBlockUpdate(at: position, in: self)
+    heightMap.handleBlockUpdate(at: position, in: self, acquireChunkLock: false)
   }
   
   // MARK: Block entities
@@ -195,7 +195,7 @@ public final class Chunk {
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: Data about the biome.
   public func biome(at position: Position, acquireLock: Bool = true) -> Biome? {
-    let biomeId = self.biomeId(at: position, acquireLock: acquireLock)
+    let biomeId = biomeId(at: position, acquireLock: acquireLock)
     return Registry.shared.biomeRegistry.biome(withId: biomeId)
   }
   
@@ -424,7 +424,7 @@ public final class Chunk {
   /// Acquire a lock for manually writing data to the chunk (e.g. writing to the sections directly).
   ///
   /// Do not call any of the public methods of this chunk until you call ``unlock()`` because that
-  /// might create a deadlock.
+  /// might create a deadlock (unless you pass `acquireLock: false` to the method).
   public func acquireWriteLock() {
     lock.acquireWriteLock()
   }

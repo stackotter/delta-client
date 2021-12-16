@@ -52,7 +52,7 @@ public struct EntityRenderer: Renderer {
     vertexBuffer = try MetalUtil.makeBuffer(
       device,
       bytes: &geometry.vertices,
-      length: geometry.vertices.count * MemoryLayout<BlockVertex>.stride,
+      length: geometry.vertices.count * MemoryLayout<EntityVertex>.stride,
       options: .storageModeShared,
       label: "entityHitBoxVertices")
     

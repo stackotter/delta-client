@@ -28,7 +28,7 @@ public class PlayerAttributes: Component {
   ///   - canFly: Defaults to false.
   ///   - canInstantBreak: Defaults to false.
   ///   - isHardcore: Defaults to false.
-  ///   - previousGamemode: Defaults to ``Gamemode.survival``.
+  ///   - previousGamemode: Defaults to ``Gamemode/survival``.
   public init(
     spawnPosition: Position = Position(x: 0, y: 0, z: 0),
     flyingSpeed: Float = 0,

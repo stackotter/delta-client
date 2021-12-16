@@ -53,7 +53,10 @@ public final class WorldRenderer: Renderer {
     worldMesh = WorldMesh(client.game.world, cameraChunk: client.game.player.position.chunk, resources: resources)
     
     // Register event handler
-    client.eventBus.registerHandler(handle(_:))
+    client.eventBus.registerHandler { [weak self] event in
+      guard let self = self else { return }
+      self.handle(event)
+    }
   }
   
   // MARK: Public methods

@@ -37,8 +37,8 @@ public struct HeightMap {
   /// Updates the height maps with regards to the given block update.
   ///
   /// The block should already be updated in the chunk.
-  public mutating func handleBlockUpdate(at position: Position, in chunk: Chunk) {
-    let newBlock = chunk.getBlock(at: position)
+  public mutating func handleBlockUpdate(at position: Position, in chunk: Chunk, acquireChunkLock: Bool = true) {
+    let newBlock = chunk.getBlock(at: position, acquireLock: acquireChunkLock)
     let columnIndex = self.columnIndex(position)
     let highestBlock = heightMap[columnIndex]
     
@@ -53,7 +53,7 @@ public struct HeightMap {
       var foundBlock = false
       for _ in 0..<position.y {
         position.y -= 1
-        let block = chunk.getBlock(at: position)
+        let block = chunk.getBlock(at: position, acquireLock: acquireChunkLock)
         if block.className != "AirBlock" {
           heightMap[columnIndex] = Int(position.y)
           foundBlock = true
@@ -79,7 +79,7 @@ public struct HeightMap {
       var foundBlock = false
       for _ in 0..<position.y {
         position.y -= 1
-        let block = chunk.getBlock(at: position)
+        let block = chunk.getBlock(at: position, acquireLock: acquireChunkLock)
         if block.lightMaterial.opacity != 0 {
           skyLightBlockingHeightMap[columnIndex] = Int(position.y)
           foundBlock = true
