@@ -31,7 +31,7 @@ public struct Camera {
   
   private var uniformsBuffers: [MTLBuffer] = []
   private var uniformsIndex = 0
-  private var uniformsCount = 3
+  private var uniformsCount = 6
   
   public init(_ device: MTLDevice) throws {
     for i in 0..<uniformsCount {

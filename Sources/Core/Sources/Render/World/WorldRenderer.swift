@@ -66,25 +66,36 @@ public final class WorldRenderer: Renderer {
     worldToClipUniformsBuffer: MTLBuffer,
     camera: Camera
   ) throws {
-    worldMesh.update(client.game.player.position.chunkSection, camera: camera)
+    var stopwatch = Stopwatch(mode: .verbose, name: "WorldRenderer.render")
     
+    stopwatch.startMeasurement("worldMesh.update")
+    worldMesh.update(client.game.player.position.chunkSection, camera: camera)
+    stopwatch.stopMeasurement("worldMesh.update")
+    
+    stopwatch.startMeasurement("arrayTexture.update")
     // Update animated textures
     arrayTexture.update(tick: client.game.tickScheduler.tickNumber, device: device, commandQueue: commandQueue)
+    stopwatch.stopMeasurement("arrayTexture.update")
     
-    // Encode render pass
+    stopwatch.startMeasurement("setup render pass")
+    // Setup render pass
     encoder.setRenderPipelineState(renderPipelineState)
     encoder.setFragmentTexture(arrayTexture.texture, index: 0)
-    encoder.setVertexBuffer(worldToClipUniformsBuffer, offset: 0, index: 1)
+    stopwatch.stopMeasurement("setup render pass")
     
+    stopwatch.startMeasurement("renderTransparentAndOpaque")
     // Render transparent and opaque geometry
     try worldMesh.mutateVisibleMeshes { _, mesh in
       try mesh.renderTransparentAndOpaque(renderEncoder: encoder, device: device, commandQueue: commandQueue)
     }
+    stopwatch.stopMeasurement("renderTransparentAndOpaque")
     
+    stopwatch.startMeasurement("renderTranslucent")
     // Render translucent geometry
     try worldMesh.mutateVisibleMeshes(fromBackToFront: true) { _, mesh in
       try mesh.renderTranslucent(viewedFrom: camera.position, sortTranslucent: true, renderEncoder: encoder, device: device, commandQueue: commandQueue)
     }
+    stopwatch.stopMeasurement("renderTranslucent")
   }
   
   // MARK: Private methods
@@ -92,11 +103,46 @@ public final class WorldRenderer: Renderer {
   private func handle(_ event: Event) {
     switch event {
       case let event as World.Event.ChunkComplete:
-        log.debug("Handling chunk complete event")
         worldMesh.addChunk(at: event.position)
+        
+      case let event as World.Event.RemoveChunk:
+        worldMesh.removeChunk(at: event.position)
+        
+      case let event as World.Event.UpdateChunkLighting:
+        let updatedSections = event.data.updatedSections
+        var affectedSections: Set<ChunkSectionPosition> = []
+        for y in updatedSections {
+          let position = ChunkSectionPosition(event.position, sectionY: y)
+          let affected = worldMesh.sectionsAffectedBySectionUpdate(at: position, onlyLighting: true)
+          affectedSections.formUnion(affected)
+        }
+        
+        for position in affectedSections {
+          worldMesh.updateSection(at: position)
+        }
+        
+      case let event as World.Event.SetBlock:
+        let affectedSections = worldMesh.sectionsAffectedBySectionUpdate(at: event.position.chunkSection)
+        
+        for position in affectedSections {
+          worldMesh.updateSection(at: position)
+        }
+        
+      case let event as World.Event.UpdateChunk:
+        var affectedSections: Set<ChunkSectionPosition> = []
+        
+        for sectionY in event.updatedSections {
+          let position = ChunkSectionPosition(event.position, sectionY: sectionY)
+          affectedSections.formUnion(worldMesh.sectionsAffectedBySectionUpdate(at: position))
+        }
+        
+        for position in affectedSections {
+          worldMesh.updateSection(at: position)
+        }
+        
       case _ as JoinWorldEvent:
-        log.debug("Creating new world mesh")
         worldMesh = WorldMesh(client.game.world, cameraChunk: client.game.player.position.chunk, resources: resources)
+        
       default:
         return
     }

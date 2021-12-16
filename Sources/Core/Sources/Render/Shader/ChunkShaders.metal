@@ -55,10 +55,10 @@ fragment float4 chunkFragmentShader(RasterizerData in [[stage_in]],
   if (in.isTransparent && color.w < 0.33) {
     discard_fragment();
   }
-    
-  if (in.isTransparent) {
-    color.w = 1;
-  }
+  
+  // A bit of branchless programming
+  color.w = color.w * !in.isTransparent // If not transparent, take the original alpha
+          + in.isTransparent; // If transparent, make alpha 1
   
   return color;
 }

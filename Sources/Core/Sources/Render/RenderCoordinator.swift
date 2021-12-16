@@ -77,11 +77,17 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
   // MARK: Render
   
   public func draw(in view: MTKView) {
+//    var stopwatch = Stopwatch(mode: .verbose, name: "RenderCoordinator.draw")
+//    stopwatch.startMeasurement("draw")
+    
+//    stopwatch.startMeasurement("getCameraUniforms")
     // Create world to clip uniforms buffer
     let uniformsBuffer = getCameraUniforms(view)
+//    stopwatch.stopMeasurement("getCameraUniforms")
     
     // TODO: Get the render pass descriptor as late as possible
     
+//    stopwatch.startMeasurement("create render encoder")
     // Create render encoder
     guard
       let commandBuffer = commandQueue.makeCommandBuffer(),
@@ -98,7 +104,10 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     renderEncoder.setDepthStencilState(depthState)
     renderEncoder.setFrontFacing(.counterClockwise)
     renderEncoder.setCullMode(.front)
+    renderEncoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
+//    stopwatch.stopMeasurement("create render encoder")
     
+//    stopwatch.startMeasurement("worldRenderer.render")
     // Render world
     do {
       try worldRenderer.render(
@@ -112,7 +121,9 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render world"))
       return
     }
+//    stopwatch.stopMeasurement("worldRenderer.render")
     
+//    stopwatch.startMeasurement("entityRenderer.render")
     // Render entities
     do {
       try entityRenderer.render(
@@ -126,7 +137,9 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render entities"))
       return
     }
+//    stopwatch.stopMeasurement("entityRenderer.render")
     
+//    stopwatch.startMeasurement("finish frame")
     // Finish encoding the frame
     guard let drawable = view.currentDrawable else {
       log.warning("Failed to get current drawable")
@@ -136,6 +149,9 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     renderEncoder.endEncoding()
     commandBuffer.present(drawable)
     commandBuffer.commit()
+//    stopwatch.stopMeasurement("finish frame")
+    
+//    stopwatch.stopMeasurement("draw")
   }
   
   // MARK: Helper

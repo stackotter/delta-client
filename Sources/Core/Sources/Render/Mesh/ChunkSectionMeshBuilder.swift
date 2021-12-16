@@ -26,8 +26,6 @@ public struct ChunkSectionMeshBuilder {
   /// The resources containing the textures and block models for the builds to use.
   private let resources: ResourcePack.Resources
   
-  public var stopwatch = Stopwatch(mode: .summary, name: "ChunkSectionMeshBuilder")
-  
   /// Create a new mesh builder.
   ///
   /// - Parameters:
@@ -81,7 +79,6 @@ public struct ChunkSectionMeshBuilder {
       for blockIndex in 0..<Chunk.Section.numBlocks {
         let blockId = section.getBlockId(at: blockIndex)
         if blockId != 0 {
-          // TODO: benchmark whether checking for airblocks.contains(blockId) or blockId == 0 is faster overall (0 is just regular air, there are actually three types of air)
           var position = Self.indexToPosition[blockIndex]
           position.x += xOffset
           position.y += yOffset
@@ -92,7 +89,8 @@ public struct ChunkSectionMeshBuilder {
             with: blockId,
             transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
             translucentMesh: &mesh.translucentMesh,
-            indexToNeighbourIndices: indexToNeighbourIndices)
+            indexToNeighbourIndices: indexToNeighbourIndices,
+            containsFluids: &mesh.containsFluids)
         }
       }
       let elapsed = CFAbsoluteTimeGetCurrent() - startTime
@@ -117,7 +115,8 @@ public struct ChunkSectionMeshBuilder {
     with blockId: Int,
     transparentAndOpaqueGeometry: inout Geometry,
     translucentMesh: inout SortableMesh,
-    indexToNeighbourIndices: [[(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]]
+    indexToNeighbourIndices: [[(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]],
+    containsFluids: inout Bool
   ) {
     // Get block model
     guard let blockModel = resources.blockModelPalette.model(for: blockId, at: position) else {
@@ -133,6 +132,7 @@ public struct ChunkSectionMeshBuilder {
     
     // Render fluid if present
     if let fluidState = block.fluidState {
+      containsFluids = true
       addFluid(at: position, atBlockIndex: blockIndex, with: blockId, translucentMesh: &translucentMesh, indexToNeighbourIndices: indexToNeighbourIndices)
       if !fluidState.isWaterlogged {
         return

@@ -82,6 +82,18 @@ public struct VisibilityGraph {
     return chunks.contains(position)
   }
   
+  public mutating func updateSection(at position: ChunkSectionPosition, in chunk: Chunk) {
+    lock.acquireWriteLock()
+    defer { lock.unlock() }
+    
+    guard let section = chunk.getSection(at: position.sectionY) else {
+      return
+    }
+    
+    var connectivityGraph = ChunkSectionVoxelGraph(for: section, blockModelPalette: blockModelPalette)
+    sectionFaceConnectivity[position] = connectivityGraph.calculateConnectivity()
+  }
+  
   /// Gets whether a ray could possibly pass through the given chunk section, entering through a given face and exiting out another given face.
   /// - Parameters:
   ///   - entryFace: Face to enter through.

@@ -69,32 +69,20 @@ public class WorldMeshWorker {
   
   /// Starts an asynchronous loop that executes all jobs on the queue until there are none left.
   private func startExecutionLoop() {
-    log.debug("Attempting to start execution loop")
-    
     if executingThreadsCount.value >= maxExecutingThreadsCount {
       return
     }
     
-    let count = executingThreadsCount.incrementAndGet()
-    
-    log.debug("Starting WorldMeshWorker execution thread number \(count)")
+    _ = executingThreadsCount.incrementAndGet()
     
     executionQueue.async {
-      var stopwatch = Stopwatch(mode: .summary, name: "Execution loop \(count)")
-      defer {
-        stopwatch.summary()
-        log.debug("Stopping WorldMeshWorker execution thread number \(count)")
-      }
-      
       while true {
-        stopwatch.startMeasurement("executeNextJob")
         let jobWasExecuted = self.executeNextJob()
-        stopwatch.stopMeasurement("executeNextJob")
         
         // If no job was executed, the job queue is empty and this execution loop can stop
         if !jobWasExecuted {
           if self.executingThreadsCount.decrementAndGet() < 0 {
-            log.warning("Error in WorldMeshWorker thread management, number of executing threads is below 0 (whoops)")
+            log.warning("Error in WorldMeshWorker thread management, number of executing threads is below 0")
           }
           return
         }
@@ -109,6 +97,12 @@ public class WorldMeshWorker {
       return false
     }
     
+    for position in WorldMesh.chunksRequiredToPrepare(chunkAt: job.position.chunk) {
+      if let chunk = world.chunk(at: position) {
+        chunk.acquireReadLock()
+      }
+    }
+    
     let meshBuilder = ChunkSectionMeshBuilder(
       forSectionAt: job.position,
       in: job.chunk,
@@ -117,6 +111,12 @@ public class WorldMeshWorker {
       resources: resources)
     // TODO: implement buffer recycling
     let mesh = meshBuilder.build()
+    
+    for position in WorldMesh.chunksRequiredToPrepare(chunkAt: job.position.chunk) {
+      if let chunk = world.chunk(at: position) {
+        chunk.unlock()
+      }
+    }
     
     lock.acquireWriteLock()
     updatedMeshes[job.position] = mesh

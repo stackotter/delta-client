@@ -58,6 +58,9 @@ public struct Mesh {
       return
     }
     
+//    var stopwatch = Stopwatch(mode: .verbose, name: "Mesh.render")
+    
+//    stopwatch.startMeasurement("vertexBuffer")
     // Get buffers. If the buffer is valid and not nil, it is used. If the buffer is invalid and not nil, it is repopulated with the new data (if big enough, otherwise a new buffer is created). If the buffer is nil, a new one is created.
     let vertexBuffer = try ((vertexBufferIsValid ? vertexBuffer : nil) ?? Self.createPrivateBuffer(
       labelled: "vertexBuffer",
@@ -65,40 +68,52 @@ public struct Mesh {
       reusing: vertexBuffer,
       device: device,
       commandQueue: commandQueue))
+//    stopwatch.stopMeasurement("vertexBuffer")
     
+//    stopwatch.startMeasurement("indexBuffer")
     let indexBuffer = try ((indexBufferIsValid ? indexBuffer : nil) ?? Self.createPrivateBuffer(
       labelled: "indexBuffer",
       containing: indices,
       reusing: indexBuffer,
       device: device,
       commandQueue: commandQueue))
+//    stopwatch.stopMeasurement("indexBuffer")
     
+//    stopwatch.startMeasurement("uniformsBuffer")
     let uniformsBuffer = try ((uniformsBufferIsValid ? uniformsBuffer : nil) ?? Self.createPrivateBuffer(
       labelled: "uniformsBuffer",
       containing: [uniforms],
       reusing: uniformsBuffer,
       device: device,
       commandQueue: commandQueue))
+//    stopwatch.stopMeasurement("uniformsBuffer")
     
+//    stopwatch.startMeasurement("update caches")
     // Update cached buffers. Unnecessary assignments won't affect performance because `MTLBuffer`s are just descriptors, not the actual data
     self.vertexBuffer = vertexBuffer
     self.indexBuffer = indexBuffer
     self.uniformsBuffer = uniformsBuffer
+//    stopwatch.stopMeasurement("update caches")
     
     // Buffers are now all valid
     vertexBufferIsValid = true
     indexBufferIsValid = true
     uniformsBufferIsValid = true
     
+//    stopwatch.startMeasurement("setVertexBuffer calls")
     // Encode draw call
     encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
     encoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 2)
+//    stopwatch.stopMeasurement("setVertexBuffer calls")
+    
+//    stopwatch.startMeasurement("drawIndexedPrimitives")
     encoder.drawIndexedPrimitives(
       type: .triangle,
       indexCount: indices.count,
       indexType: .uint32,
       indexBuffer: indexBuffer,
       indexBufferOffset: 0)
+//    stopwatch.stopMeasurement("drawIndexedPrimitives")
   }
   
   /// Force buffers to be recreated on next call to ``render(into:for:commandQueue:)``.
@@ -134,10 +149,10 @@ public struct Mesh {
     // Create a private buffer (only accessible from GPU) or reuse the existing buffer if possible
     let privateBuffer: MTLBuffer
     if let existingBuffer = existingBuffer, existingBuffer.length >= bufferSize {
-      log.trace("Reusing existing metal \(label)")
+//      log.trace("Reusing existing metal \(label)")
       privateBuffer = existingBuffer
     } else {
-      log.trace("Creating new metal \(label)")
+//      log.trace("Creating new metal \(label)")
       guard let buffer = device.makeBuffer(length: bufferSize, options: [.storageModePrivate]) else {
         throw MeshError.failedToCreateBuffer
       }

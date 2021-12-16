@@ -267,6 +267,23 @@ public final class Chunk {
     return sections
   }
   
+  /// Gets the section with the given y coordinate.
+  /// - Parameters:
+  ///   - y: The y coordinate of the section to get.
+  ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
+  /// - Returns: The section. `nil` if the `y` coordinate is invalid.
+  public func getSection(at y: Int, acquireLock: Bool = true) -> Section? {
+    if acquireLock { lock.acquireReadLock() }
+    defer { if acquireLock { lock.unlock() } }
+    
+    guard y >= 0 && y < Self.numSections else {
+      return nil
+    }
+    
+    let section = sections[y]
+    return section
+  }
+  
   /// Mutates the chunk's sections with a closure.
   /// - Parameters:
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.

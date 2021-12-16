@@ -73,7 +73,7 @@ public struct ChunkDataPacket: ClientboundPacket {
   public func handle(for client: Client) throws {
     if let existingChunk = client.game.world.chunk(at: position) {
       existingChunk.update(with: self)
-      client.eventBus.dispatch(World.Event.UpdateChunk(position: position))
+      client.eventBus.dispatch(World.Event.UpdateChunk(position: position, updatedSections: presentSections))
     } else {
       let chunk = Chunk(self)
       client.game.world.addChunk(chunk, at: position)
@@ -82,7 +82,7 @@ public struct ChunkDataPacket: ClientboundPacket {
   
   /// Unpacks a heightmap in the format at https://wiki.vg/Chunk_Format. There are 256 values that are each 9 bits, compacted into longs.
   ///
-  /// Pads incomplete heightmaps to a length of 256 with -1s to always return an array of length 256. There are 7
+  /// Pads incomplete heightmaps to a of 256 with -1s to always return an array of length 256. There are 7
   /// values in each long. Least significant bits are first. Values are in order of increasing x and then increasing z.
   /// The values are the y value of the heighest thing in the map plus 1 because otherwise an empty column would have
   /// a value of -1 which is not possible in this format. This function subtracts 1 to make the heights correspond to the actual

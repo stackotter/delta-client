@@ -7,6 +7,8 @@ public struct ChunkSectionMesh {
   public var transparentAndOpaqueMesh: Mesh
   /// The mesh containing translucent blocks. Requires sorting when the player moves (clever stuff is done to minimise sorts in ``WorldRenderer``).
   public var translucentMesh: SortableMesh
+  /// Whether the mesh contains fluids or not.
+  public var containsFluids = false
   
   public var isEmpty: Bool {
     return transparentAndOpaqueMesh.isEmpty && translucentMesh.isEmpty

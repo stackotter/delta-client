@@ -115,7 +115,6 @@ public struct EntityRenderer: Renderer {
     // Render all the hitboxes using instancing
     encoder.setRenderPipelineState(renderPipelineState)
     encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-    encoder.setVertexBuffer(worldToClipUniformsBuffer, offset: 0, index: 1)
     encoder.setVertexBuffer(instanceUniformsBuffer, offset: 0, index: 2)
     encoder.drawIndexedPrimitives(type: .triangle, indexCount: indexCount, indexType: .uint32, indexBuffer: indexBuffer, indexBufferOffset: 0, instanceCount: entities.count)
   }
