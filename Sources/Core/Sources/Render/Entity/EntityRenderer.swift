@@ -110,6 +110,8 @@ public struct EntityRenderer: Renderer {
       instanceUniformsBuffer.contents().copyMemory(from: &entityUniforms, byteCount: minimumBufferSize)
     }
     
+    use(entityUniforms)
+    
     self.instanceUniformsBuffer = instanceUniformsBuffer
     
     // Render all the hitboxes using instancing
@@ -118,6 +120,10 @@ public struct EntityRenderer: Renderer {
     encoder.setVertexBuffer(instanceUniformsBuffer, offset: 0, index: 2)
     encoder.drawIndexedPrimitives(type: .triangle, indexCount: indexCount, indexType: .uint32, indexBuffer: indexBuffer, indexBufferOffset: 0, instanceCount: entities.count)
   }
+  
+  @inline(never)
+  @_optimize(none)
+  func use(_ thing: Any) {}
   
   /// Creates a coloured and shaded cube to be rendered using instancing as entities' hitboxes.
   private static func createHitBoxGeometry(color: RGBColor) -> (vertices: [EntityVertex], indices: [UInt32]) {
