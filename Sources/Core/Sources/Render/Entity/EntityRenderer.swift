@@ -110,6 +110,8 @@ public struct EntityRenderer: Renderer {
       instanceUniformsBuffer.contents().copyMemory(from: &entityUniforms, byteCount: minimumBufferSize)
     }
     
+    // A hack to solve https://bugs.swift.org/browse/SR-15613
+    // If this isn't done, `entityUniforms` gets freed somewhere around line 99 in release builds
     use(entityUniforms)
     
     self.instanceUniformsBuffer = instanceUniformsBuffer
@@ -121,9 +123,10 @@ public struct EntityRenderer: Renderer {
     encoder.drawIndexedPrimitives(type: .triangle, indexCount: indexCount, indexType: .uint32, indexBuffer: indexBuffer, indexBufferOffset: 0, instanceCount: entities.count)
   }
   
+  /// A hack used to solve https://bugs.swift.org/browse/SR-15613
   @inline(never)
   @_optimize(none)
-  func use(_ thing: Any) {}
+  private func use(_ thing: Any) {}
   
   /// Creates a coloured and shaded cube to be rendered using instancing as entities' hitboxes.
   private static func createHitBoxGeometry(color: RGBColor) -> (vertices: [EntityVertex], indices: [UInt32]) {
