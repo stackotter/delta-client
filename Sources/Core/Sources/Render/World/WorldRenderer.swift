@@ -72,7 +72,7 @@ public final class WorldRenderer: Renderer {
     var stopwatch = Stopwatch(mode: .verbose, name: "WorldRenderer.render")
     
     stopwatch.startMeasurement("worldMesh.update")
-    worldMesh.update(client.game.player.position.chunkSection, camera: camera)
+    worldMesh.update(camera: camera)
     stopwatch.stopMeasurement("worldMesh.update")
     
     stopwatch.startMeasurement("arrayTexture.update")

@@ -135,11 +135,11 @@ public struct WorldMesh {
   /// - Parameters:
   ///   - cameraPosition: The current position of the camera.
   ///   - camera: The camera the world is being viewed from.
-  public mutating func update(_ cameraPosition: ChunkSectionPosition, camera: Camera) {
+  public mutating func update(camera: Camera) {
     lock.acquireWriteLock()
     defer { lock.unlock() }
     
-    visibleSections = visibilityGraph.chunkSectionsVisible(from: cameraPosition, camera: camera)
+    visibleSections = visibilityGraph.chunkSectionsVisible(from: camera)
     
     for section in visibleSections {
       if meshWorker.jobCount == maximumQueuedJobCount {
@@ -184,12 +184,12 @@ public struct WorldMesh {
     
     var sections = [
       position,
-      position.neighbour(inDirection: .north),
-      position.neighbour(inDirection: .south),
-      position.neighbour(inDirection: .east),
-      position.neighbour(inDirection: .west),
-      position.neighbour(inDirection: .up),
-      position.neighbour(inDirection: .down)
+      position.validNeighbour(inDirection: .north),
+      position.validNeighbour(inDirection: .south),
+      position.validNeighbour(inDirection: .east),
+      position.validNeighbour(inDirection: .west),
+      position.validNeighbour(inDirection: .up),
+      position.validNeighbour(inDirection: .down)
     ].compactMap { $0 }
     
     if onlyLighting {
@@ -198,18 +198,18 @@ public struct WorldMesh {
     
     // The following sections are only affected if they contain fluids
     let potentiallyAffected = [
-      position.neighbour(inDirection: .north)?.neighbour(inDirection: .east),
-      position.neighbour(inDirection: .north)?.neighbour(inDirection: .east)?.neighbour(inDirection: .down),
-      position.neighbour(inDirection: .north)?.neighbour(inDirection: .west),
-      position.neighbour(inDirection: .north)?.neighbour(inDirection: .west)?.neighbour(inDirection: .down),
-      position.neighbour(inDirection: .south)?.neighbour(inDirection: .west),
-      position.neighbour(inDirection: .south)?.neighbour(inDirection: .west)?.neighbour(inDirection: .down),
-      position.neighbour(inDirection: .south)?.neighbour(inDirection: .west),
-      position.neighbour(inDirection: .south)?.neighbour(inDirection: .west)?.neighbour(inDirection: .down),
-      position.neighbour(inDirection: .north)?.neighbour(inDirection: .down),
-      position.neighbour(inDirection: .east)?.neighbour(inDirection: .down),
-      position.neighbour(inDirection: .south)?.neighbour(inDirection: .down),
-      position.neighbour(inDirection: .west)?.neighbour(inDirection: .down)
+      position.validNeighbour(inDirection: .north)?.validNeighbour(inDirection: .east),
+      position.validNeighbour(inDirection: .north)?.validNeighbour(inDirection: .east)?.validNeighbour(inDirection: .down),
+      position.validNeighbour(inDirection: .north)?.validNeighbour(inDirection: .west),
+      position.validNeighbour(inDirection: .north)?.validNeighbour(inDirection: .west)?.validNeighbour(inDirection: .down),
+      position.validNeighbour(inDirection: .south)?.validNeighbour(inDirection: .west),
+      position.validNeighbour(inDirection: .south)?.validNeighbour(inDirection: .west)?.validNeighbour(inDirection: .down),
+      position.validNeighbour(inDirection: .south)?.validNeighbour(inDirection: .west),
+      position.validNeighbour(inDirection: .south)?.validNeighbour(inDirection: .west)?.validNeighbour(inDirection: .down),
+      position.validNeighbour(inDirection: .north)?.validNeighbour(inDirection: .down),
+      position.validNeighbour(inDirection: .east)?.validNeighbour(inDirection: .down),
+      position.validNeighbour(inDirection: .south)?.validNeighbour(inDirection: .down),
+      position.validNeighbour(inDirection: .west)?.validNeighbour(inDirection: .down)
     ].compactMap { $0 }
     
     for section in potentiallyAffected {

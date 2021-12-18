@@ -56,8 +56,8 @@ public struct ChunkSectionPosition {
   
   /// Gets the position of the section that neighbours this section in the specified direction.
   /// - Parameter direction: Direction to find neighbour in.
-  /// - Returns: The position of the neighbour unless the neighbour is above or below the world.
-  public func neighbour(inDirection direction: Direction) -> ChunkSectionPosition? {
+  /// - Returns: The position of the neighbour.
+  public func neighbour(inDirection direction: Direction) -> ChunkSectionPosition {
     var position = self
     switch direction {
       case .north:
@@ -74,11 +74,21 @@ public struct ChunkSectionPosition {
         position.sectionY -= 1
     }
     
-    if position.sectionY >= Chunk.numSections || position.sectionY < 0 {
+    return position
+  }
+  
+  /// Gets the position of the section that neighbours this section in the specified direction if it's valid.
+  ///
+  /// Returns `nil` if the neighbour position isn't valid (see ``isValid``).
+  /// - Parameter direction: Direction to find neighbour in.
+  /// - Returns: The position of the neighbour unless the neighbour is above or below the world.
+  public func validNeighbour(inDirection direction: Direction) -> ChunkSectionPosition? {
+    let position = neighbour(inDirection: direction)
+    if position.isValid {
+      return position
+    } else {
       return nil
     }
-    
-    return position
   }
 }
 

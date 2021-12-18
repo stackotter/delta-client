@@ -152,7 +152,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     
     let player = client.game.player
     var eyePosition = SIMD3<Float>(player.position.smoothVector)
-    eyePosition.y += 1.625 // TODO: don't hardcode this, use the player's hitbox
+    eyePosition.y += 1.625 // TODO: don't hardcode this, use the player's eye height
     
     camera.setPosition(eyePosition)
     camera.setRotation(playerLook: player.rotation)

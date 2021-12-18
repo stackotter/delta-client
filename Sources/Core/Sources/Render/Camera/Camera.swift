@@ -4,6 +4,11 @@ import Metal
 
 /// Holds information about a camera to render from.
 public struct Camera {
+  /// The camera's position as an entity position.
+  public var entityPosition: EntityPosition {
+    return EntityPosition(SIMD3<Double>(position))
+  }
+  
   /// The vertical FOV.
   public private(set) var fovY: Float = 0.5 * .pi // 90deg
   /// The near clipping plane.
