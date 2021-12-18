@@ -87,8 +87,8 @@ struct VideoSettingsView: View {
     .navigationTitle("Video")
     .onAppear {
       let config = ConfigManager.default.config.render
-      renderDistance = Double(config.renderDistance)
-      fov = Double(config.fovY)
+      renderDistance = Float(config.renderDistance)
+      fov = config.fovY
       renderMode = config.mode
     }
   }
