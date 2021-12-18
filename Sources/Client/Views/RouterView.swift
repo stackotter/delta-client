@@ -20,48 +20,7 @@ struct RouterView: View {
             case let .error(message):
               FatalErrorView(message: message)
             case let .done(loadedResources):
-              switch appState.current {
-                case .serverList:
-                  ServerListView()
-                case .editServerList:
-                  EditServerListView()
-                case .login:
-                  AccountLoginView(completion: { account in
-                    var config = ConfigManager.default.config
-                    var accounts = config.accounts
-                    accounts.append(account)
-                    config.updateAccounts(accounts)
-                    do {
-                      try config.selectAccount(account)
-                    } catch {
-                      log.error("Failed to select account")
-                      appState.update(to: .fatalError("Failed to select account (something went very wrong)"))
-                      return
-                    }
-                    ConfigManager.default.setConfig(to: config)
-                    appState.update(to: .serverList)
-                  }, cancelation: nil)
-                case .accounts:
-                  AccountSettingsView(saveAction: {
-                    appState.update(to: .serverList)
-                  }).padding()
-                case .directConnect:
-                  DirectConnectView()
-                case .playServer(let descriptor):
-                  InputView { inputCaptureEnabled, setDelegate in
-                    PlayServerView(
-                      serverDescriptor: descriptor,
-                      resourcePack: loadedResources.resourcePack,
-                      inputCaptureEnabled: inputCaptureEnabled,
-                      delegateSetter: setDelegate)
-                  }
-                case .fatalError(let message):
-                  FatalErrorView(message: message)
-                case .settings:
-                  SettingsView(isInGame: false, eventBus: nil, onDone: {
-                    appState.pop()
-                  })
-              }
+              mainView(loadedResources)
           }
         case .warning(let message):
           WarningView(message: message)
@@ -80,5 +39,51 @@ struct RouterView: View {
       }
     }
   }
-
+  
+  func mainView(_ loadedResources: LoadedResources) -> some View {
+    VStack {
+      switch appState.current {
+        case .serverList:
+          ServerListView()
+        case .editServerList:
+          EditServerListView()
+        case .login:
+          AccountLoginView(completion: { account in
+            var config = ConfigManager.default.config
+            var accounts = config.accounts
+            accounts.append(account)
+            config.updateAccounts(accounts)
+            do {
+              try config.selectAccount(account)
+            } catch {
+              log.error("Failed to select account")
+              appState.update(to: .fatalError("Failed to select account (something went very wrong)"))
+              return
+            }
+            ConfigManager.default.setConfig(to: config)
+            appState.update(to: .serverList)
+          }, cancelation: nil)
+        case .accounts:
+          AccountSettingsView(saveAction: {
+            appState.update(to: .serverList)
+          }).padding()
+        case .directConnect:
+          DirectConnectView()
+        case .playServer(let descriptor):
+          InputView { inputCaptureEnabled, setDelegate in
+            PlayServerView(
+              serverDescriptor: descriptor,
+              resourcePack: loadedResources.resourcePack,
+              inputCaptureEnabled: inputCaptureEnabled,
+              delegateSetter: setDelegate)
+          }
+        case .fatalError(let message):
+          FatalErrorView(message: message)
+        case .settings:
+          SettingsView(isInGame: false, client: nil, onDone: {
+            appState.pop()
+          })
+      }
+    }
+  }
 }

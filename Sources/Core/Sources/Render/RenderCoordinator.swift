@@ -40,11 +40,8 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     self.commandQueue = commandQueue
     
     // Setup camera
-    let fovDegrees: Float = 90
-    let fovRadians = fovDegrees / 180 * Float.pi
     do {
       camera = try Camera(device)
-      camera.setFovY(fovRadians)
     } catch {
       fatalError("Failed to create camera: \(error)")
     }
@@ -66,12 +63,6 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     depthState = try! MetalUtil.createDepthState(device: device)
     
     super.init()
-    
-    // Register listener for changing worlds
-    client.eventBus.registerHandler { [weak self] event in
-      guard let self = self else { return }
-      self.handleClientEvent(event)
-    }
   }
   
   // MARK: Render
@@ -79,8 +70,6 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
   public func draw(in view: MTKView) {
     // Create world to clip uniforms buffer
     let uniformsBuffer = getCameraUniforms(view)
-    
-    // TODO: Get the render pass descriptor as late as possible
     
     // Create render encoder
     guard
@@ -91,14 +80,23 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       log.error("Failed to create command buffer and render encoder")
       client.eventBus.dispatch(ErrorEvent(
         error: RenderError.failedToCreateRenderEncoder("RenderCoordinator"),
-        message: "RenderCoordinator failed to create command buffer and render encoder"))
+        message: "RenderCoordinator failed to create command buffer and render encoder"
+      ))
       return
     }
     
+    // Configure the render encoder
     renderEncoder.setDepthStencilState(depthState)
     renderEncoder.setFrontFacing(.counterClockwise)
-    renderEncoder.setCullMode(.front)
     renderEncoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
+    
+    switch client.configuration.render.mode {
+      case .normal:
+        renderEncoder.setCullMode(.front)
+      case .wireframe:
+        renderEncoder.setCullMode(.none)
+        renderEncoder.setTriangleFillMode(.lines)
+    }
 
     // Render world
     do {
@@ -149,6 +147,7 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
   private func getCameraUniforms(_ view: MTKView) -> MTLBuffer {
     let aspect = Float(view.drawableSize.width / view.drawableSize.height)
     camera.setAspect(aspect)
+    camera.setFovY(MathUtil.radians(from: client.configuration.render.fovY))
     
     let player = client.game.player
     var eyePosition = SIMD3<Float>(player.position.smoothVector)
@@ -158,17 +157,5 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     camera.setRotation(playerLook: player.rotation)
     camera.cacheFrustum()
     return camera.getUniformsBuffer()
-  }
-  
-  /// Handle events received from the client.
-  private func handleClientEvent(_ event: Event) {
-    switch event {
-      case let event as ChangeFOVEvent:
-        // TODO: don't use events to update the fov
-        let fov = MathUtil.radians(from: Float(event.fovDegrees))
-        camera.setFovY(fov)
-      default:
-        break
-    }
   }
 }

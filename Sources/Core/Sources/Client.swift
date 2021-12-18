@@ -9,8 +9,8 @@ public class Client {
   
   /// The game this client is playing in.
   public var game: Game
-  /// The clientside render distance.
-  public var config = ClientConfig()
+  /// The client's configuration
+  public var configuration = ClientConfiguration()
   
   /// The connection to the current server.
   public var connection: ServerConnection?
@@ -73,8 +73,6 @@ public class Client {
         game.player.updateInputs(with: inputEvent)
       case let mouseEvent as MouseMoveEvent:
         game.player.updateLook(with: mouseEvent)
-      case let changeRenderDistanceEvent as ChangeRenderDistanceEvent:
-        config.renderDistance = changeRenderDistanceEvent.renderDistance // TODO: don't change render distance using events, just use a method. events should only be emitted by delta core.
       default:
         break
     }

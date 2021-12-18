@@ -3,12 +3,12 @@ import DeltaCore
 
 struct SettingsView: View {
   var isInGame: Bool
-  var eventBus: EventBus?
+  var client: Client?
   var done: () -> Void
   
-  init(isInGame: Bool, eventBus: EventBus?, onDone done: @escaping () -> Void) {
+  init(isInGame: Bool, client: Client?, onDone done: @escaping () -> Void) {
     self.isInGame = isInGame
-    self.eventBus = eventBus
+    self.client = client
     self.done = done
   }
   
@@ -21,7 +21,7 @@ struct SettingsView: View {
 					NavigationLink("Plugins", destination: PluginView().padding())
         }
         
-        NavigationLink("Video", destination: VideoSettingsView(eventBus: eventBus).padding())
+        NavigationLink("Video", destination: VideoSettingsView(client: client).padding())
         
         Button("Done", action: done)
           .buttonStyle(BorderlessButtonStyle())

@@ -15,7 +15,7 @@ public struct Config: Codable {
   /// The user's server list.
   public var servers: [ServerDescriptor]
   /// Rendering related configuration.
-  public var video: VideoConfig
+  public var render: RenderConfiguration
   /// Plugins that the user has explicitly unloaded.
   public var unloadedPlugins: [String]
   
@@ -49,7 +49,7 @@ public struct Config: Codable {
     mojangAccounts = [:]
     offlineAccounts = [:]
     servers = []
-    video = VideoConfig()
+    render = RenderConfiguration()
     unloadedPlugins = []
   }
   

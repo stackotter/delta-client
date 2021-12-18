@@ -32,6 +32,7 @@ struct PlayServerView: View {
   init(serverDescriptor: ServerDescriptor, resourcePack: ResourcePack, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
     self.serverDescriptor = serverDescriptor
     client = Client(resourcePack: resourcePack)
+    client.configuration.render = ConfigManager.default.config.render
     
     // Disable input when the cursor isn't captured (after player hits escape during play to get to menu)
     _cursorCaptured = inputCaptureEnabled
@@ -140,19 +141,9 @@ struct PlayServerView: View {
     Group {
       switch state.current {
         case .connecting:
-          VStack {
-            Text("Establishing connection...")
-            Button("Cancel", action: disconnect)
-              .buttonStyle(SecondaryButtonStyle())
-              .frame(width: 150)
-          }
+          connectingView
         case .loggingIn:
-          VStack {
-            Text("Logging in...")
-            Button("Cancel", action: disconnect)
-              .buttonStyle(SecondaryButtonStyle())
-              .frame(width: 150)
-          }
+          loggingInView
         case .downloadingChunks(let numberReceived, let total):
           VStack {
             Text("Downloading chunks...")
@@ -167,56 +158,81 @@ struct PlayServerView: View {
           }
         case .playing:
           ZStack {
-            // Renderer
-            MetalView(renderCoordinator: makeRenderCoordinator())
-              .opacity(cursorCaptured ? 1 : 0.2)
-              .onAppear {
-                inputDelegate.bind($cursorCaptured.onChange { newValue in
-                  // When showing overlay make sure menu is the first view
-                  if newValue == false {
-                    overlayState.update(to: .menu)
-                  }
-                })
-                
-                // TODO: make a way to pass initial render config to metal view
-                client.eventBus.dispatch(ChangeFOVEvent(fovDegrees: ConfigManager.default.config.video.fov))
-                client.config.renderDistance = ConfigManager.default.config.video.renderDistance
-                
-                inputDelegate.captureCursor()
-              }
-            
-            // Cross hair
-            if cursorCaptured {
-              Image(systemName: "plus")
-                .font(.system(size: 20))
-                .blendMode(.difference)
-            }
-            
-            // In-game menu overlay
-            if !cursorCaptured {
-              switch overlayState.current {
-                case .menu:
-                  // Invisible button for escape to exit menu. Because keyboard shortcuts aren't working with my custom button styles
-                  Button("Back to game", action: inputDelegate.captureCursor)
-                    .keyboardShortcut(.escape, modifiers: [])
-                    .opacity(0)
-                  
-                  VStack {
-                    Button("Back to game", action: inputDelegate.captureCursor)
-                      .buttonStyle(PrimaryButtonStyle())
-                    Button("Settings", action: { overlayState.update(to: .settings) })
-                      .buttonStyle(SecondaryButtonStyle())
-                    Button("Disconnect", action: disconnect)
-                      .buttonStyle(SecondaryButtonStyle())
-                  }
-                  .frame(width: 200)
-                case .settings:
-                  SettingsView(isInGame: true, eventBus: client.eventBus, onDone: {
-                    overlayState.update(to: .menu)
-                  })
-              }
-            }
+            gameView
+            overlayView
           }
+      }
+    }
+  }
+  
+  var connectingView: some View {
+    VStack {
+      Text("Establishing connection...")
+      Button("Cancel", action: disconnect)
+        .buttonStyle(SecondaryButtonStyle())
+        .frame(width: 150)
+    }
+  }
+  
+  var loggingInView: some View {
+    VStack {
+      Text("Logging in...")
+      Button("Cancel", action: disconnect)
+        .buttonStyle(SecondaryButtonStyle())
+        .frame(width: 150)
+    }
+  }
+  
+  var gameView: some View {
+    ZStack {
+      // Renderer
+      MetalView(renderCoordinator: makeRenderCoordinator())
+        .opacity(cursorCaptured ? 1 : 0.2)
+        .onAppear {
+          inputDelegate.bind($cursorCaptured.onChange { newValue in
+            // When showing overlay make sure menu is the first view
+            if newValue == false {
+              overlayState.update(to: .menu)
+            }
+          })
+          
+          inputDelegate.captureCursor()
+        }
+      
+      // Cross hair
+      if cursorCaptured {
+        Image(systemName: "plus")
+          .font(.system(size: 20))
+          .blendMode(.difference)
+      }
+    }
+  }
+  
+  var overlayView: some View {
+    VStack {
+      // In-game menu overlay
+      if !cursorCaptured {
+        switch overlayState.current {
+          case .menu:
+            // Invisible button for escape to exit menu. Because keyboard shortcuts aren't working with my custom button styles
+            Button("Back to game", action: inputDelegate.captureCursor)
+              .keyboardShortcut(.escape, modifiers: [])
+              .opacity(0)
+            
+            VStack {
+              Button("Back to game", action: inputDelegate.captureCursor)
+                .buttonStyle(PrimaryButtonStyle())
+              Button("Settings", action: { overlayState.update(to: .settings) })
+                .buttonStyle(SecondaryButtonStyle())
+              Button("Disconnect", action: disconnect)
+                .buttonStyle(SecondaryButtonStyle())
+            }
+            .frame(width: 200)
+          case .settings:
+            SettingsView(isInGame: true, client: client, onDone: {
+              overlayState.update(to: .menu)
+            })
+        }
       }
     }
   }

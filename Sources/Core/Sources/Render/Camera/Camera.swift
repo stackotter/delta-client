@@ -1,15 +1,12 @@
 import Foundation
-import simd
 import Metal
+import simd
 
 /// Holds information about a camera to render from.
 public struct Camera {
-  /// The camera's position as an entity position.
-  public var entityPosition: EntityPosition {
-    return EntityPosition(SIMD3<Double>(position))
-  }
+  // MARK: Public properties
   
-  /// The vertical FOV.
+  /// The vertical FOV in radians.
   public private(set) var fovY: Float = 0.5 * .pi // 90deg
   /// The near clipping plane.
   public private(set) var nearDistance: Float = 0.01
@@ -26,17 +23,29 @@ public struct Camera {
   /// The camera's rotation around the y axis measured counter-clockwise from the positive z axis when looking down from above (yaw).
   public private(set) var yRot: Float = 0
   
+  // MARK: Public computed properties
+  
+  /// The camera's position as an entity position.
+  public var entityPosition: EntityPosition {
+    return EntityPosition(SIMD3<Double>(position))
+  }
+  
+  /// The direction that the camera is pointing.
   public var directionVector: SIMD3<Float> {
     let rotationMatrix = MatrixUtil.rotationMatrix(y: Float.pi + yRot) * MatrixUtil.rotationMatrix(x: xRot)
     let unitVector = SIMD4<Float>(0, 0, 1, 0)
     return simd_make_float3(unitVector * rotationMatrix)
   }
   
+  // MARK: Private properties
+  
   private var frustum: Frustum?
   
   private var uniformsBuffers: [MTLBuffer] = []
   private var uniformsIndex = 0
   private var uniformsCount = 6
+  
+  // MARK: Init
   
   public init(_ device: MTLDevice) throws {
     for i in 0..<uniformsCount {
@@ -47,6 +56,8 @@ public struct Camera {
       uniformsBuffers.append(buffer)
     }
   }
+  
+  // MARK: Public methods
   
   /// Update a buffer to contain the current world to clip uniforms.
   public mutating func getUniformsBuffer() -> MTLBuffer {

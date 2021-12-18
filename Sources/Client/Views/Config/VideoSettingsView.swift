@@ -2,17 +2,33 @@ import SwiftUI
 import DeltaCore
 
 struct VideoSettingsView: View {
-  /// Config updates are sent straight to the event bus as soon as they are made if event bus is present.
-  var eventBus: EventBus?
+  /// Config updates are sent straight to the client as soon as they are made if a client is provided.
+  var client: Client?
   
-  @State var renderDistance: Double = 0
-  @State var fov: Double = 0
+  @State var renderDistance: Float = 0
+  @State var fov: Float = 0
+  @State var renderMode: RenderMode = .normal
   
-  init(eventBus: EventBus? = nil) {
-    self.eventBus = eventBus
+  var config: RenderConfiguration {
+    return RenderConfiguration(
+      fovY: Float(fov.rounded()),
+      renderDistance: Int(renderDistance),
+      mode: renderMode)
   }
   
-  /// Handle when user stops/starts editing.
+  /// - Parameter client: If present, config updates are sent to this client.
+  init(client: Client? = nil) {
+    self.client = client
+  }
+  
+  /// Handles when the user changes a value.
+  func onValueChanged<T>(_ newValue: T) {
+    if let client = client {
+      client.configuration.render = config
+    }
+  }
+  
+  /// Handles when the user stops/starts editing.
   func onEditingChanged(_ newValue: Bool) {
     // If the user has stopped editing, update config
     if newValue == false {
@@ -20,14 +36,10 @@ struct VideoSettingsView: View {
     }
   }
   
-  /// Save the user's choices to the config file.
+  /// Saves the user's choices to the config file.
   func save() {
-    let renderDistance = Int(self.renderDistance)
-    let fov = Int(self.fov.rounded())
-    
     var config = ConfigManager.default.config
-    config.video.renderDistance = renderDistance
-    config.video.fov = fov
+    config.render = self.config
     ConfigManager.default.setConfig(to: config)
   }
   
@@ -36,29 +48,48 @@ struct VideoSettingsView: View {
       HStack {
         Text("Render distance: \(Int(renderDistance))")
         Spacer()
-        Slider(value: $renderDistance.onChange { newValue in
-          let event = ChangeRenderDistanceEvent(renderDistance: Int(newValue))
-          eventBus?.dispatch(event)
-        }, in: 1...20, step: 1, onEditingChanged: onEditingChanged)
+        Slider(
+          value: $renderDistance.onChange(onValueChanged),
+          in: 1...20,
+          step: 1,
+          onEditingChanged: onEditingChanged
+        )
           .frame(width: 220)
       }
       
       HStack {
         Text("FOV: \(Int(fov.rounded()))")
         Spacer()
-        Slider(value: $fov.onChange { newValue in
-          let event = ChangeFOVEvent(fovDegrees: Int(newValue.rounded()))
-          eventBus?.dispatch(event)
-        }, in: 30...110, onEditingChanged: onEditingChanged)
+        Slider(
+          value: $fov.onChange(onValueChanged),
+          in: 30...110,
+          onEditingChanged: onEditingChanged
+        )
+          .frame(width: 220)
+      }
+      
+      HStack {
+        Text("Render mode")
+        Spacer()
+        Picker("Render mode", selection: $renderMode.onChange({ newValue in
+          onValueChanged(newValue)
+          save()
+        })) {
+          ForEach(RenderMode.allCases) { mode in
+            Text(mode.rawValue.capitalized)
+          }
+        }
+          .pickerStyle(RadioGroupPickerStyle())
           .frame(width: 220)
       }
     }
     .frame(width: 400)
     .navigationTitle("Video")
     .onAppear {
-      let config = ConfigManager.default.config
-      renderDistance = Double(config.video.renderDistance)
-      fov = Double(config.video.fov)
+      let config = ConfigManager.default.config.render
+      renderDistance = Double(config.renderDistance)
+      fov = Double(config.fovY)
+      renderMode = config.mode
     }
   }
 }
