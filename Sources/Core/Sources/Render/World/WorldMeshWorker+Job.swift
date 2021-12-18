@@ -13,6 +13,13 @@ extension WorldMeshWorker {
   
   /// Handles queueing jobs and prioritisation. Completely threadsafe.
   struct JobQueue {
+    /// The number of jobs currently in the queue.
+    public var count: Int {
+      lock.acquireReadLock()
+      defer { lock.unlock() }
+      return jobs.count
+    }
+    
     /// The queue of current jobs.
     private var jobs: Deque<Job> = []
     /// A lock used to make the job queue threadsafe.

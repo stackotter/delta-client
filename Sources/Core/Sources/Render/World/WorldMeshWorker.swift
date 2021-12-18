@@ -4,6 +4,13 @@ import Metal
 
 /// A multi-threaded worker that creates and updates the world's meshes. Completely threadsafe.
 public class WorldMeshWorker {
+  // MARK: Public properties
+  
+  /// The number of jobs currently queued.
+  public var jobCount: Int {
+    jobQueue.count
+  }
+  
   // MARK: Private properties
   
   /// World that chunks are in.

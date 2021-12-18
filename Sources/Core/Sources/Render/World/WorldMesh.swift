@@ -21,6 +21,15 @@ public struct WorldMesh {
   /// Positions of all currently visible chunk sections (updated when ``update(_:camera:)`` is called.
   private var visibleSections: [ChunkSectionPosition] = []
   
+  /// The maximum number of chunk section preparation jobs that will be queued at any given time.
+  ///
+  /// This allows sections to be prepared in a more sensible order because they are prepared closer
+  /// to the time they were queued which means that the ordering is more likely to be valid. For example,
+  /// if the size of the job queue was not limited and the player turns around while sections are being
+  /// prepared, all of the sections that were previously visible would be prepared before the ones that
+  /// were actually visible.
+  private var maximumQueuedJobCount = 8
+  
   // MARK: Init
   
   /// Creates a new world mesh. Prepares any chunks already loaded in the world.
@@ -56,13 +65,11 @@ public struct WorldMesh {
         if let chunk = world.chunk(at: position) {
           visibilityGraph.addChunk(chunk, at: position)
           
-          // Mark any non-empty sections of the chunk for preparation. It doesn't actually mutate, that's just the API I had to use.
-          chunk.mutateSections(action: { sections in
-            for (y, section) in sections.enumerated() where !section.isEmpty {
-              let sectionPosition = ChunkSectionPosition(position, sectionY: y)
-              chunkSectionsToPrepare.insert(sectionPosition)
-            }
-          })
+          // Mark any non-empty sections of the chunk for preparation.
+          for (y, section) in chunk.getSections().enumerated() where !section.isEmpty {
+            let sectionPosition = ChunkSectionPosition(position, sectionY: y)
+            chunkSectionsToPrepare.insert(sectionPosition)
+          }
         }
       }
     }
@@ -135,6 +142,10 @@ public struct WorldMesh {
     visibleSections = visibilityGraph.chunkSectionsVisible(from: cameraPosition, camera: camera)
     
     for section in visibleSections {
+      if meshWorker.jobCount == maximumQueuedJobCount {
+        return
+      }
+      
       if shouldPrepareChunkSection(at: section) {
         prepareChunkSection(at: section, acquireWriteLock: false)
       }
