@@ -75,9 +75,8 @@ public struct EntityRenderer: Renderer {
     // Get all renderable entities
     let entities = client.game.nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self, excludesAll: ClientPlayerEntity.self)
     
-    guard !entities.isEmpty else {
-      return
-    }
+    let renderDistance = client.configuration.render.renderDistance
+    let cameraChunk = camera.entityPosition.chunk
     
     // Create uniforms for each entity
     var entityUniforms: [Uniforms] = []
@@ -86,8 +85,18 @@ public struct EntityRenderer: Renderer {
       var position = SIMD3<Float>(position.smoothVector)
       position -= SIMD3<Float>(hitBox.width, 0, hitBox.width) * 0.5
       
+      // Don't render entities that are outside of the render distance
+      let chunkPosition = EntityPosition(SIMD3<Double>(position)).chunk
+      if !chunkPosition.isWithinRenderDistance(renderDistance, of: cameraChunk) {
+        continue
+      }
+      
       let uniforms = Uniforms(transformation: MatrixUtil.scalingMatrix(size) * MatrixUtil.translationMatrix(position))
       entityUniforms.append(uniforms)
+    }
+    
+    guard !entityUniforms.isEmpty else {
+      return
     }
     
     // Create buffer for instance uniforms. If the current buffer is big enough, use it unless it is more than 64 entities too big.
@@ -110,17 +119,17 @@ public struct EntityRenderer: Renderer {
       instanceUniformsBuffer.contents().copyMemory(from: &entityUniforms, byteCount: minimumBufferSize)
     }
     
-    // A hack to solve https://bugs.swift.org/browse/SR-15613
-    // If this isn't done, `entityUniforms` gets freed somewhere around line 99 in release builds
-    use(entityUniforms)
-    
     self.instanceUniformsBuffer = instanceUniformsBuffer
     
     // Render all the hitboxes using instancing
     encoder.setRenderPipelineState(renderPipelineState)
     encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
     encoder.setVertexBuffer(instanceUniformsBuffer, offset: 0, index: 2)
-    encoder.drawIndexedPrimitives(type: .triangle, indexCount: indexCount, indexType: .uint32, indexBuffer: indexBuffer, indexBufferOffset: 0, instanceCount: entities.count)
+    encoder.drawIndexedPrimitives(type: .triangle, indexCount: indexCount, indexType: .uint32, indexBuffer: indexBuffer, indexBufferOffset: 0, instanceCount: entityUniforms.count)
+    
+    // A hack to solve https://bugs.swift.org/browse/SR-15613
+    // If this isn't done, `entityUniforms` gets freed somewhere around the line with `var instanceUniformsBuffer: MTLBuffer` in release builds
+    use(entityUniforms)
   }
   
   /// A hack used to solve https://bugs.swift.org/browse/SR-15613

@@ -56,6 +56,18 @@ public struct ChunkPosition {
   
   // MARK: Public methods
   
+  /// Gets whether this chunk is within the given render distance of a given chunk.
+  /// - Parameters:
+  ///   - renderDistance: The render distance.
+  ///   - other: The other chunk.
+  /// - Returns: Whether the chunk is within render distance of the other chunk.
+  public func isWithinRenderDistance(_ renderDistance: Int, of other: ChunkPosition) -> Bool {
+    let distance = max(
+      abs(self.chunkX - other.chunkX),
+      abs(self.chunkZ - other.chunkZ))
+    return distance <= renderDistance
+  }
+  
   /// Gets the position of the chunk that neighbours this chunk in the specified direction.
   public func neighbour(inDirection direction: CardinalDirection) -> ChunkPosition {
     var position = self

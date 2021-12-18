@@ -135,11 +135,11 @@ public struct WorldMesh {
   /// - Parameters:
   ///   - cameraPosition: The current position of the camera.
   ///   - camera: The camera the world is being viewed from.
-  public mutating func update(camera: Camera) {
+  public mutating func update(camera: Camera, renderDistance: Int) {
     lock.acquireWriteLock()
     defer { lock.unlock() }
     
-    visibleSections = visibilityGraph.chunkSectionsVisible(from: camera)
+    visibleSections = visibilityGraph.chunkSectionsVisible(from: camera, renderDistance: renderDistance)
     
     for section in visibleSections {
       if meshWorker.jobCount == maximumQueuedJobCount {

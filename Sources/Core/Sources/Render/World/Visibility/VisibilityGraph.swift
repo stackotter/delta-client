@@ -4,6 +4,9 @@ import Collections
 ///
 /// It uses a conservative approach, which means that some chunks will be incorrectly identified
 /// as visible, but no chunks will be incorrectly identified as not visible.
+///
+/// See https://tomcc.github.io/2014/08/31/visibility-1.html for an in-depth explanation of the
+/// technique.
 public struct VisibilityGraph {
   // MARK: Public properties
   
@@ -208,12 +211,13 @@ public struct VisibilityGraph {
   /// - Parameter position: Position of the chunk section that the world is being viewed from.
   /// - Parameter camera: Used for frustum culling.
   /// - Returns: The positions of all possibly visible chunk sections. Does not include empty sections.
-  public func chunkSectionsVisible(from camera: Camera) -> [ChunkSectionPosition] {
+  public func chunkSectionsVisible(from camera: Camera, renderDistance: Int) -> [ChunkSectionPosition] {
     lock.acquireReadLock()
     defer { lock.unlock() }
     
     // Move the position of the initial chunk to a more sensible position.
     var position = camera.entityPosition.chunkSection
+    let cameraChunk = position.chunk
     if position.sectionX < minimumX - 1 {
       position.sectionX = minimumX - 1
     } else if position.sectionX > maximumX + 1 {
@@ -250,6 +254,12 @@ public struct VisibilityGraph {
           continue
         }
         
+        // Chunks outside render distance aren't visible
+        let neighbourChunk = neighbourPosition.chunk
+        if !neighbourChunk.isWithinRenderDistance(renderDistance, of: cameraChunk) {
+          continue
+        }
+        
         // Don't visit the same section twice
         guard !visited.contains(neighbourPosition) else {
           continue
@@ -259,6 +269,7 @@ public struct VisibilityGraph {
           continue
         }
         
+        // Frustum culling
         if !camera.isChunkSectionVisible(at: neighbourPosition) {
           continue
         }

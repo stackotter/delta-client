@@ -50,7 +50,7 @@ struct VideoSettingsView: View {
         Spacer()
         Slider(
           value: $renderDistance.onChange(onValueChanged),
-          in: 1...20,
+          in: 0...32,
           step: 1,
           onEditingChanged: onEditingChanged
         )
