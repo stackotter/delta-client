@@ -8,7 +8,10 @@ public class EventBus {
   private var handlersLock = ReadWriteLock()
   
   /// The concurrent dispatch queue for dispatching events.
-  private var eventThread = DispatchQueue(label: "events")
+  private var eventThread = DispatchQueue(label: "events", attributes: [.concurrent])
+
+  /// Creates a new event bus.
+  public init() {}
   
   /// Registers a handler to receive updates.
   public func registerHandler(_ handler: @escaping (Event) -> Void) {

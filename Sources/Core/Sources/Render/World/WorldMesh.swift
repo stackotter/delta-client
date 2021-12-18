@@ -162,10 +162,12 @@ public struct WorldMesh {
   }
   
   /// Gets an array containing the position of each section affected by the update (including the section itself).
+  ///
+  /// This function shouldn't need to be `mutating`, but it causes crashes if it is not.
   /// - Parameter position: The position of the chunk section.
   /// - Parameter onlyLighting: If true, the update will be treated as if only lighting has changed.
   /// - Returns: The affected chunk sections.
-  public func sectionsAffectedBySectionUpdate(at position: ChunkSectionPosition, onlyLighting: Bool = false) -> [ChunkSectionPosition] {
+  public mutating func sectionsAffectedBySectionUpdate(at position: ChunkSectionPosition, onlyLighting: Bool = false) -> [ChunkSectionPosition] {
     lock.acquireReadLock()
     defer { lock.unlock() }
     
