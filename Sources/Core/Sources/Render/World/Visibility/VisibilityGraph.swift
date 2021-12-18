@@ -11,15 +11,15 @@ public struct VisibilityGraph {
   public var sectionCount: Int {
     lock.acquireReadLock()
     defer { lock.unlock() }
-    return sectionFaceConnectivity.count
+    return sections.count
   }
   
   // MARK: Private properties
   
   /// Used to make the graph threadsafe.
   private var lock = ReadWriteLock()
-  /// Stores the connectivity each chunk in the graph (see `ChunkSectionFaceConnectivity`).
-  private var sectionFaceConnectivity: [ChunkSectionPosition: ChunkSectionFaceConnectivity] = [:]
+  /// Stores the connectivity for each chunk in the graph (see ``ChunkSectionFaceConnectivity``).
+  private var sections: [ChunkSectionPosition: (connectivity: ChunkSectionFaceConnectivity, isEmpty: Bool)] = [:]
   /// All of the chunks currently in the visibility graph.
   private var chunks: Set<ChunkPosition> = []
   /// Block model palette used to determine whether blocks are see through or not.
@@ -48,7 +48,7 @@ public struct VisibilityGraph {
     for (sectionY, section) in chunk.getSections().enumerated() {
       let sectionPosition = ChunkSectionPosition(position, sectionY: sectionY)
       var connectivityGraph = ChunkSectionVoxelGraph(for: section, blockModelPalette: blockModelPalette)
-      sectionFaceConnectivity[sectionPosition] = connectivityGraph.calculateConnectivity()
+      sections[sectionPosition] = (connectivity: connectivityGraph.calculateConnectivity(), isEmpty: section.isEmpty)
     }
   }
   
@@ -61,7 +61,7 @@ public struct VisibilityGraph {
     chunks.remove(position)
     
     for y in 0..<Chunk.numSections {
-      sectionFaceConnectivity.removeValue(forKey: ChunkSectionPosition(position, sectionY: y))
+      sections.removeValue(forKey: ChunkSectionPosition(position, sectionY: y))
     }
   }
   
@@ -91,7 +91,7 @@ public struct VisibilityGraph {
     }
     
     var connectivityGraph = ChunkSectionVoxelGraph(for: section, blockModelPalette: blockModelPalette)
-    sectionFaceConnectivity[position] = connectivityGraph.calculateConnectivity()
+    sections[position] = (connectivity: connectivityGraph.calculateConnectivity(), isEmpty: section.isEmpty)
   }
   
   /// Gets whether a ray could possibly pass through the given chunk section, entering through a given face and exiting out another given face.
@@ -108,7 +108,11 @@ public struct VisibilityGraph {
     
     let first = ChunkSectionFace.forDirection(entryFace)
     let second = ChunkSectionFace.forDirection(exitFace)
-    return sectionFaceConnectivity[section]?.areConnected(first, second) == true
+    if let connectivity = sections[section] {
+      return connectivity.areConnected(first, second)
+    } else {
+      return section.sectionY >= -1 && section.sectionY <= Chunk.numSections + 1
+    }
   }
   
   /// Gets the positions of all chunk sections that are possibly visible from the given chunk.
@@ -159,9 +163,12 @@ public struct VisibilityGraph {
         queue.append(SearchQueueEntry(
           position: neighbourPosition,
           entryFace: exitFace.opposite,
-          directions: directions))
+          directions: directions
+        ))
         
-        visible.append(neighbourPosition)
+        if !(sections[neighbourPosition]?.isEmpty == true) {
+          visible.append(neighbourPosition)
+        }
       }
     }
     
