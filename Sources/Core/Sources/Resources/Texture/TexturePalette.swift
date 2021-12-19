@@ -5,9 +5,9 @@ public struct TexturePalette {
   /// The width of the textures in this palette. The heights will be multiples of this number.
   public var width: Int
   
-  /// An index for `textures`.
-  private var identifierToIndex: [Identifier: Int]
-  /// The palette's textures, indexed by `identifierToIndex`.
+  /// An index for ``textures``.
+  public var identifierToIndex: [Identifier: Int]
+  /// The palette's textures, indexed by ``identifierToIndex``.
   public var textures: [Texture]
   
   // MARK: Init

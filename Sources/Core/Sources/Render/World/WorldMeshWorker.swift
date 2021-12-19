@@ -21,7 +21,7 @@ public class WorldMeshWorker {
   /// A lock used to make the worker threadsafe.
   private var lock = ReadWriteLock()
   
-  /// Meshes that the worker has created or updated and the `WorldRenderer` hasn't taken back yet.
+  /// Meshes that the worker has created or updated and the ``WorldRenderer`` hasn't taken back yet.
   private var updatedMeshes: [ChunkSectionPosition: ChunkSectionMesh] = [:]
   
   /// Mesh creation jobs.

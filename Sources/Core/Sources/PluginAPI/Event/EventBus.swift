@@ -4,7 +4,7 @@ import Foundation
 public class EventBus {
   /// The array of registered event handlers.
   private var handlers: [(Event) -> Void] = []
-  /// A lock for managing thread safe read and write of `handlers`.
+  /// A lock for managing thread safe read and write of ``handlers``.
   private var handlersLock = ReadWriteLock()
   
   /// The concurrent dispatch queue for dispatching events.

@@ -31,7 +31,6 @@ public class PluginEnvironment: ObservableObject {
   /// Plugins must be in the top level of the directory and must have the `.deltaplugin` file extension.
   ///
   /// Throws if it fails to enumerate the contents of `directory`. Any errors from plugin loading are added to ``errors``.
-  ///
   /// - Parameter directory: Directory to load plugins from.
   /// - Parameter excludedIdentifiers: Identifier's of plugins to keep as unloaded (they will still be registered though).
   public func loadPlugins(from directory: URL, excluding excludedIdentifiers: [String] = []) throws {

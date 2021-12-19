@@ -72,7 +72,7 @@ extension Chunk {
     /// - Returns: The block id.
     ///
     /// For safety, the position is automatically converted to be relative to whatever section it is in. If
-    /// you're using this in a performance critical loop perhaps you should manually access `blocks` instead.
+    /// you're using this in a performance critical loop perhaps you should manually access ``blocks`` instead.
     public func getBlockId(at position: Position) -> Int {
       let index = position.relativeToChunkSection.blockIndex
       return getBlockId(at: index)
@@ -95,18 +95,16 @@ extension Chunk {
     ///   - id: The new block id.
     ///
     /// For safety, the position is automatically converted to be relative to whatever section it is in. If
-    /// you're using this in a performance critical loop perhaps you should manually modify `blocks` instead.
+    /// you're using this in a performance critical loop perhaps you should manually modify ``blocks`` instead.
     public mutating func setBlockId(at position: Position, to id: Int) {
       let index = position.relativeToChunkSection.blockIndex
       setBlockId(at: index, to: id)
     }
     
-    /// Set the block id at the specified position.
+    /// Set the block id at the specified position. Does nothing if the block index is invalid.
     /// - Parameters:
     ///   - index: Index of the block relative to this section.
     ///   - id: The new block id.
-    ///
-    /// Does nothing if the block index is invalid.
     public mutating func setBlockId(at index: Int, to id: Int) {
       guard index < Section.numBlocks && index >= 0 else {
         log.warning("Invalid position passed to Chunk.Section.setBlockState(at:to:); index=\(index)")

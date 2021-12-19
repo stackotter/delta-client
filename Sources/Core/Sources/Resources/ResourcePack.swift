@@ -62,9 +62,9 @@ public struct ResourcePack {
   
   // MARK: Loading
   
-  /// Loads the resource pack in the given directory. If provided, cached resources are loaded from the given cache directory if present. To create a resource pack cache use `cache(to:)`. Resource pack caches do not cache the whole pack yet, only the most resource intensive parts to load.
+  /// Loads the resource pack in the given directory. If provided, cached resources are loaded from the given cache directory if present. To create a resource pack cache use ``cache(to:)``. Resource pack caches do not cache the whole pack yet, only the most resource intensive parts to load.
   ///
-  /// ``Registry`` must be populated for this to work.
+  /// ``RegistryStore/shared`` must be populated for this to work.
   public static func load(from directory: URL, cacheDirectory: URL?) throws -> ResourcePack {
     // Check resource pack exists
     guard FileManager.default.directoryExists(at: directory) else {

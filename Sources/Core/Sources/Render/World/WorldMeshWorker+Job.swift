@@ -7,7 +7,7 @@ extension WorldMeshWorker {
     var chunk: Chunk
     /// The position of the section to prepare.
     var position: ChunkSectionPosition
-    /// The neighbouring chunks of `chunk`.
+    /// The neighbouring chunks of ``chunk``.
     var neighbours: ChunkNeighbours
   }
   

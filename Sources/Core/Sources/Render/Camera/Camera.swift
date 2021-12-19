@@ -134,7 +134,7 @@ public struct Camera {
     return worldToCamera * cameraToClip
   }
   
-  /// Calculates the camera's frustum and saves it. Cached frustum can be fetched via `getFrustum`.
+  /// Calculates the camera's frustum and saves it. Cached frustum can be fetched via ``getFrustum()``.
   public mutating func cacheFrustum() {
     self.frustum = calculateFrustum()
   }

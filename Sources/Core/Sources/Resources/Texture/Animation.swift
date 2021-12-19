@@ -11,7 +11,7 @@ extension Texture {
       self.frames = frames
     }
     
-    /// `textureFrames` is the number of frames present in the corresponding texture.
+    /// `maxFrameIndex` is the number of frames present in the corresponding texture.
     public init(from mcMeta: AnimationMCMeta, maxFrameIndex: Int) {
       interpolate = mcMeta.animation.interpolate ?? false
       

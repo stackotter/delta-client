@@ -35,20 +35,20 @@ public struct Biome: Codable {
   
   // MARK: Init
   
-  /// Creates a default biome.
-  ///
-  /// `depth`, `scale`, `temperature` and `rainfall` default to 0. `waterColor`, `waterFogColor`,
-  /// `fogColor` and `skyColor` default to ``RGBColor/white``. `category` defaults to ``Category/none``
-  /// and `precipitationType` defaults to ``PrecipitationType/none``.
-  ///
+  /// Creates a biome with the given parameters.
   /// - Parameters:
   ///   - id: The biome's unique id.
   ///   - identifier: The identifier used to refer to the biome in a user friendly way.
-  public init(id: Int, identifier: Identifier) {
-    self.id = id
-    self.identifier = identifier
-  }
-  
+  ///   - depth: See ``depth``. Defaults to 0.
+  ///   - scale: See ``scale``. Defaults to 0.
+  ///   - temperature: See ``temperature``. Defaults to 0.
+  ///   - rainfall: See ``rainfall``. Defaults to 0.
+  ///   - fogColor: See ``fogColor``. Defaults to ``RGBColor/white``.
+  ///   - skyColor: See ``skyColor``. Defaults to ``RGBColor/white``.
+  ///   - waterColor: See ``waterColor``. Defaults to ``RGBColor/white``.
+  ///   - waterFogColor: See ``waterFogColor``. Defaults to ``RGBColor/white``.
+  ///   - category: See ``category``. Defaults to ``Category/none``.
+  ///   - precipitationType: See ``precipitationType``. Defaults to ``PrecipitationType/none``.
   public init(
     id: Int,
     identifier: Identifier,

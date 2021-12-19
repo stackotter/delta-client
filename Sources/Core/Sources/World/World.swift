@@ -44,14 +44,14 @@ public class World {
   
   // MARK: Private properties
   
-  /// Lock for managing thread-safe read and write of `age` and `timeOfDay`.
+  /// Lock for managing thread-safe read and write of ``age`` and ``timeOfDay``.
   private var timeLock = ReadWriteLock()
   /// The world's age.
   private var age = 0
   /// The time of day.
   private var timeOfDay = 0
   
-  /// Lock for managing thread-safe read and write of `chunks`, `chunklessLightingData` and `unlitChunks`.
+  /// Lock for managing thread-safe read and write of ``chunks``, ``chunklessLightingData`` and ``unlitChunks``.
   private var terrainLock = ReadWriteLock()
   /// The world's chunks.
   private var chunks: [ChunkPosition: Chunk] = [:]
@@ -160,7 +160,7 @@ public class World {
   /// - Parameters:
   ///   - position: Position of block.
   ///   - acquireLock: Whether to acquire a lock or not before reading the value. Don't touch this unless you know what you're doing.
-  /// - Returns: The block at the given position. `Block.missing` if the block doesn't exist.
+  /// - Returns: The block at the given position. ``Block/missing`` if the block doesn't exist.
   public func getBlock(at position: Position, acquireLock: Bool = true) -> Block {
     return RegistryStore.shared.blockRegistry.block(withId: Int(getBlockId(at: position, acquireLock: acquireLock))) ?? Block.missing
   }
@@ -183,7 +183,7 @@ public class World {
   /// Gets the block light level for the given block.
   ///
   /// - Parameter position: Position of block.
-  /// - Returns: The block light level of the block. If the given position isn't loaded, `LightLevel.defaultBlockLightLevel` is returned.
+  /// - Returns: The block light level of the block. If the given position isn't loaded, ``LightLevel/defaultBlockLightLevel`` is returned.
   public func getBlockLightLevel(at position: Position) -> Int {
     if let chunk = chunk(at: position.chunk) {
       return chunk.blockLightLevel(at: position.relativeToChunk)
@@ -208,7 +208,7 @@ public class World {
   /// Gets the sky light level for the given block.
   ///
   /// - Parameter position: Position of block.
-  /// - Returns: The sky light level of the block. If the given position isn't loaded, `LightLevel.defaultSkyLightLevel` is returned.
+  /// - Returns: The sky light level of the block. If the given position isn't loaded, ``LightLevel/defaultSkyLightLevel`` is returned.
   public func getSkyLightLevel(at position: Position) -> Int {
     if let chunk = chunk(at: position.chunk) {
       return chunk.skyLightLevel(at: position.relativeToChunk)

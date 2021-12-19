@@ -9,7 +9,7 @@ public struct DirectionSet: OptionSet {
   public static let up = DirectionSet(rawValue: 0x10)
   public static let down = DirectionSet(rawValue: 0x20)
   
-  /// All possible directions. Matches the `allDirections` property of ``Direction``.
+  /// All possible directions. Matches the order of ``Direction/allDirections``.
   public static let directions: [DirectionSet] = [
     .north,
     .south,

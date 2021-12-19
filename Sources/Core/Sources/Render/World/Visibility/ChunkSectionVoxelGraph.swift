@@ -16,7 +16,7 @@ public struct ChunkSectionVoxelGraph {
   private var initialVoxelCount: Int
   /// Stores the image's voxels. Indexed by `y * voxelsPerLayer + z * dimension + x`.
   private var voxels: [Bool]
-  /// Used to efficiently set voxels values in `voxels`. Will be invalid in copies of the graph (because it's a struct).
+  /// Used to efficiently set voxels values in ``voxels``. Will be invalid in copies of the graph (because it's a struct).
   private var mutableVoxelsPointer: UnsafeMutableBufferPointer<Bool>
   
   // MARK: Private methods

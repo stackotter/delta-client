@@ -1,7 +1,9 @@
 import Foundation
 import simd
 
-/// A neater format for `PixlyzerBlockModelDescriptor`.
+/// Stores the transforms and properties to apply to a model before rendering it.
+///
+/// A neater format for ``PixlyzerBlockModelDescriptor``.
 public struct BlockModelRenderDescriptor: Codable {
   public var model: Identifier
   public var xRotationDegrees: Int
