@@ -1,4 +1,5 @@
 import Foundation
+import ZippyJSON
 
 public enum PixlyzerError: LocalizedError {
   /// The block with the specified id is missing.
@@ -12,7 +13,7 @@ public enum PixlyzerError: LocalizedError {
 public enum PixlyzerFormatter {
   /// Downloads the pixlyzer registries, reformats them, and caches them to an output directory.
   /// - Parameter version: The minecraft version string (e.g. '1.16.1').
-  public static func downloadAndFormatRegistries(_ version: String) throws -> Registry {
+  public static func downloadAndFormatRegistries(_ version: String) throws -> RegistryStore {
     let fluidsDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/fluids.min.json")!
     let blocksDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/blocks.min.json")!
     let biomesDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/biomes.min.json")!
@@ -25,7 +26,7 @@ public enum PixlyzerFormatter {
     log.info("Downloading and decoding pixlyzer biomes")
     let pixlyzerBiomes: [String: PixlyzerBiome] = try downloadJSON(biomesDownloadURL, convertSnakeCase: true)
     log.info("Downloading and decoding pixlyzer blocks")
-    let pixlyzerBlocks: [String: PixlyzerBlock] = try downloadJSON(blocksDownloadURL, convertSnakeCase: false)
+    let pixlyzerBlocks: [String: PixlyzerBlock] = try downloadJSON(blocksDownloadURL, convertSnakeCase: false, useZippyJSON: false)
     log.info("Downloading and decoding pixlyzer entities")
     let pixlyzerEntities: [String: PixlyzerEntity] = try downloadJSON(entitiesDownloadURL, convertSnakeCase: true)
     log.info("Downloading and decoding pixlyzer shapes")
@@ -149,19 +150,28 @@ public enum PixlyzerFormatter {
     let blockRegistry = BlockRegistry(blocks: blockArray, renderDescriptors: renderDescriptors)
     let entityRegistry = try EntityRegistry(entities: entities)
     
-    return Registry(
+    return RegistryStore(
       blockRegistry: blockRegistry,
       biomeRegistry: biomeRegistry,
       fluidRegistry: fluidRegistry,
       entityRegistry: entityRegistry)
   }
   
-  private static func downloadJSON<T: Decodable>(_ url: URL, convertSnakeCase: Bool) throws -> T {
+  private static func downloadJSON<T: Decodable>(_ url: URL, convertSnakeCase: Bool, useZippyJSON: Bool = true) throws -> T {
     let contents = try Data(contentsOf: url)
-    let decoder = JSONDecoder()
-    if convertSnakeCase {
-      decoder.keyDecodingStrategy = .convertFromSnakeCase
+    
+    if useZippyJSON {
+      let decoder = ZippyJSONDecoder()
+      if convertSnakeCase {
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+      }
+      return try decoder.decode(T.self, from: contents)
+    } else {
+      let decoder = JSONDecoder()
+      if convertSnakeCase {
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+      }
+      return try decoder.decode(T.self, from: contents)
     }
-    return try decoder.decode(T.self, from: contents)
   }
 }

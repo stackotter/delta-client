@@ -160,7 +160,7 @@ public struct TexturePalette {
     return arrayTexture
   }
   
-  public func updateArrayTexture(arrayTexture: MTLTexture, device: MTLDevice, animationState: ArrayTextureAnimationState, updatedTextures: [Int], commandQueue: MTLCommandQueue) {
+  public func updateArrayTexture(arrayTexture: MTLTexture, animationState: ArrayTextureAnimationState, updatedTextures: [Int], commandQueue: MTLCommandQueue) {
     guard !updatedTextures.isEmpty else {
       return
     }

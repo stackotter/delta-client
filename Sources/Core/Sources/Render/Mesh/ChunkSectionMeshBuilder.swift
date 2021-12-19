@@ -126,7 +126,7 @@ public struct ChunkSectionMeshBuilder {
     }
     
     // Get block
-    guard let block = Registry.shared.blockRegistry.block(withId: blockId) else {
+    guard let block = RegistryStore.shared.blockRegistry.block(withId: blockId) else {
       log.warning("Skipping block with non-existent state id \(blockId), failed to get block information")
       return
     }
@@ -391,7 +391,7 @@ public struct ChunkSectionMeshBuilder {
     indexToNeighbourIndices: [[(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]]
   ) {
     guard
-      let block = Registry.shared.blockRegistry.block(withId: blockId),
+      let block = RegistryStore.shared.blockRegistry.block(withId: blockId),
       let fluid = block.fluidState?.fluid
     else {
       log.warning("Failed to get fluid block with block id \(blockId)")
@@ -429,7 +429,7 @@ public struct ChunkSectionMeshBuilder {
     var cullingNeighbours = getCullingNeighbours(at: position.relativeToChunkSection, blockId: blockId, neighbouringBlocks: neighbouringBlockIds)
     var neighbourBlocks = [Direction: Block](minimumCapacity: 6)
     for (direction, neighbourBlockId) in neighbouringBlockIds {
-      let neighbourBlock = Registry.shared.blockRegistry.block(withId: neighbourBlockId)
+      let neighbourBlock = RegistryStore.shared.blockRegistry.block(withId: neighbourBlockId)
       neighbourBlocks[direction] = neighbourBlock
       if neighbourBlock?.fluidId == fluid.id {
         cullingNeighbours.insert(direction)
@@ -791,7 +791,7 @@ public struct ChunkSectionMeshBuilder {
   /// - Returns: The set of directions of neighbours that can possibly cull a face.
   func getCullingNeighbours(at position: Position, blockId: Int, neighbouringBlocks: [(Direction, Int)]) -> Set<Direction> {
     var cullingNeighbours = Set<Direction>(minimumCapacity: 6)
-    let blockCullsSameKind = Registry.shared.blockRegistry.selfCullingBlocks.contains(blockId)
+    let blockCullsSameKind = RegistryStore.shared.blockRegistry.selfCullingBlocks.contains(blockId)
     
     for (direction, neighbourBlockId) in neighbouringBlocks where neighbourBlockId != 0 {
       // We assume that block model variants always have the same culling faces as eachother, so no position is passed to getModel.

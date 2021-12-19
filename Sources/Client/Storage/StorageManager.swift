@@ -46,7 +46,7 @@ final class StorageManager {
         try? FileManager.default.removeItem(at: storageDirectory)
         try Self.createDirectory(at: storageDirectory)
       } catch {
-        DeltaClientApp.fatal("Failed to create storage directory: \(error)")
+        DeltaClientApp.fatal("Failed to create storage directory: \(error.localizedDescription)")
       }
     }
     
@@ -59,7 +59,7 @@ final class StorageManager {
         try createBackup()
         try resetStorage()
       } catch {
-        DeltaClientApp.fatal("Failed to reset storage for fresh install: \(error)")
+        DeltaClientApp.fatal("Failed to reset storage for fresh install: \(error.localizedDescription)")
       }
       
       // Create the launch marker

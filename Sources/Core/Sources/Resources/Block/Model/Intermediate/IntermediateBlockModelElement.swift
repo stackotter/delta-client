@@ -34,7 +34,7 @@ public struct IntermediateBlockModelElement {
     
     faces = try mojangElement.faces.map { (directionString, mojangFace) in
       guard let mojangDirection = JSONBlockModelFaceName(rawValue: directionString) else {
-        throw BlockRegistryError.invalidDirectionString(directionString)
+        throw BlockModelPaletteError.invalidDirectionString(directionString)
       }
       return IntermediateBlockModelFace(
         from: mojangFace,

@@ -21,48 +21,17 @@ public struct JSON {
     return [String](dict.keys)
   }
   
-  public init() {
-    self.dict = [:]
-  }
-  
   public init(dict: [String: Any]) {
     self.dict = dict
   }
   
-  public static func fromURL(_ url: URL) throws -> JSON {
-    let data: Data
-    do {
-      data = try Data(contentsOf: url)
-    } catch {
-      throw JSONError.failedToOpenURL
-    }
-    
-    return try fromData(data)
-  }
-  
   public static func fromString(_ string: String) throws -> JSON {
     let data = string.data(using: .utf8)!
-    return try fromData(data)
-  }
-  
-  public static func fromData(_ data: Data) throws -> JSON {
     guard let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
       throw JSONError.failedToDeserialize
     }
     let json = JSON(dict: dict)
     return json
-  }
-  
-  // returns true on success
-  public func writeTo(_ url: URL) -> Bool {
-    do {
-      let data = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-      try data.write(to: url)
-      return true
-    } catch {
-      log.error("failed to write json to file `\(url.absoluteString)`")
-      return false
-    }
   }
   
   public func containsKey(_ key: String) -> Bool {

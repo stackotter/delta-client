@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import DeltaCore
+import ZippyJSON
 
 /// Used to update the client to either the latest successful CI build or the latest GitHub release.
 public final class Updater: ObservableObject {
@@ -79,7 +80,7 @@ public final class Updater: ObservableObject {
         do {
           try data.write(to: zipFile)
         } catch {
-          DeltaClientApp.modalError("Failed to write download to disk; \(error)", safeState: .serverList)
+          DeltaClientApp.modalError("Failed to write download to disk; \(error.localizedDescription)", safeState: .serverList)
         }
       }
     }
@@ -101,7 +102,7 @@ public final class Updater: ObservableObject {
       } catch {
         // Just a workaround because somehow this job unsuspends as when the a subsequent update attempt writes to DeltaClient.zip
         if !queue.isSuspended {
-          DeltaClientApp.modalError("Failed to unzip DeltaClient.zip; \(error)", safeState: .serverList)
+          DeltaClientApp.modalError("Failed to unzip DeltaClient.zip; \(error.localizedDescription)", safeState: .serverList)
         }
       }
     }
@@ -115,7 +116,7 @@ public final class Updater: ObservableObject {
         try FileManager.default.removeItem(at: StorageManager.default.cacheDirectory)
       } catch {
         if !queue.isSuspended {
-          DeltaClientApp.modalError("Failed to delete cache directory; \(error)", safeState: .serverList)
+          DeltaClientApp.modalError("Failed to delete cache directory; \(error.localizedDescription)", safeState: .serverList)
         }
       }
     }
@@ -172,7 +173,7 @@ public final class Updater: ObservableObject {
   ///
   /// - Returns: A download URL and a version string
   private static func getLatestStableDownloadURL() throws -> (URL, String) {
-    let decoder = JSONDecoder()
+    let decoder = ZippyJSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
     
     let apiURL = URL(string: "https://api.github.com/repos/stackotter/delta-client/releases")!
@@ -201,7 +202,7 @@ public final class Updater: ObservableObject {
   ///
   /// - Returns: A download URL and a version string
   private static func getLatestUnstableDownloadURL() throws -> (URL, String) {
-    let decoder = JSONDecoder()
+    let decoder = ZippyJSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
     
     // Get a list of all workflow runs

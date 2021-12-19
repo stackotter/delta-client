@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+enum ProtobufDirection {
+  DOWN = 0;
+  UP = 1;
+  NORTH = 2;
+  SOUTH = 3;
+  WEST = 4;
+  EAST = 5;
+}
+
+enum ProtobufTextureType {
+  OPAQUE = 0;
+  TRANSPARENT = 1;
+  TRANSLUCENT = 2;
+}
+
+message ProtobufBlockModelFace {
+  ProtobufDirection direction = 1;
+  ProtobufDirection actual_direction = 2;
+  repeated float uvs = 3;
+  int32 texture = 4;
+  optional ProtobufDirection cullface = 5;
+  bool is_tinted = 6;
+}
+
+message ProtobufBlockModelElement {
+  bytes transformation = 1;
+  bool shade = 2;
+  repeated ProtobufBlockModelFace faces = 3;
+}
+
+message ProtobufBlockModelPart {
+  bool ambient_occlusion = 1;
+  optional int32 display_transforms_index = 2;
+  repeated ProtobufBlockModelElement elements = 3;
+}
+
+message ProtobufBlockModel {
+  repeated ProtobufBlockModelPart parts = 1;
+  repeated ProtobufDirection culling_faces = 2;
+  repeated ProtobufDirection cullable_faces = 3;
+  repeated ProtobufDirection non_cullable_faces = 4;
+  ProtobufTextureType texture_type = 5;
+}
+
+message ProtobufVariants {
+  repeated ProtobufBlockModel variants = 1;
+}
+
+message ProtobufDisplayTransforms {
+  bytes third_person_right_hand = 1;
+  bytes third_person_left_hand = 2;
+  bytes first_person_right_hand = 3;
+  bytes first_person_left_hand = 4;
+  bytes gui = 5;
+  bytes head = 6;
+  bytes ground = 7;
+  bytes fixed = 8;
+}
+
+message ProtobufBlockModelPalette {
+  repeated ProtobufVariants models = 1;
+  repeated ProtobufDisplayTransforms display_transforms = 2;
+  repeated bool fully_opaque_blocks = 3;
+}

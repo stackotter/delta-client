@@ -15,15 +15,18 @@ struct SettingsView: View {
   var body: some View {
     NavigationView {
       List {
+        NavigationLink("Video", destination: VideoSettingsView(client: client).padding())
+        NavigationLink("Controls", destination: ControlsSettingsView().padding())
+        
         if !isInGame {
           NavigationLink("Accounts", destination: AccountSettingsView().padding())
           NavigationLink("Update", destination: UpdateView().padding())
-					NavigationLink("Plugins", destination: PluginView().padding())
+          NavigationLink("Plugins", destination: PluginSettingsView().padding())
         }
         
-        NavigationLink("Video", destination: VideoSettingsView(client: client).padding())
-        
-        Button("Done", action: done)
+        Button("Done", action: {
+          withAnimation(nil) { done() }
+        })
           .buttonStyle(BorderlessButtonStyle())
           .padding(.top, 8)
           .keyboardShortcut(.escape, modifiers: [])

@@ -8,7 +8,7 @@ public struct BlockModelElement {
   /// Whether to render shadows or not.
   public var shade: Bool
   /// The faces present on this element.
-  public var faces: [BlockModelFace]
+  public var faces: [BlockModelFace] = []
   
   public init(transformation: matrix_float4x4, shade: Bool, faces: [BlockModelFace]) {
     self.transformation = transformation

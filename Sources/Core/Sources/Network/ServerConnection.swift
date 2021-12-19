@@ -39,19 +39,13 @@ public class ServerConnection {
   
   // MARK: Lifecycle
   
-  /// Initiates the connection.
-  private func start() {
-    state = .connecting
-    networkStack.connect()
-  }
-  
   /// Closes the connection.
   public func close() {
     networkStack.disconnect()
     state = .disconnected
   }
   
-  /// Restarts the connection to the server.
+  /// Restarts the connection to the server. Initiates the connection if not currently connected.
   private func restart() {
     state = .connecting
     networkStack.reconnect()
@@ -133,8 +127,8 @@ public class ServerConnection {
         }
       } catch {
         self.close()
-        self.eventBus.dispatch(PacketDecodingErrorEvent(packetId: packetReader.packetId, error: "\(error)"))
-        log.warning("Failed to decode packet with id \(String(packetReader.packetId, radix: 16)): \(error)")
+        self.eventBus.dispatch(PacketDecodingErrorEvent(packetId: packetReader.packetId, error: "\(error.localizedDescription)"))
+        log.warning("Failed to decode packet with id \(String(packetReader.packetId, radix: 16)): \(error.localizedDescription)")
       }
     })
   }

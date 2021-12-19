@@ -1,5 +1,6 @@
 import Foundation
 import ColorSync
+import ZippyJSON
 
 public enum TextureError: LocalizedError {
   /// The texture's height must be a multiple of the width.
@@ -103,7 +104,7 @@ public struct Texture {
     let numFrames = height / width
     do {
       let data = try Data(contentsOf: animationMetadataFile)
-      let animationMCMeta = try JSONDecoder().decode(AnimationMCMeta.self, from: data)
+      let animationMCMeta = try ZippyJSONDecoder().decode(AnimationMCMeta.self, from: data)
       animation = Animation(from: animationMCMeta, maxFrameIndex: numFrames)
     } catch {
       throw TextureError.failedToLoadTextureAnimation(error)

@@ -28,7 +28,7 @@ public struct SpawnEntityPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    guard let entityKind = Registry.shared.entityRegistry.entity(withId: type) else {
+    guard let entityKind = RegistryStore.shared.entityRegistry.entity(withId: type) else {
       log.warning("Ignored entity received with unknown type: \(type)")
       return
     }

@@ -1,6 +1,6 @@
 extension Block {
   /// Information about the shape of a block. Used for both occlusion (in lighting) and collisions.
-  public struct Shape: Codable{
+  public struct Shape: Codable {
     /// Used for missing blocks.
     public static var `default` = Shape(
       isDynamic: false,

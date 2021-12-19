@@ -162,7 +162,7 @@ public class World {
   ///   - acquireLock: Whether to acquire a lock or not before reading the value. Don't touch this unless you know what you're doing.
   /// - Returns: The block at the given position. `Block.missing` if the block doesn't exist.
   public func getBlock(at position: Position, acquireLock: Bool = true) -> Block {
-    return Registry.shared.blockRegistry.block(withId: Int(getBlockId(at: position, acquireLock: acquireLock))) ?? Block.missing
+    return RegistryStore.shared.blockRegistry.block(withId: Int(getBlockId(at: position, acquireLock: acquireLock))) ?? Block.missing
   }
   
   // MARK: Lighting

@@ -9,7 +9,7 @@ public struct FluidState: Codable {
   
   /// The fluid this fluid state is for.
   public var fluid: Fluid {
-    return Registry.shared.fluidRegistry.fluid(withId: fluidId)
+    return RegistryStore.shared.fluidRegistry.fluid(withId: fluidId)
   }
   
   public init(fluidId: Int, height: Int, isWaterlogged: Bool) {

@@ -22,7 +22,7 @@ public struct SpawnPlayerPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    let playerEntity = Registry.shared.entityRegistry.playerEntityKind
+    let playerEntity = RegistryStore.shared.entityRegistry.playerEntityKind
     client.game.createEntity(id: entityId) {
       LivingEntity()
       PlayerEntity()

@@ -68,12 +68,12 @@ public struct EncryptionRequestPacket: ClientboundPacket {
                 client.connection?.enableEncryption(sharedSecret: sharedSecret)
               }
             } catch {
-              log.error("Failed to enable encryption: \(error)")
+              log.error("Failed to enable encryption: \(error.localizedDescription)")
             }
           }
         },
         onFailure: { error in
-          log.error("Join request for online server failed: \(error)")
+          log.error("Join request for online server failed: \(error.localizedDescription)")
         }
       )
     } else {

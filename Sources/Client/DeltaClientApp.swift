@@ -39,6 +39,8 @@ struct DeltaClientApp: App {
       }
       
       do {
+        let start = CFAbsoluteTimeGetCurrent()
+        
         // Load plugins first
         updateLoadingMessage("Loading plugins")
         do {
@@ -49,7 +51,7 @@ struct DeltaClientApp: App {
             log.error("Error occured when loading plugin '\(bundle)': \(error.localizedDescription)")
           }
         } catch {
-          Self.modalError("Error occurred during plugin loading, no plugins will be available: \(error)")
+          Self.modalError("Error occurred during plugin loading, no plugins will be available: \(error.localizedDescription)")
         }
         
         // Download vanilla assets if they haven't already been downloaded
@@ -60,13 +62,14 @@ struct DeltaClientApp: App {
         
         // Load registries
         updateLoadingMessage("Loading registries")
-        try Registry.populateShared(StorageManager.default.registryDirectory)
+        try RegistryStore.populateShared(StorageManager.default.registryDirectory)
         
         // Load resource pack and cache it if necessary
         updateLoadingMessage("Loading resource pack")
         let packCache = StorageManager.default.cacheDirectory.appendingPathComponent("vanilla.rpcache/")
-        let cacheExists = StorageManager.default.directoryExists(at: packCache)
+        var cacheExists = StorageManager.default.directoryExists(at: packCache)
         let resourcePack = try ResourcePack.load(from: StorageManager.default.vanillaAssetsDirectory, cacheDirectory: cacheExists ? packCache : nil)
+        cacheExists = StorageManager.default.directoryExists(at: packCache)
         if !cacheExists {
           do {
             try resourcePack.cache(to: packCache)
@@ -81,10 +84,12 @@ struct DeltaClientApp: App {
         }
         
         // Finish loading
-        log.info("Done")
+        let elapsedMilliseconds = (CFAbsoluteTimeGetCurrent() - start) * 1000
+        let elapsedString = String(format: "%.2f", elapsedMilliseconds)
+        log.info("Done (\(elapsedString)ms)")
         Self.loadingState.update(to: .done(LoadedResources(resourcePack: resourcePack)))
       } catch {
-        Self.loadingState.update(to: .error("Failed to load: \(error)"))
+        Self.loadingState.update(to: .error("Failed to load: \(error.localizedDescription)"))
       }
     }
   }

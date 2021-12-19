@@ -1,11 +1,12 @@
 import Foundation
 import simd
+import ZippyJSON
 
 // TODO: For plugin API make the block model palette api safe and easy to use (for adding/editing models)
 
 /// Contains block models loaded from a resource pack.
 public struct BlockModelPalette {
-  /// Block models indexed by block state id. Each is an array of block model variants. Each variant is an array of block models (required for multi-part block models).
+  /// Block models indexed by block state id. Each is an array of block model variants.
   public var models: [[BlockModel]] = []
   /// The transforms to use when displaying blocks in different places. Block models specify an index into this array.
   public var displayTransforms: [BlockModelDisplayTransforms] = []
@@ -81,18 +82,18 @@ public struct BlockModelPalette {
     let intermediateBlockModelPalette = try IntermediateBlockModelPalette(from: jsonBlockModels)
     
     // Convert intermediate block models to final format
-    var blockModels = [[BlockModel]](repeating: [], count: Registry.shared.blockRegistry.renderDescriptors.count)
-    for (blockId, variants) in Registry.shared.blockRegistry.renderDescriptors.enumerated() {
+    var blockModels = [[BlockModel]](repeating: [], count: RegistryStore.shared.blockRegistry.renderDescriptors.count)
+    for (blockId, variants) in RegistryStore.shared.blockRegistry.renderDescriptors.enumerated() {
       let blockModelVariants: [BlockModel] = try variants.map { variant in
         do {
-          let block = Registry.shared.blockRegistry.block(withId: blockId) ?? Block.missing
+          let block = RegistryStore.shared.blockRegistry.block(withId: blockId) ?? Block.missing
           return try blockModel(
             for: variant,
             from: intermediateBlockModelPalette,
             with: blockTexturePalette,
             block: block)
         } catch {
-          log.error("Failed to create block model for state \(blockId): \(error)")
+          log.error("Failed to create block model for state \(blockId): \(error.localizedDescription)")
           throw error
         }
       }
@@ -381,24 +382,5 @@ public struct BlockModelPalette {
     }
     
     return rotatedCoordinates
-  }
-  
-  /// Returns a dictionary containing all of the block models in the specified directory (in Mojang's format).
-  private static func readJSONBlockModels(from directory: URL) throws -> [Identifier: JSONBlockModel] {
-    var mojangBlockModels: [Identifier: JSONBlockModel] = [:]
-    
-    let files = try FileManager.default.contentsOfDirectory(
-      at: directory,
-      includingPropertiesForKeys: nil,
-      options: .skipsSubdirectoryDescendants)
-    for file in files where file.pathExtension == "json" {
-      let blockName = file.deletingPathExtension().lastPathComponent
-      let identifier = Identifier(name: "block/\(blockName)")
-      let data = try Data(contentsOf: file)
-      let mojangBlockModel = try JSONDecoder().decode(JSONBlockModel.self, from: data)
-      mojangBlockModels[identifier] = mojangBlockModel
-    }
-    
-    return mojangBlockModels
   }
 }

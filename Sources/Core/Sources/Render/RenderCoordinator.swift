@@ -43,24 +43,28 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     do {
       camera = try Camera(device)
     } catch {
-      fatalError("Failed to create camera: \(error)")
+      fatalError("Failed to create camera: \(error.localizedDescription)")
     }
     
     // Create world renderer
     do {
       worldRenderer = try WorldRenderer(client: client, device: device, commandQueue: commandQueue)
     } catch {
-      fatalError("Failed to create world renderer: \(error)")
+      fatalError("Failed to create world renderer: \(error.localizedDescription)")
     }
     
     do {
       entityRenderer = try EntityRenderer(client: client, device: device, commandQueue: commandQueue)
     } catch {
-      fatalError("Failed to create entity renderer: \(error)")
+      fatalError("Failed to create entity renderer: \(error.localizedDescription)")
     }
     
     // Create depth stencil state
-    depthState = try! MetalUtil.createDepthState(device: device)
+    do {
+      depthState = try MetalUtil.createDepthState(device: device)
+    } catch {
+      fatalError("Failed to create depth state: \(error.localizedDescription)")
+    }
     
     super.init()
   }

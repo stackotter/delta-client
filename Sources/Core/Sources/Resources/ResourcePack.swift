@@ -1,11 +1,10 @@
 import Foundation
 import ZIPFoundation
+import ZippyJSON
 
 enum ResourcePackError: LocalizedError {
   /// The specified resource pack directory does not exist.
   case noSuchDirectory
-  /// The resource pack is missing a `pack.mcmeta` in its root.
-  case missingPackMCMeta
   /// The resource pack's `pack.mcmeta` is invalid.
   case failedToReadMCMeta(Error)
   /// Failed to list the contents of a texture directory.
@@ -18,11 +17,6 @@ enum ResourcePackError: LocalizedError {
   case failedToReadTextureImage
   /// Failed to create a `CGDataProvider` for the given image file.
   case failedToCreateImageProvider
-  /// Failed to read the contents of the given pixlyzer block palette file.
-  case failedToReadPixlyzerBlockPalette
-  /// The given pixlyzer block palette was of an invalid format.
-  case failedToParsePixlyzerBlockPalette
-  
   /// Failed to download the specified client jar.
   case clientJarDownloadFailure
   /// Failed to extract assets from a client jar.
@@ -31,8 +25,6 @@ enum ResourcePackError: LocalizedError {
   case assetCopyFailure
   /// Failed to create a dummy pack.mcmeta for the downloaded vanilla assets.
   case failedToCreatePackMCMetaData
-  /// Failed to download pixlyzer data from gitlab.
-  case failedToDownloadPixlyzerData(Error)
   /// No client jar is available to download for the specified version.
   case noURLForVersion(String)
   /// Failed to decode a version manifest.
@@ -130,20 +122,19 @@ public struct ResourcePack {
       resources.biomeColors = biomeColors
     }
     
-    
     // Attempt to load block model palette from the resource pack cache if it exists
     var loadedFromCache = false
-    if let modelCacheFile = cacheDirectory?.appendingPathComponent("block-models.cache") {
+    if let cacheDirectory = cacheDirectory {
+      let modelCacheFile = cacheDirectory.appendingPathComponent("block_models.bin")
       log.debug("Loading cached block models")
       if FileManager.default.fileExists(atPath: modelCacheFile.path) {
         do {
-          let cache = try Data(contentsOf: modelCacheFile)
-          resources.blockModelPalette = try BlockModelPalette(from: cache)
+          resources.blockModelPalette = try BlockModelPalette(fromFile: modelCacheFile)
           loadedFromCache = true
         } catch {
           log.warning("Failed to load block models from cache, deleting cache")
           do {
-            try FileManager.default.removeItem(at: modelCacheFile)
+            try FileManager.default.removeItem(at: cacheDirectory)
           } catch {
             log.warning("Failed to remove invalid block model cache, ignoring anyway")
           }
@@ -186,7 +177,7 @@ public struct ResourcePack {
     let mcMeta: ResourcePack.PackMCMeta
     do {
       let data = try Data(contentsOf: mcMetaFile)
-      mcMeta = try JSONDecoder().decode(ResourcePack.PackMCMeta.self, from: data)
+      mcMeta = try ZippyJSONDecoder().decode(ResourcePack.PackMCMeta.self, from: data)
     } catch {
       throw ResourcePackError.failedToReadMCMeta(error)
     }
@@ -204,9 +195,8 @@ public struct ResourcePack {
       try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true, attributes: nil)
       
       // Cache block models
-      let blockModelCacheFile = cacheDirectory.appendingPathComponent("block-models.cache")
-      let blockModelCache = try resources.blockModelPalette.serialize()
-      try blockModelCache.write(to: blockModelCacheFile)
+      let blockModelCacheFile = cacheDirectory.appendingPathComponent("block_models.bin")
+      try resources.blockModelPalette.cache(toFile: blockModelCacheFile)
     }
   }
   
@@ -227,7 +217,7 @@ public struct ResourcePack {
       let data = try Data(contentsOf: clientJarURL)
       try data.write(to: clientJarTempFile)
     } catch {
-      log.error("Failed to download client jar: \(error)")
+      log.error("Failed to download client jar: \(error.localizedDescription)")
       throw ResourcePackError.clientJarDownloadFailure
     }
     
@@ -238,7 +228,7 @@ public struct ResourcePack {
     do {
       try FileManager.default.unzipItem(at: clientJarTempFile, to: extractedClientJarDirectory, skipCRC32: true)
     } catch {
-      log.error("Failed to extract client jar: \(error)")
+      log.error("Failed to extract client jar: \(error.localizedDescription)")
       throw ResourcePackError.clientJarExtractionFailure
     }
     
@@ -249,7 +239,7 @@ public struct ResourcePack {
         at: extractedClientJarDirectory.appendingPathComponent("assets"),
         to: directory)
     } catch {
-      log.error("Failed to copy assets from extracted client jar: \(error)")
+      log.error("Failed to copy assets from extracted client jar: \(error.localizedDescription)")
       throw ResourcePackError.assetCopyFailure
     }
     
@@ -276,7 +266,7 @@ public struct ResourcePack {
     let versionsManifest: VersionsManifest
     do {
       let data = try Data(contentsOf: versionsManifestURL)
-      versionsManifest = try JSONDecoder().decode(VersionsManifest.self, from: data)
+      versionsManifest = try ZippyJSONDecoder().decode(VersionsManifest.self, from: data)
     } catch {
       throw ResourcePackError.versionsManifestFailure(error)
     }
@@ -296,7 +286,7 @@ public struct ResourcePack {
     let versionManifest: VersionManifest
     do {
       let data = try Data(contentsOf: versionURL)
-      versionManifest = try JSONDecoder().decode(VersionManifest.self, from: data)
+      versionManifest = try ZippyJSONDecoder().decode(VersionManifest.self, from: data)
     } catch {
       throw ResourcePackError.versionManifestFailure(error)
     }

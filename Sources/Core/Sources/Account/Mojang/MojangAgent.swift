@@ -8,9 +8,4 @@ struct MojangAgent: Codable {
     self.name = "Minecraft"
     self.version = 1
   }
-  
-  init(name: String, version: Int) {
-    self.name = name
-    self.version = version
-  }
 }

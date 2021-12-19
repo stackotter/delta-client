@@ -115,11 +115,11 @@ extension Chunk {
       
       self.blocks[index] = UInt16(id)
       
-      if Registry.shared.blockRegistry.isAir(getBlockId(at: index)) {
+      if RegistryStore.shared.blockRegistry.isAir(getBlockId(at: index)) {
         blockCount += 1
       }
       
-      if Registry.shared.blockRegistry.isAir(id) {
+      if RegistryStore.shared.blockRegistry.isAir(id) {
         blockCount -= 1
       }
     }

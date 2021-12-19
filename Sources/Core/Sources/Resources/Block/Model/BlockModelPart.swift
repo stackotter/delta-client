@@ -7,7 +7,7 @@ public struct BlockModelPart {
   /// Index of the transforms to use when displaying this block.
   public var displayTransformsIndex: Int?
   /// The elements that make up this block model.
-  public var elements: [BlockModelElement]
+  public var elements: [BlockModelElement] = []
   
   public init(ambientOcclusion: Bool, displayTransformsIndex: Int? = nil, elements: [BlockModelElement]) {
     self.ambientOcclusion = ambientOcclusion

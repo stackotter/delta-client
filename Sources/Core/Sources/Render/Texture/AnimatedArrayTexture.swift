@@ -23,7 +23,6 @@ public struct AnimatedArrayTexture {
     let updatedTextures = state.update(tick: tick)
     palette.updateArrayTexture(
       arrayTexture: texture,
-      device: device,
       animationState: state,
       updatedTextures: updatedTextures,
       commandQueue: commandQueue)

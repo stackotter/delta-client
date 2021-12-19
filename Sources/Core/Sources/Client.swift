@@ -31,7 +31,7 @@ public class Client {
   // MARK: Connection lifecycle
   
   /// Join the specified server.
-  public func joinServer(describedBy descriptor: ServerDescriptor, with account: Account, onFailure failure: @escaping (Error) -> Void) {
+  public func joinServer(describedBy descriptor: ServerDescriptor, with account: Account) {
     self.account = account
     
     // Create a connection to the server
@@ -60,8 +60,8 @@ public class Client {
       try packet.handle(for: self)
     } catch {
       closeConnection()
-      log.error("Failed to handle packet: \(error)")
-      eventBus.dispatch(PacketHandlingErrorEvent(packetId: type(of: packet).id, error: "\(error)"))
+      log.error("Failed to handle packet: \(error.localizedDescription)")
+      eventBus.dispatch(PacketHandlingErrorEvent(packetId: type(of: packet).id, error: "\(error.localizedDescription)"))
     }
   }
   

@@ -20,7 +20,7 @@ public enum PluginLoadingError: LocalizedError {
     case .alreadyLoaded:
       return "A plugin with the same identifier is already loaded"
     case let .invalidManifest(error):
-      return "The plugin's manifest file is invalid: \(error)"
+      return "The plugin's manifest file is invalid: \(error.localizedDescription)"
     }
   }
 }

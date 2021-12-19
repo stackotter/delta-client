@@ -36,7 +36,7 @@ public struct Player {
   
   /// Creates a player.
   public init() {
-    let playerEntity = Registry.shared.entityRegistry.playerEntityKind
+    let playerEntity = RegistryStore.shared.entityRegistry.playerEntityKind
     entityId = EntityId(-1) // Temporary value until the actual id is received from the server.
     onGround = EntityOnGround(true)
     position = EntityPosition(0, 0, 0, smoothingAmount: 1 / 18) // Having it set to slightly more than a tick smooths out any hick ups caused by late ticks
@@ -60,7 +60,7 @@ public struct Player {
       LivingEntity() // Mark it as a living entity
       PlayerEntity() // Mark it as a player
       ClientPlayerEntity() // Mark it as the current player
-      EntityKindId(Registry.shared.entityRegistry.playerEntityKindId) // Give it the entity kind id for player
+      EntityKindId(RegistryStore.shared.entityRegistry.playerEntityKindId) // Give it the entity kind id for player
       entityId
       onGround
       position
@@ -80,9 +80,8 @@ public struct Player {
   
   /// Updates the direction the player is looking in with a mouse movement event.
   public mutating func updateLook(with event: MouseMoveEvent) {
-    let sensitivity: Float = 0.35
-    rotation.yaw += event.deltaX * sensitivity
-    rotation.pitch += event.deltaY * sensitivity
+    rotation.yaw += event.deltaX
+    rotation.pitch += event.deltaY
     
     // Clamp pitch between -90 and 90
     rotation.pitch = min(max(-90, rotation.pitch), 90)
