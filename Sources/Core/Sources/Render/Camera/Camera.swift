@@ -9,9 +9,9 @@ public struct Camera {
   /// The vertical FOV in radians.
   public private(set) var fovY: Float = 0.5 * .pi // 90deg
   /// The near clipping plane.
-  public private(set) var nearDistance: Float = 0.01
+  public private(set) var nearDistance: Float = 0.04
   /// The far clipping plant.
-  public private(set) var farDistance: Float = 1000
+  public private(set) var farDistance: Float = 400
   
   /// The aspect ratio.
   public private(set) var aspect: Float = 1
