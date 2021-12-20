@@ -82,6 +82,37 @@ public enum MetalUtil {
     return buffer
   }
   
+  /// Creates a buffer for sampling the requested set of counters.
+  /// - Parameters:
+  ///   - device: The device that sampling will be performed on.
+  ///   - commonCounterSet: The counter set that the buffer will be used to sample.
+  ///   - sampleCount: The size of sampling buffer to create.
+  /// - Returns: A buffer for storing counter samples.
+  public static func makeCounterSampleBuffer(_ device: MTLDevice, counterSet commonCounterSet: MTLCommonCounterSet, sampleCount: Int) throws -> MTLCounterSampleBuffer {
+    var counterSet: MTLCounterSet? = nil
+    for deviceCounterSet in device.counterSets ?? [] {
+      if deviceCounterSet.name.caseInsensitiveCompare(commonCounterSet.rawValue) == .orderedSame {
+        counterSet = deviceCounterSet
+        break
+      }
+    }
+    
+    guard let counterSet = counterSet else {
+      throw RenderError.failedToGetCounterSet(commonCounterSet.rawValue)
+    }
+    
+    let descriptor = MTLCounterSampleBufferDescriptor()
+    descriptor.counterSet = counterSet
+    descriptor.storageMode = .shared
+    descriptor.sampleCount = sampleCount
+    
+    do {
+      return try device.makeCounterSampleBuffer(descriptor: descriptor)
+    } catch {
+      throw RenderError.failedToMakeCounterSampleBuffer(error)
+    }
+  }
+  
   /// Creates an empty buffer.
   /// - Parameters:
   ///   - device: Device to create the buffer with.

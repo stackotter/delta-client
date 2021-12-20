@@ -4,13 +4,13 @@ import MetalKit
 import SwiftUI
 
 final class MetalView: NSViewRepresentable {
-  var renderCoordinator: RenderCoordinatorProtocol
+  var renderCoordinator: RenderCoordinator
   
-  init(renderCoordinator: RenderCoordinatorProtocol) {
+  init(renderCoordinator: RenderCoordinator) {
     self.renderCoordinator = renderCoordinator
   }
   
-  func makeCoordinator() -> RenderCoordinatorProtocol {
+  func makeCoordinator() -> RenderCoordinator {
     return renderCoordinator
   }
   

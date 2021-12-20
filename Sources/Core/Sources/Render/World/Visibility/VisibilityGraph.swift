@@ -285,7 +285,7 @@ public struct VisibilityGraph {
           directions: directions
         ))
         
-        if !(sections[neighbourPosition]?.isEmpty == true) {
+        if !(sections[neighbourPosition]?.isEmpty == true) && neighbourPosition.isValid {
           visible.append(neighbourPosition)
         }
       }

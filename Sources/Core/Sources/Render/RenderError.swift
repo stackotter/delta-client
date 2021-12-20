@@ -23,10 +23,22 @@ public enum RenderError: LocalizedError {
   case failedToCreateEntityDepthStencilState
   /// Failed to create the block texture array.
   case failedToCreateBlockTextureArray(Error)
-  /// Failed to create render encoder for a render pipeline.
-  case failedToCreateRenderEncoder(String)
+  /// Failed to create the render encoder.
+  case failedToCreateRenderEncoder
+  /// Failed to create the command buffer.
+  case failedToCreateCommandBuffer
   /// Failed to create geometry buffers for the entity renderer.
   case failedToCreateEntityGeometryBuffers
   /// Failed to create a metal buffer.
   case failedToCreateBuffer(label: String?)
+  /// Failed to get the current render pass descriptor for a frame.
+  case failedToGetCurrentRenderPassDescriptor
+  /// Failed to create an event for the gpu timer.
+  case failedToCreateTimerEvent
+  /// Failed to get the specified counter set (it is likely not supported by the selected device).
+  case failedToGetCounterSet(String)
+  /// Failed to create the buffer used for sampling GPU counters.
+  case failedToMakeCounterSampleBuffer(Error)
+  /// Failed to sample the GPU counters used to calculate FPS.
+  case failedToSampleCounters
 }

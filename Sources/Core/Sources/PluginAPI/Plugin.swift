@@ -15,12 +15,6 @@ public protocol Plugin {
   /// Not called when the client gets closed, only when the plugin is unloaded through the UI.
   func willUnload()
   
-  // MARK: Rendering
-  
-  /// Creates and returns a custom render coordinator if the plugin has one.
-  /// - Parameter client: The client the render coordinator should render.
-  func makeRenderCoordinator(_ client: Client) -> RenderCoordinatorProtocol?
-  
   // MARK: Event handling
   
   /// Called when the client is about to join a server.

@@ -2,7 +2,14 @@ import Foundation
 import MetalKit
 
 /// Coordinates the rendering of the game (e.g. blocks and entities).
-public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDelegate {
+public final class RenderCoordinator: NSObject, MTKViewDelegate {
+  // MARK: Public properties
+  
+  /// Statistics that measure the renderer's current performance.
+  public var statistics = RenderStatistics()
+  
+  // MARK: Private properties
+  
   /// The client to render.
   private var client: Client
   
@@ -21,6 +28,14 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
   /// The command queue.
   private var commandQueue: MTLCommandQueue
   
+  /// The time that the cpu started encoding the previous frame.
+  private var previousFrameStartTime: Double = 0
+  /// A buffer used for sampling GPU counters.
+  private var gpuCounterBuffer: MTLCounterSampleBuffer
+  
+  /// The callibration data used to convert the difference between two GPU timestamps to nanoseconds.
+  private var gpuTimeCallibrationFactor: Double
+  
   // MARK: Init
   
   /// Creates a render coordinator.
@@ -30,6 +45,9 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
     guard let device = MTLCreateSystemDefaultDevice() else {
       fatalError("Failed to get metal device")
     }
+    
+    // Take an initial measurement for calibrating the GPU clock
+    let startTimestamp = device.sampleTimestamps()
     
     guard let commandQueue = device.makeCommandQueue() else {
       fatalError("Failed to make render command queue")
@@ -66,28 +84,66 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       fatalError("Failed to create depth state: \(error.localizedDescription)")
     }
     
+    do {
+      gpuCounterBuffer = try MetalUtil.makeCounterSampleBuffer(device, counterSet: .timestamp, sampleCount: 2)
+    } catch {
+      fatalError("Failed to create counter sample buffer: \(error.localizedDescription)")
+    }
+    
+    // Finish collecting data for GPU timestamp callibration.
+    let endTimestamp = device.sampleTimestamps()
+    gpuTimeCallibrationFactor = Double(endTimestamp.cpu - startTimestamp.cpu) / Double(endTimestamp.gpu - startTimestamp.gpu)
+    
     super.init()
   }
   
   // MARK: Render
   
   public func draw(in view: MTKView) {
-    // Create world to clip uniforms buffer
-    let uniformsBuffer = getCameraUniforms(view)
+    let time = CFAbsoluteTimeGetCurrent()
+    let frameTime = time - previousFrameStartTime
+    previousFrameStartTime = time
     
-    // Create render encoder
-    guard
-      let commandBuffer = commandQueue.makeCommandBuffer(),
-      let renderPassDescriptor = view.currentRenderPassDescriptor,
-      let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
-    else {
-      log.error("Failed to create command buffer and render encoder")
+    // Get current render pass descriptor
+    guard let renderPassDescriptor = view.currentRenderPassDescriptor else {
+      log.error("Failed to get the current render pass descriptor")
       client.eventBus.dispatch(ErrorEvent(
-        error: RenderError.failedToCreateRenderEncoder("RenderCoordinator"),
-        message: "RenderCoordinator failed to create command buffer and render encoder"
+        error: RenderError.failedToGetCurrentRenderPassDescriptor,
+        message: "RenderCoordinator failed to get the current render pass descriptor"
       ))
       return
     }
+    
+    // Setup GPU counters
+    renderPassDescriptor.sampleBufferAttachments[0].sampleBuffer = gpuCounterBuffer
+    
+    // The CPU start time if vsync was disabled
+    let cpuStartTime = CFAbsoluteTimeGetCurrent()
+    
+    // Create world to clip uniforms buffer
+    let uniformsBuffer = getCameraUniforms(view)
+    
+    // Create command bugger
+    guard let commandBuffer = commandQueue.makeCommandBuffer() else {
+      log.error("Failed to create command buffer")
+      client.eventBus.dispatch(ErrorEvent(
+        error: RenderError.failedToCreateCommandBuffer,
+        message: "RenderCoordinator failed to create command buffer"
+      ))
+      return
+    }
+    
+    // Create render encoder
+    guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
+      log.error("Failed to create render encoder")
+      client.eventBus.dispatch(ErrorEvent(
+        error: RenderError.failedToCreateRenderEncoder,
+        message: "RenderCoordinator failed to create render encoder"
+      ))
+      return
+    }
+    
+    renderEncoder.sampleCounters(sampleBuffer: gpuCounterBuffer, sampleIndex: 0, barrier: false)
     
     // Configure the render encoder
     renderEncoder.setDepthStencilState(depthState)
@@ -130,14 +186,41 @@ public class RenderCoordinator: NSObject, RenderCoordinatorProtocol, MTKViewDele
       return
     }
     
+    // Finish measurements for render statistics
+    let cpuFinishTime = CFAbsoluteTimeGetCurrent()
+    
     // Finish encoding the frame
     guard let drawable = view.currentDrawable else {
       log.warning("Failed to get current drawable")
       return
     }
     
+    renderEncoder.sampleCounters(sampleBuffer: gpuCounterBuffer, sampleIndex: 1, barrier: false)
+    
     renderEncoder.endEncoding()
     commandBuffer.present(drawable)
+    
+    commandBuffer.addCompletedHandler { commandBuffer in
+      guard let data = try? self.gpuCounterBuffer.resolveCounterRange(0..<2) else {
+        log.error("Failed to sample GPU counters")
+        self.client.eventBus.dispatch(ErrorEvent(
+          error: RenderError.failedToSampleCounters,
+          message: "Failed to sample GPU counters"
+        ))
+        return
+      }
+      
+      data.withUnsafeBytes { pointer in
+        let timestamps = pointer.bindMemory(to: UInt64.self)
+        let gpuNanoseconds = Double(timestamps[1] - timestamps[0]) * self.gpuTimeCallibrationFactor
+        
+        self.statistics.addMeasurement(
+          frameTime: frameTime,
+          cpuTime: cpuFinishTime - cpuStartTime,
+          gpuTime: gpuNanoseconds / 1_000_000_000)
+      }
+    }
+    
     commandBuffer.commit()
   }
   

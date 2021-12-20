@@ -13,22 +13,31 @@ enum OverlayState {
   case settings
 }
 
-final class RenderCoordinatorWrapper {
-  var renderCoordinator: RenderCoordinatorProtocol?
+class HUDUpdater: ObservableObject {
+  @Published var dummy = false
+  var timer: Timer?
+  
+  init() {
+    timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+      ThreadUtil.runInMain {
+        self.dummy.toggle()
+      }
+    }
+  }
 }
 
 struct GameView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
   
+  @ObservedObject var hudUpdater = HUDUpdater()
   @ObservedObject var state = StateWrapper<GameState>(initial: .connecting)
   @ObservedObject var overlayState = StateWrapper<OverlayState>(initial: .menu)
-  
   @Binding var cursorCaptured: Bool
   
   var client: Client
   var inputDelegate: ClientInputDelegate
   var serverDescriptor: ServerDescriptor
-  var renderCoordinatorWrapper = RenderCoordinatorWrapper()
+  var renderCoordinator: RenderCoordinator
   
   init(serverDescriptor: ServerDescriptor, resourcePack: ResourcePack, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
     self.serverDescriptor = serverDescriptor
@@ -42,6 +51,9 @@ struct GameView: View {
     inputDelegate = ClientInputDelegate(for: client)
     setDelegate(inputDelegate)
     
+    // Create render coordinator
+    renderCoordinator = RenderCoordinator(client)
+    
     // Register for client events
     client.eventBus.registerHandler(handleClientEvent(_:))
     
@@ -53,22 +65,122 @@ struct GameView: View {
     joinServer(serverDescriptor)
   }
   
-  func makeRenderCoordinator() -> RenderCoordinatorProtocol {
-    if let renderCoordinator = renderCoordinatorWrapper.renderCoordinator {
-      return renderCoordinator
-    }
-    
-    var pluginRenderCoordinator: RenderCoordinatorProtocol? = nil
-    for (plugin, _, _) in DeltaClientApp.pluginEnvironment.plugins.values {
-      if let renderCoordinator = plugin.makeRenderCoordinator(client) {
-        pluginRenderCoordinator = renderCoordinator
-        break
+  var body: some View {
+    Group {
+      switch state.current {
+        case .connecting:
+          connectingView
+        case .loggingIn:
+          loggingInView
+        case .downloadingChunks(let numberReceived, let total):
+          VStack {
+            Text("Downloading chunks...")
+            HStack {
+              ProgressView(value: Double(numberReceived) / Double(total))
+              Text("\(numberReceived) of \(total)")
+            }
+              .frame(maxWidth: 200)
+            Button("Cancel", action: disconnect)
+              .buttonStyle(SecondaryButtonStyle())
+              .frame(width: 150)
+          }
+        case .playing:
+          ZStack {
+            gameView.opacity(cursorCaptured ? 1 : 0.2)
+            hudView.opacity(cursorCaptured ? 1 : 0.2)
+            overlayView
+          }
       }
     }
-    
-    let renderCoordinator = pluginRenderCoordinator ?? RenderCoordinator(client)
-    renderCoordinatorWrapper.renderCoordinator = renderCoordinator
-    return renderCoordinator
+  }
+  
+  var connectingView: some View {
+    VStack {
+      Text("Establishing connection...")
+      Button("Cancel", action: disconnect)
+        .buttonStyle(SecondaryButtonStyle())
+        .frame(width: 150)
+    }
+  }
+  
+  var loggingInView: some View {
+    VStack {
+      Text("Logging in...")
+      Button("Cancel", action: disconnect)
+        .buttonStyle(SecondaryButtonStyle())
+        .frame(width: 150)
+    }
+  }
+  
+  var gameView: some View {
+    ZStack {
+      // Renderer
+      MetalView(renderCoordinator: renderCoordinator)
+        .onAppear {
+          inputDelegate.bind($cursorCaptured.onChange { newValue in
+            // When showing overlay make sure menu is the first view
+            if newValue == false {
+              overlayState.update(to: .menu)
+            }
+          })
+          
+          inputDelegate.captureCursor()
+        }
+      
+      // Cross hair
+      if cursorCaptured {
+        Image(systemName: "plus")
+          .font(.system(size: 20))
+          .blendMode(.difference)
+      }
+    }
+  }
+  
+  var hudView: some View {
+    VStack(alignment: .leading) {
+      Text("fps: \(Int(renderStats.averageFPS))")
+      Text("theoretical fps: \(Int(renderStats.averageTheoreticalFPS))")
+      
+      Spacer().frame(height: 16)
+      
+      let averageFrameTime = (renderStats.averageFrameTime * 1000.0).rounded(toPlaces: 1)
+      let averageCPUTime = (renderStats.averageCPUTime * 1000.0).rounded(toPlaces: 1)
+      let averageGPUTime = (renderStats.averageGPUTime * 1000.0).rounded(toPlaces: 1)
+      Text("frame time: \(String(format: "%.01f", averageFrameTime))ms")
+      Text("cpu time: \(String(format: "%.01f", averageCPUTime))ms")
+      Text("gpu time: \(String(format: "%.01f", averageGPUTime))ms")
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .padding(16)
+  }
+  
+  var renderStats: RenderStatistics {
+    renderCoordinator.statistics
+  }
+  
+  var overlayView: some View {
+    VStack {
+      // In-game menu overlay
+      if !cursorCaptured {
+        switch overlayState.current {
+          case .menu:
+            VStack {
+              Button("Back to game", action: closeMenu)
+                .keyboardShortcut(.escape, modifiers: [])
+                .buttonStyle(PrimaryButtonStyle())
+              Button("Settings", action: { overlayState.update(to: .settings) })
+                .buttonStyle(SecondaryButtonStyle())
+              Button("Disconnect", action: disconnect)
+                .buttonStyle(SecondaryButtonStyle())
+            }
+            .frame(width: 200)
+          case .settings:
+            SettingsView(isInGame: true, client: client, onDone: {
+              overlayState.update(to: .menu)
+            })
+        }
+      }
+    }
   }
   
   func joinServer(_ descriptor: ServerDescriptor) {
@@ -140,102 +252,6 @@ struct GameView: View {
     
     withAnimation(nil) {
       inputDelegate.captureCursor()
-    }
-  }
-  
-  var body: some View {
-    Group {
-      switch state.current {
-        case .connecting:
-          connectingView
-        case .loggingIn:
-          loggingInView
-        case .downloadingChunks(let numberReceived, let total):
-          VStack {
-            Text("Downloading chunks...")
-            HStack {
-              ProgressView(value: Double(numberReceived) / Double(total))
-              Text("\(numberReceived) of \(total)")
-            }
-            .frame(maxWidth: 200)
-            Button("Cancel", action: disconnect)
-              .buttonStyle(SecondaryButtonStyle())
-              .frame(width: 150)
-          }
-        case .playing:
-          ZStack {
-            gameView
-            overlayView
-          }
-      }
-    }
-  }
-  
-  var connectingView: some View {
-    VStack {
-      Text("Establishing connection...")
-      Button("Cancel", action: disconnect)
-        .buttonStyle(SecondaryButtonStyle())
-        .frame(width: 150)
-    }
-  }
-  
-  var loggingInView: some View {
-    VStack {
-      Text("Logging in...")
-      Button("Cancel", action: disconnect)
-        .buttonStyle(SecondaryButtonStyle())
-        .frame(width: 150)
-    }
-  }
-  
-  var gameView: some View {
-    ZStack {
-      // Renderer
-      MetalView(renderCoordinator: makeRenderCoordinator())
-        .opacity(cursorCaptured ? 1 : 0.2)
-        .onAppear {
-          inputDelegate.bind($cursorCaptured.onChange { newValue in
-            // When showing overlay make sure menu is the first view
-            if newValue == false {
-              overlayState.update(to: .menu)
-            }
-          })
-          
-          inputDelegate.captureCursor()
-        }
-      
-      // Cross hair
-      if cursorCaptured {
-        Image(systemName: "plus")
-          .font(.system(size: 20))
-          .blendMode(.difference)
-      }
-    }
-  }
-  
-  var overlayView: some View {
-    VStack {
-      // In-game menu overlay
-      if !cursorCaptured {
-        switch overlayState.current {
-          case .menu:
-            VStack {
-              Button("Back to game", action: closeMenu)
-                .keyboardShortcut(.escape, modifiers: [])
-                .buttonStyle(PrimaryButtonStyle())
-              Button("Settings", action: { overlayState.update(to: .settings) })
-                .buttonStyle(SecondaryButtonStyle())
-              Button("Disconnect", action: disconnect)
-                .buttonStyle(SecondaryButtonStyle())
-            }
-            .frame(width: 200)
-          case .settings:
-            SettingsView(isInGame: true, client: client, onDone: {
-              overlayState.update(to: .menu)
-            })
-        }
-      }
     }
   }
 }
