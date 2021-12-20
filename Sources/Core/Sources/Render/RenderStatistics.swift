@@ -13,8 +13,8 @@ public struct RenderStatistics {
   }
   
   /// The average GPU time.
-  public var averageGPUTime: Double {
-    gpuTimes.average()
+  public var averageGPUTime: Double? {
+    gpuCountersEnabled ? gpuTimes.average() : nil
   }
   
   /// The average FPS.
@@ -23,10 +23,16 @@ public struct RenderStatistics {
   }
   
   /// The theoretical FPS if vsync was disabled.
-  public var averageTheoreticalFPS: Double {
-    let bottleneck = max(averageCPUTime, averageGPUTime)
-    return bottleneck == 0 ? 0 : 1 / bottleneck
+  public var averageTheoreticalFPS: Double? {
+    if let averageGPUTime = averageGPUTime {
+      let bottleneck = max(averageCPUTime, averageGPUTime)
+      return bottleneck == 0 ? 0 : 1 / bottleneck
+    } else {
+      return nil
+    }
   }
+  
+  public var gpuCountersEnabled: Bool
   
   // MARK: Private properties
   
@@ -43,7 +49,9 @@ public struct RenderStatistics {
   // MARK: Init
   
   /// Creates a new group of render statistics.
-  public init() {}
+  public init(gpuCountersEnabled: Bool) {
+    self.gpuCountersEnabled = gpuCountersEnabled
+  }
   
   // MARK: Public methods
   
@@ -52,15 +60,19 @@ public struct RenderStatistics {
   ///   - frameTime: The CPU time taken for the frame measured in seconds including waiting for vsync.
   ///   - cpuTime: The CPU time taken for the frame measured in seconds excluding waiting for vsync.
   ///   - gpuTime: The GPU time taken for the frame measured in seconds.
-  public mutating func addMeasurement(frameTime: Double, cpuTime: Double, gpuTime: Double) {
+  public mutating func addMeasurement(frameTime: Double, cpuTime: Double, gpuTime: Double?) {
     frameTimes.append(frameTime)
     cpuTimes.append(cpuTime)
-    gpuTimes.append(gpuTime)
+    if let gpuTime = gpuTime {
+      gpuTimes.append(gpuTime)
+    }
     
     if frameTimes.count > sampleSize {
       frameTimes.removeFirst()
       cpuTimes.removeFirst()
-      gpuTimes.removeFirst()
+      if gpuTime != nil {
+        gpuTimes.removeFirst()
+      }
     }
   }
 }

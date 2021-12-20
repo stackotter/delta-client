@@ -6,7 +6,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   // MARK: Public properties
   
   /// Statistics that measure the renderer's current performance.
-  public var statistics = RenderStatistics()
+  public var statistics: RenderStatistics
   
   // MARK: Private properties
   
@@ -31,7 +31,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   /// The time that the cpu started encoding the previous frame.
   private var previousFrameStartTime: Double = 0
   /// A buffer used for sampling GPU counters.
-  private var gpuCounterBuffer: MTLCounterSampleBuffer
+  private var gpuCounterBuffer: MTLCounterSampleBuffer?
   
   /// The callibration data used to convert the difference between two GPU timestamps to nanoseconds.
   private var gpuTimeCallibrationFactor: Double
@@ -84,15 +84,13 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       fatalError("Failed to create depth state: \(error.localizedDescription)")
     }
     
-    do {
-      gpuCounterBuffer = try MetalUtil.makeCounterSampleBuffer(device, counterSet: .timestamp, sampleCount: 2)
-    } catch {
-      fatalError("Failed to create counter sample buffer: \(error.localizedDescription)")
-    }
+    gpuCounterBuffer = try? MetalUtil.makeCounterSampleBuffer(device, counterSet: .timestamp, sampleCount: 2)
     
     // Finish collecting data for GPU timestamp callibration.
     let endTimestamp = device.sampleTimestamps()
     gpuTimeCallibrationFactor = Double(endTimestamp.cpu - startTimestamp.cpu) / Double(endTimestamp.gpu - startTimestamp.gpu)
+    
+    statistics = RenderStatistics(gpuCountersEnabled: gpuCounterBuffer != nil)
     
     super.init()
   }
@@ -143,7 +141,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       return
     }
     
-    renderEncoder.sampleCounters(sampleBuffer: gpuCounterBuffer, sampleIndex: 0, barrier: false)
+    if let gpuCounterBuffer = gpuCounterBuffer {
+      renderEncoder.sampleCounters(sampleBuffer: gpuCounterBuffer, sampleIndex: 0, barrier: false)
+    }
     
     // Configure the render encoder
     renderEncoder.setDepthStencilState(depthState)
@@ -195,30 +195,39 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       return
     }
     
-    renderEncoder.sampleCounters(sampleBuffer: gpuCounterBuffer, sampleIndex: 1, barrier: false)
+    if let gpuCounterBuffer = gpuCounterBuffer {
+      renderEncoder.sampleCounters(sampleBuffer: gpuCounterBuffer, sampleIndex: 1, barrier: false)
+    }
     
     renderEncoder.endEncoding()
     commandBuffer.present(drawable)
     
-    commandBuffer.addCompletedHandler { commandBuffer in
-      guard let data = try? self.gpuCounterBuffer.resolveCounterRange(0..<2) else {
-        log.error("Failed to sample GPU counters")
-        self.client.eventBus.dispatch(ErrorEvent(
-          error: RenderError.failedToSampleCounters,
-          message: "Failed to sample GPU counters"
-        ))
-        return
-      }
-      
-      data.withUnsafeBytes { pointer in
-        let timestamps = pointer.bindMemory(to: UInt64.self)
-        let gpuNanoseconds = Double(timestamps[1] &- timestamps[0]) * self.gpuTimeCallibrationFactor
+    if let gpuCounterBuffer = gpuCounterBuffer {
+      commandBuffer.addCompletedHandler { commandBuffer in
+        guard let data = try? gpuCounterBuffer.resolveCounterRange(0..<2) else {
+          log.error("Failed to sample GPU counters")
+          self.client.eventBus.dispatch(ErrorEvent(
+            error: RenderError.failedToSampleCounters,
+            message: "Failed to sample GPU counters"
+          ))
+          return
+        }
         
-        self.statistics.addMeasurement(
-          frameTime: frameTime,
-          cpuTime: cpuFinishTime - cpuStartTime,
-          gpuTime: gpuNanoseconds / 1_000_000_000)
+        data.withUnsafeBytes { pointer in
+          let timestamps = pointer.bindMemory(to: UInt64.self)
+          let gpuNanoseconds = Double(timestamps[1] &- timestamps[0]) * self.gpuTimeCallibrationFactor
+          
+          self.statistics.addMeasurement(
+            frameTime: frameTime,
+            cpuTime: cpuFinishTime - cpuStartTime,
+            gpuTime: gpuNanoseconds / 1_000_000_000)
+        }
       }
+    } else {
+      self.statistics.addMeasurement(
+        frameTime: frameTime,
+        cpuTime: cpuFinishTime - cpuStartTime,
+        gpuTime: nil)
     }
     
     commandBuffer.commit()

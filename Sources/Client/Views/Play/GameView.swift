@@ -146,17 +146,22 @@ struct GameView: View {
   
   var debugHUDView: some View {
     VStack(alignment: .leading) {
-      Text("fps: \(Int(renderStats.averageFPS))")
-      Text("theoretical fps: \(Int(renderStats.averageTheoreticalFPS))")
+      Text("FPS: \(Int(renderStats.averageFPS))")
+      if let averageTheoreticalFPS = renderStats.averageTheoreticalFPS {
+        Text("Theoretical FPS: \(Int(averageTheoreticalFPS))")
+      }
       
       Spacer().frame(height: 16)
       
       let averageFrameTime = (renderStats.averageFrameTime * 1000.0).rounded(toPlaces: 1)
+      Text("Frame time: \(String(format: "%.01f", averageFrameTime))ms")
       let averageCPUTime = (renderStats.averageCPUTime * 1000.0).rounded(toPlaces: 1)
-      let averageGPUTime = (renderStats.averageGPUTime * 1000.0).rounded(toPlaces: 1)
-      Text("frame time: \(String(format: "%.01f", averageFrameTime))ms")
-      Text("cpu time: \(String(format: "%.01f", averageCPUTime))ms")
-      Text("gpu time: \(String(format: "%.01f", averageGPUTime))ms")
+      Text("CPU time: \(String(format: "%.01f", averageCPUTime))ms")
+      
+      if let averageGPUTime = renderStats.averageGPUTime {
+        let averageGPUTime = (averageGPUTime * 1000.0).rounded(toPlaces: 1)
+        Text("GPU time: \(String(format: "%.01f", averageGPUTime))ms")
+      }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     .padding(16)
