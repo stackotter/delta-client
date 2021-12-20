@@ -35,6 +35,8 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   
   /// The callibration data used to convert the difference between two GPU timestamps to nanoseconds.
   private var gpuTimeCallibrationFactor: Double
+  /// Whether GPU counters can be sampled at stage boundaries.
+  private var supportsStageBoundarySampling: Bool
   
   // MARK: Init
   
@@ -45,6 +47,8 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     guard let device = MTLCreateSystemDefaultDevice() else {
       fatalError("Failed to get metal device")
     }
+    
+    supportsStageBoundarySampling = device.supportsCounterSampling(.atStageBoundary)
     
     // Take an initial measurement for calibrating the GPU clock
     let startTimestamp = device.sampleTimestamps()
@@ -113,7 +117,16 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     }
     
     // Setup GPU counters
-    renderPassDescriptor.sampleBufferAttachments[0].sampleBuffer = gpuCounterBuffer
+    if let gpuCounterBuffer = gpuCounterBuffer {
+      renderPassDescriptor.sampleBufferAttachments[0].sampleBuffer = gpuCounterBuffer
+      if supportsStageBoundarySampling {
+        renderPassDescriptor.sampleBufferAttachments[0].startOfVertexSampleIndex = 0
+        renderPassDescriptor.sampleBufferAttachments[0].endOfFragmentSampleIndex = 1
+      }
+    }
+    
+    // Make sure depth attachment is cleared before the render pass
+    renderPassDescriptor.depthAttachment.loadAction = .clear
     
     // The CPU start time if vsync was disabled
     let cpuStartTime = CFAbsoluteTimeGetCurrent()
@@ -141,7 +154,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       return
     }
     
-    if let gpuCounterBuffer = gpuCounterBuffer {
+    if let gpuCounterBuffer = gpuCounterBuffer, !supportsStageBoundarySampling {
       renderEncoder.sampleCounters(sampleBuffer: gpuCounterBuffer, sampleIndex: 0, barrier: false)
     }
     
@@ -195,7 +208,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       return
     }
     
-    if let gpuCounterBuffer = gpuCounterBuffer {
+    if let gpuCounterBuffer = gpuCounterBuffer, !supportsStageBoundarySampling {
       renderEncoder.sampleCounters(sampleBuffer: gpuCounterBuffer, sampleIndex: 1, barrier: false)
     }
     
