@@ -33,7 +33,7 @@ public struct WorldMesh {
   // MARK: Init
   
   /// Creates a new world mesh. Prepares any chunks already loaded in the world.
-  public init(_ world: World, cameraChunk: ChunkPosition, resources: ResourcePack.Resources) {
+  public init(_ world: World, resources: ResourcePack.Resources) {
     self.world = world
     meshWorker = WorldMeshWorker(world: world, resources: resources)
     visibilityGraph = VisibilityGraph(blockModelPalette: resources.blockModelPalette)

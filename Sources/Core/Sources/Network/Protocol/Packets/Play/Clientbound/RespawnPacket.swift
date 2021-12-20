@@ -33,8 +33,10 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
     // TODO: check if the discussion at https://wiki.vg/Protocol#Respawn about respawning to the same dimension applies or if it's just a java edition bug
     client.game.world = World(from: self, eventBus: client.eventBus)
     
-    client.game.player.gamemode.gamemode = gamemode
-    client.game.player.attributes.previousGamemode = previousGamemode
+    client.game.accessPlayer { player in
+      player.gamemode.gamemode = gamemode
+      player.attributes.previousGamemode = previousGamemode
+    }
     
     // TODO: get auto respawn working
     let clientStatus = ClientStatusPacket(action: .performRespawn)

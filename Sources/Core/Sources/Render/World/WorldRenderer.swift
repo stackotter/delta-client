@@ -50,7 +50,7 @@ public final class WorldRenderer: Renderer {
       blendingEnabled: true)
     
     // Create world mesh
-    worldMesh = WorldMesh(client.game.world, cameraChunk: client.game.player.position.chunk, resources: resources)
+    worldMesh = WorldMesh(client.game.world, resources: resources)
     
     // Register event handler
     client.eventBus.registerHandler { [weak self] event in
@@ -144,7 +144,7 @@ public final class WorldRenderer: Renderer {
         }
         
       case _ as JoinWorldEvent:
-        worldMesh = WorldMesh(client.game.world, cameraChunk: client.game.player.position.chunk, resources: resources)
+        worldMesh = WorldMesh(client.game.world, resources: resources)
         
       default:
         return

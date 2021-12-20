@@ -10,7 +10,9 @@ public struct SpawnPositionPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.game.player.attributes.spawnPosition = location
+    client.game.accessPlayer { player in
+      player.attributes.spawnPosition = location
+    }
     
     log.info("Finished downloading terrain")
     client.eventBus.dispatch(TerrainDownloadCompletionEvent())

@@ -14,9 +14,11 @@ public struct UpdateHealthPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    client.game.player.health.health = health
-    client.game.player.nutrition.food = food
-    client.game.player.nutrition.saturation = foodSaturation
+    client.game.accessPlayer { player in
+      player.health.health = health
+      player.nutrition.food = food
+      player.nutrition.saturation = foodSaturation
+    }
     
     if health <= 0 {
       // TODO: Handle death

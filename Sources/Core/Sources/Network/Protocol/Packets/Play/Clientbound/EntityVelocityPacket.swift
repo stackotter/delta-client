@@ -14,7 +14,7 @@ public struct EntityVelocityPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    if let velocityComponent = client.game.component(entityId: entityId, EntityVelocity.self) {
+    client.game.accessComponent(entityId: entityId, EntityVelocity.self) { velocityComponent in
       velocityComponent.vector = velocity
     }
   }

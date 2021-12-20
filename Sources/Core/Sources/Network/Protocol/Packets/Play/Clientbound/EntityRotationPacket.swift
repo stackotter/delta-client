@@ -19,17 +19,17 @@ public struct EntityRotationPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    if let rotation = client.game.component(entityId: entityId, EntityRotation.self) {
+    client.game.accessComponent(entityId: entityId, EntityRotation.self) { rotation in
       rotation.pitch = pitch
       rotation.yaw = yaw
     }
     
-    if let onGroundComponent = client.game.component(entityId: entityId, EntityOnGround.self) {
+    client.game.accessComponent(entityId: entityId, EntityOnGround.self) { onGroundComponent in
       onGroundComponent.onGround = onGround
     }
     
-    if let velocity = client.game.component(entityId: entityId, EntityVelocity.self) {
-      if onGround {
+    if onGround {
+      client.game.accessComponent(entityId: entityId, EntityVelocity.self) { velocity in
         velocity.y = 0
       }
     }

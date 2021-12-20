@@ -10,7 +10,7 @@ public struct EntityMovementPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    if let velocity = client.game.component(entityId: entityId, EntityVelocity.self) {
+    client.game.accessComponent(entityId: entityId, EntityVelocity.self) { velocity in
       velocity.vector = SIMD3<Double>.zero
     }
   }

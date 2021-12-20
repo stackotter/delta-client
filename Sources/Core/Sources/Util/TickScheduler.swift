@@ -17,11 +17,17 @@ public final class TickScheduler {
   /// The time that the most recent tick began, in unix epoch seconds.
   public var mostRecentTick: Double = CFAbsoluteTimeGetCurrent()
   
+  private var nexusLock: ReadWriteLock
   private var shouldCancel: AtomicBool = AtomicBool(initialValue: false)
   private var timebaseInfo = mach_timebase_info_data_t()
   
-  public init(_ nexus: Nexus) {
+  /// Creates a new tick scheduler.
+  /// - Parameters:
+  ///   - nexus: The nexus to run updates on.
+  ///   - lock: The lock to acquire for each tick to keep the nexus threadsafe.
+  public init(_ nexus: Nexus, lock: ReadWriteLock) {
     self.nexus = nexus
+    nexusLock = lock
   }
   
   /// Adds a system to the tick loop. Systems are run in the order they are added.
@@ -53,7 +59,10 @@ public final class TickScheduler {
     }
   }
   
+  /// Run all of the systems.
   private func tick() {
+    nexusLock.acquireWriteLock()
+    nexusLock.unlock()
     for system in systems {
       system.update(nexus)
     }

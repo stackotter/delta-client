@@ -5,8 +5,6 @@ import FirebladeECS
 public struct Game {
   // MARK: Public properties
   
-  /// The container for the game's entities. Strictly only contains what Minecraft counts as entities. Doesn't include block entities.
-  public let nexus = Nexus()
   /// The scheduler that runs the game's systems every 20th of a second.
   public var tickScheduler: TickScheduler
   /// The event bus for emitting events.
@@ -14,8 +12,6 @@ public struct Game {
   /// Maps Vanilla entity Ids to identifiers of entities in the ``Nexus``.
   private var entityIdToEntityIdentifier: [Int: EntityIdentifier] = [:]
   
-  /// The player.
-  public var player: Player
   /// The world the player is currently connected to.
   public var world: World
   /// The list of all players in the game.
@@ -47,13 +43,22 @@ public struct Game {
   /// The system that handles entity physics.
   public var physicsSystem = PhysicsSystem()
   
+  // MARK: Private properties
+  
+  /// A locked for managing safe access of ``nexus``.
+  private let nexusLock = ReadWriteLock()
+  /// The container for the game's entities. Strictly only contains what Minecraft counts as entities. Doesn't include block entities.
+  private let nexus = Nexus()
+  /// The player.
+  private var player: Player
+  
   // MARK: Init
   
   /// Creates a game with default properties. Creates the player. Starts the tick loop.
   public init(eventBus: EventBus) {
     self.eventBus = eventBus
     
-    tickScheduler = TickScheduler(nexus)
+    tickScheduler = TickScheduler(nexus, lock: nexusLock)
     
     world = World(eventBus: eventBus)
     
@@ -76,44 +81,89 @@ public struct Game {
   ///
   /// The builder can handle up to 20 components. This should be enough in most cases but if not, components can be added to the nexus directly, this is just more convenient.
   /// The builder can only work for up to 20 components because of a limitation regarding result builders.
-  @discardableResult
-  public mutating func createEntity(id: Int, @ComponentsBuilder using builder: () -> [Component]) -> Entity {
+  /// - Parameters:
+  ///   - id: The id to create the entity with.
+  ///   - builder: The builder that creates the components for the entity.
+  ///   - action: An action to perform on the entity once it's created.
+  public mutating func createEntity(id: Int, @ComponentsBuilder using builder: () -> [Component], action: ((Entity) -> Void)? = nil) {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+    
     let entity = nexus.createEntity(with: builder())
     entityIdToEntityIdentifier[id] = entity.identifier
-    return entity
+    action?(entity)
   }
   
-  /// Returns the entity with the given vanilla id if it exists.
-  public func entity(id: Int) -> Entity? {
+  /// Allows thread safe access to a given entity.
+  /// - Parameters:
+  ///   - id: The id of the entity to access.
+  ///   - action: The action to perform on the entity if it exists.
+  public func accessEntity(id: Int, action: (Entity) -> Void) {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+    
     if let identifier = entityIdToEntityIdentifier[id] {
-      return nexus.entity(from: identifier)
+      action(nexus.entity(from: identifier))
     }
-    return nil
   }
   
-  /// Returns the entity with the given vanilla id if it exists.
-  public func component<T: Component>(entityId: Int, _ componentType: T.Type) -> T? {
-    if let identifier = entityIdToEntityIdentifier[entityId] {
-      return nexus.entity(from: identifier).get(component: T.self)
+  /// Allows thread safe access to a given component.
+  /// - Parameters:
+  ///   - entityId: The id of the entity with the component.
+  ///   - componentType: The type of component to access.
+  ///   - action: The action to perform on the component if the entity exists and contains that component.
+  public func accessComponent<T: Component>(entityId: Int, _ componentType: T.Type, action: (T) -> Void) {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+    
+    if let identifier = entityIdToEntityIdentifier[entityId], let component = nexus.entity(from: identifier).get(component: T.self) {
+      action(component)
     }
-    return nil
   }
   
   /// Removes the entity with the given vanilla id from the game if it exists.
+  /// - Parameter id: The id of the entity to remove.
   public func removeEntity(id: Int) {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+    
     if let identifier = entityIdToEntityIdentifier[id] {
       nexus.destroy(entityId: identifier)
     }
   }
   
   /// Updates an entity's id if it exists.
+  /// - Parameters:
+  ///   - id: The current id of the entity.
+  ///   - newId: The new id for the entity.
   public mutating func updateEntityId(_ id: Int, to newId: Int) {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+    
     if let identifier = entityIdToEntityIdentifier.removeValue(forKey: id) {
       entityIdToEntityIdentifier[newId] = identifier
       if let component = nexus.entity(from: identifier).get(component: EntityId.self) {
         component.id = newId
       }
     }
+  }
+  
+  /// Allows thread safe access to the nexus.
+  /// - Parameter action: The action to perform on the nexus.
+  public func accessNexus(action: (Nexus) -> Void) {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+    
+    action(nexus)
+  }
+  
+  /// Allows thread safe access to the player.
+  /// - Parameter action: The actin to perform on the player.
+  public mutating func accessPlayer(action: (inout Player) -> Void) {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+    
+    action(&player)
   }
   
   // MARK: Lifecycle
@@ -126,10 +176,17 @@ public struct Game {
     respawnScreenEnabled = packet.enableRespawnScreen
     isHardcore = packet.isHardcore
     
-    player.attributes.previousGamemode = packet.previousGamemode
-    player.gamemode.gamemode = packet.gamemode
-    player.attributes.isHardcore = packet.isHardcore
-    updateEntityId(player.entityId.id, to: packet.playerEntityId)
+    var playerEntityId: Int? = nil
+    accessPlayer { player in
+      player.attributes.previousGamemode = packet.previousGamemode
+      player.gamemode.gamemode = packet.gamemode
+      player.attributes.isHardcore = packet.isHardcore
+      playerEntityId = player.entityId.id
+    }
+    
+    if let playerEntityId = playerEntityId {
+      updateEntityId(player.entityId.id, to: packet.playerEntityId)
+    }
     
     world = World(from: packet, eventBus: client.eventBus)
   }

@@ -73,26 +73,28 @@ public struct EntityRenderer: Renderer {
     camera: Camera
   ) throws {
     // Get all renderable entities
-    let entities = client.game.nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self, excludesAll: ClientPlayerEntity.self)
-    
-    let renderDistance = client.configuration.render.renderDistance
-    let cameraChunk = camera.entityPosition.chunk
-    
-    // Create uniforms for each entity
     var entityUniforms: [Uniforms] = []
-    for (position, hitBox) in entities {
-      let size = hitBox.size
-      var position = SIMD3<Float>(position.smoothVector)
-      position -= SIMD3<Float>(hitBox.width, 0, hitBox.width) * 0.5
+    client.game.accessNexus { nexus in
+      let entities = nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self, excludesAll: ClientPlayerEntity.self)
       
-      // Don't render entities that are outside of the render distance
-      let chunkPosition = EntityPosition(SIMD3<Double>(position)).chunk
-      if !chunkPosition.isWithinRenderDistance(renderDistance, of: cameraChunk) {
-        continue
+      let renderDistance = client.configuration.render.renderDistance
+      let cameraChunk = camera.entityPosition.chunk
+      
+      // Create uniforms for each entity
+      for (position, hitBox) in entities {
+        let size = hitBox.size
+        var position = SIMD3<Float>(position.smoothVector)
+        position -= SIMD3<Float>(hitBox.width, 0, hitBox.width) * 0.5
+        
+        // Don't render entities that are outside of the render distance
+        let chunkPosition = EntityPosition(SIMD3<Double>(position)).chunk
+        if !chunkPosition.isWithinRenderDistance(renderDistance, of: cameraChunk) {
+          continue
+        }
+        
+        let uniforms = Uniforms(transformation: MatrixUtil.scalingMatrix(size) * MatrixUtil.translationMatrix(position))
+        entityUniforms.append(uniforms)
       }
-      
-      let uniforms = Uniforms(transformation: MatrixUtil.scalingMatrix(size) * MatrixUtil.translationMatrix(position))
-      entityUniforms.append(uniforms)
     }
     
     guard !entityUniforms.isEmpty else {

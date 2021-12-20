@@ -70,9 +70,13 @@ public class Client {
   private func handleEvent(_ event: Event) {
     switch event {
       case let inputEvent as InputEvent:
-        game.player.updateInputs(with: inputEvent)
+        game.accessPlayer { player in
+          player.updateInputs(with: inputEvent)
+        }
       case let mouseEvent as MouseMoveEvent:
-        game.player.updateLook(with: mouseEvent)
+        game.accessPlayer { player in
+          player.updateLook(with: mouseEvent)
+        }
       default:
         break
     }

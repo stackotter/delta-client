@@ -102,6 +102,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     let frameTime = time - previousFrameStartTime
     previousFrameStartTime = time
     
+    var stopwatch = Stopwatch(mode: .verbose, name: "RenderCoordinator.draw")
+    
+    stopwatch.startMeasurement("Get render pass descriptor")
     // Get current render pass descriptor
     guard let renderPassDescriptor = view.currentRenderPassDescriptor else {
       log.error("Failed to get the current render pass descriptor")
@@ -111,6 +114,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       ))
       return
     }
+    stopwatch.stopMeasurement("Get render pass descriptor")
     
     // Setup GPU counters
     renderPassDescriptor.sampleBufferAttachments[0].sampleBuffer = gpuCounterBuffer
@@ -118,9 +122,12 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     // The CPU start time if vsync was disabled
     let cpuStartTime = CFAbsoluteTimeGetCurrent()
     
+    stopwatch.startMeasurement("Update camera")
     // Create world to clip uniforms buffer
     let uniformsBuffer = getCameraUniforms(view)
+    stopwatch.stopMeasurement("Update camera")
     
+    stopwatch.startMeasurement("Create render encoder")
     // Create command bugger
     guard let commandBuffer = commandQueue.makeCommandBuffer() else {
       log.error("Failed to create command buffer")
@@ -141,6 +148,8 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       return
     }
     
+    stopwatch.stopMeasurement("Create render encoder")
+    
     if let gpuCounterBuffer = gpuCounterBuffer {
       renderEncoder.sampleCounters(sampleBuffer: gpuCounterBuffer, sampleIndex: 0, barrier: false)
     }
@@ -158,6 +167,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         renderEncoder.setTriangleFillMode(.lines)
     }
 
+    stopwatch.startMeasurement("Render world")
     // Render world
     do {
       try worldRenderer.render(
@@ -171,7 +181,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render world"))
       return
     }
+    stopwatch.stopMeasurement("Render world")
 
+    stopwatch.startMeasurement("Render entities")
     // Render entities
     do {
       try entityRenderer.render(
@@ -185,7 +197,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render entities"))
       return
     }
+    stopwatch.stopMeasurement("Render entities")
     
+    stopwatch.startMeasurement("Finish frame")
     // Finish measurements for render statistics
     let cpuFinishTime = CFAbsoluteTimeGetCurrent()
     
@@ -231,6 +245,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     }
     
     commandBuffer.commit()
+    stopwatch.stopMeasurement("Finish frame")
   }
   
   // MARK: Helper
@@ -245,12 +260,14 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     camera.setAspect(aspect)
     camera.setFovY(MathUtil.radians(from: client.configuration.render.fovY))
     
-    let player = client.game.player
-    var eyePosition = SIMD3<Float>(player.position.smoothVector)
-    eyePosition.y += 1.625 // TODO: don't hardcode this, use the player's eye height
+    client.game.accessPlayer { player in
+      var eyePosition = SIMD3<Float>(player.position.smoothVector)
+      eyePosition.y += 1.625 // TODO: don't hardcode this, use the player's eye height
+      
+      camera.setPosition(eyePosition)
+      camera.setRotation(playerLook: player.rotation)
+    }
     
-    camera.setPosition(eyePosition)
-    camera.setRotation(playerLook: player.rotation)
     camera.cacheFrustum()
     return camera.getUniformsBuffer()
   }
