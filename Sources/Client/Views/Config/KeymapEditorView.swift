@@ -31,7 +31,7 @@ struct KeymapEditorView: View {
             .frame(width: 150)
           
           // Button to set a new binding
-          let keyName = state.keymap[input]?.humanReadableLabel ?? "Unbound"
+          let keyName = state.keymap[input]?.rawValue ?? "Unbound"
           Button(action: {
             if isSelected {
               state.selectedInput = nil

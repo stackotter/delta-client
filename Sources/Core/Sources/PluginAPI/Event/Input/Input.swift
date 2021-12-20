@@ -1,30 +1,37 @@
 import Foundation
 
 public enum Input: Codable, CaseIterable {
-  case forward
-  case backward
-  case left
-  case right
+  case moveForward
+  case moveBackward
+  case strafeLeft
+  case strafeRight
+  
   case jump
-  case shift
+  case sneak
   case sprint
+  
+  case toggleDebugHUD
   
   public var humanReadableLabel: String {
     switch self {
-    case .forward:
-      return "Move forward"
-    case .backward:
-      return "Move backward"
-    case .left:
-      return "Strafe left"
-    case .right:
-      return "Strafe right"
-    case .sprint:
-      return "Sprint"
-    case .jump:
-      return "Jump"
-    case .shift:
-      return "Sneak"
+      case .moveForward:
+        return "Move forward"
+      case .moveBackward:
+        return "Move backward"
+      case .strafeLeft:
+        return "Strafe left"
+      case .strafeRight:
+        return "Strafe right"
+        
+      case .jump:
+        return "Jump"
+      case .sneak:
+        return "Sneak"
+      case .sprint:
+        return "Sprint"
+        
+      case .toggleDebugHUD:
+        return "Toggle debug HUD"
     }
   }
 }

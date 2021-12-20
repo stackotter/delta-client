@@ -20,7 +20,7 @@ class KeymapEditorInputDelegate: InputDelegate {
       return
     }
     
-    if key == .code(53) {
+    if key == .escape {
       editorState.keymap.removeValue(forKey: selectedInput)
     } else {
       editorState.keymap[selectedInput] = key

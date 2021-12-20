@@ -1,11 +1,7 @@
 import Foundation
 
-public struct InputEvent: Event {
-  public var type: InputEventType
-  public var input: Input
-  
-  public init(type: InputEventType, input: Input) {
-    self.type = type
-    self.input = input
-  }
+/// A input action event.
+public enum InputEvent: Event {
+  case press(Input)
+  case release(Input)
 }

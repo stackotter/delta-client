@@ -55,15 +55,7 @@ public struct Config: Codable {
     servers = []
     render = RenderConfiguration()
     unloadedPlugins = []
-    keymap = Keymap(bindings: [
-      .forward: .code(13),
-      .backward: .code(1),
-      .left: .code(0),
-      .right: .code(2),
-      .jump: .code(49),
-      .shift: .modifier(.leftShift),
-      .sprint: .modifier(.leftControl)
-    ])
+    keymap = Keymap.default
     mouseSensitivity = 1
   }
   

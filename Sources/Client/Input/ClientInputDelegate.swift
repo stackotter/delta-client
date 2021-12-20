@@ -29,13 +29,12 @@ final class ClientInputDelegate: InputDelegate {
   func onKeyDown(_ key: Key) {
     pressedKeys.insert(key)
     
-    // Release cursor when escape is pressed
-    if key == .code(53) {
+    if key == .escape {
       releaseCursor()
     }
     
     if let input = keymap.getInput(for: key) {
-      let event = InputEvent(type: .press, input: input)
+      let event = InputEvent.press(input)
       client.eventBus.dispatch(event)
     }
   }
@@ -44,7 +43,7 @@ final class ClientInputDelegate: InputDelegate {
     pressedKeys.remove(key)
     
     if let input = keymap.getInput(for: key) {
-      let event = InputEvent(type: .release, input: input)
+      let event = InputEvent.release(input)
       client.eventBus.dispatch(event)
     }
   }
@@ -58,7 +57,7 @@ final class ClientInputDelegate: InputDelegate {
   func releaseCursor() {
     for key in pressedKeys {
       if let input = keymap.getInput(for: key) {
-        let event = InputEvent(type: .release, input: input)
+        let event = InputEvent.release(input)
         client.eventBus.dispatch(event)
       }
     }

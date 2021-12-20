@@ -212,7 +212,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       
       data.withUnsafeBytes { pointer in
         let timestamps = pointer.bindMemory(to: UInt64.self)
-        let gpuNanoseconds = Double(timestamps[1] - timestamps[0]) * self.gpuTimeCallibrationFactor
+        let gpuNanoseconds = Double(timestamps[1] &- timestamps[0]) * self.gpuTimeCallibrationFactor
         
         self.statistics.addMeasurement(
           frameTime: frameTime,

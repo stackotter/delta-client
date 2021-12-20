@@ -13,14 +13,18 @@ enum OverlayState {
   case settings
 }
 
-class HUDUpdater: ObservableObject {
+class HUDState: ObservableObject {
   @Published var dummy = false
+  @Published var showDebugHUD = false
+  
   var timer: Timer?
   
   init() {
     timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
-      ThreadUtil.runInMain {
-        self.dummy.toggle()
+      if self.showDebugHUD {
+        ThreadUtil.runInMain {
+          self.dummy.toggle()
+        }
       }
     }
   }
@@ -29,7 +33,7 @@ class HUDUpdater: ObservableObject {
 struct GameView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
   
-  @ObservedObject var hudUpdater = HUDUpdater()
+  @ObservedObject var hudState = HUDState()
   @ObservedObject var state = StateWrapper<GameState>(initial: .connecting)
   @ObservedObject var overlayState = StateWrapper<OverlayState>(initial: .menu)
   @Binding var cursorCaptured: Bool
@@ -87,7 +91,11 @@ struct GameView: View {
         case .playing:
           ZStack {
             gameView.opacity(cursorCaptured ? 1 : 0.2)
-            hudView.opacity(cursorCaptured ? 1 : 0.2)
+            
+            if hudState.showDebugHUD {
+              debugHUDView.opacity(cursorCaptured ? 1 : 0.2)
+            }
+            
             overlayView
           }
       }
@@ -136,7 +144,7 @@ struct GameView: View {
     }
   }
   
-  var hudView: some View {
+  var debugHUDView: some View {
     VStack(alignment: .leading) {
       Text("fps: \(Int(renderStats.averageFPS))")
       Text("theoretical fps: \(Int(renderStats.averageTheoreticalFPS))")
@@ -235,6 +243,10 @@ struct GameView: View {
           DeltaClientApp.modalError("\(message); \(generalError.error)")
         } else {
           DeltaClientApp.modalError("\(generalError.error)")
+        }
+      case .press(.toggleDebugHUD) as InputEvent:
+        ThreadUtil.runInMain {
+          hudState.showDebugHUD.toggle()
         }
       default:
         break

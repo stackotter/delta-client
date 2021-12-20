@@ -49,11 +49,13 @@ struct InputView<Content: View>: View {
               return event
             }
             
-            delegateWrapper.delegate?.onKeyDown(.code(Int(event.keyCode)))
-            
-            if event.keyCode == 12 && event.modifierFlags.contains(.command) {
-              // Pass through quit command
-              return event
+            if let key = Key(keyCode: event.keyCode) {
+              delegateWrapper.delegate?.onKeyDown(key)
+              
+              if key == .q && event.modifierFlags.contains(.command) {
+                // Pass through quit command
+                return event
+              }
             }
             
             return nil
@@ -64,7 +66,9 @@ struct InputView<Content: View>: View {
               return event
             }
             
-            delegateWrapper.delegate?.onKeyUp(.code(Int(event.keyCode)))
+            if let key = Key(keyCode: event.keyCode) {
+              delegateWrapper.delegate?.onKeyUp(key)
+            }
             return event
           })
           
@@ -77,51 +81,51 @@ struct InputView<Content: View>: View {
             let previousRaw = Int32(previousModifierFlags?.rawValue ?? 0)
             
             if raw & NX_DEVICELALTKEYMASK != 0 && previousRaw & NX_DEVICELALTKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.modifier(.leftOption))
+              delegateWrapper.delegate?.onKeyDown(.leftOption)
             } else if raw & NX_DEVICELALTKEYMASK == 0 && previousRaw & NX_DEVICELALTKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.modifier(.leftOption))
+              delegateWrapper.delegate?.onKeyUp(.leftOption)
             }
             
             if raw & NX_DEVICELCMDKEYMASK != 0 && previousRaw & NX_DEVICELCMDKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.modifier(.leftCommand))
+              delegateWrapper.delegate?.onKeyDown(.leftCommand)
             } else if raw & NX_DEVICELCMDKEYMASK == 0 && previousRaw & NX_DEVICELCMDKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.modifier(.leftCommand))
+              delegateWrapper.delegate?.onKeyUp(.leftCommand)
             }
             
             if raw & NX_DEVICELCTLKEYMASK != 0 && previousRaw & NX_DEVICELCTLKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.modifier(.leftControl))
+              delegateWrapper.delegate?.onKeyDown(.leftControl)
             } else if raw & NX_DEVICELCTLKEYMASK == 0 && previousRaw & NX_DEVICELCTLKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.modifier(.leftControl))
+              delegateWrapper.delegate?.onKeyUp(.leftControl)
             }
             
             if raw & NX_DEVICELSHIFTKEYMASK != 0 && previousRaw & NX_DEVICELSHIFTKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.modifier(.leftShift))
+              delegateWrapper.delegate?.onKeyDown(.leftShift)
             } else if raw & NX_DEVICELSHIFTKEYMASK == 0 && previousRaw & NX_DEVICELSHIFTKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.modifier(.leftShift))
+              delegateWrapper.delegate?.onKeyUp(.leftShift)
             }
             
             if raw & NX_DEVICERALTKEYMASK != 0 && previousRaw & NX_DEVICERALTKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.modifier(.rightOption))
+              delegateWrapper.delegate?.onKeyDown(.rightOption)
             } else if raw & NX_DEVICERALTKEYMASK == 0 && previousRaw & NX_DEVICERALTKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.modifier(.rightOption))
+              delegateWrapper.delegate?.onKeyUp(.rightOption)
             }
             
             if raw & NX_DEVICERCMDKEYMASK != 0 && previousRaw & NX_DEVICERCMDKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.modifier(.rightCommand))
+              delegateWrapper.delegate?.onKeyDown(.rightCommand)
             } else if raw & NX_DEVICERCMDKEYMASK == 0 && previousRaw & NX_DEVICERCMDKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.modifier(.rightCommand))
+              delegateWrapper.delegate?.onKeyUp(.rightCommand)
             }
             
             if raw & NX_DEVICERCTLKEYMASK != 0 && previousRaw & NX_DEVICERCTLKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.modifier(.rightControl))
+              delegateWrapper.delegate?.onKeyDown(.rightControl)
             } else if raw & NX_DEVICERCTLKEYMASK == 0 && previousRaw & NX_DEVICERCTLKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.modifier(.rightControl))
+              delegateWrapper.delegate?.onKeyUp(.rightControl)
             }
             
             if raw & NX_DEVICERSHIFTKEYMASK != 0 && previousRaw & NX_DEVICERSHIFTKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.modifier(.rightShift))
+              delegateWrapper.delegate?.onKeyDown(.rightShift)
             } else if raw & NX_DEVICERSHIFTKEYMASK == 0 && previousRaw & NX_DEVICERSHIFTKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.modifier(.rightShift))
+              delegateWrapper.delegate?.onKeyUp(.rightShift)
             }
             
             previousModifierFlags = event.modifierFlags

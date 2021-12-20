@@ -92,11 +92,11 @@ public struct Player {
   
   /// Updates the player's velocity with an input event.
   public mutating func updateInputs(with event: InputEvent) {
-    switch event.type {
-      case .press:
-        input.inputs.insert(event.input)
-      case .release:
-        input.inputs.remove(event.input)
+    switch event {
+      case let .press(input):
+        self.input.inputs.insert(input)
+      case let .release(input):
+        self.input.inputs.remove(input)
     }
   }
 }

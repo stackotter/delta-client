@@ -20,21 +20,21 @@ public struct PhysicsSystem: System {
       
       // Update velocity relative to yaw
       var velocityVector = SIMD3<Double>(0, 0, 0)
-      if inputs.contains(.forward) {
+      if inputs.contains(.moveForward) {
         velocityVector.z = playerSpeed
-      } else if inputs.contains(.backward) {
+      } else if inputs.contains(.moveBackward) {
         velocityVector.z = -playerSpeed
       }
       
-      if inputs.contains(.left) {
+      if inputs.contains(.strafeLeft) {
         velocityVector.x = playerSpeed
-      } else if inputs.contains(.right) {
+      } else if inputs.contains(.strafeRight) {
         velocityVector.x = -playerSpeed
       }
       
       if inputs.contains(.jump) {
         velocityVector.y = playerSpeed
-      } else if inputs.contains(.shift) {
+      } else if inputs.contains(.sneak) {
         velocityVector.y = -playerSpeed
       }
       
