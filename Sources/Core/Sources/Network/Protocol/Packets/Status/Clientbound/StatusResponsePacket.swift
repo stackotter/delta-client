@@ -35,7 +35,7 @@ public struct StatusResponsePacket: ClientboundPacket {
     ThreadUtil.runInMain {
       log.debug("Received ping response from \(pinger.connection?.socketAddress ?? "Unknown??")")
       pinger.pingResult = Result.success(pingInfo)
+      pinger.closeConnection()
     }
-    pinger.closeConnection()
   }
 }

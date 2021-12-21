@@ -1,5 +1,6 @@
 import SwiftUI
 import DeltaCore
+import Combine
 
 enum GameState {
   case connecting
@@ -38,170 +39,47 @@ class Box<T> {
   }
 }
 
-struct GameView: View {
-  @EnvironmentObject var appState: StateWrapper<AppState>
-  
-  @ObservedObject var hudState = HUDState()
-  @ObservedObject var state = StateWrapper<GameState>(initial: .connecting)
-  @ObservedObject var overlayState = StateWrapper<OverlayState>(initial: .menu)
-  @Binding var cursorCaptured: Bool
+class GameViewModel: ObservableObject {
+  @Published var hudState = HUDState()
+  @Published var state = StateWrapper<GameState>(initial: .connecting)
+  @Published var overlayState = StateWrapper<OverlayState>(initial: .menu)
   
   var client: Client
   var inputDelegate: ClientInputDelegate
-  var serverDescriptor: ServerDescriptor
   var renderCoordinator: RenderCoordinator
   var downloadedChunksCount = Box(0)
+  var serverDescriptor: ServerDescriptor
   
-  init(serverDescriptor: ServerDescriptor, resourcePack: ResourcePack, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
+  var cancellables : [AnyCancellable] = []
+  
+  init(client: Client, inputDelegate: ClientInputDelegate, renderCoordinator: RenderCoordinator, serverDescriptor: ServerDescriptor) {
+    self.client = client
+    self.inputDelegate = inputDelegate
+    self.renderCoordinator = renderCoordinator
     self.serverDescriptor = serverDescriptor
-    client = Client(resourcePack: resourcePack)
-    client.configuration.render = ConfigManager.default.config.render
     
-    // Disable input when the cursor isn't captured (after player hits escape during play to get to menu)
-    _cursorCaptured = inputCaptureEnabled
-    
-    // Setup input system
-    inputDelegate = ClientInputDelegate(for: client)
-    setDelegate(inputDelegate)
-    
-    // Create render coordinator
-    renderCoordinator = RenderCoordinator(client)
-    
-    // Register for client events
-    client.eventBus.registerHandler(handleClientEvent(_:))
-    
-    // Setup plugins
-    DeltaClientApp.pluginEnvironment.addEventBus(client.eventBus)
-    DeltaClientApp.pluginEnvironment.handleWillJoinServer(server: serverDescriptor, client: client)
-    
-    // Connect to server
-    joinServer(serverDescriptor)
-  }
-  
-  var body: some View {
-    Group {
-      switch state.current {
-        case .connecting:
-          connectingView
-        case .loggingIn:
-          loggingInView
-        case .downloadingChunks(let numberReceived, let total):
-          VStack {
-            Text("Downloading chunks...")
-            HStack {
-              ProgressView(value: Double(numberReceived) / Double(total))
-              Text("\(numberReceived) of \(total)")
-            }
-              .frame(maxWidth: 200)
-            Button("Cancel", action: disconnect)
-              .buttonStyle(SecondaryButtonStyle())
-              .frame(width: 150)
-          }
-        case .playing:
-          ZStack {
-            gameView.opacity(cursorCaptured ? 1 : 0.2)
-            
-            if hudState.showDebugHUD {
-              debugHUDView.opacity(cursorCaptured ? 1 : 0.2)
-            }
-            
-            overlayView
-          }
-      }
+    client.eventBus.registerHandler { [weak self] event in
+      guard let self = self else { return }
+      self.handleClientEvent(event)
     }
+    
+    watch(hudState)
+    watch(state)
+    watch(overlayState)
   }
   
-  var connectingView: some View {
-    VStack {
-      Text("Establishing connection...")
-      Button("Cancel", action: disconnect)
-        .buttonStyle(SecondaryButtonStyle())
-        .frame(width: 150)
-    }
+  func watch<T: ObservableObject>(_ value: T) {
+    self.cancellables.append(value.objectWillChange.sink { [weak self] _ in
+      self?.objectWillChange.send()
+    })
   }
   
-  var loggingInView: some View {
-    VStack {
-      Text("Logging in...")
-      Button("Cancel", action: disconnect)
-        .buttonStyle(SecondaryButtonStyle())
-        .frame(width: 150)
-    }
-  }
-  
-  var gameView: some View {
-    ZStack {
-      // Renderer
-      MetalView(renderCoordinator: renderCoordinator)
-        .onAppear {
-          inputDelegate.bind($cursorCaptured.onChange { newValue in
-            // When showing overlay make sure menu is the first view
-            if newValue == false {
-              overlayState.update(to: .menu)
-            }
-          })
-          
-          inputDelegate.captureCursor()
-        }
-      
-      // Cross hair
-      if cursorCaptured {
-        Image(systemName: "plus")
-          .font(.system(size: 20))
-          .blendMode(.difference)
-      }
-    }
-  }
-  
-  var debugHUDView: some View {
-    VStack(alignment: .leading) {
-      Text("FPS: \(Int(renderStats.averageFPS))")
-      if let averageTheoreticalFPS = renderStats.averageTheoreticalFPS {
-        Text("Theoretical FPS: \(Int(averageTheoreticalFPS))")
-      }
-      
-      Spacer().frame(height: 16)
-      
-      let averageFrameTime = (renderStats.averageFrameTime * 1000.0).rounded(toPlaces: 1)
-      Text("Frame time: \(String(format: "%.01f", averageFrameTime))ms")
-      let averageCPUTime = (renderStats.averageCPUTime * 1000.0).rounded(toPlaces: 1)
-      Text("CPU time: \(String(format: "%.01f", averageCPUTime))ms")
-      
-      if let averageGPUTime = renderStats.averageGPUTime {
-        let averageGPUTime = (averageGPUTime * 1000.0).rounded(toPlaces: 1)
-        Text("GPU time: \(String(format: "%.01f", averageGPUTime))ms")
-      }
-    }
-    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .padding(16)
-  }
-  
-  var renderStats: RenderStatistics {
-    renderCoordinator.statistics
-  }
-  
-  var overlayView: some View {
-    VStack {
-      // In-game menu overlay
-      if !cursorCaptured {
-        switch overlayState.current {
-          case .menu:
-            VStack {
-              Button("Back to game", action: closeMenu)
-                .keyboardShortcut(.escape, modifiers: [])
-                .buttonStyle(PrimaryButtonStyle())
-              Button("Settings", action: { overlayState.update(to: .settings) })
-                .buttonStyle(SecondaryButtonStyle())
-              Button("Disconnect", action: disconnect)
-                .buttonStyle(SecondaryButtonStyle())
-            }
-            .frame(width: 200)
-          case .settings:
-            SettingsView(isInGame: true, client: client, onDone: {
-              overlayState.update(to: .menu)
-            })
-        }
-      }
+  func closeMenu() {
+    inputDelegate.keymap = ConfigManager.default.config.keymap
+    inputDelegate.mouseSensitivity = ConfigManager.default.config.mouseSensitivity
+    
+    withAnimation(nil) {
+      inputDelegate.captureCursor()
     }
   }
   
@@ -216,7 +94,7 @@ struct GameView: View {
     // Refresh the account (if Mojang) and then join the server
     ConfigManager.default.refreshSelectedAccount(onCompletion: { account in
       do {
-        try client.joinServer(
+        try self.client.joinServer(
           describedBy: descriptor,
           with: account)
       } catch {
@@ -276,18 +154,173 @@ struct GameView: View {
         break
     }
   }
+}
+
+struct GameView: View {
+  @EnvironmentObject var appState: StateWrapper<AppState>
   
-  func disconnect() {
-    client.closeConnection()
-    appState.update(to: .serverList)
+  @ObservedObject var model: GameViewModel
+  @Binding var cursorCaptured: Bool
+  
+  init(serverDescriptor: ServerDescriptor, resourcePack: ResourcePack, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
+    let client = Client(resourcePack: resourcePack)
+    client.configuration.render = ConfigManager.default.config.render
+    
+    // Setup input system
+    let inputDelegate = ClientInputDelegate(for: client)
+    setDelegate(inputDelegate)
+    
+    // Create render coordinator
+    let renderCoordinator = RenderCoordinator(client)
+    
+    model = GameViewModel(
+      client: client,
+      inputDelegate: inputDelegate,
+      renderCoordinator: renderCoordinator,
+      serverDescriptor: serverDescriptor)
+    
+    _cursorCaptured = inputCaptureEnabled
+    
+    // Setup plugins
+    DeltaClientApp.pluginEnvironment.addEventBus(client.eventBus)
+    DeltaClientApp.pluginEnvironment.handleWillJoinServer(server: serverDescriptor, client: client)
+    
+    // Connect to server
+    model.joinServer(serverDescriptor)
   }
   
-  func closeMenu() {
-    inputDelegate.keymap = ConfigManager.default.config.keymap
-    inputDelegate.mouseSensitivity = ConfigManager.default.config.mouseSensitivity
-    
-    withAnimation(nil) {
-      inputDelegate.captureCursor()
+  var body: some View {
+    Group {
+      switch model.state.current {
+        case .connecting:
+          connectingView
+        case .loggingIn:
+          loggingInView
+        case .downloadingChunks(let numberReceived, let total):
+          VStack {
+            Text("Downloading chunks...")
+            HStack {
+              ProgressView(value: Double(numberReceived) / Double(total))
+              Text("\(numberReceived) of \(total)")
+            }
+              .frame(maxWidth: 200)
+            Button("Cancel", action: disconnect)
+              .buttonStyle(SecondaryButtonStyle())
+              .frame(width: 150)
+          }
+        case .playing:
+          ZStack {
+            gameView.opacity(cursorCaptured ? 1 : 0.2)
+            
+            if model.hudState.showDebugHUD {
+              debugHUDView.opacity(cursorCaptured ? 1 : 0.2)
+            }
+            
+            overlayView
+          }
+      }
     }
+    .onDisappear {
+      model.client.disconnect()
+      model.renderCoordinator = RenderCoordinator(model.client)
+    }
+  }
+  
+  var connectingView: some View {
+    VStack {
+      Text("Establishing connection...")
+      Button("Cancel", action: disconnect)
+        .buttonStyle(SecondaryButtonStyle())
+        .frame(width: 150)
+    }
+  }
+  
+  var loggingInView: some View {
+    VStack {
+      Text("Logging in...")
+      Button("Cancel", action: disconnect)
+        .buttonStyle(SecondaryButtonStyle())
+        .frame(width: 150)
+    }
+  }
+  
+  var gameView: some View {
+    ZStack {
+      // Renderer
+      MetalView(renderCoordinator: model.renderCoordinator)
+        .onAppear {
+          model.inputDelegate.bind($cursorCaptured.onChange { newValue in
+            // When showing overlay make sure menu is the first view
+            if newValue == false {
+              model.overlayState.update(to: .menu)
+            }
+          })
+          
+          model.inputDelegate.captureCursor()
+        }
+      
+      // Cross hair
+      if cursorCaptured {
+        Image(systemName: "plus")
+          .font(.system(size: 20))
+          .blendMode(.difference)
+      }
+    }
+  }
+  
+  var debugHUDView: some View {
+    VStack(alignment: .leading) {
+      Text("FPS: \(Int(renderStats.averageFPS))")
+      if let averageTheoreticalFPS = renderStats.averageTheoreticalFPS {
+        Text("Theoretical FPS: \(Int(averageTheoreticalFPS))")
+      }
+      
+      Spacer().frame(height: 16)
+      
+      let averageFrameTime = (renderStats.averageFrameTime * 1000.0).rounded(toPlaces: 1)
+      Text("Frame time: \(String(format: "%.01f", averageFrameTime))ms")
+      let averageCPUTime = (renderStats.averageCPUTime * 1000.0).rounded(toPlaces: 1)
+      Text("CPU time: \(String(format: "%.01f", averageCPUTime))ms")
+      
+      if let averageGPUTime = renderStats.averageGPUTime {
+        let averageGPUTime = (averageGPUTime * 1000.0).rounded(toPlaces: 1)
+        Text("GPU time: \(String(format: "%.01f", averageGPUTime))ms")
+      }
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .padding(16)
+  }
+  
+  var renderStats: RenderStatistics {
+    model.renderCoordinator.statistics
+  }
+  
+  var overlayView: some View {
+    VStack {
+      // In-game menu overlay
+      if !cursorCaptured {
+        switch model.overlayState.current {
+          case .menu:
+            VStack {
+              Button("Back to game", action: model.closeMenu)
+                .keyboardShortcut(.escape, modifiers: [])
+                .buttonStyle(PrimaryButtonStyle())
+              Button("Settings", action: { model.overlayState.update(to: .settings) })
+                .buttonStyle(SecondaryButtonStyle())
+              Button("Disconnect", action: disconnect)
+                .buttonStyle(SecondaryButtonStyle())
+            }
+            .frame(width: 200)
+          case .settings:
+            SettingsView(isInGame: true, client: model.client, onDone: {
+              model.overlayState.update(to: .menu)
+            })
+        }
+      }
+    }
+  }
+  
+  func disconnect() {
+    appState.update(to: .serverList)
   }
 }

@@ -46,7 +46,6 @@ struct AccountLoginView: EditorView {
         let account = OfflineAccount(username: username)
         completionHandler(account)
       case .microsoft:
-        print("microsoft login")
         cancelationHandler?()
     }
   }

@@ -85,7 +85,7 @@ public class ServerConnection {
         return (srvHostname, record.resource.port)
       }
     } catch {
-      print("Failed to resolve SRV record")
+      log.error("Failed to resolve SRV record")
     }
     
     // Return the default port

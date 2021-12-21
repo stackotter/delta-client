@@ -160,6 +160,7 @@ public final class SocketLayer {
   /// - Parameter error: The error to handle.
   private func handleNWError(_ error: NWError) {
     if state != .disconnected {
+      disconnect()
       eventBus.dispatch(ConnectionFailedEvent(networkError: error))
       if error == NWError.posix(.ECONNREFUSED) {
         log.error("Connection refused: '\(self.host):\(self.port)'")

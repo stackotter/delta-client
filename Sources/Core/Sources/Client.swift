@@ -1,7 +1,7 @@
 import Foundation
 
 /// A client creates and maintains a connection to a server and handles the received packets.
-public class Client {
+public final class Client {
   /// The resource pack to use.
   public var resourcePack: ResourcePack
   /// The account this client uses to join servers.
@@ -28,6 +28,11 @@ public class Client {
     }
   }
   
+  deinit {
+    game.tickScheduler.cancel()
+    connection?.close()
+  }
+  
   // MARK: Connection lifecycle
   
   /// Join the specified server. Throws if the packets fail to send.
@@ -42,9 +47,14 @@ public class Client {
   }
   
   /// Disconnect from the currently connected server if any.
-  public func closeConnection() {
+  public func disconnect() {
+    // Close connection
     connection?.close()
     connection = nil
+    // Reset chunk storage
+    game.world = World(eventBus: eventBus)
+    // Stop ticking
+    game.tickScheduler.cancel()
   }
   
   // MARK: Networking
@@ -59,7 +69,7 @@ public class Client {
     do {
       try packet.handle(for: self)
     } catch {
-      closeConnection()
+      disconnect()
       log.error("Failed to handle packet: \(error.localizedDescription)")
       eventBus.dispatch(PacketHandlingErrorEvent(packetId: type(of: packet).id, error: "\(error.localizedDescription)"))
     }

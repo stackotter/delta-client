@@ -177,7 +177,6 @@ public class LANServerEnumerator: ObservableObject {
     servers.append(server)
     
     ThreadUtil.runInMain {
-      print("Adding pinger")
       pingers.append(pinger)
     }
   }
