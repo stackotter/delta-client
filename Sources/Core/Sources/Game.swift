@@ -185,7 +185,7 @@ public struct Game {
     }
     
     if let playerEntityId = playerEntityId {
-      updateEntityId(player.entityId.id, to: packet.playerEntityId)
+      updateEntityId(playerEntityId, to: packet.playerEntityId)
     }
     
     world = World(from: packet, eventBus: client.eventBus)
