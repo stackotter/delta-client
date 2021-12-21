@@ -30,14 +30,14 @@ public class Client {
   
   // MARK: Connection lifecycle
   
-  /// Join the specified server.
-  public func joinServer(describedBy descriptor: ServerDescriptor, with account: Account) {
+  /// Join the specified server. Throws if the packets fail to send.
+  public func joinServer(describedBy descriptor: ServerDescriptor, with account: Account) throws {
     self.account = account
     
     // Create a connection to the server
     let connection = ServerConnection(descriptor: descriptor, locale: resourcePack.getDefaultLocale(), eventBus: eventBus)
     connection.setPacketHandler(handlePacket(_:))
-    connection.login(username: account.username)
+    try connection.login(username: account.username)
     self.connection = connection
   }
   
@@ -50,8 +50,8 @@ public class Client {
   // MARK: Networking
   
   /// Send a packet to the server currently connected to (if any).
-  public func sendPacket(_ packet: ServerboundPacket) {
-    connection?.sendPacket(packet)
+  public func sendPacket(_ packet: ServerboundPacket) throws {
+    try connection?.sendPacket(packet)
   }
   
   /// The client's packet handler.

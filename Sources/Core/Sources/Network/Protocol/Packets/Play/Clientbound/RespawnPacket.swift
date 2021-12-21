@@ -40,6 +40,6 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
     
     // TODO: get auto respawn working
     let clientStatus = ClientStatusPacket(action: .performRespawn)
-    client.sendPacket(clientStatus)
+    try client.sendPacket(clientStatus)
   }
 }

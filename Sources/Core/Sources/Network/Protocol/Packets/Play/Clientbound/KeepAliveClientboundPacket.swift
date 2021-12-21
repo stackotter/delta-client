@@ -12,6 +12,6 @@ public struct KeepAliveClientboundPacket: ClientboundPacket {
   
   public func handle(for client: Client) throws {
     let keepAlive = KeepAliveServerBoundPacket(keepAliveId: keepAliveId)
-    client.sendPacket(keepAlive)
+    try client.sendPacket(keepAlive)
   }
 }

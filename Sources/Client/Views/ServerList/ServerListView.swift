@@ -39,7 +39,7 @@ struct ServerListView: View {
   /// Ping all servers again and clear discovered LAN servers.
   func refresh() {
     for pinger in pingers {
-      pinger.ping()
+      try? pinger.ping()
     }
     
     lanServerEnumerator?.clear()

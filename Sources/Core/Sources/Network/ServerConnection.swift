@@ -7,9 +7,9 @@ public class ServerConnection {
   public private(set) var host: String
   public private(set) var port: UInt16
   
-  public var networkStack: NetworkStack // TODO: The server connection's network stack should be able to be private
+  public var networkStack: NetworkStack
   
-  public var packetRegistry: PacketRegistry // TODO: Make PacketRegistry a singleton
+  public var packetRegistry: PacketRegistry
   public private(set) var state: State = .idle
   
   public private(set) var eventBus: EventBus
@@ -51,7 +51,7 @@ public class ServerConnection {
     networkStack.reconnect()
   }
   
-  // TODO: Remove the need for this function.
+  /// Sets the state of the server connection.
   public func setState(_ newState: State) {
     state = newState
   }
@@ -108,7 +108,8 @@ public class ServerConnection {
   
   /// Sets the handler to use for received packets.
   public func setPacketHandler(_ handler: @escaping (ClientboundPacket) -> Void) {
-    networkStack.setPacketHandler({ packetReader in
+    networkStack.packetHandler = { [weak self] packetReader in
+      guard let self = self else { return }
       do {
         if let packetState = self.state.packetState {
           // Create a mutable packet reader
@@ -117,7 +118,7 @@ public class ServerConnection {
           
           // Get the correct type of packet
           guard let packetType = self.packetRegistry.getClientboundPacketType(withId: reader.packetId, andState: packetState) else {
-            log.warning("non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
+            log.warning("Non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
             return
           }
           
@@ -130,40 +131,40 @@ public class ServerConnection {
         self.eventBus.dispatch(PacketDecodingErrorEvent(packetId: packetReader.packetId, error: "\(error.localizedDescription)"))
         log.warning("Failed to decode packet with id \(String(packetReader.packetId, radix: 16)): \(error.localizedDescription)")
       }
-    })
+    }
   }
   
-  /// Sends the given packet to the server currently connected to.
-  public func sendPacket(_ packet: ServerboundPacket) {
-    networkStack.sendPacket(packet)
+  /// Sends a packet to the server.
+  /// - Parameter packet: The packet to send.
+  public func sendPacket(_ packet: ServerboundPacket) throws {
+    try networkStack.sendPacket(packet)
   }
   
   // MARK: Handshake
   
-  /// Sends a login request with the given username.
-  public func login(username: String) {
+  /// Sends a login request to the server. Throws if the packet fails to send.
+  /// - Parameter username: The username to login with.
+  public func login(username: String) throws {
     restart()
     
-    handshake(nextState: .login)
-    
+    try handshake(nextState: .login)
     let loginStart = LoginStartPacket(username: username)
-    sendPacket(loginStart)
+    try sendPacket(loginStart)
   }
   
   /// Sends a status request or 'ping'.
-  public func ping() {
+  public func ping() throws {
     restart()
     
-    handshake(nextState: .status)
-    
+    try handshake(nextState: .status)
     let statusRequest = StatusRequestPacket()
-    sendPacket(statusRequest)
+    try sendPacket(statusRequest)
   }
   
   /// Sends a handshake with the goal of transitioning to the given state (either status or login).
-  public func handshake(nextState: HandshakePacket.NextState) {
+  public func handshake(nextState: HandshakePacket.NextState) throws {
     let handshake = HandshakePacket(protocolVersion: Constants.protocolVersion, serverAddr: host, serverPort: Int(port), nextState: nextState)
-    sendPacket(handshake)
+    try sendPacket(handshake)
     state = (nextState == .login) ? .login : .status
   }
 }

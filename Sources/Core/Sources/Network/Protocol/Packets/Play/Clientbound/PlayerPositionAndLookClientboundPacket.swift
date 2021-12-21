@@ -33,7 +33,7 @@ public struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
   
   public func handle(for client: Client) throws {
     let teleportConfirm = TeleportConfirmPacket(teleportId: teleportId)
-    client.sendPacket(teleportConfirm)
+    try client.sendPacket(teleportConfirm)
     
     client.game.accessPlayer { player in
       let position = player.position

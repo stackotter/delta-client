@@ -1,52 +1,63 @@
 import Foundation
 import Compression
 
-public class CompressionLayer: NetworkLayer {
-  public var inboundSuccessor: InboundNetworkLayer?
-  public var outboundSuccessor: OutboundNetworkLayer?
+/// An error with packet compression.
+public enum CompressionLayerError: LocalizedError {
+  /// A compressed packet was under the required length for compressed packets.
+  case compressedPacketIsUnderThreshold(length: Int, threshold: Int)
+}
+
+/// Handles the compression and decompression of packets (outbound and inbound respectively).
+public struct CompressionLayer {
+  // MARK: Public properties
   
+  /// Packets greater than or equal to this threshold (in length) will get compressed.
   public var compressionThreshold = -1
   
-  public func handleInbound(_ inBuffer: Buffer) {
+  // MARK: Init
+  
+  /// Creates a new compression layer.
+  public init() {}
+  
+  // MARK: Public properties
+  
+  public func processInbound(_ buffer: Buffer) throws -> Buffer {
     if compressionThreshold > 0 {
-      var buffer = inBuffer // mutable copy
+      var buffer = buffer
       let dataLength = buffer.readVarInt()
-      if dataLength == 0 { // uncompressed packet
-        inboundSuccessor?.handleInbound(buffer)
-      } else { // compressed packet
+      if dataLength == 0 { // Packet isn't compressed
+        return buffer
+      } else { // Packet is compressed
         if dataLength < compressionThreshold {
-          log.error("illegal compressed packet received (below compression threshold), threshold: \(compressionThreshold), length: \(dataLength)")
-          let compressedBytes = buffer.readRemainingBytes()
-          let decompressed = CompressionUtil.decompress(compressedBytes, decompressedLength: dataLength)
-          inboundSuccessor?.handleInbound(Buffer(decompressed))
+          throw CompressionLayerError.compressedPacketIsUnderThreshold(length: dataLength, threshold: compressionThreshold)
         } else {
           let compressedBytes = buffer.readRemainingBytes()
           let decompressed = CompressionUtil.decompress(compressedBytes, decompressedLength: dataLength)
-          inboundSuccessor?.handleInbound(Buffer(decompressed))
+          return Buffer(decompressed)
         }
       }
     } else {
-      inboundSuccessor?.handleInbound(inBuffer)
+      return buffer
     }
   }
   
-  public func handleOutbound(_ inBuffer: Buffer) {
-    if compressionThreshold > 0 { // compression enabled
-      var buffer = inBuffer // mutable copy
+  public func processOutbound(_ buffer: Buffer) -> Buffer {
+    if compressionThreshold > 0 { // Compression is enabled
+      var buffer = buffer
       var outBuffer = Buffer()
       if buffer.length >= compressionThreshold {
         let bytes = buffer.readRemainingBytes()
         let compressed = CompressionUtil.compress(bytes)
         outBuffer.writeVarInt(Int32(compressed.count))
         outBuffer.writeBytes(compressed)
-        outboundSuccessor?.handleOutbound(outBuffer)
+        return outBuffer
       } else {
         outBuffer.writeVarInt(0)
         outBuffer.writeBytes(buffer.readRemainingBytes())
-        outboundSuccessor?.handleOutbound(outBuffer)
+        return outBuffer
       }
-    } else { // compression disabled
-      outboundSuccessor?.handleOutbound(inBuffer)
+    } else { // Compression is disabled
+      return buffer
     }
   }
 }

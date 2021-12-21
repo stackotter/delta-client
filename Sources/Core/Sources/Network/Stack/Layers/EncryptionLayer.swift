@@ -1,47 +1,70 @@
 import Foundation
 import IDZSwiftCommonCrypto
 
-public class EncryptionLayer: NetworkLayer {
+/// An error related to packet encryption and decryption.
+public enum EncryptionLayerError: LocalizedError {
+  /// Failed to decrypt a packet.
+  case failedToDecryptPacket(Status)
+  /// Failed to encrypt a packet.
+  case failedToEncryptPacket(Status)
+}
+
+/// Handles the encryption and decryption of packets (outbound and inbound respectively).
+public struct EncryptionLayer {
+  // MARK: Private properties
+  
+  /// The cryptor used for decrypting inbound packets.
   private var inputCryptor: StreamCryptor?
+  /// The cryptor used for encryption outbound packets.
   private var outputCryptor: StreamCryptor?
   
-  public var inboundSuccessor: InboundNetworkLayer?
-  public var outboundSuccessor: OutboundNetworkLayer?
+  // MARK: Init
   
-  public func enableEncryption(sharedSecret: [UInt8]) {
+  /// Creates a new encryption layer.
+  public init() {}
+  
+  // MARK: Public methods
+  
+  /// Enables the encryption layer.
+  /// - Parameter sharedSecret: The shared secret to initialize the stream cryptors with.
+  public mutating func enableEncryption(sharedSecret: [UInt8]) {
     inputCryptor = createCryptor(sharedSecret: sharedSecret, operation: .decrypt)
     outputCryptor = createCryptor(sharedSecret: sharedSecret, operation: .encrypt)
-    log.debug("enabled encryption")
   }
   
-  public func handleInbound(_ buffer: Buffer) {
+  /// Decrypts a packet.
+  public func processInbound(_ buffer: Buffer) throws -> Buffer {
     if let cryptor = inputCryptor {
       var decrypted = [UInt8](repeating: 0, count: buffer.bytes.count)
       let (_, status) = cryptor.update(byteArrayIn: buffer.bytes, byteArrayOut: &decrypted)
       if status == .success {
-        inboundSuccessor?.handleInbound(Buffer(decrypted))
+        return Buffer(decrypted)
       } else {
-        log.error("failed to decrypt packet: \(status)")
+        throw EncryptionLayerError.failedToDecryptPacket(status)
       }
     } else {
-      inboundSuccessor?.handleInbound(buffer)
+      return buffer
     }
   }
   
-  public func handleOutbound(_ buffer: Buffer) {
+  /// Encrypts a packet.
+  public func processOutbound(_ buffer: Buffer) throws -> Buffer {
     if let cryptor = outputCryptor {
       var encrypted = [UInt8](repeating: 0, count: buffer.bytes.count)
       let (_, status) = cryptor.update(byteArrayIn: buffer.bytes, byteArrayOut: &encrypted)
       if status == .success {
-        outboundSuccessor?.handleOutbound(Buffer(encrypted))
+        return Buffer(encrypted)
       } else {
-        log.error("failed to decrypt packet: \(status)")
+        throw EncryptionLayerError.failedToEncryptPacket(status)
       }
     } else {
-      outboundSuccessor?.handleOutbound(buffer)
+      return buffer
     }
   }
   
+  // MARK: Private methods
+  
+  /// Creates a stream cryptor.
   private func createCryptor(sharedSecret: [UInt8], operation: StreamCryptor.Operation) -> StreamCryptor {
     return StreamCryptor(
       operation: operation,

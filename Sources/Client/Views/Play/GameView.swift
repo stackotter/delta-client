@@ -215,9 +215,15 @@ struct GameView: View {
     
     // Refresh the account (if Mojang) and then join the server
     ConfigManager.default.refreshSelectedAccount(onCompletion: { account in
-      client.joinServer(
-        describedBy: descriptor,
-        with: account)
+      do {
+        try client.joinServer(
+          describedBy: descriptor,
+          with: account)
+      } catch {
+        let message = "Failed to send join server request: \(error.localizedDescription)"
+        log.error(message)
+        DeltaClientApp.modalError(message, safeState: .serverList)
+      }
     }, onFailure: { error in
       let message = "Failed to refresh Mojang account '\(account.username)': \(error.localizedDescription)"
       log.error(message)

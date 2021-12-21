@@ -61,7 +61,7 @@ public struct EncryptionRequestPacket: ClientboundPacket {
               let encryptionResponse = EncryptionResponsePacket(
                 sharedSecret: [UInt8](encryptedSharedSecret),
                 verifyToken: [UInt8](encryptedVerifyToken))
-              client.sendPacket(encryptionResponse)
+              try client.sendPacket(encryptionResponse)
               
               // wait for packet to send then enable encryption
               client.connection?.networkStack.outboundThread.sync {

@@ -32,12 +32,12 @@ public class Pinger: ObservableObject {
     }
   }
   
-  public func ping() {
+  public func ping() throws {
     if let connection = connection {
       ThreadUtil.runInMain {
         pingResult = nil
       }
-      connection.ping()
+      try connection.ping()
       shouldPing = false
     } else if !isConnecting {
       shouldPing = true
@@ -58,7 +58,7 @@ public class Pinger: ObservableObject {
       self.connection = connection
       self.isConnecting = false
       if self.shouldPing {
-        self.ping()
+        try? self.ping()
       }
     }
   }
