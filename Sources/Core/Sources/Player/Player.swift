@@ -31,8 +31,8 @@ public struct Player {
   public private(set) var gamemode: PlayerGamemode
   /// The component storing the player's inventory.
   public private(set) var inventory: PlayerInventory
-  /// The component storing the player's current input (i.e. keyboard and mouse button input).
-  public private(set) var input: PlayerInput
+  /// The component storing the player's current inputs (i.e. keyboard and mouse button input).
+  public private(set) var inputs: PlayerInputs
   
   /// Creates a player.
   public init() {
@@ -50,7 +50,7 @@ public struct Player {
     attributes = PlayerAttributes()
     gamemode = PlayerGamemode()
     inventory = PlayerInventory()
-    input = PlayerInput()
+    inputs = PlayerInputs()
   }
   
   /// Adds the player to a game.
@@ -74,7 +74,7 @@ public struct Player {
       attributes
       gamemode
       inventory
-      input
+      inputs
     }
   }
   
@@ -94,9 +94,9 @@ public struct Player {
   public mutating func updateInputs(with event: InputEvent) {
     switch event {
       case let .press(input):
-        self.input.inputs.insert(input)
+        self.inputs.inputs.insert(input)
       case let .release(input):
-        self.input.inputs.remove(input)
+        self.inputs.inputs.remove(input)
     }
   }
 }
