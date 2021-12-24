@@ -88,7 +88,7 @@ public final class Client: @unchecked Sendable {
     switch event {
       case let inputEvent as InputEvent:
         game.accessPlayer { player in
-          player.updateInputs(with: inputEvent)
+          player.updateInput(with: inputEvent)
         }
       case let mouseEvent as MouseMoveEvent:
         game.accessPlayer { player in

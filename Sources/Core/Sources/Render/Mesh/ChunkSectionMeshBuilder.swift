@@ -510,7 +510,7 @@ public struct ChunkSectionMeshBuilder {
             
             // Rotate UVs 45 degrees if necessary
             if lowestCornersCount == 1 || lowestCornersCount == 3 {
-              let uvRotation = MatrixUtil.rotationMatrix2d(lowestCornersCount == 1 ? .pi / 4 : 3 * .pi / 4)
+              let uvRotation = MatrixUtil.rotationMatrix2d(lowestCornersCount == 1 ? Float.pi / 4 : 3 * Float.pi / 4)
               let center = SIMD2<Float>(repeating: 0.5)
               for (index, uv) in uvs.enumerated() {
                 uvs[index] = (uv - center) * uvRotation + center

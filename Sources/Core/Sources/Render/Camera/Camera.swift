@@ -114,8 +114,8 @@ public struct Camera {
   
   /// Faces this camera in the direction of an entity's rotation.
   public mutating func setRotation(playerLook: EntityRotation) {
-    xRot = playerLook.pitch / 180 * Float.pi
-    yRot = playerLook.yaw / 180 * Float.pi
+    xRot = playerLook.pitch
+    yRot = playerLook.yaw
   }
   
   /// Returns this camera's world space to clip space transformation matrix.
