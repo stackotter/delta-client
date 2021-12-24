@@ -31,7 +31,7 @@ public struct Player {
   public private(set) var gamemode: PlayerGamemode
   /// The component storing the player's inventory.
   public private(set) var inventory: PlayerInventory
-  /// The component storing the player's current input (i.e. keyboard and mouse button input).
+  /// The component storing the player's current inputs (i.e. keyboard and mouse button input).
   public private(set) var input: PlayerInput
   
   /// Creates a player.
@@ -84,14 +84,14 @@ public struct Player {
     rotation.pitch += event.deltaY
     
     // Clamp pitch between -90 and 90
-    rotation.pitch = min(max(-90, rotation.pitch), 90)
+    rotation.pitch = min(max(-.pi / 2, rotation.pitch), .pi / 2)
     // Wrap yaw to between 0 and 360
-    let remainder = rotation.yaw.truncatingRemainder(dividingBy: 360)
-    rotation.yaw = remainder < 0 ? 360 + remainder : remainder
+    let remainder = rotation.yaw.truncatingRemainder(dividingBy: .pi * 2)
+    rotation.yaw = remainder < 0 ? .pi * 2 + remainder : remainder
   }
   
   /// Updates the player's velocity with an input event.
-  public mutating func updateInputs(with event: InputEvent) {
+  public mutating func updateInput(with event: InputEvent) {
     switch event {
       case let .press(input):
         self.input.inputs.insert(input)
