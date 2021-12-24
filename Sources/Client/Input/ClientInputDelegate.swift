@@ -5,7 +5,7 @@ import Carbon
 #if os(macOS)
 final class ClientInputDelegate: InputDelegate {
   /// ``mouseSensitivity`` is multiplied by this factor before use.
-  let sensitivityAdjustmentFactor: Float = 0.2
+  let sensitivityAdjustmentFactor: Float = 0.004
   
   var keymap = ConfigManager.default.config.keymap
   var mouseSensitivity = ConfigManager.default.config.mouseSensitivity
