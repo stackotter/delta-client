@@ -1,87 +1,112 @@
 import Foundation
 
-// TODO: get rid of successor and predecessor, use a list instead, this means layers can be structs
-
-public class NetworkStack {
-  private var ioThread: DispatchQueue
-  public private(set) var outboundThread: DispatchQueue // TODO: threads should be private
-  public private(set) var inboundThread: DispatchQueue
+/// The network stack that handles receiving and sending Minecraft packets.
+///
+/// See https://wiki.vg/Protocol#Packet_format for more information about the packet format.
+/// See https://wiki.vg/Protocol_Encryption for more in-depth information about packet encryption and decryption.
+public final class NetworkStack {
+  // MARK: Public properties
   
+  /// The handler for packets received from the server.
+  public var packetHandler: ((PacketReader) -> Void)?
+  
+  /// Handles the connection to the server (the raw network IO).
+  public var socketLayer: SocketLayer
+  /// Encrypts and decrypts packets.
+  public var encryptionLayer: EncryptionLayer
+  /// Compresses and decompresses packets.
+  public var compressionLayer: CompressionLayer
+  /// Splits the stream of bytes into individual Minecraft packets.
+  public var packetLayer: PacketLayer
+  
+  /// The serial queue that outbound packets are handled on.
+  public var outboundThread: DispatchQueue
+  /// The serial queue that inbound packets are handled on.
+  public var inboundThread: DispatchQueue
+  
+  // MARK: Private properties
+  
+  /// The host being connected to.
   private var host: String
+  /// The port being connected to.
   private var port: UInt16
-  
+  /// The event bus that network errors are dispatched to.
   private var eventBus: EventBus
-  
-  // MARK: Network Layers
-  
-  public private(set) var socketLayer: SocketLayer
-  public private(set) var encryptionLayer: EncryptionLayer
-  public private(set) var packetLayer: PacketLayer
-  public private(set) var compressionLayer: CompressionLayer
-  public private(set) var protocolLayer: ProtocolLayer
   
   // MARK: Init
   
+  /// Creates a new network stack for connecting to the given server.
   public init(_ host: String, _ port: UInt16, eventBus: EventBus) {
     self.host = host
     self.port = port
     self.eventBus = eventBus
     
-    ioThread = DispatchQueue(label: "networkIO")
-    inboundThread = DispatchQueue(label: "networkHandlingInbound")
-    outboundThread = DispatchQueue(label: "networkHandlingOutbound")
+    // Create threads
+    inboundThread = DispatchQueue(label: "NetworkStack.inboundThread")
+    outboundThread = DispatchQueue(label: "NetworkStack.outboundThread")
     
-    // create layers
-    socketLayer = SocketLayer(host, port, inboundThread: inboundThread, ioThread: ioThread, eventBus: eventBus)
+    // Create layers
+    socketLayer = SocketLayer(host, port, eventBus: eventBus)
     encryptionLayer = EncryptionLayer()
-    packetLayer = PacketLayer()
     compressionLayer = CompressionLayer()
-    protocolLayer = ProtocolLayer(outboundThread: outboundThread)
+    packetLayer = PacketLayer()
     
-    // setup inbound flow
-    socketLayer.inboundSuccessor = encryptionLayer
-    encryptionLayer.inboundSuccessor = packetLayer
-    packetLayer.inboundSuccessor = compressionLayer
-    compressionLayer.inboundSuccessor = protocolLayer
-    
-    // setup outbound flow
-    protocolLayer.outboundSuccessor = compressionLayer
-    compressionLayer.outboundSuccessor = packetLayer
-    packetLayer.outboundSuccessor = encryptionLayer
-    encryptionLayer.outboundSuccessor = socketLayer
+    // Setup handler for packets received from the server
+    socketLayer.packetHandler = { [weak self] buffer in
+      guard let self = self else { return }
+      self.inboundThread.async {
+        var buffer = buffer
+        do {
+          buffer = try self.encryptionLayer.processInbound(buffer)
+          let buffers = self.packetLayer.processInbound(buffer)
+          
+          for buffer in buffers {
+            let buffer = try self.compressionLayer.processInbound(buffer)
+            let packetReader = PacketReader(buffer: buffer)
+            log.debug("Packet received, id=0x\(String(format: "%02x", packetReader.packetId))")
+            self.packetHandler?(packetReader)
+          }
+        } catch {
+          log.warning("Failed to decode a packet received from the server: \(error)")
+          self.socketLayer.disconnect()
+          self.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to decode a packet received from the server"))
+        }
+      }
+    }
   }
   
-  // MARK: Lifecycle
+  // MARK: Public methods
   
+  /// Sends a packet. Throws if the packet failed to be encrypted.
+  public func sendPacket(_ packet: ServerboundPacket) throws {
+    var buffer = packet.toBuffer()
+    buffer = compressionLayer.processOutbound(buffer)
+    buffer = packetLayer.processOutbound(buffer)
+    buffer = try encryptionLayer.processOutbound(buffer)
+    socketLayer.send(buffer)
+  }
+  
+  /// Connect to the server.
   public func connect() {
+    let handler = socketLayer.packetHandler
+    socketLayer = SocketLayer(host, port, eventBus: eventBus)
+    socketLayer.packetHandler = handler
+    
+    compressionLayer = CompressionLayer()
+    encryptionLayer = EncryptionLayer()
+    packetLayer = PacketLayer()
+    
     socketLayer.connect()
   }
   
+  /// Disconnect from the server.
   public func disconnect() {
     socketLayer.disconnect()
   }
   
+  /// Reconnect to the server.
   public func reconnect() {
     disconnect()
-    
-    // remake socket layer
-    let socketLayerSuccessor = socketLayer.inboundSuccessor
-    socketLayer = SocketLayer(host, port, inboundThread: inboundThread, ioThread: ioThread, eventBus: eventBus)
-    socketLayer.inboundSuccessor = socketLayerSuccessor
-    if var outboundPredecessor = socketLayer.inboundSuccessor as? OutboundNetworkLayer {
-      outboundPredecessor.outboundSuccessor = socketLayer
-    }
-    
     connect()
-  }
-  
-  // MARK: Packets
-  
-  public func setPacketHandler(_ handler: @escaping (ProtocolLayer.Output) -> Void) {
-    protocolLayer.handler = handler
-  }
-  
-  public func sendPacket(_ packet: ServerboundPacket) {
-    protocolLayer.send(packet)
   }
 }

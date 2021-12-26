@@ -1,7 +1,7 @@
 import Foundation
 
 public class Pinger: ObservableObject {
-  @Published public var pingResult: Result<PingInfo, PingError>?
+  @Published public var response: Result<StatusResponse, PingError>?
   
   public var connection: ServerConnection?
   public let descriptor: ServerDescriptor
@@ -25,19 +25,19 @@ public class Pinger: ObservableObject {
     switch event {
       case let event as ConnectionFailedEvent:
         ThreadUtil.runInMain {
-          pingResult = Result.failure(PingError.connectionFailed(event.networkError))
+          response = Result.failure(PingError.connectionFailed(event.networkError))
         }
       default:
         break
     }
   }
   
-  public func ping() {
+  public func ping() throws {
     if let connection = connection {
       ThreadUtil.runInMain {
-        pingResult = nil
+        response = nil
       }
-      connection.ping()
+      try connection.ping()
       shouldPing = false
     } else if !isConnecting {
       shouldPing = true
@@ -51,14 +51,13 @@ public class Pinger: ObservableObject {
     isConnecting = true
     // DNS resolution sometimes takes a while so we do that in parallel
     queue.async {
-      // TODO: resolve dns stuff in server connection async cause it takes a while sometimes?
       let connection = ServerConnection(descriptor: self.descriptor)
       connection.setPacketHandler(self.handlePacket)
       connection.eventBus.registerHandler(self.handleNetworkEvent)
       self.connection = connection
       self.isConnecting = false
       if self.shouldPing {
-        self.ping()
+        try? self.ping()
       }
     }
   }
@@ -75,7 +74,7 @@ public class Pinger: ObservableObject {
       try packet.handle(for: self)
     } catch {
       closeConnection()
-      log.error("Failed to handle packet: \(error.localizedDescription)")
+      log.error("Failed to handle packet: \(error)")
     }
   }
 }

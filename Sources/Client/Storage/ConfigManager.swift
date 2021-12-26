@@ -82,7 +82,7 @@ public final class ConfigManager {
       do {
         try self.commitConfig()
       } catch {
-        log.error("Failed to write config to file: \(error.localizedDescription)")
+        log.error("Failed to write config to file: \(error)")
       }
     }
   }

@@ -35,6 +35,8 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   
   /// The callibration data used to convert the difference between two GPU timestamps to nanoseconds.
   private var gpuTimeCallibrationFactor: Double
+  /// Whether GPU counters can be sampled at stage boundaries.
+  private var supportsStageBoundarySampling: Bool
   
   // MARK: Init
   
@@ -45,6 +47,8 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     guard let device = MTLCreateSystemDefaultDevice() else {
       fatalError("Failed to get metal device")
     }
+    
+    supportsStageBoundarySampling = device.supportsCounterSampling(.atStageBoundary)
     
     // Take an initial measurement for calibrating the GPU clock
     let startTimestamp = device.sampleTimestamps()
@@ -61,27 +65,27 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     do {
       camera = try Camera(device)
     } catch {
-      fatalError("Failed to create camera: \(error.localizedDescription)")
+      fatalError("Failed to create camera: \(error)")
     }
     
     // Create world renderer
     do {
       worldRenderer = try WorldRenderer(client: client, device: device, commandQueue: commandQueue)
     } catch {
-      fatalError("Failed to create world renderer: \(error.localizedDescription)")
+      fatalError("Failed to create world renderer: \(error)")
     }
     
     do {
       entityRenderer = try EntityRenderer(client: client, device: device, commandQueue: commandQueue)
     } catch {
-      fatalError("Failed to create entity renderer: \(error.localizedDescription)")
+      fatalError("Failed to create entity renderer: \(error)")
     }
     
     // Create depth stencil state
     do {
       depthState = try MetalUtil.createDepthState(device: device)
     } catch {
-      fatalError("Failed to create depth state: \(error.localizedDescription)")
+      fatalError("Failed to create depth state: \(error)")
     }
     
     gpuCounterBuffer = try? MetalUtil.makeCounterSampleBuffer(device, counterSet: .timestamp, sampleCount: 2)
@@ -117,7 +121,16 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     stopwatch.stopMeasurement("Get render pass descriptor")
     
     // Setup GPU counters
-    renderPassDescriptor.sampleBufferAttachments[0].sampleBuffer = gpuCounterBuffer
+    if let gpuCounterBuffer = gpuCounterBuffer {
+      renderPassDescriptor.sampleBufferAttachments[0].sampleBuffer = gpuCounterBuffer
+      if supportsStageBoundarySampling {
+        renderPassDescriptor.sampleBufferAttachments[0].startOfVertexSampleIndex = 0
+        renderPassDescriptor.sampleBufferAttachments[0].endOfFragmentSampleIndex = 1
+      }
+    }
+    
+    // Make sure depth attachment is cleared before the render pass
+    renderPassDescriptor.depthAttachment.loadAction = .clear
     
     // The CPU start time if vsync was disabled
     let cpuStartTime = CFAbsoluteTimeGetCurrent()
@@ -147,10 +160,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       ))
       return
     }
-    
     stopwatch.stopMeasurement("Create render encoder")
     
-    if let gpuCounterBuffer = gpuCounterBuffer {
+    if let gpuCounterBuffer = gpuCounterBuffer, !supportsStageBoundarySampling {
       renderEncoder.sampleCounters(sampleBuffer: gpuCounterBuffer, sampleIndex: 0, barrier: false)
     }
     
@@ -209,7 +221,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       return
     }
     
-    if let gpuCounterBuffer = gpuCounterBuffer {
+    if let gpuCounterBuffer = gpuCounterBuffer, !supportsStageBoundarySampling {
       renderEncoder.sampleCounters(sampleBuffer: gpuCounterBuffer, sampleIndex: 1, barrier: false)
     }
     

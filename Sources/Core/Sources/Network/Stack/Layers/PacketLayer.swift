@@ -1,24 +1,36 @@
 import Foundation
 
-// TODO: this could do with some refactoring
-public class PacketLayer: NetworkLayer {
-  public var inboundSuccessor: InboundNetworkLayer?
-  public var outboundSuccessor: OutboundNetworkLayer?
+/// Splits a stream of bytes into Minecraft packets.
+public struct PacketLayer {
+  // MARK: Private properties
   
-  private var receiveState: ReceiveState
+  /// Keeps track of the state of the receiver across calls to ``processInbound(_:)``.
+  private var receiveState = ReceiveState(lengthBytes: [], length: 0, packet: [])
   
+  /// The state of the receiver.
   private struct ReceiveState {
     var lengthBytes: [UInt8]
     var length: Int
     var packet: [UInt8]
   }
   
-  public init() {
-    self.receiveState = ReceiveState(lengthBytes: [], length: 0, packet: [])
-  }
+  // MARK: Init
   
-  public func handleInbound(_ inBuffer: Buffer) {
-    var buffer = inBuffer // mutable copy
+  /// Creates a new packet layer.
+  public init() {}
+  
+  // MARK: Public methods
+  
+  /// Processes an inbound buffer.
+  ///
+  /// For each packet contained within the buffer it calls ``packetHandler``. It also works if
+  /// packets are split across multiple packets.
+  /// - Parameter buffer: The buffer of data received from the server.
+  /// - Returns: An array of buffers, each representing a Minecraft packet.
+  public mutating func processInbound(_ buffer: Buffer) -> [Buffer] {
+    var packets: [Buffer] = []
+    
+    var buffer = buffer // mutable copy
     while true {
       if receiveState.length == -1 {
         while buffer.remaining != 0 {
@@ -31,7 +43,7 @@ public class PacketLayer: NetworkLayer {
         
         if !receiveState.lengthBytes.isEmpty, let lastLengthByte = receiveState.lengthBytes.last {
           if lastLengthByte & 0x80 == 0x00 {
-            // using standalone implementation of varint decoding to hopefully reduce networking overheads slightly?
+            // Using standalone implementation of varint decoding to hopefully reduce networking overheads slightly?
             receiveState.length = 0
             for i in 0..<receiveState.lengthBytes.count {
               let byte = receiveState.lengthBytes[i]
@@ -51,7 +63,7 @@ public class PacketLayer: NetworkLayer {
           receiveState.packet.append(byte)
           
           if receiveState.packet.count == receiveState.length {
-            inboundSuccessor?.handleInbound(Buffer(receiveState.packet))
+            packets.append(Buffer(receiveState.packet))
             receiveState.packet = []
             receiveState.length = -1
             receiveState.lengthBytes = []
@@ -64,12 +76,17 @@ public class PacketLayer: NetworkLayer {
         break
       }
     }
+    
+    return packets
   }
   
-  public func handleOutbound(_ buffer: Buffer) {
+  /// Wraps an outbound packet into a regularly formatted Minecraft packet (without compression and encryption).
+  ///
+  /// It prefixes the buffer with its length as a var int.
+  public func processOutbound(_ buffer: Buffer) -> Buffer {
     var packed = Buffer()
     packed.writeVarInt(Int32(buffer.length))
     packed.writeBytes(buffer.bytes)
-    outboundSuccessor?.handleOutbound(packed)
+    return packed
   }
 }

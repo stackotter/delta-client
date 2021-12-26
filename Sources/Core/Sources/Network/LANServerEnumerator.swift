@@ -173,11 +173,10 @@ public class LANServerEnumerator: ObservableObject {
     
     // Ping the server
     let pinger = Pinger(server)
-    pinger.ping()
+    try? pinger.ping()
     servers.append(server)
     
     ThreadUtil.runInMain {
-      print("Adding pinger")
       pingers.append(pinger)
     }
   }

@@ -13,12 +13,15 @@ struct ServerDetail: View {
       Text(descriptor.description)
         .padding(.bottom, 8)
       
-      if let result = pinger.pingResult {
+      if let result = pinger.response {
         switch result {
-          case let .success(info):
-            Text(verbatim: "\(info.numPlayers)/\(info.maxPlayers) online")
+          case let .success(response):
+            Text("\(response.description.text)")
+              .padding(.bottom, 8)
+            
+            Text(verbatim: "\(response.players.online)/\(response.players.max) online")
             MCAttributedText(
-              string: "version: \(info.versionName) \(info.protocolVersion == Constants.protocolVersion ? "" : "(incompatible)")",
+              string: "Version: \(response.version.name) \(response.version.protocolVersion == Constants.protocolVersion ? "" : "(incompatible)")",
               alignment: .left
             )
               .padding(.bottom, 8)

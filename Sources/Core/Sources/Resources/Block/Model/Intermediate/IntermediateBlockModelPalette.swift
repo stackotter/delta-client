@@ -21,7 +21,7 @@ public struct IntermediateBlockModelPalette {
           let flattened = try flatten(blockModel, with: jsonBlockModelPalette)
           append(flattened, as: identifier)
         } catch {
-          log.error("Failed to flatten mojang block model: \(error.localizedDescription)")
+          log.error("Failed to flatten mojang block model: \(error)")
           throw BlockModelPaletteError.failedToFlatten(identifier)
         }
       }

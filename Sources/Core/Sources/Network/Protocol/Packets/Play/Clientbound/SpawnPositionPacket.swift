@@ -19,6 +19,6 @@ public struct SpawnPositionPacket: ClientboundPacket {
     
     // notify server that we are ready to finish login
     let clientStatus = ClientStatusPacket(action: .performRespawn)
-    client.sendPacket(clientStatus)
+    try client.sendPacket(clientStatus)
   }
 }

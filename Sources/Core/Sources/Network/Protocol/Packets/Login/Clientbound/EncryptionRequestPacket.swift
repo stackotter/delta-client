@@ -61,19 +61,19 @@ public struct EncryptionRequestPacket: ClientboundPacket {
               let encryptionResponse = EncryptionResponsePacket(
                 sharedSecret: [UInt8](encryptedSharedSecret),
                 verifyToken: [UInt8](encryptedVerifyToken))
-              client.sendPacket(encryptionResponse)
+              try client.sendPacket(encryptionResponse)
               
               // wait for packet to send then enable encryption
               client.connection?.networkStack.outboundThread.sync {
                 client.connection?.enableEncryption(sharedSecret: sharedSecret)
               }
             } catch {
-              log.error("Failed to enable encryption: \(error.localizedDescription)")
+              log.error("Failed to enable encryption: \(error)")
             }
           }
         },
         onFailure: { error in
-          log.error("Join request for online server failed: \(error.localizedDescription)")
+          log.error("Join request for online server failed: \(error)")
         }
       )
     } else {

@@ -93,7 +93,7 @@ public struct BlockModelPalette {
             with: blockTexturePalette,
             block: block)
         } catch {
-          log.error("Failed to create block model for state \(blockId): \(error.localizedDescription)")
+          log.error("Failed to create block model for state \(blockId): \(error)")
           throw error
         }
       }
