@@ -70,8 +70,8 @@ public final class Client {
       try packet.handle(for: self)
     } catch {
       disconnect()
-      log.error("Failed to handle packet: \(error.localizedDescription)")
-      eventBus.dispatch(PacketHandlingErrorEvent(packetId: type(of: packet).id, error: "\(error.localizedDescription)"))
+      log.error("Failed to handle packet: \(error)")
+      eventBus.dispatch(PacketHandlingErrorEvent(packetId: type(of: packet).id, error: "\(error)"))
     }
   }
   

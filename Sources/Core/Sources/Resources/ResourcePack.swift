@@ -217,7 +217,7 @@ public struct ResourcePack {
       let data = try Data(contentsOf: clientJarURL)
       try data.write(to: clientJarTempFile)
     } catch {
-      log.error("Failed to download client jar: \(error.localizedDescription)")
+      log.error("Failed to download client jar: \(error)")
       throw ResourcePackError.clientJarDownloadFailure
     }
     
@@ -228,7 +228,7 @@ public struct ResourcePack {
     do {
       try FileManager.default.unzipItem(at: clientJarTempFile, to: extractedClientJarDirectory, skipCRC32: true)
     } catch {
-      log.error("Failed to extract client jar: \(error.localizedDescription)")
+      log.error("Failed to extract client jar: \(error)")
       throw ResourcePackError.clientJarExtractionFailure
     }
     
@@ -239,7 +239,7 @@ public struct ResourcePack {
         at: extractedClientJarDirectory.appendingPathComponent("assets"),
         to: directory)
     } catch {
-      log.error("Failed to copy assets from extracted client jar: \(error.localizedDescription)")
+      log.error("Failed to copy assets from extracted client jar: \(error)")
       throw ResourcePackError.assetCopyFailure
     }
     

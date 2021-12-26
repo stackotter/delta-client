@@ -51,7 +51,7 @@ public struct RegistryStore {
         fluidRegistry: fluidRegistry,
         entityRegistry: entityRegistry)
     } catch {
-      log.warning("Failed to load cached registries; \(error.localizedDescription)")
+      log.warning("Failed to load cached registries; \(error)")
       log.info("Downloading registries")
       
       let registry = try PixlyzerFormatter.downloadAndFormatRegistries(Constants.versionString)

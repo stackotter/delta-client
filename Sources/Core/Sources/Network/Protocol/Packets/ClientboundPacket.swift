@@ -6,6 +6,7 @@ public enum ClientboundPacketError: LocalizedError {
   case invalidServerId
   case invalidSkyLightMask
   case invalidBlockLightMask
+  case invalidJSONString
   case disconnect(reason: String)
 }
 
