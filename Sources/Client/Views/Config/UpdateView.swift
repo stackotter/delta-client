@@ -31,17 +31,17 @@ struct UpdateView: View {
           state.update(to: .performUpdate)
         }.buttonStyle(PrimaryButtonStyle())
         Spacer()
-        
-        Menu {
-          ForEach(updater.branches, id: \.self) { branch in
-            Button(branch) {
-              updater.unstableBranch = branch
+        if !updater.branches == [String]() {
+          Menu {
+            ForEach(updater.branches, id: \.self) { branch in
+              Button(branch) {
+                updater.unstableBranch = branch
+              }
             }
+          } label: {
+            Text(updater.unstableBranch)
           }
-        } label: {
-          Text(updater.unstableBranch)
         }
-        
         Button("Update to latest unstable") {
           updater.updateType = .unstable
           state.update(to: .performUpdate)
