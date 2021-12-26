@@ -62,7 +62,7 @@ public final class Updater: ObservableObject {
       let downloadURL: URL
       let downloadVersion: String
       do {
-        (downloadURL, downloadVersion) = try Self.getDownloadURL(self.updateType, unstableBranch: self.unstableBranch)
+        (downloadURL, downloadVersion) = try self.getDownloadURL(self.updateType)
       } catch {
         DeltaClientApp.modalError("Failed to get download URL", safeState: .serverList)
         return
@@ -171,12 +171,12 @@ public final class Updater: ObservableObject {
   // MARK: Helper
   
   /// - Returns: A download URL and a version string
-  public static func getDownloadURL(_ type: UpdateType, unstableBranch: String) throws -> (URL, String) {
+  public func getDownloadURL(_ type: UpdateType) throws -> (URL, String) {
     switch type {
       case .stable:
-        return try getLatestStableDownloadURL()
+        return try Self.getLatestStableDownloadURL()
       case .unstable:
-        return try getLatestUnstableDownloadURL(unstableBranch: unstableBranch)
+        return try Self.getLatestUnstableDownloadURL(branch: unstableBranch)
     }
   }
   
@@ -212,7 +212,7 @@ public final class Updater: ObservableObject {
   /// Get the download URL for the artifact uploaded by the latest successful GitHub action run.
   ///
   /// - Returns: A download URL and a version string
-  private static func getLatestUnstableDownloadURL(unstableBranch: String) throws -> (URL, String) {
+  private static func getLatestUnstableDownloadURL(branch: String) throws -> (URL, String) {
     let decoder = ZippyJSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
     
@@ -220,7 +220,7 @@ public final class Updater: ObservableObject {
     
     // Get the latest relevant run
     guard let run = workflowRuns.first(where: {
-      $0.event == "push" && $0.headBranch == unstableBranch && $0.conclusion == "success" && $0.name == "Build" && $0.status == "completed"
+      $0.event == "push" && $0.headBranch == branch && $0.conclusion == "success" && $0.name == "Build" && $0.status == "completed"
     }) else {
       throw UpdateError.failedToGetLatestSuccessfulWorkflowRun(branch: "main")
     }

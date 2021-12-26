@@ -24,30 +24,30 @@ struct UpdateView: View {
     switch state.current {
       case .selectUpdate:
         // Gives user a choice of which latest version to update to (stable or unstable)
-      VStack {
-        Spacer()
-        Button("Update to latest stable") {
-          updater.updateType = .stable
-          state.update(to: .performUpdate)
-        }.buttonStyle(PrimaryButtonStyle())
-        Spacer()
-        if !updater.branches.isEmpty {
-          Menu {
-            ForEach(updater.branches, id: \.self) { branch in
-              Button(branch) {
-                updater.unstableBranch = branch
+        VStack {
+          Spacer()
+          Button("Update to latest stable") {
+            updater.updateType = .stable
+            state.update(to: .performUpdate)
+          }.buttonStyle(PrimaryButtonStyle())
+          Spacer()
+          if !updater.branches.isEmpty {
+            Menu {
+              ForEach(updater.branches, id: \.self) { branch in
+                Button(branch) {
+                  updater.unstableBranch = branch
+                }
               }
+            } label: {
+              Text(updater.unstableBranch)
             }
-          } label: {
-            Text(updater.unstableBranch)
           }
+          Button("Update to latest unstable") {
+            updater.updateType = .unstable
+            state.update(to: .performUpdate)
+          }.buttonStyle(SecondaryButtonStyle())
+          Spacer()
         }
-        Button("Update to latest unstable") {
-          updater.updateType = .unstable
-          state.update(to: .performUpdate)
-        }.buttonStyle(SecondaryButtonStyle())
-        Spacer()
-      }
         .frame(width: 200)
         .padding(.vertical)
         
