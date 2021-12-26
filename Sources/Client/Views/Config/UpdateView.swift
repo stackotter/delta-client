@@ -31,7 +31,7 @@ struct UpdateView: View {
           state.update(to: .performUpdate)
         }.buttonStyle(PrimaryButtonStyle())
         Spacer()
-        if !updater.branches == [String]() {
+        if !updater.branches.isEmpty {
           Menu {
             ForEach(updater.branches, id: \.self) { branch in
               Button(branch) {
