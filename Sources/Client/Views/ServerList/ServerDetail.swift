@@ -17,7 +17,10 @@ struct ServerDetail: View {
         switch result {
           case let .success(info):
             Text(verbatim: "\(info.numPlayers)/\(info.maxPlayers) online")
-            Text("version: \(info.versionName) \(info.protocolVersion == Constants.protocolVersion ? "" : "(incompatible)")")
+            MCAttributedText(
+              string: "version: \(info.versionName) \(info.protocolVersion == Constants.protocolVersion ? "" : "(incompatible)")",
+              alignment: .left
+            )
               .padding(.bottom, 8)
             
             Button("Play") {
