@@ -4,19 +4,15 @@ import simd
 
 /// The system that handles entity physics.
 public struct PhysicsSystem: System {
-  // TODO: use an actual player speed value from a component or something
-  /// Defaults player speed in blocks per tick
-  public var playerSpeed: Double = 0.2
-  
-  /// Creates a default physics system.
+  /// Creates a simple physics system.
   public init() {}
   
   /// Runs a physics update for all entities in the given Nexus.
   public func update(_ nexus: Nexus) {
     // Update the player's velocity.
-    let currentPlayerEntities = nexus.family(requiresAll: EntityVelocity.self, EntityRotation.self, PlayerInputs.self, PlayerGamemode.self, ClientPlayerEntity.self)
-    for (velocity, rotation, inputs, gamemode, _) in currentPlayerEntities {
-      updatePlayer(velocity: velocity, rotation: rotation, inputs: inputs, gamemode: gamemode)
+    let currentPlayerEntities = nexus.family(requiresAll: EntityVelocity.self, EntityRotation.self, PlayerInput.self, PlayerGamemode.self, EntityFlying.self, PlayerAttributes.self, ClientPlayerEntity.self)
+    for (velocity, rotation, inputs, gamemode, flying, attributes, _) in currentPlayerEntities {
+      updatePlayerVelocity(velocity: velocity, rotation: rotation, input: inputs, gamemode: gamemode, flying: flying, attributes: attributes)
     }
     
     // Apply velocity to all moving entities.
@@ -26,46 +22,65 @@ public struct PhysicsSystem: System {
     }
   }
   
-  func updatePlayer(
+  func updatePlayerVelocity(
     velocity: EntityVelocity,
     rotation: EntityRotation,
-    inputs: PlayerInputs,
-    gamemode: PlayerGamemode
+    input: PlayerInput,
+    gamemode: PlayerGamemode,
+    flying: EntityFlying,
+    attributes: PlayerAttributes
   ) {
-    let inputs = input.inputs
+    // TODO: Implement sprinting
+//    let isSneaking = !isFlying && inputs.contains(.sneak)
     
-    // Update velocity relative to yaw
-    var velocityVector = SIMD3<Double>(0, 0, 0)
-    if inputs.contains(.moveForward) {
-      velocityVector.z = playerSpeed
-    } else if inputs.contains(.moveBackward) {
-      velocityVector.z = -playerSpeed
+    // TODO: Properly calculate these constants
+    let frictionMultiplier = 0.91
+    let airResistanceMultiplier = 0.98 // This one is just hardcoded
+    
+    // TODO: move this to some sort of gamemode system
+    if gamemode.gamemode.isAlwaysFlying {
+      flying.isFlying = true
+    } else if !attributes.canFly {
+      flying.isFlying = false
     }
     
-    if inputs.contains(.strafeLeft) {
-      velocityVector.x = playerSpeed
-    } else if inputs.contains(.strafeRight) {
-      velocityVector.x = -playerSpeed
+    var velocityVector = input.getVector(isFlying: flying.isFlying)
+    velocityVector *= airResistanceMultiplier
+    
+    var magnitude = simd_length_squared(velocityVector)
+    if magnitude < 0.0000001 {
+      velocityVector = SIMD3<Double>(repeating: 0)
+      magnitude = 0
     }
     
-    if inputs.contains(.jump) {
-      velocityVector.y = playerSpeed
-    } else if inputs.contains(.sneak) {
-      velocityVector.y = -playerSpeed
+    if magnitude > 1 {
+      velocityVector = normalize(velocityVector)
     }
     
-    if inputs.contains(.sprint) {
-      velocityVector *= 2
+    // Adjust velocity to point in the right direction
+    let rotationMatrix = MatrixUtil.rotationMatrix(y: Double(rotation.yaw))
+    velocityVector = simd_make_double3(SIMD4<Double>(velocityVector, 1) * rotationMatrix)
+    
+    velocityVector *= Double(attributes.flyingSpeed)
+    velocityVector += velocity.vector
+    
+    if flying.isFlying {
+      let jumpPressed = input.inputs.contains(.jump)
+      let sneakPressed = input.inputs.contains(.sneak)
+      if jumpPressed != sneakPressed {
+        if jumpPressed {
+          velocityVector.y = Double(attributes.flyingSpeed * 3)
+        } else {
+          velocityVector.y = -Double(attributes.flyingSpeed * 3)
+        }
+      } else {
+        velocityVector.y = 0
+      }
     }
     
-    // Adjust velocity to point in the right direction (using yaw)
-    let yawRadians = Double(rotation.yaw * .pi / 180)
-    var xz = SIMD2<Double>(velocityVector.x, velocityVector.z)
-    // swiftlint:disable shorthand_operator
-    xz = xz * MatrixUtil.rotationMatrix2dDouble(yawRadians)
-    // swiftlint:enable shorthand_operator
-    velocityVector.x = xz.x
-    velocityVector.z = xz.y // z is the 2nd component of xz (aka y)
+    velocityVector *= SIMD3(frictionMultiplier, airResistanceMultiplier, frictionMultiplier)
+    
+    // Update the player's velocity
     velocity.vector = velocityVector
   }
 }
