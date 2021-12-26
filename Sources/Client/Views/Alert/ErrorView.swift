@@ -9,7 +9,7 @@ struct ErrorView: View {
   
   var body: some View {
     VStack {
-      Text(message)
+      MCAttributedText(string: message)
       Button("OK") {
         if let nextState = safeState {
           appState.update(to: nextState)
