@@ -27,6 +27,7 @@ public final class Updater: ObservableObject {
   @Published public var version: String?
   @Published public var canCancel = true
   @Published public var branches = [String]()
+  @Published public var hasErrored = false
 
   /// The branch used for unstable updates.
   @Published public var unstableBranch = "dev"
@@ -42,14 +43,6 @@ public final class Updater: ObservableObject {
     queue = OperationQueue()
     queue.name = "dev.stackotter.delta-client.update"
     queue.maxConcurrentOperationCount = 1
-    
-    queue.addOperation {
-      do {
-        self.branches = try Self.getUnstableBranches()
-      } catch {
-        DeltaClientApp.modalWarning("Failed to load unstable branches.")
-      }
-    }
   }
   
   // MARK: Perform update
@@ -257,16 +250,24 @@ public final class Updater: ObservableObject {
     return response.workflowRuns
   }
   
-  private static func getUnstableBranches() throws -> [String] {
-    let workflowRuns = try getWorkflowRuns()
-    
-    var branches = workflowRuns.map(\.headBranch)
-    
-    //remove duplicates while maintaining order
-    var seen = Set<String>()
-    
-    branches = branches.filter { seen.insert($0).inserted }
-    return branches
+  public func loadUnstableBranches() {
+    queue.addOperation {
+      self.hasErrored = true
+      do {
+        let workflowRuns = try Self.getWorkflowRuns()
+        
+        var branches = workflowRuns.map(\.headBranch)
+        
+        //remove duplicates while maintaining order
+        var seen = Set<String>()
+        
+        branches = branches.filter { seen.insert($0).inserted }
+        self.branches = branches
+        self.hasErrored = false
+      } catch {
+        self.hasErrored = true
+      }
+    }
   }
   
   /// Resets the updater back to its initial state
