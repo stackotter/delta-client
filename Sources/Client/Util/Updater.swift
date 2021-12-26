@@ -213,7 +213,7 @@ public final class Updater: ObservableObject {
     
     // Get the latest relevant run
     guard let run = workflowRuns.first(where: {
-      $0.event == "push" && $0.headBranch == branch && $0.conclusion == "success" && $0.name == "Build" && $0.status == "completed"
+      $0.headBranch == branch && $0.conclusion == "success" && $0.name == "Build" && $0.status == "completed"
     }) else {
       throw UpdateError.failedToGetLatestSuccessfulWorkflowRun(branch: "main")
     }
@@ -252,7 +252,6 @@ public final class Updater: ObservableObject {
   
   public func loadUnstableBranches() {
     queue.addOperation {
-      self.hasErrored = true
       do {
         let workflowRuns = try Self.getWorkflowRuns()
         
