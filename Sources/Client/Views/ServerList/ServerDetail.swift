@@ -20,7 +20,10 @@ struct ServerDetail: View {
               .padding(.bottom, 8)
             
             Text(verbatim: "\(response.players.online)/\(response.players.max) online")
-            Text("Version: \(response.version.name) \(response.version.protocolVersion == Constants.protocolVersion ? "" : "(incompatible)")")
+            MCAttributedText(
+              string: "Version: \(response.version.name) \(response.version.protocolVersion == Constants.protocolVersion ? "" : "(incompatible)")",
+              alignment: .left
+            )
               .padding(.bottom, 8)
             
             Button("Play") {
