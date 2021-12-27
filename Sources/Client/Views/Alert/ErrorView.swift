@@ -9,7 +9,7 @@ struct ErrorView: View {
   
   var body: some View {
     VStack {
-      MCAttributedText(string: message)
+      LegacyFormattedText(legacyString: message, fontSize: NSFont.systemFontSize(for: .regular))
       Button("OK") {
         if let nextState = safeState {
           appState.update(to: nextState)

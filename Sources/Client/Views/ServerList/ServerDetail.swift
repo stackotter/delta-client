@@ -16,15 +16,16 @@ struct ServerDetail: View {
       if let result = pinger.response {
         switch result {
           case let .success(response):
-            Text("\(response.description.text)")
+            LegacyFormattedText(legacyString: "\(response.description.text)", fontSize: NSFont.systemFontSize(for: .regular), alignment: .right)
               .padding(.bottom, 8)
             
             Text(verbatim: "\(response.players.online)/\(response.players.max) online")
-            MCAttributedText(
-              string: "Version: \(response.version.name) \(response.version.protocolVersion == Constants.protocolVersion ? "" : "(incompatible)")",
-              alignment: .left
-            )
-              .padding(.bottom, 8)
+            
+            LegacyFormattedText(
+              legacyString: "Version: \(response.version.name) \(response.version.protocolVersion == Constants.protocolVersion ? "" : "(incompatible)")",
+              fontSize: NSFont.systemFontSize(for: .regular),
+              alignment: .center
+            ).padding(.bottom, 8)
             
             Button("Play") {
               appState.update(to: .playServer(descriptor))
