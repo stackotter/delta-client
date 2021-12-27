@@ -8,7 +8,7 @@ enum UpdateViewState {
 }
 
 enum UpdateError: LocalizedError {
-  case failedToGetWorkflowRuns
+  case failedToGetWorkflowRuns(Error)
   case failedToGetLatestSuccessfulWorkflowRun(branch: String)
   case failedToGetWorkflowArtifact
   case failedToGetDownloadURL
@@ -59,7 +59,7 @@ struct UpdateView: View {
           .padding(.vertical)
         } else {
           VStack {
-            Text("Failed to load the unstable branches.")
+            Text("Failed to load update information: \(updater.error?.localizedDescription ?? "No error information")")
             Button("Try again") {
               updater.loadUnstableBranches()
             }

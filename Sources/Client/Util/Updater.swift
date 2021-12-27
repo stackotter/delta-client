@@ -5,7 +5,6 @@ import ZippyJSON
 
 /// Used to update the client to either the latest successful CI build or the latest GitHub release.
 public final class Updater: ObservableObject {
-
   /// The type of update this updater will perform.
   public var updateType: UpdateType
   
@@ -28,6 +27,7 @@ public final class Updater: ObservableObject {
   @Published public var canCancel = true
   @Published public var branches = [String]()
   @Published public var hasErrored = false
+  @Published public var error: Error?
 
   /// The branch used for unstable updates.
   @Published public var unstableBranch = "dev"
@@ -142,10 +142,11 @@ public final class Updater: ObservableObject {
     }
     
     queue.addOperation {
-      let newApp = temp2.appendingPathComponent("DeltaClient.app")
-      let currentApp = Bundle.main.bundlePath
+      let newApp = temp2.appendingPathComponent("DeltaClient.app").path.replacingOccurrences(of: " ", with: "\\ ")
+      let currentApp = Bundle.main.bundlePath.replacingOccurrences(of: " ", with: "\\ ")
       if !self.queue.isSuspended {
-        Utils.shell(#"nohup sh -c 'sleep 3; rm -rf \#(currentApp); mv \#(newApp.path) \#(currentApp); open \#(currentApp); open \#(currentApp)' >/dev/null 2>&1 &"#)
+        let logFile = StorageManager.default.storageDirectory.appendingPathComponent("output.log").path.replacingOccurrences(of: " ", with: "\\ ")
+        Utils.shell(#"nohup sh -c 'sleep 3; rm -rf \#(currentApp); mv \#(newApp) \#(currentApp); open \#(currentApp); open \#(currentApp)' >\#(logFile) 2>&1 &"#)
         Foundation.exit(0)
       }
     }
@@ -241,17 +242,18 @@ public final class Updater: ObservableObject {
     
     // Get a list of all workflow runs
     let apiURL = URL(string: "https://api.github.com/repos/stackotter/delta-client/actions/workflows/main.yml/runs")!
-    guard
-      let data = try? Data(contentsOf: apiURL),
-      let response = try? decoder.decode(GitHubWorkflowAPIResponse.self, from: data)
-    else {
-      throw UpdateError.failedToGetWorkflowRuns
+    do {
+      let data = try Data(contentsOf: apiURL)
+      let response = try decoder.decode(GitHubWorkflowAPIResponse.self, from: data)
+      return response.workflowRuns
+    } catch {
+      throw UpdateError.failedToGetWorkflowRuns(error)
     }
-    return response.workflowRuns
   }
   
   public func loadUnstableBranches() {
     queue.addOperation {
+      self.hasErrored = false
       do {
         let workflowRuns = try Self.getWorkflowRuns()
         
@@ -261,10 +263,16 @@ public final class Updater: ObservableObject {
         var seen = Set<String>()
         
         branches = branches.filter { seen.insert($0).inserted }
-        self.branches = branches
-        self.hasErrored = false
+        ThreadUtil.runInMain {
+          self.branches = branches
+          self.hasErrored = false
+        }
       } catch {
-        self.hasErrored = true
+        ThreadUtil.runInMain {
+          self.hasErrored = true
+          log.debug("\(error)")
+          self.error = error
+        }
       }
     }
   }
