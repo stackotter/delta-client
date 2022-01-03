@@ -41,7 +41,10 @@ public final class Client {
     
     // Create a connection to the server
     let connection = ServerConnection(descriptor: descriptor, locale: resourcePack.getDefaultLocale(), eventBus: eventBus)
-    connection.setPacketHandler(handlePacket(_:))
+    connection.setPacketHandler { [weak self] packet in
+      guard let self = self else { return }
+      self.handlePacket(packet)
+    }
     try connection.login(username: account.username)
     self.connection = connection
   }
