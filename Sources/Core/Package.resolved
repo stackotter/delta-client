@@ -29,6 +29,15 @@
         }
       },
       {
+        "package": "JJLISO8601DateFormatter",
+        "repositoryURL": "https://github.com/michaeleisel/JJLISO8601DateFormatter",
+        "state": {
+          "branch": null,
+          "revision": "99fadf2e6425a0f827b1b485ea60bc2b7ecdd22c",
+          "version": "0.1.4"
+        }
+      },
+      {
         "package": "NioDNS",
         "repositoryURL": "https://github.com/OpenKitten/NioDNS",
         "state": {
@@ -98,6 +107,24 @@
           "branch": null,
           "revision": "7254c74b49cec2cb81520523ba993c671f71b066",
           "version": "0.9.14"
+        }
+      },
+      {
+        "package": "ZippyJSON",
+        "repositoryURL": "https://github.com/michaeleisel/ZippyJSON",
+        "state": {
+          "branch": null,
+          "revision": "1ab389998592d038a60a3ca71aa7554d0e84ab4a",
+          "version": "1.2.4"
+        }
+      },
+      {
+        "package": "ZippyJSONCFamily",
+        "repositoryURL": "https://github.com/michaeleisel/ZippyJSONCFamily",
+        "state": {
+          "branch": null,
+          "revision": "c55123b23f0faa898b22bf1b967e72a2df51fdb4",
+          "version": "1.2.4"
         }
       }
     ]

@@ -27,3 +27,10 @@ public protocol Plugin {
   /// - Parameter event: The event that was emitted.
   func handle(_ event: Event)
 }
+
+public extension Plugin {
+    func finishLoading() {}
+    func willUnload() {}
+    func willJoinServer(_ server: ServerDescriptor, client: Client) {}
+    func handle(_ event: Event) {}
+}
