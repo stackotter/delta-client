@@ -89,7 +89,7 @@ struct PluginSettingsView: View {
           pluginEnvironment.unloadAll()
           updateConfig()
 				}
-				Button("Reload All") {
+				Button("Reload all") {
           pluginEnvironment.reloadAll(StorageManager.default.pluginsDirectory)
           updateConfig()
 				}
