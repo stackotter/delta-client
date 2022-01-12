@@ -6,3 +6,4 @@
 xcuserdata/
 *.xcworkspace
 .swiftpm
+DeltaClient.app
