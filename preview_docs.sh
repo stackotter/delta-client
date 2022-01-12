@@ -11,7 +11,7 @@ swift build --target $TARGET \
 mkdir .build/swift-docc-symbol-graphs
 mv .build/symbol-graphs/$TARGET* .build/swift-docc-symbol-graphs
 
-docc preview \
+docc preview Sources/Client/Documentation.docc \
   --fallback-display-name $TARGET \
   --fallback-bundle-identifier dev.stackotter.$TARGET \
   --fallback-bundle-version 0.1.0 \
