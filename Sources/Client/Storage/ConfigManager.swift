@@ -3,13 +3,13 @@ import DeltaCore
 import ZippyJSON
 
 /// Manages the config stored in a config file.
-public final class ConfigManager {
+final class ConfigManager {
   /// The manager for the default config file.
-  public static var `default` = ConfigManager(
+  static var `default` = ConfigManager(
     for: StorageManager.default.absoluteFromRelative("config.json"))
 
   /// The current config.
-  public private(set) var config: Config
+  private(set) var config: Config
   /// The file to store config in.
   private let configFile: URL
 
@@ -53,7 +53,7 @@ public final class ConfigManager {
   }
   
   /// Refreshes the currently selected account.
-  public func refreshSelectedAccount(onCompletion completion: @escaping (Account) -> Void, onFailure failure: @escaping (ConfigError) -> Void) {
+  func refreshSelectedAccount(onCompletion completion: @escaping (Account) -> Void, onFailure failure: @escaping (ConfigError) -> Void) {
     if let account = config.selectedAccount {
       switch account {
         case let account as MojangAccount:
@@ -75,7 +75,7 @@ public final class ConfigManager {
   }
 
   /// Updates the config and writes it to the config file.
-  public func setConfig(to config: Config) {
+  func setConfig(to config: Config) {
     self.config = config
 
     queue.async {

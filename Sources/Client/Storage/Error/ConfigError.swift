@@ -1,6 +1,6 @@
 import Foundation
 
-public enum ConfigError: LocalizedError {
+enum ConfigError: LocalizedError {
   /// The account in question is of an invalid type.
   case invalidAccountType
   /// No account is selected.

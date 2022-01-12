@@ -1,6 +1,6 @@
 import Foundation
 
-public enum ModifierKey: Hashable, Codable {
+enum ModifierKey: Hashable, Codable {
   case leftShift
   case rightShift
   case leftControl

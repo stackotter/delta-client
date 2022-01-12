@@ -4,11 +4,11 @@ import DeltaCore
 import ZippyJSON
 
 /// Used to update the client to either the latest successful CI build or the latest GitHub release.
-public final class Updater: ObservableObject {
+final class Updater: ObservableObject {
   /// The type of update this updater will perform.
-  public var updateType: UpdateType
+  var updateType: UpdateType
   
-  public enum UpdateType {
+  enum UpdateType {
     /// Update from GitHub releases.
     case stable
     /// Update from latest CI build.
@@ -21,24 +21,24 @@ public final class Updater: ObservableObject {
   
   // MARK: SwiftUI
   
-  @Published public var fractionCompleted: Double? = nil
-  @Published public var stepDescription = ""
-  @Published public var version: String?
-  @Published public var canCancel = true
-  @Published public var branches = [String]()
-  @Published public var hasErrored = false
-  @Published public var error: Error?
+  @Published var fractionCompleted: Double? = nil
+  @Published var stepDescription = ""
+  @Published var version: String?
+  @Published var canCancel = true
+  @Published var branches = [String]()
+  @Published var hasErrored = false
+  @Published var error: Error?
 
   /// The branch used for unstable updates.
-  @Published public var unstableBranch = "dev"
+  @Published var unstableBranch = "dev"
   
   // MARK: Init
   
-  public convenience init() {
+  convenience init() {
     self.init(.stable)
   }
   
-  public init(_ updateType: UpdateType) {
+  init(_ updateType: UpdateType) {
     self.updateType = updateType
     queue = OperationQueue()
     queue.name = "dev.stackotter.delta-client.update"
@@ -48,7 +48,7 @@ public final class Updater: ObservableObject {
   // MARK: Perform update
   
   /// Starts the requested update asynchronously.
-  public func startUpdate() {
+  func startUpdate() {
     reset()
     queue.addOperation {
       self.updateStep("Getting download URL")
@@ -153,7 +153,7 @@ public final class Updater: ObservableObject {
   }
   
   /// Cancels the update if `canCancel` is true.
-  public func cancel() {
+  func cancel() {
     queue.cancelAllOperations()
     queue.isSuspended = true
     for observation in observations {
@@ -165,7 +165,7 @@ public final class Updater: ObservableObject {
   // MARK: Helper
   
   /// - Returns: A download URL and a version string
-  public func getDownloadURL(_ type: UpdateType) throws -> (URL, String) {
+  func getDownloadURL(_ type: UpdateType) throws -> (URL, String) {
     switch type {
       case .stable:
         return try Self.getLatestStableDownloadURL()
@@ -251,7 +251,7 @@ public final class Updater: ObservableObject {
     }
   }
   
-  public func loadUnstableBranches() {
+  func loadUnstableBranches() {
     queue.addOperation {
       self.hasErrored = false
       do {

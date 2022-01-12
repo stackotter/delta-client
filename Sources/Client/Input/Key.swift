@@ -1,7 +1,7 @@
 import Foundation
 import Carbon
 
-public enum Key: String, Hashable, Codable {
+enum Key: String, Hashable, Codable {
   case leftShift = "Left shift"
   case rightShift = "Right shift"
   case leftControl = "Left control"
@@ -122,7 +122,7 @@ public enum Key: String, Hashable, Codable {
   case leftArrow = "Left arrow"
   case rightArrow = "Right arrow"
   
-  public init?(keyCode: UInt16) {
+  init?(keyCode: UInt16) {
     if let key = Self.keyCodeToKey[keyCode] {
       self = key
     } else {
