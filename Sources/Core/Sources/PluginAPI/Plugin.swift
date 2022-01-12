@@ -29,8 +29,8 @@ public protocol Plugin {
 }
 
 public extension Plugin {
-    func finishLoading() {}
-    func willUnload() {}
-    func willJoinServer(_ server: ServerDescriptor, client: Client) {}
-    func handle(_ event: Event) {}
+  func finishLoading() {}
+  func willUnload() {}
+  func willJoinServer(_ server: ServerDescriptor, client: Client) {}
+  func handle(_ event: Event) {}
 }

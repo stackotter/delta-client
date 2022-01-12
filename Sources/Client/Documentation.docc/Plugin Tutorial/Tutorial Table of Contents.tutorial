@@ -1,15 +1,15 @@
-@Tutorials(name: "Plugins") {
+@Tutorials(name: "Plugin") {
     @Intro(title: "Creating plugins") {
         Plugins allow Delta Client users to customize the client in any way they want. Want to create some shaders or maybe just add some new blocks? Go ahead!
         
-        @Image(source: "delta_client.png", alt: "An image of Delta Client viewing some mountains")
+        @Image(source: "delta-client.png", alt: "An image of Delta Client viewing some mountains")
     }
     
     @Chapter(name: "Hello, world!") {
         Learn how to create a basic hello world plugin using the plugin template.
         
-        @Image(source: "hello_world.png", alt: "A hand waving")
+        @Image(source: "hello-world.png", alt: "A hand waving")
         
-        @TutorialReference(tutorial: "doc:<#tutorial name#>")
+        @TutorialReference(tutorial: "doc:Hello-World")
     }
 }

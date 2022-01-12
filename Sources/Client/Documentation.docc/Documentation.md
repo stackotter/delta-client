@@ -8,8 +8,16 @@ Delta Client is made up of two components: DeltaClient and DeltaCore. The DeltaC
 
 ## Topics
 
+### Getting started
+
+- <doc:Installing-Dependencies>
+
 ### Tutorials
 
-- 
+- <doc:Tutorial-Table-of-Contents>
+
+### Further reading
+
+- <doc:Advanced-Plugin-Development>
 
 

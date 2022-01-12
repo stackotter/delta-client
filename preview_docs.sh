@@ -1,4 +1,7 @@
-TARGET="DeltaCore"
+#!/bin/sh
+
+TARGET="DeltaClient"
+export DOCC_HTML_DIR="$(dirname $(xcrun --find docc))/../share/docc/render"
 
 mkdir -p .build/symbol-graphs
 swift build --target $TARGET \

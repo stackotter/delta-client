@@ -1,0 +1,75 @@
+@Tutorial(time: 20) {
+    @Intro(title: "Hello, world!") {
+        Learn how to create and build a basic hello world plugin using the plugin template.
+    }
+    
+    @Section(title: "Downloading and running an example plugin") {
+        @ContentAndMedia {
+            Before proceeding with this tutorial, make sure to check out <doc:Installing-Dependencies> and install any dependencies that you are missing.
+        }
+        
+        @Steps {
+            @Step {
+                Use Finder to create a directory for plugin development.
+                
+                @Image(source: hello-world-01-01-create-directory.png, alt: "A directory called 'plugin-development' being created using the Finder application")
+            }
+          
+            @Step {
+                Open Terminal and navigate to the directory you just created by typing `cd ` (with a trailing space), and then dragging the directory from Finder into Terminal and pressing enter.
+                
+                @Image(source: hello-world-01-02-navigate-in-terminal.png, alt: "A directory called 'plugin-development' is dragged from Finder into Terminal. The current command typed in Terminal is 'cd' with a trailing space")
+            }
+            
+            @Step {
+                Clone the template plugin in Terminal and rename the cloned directory to `HelloWorldPlugin`, and then navigate into the `HelloWorldPlugin` directory in Terminal.
+                
+                You don't have to execute the lines beginning with `#`, they are comments. 
+                
+                @Code(file: hello-world-01-03-clone-template.sh, name: "CloneTemplatePlugin.sh", reset: true)
+            }
+            
+            @Step {
+                Next, run the setup script to download the latest version of delta-client. This will be the version of Delta Client that your plugin is compatible with.
+                
+                Alternatively, advanced users can create a symlink to an existing copy of the delta-client repository. To update to a newer version of delta-client at any point, run `git pull` in the delta-client directory inside your plugin.
+                
+                @Code(file: hello-world-01-04-setup.sh, name: "Setup.sh", reset: true)
+            }
+            
+            @Step {
+                Switch to the `dev` branch, because the `main` branch is mostly outdated.
+                
+                Advanced users can edit the `setup.sh` script to automatically switch to the exact version of delta-client that their plugin is intended to work with.
+                
+                @Code(file: hello-world-01-05-switch-branch.sh, name: "SwitchToDev.sh", reset: true)
+            }
+            
+            @Step {
+                Now build and run the plugin using the included shell script (`build-and-run.sh`)
+                
+                The first time you run this command, it will build delta-client as well as your plugin, so you might want to find something else to do while you wait, it can take up to 10 minutes on certain hardware.
+                
+                @Code(file: hello-world-01-06-build-and-run.sh, name: "BuildAndRun.sh", reset: true)
+            }
+            
+            @Step {
+                Eventually, an instance of Delta Client should open up. If you scroll through the log output you should find a line containing `Hello, world!` if the plugin was loaded correctly.
+                
+                You can also confirm that your plugin is loaded by pressing `cmd`+`,` and navigating to the plugins tab.
+                
+                @Image(source: hello-world-01-07-plugin-loaded, alt: "A screenshot of Delta Client on the plugin settings screen. It is showing that the Hello World plugin has successfully been loaded.")
+            }
+            
+            @Step {
+                Congratulations, you have just setup your first Delta Client plugin!
+            }
+        }
+    }
+    
+<!--    @Section(title: "Modifying the example plugin") {-->
+<!--        @ContentAndMedia {-->
+<!--            Now that you've built and run your first plugin, let's try modifying it! -->
+<!--        }-->
+<!--    }-->
+}
