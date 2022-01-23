@@ -23,26 +23,63 @@ public struct RegistryStore {
   }
   
   /// Populate the shared registry store.
-  /// - Parameter directory: Directory used for caching registries.
-  public static func populateShared(_ directory: URL) throws {
-    shared = try loadCached(directory)
+  /// - Parameters:
+  ///   - directory: Directory used for caching registries.
+  ///   - onProgress: callback triggered whenever the operation progress is updated
+  public static func populateShared(_ directory: URL, _ onProgress: ((Double, String) -> Void)?) throws {
+    shared = try loadCached(directory, onProgress: onProgress)
+  }
+  
+  /// Tasks to be exectued during the `loadCached` process
+  private enum LoadCacheTask: CaseIterable {
+    case loadBlock, loadBiome, loadFluid, loadEntity
+    case cacheBlock, cacheBiome, cacheFluid, cacheEntity
+    
+    /// Task progress in respect to the whole download process
+    public var progress: Double {
+      let stepIndex = Double(Self.allCases.firstIndex(of: self)!)
+      return (stepIndex+1) / Double(Self.allCases.count)
+    }
+    /// The task description
+    public var message: String {
+      var prefix: String
+      var identifier: String
+      switch self {
+        case .loadBlock, .loadBiome, .loadFluid, .loadEntity: prefix = "Loading cached"
+        case .cacheBlock, .cacheBiome, .cacheFluid, .cacheEntity: prefix = "Caching"
+      }
+      switch self {
+        case .loadBlock, .cacheBlock: identifier = "block"
+        case .loadBiome, .cacheBiome: identifier = "biome"
+        case .loadFluid, .cacheFluid: identifier = "fluid"
+        case .loadEntity, .cacheEntity: identifier = "entity"
+      }
+      return "\(prefix) \(identifier) registry"
+    }
   }
   
   /// Loads the registries cached in a directory. If any registries are missing, they're all redownloaded and cached.
-  /// - Parameter directory: The directory containing the cached registries.
+  /// - Parameters:
+  ///   - directory: The directory containing the cached registries.
+  ///   - onProgress: callback triggered whenever the operation progress is updated
   /// - Returns: The loaded registry.
-  public static func loadCached(_ directory: URL) throws -> RegistryStore {
+  public static func loadCached(_ directory: URL, onProgress: ((Double, String) -> Void)?) throws -> RegistryStore {
+    func updateProgressState(for task: LoadCacheTask) {
+      log.info(task.message)
+      onProgress?(task.progress, task.message)
+    }
+    
     do {
-      log.info("Loading cached block registry")
+      updateProgressState(for: .loadBlock)
       let blockRegistry = try BlockRegistry.loadCached(from: directory)
       
-      log.info("Loading cached biome registry")
+      updateProgressState(for: .loadBiome)
       let biomeRegistry = try BiomeRegistry.loadCached(from: directory)
       
-      log.info("Loading cached fluid registry")
+      updateProgressState(for: .loadFluid)
       let fluidRegistry = try FluidRegistry.loadCached(from: directory)
       
-      log.info("Loading cached entity registry")
+      updateProgressState(for: .loadEntity)
       let entityRegistry = try EntityRegistry.loadCached(from: directory)
       
       return RegistryStore(
@@ -57,16 +94,16 @@ public struct RegistryStore {
       let registry = try PixlyzerFormatter.downloadAndFormatRegistries(Constants.versionString)
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
       
-      log.info("Caching block registry")
+      updateProgressState(for: .cacheBlock)
       try registry.blockRegistry.cache(to: directory)
       
-      log.info("Caching biome registry")
+      updateProgressState(for: .cacheBiome)
       try registry.biomeRegistry.cache(to: directory)
       
-      log.info("Caching fluid registry")
+      updateProgressState(for: .cacheFluid)
       try registry.fluidRegistry.cache(to: directory)
       
-      log.info("Caching entity registry")
+      updateProgressState(for: .cacheEntity)
       try registry.entityRegistry.cache(to: directory)
       
       return registry
