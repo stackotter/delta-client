@@ -12,6 +12,49 @@ struct DeltaClientApp: App {
   
   @ObservedObject public static var pluginEnvironment = PluginEnvironment()
   
+  
+  // MARK: - Startup tasks
+  
+  
+  /// Tasks to be executed on startup
+  private enum StartupTask: CaseIterable {
+    // In ascending execution order
+    case loadPlugins, downloadAssets, loadRegistries, loadResourcePacks, wrapUp
+    
+    /// The task description
+    public var message: String {
+      switch self {
+        case .loadPlugins: return "Loading plugins"
+        case .downloadAssets: return "Downloading vanilla assets (might take a little while)"
+        case .loadRegistries: return "Loading registries"
+        case .loadResourcePacks: return "Loading resource pack"
+        case .wrapUp: return "Starting"
+      }
+    }
+    /// The greated the wieghedDuration, the longer the task is generally expected to be running
+    private var weighedDuration: Double {
+      switch self {
+        case .loadPlugins: return 3
+        case .downloadAssets: return 10
+        case .loadRegistries: return 8
+        case .loadResourcePacks: return 5
+        case .wrapUp: return 1
+      }
+    }
+    
+    /// Task progress in respect to the whole startup process
+    ///
+    /// - Parameter subtaskProgress: the task subtask progress, if any
+    public func progress(subtaskProgress: Double = 1) -> Double {
+      let totalWeighedDuration = Self.allCases.map( { $0.weighedDuration }).reduce(0, { $0 + $1 })
+      let stepIndex = Self.allCases.firstIndex(of: self)!
+      var stepWeighedDuration: Double = 0
+      for i in 0..<stepIndex { stepWeighedDuration += Self.allCases[i].weighedDuration }
+      return (stepWeighedDuration + weighedDuration*subtaskProgress) / totalWeighedDuration
+    }
+  }
+  
+  
   // MARK: Init
   
   init() {
@@ -33,16 +76,26 @@ struct DeltaClientApp: App {
 
     // Load plugins, registries and resources
     taskQueue.async {
-      func updateLoadingMessage(_ message: String) {
-        Self.loadingState.update(to: .loadingWithMessage(message))
-        log.info(message)
+      func updateLoadingState(for task: StartupTask, message: String? = nil, subtaskProgress: Double = 1) {
+        let secretMessages: [String] = ["Frying eggs", "Baking cookies", "Planting trees", "Filling up oceans", "Brewing beer", "Painting clouds", "Dreamin' of ancient worlds"]
+        let kShowsSecretMessage = Int.random(in: 0...100)
+        let secretMessageProbability = 0.05
+        let secretMessageShown = kShowsSecretMessage >= 100-Int(100*secretMessageProbability)
+        
+        var loadingMessage: String
+        if secretMessageShown { loadingMessage = secretMessages.randomElement()! }
+        else if let message = message { loadingMessage = message }
+        else { loadingMessage = task.message }
+        
+        Self.loadingState.update(to: .loadingWithMessage(loadingMessage, progress: task.progress(subtaskProgress: subtaskProgress)))
+        log.info(task.message)
       }
       
       do {
         let start = CFAbsoluteTimeGetCurrent()
         
         // Load plugins first
-        updateLoadingMessage("Loading plugins")
+        updateLoadingState(for: .loadPlugins)
         do {
           try Self.pluginEnvironment.loadPlugins(
             from: StorageManager.default.pluginsDirectory,
@@ -56,16 +109,20 @@ struct DeltaClientApp: App {
         
         // Download vanilla assets if they haven't already been downloaded
         if !StorageManager.default.directoryExists(at: StorageManager.default.vanillaAssetsDirectory) {
-          updateLoadingMessage("Downloading vanilla assets (might take a little while)")
-          try ResourcePack.downloadVanillaAssets(forVersion: Constants.versionString, to: StorageManager.default.vanillaAssetsDirectory)
+          updateLoadingState(for: .downloadAssets)
+          try ResourcePack.downloadVanillaAssets(forVersion: Constants.versionString, to: StorageManager.default.vanillaAssetsDirectory) { progress, message in
+            updateLoadingState(for: .downloadAssets, message: message, subtaskProgress: progress)
+          }
         }
         
         // Load registries
-        updateLoadingMessage("Loading registries")
-        try RegistryStore.populateShared(StorageManager.default.registryDirectory)
+        updateLoadingState(for: .loadRegistries)
+        try RegistryStore.populateShared(StorageManager.default.registryDirectory) { progress, message in
+          updateLoadingState(for: .loadRegistries, message: message, subtaskProgress: progress)
+        }
         
         // Load resource pack and cache it if necessary
-        updateLoadingMessage("Loading resource pack")
+        updateLoadingState(for: .loadResourcePacks)
         let packCache = StorageManager.default.cacheDirectory.appendingPathComponent("vanilla.rpcache/")
         var cacheExists = StorageManager.default.directoryExists(at: packCache)
         let resourcePack = try ResourcePack.load(from: StorageManager.default.vanillaAssetsDirectory, cacheDirectory: cacheExists ? packCache : nil)
@@ -78,6 +135,7 @@ struct DeltaClientApp: App {
           }
         }
         
+        updateLoadingState(for: .wrapUp)
         // Get user to login if they haven't already
         if ConfigManager.default.config.accounts.isEmpty {
           Self.appState.update(to: .login)
