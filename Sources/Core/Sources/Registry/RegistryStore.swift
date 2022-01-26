@@ -25,35 +25,36 @@ public struct RegistryStore {
   /// Populate the shared registry store.
   /// - Parameters:
   ///   - directory: Directory used for caching registries.
-  ///   - onProgress: callback triggered whenever the operation progress is updated
+  ///   - onProgress: Callback triggered whenever the operation progress is updated.
   public static func populateShared(_ directory: URL, _ onProgress: ((Double, String) -> Void)?) throws {
     shared = try loadCached(directory, onProgress: onProgress)
   }
   
-  /// Tasks to be exectued during the `loadCached` process
-  private enum LoadCacheTask: CaseIterable {
+  /// Steps to be exectued during the `populateShared` process.
+  private enum RegistryLoadingStep: CaseIterable, TaskStep {
     case loadBlock, loadBiome, loadFluid, loadEntity
     case cacheBlock, cacheBiome, cacheFluid, cacheEntity
     
-    /// Task progress in respect to the whole download process
-    public var progress: Double {
-      let stepIndex = Double(Self.allCases.firstIndex(of: self)!)
-      return (stepIndex+1) / Double(Self.allCases.count)
-    }
+    /// Task progress in respect to the whole loading process
+    public var relativeDuration: Double { 1 }
+    
     /// The task description
     public var message: String {
       var prefix: String
       var identifier: String
+      
       switch self {
         case .loadBlock, .loadBiome, .loadFluid, .loadEntity: prefix = "Loading cached"
         case .cacheBlock, .cacheBiome, .cacheFluid, .cacheEntity: prefix = "Caching"
       }
+      
       switch self {
         case .loadBlock, .cacheBlock: identifier = "block"
         case .loadBiome, .cacheBiome: identifier = "biome"
         case .loadFluid, .cacheFluid: identifier = "fluid"
         case .loadEntity, .cacheEntity: identifier = "entity"
       }
+      
       return "\(prefix) \(identifier) registry"
     }
   }
@@ -61,25 +62,28 @@ public struct RegistryStore {
   /// Loads the registries cached in a directory. If any registries are missing, they're all redownloaded and cached.
   /// - Parameters:
   ///   - directory: The directory containing the cached registries.
-  ///   - onProgress: callback triggered whenever the operation progress is updated
+  ///   - onProgress: Callback triggered whenever the operation progress is updated.
   /// - Returns: The loaded registry.
   public static func loadCached(_ directory: URL, onProgress: ((Double, String) -> Void)?) throws -> RegistryStore {
-    func updateProgressState(for task: LoadCacheTask) {
-      log.info(task.message)
-      onProgress?(task.progress, task.message)
+    var progress = TaskProgress<RegistryLoadingStep>()
+    
+    func updateProgressState(step: RegistryLoadingStep) {
+      progress.update(to: step)
+      log.info(progress.message)
+      onProgress?(progress.progress, progress.message)
     }
     
     do {
-      updateProgressState(for: .loadBlock)
+      updateProgressState(step: .loadBlock)
       let blockRegistry = try BlockRegistry.loadCached(from: directory)
       
-      updateProgressState(for: .loadBiome)
+      updateProgressState(step: .loadBiome)
       let biomeRegistry = try BiomeRegistry.loadCached(from: directory)
       
-      updateProgressState(for: .loadFluid)
+      updateProgressState(step: .loadFluid)
       let fluidRegistry = try FluidRegistry.loadCached(from: directory)
       
-      updateProgressState(for: .loadEntity)
+      updateProgressState(step: .loadEntity)
       let entityRegistry = try EntityRegistry.loadCached(from: directory)
       
       return RegistryStore(
@@ -94,16 +98,16 @@ public struct RegistryStore {
       let registry = try PixlyzerFormatter.downloadAndFormatRegistries(Constants.versionString)
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
       
-      updateProgressState(for: .cacheBlock)
+      updateProgressState(step: .cacheBlock)
       try registry.blockRegistry.cache(to: directory)
       
-      updateProgressState(for: .cacheBiome)
+      updateProgressState(step: .cacheBiome)
       try registry.biomeRegistry.cache(to: directory)
       
-      updateProgressState(for: .cacheFluid)
+      updateProgressState(step: .cacheFluid)
       try registry.fluidRegistry.cache(to: directory)
       
-      updateProgressState(for: .cacheEntity)
+      updateProgressState(step: .cacheEntity)
       try registry.entityRegistry.cache(to: directory)
       
       return registry

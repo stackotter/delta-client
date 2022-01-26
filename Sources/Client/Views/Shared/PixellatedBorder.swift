@@ -1,38 +1,35 @@
 import SwiftUI
 
-// MARK: - PixellatedBorder
-
-
 struct PixellatedBorder: InsettableShape {
+  public var insetAmount: CGFloat = 0
   
-   // MARK: - UI properties
-   
-   public var insetAmount: CGFloat = 0
-   private let borderCorner: CGFloat = 4
+  private let borderCorner: CGFloat = 4
 
+  func path(in rect: CGRect) -> Path {
+    var path = Path()
 
-   // MARK: - InsettableShape
-   
+    // Top
+    path.move(to: CGPoint(x: borderCorner + insetAmount, y: borderCorner / 2 + insetAmount))
+    path.addLine(to: CGPoint(x: rect.width - borderCorner - insetAmount, y: borderCorner / 2 + insetAmount))
 
-   func path(in rect: CGRect) -> Path {
-     var path = Path()
+    // Right
+    path.move(to: CGPoint(x: rect.width - borderCorner / 2 - insetAmount, y: borderCorner + insetAmount))
+    path.addLine(to: CGPoint(x: rect.width - borderCorner/2 - insetAmount, y: rect.height - borderCorner - insetAmount))
 
-     path.move(to: CGPoint(x: borderCorner + insetAmount, y: insetAmount))
-     path.addLine(to: CGPoint(x: rect.width - borderCorner - insetAmount, y: insetAmount))
-     path.move(to: CGPoint(x: rect.width - borderCorner/2 - insetAmount, y: borderCorner + insetAmount))
-     path.addLine(to: CGPoint(x: rect.width - borderCorner/2 - insetAmount, y: rect.height - borderCorner - insetAmount))
-     path.move(to: CGPoint(x: rect.width - borderCorner - insetAmount, y: rect.height - insetAmount))
-     path.addLine(to: CGPoint(x: borderCorner + insetAmount, y: rect.height - insetAmount))
-     path.move(to: CGPoint(x: borderCorner/2 + insetAmount, y: rect.height - borderCorner - insetAmount))
-     path.addLine(to: CGPoint(x: borderCorner/2 + insetAmount, y: borderCorner + insetAmount))
+    // Bottom
+    path.move(to: CGPoint(x: rect.width - borderCorner - insetAmount, y: rect.height - borderCorner / 2 - insetAmount))
+    path.addLine(to: CGPoint(x: borderCorner + insetAmount, y: rect.height - borderCorner / 2 - insetAmount))
 
-     return path
-   }
+    // Left
+    path.move(to: CGPoint(x: borderCorner / 2 + insetAmount, y: rect.height - borderCorner - insetAmount))
+    path.addLine(to: CGPoint(x: borderCorner / 2 + insetAmount, y: borderCorner + insetAmount))
 
-   func inset(by amount: CGFloat) -> some InsettableShape {
-       var shape = self
-       shape.insetAmount += amount
-       return shape
-   }
-
- }
+    return path
+  }
+  
+  func inset(by amount: CGFloat) -> some InsettableShape {
+    var border = self
+    border.insetAmount += amount
+    return border
+  }
+}
