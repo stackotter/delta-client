@@ -202,17 +202,12 @@ public struct ResourcePack {
   
   // MARK: Download
   
-  
   /// Tasks to be exectued during the `downloadVanillaAssets` process
-  private enum DownloadTask: CaseIterable {
+  private enum DownloadStep: CaseIterable, TaskStep {
     case fetchManifest, downloadJar, extractJar, copyingAssets, creatingMcmeta
     
-    /// Task progress in respect to the whole download process
-    public var progress: Double {
-      let stepIndex = Double(Self.allCases.firstIndex(of: self)!)
-      return (stepIndex+1) / Double(Self.allCases.count)
-    }
-    /// The task description
+    public var relativeDuration: Double { 1 }
+    
     public var message: String {
       switch self {
         case .fetchManifest: return "Fetching version manifest"
@@ -226,17 +221,20 @@ public struct ResourcePack {
   
   /// Downloads the vanilla client and extracts its assets (textures, block models, etc.).
   public static func downloadVanillaAssets(forVersion version: String, to directory: URL, _ onProgress: ((Double, String) -> Void)?) throws {
-    func updateProgressStatus(for task: DownloadTask) {
-      log.info(task.message)
-      onProgress?(task.progress, task.message)
+    var progress = TaskProgress<DownloadStep>()
+    
+    func updateProgressStatus(step: DownloadStep) {
+      progress.update(to: step)
+      log.info(progress.message)
+      onProgress?(progress.progress, progress.message)
     }
     // Get the url for the client jar
-    updateProgressStatus(for: .fetchManifest)
+    updateProgressStatus(step: .fetchManifest)
     let versionManifest = try getVersionManifest(for: version)
     let clientJarURL = versionManifest.downloads.client.url
     
     // Download the client jar
-    updateProgressStatus(for: .downloadJar)
+    updateProgressStatus(step: .downloadJar)
     let temporaryDirectory = FileManager.default.temporaryDirectory
     let clientJarTempFile = temporaryDirectory.appendingPathComponent("client.jar")
     do {
@@ -248,7 +246,7 @@ public struct ResourcePack {
     }
     
     // Extract the contents of the client jar (jar files are just zip archives)
-    updateProgressStatus(for: .extractJar)
+    updateProgressStatus(step: .extractJar)
     let extractedClientJarDirectory = temporaryDirectory.appendingPathComponent("client", isDirectory: true)
     try? FileManager.default.removeItem(at: extractedClientJarDirectory)
     do {
@@ -259,7 +257,7 @@ public struct ResourcePack {
     }
     
     // Copy the assets from the extracted client jar to application support
-    updateProgressStatus(for: .copyingAssets)
+    updateProgressStatus(step: .copyingAssets)
     do {
       try FileManager.default.copyItem(
         at: extractedClientJarDirectory.appendingPathComponent("assets"),
@@ -270,7 +268,7 @@ public struct ResourcePack {
     }
     
     // Create a default pack.mcmeta for it
-    updateProgressStatus(for: .creatingMcmeta)
+    updateProgressStatus(step: .creatingMcmeta)
     let contents = #"{"pack": {"pack_format": 5, "description": "The default vanilla assets"}}"#
     guard let data = contents.data(using: .utf8) else {
       throw ResourcePackError.failedToCreatePackMCMetaData
