@@ -48,7 +48,7 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
   
   public func handle(for client: Client) throws {
     // TODO: check if the discussion at https://wiki.vg/Protocol#Respawn about respawning to the same dimension applies or if it's just a java edition bug
-    client.game.world = World(from: self, eventBus: client.eventBus)
+    client.game.setWorld(World(from: self, eventBus: client.eventBus))
     
     client.game.accessPlayer { player in
       player.gamemode.gamemode = gamemode
