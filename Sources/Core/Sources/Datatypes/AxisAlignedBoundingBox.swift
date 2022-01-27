@@ -20,6 +20,29 @@ public struct AxisAlignedBoundingBox: Codable {
     position + size
   }
   
+  /// All of the block positions that this AABB overlaps with.
+  public var blockPositions: [Position] {
+    let minX = Int(minimum.x.rounded(.down))
+    let maxX = Int(maximum.x.rounded(.down))
+    let minY = Int(minimum.y.rounded(.down))
+    let maxY = Int(maximum.y.rounded(.down))
+    let minZ = Int(minimum.z.rounded(.down))
+    let maxZ = Int(maximum.z.rounded(.down))
+    
+    var positions: [Position] = []
+    positions.reserveCapacity((maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1))
+    
+    for x in minX...maxX {
+      for y in minY...maxY {
+        for z in minZ...maxZ {
+          positions.append(Position(x: x, y: y, z: z))
+        }
+      }
+    }
+    
+    return positions
+  }
+  
   // MARK: Init
   
   /// Create a new axis aligned bounding box at a position with a given size.
@@ -78,5 +101,22 @@ public struct AxisAlignedBoundingBox: Codable {
     let tbr = SIMD4<Float>(maximum, 1)
     
     return [bfl, bfr, tfl, tfr, bbl, bbr, tbl, tbr]
+  }
+  
+  /// Moves the bounding box by the given amount.
+  public func offset(by vector: SIMD3<Float>) -> AxisAlignedBoundingBox {
+    var aabb = self
+    aabb.position += vector
+    return aabb
+  }
+  
+  /// Extends the bounding box by the given amount in the given direction.
+  public func extend(_ direction: Direction, amount: Float) -> AxisAlignedBoundingBox {
+    var aabb = self
+    aabb.size += direction.vector * amount
+    if !direction.isPositive {
+      aabb.position -= direction.vector * amount
+    }
+    return aabb
   }
 }
