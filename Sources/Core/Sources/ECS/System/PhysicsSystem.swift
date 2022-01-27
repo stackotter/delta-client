@@ -16,7 +16,7 @@ public class PhysicsSystem: System {
   public func update(_ nexus: Nexus) {
     // Update the player's velocity.
     let currentPlayerEntities = nexus.family(requiresAll: EntityPosition.self, EntityVelocity.self, EntityRotation.self, PlayerInput.self, PlayerGamemode.self, EntityFlying.self, PlayerAttributes.self, ClientPlayerEntity.self)
-    for (_, velocity, rotation, inputs, gamemode, flying, attributes, _) in currentPlayerEntities {
+    for (position, velocity, rotation, inputs, gamemode, flying, attributes, _) in currentPlayerEntities {
       updatePlayerVelocity(velocity: velocity, rotation: rotation, input: inputs, gamemode: gamemode, flying: flying, attributes: attributes)
       collisionTest(position, velocity)
     }
@@ -101,6 +101,6 @@ public class PhysicsSystem: System {
     defer { worldLock.unlock() }
     
     let projectedPosition = position.vector + velocity.vector
-    let blockPosition = 
+//    let blockPosition =
   }
 }

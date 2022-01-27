@@ -59,9 +59,9 @@ public struct Block: Codable {
   }
   
   /// Returns the offset to apply to the given block at the given position when rendering.
-  public func getModelOffset(at position: Position) -> SIMD3<Float> {
+  public func getModelOffset(at position: BlockPosition) -> SIMD3<Float> {
     if let offset = offset {
-      let seed = Self.getPositionRandom(Position(x: position.x, y: 0, z: position.z))
+      let seed = Self.getPositionRandom(BlockPosition(x: position.x, y: 0, z: position.z))
       let y: Float
       switch offset {
         case .xyz:
@@ -79,7 +79,7 @@ public struct Block: Codable {
   }
   
   /// Returns the seed to use for choosing block models. Identical behaviour to vanilla.
-  public static func getPositionRandom(_ position: Position) -> Int64 {
+  public static func getPositionRandom(_ position: BlockPosition) -> Int64 {
     var seed = Int64(position.x &* 3129871) ^ (Int64(position.z) &* 116129781) ^ Int64(position.y)
     seed = (seed &* seed &* 42317861) &+ (seed &* 11)
     return seed >> 16

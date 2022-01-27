@@ -4,7 +4,7 @@ public struct PlayerBlockPlacementPacket: ServerboundPacket {
   public static let id: Int = 0x2d
   
   public var hand: Hand
-  public var location: Position
+  public var location: BlockPosition
   public var face: Direction
   public var cursorPositionX: Float
   public var cursorPositionY: Float
