@@ -13,7 +13,7 @@ public struct Game {
   private var entityIdToEntityIdentifier: [Int: EntityIdentifier] = [:]
   
   /// The world the player is currently connected to.
-  public var world: World
+  private(set) public var world: World
   /// The list of all players in the game.
   public var tabList = TabList()
   /// The names of all worlds in this game
@@ -189,13 +189,17 @@ public struct Game {
       updateEntityId(playerEntityId, to: packet.playerEntityId)
     }
     
-    world = World(from: packet, eventBus: client.eventBus)
-    physicsSystem.setWorld(world)
+    setWorld(World(from: packet, eventBus: client.eventBus))
   }
   
   /// Sets the game's event bus. This is a method in case the game ever needs to listen to the event bus, this way means that the listener can be added again.
   public mutating func setEventBus(_ eventBus: EventBus) {
     self.eventBus = eventBus
     self.world.eventBus = eventBus
+  }
+  
+  public mutating func setWorld(_ world: World) {
+    self.world = world
+    physicsSystem.setWorld(world)
   }
 }
