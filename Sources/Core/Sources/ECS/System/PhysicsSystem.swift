@@ -3,9 +3,14 @@ import FirebladeECS
 import simd
 
 /// The system that handles entity physics.
-public struct PhysicsSystem: System {
+public class PhysicsSystem: System {
+  private var world: World
+  private var worldLock = ReadWriteLock()
+  
   /// Creates a simple physics system.
-  public init() {}
+  public init(world: World) {
+    self.world = world
+  }
   
   /// Runs a physics update for all entities in the given Nexus.
   public func update(_ nexus: Nexus) {
@@ -20,6 +25,12 @@ public struct PhysicsSystem: System {
     for (position, velocity) in physicsEntities {
       position.move(by: velocity.vector)
     }
+  }
+  
+  public func setWorld(_ world: World) {
+    worldLock.acquireWriteLock()
+    defer { worldLock.unlock() }
+    self.world = world
   }
   
   func updatePlayerVelocity(
@@ -82,5 +93,12 @@ public struct PhysicsSystem: System {
     
     // Update the player's velocity
     velocity.vector = velocityVector
+    
+    collisionTest()
+  }
+  
+  func collisionTest() {
+    worldLock.acquireReadLock()
+    defer { worldLock.unlock() }
   }
 }
