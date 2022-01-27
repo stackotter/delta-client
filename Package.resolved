@@ -21,11 +21,11 @@
       },
       {
         "package": "FirebladeECS",
-        "repositoryURL": "https://github.com/fireblade-engine/ecs.git",
+        "repositoryURL": "https://github.com/stackotter/ecs.git",
         "state": {
-          "branch": null,
-          "revision": "fd57037a6df5aa7fb8070d6af105650fb84c340c",
-          "version": "0.17.5"
+          "branch": "master",
+          "revision": "c7660bcd24e31ef2fc3457f56a2bf4a58c3ad6ee",
+          "version": null
         }
       },
       {
