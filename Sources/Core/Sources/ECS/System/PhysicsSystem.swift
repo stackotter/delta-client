@@ -15,9 +15,10 @@ public class PhysicsSystem: System {
   /// Runs a physics update for all entities in the given Nexus.
   public func update(_ nexus: Nexus) {
     // Update the player's velocity.
-    let currentPlayerEntities = nexus.family(requiresAll: EntityVelocity.self, EntityRotation.self, PlayerInput.self, PlayerGamemode.self, EntityFlying.self, PlayerAttributes.self, ClientPlayerEntity.self)
-    for (velocity, rotation, inputs, gamemode, flying, attributes, _) in currentPlayerEntities {
+    let currentPlayerEntities = nexus.family(requiresAll: EntityPosition.self, EntityVelocity.self, EntityRotation.self, PlayerInput.self, PlayerGamemode.self, EntityFlying.self, PlayerAttributes.self, ClientPlayerEntity.self)
+    for (_, velocity, rotation, inputs, gamemode, flying, attributes, _) in currentPlayerEntities {
       updatePlayerVelocity(velocity: velocity, rotation: rotation, input: inputs, gamemode: gamemode, flying: flying, attributes: attributes)
+      collisionTest(position, velocity)
     }
     
     // Apply velocity to all moving entities.
@@ -93,12 +94,13 @@ public class PhysicsSystem: System {
     
     // Update the player's velocity
     velocity.vector = velocityVector
-    
-    collisionTest()
   }
   
-  func collisionTest() {
+  func collisionTest(_ position: EntityPosition, _ velocity: EntityVelocity) {
     worldLock.acquireReadLock()
     defer { worldLock.unlock() }
+    
+    let projectedPosition = position.vector + velocity.vector
+    let blockPosition = 
   }
 }
