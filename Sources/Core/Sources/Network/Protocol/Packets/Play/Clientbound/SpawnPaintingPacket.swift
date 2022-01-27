@@ -6,7 +6,7 @@ public struct SpawnPaintingPacket: ClientboundPacket {
   public var entityId: Int
   public var entityUUID: UUID
   public var motive: Int
-  public var location: Position
+  public var location: BlockPosition
   public var direction: UInt8 // TODO_LATER
   
   public init(from packetReader: inout PacketReader) throws {

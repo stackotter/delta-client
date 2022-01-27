@@ -111,7 +111,7 @@ public struct ChunkSectionMeshBuilder {
   
   /// Adds a block to the mesh.
   private func addBlock(
-    at position: Position,
+    at position: BlockPosition,
     atBlockIndex blockIndex: Int,
     with blockId: Int,
     transparentAndOpaqueGeometry: inout Geometry,
@@ -381,7 +381,7 @@ public struct ChunkSectionMeshBuilder {
   ///   - translucentMesh: The mesh to add the fluid to.
   ///   - indexToNeighbourIndices: The lookup table used to find the block indices of the neighbouring blocks quickly.
   private func addFluid(
-    at position: Position,
+    at position: BlockPosition,
     atBlockIndex blockIndex: Int,
     with blockId: Int,
     translucentMesh: inout SortableMesh,
@@ -615,7 +615,7 @@ public struct ChunkSectionMeshBuilder {
     .east: [3, 0]]
   
   /// Convert corner heights to corner positions relative to the current chunk section.
-  private func calculatePositions(_ blockPosition: Position, _ heights: [Float]) -> [SIMD3<Float>] {
+  private func calculatePositions(_ blockPosition: BlockPosition, _ heights: [Float]) -> [SIMD3<Float>] {
     let basePosition = blockPosition.relativeToChunkSection.floatVector + SIMD3<Float>(0.5, 0, 0.5)
     var positions: [SIMD3<Float>] = []
     for (index, height) in heights.enumerated() {
@@ -631,7 +631,7 @@ public struct ChunkSectionMeshBuilder {
   }
   
   /// Calculate the height of each corner of a fluid.
-  private func calculateHeights(position: Position, block: Block, neighbourBlocks: [Direction: Block]) -> [Float] {
+  private func calculateHeights(position: BlockPosition, block: Block, neighbourBlocks: [Direction: Block]) -> [Float] {
     // If under a fluid block of the same type, all corners are 1
     if neighbourBlocks[.up]?.fluidId == block.fluidId {
       return [1, 1, 1, 1]
@@ -650,7 +650,7 @@ public struct ChunkSectionMeshBuilder {
       // Get positions of blocks surrounding the current corner
       let zOffset = directions[0].intVector
       let xOffset = directions[1].intVector
-      let positions: [Position] = [
+      let positions: [BlockPosition] = [
         position + xOffset,
         position + zOffset,
         position + xOffset + zOffset]
@@ -790,7 +790,7 @@ public struct ChunkSectionMeshBuilder {
   ///   - blockId: The id of the block at the given position.
   ///   - neighbouringBlocks: The block ids of neighbouring blocks.
   /// - Returns: The set of directions of neighbours that can possibly cull a face.
-  func getCullingNeighbours(at position: Position, blockId: Int, neighbouringBlocks: [(Direction, Int)]) -> Set<Direction> {
+  func getCullingNeighbours(at position: BlockPosition, blockId: Int, neighbouringBlocks: [(Direction, Int)]) -> Set<Direction> {
     var cullingNeighbours = Set<Direction>(minimumCapacity: 6)
     let blockCullsSameKind = RegistryStore.shared.blockRegistry.selfCullingBlocks.contains(blockId)
     
@@ -816,19 +816,19 @@ public struct ChunkSectionMeshBuilder {
   ///   - blockId: The id of the block at the given position.
   ///   - neighbourIndices: The neighbour indices lookup table to use.
   /// - Returns: The set of directions of neighbours that can possibly cull a face.
-  func getCullingNeighbours(at position: Position, blockId: Int, neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> Set<Direction> {
+  func getCullingNeighbours(at position: BlockPosition, blockId: Int, neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> Set<Direction> {
     let neighbouringBlocks = getNeighbouringBlockIds(neighbourIndices: neighbourIndices)
     return getCullingNeighbours(at: position, blockId: blockId, neighbouringBlocks: neighbouringBlocks)
   }
   
   /// Generates a lookup table to quickly convert from section block index to block position.
-  private static func generateIndexLookup() -> [Position] {
-    var lookup: [Position] = []
+  private static func generateIndexLookup() -> [BlockPosition] {
+    var lookup: [BlockPosition] = []
     lookup.reserveCapacity(Chunk.Section.numBlocks)
     for y in 0..<Chunk.Section.height {
       for z in 0..<Chunk.Section.depth {
         for x in 0..<Chunk.Section.width {
-          let position = Position(x: x, y: y, z: z)
+          let position = BlockPosition(x: x, y: y, z: z)
           lookup.append(position)
         }
       }

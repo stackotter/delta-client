@@ -3,7 +3,7 @@ import Foundation
 public struct UpdateJigsawBlockPacket: ServerboundPacket {
   public static let id: Int = 0x28
   
-  public var location: Position
+  public var location: BlockPosition
   public var name: Identifier
   public var target: Identifier
   public var pool: Identifier

@@ -127,7 +127,7 @@ public class World {
   /// Sets the block at the specified position to the specified block id.
   ///
   /// This will trigger lighting to be updated.
-  public func setBlockId(at position: Position, to state: Int) {
+  public func setBlockId(at position: BlockPosition, to state: Int) {
     if let chunk = chunk(at: position.chunk) {
       chunk.setBlockId(at: position.relativeToChunk, to: state)
       lightingEngine.updateLighting(at: position, in: self)
@@ -148,7 +148,7 @@ public class World {
   ///   - position: A block position in world coordinates.
   ///   - acquireLock: Whether to acquire a lock or not before reading the value. Don't touch this unless you know what you're doing.
   /// - Returns: A block state id. If `position` is in a chunk that isn't loaded, `0` (regular air) is returned.
-  public func getBlockId(at position: Position, acquireLock: Bool = true) -> Int {
+  public func getBlockId(at position: BlockPosition, acquireLock: Bool = true) -> Int {
     if Self.isValidBlockPosition(position), let chunk = chunk(at: position.chunk) {
       return chunk.getBlockId(at: position.relativeToChunk, acquireLock: acquireLock)
     } else {
@@ -161,7 +161,7 @@ public class World {
   ///   - position: Position of block.
   ///   - acquireLock: Whether to acquire a lock or not before reading the value. Don't touch this unless you know what you're doing.
   /// - Returns: The block at the given position. ``Block/missing`` if the block doesn't exist.
-  public func getBlock(at position: Position, acquireLock: Bool = true) -> Block {
+  public func getBlock(at position: BlockPosition, acquireLock: Bool = true) -> Block {
     return RegistryStore.shared.blockRegistry.block(withId: Int(getBlockId(at: position, acquireLock: acquireLock))) ?? Block.missing
   }
   
@@ -174,7 +174,7 @@ public class World {
   /// - Parameters:
   ///   - position: A block position relative to the world.
   ///   - level: The new block light level. Should be from 0 to 15 inclusive. Not validated.
-  public func setBlockLightLevel(at position: Position, to level: Int) {
+  public func setBlockLightLevel(at position: BlockPosition, to level: Int) {
     if let chunk = chunk(at: position.chunk) {
       chunk.setBlockLightLevel(at: position.relativeToChunk, to: level)
     }
@@ -184,7 +184,7 @@ public class World {
   ///
   /// - Parameter position: Position of block.
   /// - Returns: The block light level of the block. If the given position isn't loaded, ``LightLevel/defaultBlockLightLevel`` is returned.
-  public func getBlockLightLevel(at position: Position) -> Int {
+  public func getBlockLightLevel(at position: BlockPosition) -> Int {
     if let chunk = chunk(at: position.chunk) {
       return chunk.blockLightLevel(at: position.relativeToChunk)
     } else {
@@ -199,7 +199,7 @@ public class World {
   /// - Parameters:
   ///   - position: A block position relative to the world.
   ///   - level: The new sky light level. Should be from 0 to 15 inclusive. Not validated.
-  public func setSkyLightLevel(at position: Position, to level: Int) {
+  public func setSkyLightLevel(at position: BlockPosition, to level: Int) {
     if let chunk = chunk(at: position.chunk) {
       chunk.setSkyLightLevel(at: position.relativeToChunk, to: level)
     }
@@ -209,7 +209,7 @@ public class World {
   ///
   /// - Parameter position: Position of block.
   /// - Returns: The sky light level of the block. If the given position isn't loaded, ``LightLevel/defaultSkyLightLevel`` is returned.
-  public func getSkyLightLevel(at position: Position) -> Int {
+  public func getSkyLightLevel(at position: BlockPosition) -> Int {
     if let chunk = chunk(at: position.chunk) {
       return chunk.skyLightLevel(at: position.relativeToChunk)
     } else {
@@ -355,13 +355,13 @@ public class World {
   /// Gets whether the a position is in a loaded chunk or not.
   /// - Parameter position: Position to check.
   /// - Returns: `true` if the position is in a loaded chunk.
-  public func isPositionLoaded(_ position: Position) -> Bool {
+  public func isPositionLoaded(_ position: BlockPosition) -> Bool {
     return isChunkComplete(at: position.chunk)
   }
   
   /// - Parameter position: Position to validate.
   /// - Returns: whether a block position is below the world height limit and above 0.
-  public static func isValidBlockPosition(_ position: Position) -> Bool {
+  public static func isValidBlockPosition(_ position: BlockPosition) -> Bool {
     return position.y < Chunk.height && position.y >= 0
   }
 }

@@ -4,7 +4,7 @@ public struct EffectPacket: ClientboundPacket {
   public static let id: Int = 0x22
   
   public var effectId: Int
-  public var location: Position
+  public var location: BlockPosition
   public var data: Int
   public var disableRelativeVolume: Bool
   

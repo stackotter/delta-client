@@ -57,7 +57,7 @@ public struct ResourcePack {
   
   // MARK: Access
   
-  public func getBlockModel(for stateId: Int, at position: Position) -> BlockModel? {
+  public func getBlockModel(for stateId: Int, at position: BlockPosition) -> BlockModel? {
     return vanillaResources.blockModelPalette.model(for: stateId, at: position)
   }
   

@@ -2,7 +2,7 @@ import Foundation
 import simd
 
 /// A block position.
-public struct Position {
+public struct BlockPosition {
   public var x: Int
   public var y: Int
   public var z: Int
@@ -37,18 +37,18 @@ public struct Position {
   }
   
   /// This position relative to the ``Chunk`` it's in
-  public var relativeToChunk: Position {
+  public var relativeToChunk: BlockPosition {
     let relativeX = x &- chunk.chunkX &* Chunk.Section.width
     let relativeZ = z &- chunk.chunkZ &* Chunk.Section.depth
-    return Position(x: relativeX, y: y, z: relativeZ)
+    return BlockPosition(x: relativeX, y: y, z: relativeZ)
   }
   
   /// This position relative to the ``Chunk/Section`` it's in
-  public var relativeToChunkSection: Position {
+  public var relativeToChunkSection: BlockPosition {
     let relativeX = x &- chunk.chunkX &* Chunk.Section.width
     let relativeZ = z &- chunk.chunkZ &* Chunk.Section.depth
     let relativeY = y &- sectionIndex &* Chunk.Section.height
-    return Position(x: relativeX, y: relativeY, z: relativeZ)
+    return BlockPosition(x: relativeX, y: relativeY, z: relativeZ)
   }
   
   /// This position as a float vector
@@ -65,12 +65,12 @@ public struct Position {
   }
   
   /// The positions neighbouring this position.
-  public var neighbours: [Position] {
+  public var neighbours: [BlockPosition] {
     Direction.allDirections.map { self + $0.intVector }
   }
   
-  public static func + (lhs: Position, rhs: SIMD3<Int>) -> Position {
-    return Position(x: lhs.x &+ Int(rhs.x), y: lhs.y &+ Int(rhs.y), z: lhs.z &+ Int(rhs.z))
+  public static func + (lhs: BlockPosition, rhs: SIMD3<Int>) -> BlockPosition {
+    return BlockPosition(x: lhs.x &+ Int(rhs.x), y: lhs.y &+ Int(rhs.y), z: lhs.z &+ Int(rhs.z))
   }
   
   /// The block index of the position.
@@ -98,7 +98,7 @@ public struct Position {
   }
 }
 
-extension Position: Hashable {
+extension BlockPosition: Hashable {
   public func hash(into hasher: inout Hasher) {
     hasher.combine(x)
     hasher.combine(y)

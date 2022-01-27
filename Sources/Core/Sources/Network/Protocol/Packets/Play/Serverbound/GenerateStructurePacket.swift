@@ -3,7 +3,7 @@ import Foundation
 public struct GenerateStructurePacket: ServerboundPacket {
   public static let id: Int = 0x0f
   
-  public var location: Position
+  public var location: BlockPosition
   public var levels: Int32
   public var keepJigsaws: Bool
   

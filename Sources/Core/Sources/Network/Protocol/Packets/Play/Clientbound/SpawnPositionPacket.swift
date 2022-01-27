@@ -3,7 +3,7 @@ import Foundation
 public struct SpawnPositionPacket: ClientboundPacket {
   public static let id: Int = 0x42
   
-  public var location: Position
+  public var location: BlockPosition
 
   public init(from packetReader: inout PacketReader) throws {
     location = packetReader.readPosition()

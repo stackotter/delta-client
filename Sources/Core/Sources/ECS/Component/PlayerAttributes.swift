@@ -3,7 +3,7 @@ import FirebladeECS
 /// A component storing attributes specific to the client's player.
 public class PlayerAttributes: Component {
   /// The player's spawn position.
-  public var spawnPosition: Position
+  public var spawnPosition: BlockPosition
   /// The player's maximum flying speed (set by server).
   public var flyingSpeed: Float
   /// The player's current fov modifier.
@@ -30,7 +30,7 @@ public class PlayerAttributes: Component {
   ///   - isHardcore: Defaults to false.
   ///   - previousGamemode: Defaults to `nil`.
   public init(
-    spawnPosition: Position = Position(x: 0, y: 0, z: 0),
+    spawnPosition: BlockPosition = BlockPosition(x: 0, y: 0, z: 0),
     flyingSpeed: Float = 0,
     fovModifier: Float = 0,
     isInvulnerable: Bool = false,

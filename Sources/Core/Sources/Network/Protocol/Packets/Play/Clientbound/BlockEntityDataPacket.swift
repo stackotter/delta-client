@@ -3,7 +3,7 @@ import Foundation
 public struct BlockEntityDataPacket: ClientboundPacket {
   public static let id: Int = 0x09
   
-  public var location: Position
+  public var location: BlockPosition
   public var action: UInt8
   public var nbtData: NBT.Compound
   

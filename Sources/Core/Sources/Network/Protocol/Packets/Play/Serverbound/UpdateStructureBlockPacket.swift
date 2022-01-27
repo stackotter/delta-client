@@ -3,7 +3,7 @@ import Foundation
 public struct UpdateStructureBlockPacket: ServerboundPacket {
   public static let id: Int = 0x29
   
-  public var location: Position
+  public var location: BlockPosition
   public var action: StructureBlockAction
   public var mode: StructureBlockMode
   public var name: String

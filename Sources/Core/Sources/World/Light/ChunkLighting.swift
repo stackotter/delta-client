@@ -59,7 +59,7 @@ public struct ChunkLighting {
   /// Gets the light level at the given position. Includes both the block light and sky light level.
   /// - Parameter position: The position to get the light level at.
   /// - Returns: The requested light level. If the position is not loaded, the default light level is returned.
-  public func getLightLevel(at position: Position) -> LightLevel {
+  public func getLightLevel(at position: BlockPosition) -> LightLevel {
     let skyLightLevel = getSkyLightLevel(at: position)
     let blockLightLevel = getBlockLightLevel(at: position)
     return LightLevel(sky: skyLightLevel, block: blockLightLevel)
@@ -70,7 +70,7 @@ public struct ChunkLighting {
   ///   - position: The position to get the light level at (relative to the specified section).
   ///   - sectionIndex: The chunk section containing the light level to get.
   /// - Returns: The requested light level. If the position is not loaded, the default light level is returned.
-  public func getLightLevel(at position: Position, inSectionAt sectionIndex: Int) -> LightLevel {
+  public func getLightLevel(at position: BlockPosition, inSectionAt sectionIndex: Int) -> LightLevel {
     var position = position
     position.y += sectionIndex * Chunk.Section.height
     let skyLightLevel = getSkyLightLevel(at: position)
@@ -101,7 +101,7 @@ public struct ChunkLighting {
   /// Gets the sky light level at the given position.
   /// - Parameter position: The position to get the light level at.
   /// - Returns: The requested light level. If the position is not loaded, ``LightLevel/defaultSkyLightLevel`` is returned.
-  public func getSkyLightLevel(at position: Position) -> Int {
+  public func getSkyLightLevel(at position: BlockPosition) -> Int {
     if !Self.isValidPosition(position) {
       return LightLevel.defaultSkyLightLevel
     }
@@ -137,7 +137,7 @@ public struct ChunkLighting {
   /// Gets the block light level at the given position.
   /// - Parameter position: The position to get the light level at.
   /// - Returns: The requested light level. If the position is not loaded, ``LightLevel/defaultBlockLightLevel`` is returned.
-  public func getBlockLightLevel(at position: Position) -> Int {
+  public func getBlockLightLevel(at position: BlockPosition) -> Int {
     if !Self.isValidPosition(position) {
       return LightLevel.defaultBlockLightLevel
     }
@@ -176,7 +176,7 @@ public struct ChunkLighting {
   /// - Parameters:
   ///   - position: The position to set the block light level for.
   ///   - newLevel: The new block light level from 0 to 15
-  public mutating func setBlockLightLevel(at position: Position, to newLevel: Int) {
+  public mutating func setBlockLightLevel(at position: BlockPosition, to newLevel: Int) {
     guard Self.isValidPosition(position) else {
       return
     }
@@ -203,7 +203,7 @@ public struct ChunkLighting {
   /// - Parameters:
   ///   - position: The position to set the sky light level for.
   ///   - newLevel: The new sky light level from 0 to 15
-  public mutating func setSkyLightLevel(at position: Position, to newLevel: Int) {
+  public mutating func setSkyLightLevel(at position: BlockPosition, to newLevel: Int) {
     guard Self.isValidPosition(position) else {
       return
     }
@@ -231,7 +231,7 @@ public struct ChunkLighting {
   /// Checks whether a position is within the chunk (including 1 block above and below).
   /// - Parameter position: The position to check.
   /// - Returns: Whether the position is valid or not.
-  private static func isValidPosition(_ position: Position) -> Bool {
+  private static func isValidPosition(_ position: BlockPosition) -> Bool {
     return position.x >= 0 && position.y >= -1 && position.z >= 0 && position.x < Chunk.width && position.y < Chunk.height + 1 && position.z < Chunk.depth
   }
 }
