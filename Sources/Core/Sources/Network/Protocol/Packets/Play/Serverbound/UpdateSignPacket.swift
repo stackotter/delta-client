@@ -3,7 +3,7 @@ import Foundation
 public struct UpdateSignPacket: ServerboundPacket {
   public static let id: Int = 0x2a
   
-  public var location: Position
+  public var location: BlockPosition
   public var line1: String
   public var line2: String
   public var line3: String

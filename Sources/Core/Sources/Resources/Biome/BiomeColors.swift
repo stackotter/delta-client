@@ -119,7 +119,7 @@ public struct BiomeColors {
   ///   - position: The position of the block. Currently ignored.
   ///   - biome: The biome the block is in.
   /// - Returns: A tint color. Returns `nil` if the block doesn't need a tint to be applied and in some cases where biome color look ups fail which could happen if plugins mess with this.
-  public func color(for block: Block, at position: Position, in biome: Biome) -> RGBColor? {
+  public func color(for block: Block, at position: BlockPosition, in biome: Biome) -> RGBColor? {
     if let tintColor = blockColorOverrides[block.identifier] {
       return tintColor
     }

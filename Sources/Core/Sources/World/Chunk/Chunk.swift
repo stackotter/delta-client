@@ -95,7 +95,7 @@ public final class Chunk {
   ///   - position: A block position relative to the chunk.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: Information about block and its state. Returns ``Block/missing`` if block state id is invalid.
-  public func getBlock(at position: Position, acquireLock: Bool = true) -> Block {
+  public func getBlock(at position: BlockPosition, acquireLock: Bool = true) -> Block {
     let stateId = getBlockId(at: position, acquireLock: acquireLock)
     return RegistryStore.shared.blockRegistry.block(withId: stateId) ?? Block.missing
   }
@@ -105,7 +105,7 @@ public final class Chunk {
   ///   - position: A block position relative to the chunk.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: Block id of block. Returns 0 (regular air) if `position` is invalid (outside chunk).
-  public func getBlockId(at position: Position, acquireLock: Bool = true) -> Int {
+  public func getBlockId(at position: BlockPosition, acquireLock: Bool = true) -> Int {
     let blockIndex = position.blockIndex
     return getBlockId(at: blockIndex, acquireLock: acquireLock)
   }
@@ -137,7 +137,7 @@ public final class Chunk {
   ///   - position: A position relative to the chunk.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   ///   - newState: A new block state. Not validated.
-  public func setBlockId(at position: Position, to state: Int, acquireLock: Bool = true) {
+  public func setBlockId(at position: BlockPosition, to state: Int, acquireLock: Bool = true) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
     
@@ -181,7 +181,7 @@ public final class Chunk {
   ///   - position: Position of block in chunk relative coordinates.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: Data about the biome.
-  public func biomeId(at position: Position, acquireLock: Bool = true) -> Int {
+  public func biomeId(at position: BlockPosition, acquireLock: Bool = true) -> Int {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
     
@@ -194,7 +194,7 @@ public final class Chunk {
   ///   - position: Position of block in chunk relative coordinates.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: Data about the biome.
-  public func biome(at position: Position, acquireLock: Bool = true) -> Biome? {
+  public func biome(at position: BlockPosition, acquireLock: Bool = true) -> Biome? {
     let biomeId = biomeId(at: position, acquireLock: acquireLock)
     return RegistryStore.shared.biomeRegistry.biome(withId: biomeId)
   }
@@ -303,7 +303,7 @@ public final class Chunk {
   ///   - position: Position of block.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: The requested block light level.
-  public func blockLightLevel(at position: Position, acquireLock: Bool = true) -> Int {
+  public func blockLightLevel(at position: BlockPosition, acquireLock: Bool = true) -> Int {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
     
@@ -315,7 +315,7 @@ public final class Chunk {
   ///   - position: Position of block.
   ///   - level: The new block light level.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
-  public func setBlockLightLevel(at position: Position, to level: Int, acquireLock: Bool = true) {
+  public func setBlockLightLevel(at position: BlockPosition, to level: Int, acquireLock: Bool = true) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
     
@@ -327,7 +327,7 @@ public final class Chunk {
   ///   - position: Position of block.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: The requested sky light level.
-  public func skyLightLevel(at position: Position, acquireLock: Bool = true) -> Int {
+  public func skyLightLevel(at position: BlockPosition, acquireLock: Bool = true) -> Int {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
     
@@ -339,7 +339,7 @@ public final class Chunk {
   ///   - position: Position of block.
   ///   - level: The new sky light level.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
-  public func setSkyLightLevel(at position: Position, to level: Int, acquireLock: Bool = true) {
+  public func setSkyLightLevel(at position: BlockPosition, to level: Int, acquireLock: Bool = true) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
     
@@ -450,7 +450,7 @@ public final class Chunk {
   }
   
   /// - Returns: `true` if the block position is contained within the a chunk.
-  private static func isValidBlockPosition(_ position: Position) -> Bool {
+  private static func isValidBlockPosition(_ position: BlockPosition) -> Bool {
     return (
       position.x < Chunk.width && position.x >= 0 &&
       position.z < Chunk.depth && position.z >= 0 &&

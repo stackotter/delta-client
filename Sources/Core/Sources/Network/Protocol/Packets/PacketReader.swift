@@ -187,7 +187,7 @@ public struct PacketReader {
   }
   
   // reads x, y and z from a packed integer (each is signed)
-  public mutating func readPosition() -> Position {
+  public mutating func readPosition() -> BlockPosition {
     let val = buffer.readLong(endian: .big)
     
     // extract the bit patterns (it goes x, then z, then y)
@@ -212,7 +212,7 @@ public struct PacketReader {
     }
     
     // read and return the bit patterns
-    return Position(
+    return BlockPosition(
       x: Int(Int32(bitPattern: x)),
       y: Int(Int32(bitPattern: y)),
       z: Int(Int32(bitPattern: z))

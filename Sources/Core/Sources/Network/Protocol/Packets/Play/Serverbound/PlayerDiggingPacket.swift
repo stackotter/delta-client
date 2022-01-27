@@ -4,7 +4,7 @@ public struct PlayerDiggingPacket: ServerboundPacket {
   public static let id: Int = 0x1b
   
   public var status: DiggingStatus
-  public var location: Position
+  public var location: BlockPosition
   public var face: Direction
   
   public enum DiggingStatus: Int32 {

@@ -3,7 +3,7 @@ import Foundation
 public struct UpdateCommandBlockPacket: ServerboundPacket {
   public static let id: Int = 0x25
   
-  public var location: Position
+  public var location: BlockPosition
   public var command: String
   public var mode: CommandBlockMode
   public var flags: CommandBlockFlags

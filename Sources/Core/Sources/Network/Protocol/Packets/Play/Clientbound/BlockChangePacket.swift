@@ -3,7 +3,7 @@ import Foundation
 public struct BlockChangePacket: ClientboundPacket {
   public static let id: Int = 0x0b
   
-  public var location: Position
+  public var location: BlockPosition
   public var blockId: Int
   
   public init(from packetReader: inout PacketReader) throws {

@@ -21,7 +21,7 @@ public struct AxisAlignedBoundingBox: Codable {
   }
   
   /// All of the block positions that this AABB overlaps with.
-  public var blockPositions: [Position] {
+  public var blockPositions: [BlockPosition] {
     let minX = Int(minimum.x.rounded(.down))
     let maxX = Int(maximum.x.rounded(.down))
     let minY = Int(minimum.y.rounded(.down))
@@ -29,13 +29,13 @@ public struct AxisAlignedBoundingBox: Codable {
     let minZ = Int(minimum.z.rounded(.down))
     let maxZ = Int(maximum.z.rounded(.down))
     
-    var positions: [Position] = []
+    var positions: [BlockPosition] = []
     positions.reserveCapacity((maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1))
     
     for x in minX...maxX {
       for y in minY...maxY {
         for z in minZ...maxZ {
-          positions.append(Position(x: x, y: y, z: z))
+          positions.append(BlockPosition(x: x, y: y, z: z))
         }
       }
     }

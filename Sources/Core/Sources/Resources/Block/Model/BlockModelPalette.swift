@@ -44,7 +44,7 @@ public struct BlockModelPalette {
   /// If `position` is nil the first block model is returned. This is used to skip
   /// random number generation in finding culling faces. We assume that the block
   /// model variants all have the same general shape.
-  public func model(for stateId: Int, at position: Position?) -> BlockModel? {
+  public func model(for stateId: Int, at position: BlockPosition?) -> BlockModel? {
     // TODO: correctly select weighted models (not doing that only affects chorus fruit so not a big deal)
     let variants = models[stateId]
     if let position = position {

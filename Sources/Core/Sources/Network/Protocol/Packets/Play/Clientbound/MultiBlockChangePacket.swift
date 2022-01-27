@@ -42,7 +42,7 @@ public struct MultiBlockChangePacket: ClientboundPacket {
   
   public func handle(for client: Client) throws {
     records.forEach { record in
-      var absolutePosition = Position(
+      var absolutePosition = BlockPosition(
         x: Int(record.x),
         y: Int(record.y),
         z: Int(record.z))
