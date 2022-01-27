@@ -48,11 +48,6 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       fatalError("Failed to get metal device")
     }
     
-    supportsStageBoundarySampling = device.supportsCounterSampling(.atStageBoundary)
-    
-    // Take an initial measurement for calibrating the GPU clock
-    let startTimestamp = device.sampleTimestamps()
-    
     guard let commandQueue = device.makeCommandQueue() else {
       fatalError("Failed to make render command queue")
     }
@@ -88,13 +83,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       fatalError("Failed to create depth state: \(error)")
     }
     
-    gpuCounterBuffer = try? MetalUtil.makeCounterSampleBuffer(device, counterSet: .timestamp, sampleCount: 2)
+    gpuTimeCallibrationFactor = 0
     
-    // Finish collecting data for GPU timestamp callibration.
-    let endTimestamp = device.sampleTimestamps()
-    gpuTimeCallibrationFactor = Double(endTimestamp.cpu - startTimestamp.cpu) / Double(endTimestamp.gpu - startTimestamp.gpu)
-    
-    statistics = RenderStatistics(gpuCountersEnabled: gpuCounterBuffer != nil)
+    statistics = RenderStatistics(gpuCountersEnabled: false)
     
     super.init()
   }
@@ -119,18 +110,6 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       return
     }
     stopwatch.stopMeasurement("Get render pass descriptor")
-    
-    // Setup GPU counters
-    if let gpuCounterBuffer = gpuCounterBuffer {
-      renderPassDescriptor.sampleBufferAttachments[0].sampleBuffer = gpuCounterBuffer
-      if supportsStageBoundarySampling {
-        renderPassDescriptor.sampleBufferAttachments[0].startOfVertexSampleIndex = 0
-        renderPassDescriptor.sampleBufferAttachments[0].endOfFragmentSampleIndex = 1
-      }
-    }
-    
-    // Make sure depth attachment is cleared before the render pass
-    renderPassDescriptor.depthAttachment.loadAction = .clear
     
     // The CPU start time if vsync was disabled
     let cpuStartTime = CFAbsoluteTimeGetCurrent()
@@ -161,10 +140,6 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       return
     }
     stopwatch.stopMeasurement("Create render encoder")
-    
-    if let gpuCounterBuffer = gpuCounterBuffer, !supportsStageBoundarySampling {
-      renderEncoder.sampleCounters(sampleBuffer: gpuCounterBuffer, sampleIndex: 0, barrier: false)
-    }
     
     // Configure the render encoder
     renderEncoder.setDepthStencilState(depthState)
@@ -221,40 +196,13 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       return
     }
     
-    if let gpuCounterBuffer = gpuCounterBuffer, !supportsStageBoundarySampling {
-      renderEncoder.sampleCounters(sampleBuffer: gpuCounterBuffer, sampleIndex: 1, barrier: false)
-    }
-    
     renderEncoder.endEncoding()
     commandBuffer.present(drawable)
     
-    if let gpuCounterBuffer = gpuCounterBuffer {
-      commandBuffer.addCompletedHandler { commandBuffer in
-        guard let data = try? gpuCounterBuffer.resolveCounterRange(0..<2) else {
-          log.error("Failed to sample GPU counters")
-          self.client.eventBus.dispatch(ErrorEvent(
-            error: RenderError.failedToSampleCounters,
-            message: "Failed to sample GPU counters"
-          ))
-          return
-        }
-        
-        data.withUnsafeBytes { pointer in
-          let timestamps = pointer.bindMemory(to: UInt64.self)
-          let gpuNanoseconds = Double(timestamps[1] &- timestamps[0]) * self.gpuTimeCallibrationFactor
-          
-          self.statistics.addMeasurement(
-            frameTime: frameTime,
-            cpuTime: cpuFinishTime - cpuStartTime,
-            gpuTime: gpuNanoseconds / 1_000_000_000)
-        }
-      }
-    } else {
-      self.statistics.addMeasurement(
-        frameTime: frameTime,
-        cpuTime: cpuFinishTime - cpuStartTime,
-        gpuTime: nil)
-    }
+    self.statistics.addMeasurement(
+      frameTime: frameTime,
+      cpuTime: cpuFinishTime - cpuStartTime,
+      gpuTime: nil)
     
     commandBuffer.commit()
     stopwatch.stopMeasurement("Finish frame")
