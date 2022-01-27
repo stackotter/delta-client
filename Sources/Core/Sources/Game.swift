@@ -41,7 +41,7 @@ public struct Game {
   public var isDifficultyLocked = true
   
   /// The system that handles entity physics.
-  public var physicsSystem = PhysicsSystem()
+  public var physicsSystem: PhysicsSystem
   
   // MARK: Private properties
   
@@ -58,9 +58,10 @@ public struct Game {
   public init(eventBus: EventBus) {
     self.eventBus = eventBus
     
-    tickScheduler = TickScheduler(nexus, lock: nexusLock)
-    
     world = World(eventBus: eventBus)
+    
+    tickScheduler = TickScheduler(nexus, lock: nexusLock)
+    physicsSystem = PhysicsSystem(world: world)
     
     player = Player()
     var player = player
@@ -189,6 +190,7 @@ public struct Game {
     }
     
     world = World(from: packet, eventBus: client.eventBus)
+    physicsSystem.setWorld(world)
   }
   
   /// Sets the game's event bus. This is a method in case the game ever needs to listen to the event bus, this way means that the listener can be added again.

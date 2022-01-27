@@ -41,6 +41,10 @@ public class PlayerInput: Component {
       }
     }
     
+    if isSneaking {
+      velocityVector *= 0.3
+    }
+    
     return velocityVector
   }
 }
