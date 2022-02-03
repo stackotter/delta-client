@@ -82,18 +82,18 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
 - [x] rewrite block model loading system
 - [x] lighting
 - [x] animated textures
-- [ ] fix gpu ram usage (clear buffers when not being used, possibly use private mode buffers, possibly use a big default size buffer and transfer things through that)
-- [ ] fix indices (either use 6 vertices to a face or do the fancy shader thing from before (adjusting the vertex indices))
-- [ ] optimise chunk mesh preparation
-- [ ] proper transparent and translucent rendering
-- [ ] non-transparent leaves for now (better performance)
-- [ ] reduce cpu time for frames (gpu frame time is well below 16ms, cpu is taking up the majority of the time each frame)
+- [x] fix gpu ram usage (clear buffers when not being used, possibly use private mode buffers, possibly use a big default size buffer and transfer things through that)
+- [x] fix indices (either use 6 vertices to a face or do the fancy shader thing from before (adjusting the vertex indices))
+- [x] optimise chunk mesh preparation
+- [x] proper transparent and translucent rendering
+- [x] non-transparent leaves for now (better performance)
+- [x] reduce cpu time for frames (gpu frame time is well below 16ms, cpu is taking up the majority of the time each frame)
 - [x] possibly use section based rendering instead of chunk based
 - [x] basic multichunk rendering
 - [x] fix hypixel chunk loading
 - [x] fix grass block sides
-- [ ] implement rescale
-- [ ] random block variants (that match vanilla)
+- [x] implement rescale
+- [x] random block variants (that match vanilla)
 - [x] frustum culling for chunks
 - [x] create an input system
   - [x] keyboard
@@ -101,13 +101,15 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
 - [x] create a physics loop
   - [x] make a loop that runs at a consistent interval
   - [x] add basic physics simulation
-- [ ] add input configuration (mouse sensitivity and keymappings)
 - [x] add basis for multi-accounting
   - [x] config
   - [x] login code
 - [x] add offline account support
 - [x] ui for switching accounts
-- [ ] fix memory usage errors (when leaving a server or starting the app for the first time a lot of memory doesn't get freed for some reason)
+- [x] fix memory usage errors (when leaving a server or starting the app for the first time a lot of memory doesn't get freed for some reason)
+- [x] fluids
+- [ ] waterlogging
+- [ ] block id refactor (issue #25)
 
 ## Alpha 2 - Creative Mode Without Inventory
 

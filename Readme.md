@@ -64,8 +64,8 @@ Not every version will be perfectly supported but we will try and have the most 
   - [x] Server list ping
   - [x] Encryption (for non-offline mode servers)
     - [x] Mojang accounts
-    - [ ] Microsoft accounts (if you have a Microsoft account and are willing to test logging on for me I can implement this)
-  - [ ] LAN server detection
+    - [ ] Microsoft accounts
+  - [x] LAN server detection
 - [x] Basic config system
   - [x] Multi-accounting
 - [ ] Rendering
@@ -78,20 +78,13 @@ Not every version will be perfectly supported but we will try and have the most 
     - [x] Multiple chunks
     - [x] Lighting
     - [x] Animated textures (e.g. lava)
-    - [ ] Translucency
-    - [ ] Fluids (lava and water)
+    - [x] Translucency
+    - [x] Fluids (lava and water)
+    - [x] Chunk frustum culling
+    - [x] Biome blending (mostly)
     - [ ] Block entities (e.g. chests)
-    - [x] Chunk culling
-  - [ ] HUD
-    - [ ] Basic text
-    - [ ] Chat
-    - [ ] F3-style stuff
-    - [ ] Bossbars
-    - [ ] Scoreboard
-    - [ ] Health, hunger and experience
-  - [ ] Items (like in the inventory and hotbar)
   - [ ] Entities
-    - [ ] Basic entity rendering (just coloured cubes)
+    - [x] Basic entity rendering (just coloured cubes)
     - [ ] Render entity models
     - [ ] Entity animations
   - [ ] Particles
@@ -100,7 +93,13 @@ Not every version will be perfectly supported but we will try and have the most 
     - [ ] Ambient particles
     - [ ] Hit particles
     - [ ] Particles from server
+  - [ ] Items (like in the inventory and hotbar)
   - [ ] GUI
+    - [ ] Chat
+    - [ ] F3-style stuff
+    - [ ] Bossbars
+    - [ ] Scoreboard
+    - [ ] Health, hunger and experience
     - [ ] Hotbar
     - [ ] Inventory
       - [ ] Basic inventory
@@ -114,6 +113,11 @@ Not every version will be perfectly supported but we will try and have the most 
   - [x] Physics loop
   - [x] Input system
   - [ ] Collision system
+- [ ] Interaction
+  - [ ] Block placing
+  - [ ] Block breaking
+  - [ ] Block entity interaction
+  - [ ] Entity interaction
 
 ## Contributing
 
