@@ -137,6 +137,10 @@ Not every version will be perfectly supported but I will try and have the most p
 
 First, please check out the [contributing guidelines](Contributing.md). Then you can checkout the [issues](https://github.com/stackotter/delta-client/issues) for a place to get started. Make sure to leave a comment on the issue you choose so that people know that someone's already working on it.
 
+## Contributing
+
+First, please check out the [contributing guidelines](Contributing.md). Then you can checkout the [issues](https://github.com/stackotter/delta-client/issues) for a place to get started. Make sure to leave a comment on the issue you choose, so that people know that someone's already working on it. All changes should be made on the dev branch or a branch created from dev.
+
 ## Servers
 
 We now have an official testing server (`play.deltaclient.app`)! However, if you want to mess around to your hearts content you can run a server on your computer for full control (see below).
