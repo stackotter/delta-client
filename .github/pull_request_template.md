@@ -20,4 +20,3 @@ Please delete options that are not relevant.
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation comments
 - [ ] My changes generate no new warnings
-- [ ] Any changes to Delta Core that this relies on will also have pull requests opened

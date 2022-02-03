@@ -26,7 +26,7 @@ If applicable, add screenshots to help explain your problem.
 **Extra information (please complete the following information**
 - OS: [e.g. macOS 11.5.1]
 - Hardware: [e.g. M1 MacBook Air]
-- Build: [e.g. v0.1.0-snapshot.8]
+- Build: [e.g. commit 060e29e or Snapshot 9]
 
 **Additional context**
 Add any other context about the problem here.

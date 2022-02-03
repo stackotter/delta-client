@@ -119,6 +119,10 @@ Not every version will be perfectly supported but we will try and have the most 
   - [ ] Block entity interaction
   - [ ] Entity interaction
 
+## Contributing
+
+First, please check out the [contributing guidelines](Contributing.md). Then you can checkout the [issues](https://github.com/stackotter/delta-client/issues) for a place to get started. Make sure to leave a comment on the issue you choose, so that people know that someone's already working on it. All changes should be made on the dev branch or a branch created from dev.
+
 ## Servers
 
 We now have an official test server made by @ninjadev64! The address is `play.stackotter.dev`. To run it cheaply, the server goes to sleep. To join it click play and you'll get a message telling you that it's starting up. Wait around 10 seconds and then click play again and you should be good to go. Alternatively, you can run your own server on your computer (see below).
