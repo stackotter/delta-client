@@ -2,11 +2,11 @@
 
 [![Discord](https://img.shields.io/discord/851058836776419368.svg?label=&logo=discord&logoColor=ffffff&color=5C5C5C&labelColor=6A7EC2)](https://discord.gg/xZPyDbmR6k)
 
-An open source rewrite of Minecraft Java Edition written in Swift for macOS.
+An open source rewrite of the *Minecraft: Java Edition* client, written in Swift for macOS. Currently Delta Client only supports connecting to 1.16.1 servers.
 
 ## Disclaimer
 
-This client is not at all useable yet. If you're looking for a client to use to play Minecraft today, then this is not for you. But hopefully one day it does get to a useable state.
+This client is not useable yet. If you're looking for a client to use to play Minecraft today, then this is not for you. However, the plan is that one day it does get to a useable state.
 
 **I am NOT responsible for anti-cheat bans, the client has not been thoroughly tested yet and is still deep in development.**
 
@@ -22,22 +22,23 @@ If you want to have a say in the development of the client or have any questions
 
 ## Installation
 
-1. Download the latest release from the releases page (or if you like living on the edge, download a CI build from the latest GitHub action run)
-2. Unzip the download (if it doesn't automatically do so) and open the app inside
+1. Visit [the Delta Client website's download page](https://delta.stackotter.dev/downloads) and download the latest unstable build (the stable releases are very outdated).
+2. Unzip the downloaded zip archive and open the app inside
 3. You will get a security alert, click ok
-4. Right click the app and click open
+4. Right click the app in finder and select open
 5. You should get another pop-up, click 'Open'
-6. Wait for it to download and process the required assets (this only has to happen once and should take around 40s with a mediocre internet speed)
+6. Delta Client will now open and start downloading the required assets (this only has to happen once and should take around 40s with a mediocre internet speed)
 7. You can move Delta Client to your Applications folder for ease of use if you want
 
 ## Building
 
-To build Delta Client you'll first need to install Xcode and [swift-bundler](https://github.com/stackotter/swift-bundler). Once you've installed both of those, run the following commands in terminal;
+To build Delta Client you'll first need to install Xcode and the latest version of [swift-bundler](https://github.com/stackotter/swift-bundler). Once you've installed both of those, run the following commands in terminal;
 
 ```sh
 # Clone Delta Client
 git clone https://github.com/stackotter/delta-client
 cd delta-client
+git checkout dev # choose a different branch if you desire
 
 # Perform a release build, output the .app to the current directory, and show a fancy progress bar in a pop-up window
 swift bundler build -c release -o . -p
@@ -49,9 +50,9 @@ swift bundler generate-xcode-support
 
 ## Minecraft version support
 
-At the moment the client only supports joining 1.16.1 servers. However, another developer is working on creating a way for us to easily add support for more Minecraft versions.
+At the moment the client only supports joining **1.16.1** servers. In the future I plan to support more versions. But not now, as that'd slow down development of more important features because it would create more maintenance work.
 
-Not every version will be perfectly supported but we will try and have the most polished support for the following versions;
+Not every version will be perfectly supported but I will try and have the most polished support for the following versions;
 
 - 1.8.9
 - the latest speedrunning version (currently 1.16.1 and may be for a while)
