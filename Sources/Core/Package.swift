@@ -19,6 +19,7 @@ let package = Package(
     .package(name: "Concurrency", url: "https://github.com/uber/swift-concurrency.git", from: "0.7.1"),
     .package(name: "FirebladeECS", url: "https://github.com/fireblade-engine/ecs.git", from: "0.17.5"),
     .package(name: "ZippyJSON", url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
+    .package(url: "https://github.com/stackotter/swift-lint-plugin", branch: "main"),
   ],
   targets: [
     .target(
