@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout delta-client
         uses: actions/checkout@v2
+      - name: Check Xcode versions
+        run: ls /Applications
       - name: Force Xcode 13.3
         run: sudo xcode-select -switch /Applications/Xcode_13.3.app
       - name: Download swift-bundler
