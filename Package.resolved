@@ -3,11 +3,11 @@
     "pins": [
       {
         "package": "Socket",
-        "repositoryURL": "https://github.com/Kitura/BlueSocket.git",
+        "repositoryURL": "https://github.com/stackotter/BlueSocket.git",
         "state": {
-          "branch": null,
-          "revision": "dd924c3bc2c1c144c42b8dda3896f1a03115ded4",
-          "version": "2.0.2"
+          "branch": "master",
+          "revision": "31e92ab743a9ffc2a4a6e7e2f1043f5fe1d97e80",
+          "version": null
         }
       },
       {
@@ -56,12 +56,21 @@
         }
       },
       {
+        "package": "SourceKitten",
+        "repositoryURL": "https://github.com/jpsim/SourceKitten.git",
+        "state": {
+          "branch": null,
+          "revision": "558628392eb31d37cb251cfe626c53eafd330df6",
+          "version": "0.31.1"
+        }
+      },
+      {
         "package": "swift-argument-parser",
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
           "branch": null,
-          "revision": "6b2aa2748a7881eebb9f84fb10c01293e15b52ca",
-          "version": "0.5.0"
+          "revision": "e394bf350e38cb100b6bc4172834770ede1b7232",
+          "version": "1.0.3"
         }
       },
       {
@@ -80,6 +89,15 @@
           "branch": null,
           "revision": "e29e42c41c47c82ec32d3a2b2695719c32415ca9",
           "version": "0.7.1"
+        }
+      },
+      {
+        "package": "SwiftLintPlugin",
+        "repositoryURL": "https://github.com/stackotter/swift-lint-plugin",
+        "state": {
+          "branch": "main",
+          "revision": "282b3afaf68cc355abeeb03b7b7bb24623c2b61c",
+          "version": null
         }
       },
       {
@@ -119,12 +137,48 @@
         }
       },
       {
-        "package": "SwordRPC",
-        "repositoryURL": "https://github.com/PKBeam/SwordRPC",
+        "package": "SwiftLint",
+        "repositoryURL": "https://github.com/stackotter/SwiftLint",
         "state": {
           "branch": null,
-          "revision": "f9831261fcbe6a17243f8839921fb7820e99fa6e",
+          "revision": "b4a54f32df66008d30f0229446831cb823576c42",
+          "version": "0.46.2"
+        }
+      },
+      {
+        "package": "SwiftyTextTable",
+        "repositoryURL": "https://github.com/scottrhoyt/SwiftyTextTable.git",
+        "state": {
+          "branch": null,
+          "revision": "c6df6cf533d120716bff38f8ff9885e1ce2a4ac3",
+          "version": "0.9.0"
+        }
+      },
+      {
+        "package": "SwordRPC",
+        "repositoryURL": "https://github.com/stackotter/SwordRPC",
+        "state": {
+          "branch": null,
+          "revision": "3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed",
           "version": null
+        }
+      },
+      {
+        "package": "SWXMLHash",
+        "repositoryURL": "https://github.com/drmohundro/SWXMLHash.git",
+        "state": {
+          "branch": null,
+          "revision": "9183170d20857753d4f331b0ca63f73c60764bf3",
+          "version": "5.0.2"
+        }
+      },
+      {
+        "package": "Yams",
+        "repositoryURL": "https://github.com/jpsim/Yams.git",
+        "state": {
+          "branch": null,
+          "revision": "9ff1cc9327586db4e0c8f46f064b6a82ec1566fa",
+          "version": "4.0.6"
         }
       },
       {
@@ -132,8 +186,8 @@
         "repositoryURL": "https://github.com/weichsel/ZIPFoundation.git",
         "state": {
           "branch": null,
-          "revision": "cf10bbff6ac3b873e97b36b9784c79866a051a8e",
-          "version": "0.9.12"
+          "revision": "7254c74b49cec2cb81520523ba993c671f71b066",
+          "version": "0.9.14"
         }
       },
       {
