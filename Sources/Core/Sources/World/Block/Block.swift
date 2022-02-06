@@ -80,9 +80,9 @@ public struct Block: Codable {
   
   /// Returns the seed to use for choosing block models. Identical behaviour to vanilla.
   public static func getPositionRandom(_ position: Position) -> Int64 {
-    var seed = Int64(position.x &* 3129871) ^ (Int64(position.z) &* 116129781) ^ Int64(position.y);
-    seed = (seed &* seed &* 42317861) &+ (seed &* 11);
-    return seed >> 16;
+    var seed = Int64(position.x &* 3129871) ^ (Int64(position.z) &* 116129781) ^ Int64(position.y)
+    seed = (seed &* seed &* 42317861) &+ (seed &* 11)
+    return seed >> 16
   }
   
   /// Used when a block does not exist (e.g. when an invalid block id is received from the server).
