@@ -1,0 +1,80 @@
+reporter: "xcode" # reporter type (xcode, json, csv, checkstyle)
+
+# Disabled rules
+disabled_rules:
+  - trailing_whitespace
+
+# Enabled rules
+opt_in_rules:
+  - empty_count
+  - explicit_init
+  - closure_spacing
+  - overridden_super_call
+  - redundant_nil_coalescing
+  - nimble_operator
+  - attributes
+  - operator_usage_whitespace
+  - closure_end_indentation
+  - first_where
+  - object_literal
+  - prohibited_super_call
+
+  - fatal_error_message
+  - missing_docs
+
+# Severity
+force_cast: error
+force_try: error
+force_unwrapping: error
+comma: error
+colon: error
+opening_brace: error
+empty_count: error
+legacy_constructor: error
+statement_position: error
+legacy_constant: error
+trailing_semicolon: error
+
+# Rule settings
+line_length: 200
+number_separator:
+  minimum_length: 5
+cyclomatic_complexity:
+  warning: 5
+  error: 6
+variable_name:
+  max_length:
+    warning: 40
+    error: 50
+  min_length:
+    error: 3
+  excluded:
+    - id
+    - i
+    - to
+    - x
+    - y
+    - z
+    - xz
+    - xy
+    - yz
+
+# Custom rules
+custom_rules:
+  comments_space: # from https://github.com/brandenr/swiftlintconfig
+    name: "Space After Comment"
+    regex: '(^ *//\w+)'
+    message: "There should be a space after //"
+    severity: error
+  comments_capitalized_ignore_possible_code: # from https://github.com/brandenr/swiftlintconfig
+    name: "Capitalize First Word In Comment"
+    regex: '(^ +// +(?!swiftlint)[a-z]+)'
+    message: "The first word of a comment should be capitalized"
+    severity: error
+  double_space: # from https://github.com/IBM-Swift/Package-Builder
+    include: "*.swift"
+    name: "Double space"
+    regex: '([a-z,A-Z] \s+)'
+    message: "Double space between keywords"
+    match_kinds: keyword
+    severity: warning
