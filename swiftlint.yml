@@ -40,8 +40,8 @@ line_length: 200
 number_separator:
   minimum_length: 5
 cyclomatic_complexity:
-  warning: 5
-  error: 6
+  warning: 10
+  error: 12
 variable_name:
   max_length:
     warning: 40
