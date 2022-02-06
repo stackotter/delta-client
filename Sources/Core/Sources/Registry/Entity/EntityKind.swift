@@ -11,7 +11,7 @@ public struct EntityKind: Codable {
   /// Attributes that are the same for every entity of this kind (e.g. maximum health).
   public var attributes: [EntityAttribute: Float]
   
-  public init(identifier: Identifier, id: Int, width: Float, height: Float, attributes: [EntityAttribute : Float]) {
+  public init(identifier: Identifier, id: Int, width: Float, height: Float, attributes: [EntityAttribute: Float]) {
     self.identifier = identifier
     self.id = id
     self.width = width

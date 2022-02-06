@@ -61,11 +61,4 @@ public struct StatusResponse: Decodable {
   public var description: Description
   /// The server's icon.
   public var favicon: String?
-  
-  public init(version: StatusResponse.Version, players: StatusResponse.PlayerList, description: StatusResponse.Description, favicon: String) {
-    self.version = version
-    self.players = players
-    self.description = description
-    self.favicon = favicon
-  }
 }

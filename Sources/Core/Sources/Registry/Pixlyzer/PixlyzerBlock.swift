@@ -36,6 +36,7 @@ public struct PixlyzerBlock: Decodable {
 }
 
 extension Block {
+  // swiftlint:disable function_body_length
   public init(
     _ pixlyzerBlock: PixlyzerBlock,
     _ pixlyzerState: PixlyzerBlockState,
@@ -119,4 +120,5 @@ extension Block {
       soundMaterial: soundMaterial,
       shape: shape)
   }
+  // swiftlint:enable function_body_length
 }

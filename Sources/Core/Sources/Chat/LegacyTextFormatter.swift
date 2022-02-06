@@ -38,7 +38,7 @@ public enum LegacyTextFormatter {
       }
       
       token.remove(at: token.startIndex) // Removing color code
-      if token.count > 0 {
+      if !token.isEmpty {
         formattedTokens.append((String(token), currentColor, currentStyle))
       }
     }

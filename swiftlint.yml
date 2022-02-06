@@ -1,8 +1,14 @@
 reporter: "xcode" # reporter type (xcode, json, csv, checkstyle)
 
+# Excluded files
+excluded:
+  - "**/*.pb.swift"
+
 # Disabled rules
 disabled_rules:
   - trailing_whitespace
+  - switch_case_alignment
+  - identifier_name
 
 # Enabled rules
 opt_in_rules:
@@ -18,9 +24,11 @@ opt_in_rules:
   - first_where
   - object_literal
   - prohibited_super_call
+  - force_unwrapping
+  - number_separator
 
-  - fatal_error_message
-  - missing_docs
+  # - fatal_error_message
+  # - missing_docs
 
 # Severity
 force_cast: error
@@ -42,22 +50,8 @@ number_separator:
 cyclomatic_complexity:
   warning: 10
   error: 12
-variable_name:
-  max_length:
-    warning: 40
-    error: 50
-  min_length:
-    error: 3
-  excluded:
-    - id
-    - i
-    - to
-    - x
-    - y
-    - z
-    - xz
-    - xy
-    - yz
+nesting:
+  type_level: 2
 
 # Custom rules
 custom_rules:
@@ -65,11 +59,6 @@ custom_rules:
     name: "Space After Comment"
     regex: '(^ *//\w+)'
     message: "There should be a space after //"
-    severity: error
-  comments_capitalized_ignore_possible_code: # from https://github.com/brandenr/swiftlintconfig
-    name: "Capitalize First Word In Comment"
-    regex: '(^ +// +(?!swiftlint)[a-z]+)'
-    message: "The first word of a comment should be capitalized"
     severity: error
   double_space: # from https://github.com/IBM-Swift/Package-Builder
     include: "*.swift"

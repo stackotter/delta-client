@@ -8,17 +8,23 @@ public enum PixlyzerError: LocalizedError {
   case invalidAABBVertex([Float])
   /// The entity registry does not contain the player entity.
   case entityRegistryMissingPlayer
+  /// The string could not be converted to data using UTF8.
+  case invalidUTF8BlockName(String)
 }
 
+/// A utility for downloading and reformatting data from the Pixlyzer data repository.
 public enum PixlyzerFormatter {
+  // swiftlint:disable function_body_length
   /// Downloads the pixlyzer registries, reformats them, and caches them to an output directory.
   /// - Parameter version: The minecraft version string (e.g. '1.16.1').
   public static func downloadAndFormatRegistries(_ version: String) throws -> RegistryStore {
+    // swiftlint:disable force_unwrapping
     let fluidsDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/fluids.min.json")!
     let blocksDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/blocks.min.json")!
     let biomesDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/biomes.min.json")!
     let entitiesDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/entities.min.json")!
     let shapeRegistryDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/shapes.min.json")!
+    // swiftlint:enable force_unwrapping
     
     // Load and decode pixlyzer data
     log.info("Downloading and decoding pixlyzer fluids")
@@ -156,6 +162,7 @@ public enum PixlyzerFormatter {
       fluidRegistry: fluidRegistry,
       entityRegistry: entityRegistry)
   }
+  // swiftlint:enable function_body_length
   
   private static func downloadJSON<T: Decodable>(_ url: URL, convertSnakeCase: Bool, useZippyJSON: Bool = true) throws -> T {
     let contents = try Data(contentsOf: url)
