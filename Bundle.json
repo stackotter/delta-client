@@ -4,5 +4,8 @@
   "bundleIdentifier" : "dev.stackotter.delta-client",
   "category" : "public.app-category.games",
   "minOSVersion" : "11.0",
-  "versionString" : "0.1.0"
+  "versionString" : "0.1.0",
+  "extraInfoPlistEntries": {
+    "ATSApplicationFontsPath": "Sources/Client/Fonts"
+  }
 }
