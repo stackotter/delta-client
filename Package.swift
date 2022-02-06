@@ -1,7 +1,19 @@
 // swift-tools-version:5.5
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
+
+var dependencies: [Package.Dependency] = [
+    // See Notes/PluginSystem.md for more details on the architecture of the project in regards to dependencies, targets and linking
+    // In short, the dependencies for DeltaCore can be found in Sources/Core/Package.swift
+    .package(name: "DeltaCore", path: "Sources/Core"),
+    .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
+    .package(url: "https://github.com/stackotter/SwordRPC", .revision("3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed")),
+]
+
+#if swift(>=5.6)
+// Add linter if swift version is high enough
+dependencies.append(.package(url: "https://github.com/stackotter/swift-lint-plugin", branch: "main"))
+#endif
 
 let package = Package(
   name: "DeltaClient",
@@ -21,14 +33,7 @@ let package = Package(
       name: "StaticShim",
       targets: ["StaticShim"]),
   ],
-  dependencies: [
-    // See Notes/PluginSystem.md for more details on the architecture of the project in regards to dependencies, targets and linking
-    // In short, the dependencies for DeltaCore can be found in Sources/Core/Package.swift
-    .package(name: "DeltaCore", path: "Sources/Core"),
-    .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
-    .package(url: "https://github.com/stackotter/SwordRPC", .revision("3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed")),
-    .package(url: "https://github.com/stackotter/swift-lint-plugin", branch: "main"),
-  ],
+  dependencies: dependencies,
   targets: [
     .executableTarget(
       name: "DeltaClient",
