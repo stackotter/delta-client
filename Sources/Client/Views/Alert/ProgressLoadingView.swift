@@ -57,11 +57,9 @@ struct ProgressLoadingView: View {
             .foregroundColor(.white)
             .font(Font.custom(.worksans, size: 15))
         }
-        
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
       .background(Color.black)
     }
   }
-  
 }
