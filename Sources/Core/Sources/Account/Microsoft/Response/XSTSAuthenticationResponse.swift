@@ -8,11 +8,9 @@ struct XSTSAuthenticationResponse: Codable {
   struct XUIClaim: Codable {
     var userHash: String
     
-    // swiftlint:disable nesting
     private enum CodingKeys: String, CodingKey {
       case userHash = "uhs"
     }
-    // swiftlint:enable nesting
   }
   
   var issueInstant: String

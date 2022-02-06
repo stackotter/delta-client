@@ -50,9 +50,9 @@ public struct Random {
     var bits: Int32
     var val: Int32
     repeat {
-      bits = next(31);
-      val = bits % max;
-    } while (bits &- val &+ (max &- 1) < 0);
+      bits = next(31)
+      val = bits % max
+    } while (bits &- val &+ (max &- 1) < 0)
     return val
   }
   

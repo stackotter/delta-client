@@ -9,8 +9,10 @@ public struct Identifier {
   /// An identifier that is null is never equal to any other identifier (even another null identifier).
   public var isNull = false
   
+  // swiftlint:disable force_try
   /// Precompiled regex for parsing identifier strings.
   private static let regex = try! NSRegularExpression(pattern: "^(([0-9a-z\\-_]+):)?([0-9a-z\\-_/\\.]+)$")
+  // swiftlint:enable force_try
   
   /// An identifier that is never equal to any other identifier.
   public static var null: Identifier {

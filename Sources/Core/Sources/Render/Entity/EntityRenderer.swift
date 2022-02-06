@@ -145,8 +145,8 @@ public struct EntityRenderer: Renderer {
     var indices: [UInt32] = []
     
     for direction in Direction.allDirections {
-      let faceVertices = CubeGeometry.faceVertices[direction]
-      for position in faceVertices! {
+      let faceVertices = CubeGeometry.faceVertices[direction.rawValue]
+      for position in faceVertices {
         let color = color.floatVector * CubeGeometry.shades[direction.rawValue]
         vertices.append(
           EntityVertex(

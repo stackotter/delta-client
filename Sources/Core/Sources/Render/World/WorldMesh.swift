@@ -167,7 +167,10 @@ public struct WorldMesh {
     let sections = shouldReverseOrder ? visibleSections.reversed() : visibleSections
     for position in sections {
       if meshes[position] != nil {
+        // It was done this way to prevent copies
+        // swiftlint:disable force_unwrapping
         try action(position, &meshes[position]!)
+        // swiftlint:enable force_unwrapping
       }
     }
   }

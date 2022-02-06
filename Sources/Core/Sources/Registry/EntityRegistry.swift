@@ -8,9 +8,13 @@ public struct EntityRegistry: Codable {
   public var identifierToEntityId: [Identifier: Int] = [:]
   /// The kind id of player entities.
   public var playerEntityKindId: Int
+  
   /// Returns information about the player entity. Will fatally crash if ``playerEntityKindId`` is invalid.
   public var playerEntityKind: EntityKind {
-    entities[playerEntityKindId]!
+    guard let kind = entities[playerEntityKindId] else {
+      fatalError("The player entity kind was missing from the EntityRegistry")
+    }
+    return kind
   }
   
   // MARK: Init
