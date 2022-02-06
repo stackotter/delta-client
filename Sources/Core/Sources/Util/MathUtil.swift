@@ -60,7 +60,7 @@ public enum MathUtil {
   }
   
   @_specialize(where T:_Trivial)
-  public static func clamp<T>(_ value: T,  _ minValue: T, _ maxValue: T) -> T where T : Comparable {
+  public static func clamp<T>(_ value: T, _ minValue: T, _ maxValue: T) -> T where T : Comparable {
     return min(max(value, minValue), maxValue)
   }
 }

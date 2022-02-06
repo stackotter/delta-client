@@ -12,15 +12,18 @@ struct CubeGeometry {
     SIMD3<Float>([0, 1, 1]),
     SIMD3<Float>([0, 0, 1]),
     SIMD3<Float>([1, 0, 1]),
-    SIMD3<Float>([1, 1, 1])]
+    SIMD3<Float>([1, 1, 1])
+  ]
   
-  static let faceVertices: [Direction: [SIMD3<Float>]] = [
-    .up: CubeGeometry.generateFaceVertices(facing: .up),
-    .down: CubeGeometry.generateFaceVertices(facing: .down),
-    .east: CubeGeometry.generateFaceVertices(facing: .east),
-    .west: CubeGeometry.generateFaceVertices(facing: .west),
-    .north: CubeGeometry.generateFaceVertices(facing: .north),
-    .south: CubeGeometry.generateFaceVertices(facing: .south)]
+  /// Indexed by ``Direction/rawValue``.
+  static let faceVertices: [[SIMD3<Float>]] = [
+    CubeGeometry.generateFaceVertices(facing: .down),
+    CubeGeometry.generateFaceVertices(facing: .up),
+    CubeGeometry.generateFaceVertices(facing: .north),
+    CubeGeometry.generateFaceVertices(facing: .south),
+    CubeGeometry.generateFaceVertices(facing: .west),
+    CubeGeometry.generateFaceVertices(facing: .east)
+  ]
   
   public static let shades: [Float] = [
     0.6, // down
@@ -39,9 +42,11 @@ struct CubeGeometry {
       case .north: vertexIndices = [0, 1, 2, 3]
       case .south: vertexIndices = [7, 6, 5, 4]
     }
+    
     let vertices = vertexIndices.map { index in
       return cubeVertices[index]
     }
+    
     return vertices
   }
 }

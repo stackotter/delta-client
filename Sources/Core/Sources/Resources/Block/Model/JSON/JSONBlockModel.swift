@@ -29,6 +29,7 @@ extension JSONBlockModel {
     from directory: URL,
     namespace: String
   ) throws -> [Identifier: JSONBlockModel] {
+    // swiftlint:disable force_unwrapping
     // Constants used when composing JSON object from models
     let doubleQuote = "\"".data(using: .utf8)!
     let doubleQuoteColon = "\":".data(using: .utf8)!
@@ -36,6 +37,7 @@ extension JSONBlockModel {
     
     // JSON object starts with opening brace
     var json = "{".data(using: .utf8)!
+    // swiftlint:enable force_unwrapping
     
     // Reserves the approximate size of the block model folder of a vanilla resource pack (with a bit of head room).
     // Seems to cut down times by about 5 to 10%.
@@ -50,9 +52,7 @@ extension JSONBlockModel {
     // All file reading operations are performed at once which is best for performance apparently
     // The models are combined into one big JSON object which should also minimise losses from
     // switching between Swift and ZippyJSON's cpp. It seems to cut down load time of the json
-    // files by about 25% (from 780ms to 570ms). I wrote a rust program to do the same thing
-    // (without the weird combining objects trick) and it can read and deserialize all of the files
-    // in 55ms :'( I didn't even have to do any weird tricks or optimisations.
+    // files by about 25% (from 780ms to 570ms).
     var isFirst = true
     for file in files where file.pathExtension == "json" {
       // Add comma separator between model entries
@@ -66,7 +66,10 @@ extension JSONBlockModel {
       
       // Append `"blockName":`
       json.append(doubleQuote)
-      json.append(blockName.data(using: .utf8)!)
+      guard let blockNameData = blockName.data(using: .utf8) else {
+        throw PixlyzerError.invalidUTF8BlockName(blockName)
+      }
+      json.append(blockNameData)
       json.append(doubleQuoteColon)
       
       let data = try Data(contentsOf: file)
@@ -76,7 +79,9 @@ extension JSONBlockModel {
     }
     
     // Finish JSON object with a closing brace
+    // swiftlint:disable force_unwrapping
     json.append("}".data(using: .utf8)!)
+    // swiftlint:enable force_unwrapping
     
     // Load JSON
     let models: [String: JSONBlockModel] = try ZippyJSONDecoder().decode([String: JSONBlockModel].self, from: json)

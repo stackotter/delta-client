@@ -152,7 +152,7 @@ public struct ChunkSectionMeshBuilder {
     let culledFaces = getCullingNeighbours(at: position, blockId: blockId, neighbourIndices: neighbourIndices)
     
     // Return early if there can't possibly be any visible faces
-    if blockModel.cullableFaces.count == 6 && culledFaces.count == 6 && blockModel.nonCullableFaces.count == 0 {
+    if blockModel.cullableFaces.count == 6 && culledFaces.count == 6 && blockModel.nonCullableFaces.isEmpty {
       return
     }
     
@@ -328,10 +328,7 @@ public struct ChunkSectionMeshBuilder {
       geometry.indices.append(index &+ offset)
     }
     
-    // swiftlint:disable force_unwrapping
-    // This lookup will never be nil cause every direction is included in the static lookup table
-    let faceVertexPositions = CubeGeometry.faceVertices[face.direction]!
-    // swiftlint:enable force_unwrapping
+    let faceVertexPositions = CubeGeometry.faceVertices[face.direction.rawValue]
     
     // Calculate shade of face
     let lightLevel = max(lightLevel.block, lightLevel.sky)
@@ -545,7 +542,11 @@ public struct ChunkSectionMeshBuilder {
           
           geometry.indices.append(contentsOf: CubeGeometry.faceWinding)
         case .north, .east, .south, .west:
+          // The lookup will never be nil because directionCorners contains values for north, east, south and west
+          // swiftlint:disable force_unwrapping
           let cornerIndices = Self.directionCorners[direction]!
+          // swiftlint:enable force_unwrapping
+          
           var uvs = flowingUVs
           uvs[0][1] += (1 - heights[cornerIndices[0]]) / 2
           uvs[1][1] += (1 - heights[cornerIndices[1]]) / 2
