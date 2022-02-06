@@ -186,7 +186,10 @@ public struct ChunkLighting {
     let sectionIndex = position.sectionIndex
     let blockIndex = position.relativeToChunkSection.blockIndex
     if blockLightData[sectionIndex] != nil {
+      // It was done this way to prevent copies
+      // swiftlint:disable force_unwrapping
       blockLightData[sectionIndex]![blockIndex] = UInt8(newLevel)
+      // swiftlint:enable force_unwrapping
     } else {
       var blockLighting: [UInt8] = [UInt8](repeating: UInt8(LightLevel.defaultBlockLightLevel), count: Chunk.Section.numBlocks)
       let skyLighting: [UInt8] = [UInt8](repeating: UInt8(LightLevel.defaultSkyLightLevel), count: Chunk.Section.numBlocks)
@@ -210,7 +213,10 @@ public struct ChunkLighting {
     let sectionIndex = position.sectionIndex
     let blockIndex = position.relativeToChunkSection.blockIndex
     if skyLightData[sectionIndex] != nil {
+      // It was done this way to prevent copies
+      // swiftlint:disable force_unwrapping
       skyLightData[sectionIndex]![blockIndex] = UInt8(newLevel)
+      // swiftlint:enable force_unwrapping
     } else {
       let blockLighting: [UInt8] = [UInt8](repeating: UInt8(LightLevel.defaultBlockLightLevel), count: Chunk.Section.numBlocks)
       var skyLighting: [UInt8] = [UInt8](repeating: UInt8(LightLevel.defaultSkyLightLevel), count: Chunk.Section.numBlocks)

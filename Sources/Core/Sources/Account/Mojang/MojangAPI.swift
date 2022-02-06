@@ -76,7 +76,6 @@ public enum MojangAPI {
     with clientToken: String
   ) async throws -> MojangAccount {
     let accessToken = String(account.accessToken.token.split(separator: ".")[1])
-    
     let payload = MojangRefreshTokenRequest(
       accessToken: accessToken,
       clientToken: clientToken)

@@ -33,7 +33,8 @@ public struct BlockRegistry {
     self.blocks = blocks
     self.renderDescriptors = renderDescriptors
     
-    // I'm really struggling to find a good name for this value and everything else around this stuff. Its basically just a way to hardcode certain blocks that cull the faces of their own kind (e.g. glass blocks).
+    // I'm really struggling to find a good name for this value and everything else around this stuff. Its basically
+    // just a way to hardcode certain blocks that cull the faces of their own kind (e.g. glass blocks).
     // Fluid blocks are handled separately by the fluid renderer
     let selfCullingBlockClasses = selfCullingBlockClasses ?? ["StainedGlassBlock", "GlassBlock", "LeavesBlock"]
     for block in blocks {

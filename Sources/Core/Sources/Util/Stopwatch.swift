@@ -52,7 +52,7 @@ public struct Stopwatch {
 //      let categoryMeasurements = measurements.filter { $0.name == category }
 //      let count = categoryMeasurements.count
 //      let sum = categoryMeasurements.reduce(into: 0, { total, measurement in
-//        total = total + measurement.duration
+//        total += measurement.duration
 //      })
 //      let avg = sum / Double(count)
 //      var message = "\(category): \(String(format: "%.5fms, total: %.5fms", avg, sum / Double(repeats)))"
