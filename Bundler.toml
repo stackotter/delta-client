@@ -10,3 +10,4 @@ icon = 'AppIcon.icns'
 # Append the current commit hash to the user-facing version string
 CFBundleShortVersionString = "{VERSION}, commit: {COMMIT_HASH}"
 GCSupportsControllerUserInteraction = "True"
+ATSApplicationFontsPath = "."

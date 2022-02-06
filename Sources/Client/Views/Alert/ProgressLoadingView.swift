@@ -39,25 +39,34 @@ struct ProgressLoadingView: View {
   var body: some View {
     GeometryReader { proxy in
       let parentWidth = proxy.size.width
-      let loaderWidth = parentWidth * 0.6
+      let loaderWidth = parentWidth * 0.5
       let progressBarWidth = loaderWidth - 2 * inset
 
-      VStack(alignment: .center) {
-        Text(message)
-
-        HStack(alignment: .center) {
-          Color.white
-            .frame(width: progressBarWidth * animatedProgress)
-            .frame(maxHeight: .infinity, alignment: .leading)
-          Spacer()
+      VStack(alignment: .center, spacing: 70) {
+        Text("Delta  Client")
+          .foregroundColor(.white)
+          .font(Font.custom(.minecraft, size: 43))
+        
+        VStack(alignment: .center, spacing: 27.5) {
+          HStack(alignment: .center) {
+            Color.white
+              .frame(width: progressBarWidth * progress)
+              .frame(maxHeight: .infinity, alignment: .leading)
+              .animation(.easeInOut(duration: 1))
+            Spacer()
+          }
+          .padding(.horizontal, inset)
+          .padding(.vertical, inset)
+          .frame(width: loaderWidth, height: loaderHeight)
+          .overlay(
+            PixellatedBorder()
+              .stroke(Color.white, lineWidth: loaderSize)
+          )
+          
+          Text(message)
+            .foregroundColor(.white)
+            .font(Font.custom(.worksans, size: 15))
         }
-        .padding(.horizontal, inset)
-        .padding(.vertical, inset)
-        .frame(width: loaderWidth, height: loaderHeight)
-        .overlay(
-          PixellatedBorder()
-            .stroke(Color.white, lineWidth: loaderSize)
-        )
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
       .background(Color.black)
