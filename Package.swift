@@ -42,7 +42,8 @@ let package = Package(
         "SwordRPC",
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
       ],
-      path: "Sources/Client"),
+      path: "Sources/Client",
+      resources: [.copy("Fonts/minecraft.ttf"), .copy("Fonts/WorkSans-Regular.ttf")]),
     
     .target(
       name: "DynamicShim",
