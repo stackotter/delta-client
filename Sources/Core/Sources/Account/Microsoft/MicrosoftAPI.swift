@@ -7,7 +7,7 @@ public enum MicrosoftAPIError: LocalizedError {
   case failedToSerializeRequest
   case failedToDeserializeResponse(String)
   case xstsAuthenticationFailed(XSTSAuthenticationError)
-  case requestFailed(Error?)
+  case requestFailed(Error)
 }
 
 public enum MicrosoftAPI {
@@ -44,10 +44,10 @@ public enum MicrosoftAPI {
   
   /// Extracts the user's OAuth authorization code from the OAuth redirect URL's query parameters.
   /// - Parameter url: The OAuth redirect URL.
-  /// - Returns: The user's OAuth code.
-  public static func codeFromRedirectURL(_ url: URL) throws -> String {
+  /// - Returns: The user's OAuth code. `nil` if the URL doesn't contain an OAuth code.
+  public static func codeFromRedirectURL(_ url: URL) -> String? {
     guard let components = URLComponents(string: url.absoluteString), let queryItems = components.queryItems else {
-      throw MicrosoftAPIError.invalidRedirectURL
+      return nil
     }
     
     for item in queryItems where item.name == "code" {
@@ -56,52 +56,41 @@ public enum MicrosoftAPI {
       }
     }
     
-    throw MicrosoftAPIError.invalidRedirectURL
+    return nil
   }
   
   /// Gets the user's Microsoft access token from their OAuth authorization code.
   /// - Parameters:
   ///   - authorizationCode: The user's authorization code.
-  ///   - completion: Completion handler.
-  ///   - failure: Failure handler.
-  public static func getMicrosoftAccessToken(
-    authorizationCode: String,
-    onCompletion completion: @escaping (_ token: String) -> Void,
-    onFailure failure: @escaping (MicrosoftAPIError) -> Void
-  ) {
+  public static func getMicrosoftAccessToken(authorizationCode: String) async throws -> String {
     let formData = [
       "client_id": clientId,
       "code": authorizationCode,
       "grant_type": "authorization_code",
       "scope": "service::user.auth.xboxlive.com::MBI_SSL"]
     
-    RequestUtil.performFormRequest(
-      url: authenticationURL,
-      body: formData,
-      method: .post,
-      onCompletion: { _, data in
-        guard let response = try? ZippyJSONDecoder().decode(MicrosoftAccessTokenResponse.self, from: data) else {
-          failure(MicrosoftAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8)!))
-          return
-        }
-      
-        completion(response.accessToken)
-      },
-      onFailure: { error in
-        failure(.requestFailed(error))
-      })
+    let data: Data
+    do {
+      let (_, response) = try await RequestUtil.performFormRequest(
+        url: authenticationURL,
+        body: formData,
+        method: .post)
+      data = response
+    } catch {
+      throw MicrosoftAPIError.requestFailed(error)
+    }
+    
+    guard let response = try? ZippyJSONDecoder().decode(MicrosoftAccessTokenResponse.self, from: data) else {
+      throw MicrosoftAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
+    }
+    
+    return response.accessToken
   }
   
   /// Gets the user's Xbox Live token from their Microsoft access token.
   /// - Parameters:
   ///   - microsoftAccessToken: The user's Microsoft access token.
-  ///   - completion: Completion handler.
-  ///   - failure: Failure handler.
-  public static func getXBoxLiveToken(
-    _ microsoftAccessToken: String,
-    onCompletion completion: @escaping (_ token: String, _ userHash: String) -> Void,
-    onFailure failure: @escaping (MicrosoftAPIError) -> Void
-  ) {
+  public static func getXBoxLiveToken(_ microsoftAccessToken: String) async throws -> XboxLiveToken {
     let payload = XboxLiveAuthenticationRequest(
       properties: XboxLiveAuthenticationRequest.Properties(
         authMethod: "RPS",
@@ -110,37 +99,32 @@ public enum MicrosoftAPI {
       relyingParty: "http://auth.xboxlive.com",
       tokenType: "JWT")
     
-    RequestUtil.performJSONRequest(
-      url: xboxLiveAuthenticationURL,
-      body: payload,
-      method: .post,
-      onCompletion: { _, data in
-        guard let response = try? ZippyJSONDecoder().decode(XboxLiveAuthenticationResponse.self, from: data) else {
-          failure(MicrosoftAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8)!))
-          return
-        }
-        
-        if let userHash = response.displayClaims.xui.first?.userHash {
-          completion(response.token, userHash)
-        } else {
-          failure(MicrosoftAPIError.noUserHashInResponse)
-        }
-      },
-      onFailure: { error in
-        failure(.requestFailed(error))
-      })
+    let data: Data
+    do {
+      let (_, response) = try await RequestUtil.performJSONRequest(
+        url: xboxLiveAuthenticationURL,
+        body: payload,
+        method: .post)
+      data = response
+    } catch {
+      throw MicrosoftAPIError.requestFailed(error)
+    }
+    
+    guard let response = try? ZippyJSONDecoder().decode(XboxLiveAuthenticationResponse.self, from: data) else {
+      throw MicrosoftAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
+    }
+    
+    guard let userHash = response.displayClaims.xui.first?.userHash else {
+      throw MicrosoftAPIError.noUserHashInResponse
+    }
+    
+    return XboxLiveToken(token: response.token, userHash: userHash)
   }
   
   /// Gets the user's XSTS token from their Xbox Live token.
   /// - Parameters:
   ///   - xboxLiveToken: The user's Xbox Live token.
-  ///   - completion: Completion handler.
-  ///   - failure: Failure handler.
-  public static func getXSTSToken(
-    _ xboxLiveToken: String,
-    onCompletion completion: @escaping (_ token: String) -> Void,
-    onFailure failure: @escaping (MicrosoftAPIError) -> Void
-  ) {
+  public static func getXSTSToken(_ xboxLiveToken: String) async throws -> String {
     let payload = XSTSAuthenticationRequest(
       properties: XSTSAuthenticationRequest.Properties(
         sandboxId: xstsSandboxId,
@@ -148,84 +132,74 @@ public enum MicrosoftAPI {
       relyingParty: xstsRelyingParty,
       tokenType: "JWT")
     
-    RequestUtil.performJSONRequest(
-      url: xstsAuthenticationURL,
-      body: payload,
-      method: .post,
-      onCompletion: { _, data in
-        guard let response = try? ZippyJSONDecoder().decode(XSTSAuthenticationResponse.self, from: data) else {
-          if let error = try? ZippyJSONDecoder().decode(XSTSAuthenticationError.self, from: data) {
-            failure(MicrosoftAPIError.xstsAuthenticationFailed(error))
-          } else {
-            failure(MicrosoftAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8)!))
-          }
-          return
-        }
-        
-        completion(response.token)
-      },
-      onFailure: { error in
-        failure(.requestFailed(error))
-      })
+    let data: Data
+    do {
+      let (_, response) = try await RequestUtil.performJSONRequest(
+        url: xstsAuthenticationURL,
+        body: payload,
+        method: .post)
+      data = response
+    } catch {
+      throw MicrosoftAPIError.requestFailed(error)
+    }
+      
+    guard let response = try? ZippyJSONDecoder().decode(XSTSAuthenticationResponse.self, from: data) else {
+      if let error = try? ZippyJSONDecoder().decode(XSTSAuthenticationError.self, from: data) {
+        throw MicrosoftAPIError.xstsAuthenticationFailed(error)
+      }
+      
+      throw MicrosoftAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
+    }
+    
+    return response.token
   }
   
   /// Gets the Minecraft access token from the user's XSTS token.
   /// - Parameters:
   ///   - xstsToken: The user's XSTS token.
   ///   - userHash: The user's hash.
-  ///   - completion: Completion handler.
-  ///   - failure: Failure handler.
-  public static func getMinecraftAccessToken(
-    _ xstsToken: String,
-    _ userHash: String,
-    onCompletion completion: @escaping (_ token: String) -> Void,
-    onFailure failure: @escaping (MicrosoftAPIError) -> Void
-  ) {
+  public static func getMinecraftAccessToken(_ xstsToken: String, _ userHash: String) async throws -> String {
     let payload = MinecraftXboxAuthenticationRequest(
       identityToken: "XBL3.0 x=\(userHash);\(xstsToken)")
     
-    RequestUtil.performJSONRequest(
-      url: minecraftXboxAuthenticationURL,
-      body: payload,
-      method: .post,
-      onCompletion: { _, data in
-        guard let response = try? ZippyJSONDecoder().decode(MinecraftXboxAuthenticationResponse.self, from: data) else {
-          failure(MicrosoftAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8)!))
-          return
-        }
-        
-        completion(response.accessToken)
-      },
-      onFailure: { error in
-        failure(.requestFailed(error))
-      })
+    let data: Data
+    do {
+      let (_, response) = try await RequestUtil.performJSONRequest(
+        url: minecraftXboxAuthenticationURL,
+        body: payload,
+        method: .post)
+      data = response
+    } catch {
+      throw MicrosoftAPIError.requestFailed(error)
+    }
+    
+    guard let response = try? ZippyJSONDecoder().decode(MinecraftXboxAuthenticationResponse.self, from: data) else {
+      throw MicrosoftAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
+    }
+    
+    return response.accessToken
   }
   
   /// Gets the license attached to an account.
   /// - Parameters:
   ///   - accessToken: Access token of account.
-  ///   - completion: Completion handler.
-  ///   - failure: Failure handler.
-  public static func getAttachedLicenses(
-    _ accessToken: String,
-    onCompletion completion: @escaping (_ licenses: [GameOwnershipResponse.License]) -> Void,
-    onFailure failure: @escaping (MicrosoftAPIError) -> Void
-  ) {
+  public static func getAttachedLicenses(_ accessToken: String) async throws -> [GameOwnershipResponse.License] {
     var request = Request(gameOwnershipURL)
     request.method = .get
     request.headers["Authorization"] = "Bearer \(accessToken)"
     
-    RequestUtil.performRequest(
-      request,
-      onCompletion: { _, data in
-        guard let response = try? ZippyJSONDecoder().decode(GameOwnershipResponse.self, from: data) else {
-          failure(MicrosoftAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8)!))
-          return
-        }
+    let data: Data
+    do {
+      let (_, response) = try await RequestUtil.performRequest(request)
+      data = response
+    } catch {
+      throw MicrosoftAPIError.requestFailed(error)
+    }
+    
+    guard let response = try? ZippyJSONDecoder().decode(GameOwnershipResponse.self, from: data) else {
+      throw MicrosoftAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
+    }
         
-        completion(response.items)
-      }, onFailure: { error in
-        failure(.requestFailed(error))
-      })
+    return response.items
   }
 }
