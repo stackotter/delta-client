@@ -23,7 +23,7 @@ public struct XSTSAuthenticationResponse: Codable {
   private enum CodingKeys: String, CodingKey {
     case issueInstant = "IssueInstant"
     case notAfter = "NotAfter"
-    case token = "token"
+    case token = "Token"
     case displayClaims = "DisplayClaims"
   }
 }
