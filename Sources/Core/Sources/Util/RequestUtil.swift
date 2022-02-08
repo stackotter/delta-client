@@ -1,22 +1,22 @@
 import Foundation
 
 enum RequestError: LocalizedError {
+  /// The request's body could not be converted to data.
   case failedToConvertBodyToData
+  /// The response was not of type HTTP.
+  case invalidURLResponse
 }
 
 enum RequestUtil {
   static func performFormRequest(
     url: URL,
     body: [String: String],
-    method: RequestMethod,
-    onCompletion completion: @escaping (HTTPURLResponse, Data) -> Void,
-    onFailure failure: @escaping (Error?) -> Void
-  ) {
+    method: RequestMethod
+  ) async throws -> (HTTPURLResponse, Data) {
     let payload = RequestUtil.encodeParameters(body)
     
     guard let body = payload.data(using: .utf8) else {
-      failure(RequestError.failedToConvertBodyToData)
-      return
+      throw RequestError.failedToConvertBodyToData
     }
     
     var request = Request(url)
@@ -24,34 +24,24 @@ enum RequestUtil {
     request.contentType = .form
     request.body = body
     
-    performRequest(request, onCompletion: completion, onFailure: failure)
+    return try await performRequest(request)
   }
   
   static func performJSONRequest<T: Encodable>(
     url: URL,
     body: T,
-    method: RequestMethod,
-    onCompletion completion: @escaping (HTTPURLResponse, Data) -> Void,
-    onFailure failure: @escaping (Error?) -> Void
-  ) {
+    method: RequestMethod
+  ) async throws -> (HTTPURLResponse, Data) {
     var request = Request(url)
     request.method = method
     request.contentType = .json
     
-    do {
-      request.body = try JSONEncoder().encode(body)
-    } catch {
-      failure(error)
-    }
+    request.body = try JSONEncoder().encode(body)
     
-    performRequest(request, onCompletion: completion, onFailure: failure)
+    return try await performRequest(request)
   }
   
-  static func performRequest(
-    _ request: Request,
-    onCompletion completion: @escaping (HTTPURLResponse, Data) -> Void,
-    onFailure failure: @escaping (Error?) -> Void)
-  {
+  static func performRequest(_ request: Request) async throws -> (HTTPURLResponse, Data) {
     var urlRequest = URLRequest(url: request.url)
     urlRequest.httpMethod = request.method.rawValue
     urlRequest.httpBody = request.body
@@ -61,20 +51,13 @@ enum RequestUtil {
       urlRequest.addValue(value, forHTTPHeaderField: key)
     }
     
-    let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-      if let error = error {
-        failure(error)
-      } else if let data = data {
-        if let response = response as? HTTPURLResponse {
-          completion(response, data)
-        } else {
-          failure(nil)
-        }
-      } else {
-        failure(nil)
-      }
+    let (data, response) = try await URLSession.shared.data(for: urlRequest)
+    
+    guard let httpResponse = response as? HTTPURLResponse else {
+      throw RequestError.invalidURLResponse
     }
-    task.resume()
+    
+    return (httpResponse, data)
   }
   
   static func urlEncode(_ string: String) -> String {

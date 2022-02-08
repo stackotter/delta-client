@@ -30,17 +30,21 @@ struct AccountLoginView: EditorView {
           errorMessage = "Invalid email address"
         } else {
           loggingIn = true
-          MojangAPI.login(
-            email: username,
-            password: password,
-            clientToken: ConfigManager.default.config.clientToken,
-            onCompletion: completionHandler,
-            onFailure: { error in
+          
+          Task {
+            do {
+              let account = try await MojangAPI.login(
+                email: username,
+                password: password,
+                clientToken: ConfigManager.default.config.clientToken)
+              completionHandler(account)
+            } catch {
               ThreadUtil.runInMain {
-                errorMessage = "Login failed"
+                errorMessage = "Login failed: \(error)"
                 loggingIn = false
               }
-            })
+            }
+          }
         }
       case .offline:
         let account = OfflineAccount(username: username)

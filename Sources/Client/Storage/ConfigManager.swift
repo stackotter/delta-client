@@ -53,24 +53,25 @@ public final class ConfigManager {
   }
   
   /// Refreshes the currently selected account.
-  public func refreshSelectedAccount(onCompletion completion: @escaping (Account) -> Void, onFailure failure: @escaping (ConfigError) -> Void) {
-    if let account = config.selectedAccount {
-      switch account {
-        case let account as MojangAccount:
-          MojangAPI.refresh(account, with: config.clientToken, onCompletion: { account in
-            self.config.mojangAccounts[account.id] = account
-            self.setConfig(to: self.config)
-            completion(account)
-          }, onFailure: { error in
-            failure(ConfigError.accountRefreshFailed(error))
-          })
-        case let account as OfflineAccount:
-          completion(account)
-        default:
-          failure(ConfigError.invalidSelectedAccountType)
-      }
-    } else {
-      failure(ConfigError.noAccountSelected)
+  public func refreshSelectedAccount() async throws -> Account {
+    guard let account = config.selectedAccount else {
+      throw ConfigError.noAccountSelected
+    }
+    
+    switch account {
+      case let account as MojangAccount:
+        do {
+          let account = try await MojangAPI.refresh(account, with: config.clientToken)
+          self.config.mojangAccounts[account.id] = account
+          self.setConfig(to: self.config)
+          return account
+        } catch {
+          throw ConfigError.accountRefreshFailed(error)
+        }
+      case let account as OfflineAccount:
+        return account
+      default:
+        throw ConfigError.invalidSelectedAccountType
     }
   }
 
