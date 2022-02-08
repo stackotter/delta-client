@@ -51,13 +51,22 @@ enum RequestUtil {
       urlRequest.addValue(value, forHTTPHeaderField: key)
     }
     
-    let (data, response) = try await URLSession.shared.data(for: urlRequest)
-    
-    guard let httpResponse = response as? HTTPURLResponse else {
-      throw RequestError.invalidURLResponse
+    return try await withCheckedThrowingContinuation { continuation in
+      let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+        if let error = error {
+          continuation.resume(throwing: error)
+          return
+        }
+        
+        guard let httpResponse = response as? HTTPURLResponse, let data = data else {
+          continuation.resume(throwing: RequestError.invalidURLResponse)
+          return
+        }
+        
+        continuation.resume(returning: (httpResponse, data))
+      }
+      task.resume()
     }
-    
-    return (httpResponse, data)
   }
   
   static func urlEncode(_ string: String) -> String {
