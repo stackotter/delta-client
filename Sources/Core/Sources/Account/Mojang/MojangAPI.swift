@@ -2,12 +2,9 @@ import Foundation
 import ZippyJSON
 
 public enum MojangAPIError: LocalizedError {
-  case failedToDeserializeResponse
+  case failedToDeserializeResponse(String)
   case requestFailed(Error?)
 }
-
-// TODO: make these async when Xcode 13.2 is released
-// TODO: check status code of responses and handle errors in api response when status code is 403
 
 /// Used to interface with Mojang's authentication API.
 public enum MojangAPI {
@@ -22,15 +19,11 @@ public enum MojangAPI {
   ///   - email: User's email.
   ///   - password: User's password.
   ///   - clientToken: The client's 'unique' token (Delta Client uses Mojang's client token).
-  ///   - completion: Completion handler.
-  ///   - failure: Failure handler.
   public static func login(
     email: String,
     password: String,
-    clientToken: String,
-    onCompletion completion: @escaping (_ account: MojangAccount) -> Void,
-    onFailure failure: @escaping (MojangAPIError) -> Void)
-  {
+    clientToken: String
+  ) async throws -> MojangAccount {
     let payload = MojangAuthenticationRequest(
       agent: MojangAgent(),
       username: email,
@@ -38,24 +31,21 @@ public enum MojangAPI {
       clientToken: clientToken,
       requestUser: true)
     
-    RequestUtil.performJSONRequest(url: authenticationURL, body: payload, method: .post, onCompletion: { _, data in
-      guard let response = try? ZippyJSONDecoder().decode(MojangAuthenticationResponse.self, from: data) else {
-        failure(MojangAPIError.failedToDeserializeResponse)
-        return
-      }
-      
-      let selectedProfile = response.selectedProfile
-      let account = MojangAccount(
-        id: response.user.id,
-        profileId: selectedProfile.id,
-        name: response.selectedProfile.name,
-        email: email,
-        accessToken: response.accessToken)
-      
-      completion(account)
-    }, onFailure: { error in
-      failure(.requestFailed(error))
-    })
+    let (_, data) = try await RequestUtil.performJSONRequest(url: authenticationURL, body: payload, method: .post)
+    
+    guard let response = try? ZippyJSONDecoder().decode(MojangAuthenticationResponse.self, from: data) else {
+      throw MojangAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
+    }
+    
+    let selectedProfile = response.selectedProfile
+    let account = MojangAccount(
+      id: response.user.id,
+      profileId: selectedProfile.id,
+      name: response.selectedProfile.name,
+      email: email,
+      accessToken: response.accessToken)
+    
+    return account
   }
   
   /// Contacts the Mojang auth servers as part of the join game handshake.
@@ -63,55 +53,40 @@ public enum MojangAPI {
   ///   - accessToken: User's access token.
   ///   - selectedProfile: UUID of the user's selected profile (one account can have multiple profiles).
   ///   - serverHash: The hash received from the server that is being joined.
-  ///   - completion: Completion handler.
-  ///   - failure: Failure handler.
   public static func join(
     accessToken: String,
     selectedProfile: String,
-    serverHash: String,
-    onCompletion completion: @escaping () -> Void,
-    onFailure failure: @escaping (MojangAPIError) -> Void)
-  {
+    serverHash: String
+  ) async throws {
     let payload = MojangJoinRequest(
       accessToken: accessToken,
       selectedProfile: selectedProfile,
-      serverId: serverHash
-    )
+      serverId: serverHash)
     
-    RequestUtil.performJSONRequest(url: joinServerURL, body: payload, method: .post, onCompletion: { _, _ in
-      completion()
-    }, onFailure: { error in
-      failure(.requestFailed(error))
-    })
+    _ = try await RequestUtil.performJSONRequest(url: joinServerURL, body: payload, method: .post)
   }
   
   /// Refreshes the access token of a Mojang account.
   /// - Parameters:
   ///   - account: The account to refresh.
   ///   - clientToken: The client's 'unique' token (Delta Client just uses Mojang's).
-  ///   - completion: Completion handler.
-  ///   - failure: Failure handler.
   public static func refresh(
     _ account: MojangAccount,
-    with clientToken: String,
-    onCompletion completion: @escaping (_ account: MojangAccount) -> Void,
-    onFailure failure: @escaping (MojangAPIError) -> Void)
-  {
+    with clientToken: String
+  ) async throws -> MojangAccount {
     let payload = MojangRefreshTokenRequest(
       accessToken: account.accessToken,
       clientToken: clientToken)
     
-    RequestUtil.performJSONRequest(url: refreshURL, body: payload, method: .post, onCompletion: { _, data in
-      guard let response = try? ZippyJSONDecoder().decode(MojangRefreshTokenResponse.self, from: data) else {
-        failure(MojangAPIError.failedToDeserializeResponse)
-        return
-      }
-      
-      var refreshedAccount = account
-      refreshedAccount.accessToken = response.accessToken
-      completion(refreshedAccount)
-    }, onFailure: { error in
-      failure(.requestFailed(error))
-    })
+    let (_, data) = try await RequestUtil.performJSONRequest(url: refreshURL, body: payload, method: .post)
+    
+    guard let response = try? ZippyJSONDecoder().decode(MojangRefreshTokenResponse.self, from: data) else {
+      throw MojangAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
+    }
+    
+    var refreshedAccount = account
+    refreshedAccount.accessToken = response.accessToken
+    
+    return refreshedAccount
   }
 }

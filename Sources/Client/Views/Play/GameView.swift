@@ -92,21 +92,27 @@ class GameViewModel: ObservableObject {
     }
     
     // Refresh the account (if Mojang) and then join the server
-    ConfigManager.default.refreshSelectedAccount(onCompletion: { account in
+    Task {
+      let refreshedAccount: Account
+      do {
+        refreshedAccount = try await ConfigManager.default.refreshSelectedAccount()
+      } catch {
+        let message = "Failed to refresh Mojang account '\(account.username)': \(error.localizedDescription)"
+        log.error(message)
+        DeltaClientApp.modalError(message, safeState: .serverList)
+        return
+      }
+      
       do {
         try self.client.joinServer(
           describedBy: descriptor,
-          with: account)
+          with: refreshedAccount)
       } catch {
         let message = "Failed to send join server request: \(error.localizedDescription)"
         log.error(message)
         DeltaClientApp.modalError(message, safeState: .serverList)
       }
-    }, onFailure: { error in
-      let message = "Failed to refresh Mojang account '\(account.username)': \(error.localizedDescription)"
-      log.error(message)
-      DeltaClientApp.modalError(message, safeState: .serverList)
-    })
+    }
   }
   
   func handleClientEvent(_ event: Event) {

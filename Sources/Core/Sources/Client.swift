@@ -1,9 +1,13 @@
 import Foundation
 
+// TODO: Make client actually Sendable
+
 /// A client creates and maintains a connection to a server and handles the received packets.
-public final class Client {
+public final class Client: @unchecked Sendable {
+  // MARK: Public properties
+  
   /// The resource pack to use.
-  public var resourcePack: ResourcePack
+  public let resourcePack: ResourcePack
   /// The account this client uses to join servers.
   public var account: Account?
   
