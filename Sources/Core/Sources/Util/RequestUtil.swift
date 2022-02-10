@@ -63,8 +63,6 @@ enum RequestUtil {
           return
         }
         
-        print(httpResponse.statusCode)
-        
         continuation.resume(returning: (httpResponse, data))
       }
       task.resume()
