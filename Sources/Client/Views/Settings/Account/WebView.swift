@@ -20,9 +20,11 @@ final class WebView: NSViewRepresentable {
   final func makeNSView(context: Context) -> WKWebView  {
     let config = WKWebViewConfiguration()
     config.limitsNavigationsToAppBoundDomains = true
+    
     let webview = WKWebView()
     webview.navigationDelegate = delegate
-    // register observation for url changes
+    
+    // Register observation for url changes
     observer = webview.observe(\.url, options: .new) { view, _ in
       if let newURL = view.url {
         self.urlChangeHandler(newURL)
@@ -40,7 +42,7 @@ final class WebView: NSViewRepresentable {
 }
 
 final class WebViewDelegate: NSObject, WKNavigationDelegate {
-  // disable custom url schemes to prevent popup error on auth redirect
+  // Disable custom url schemes to prevent popup error on auth redirect
   func webView(
     _ webView: WKWebView,
     decidePolicyFor navigationAction: WKNavigationAction,

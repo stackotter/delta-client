@@ -30,13 +30,17 @@ struct UpdateView: View {
         if !updater.hasErrored {
           // Gives user a choice of which latest version to update to (stable or unstable)
           VStack {
+            // Stable
             Spacer()
             Button("Update to latest stable") {
               updater.updateType = .stable
               state.update(to: .performUpdate)
             }
             .buttonStyle(PrimaryButtonStyle())
-            Spacer()
+            
+            Spacer().frame(height: 64)
+            
+            // Unstable
             if !updater.branches.isEmpty {
               Menu {
                 ForEach(updater.branches, id: \.self) { branch in
@@ -45,9 +49,10 @@ struct UpdateView: View {
                   }
                 }
               } label: {
-                Text(updater.unstableBranch)
+                Text("Branch: \(updater.unstableBranch)")
               }
             }
+            
             Button("Update to latest unstable") {
               updater.updateType = .unstable
               state.update(to: .performUpdate)
@@ -62,8 +67,7 @@ struct UpdateView: View {
             Text("Failed to load update information: \(updater.error?.localizedDescription ?? "No error information")")
             Button("Try again") {
               updater.loadUnstableBranches()
-            }
-            .buttonStyle(PrimaryButtonStyle())
+            }.buttonStyle(PrimaryButtonStyle())
           }
           .frame(width: 300)
         }
