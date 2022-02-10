@@ -71,7 +71,7 @@ struct DeltaClientApp: App {
             log.error("Error occured when loading plugin '\(bundle)': \(error)")
           }
         } catch {
-          Self.modalError("Error occurred during plugin loading, no plugins will be available: \(error.localizedDescription)")
+          Self.modalError("Error occurred during plugin loading, no plugins will be available: \(error)")
         }
         
         // Download vanilla assets if they haven't already been downloaded
@@ -115,7 +115,7 @@ struct DeltaClientApp: App {
         
         Self.loadingState.update(to: .done(LoadedResources(resourcePack: resourcePack)))
       } catch {
-        Self.loadingState.update(to: .error("Failed to load: \(error.localizedDescription)"))
+        Self.loadingState.update(to: .error("Failed to load: \(error)"))
       }
     }
   }

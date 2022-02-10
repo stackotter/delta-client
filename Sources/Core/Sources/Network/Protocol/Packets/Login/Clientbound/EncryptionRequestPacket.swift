@@ -39,14 +39,14 @@ public struct EncryptionRequestPacket: ClientboundPacket, Sendable {
     
     // TODO: Clean up EncryptionRequestPacket.handle
     // Request to join the server
-    if let mojangAccount = client.account as? MojangAccount {
-      let accessToken = mojangAccount.accessToken
-      let selectedProfile = mojangAccount.profileId
+    if let account = client.account?.online {
+      let accessToken = account.accessToken
+      let selectedProfile = account.id
       
       Task {
         do {
           try await MojangAPI.join(
-            accessToken: accessToken,
+            accessToken: accessToken.token,
             selectedProfile: selectedProfile,
             serverHash: serverHash)
         } catch {
