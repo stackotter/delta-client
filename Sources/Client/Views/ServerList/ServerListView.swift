@@ -28,7 +28,7 @@ struct ServerListView: View {
         }
       }
     } catch {
-      log.warning("Failed to start LAN server enumerator: \(error.localizedDescription)")
+      log.warning("Failed to start LAN server enumerator: \(error)")
     }
     
     // Start pinging and enumerating

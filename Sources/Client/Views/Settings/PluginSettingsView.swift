@@ -48,7 +48,7 @@ struct PluginSettingsView: View {
                   do {
                     try pluginEnvironment.loadPlugin(plugin.0)
                   } catch {
-                    DeltaClientApp.modalError("Failed to load plugin '\(identifier)': \(error.localizedDescription)")
+                    DeltaClientApp.modalError("Failed to load plugin '\(identifier)': \(error)")
                   }
                   updateConfig()
                 }
@@ -75,7 +75,7 @@ struct PluginSettingsView: View {
               VStack(alignment: .leading) {
                 ForEach(pluginEnvironment.errors, id: \.0) { (bundle, error) in
                   Text("\(bundle):").font(.title3)
-                  Text(error.localizedDescription)
+                  Text(String("\(error)"))
                 }
               }
             }
