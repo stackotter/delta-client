@@ -61,6 +61,21 @@ struct DeltaClientApp: App {
       do {
         let start = CFAbsoluteTimeGetCurrent()
         
+        // Refresh accounts if they're close to expiring (expire in the next 3 hours)
+        for account in ConfigManager.default.config.accounts.values {
+          guard let expiry = account.online?.accessToken.expiry else {
+            continue
+          }
+          
+          if expiry - Int(CFAbsoluteTimeGetCurrent()) < 10800 {
+            Task {
+              var account = account
+              try? await account.refreshIfExpired(withClientToken: ConfigManager.default.config.clientToken)
+              ConfigManager.default.addAccount(account)
+            }
+          }
+        }
+        
         // Load plugins first
         updateLoadingState(step: .loadPlugins)
         do {
