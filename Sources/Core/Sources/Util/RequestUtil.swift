@@ -5,6 +5,8 @@ enum RequestError: LocalizedError {
   case failedToConvertBodyToData
   /// The response was not of type HTTP.
   case invalidURLResponse
+  /// The status code of the response was not greater than or equal to 400.
+  case unsuccessfulRequest(Int)
 }
 
 enum RequestUtil {
@@ -60,6 +62,11 @@ enum RequestUtil {
         
         guard let httpResponse = response as? HTTPURLResponse, let data = data else {
           continuation.resume(throwing: RequestError.invalidURLResponse)
+          return
+        }
+        
+        if httpResponse.statusCode >= 400 {
+          continuation.resume(throwing: RequestError.unsuccessfulRequest(httpResponse.statusCode))
           return
         }
         
