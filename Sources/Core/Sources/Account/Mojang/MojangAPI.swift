@@ -82,8 +82,6 @@ public enum MojangAPI {
       accessToken: accessToken,
       clientToken: clientToken)
     
-    print("Access token: \(accessToken)")
-    
     let (_, data) = try await RequestUtil.performJSONRequest(url: refreshURL, body: payload, method: .post)
     
     guard let response = try? ZippyJSONDecoder().decode(MojangRefreshTokenResponse.self, from: data) else {
