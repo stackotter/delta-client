@@ -9,21 +9,24 @@ struct OfflineLoginView: View {
   @State private var errorMessage: String?
   
   var body: some View {
-    if let errorMessage = errorMessage {
-      Text(errorMessage)
-        .foregroundColor(.red)
+    VStack {
+      if let errorMessage = errorMessage {
+        Text(errorMessage)
+          .foregroundColor(.red)
+      }
+      
+      TextField("Username", text: $username)
+      
+      HStack {
+        Button("Back") {
+          loginViewState.update(to: .chooseAccountType)
+        }.buttonStyle(SecondaryButtonStyle())
+        Button("Login") {
+          login()
+        }.buttonStyle(PrimaryButtonStyle())
+      }
     }
-    
-    TextField("Username", text: $username)
-    
-    HStack {
-      Button("Back") {
-        loginViewState.update(to: .chooseAccountType)
-      }.buttonStyle(SecondaryButtonStyle())
-      Button("Login") {
-        login()
-      }.buttonStyle(PrimaryButtonStyle())
-    }
+    .frame(width: 200)
   }
   
   func login() {

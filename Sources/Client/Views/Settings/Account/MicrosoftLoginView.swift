@@ -26,11 +26,11 @@ struct MicrosoftLoginView: View {
         Text("Authenticating...")
     }
     
-    HStack {
-      Button("Cancel") {
-        loginViewState.update(to: .chooseAccountType)
-      }.buttonStyle(SecondaryButtonStyle())
+    Button("Cancel") {
+      loginViewState.update(to: .chooseAccountType)
     }
+    .buttonStyle(SecondaryButtonStyle())
+    .frame(width: 200)
   }
   
   func processURLChange(_ url: URL) {

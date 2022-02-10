@@ -13,26 +13,29 @@ struct MojangLoginView: View {
   @State private var authenticating = false
   
   var body: some View {
-    if authenticating {
-      Text("Authenticating...")
-    } else {
-      if let errorMessage = errorMessage {
-        Text(errorMessage)
-          .foregroundColor(.red)
-      }
-      
-      EmailField("Email", email: $email, isValid: $isEmailValid)
-      SecureField("Password", text: $password)
-      
-      HStack {
-        Button("Back") {
-          loginViewState.update(to: .chooseAccountType)
-        }.buttonStyle(SecondaryButtonStyle())
-        Button("Login") {
-          login()
-        }.buttonStyle(PrimaryButtonStyle())
+    VStack {
+      if authenticating {
+        Text("Authenticating...")
+      } else {
+        if let errorMessage = errorMessage {
+          Text(errorMessage)
+            .foregroundColor(.red)
+        }
+        
+        EmailField("Email", email: $email, isValid: $isEmailValid)
+        SecureField("Password", text: $password)
+        
+        HStack {
+          Button("Back") {
+            loginViewState.update(to: .chooseAccountType)
+          }.buttonStyle(SecondaryButtonStyle())
+          Button("Login") {
+            login()
+          }.buttonStyle(PrimaryButtonStyle())
+        }
       }
     }
+    .frame(width: 200)
   }
   
   func login() {
