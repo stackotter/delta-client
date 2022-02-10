@@ -18,12 +18,12 @@ public enum MojangAPI {
   /// - Parameters:
   ///   - email: User's email.
   ///   - password: User's password.
-  ///   - clientToken: The client's 'unique' token (Delta Client uses Mojang's client token).
+  ///   - clientToken: The client's unique token (different for each user).
   public static func login(
     email: String,
     password: String,
     clientToken: String
-  ) async throws -> MojangAccount {
+  ) async throws -> Account {
     let payload = MojangAuthenticationRequest(
       agent: MojangAgent(),
       username: email,
@@ -37,15 +37,17 @@ public enum MojangAPI {
       throw MojangAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
     }
     
+    let accessToken = MinecraftAccessToken(
+      token: response.accessToken,
+      expiry: nil)
+    
     let selectedProfile = response.selectedProfile
     let account = MojangAccount(
-      id: response.user.id,
-      profileId: selectedProfile.id,
-      name: response.selectedProfile.name,
-      email: email,
-      accessToken: response.accessToken)
+      id: selectedProfile.id,
+      username: response.selectedProfile.name,
+      accessToken: accessToken)
     
-    return account
+    return Account.mojang(account)
   }
   
   /// Contacts the Mojang auth servers as part of the join game handshake.
@@ -74,9 +76,13 @@ public enum MojangAPI {
     _ account: MojangAccount,
     with clientToken: String
   ) async throws -> MojangAccount {
+    let accessToken = String(account.accessToken.token.split(separator: ".")[1])
+    
     let payload = MojangRefreshTokenRequest(
-      accessToken: account.accessToken,
+      accessToken: accessToken,
       clientToken: clientToken)
+    
+    print("Access token: \(accessToken)")
     
     let (_, data) = try await RequestUtil.performJSONRequest(url: refreshURL, body: payload, method: .post)
     
@@ -85,7 +91,7 @@ public enum MojangAPI {
     }
     
     var refreshedAccount = account
-    refreshedAccount.accessToken = response.accessToken
+    refreshedAccount.accessToken = MinecraftAccessToken(token: response.accessToken, expiry: nil)
     
     return refreshedAccount
   }

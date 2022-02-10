@@ -91,13 +91,13 @@ class GameViewModel: ObservableObject {
       return
     }
     
-    // Refresh the account (if Mojang) and then join the server
+    // Refresh the account (if it's an online account) and then join the server
     Task {
       let refreshedAccount: Account
       do {
-        refreshedAccount = try await ConfigManager.default.refreshSelectedAccount()
+        refreshedAccount = try await ConfigManager.default.getRefreshedAccount()
       } catch {
-        let message = "Failed to refresh Mojang account '\(account.username)': \(error.localizedDescription)"
+        let message = "Failed to refresh account '\(account.username)': \(error)"
         log.error(message)
         DeltaClientApp.modalError(message, safeState: .serverList)
         return
@@ -108,7 +108,7 @@ class GameViewModel: ObservableObject {
           describedBy: descriptor,
           with: refreshedAccount)
       } catch {
-        let message = "Failed to send join server request: \(error.localizedDescription)"
+        let message = "Failed to send join server request: \(error)"
         log.error(message)
         DeltaClientApp.modalError(message, safeState: .serverList)
       }
@@ -119,7 +119,7 @@ class GameViewModel: ObservableObject {
     switch event {
       case let connectionFailedEvent as ConnectionFailedEvent:
         let serverName = serverDescriptor.host + (serverDescriptor.port != nil ? (":" + String(serverDescriptor.port!)) : "")
-        DeltaClientApp.modalError("Connection to \(serverName) failed: \(connectionFailedEvent.networkError.localizedDescription)", safeState: .serverList)
+        DeltaClientApp.modalError("Connection to \(serverName) failed: \(connectionFailedEvent.networkError)", safeState: .serverList)
       case _ as LoginStartEvent:
         state.update(to: .loggingIn)
       case _ as JoinWorldEvent:

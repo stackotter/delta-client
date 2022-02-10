@@ -33,7 +33,7 @@ struct ServerDetail: View {
               .buttonStyle(PrimaryButtonStyle())
               .frame(width: 150)
           case let .failure(error):
-            Text("Connection failed: \(error.localizedDescription)")
+            Text(String("Connection failed: \(error)"))
               .padding(.bottom, 8)
             Button("Play") { }
               .buttonStyle(DisabledButtonStyle())

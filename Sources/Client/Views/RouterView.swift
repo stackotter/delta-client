@@ -27,7 +27,7 @@ struct RouterView: View {
           ErrorView(message: message, safeState: safeState)
       }
     }.onChange(of: appState.current) { newValue in
-      // Updating discord rich presence based on current app state
+      // Update Discord rich presence based on the current app state
       switch newValue {
         case .serverList:
           DiscordManager.shared.updateRichPresence(to: .menu)
@@ -48,18 +48,7 @@ struct RouterView: View {
           EditServerListView()
         case .login:
           AccountLoginView(completion: { account in
-            var config = ConfigManager.default.config
-            var accounts = config.accounts
-            accounts.append(account)
-            config.updateAccounts(accounts)
-            do {
-              try config.selectAccount(account)
-            } catch {
-              log.error("Failed to select account")
-              appState.update(to: .fatalError("Failed to select account (something went very wrong)"))
-              return
-            }
-            ConfigManager.default.setConfig(to: config)
+            ConfigManager.default.addAccount(account, shouldSelect: true)
             appState.update(to: .serverList)
           }, cancelation: nil)
         case .accounts:
