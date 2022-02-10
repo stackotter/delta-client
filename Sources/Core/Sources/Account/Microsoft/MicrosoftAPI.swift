@@ -278,8 +278,6 @@ public enum MicrosoftAPI {
   }
   
   public static func getMinecraftAccount(_ microsoftAccessToken: MicrosoftAccessToken) async throws -> MicrosoftAccount {
-    print(microsoftAccessToken)
-    
     // Get Xbox live token
     let xboxLiveToken: XboxLiveToken
     do {
@@ -287,8 +285,6 @@ public enum MicrosoftAPI {
     } catch {
       throw MicrosoftAPIError.failedToGetXboxLiveToken(error)
     }
-    
-    print(xboxLiveToken)
     
     // Get XSTS token
     let xstsToken: String
@@ -298,8 +294,6 @@ public enum MicrosoftAPI {
       throw MicrosoftAPIError.failedToGetXSTSToken(error)
     }
     
-    print(xstsToken)
-    
     // Get Minecraft access token
     let minecraftAccessToken: MinecraftAccessToken
     do {
@@ -307,8 +301,6 @@ public enum MicrosoftAPI {
     } catch {
       throw MicrosoftAPIError.failedToGetMinecraftAccessToken(error)
     }
-    
-    print(minecraftAccessToken)
     
     // Get a list of the user's licenses
     let licenses: [GameOwnershipResponse.License]
