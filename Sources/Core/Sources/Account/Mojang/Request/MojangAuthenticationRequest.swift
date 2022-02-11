@@ -1,7 +1,12 @@
 import Foundation
 
 struct MojangAuthenticationRequest: Encodable {
-  var agent: MojangAgent
+  struct MojangAgent: Codable {
+    var name = "Minecraft"
+    var version = 1
+  }
+  
+  var agent = MojangAgent()
   var username: String
   var password: String
   var clientToken: String

@@ -40,6 +40,8 @@ public enum MicrosoftAPI {
   private static let minecraftProfileURL = URL(string: "https://api.minecraftservices.com/minecraft/profile")!
   // swiftlint:enable force_unwrapping
   
+  // MARK: Public methods
+  
   /// Gets the OAuth authorization URL.
   /// - Returns: The URL for OAuth authorization.
   public static func getAuthorizationURL() -> URL {
@@ -50,188 +52,6 @@ public enum MicrosoftAPI {
     ])
     
     return url
-  }
-  
-  /// Extracts the user's OAuth authorization code from the OAuth redirect URL's query parameters.
-  /// - Parameter url: The OAuth redirect URL.
-  /// - Returns: The user's OAuth code. `nil` if the URL doesn't contain an OAuth code.
-  public static func codeFromRedirectURL(_ url: URL) -> String? {
-    guard let components = URLComponents(string: url.absoluteString), let queryItems = components.queryItems else {
-      return nil
-    }
-    
-    for item in queryItems where item.name == "code" {
-      if let code = item.value {
-        return code
-      }
-    }
-    
-    return nil
-  }
-  
-  /// Gets the user's Microsoft access token from their OAuth authorization code.
-  /// - Parameters:
-  ///   - authorizationCode: The user's authorization code.
-  public static func getMicrosoftAccessToken(authorizationCode: String) async throws -> MicrosoftAccessToken {
-    let formData = [
-      "client_id": clientId,
-      "code": authorizationCode,
-      "grant_type": "authorization_code",
-      "scope": "service::user.auth.xboxlive.com::MBI_SSL"
-    ]
-    
-    let (_, data) = try await RequestUtil.performFormRequest(
-      url: authenticationURL,
-      body: formData,
-      method: .post)
-    
-    let response: MicrosoftAccessTokenResponse = try decodeResponse(data)
-    
-    let accessToken = MicrosoftAccessToken(
-      token: response.accessToken,
-      expiresIn: response.expiresIn,
-      refreshToken: response.refreshToken)
-    
-    return accessToken
-  }
-  
-  /// Acquires a new access token for the user's account using an existing refresh token.
-  /// - Parameter token: The access token to refresh.
-  /// - Returns: The refreshed access token.
-  public static func refreshMicrosoftAccessToken(_ token: MicrosoftAccessToken) async throws -> MicrosoftAccessToken {
-    let formData = [
-      "client_id": clientId,
-      "refresh_token": token.refreshToken,
-      "grant_type": "refresh_token",
-      "scope": "service::user.auth.xboxlive.com::MBI_SSL"
-    ]
-    
-    let (_, data) = try await RequestUtil.performFormRequest(
-      url: authenticationURL,
-      body: formData,
-      method: .post)
-    
-    let response: MicrosoftAccessTokenResponse = try decodeResponse(data)
-    
-    let accessToken = MicrosoftAccessToken(
-      token: response.accessToken,
-      expiresIn: response.expiresIn,
-      refreshToken: response.refreshToken)
-    
-    return accessToken
-  }
-  
-  /// Gets the user's Xbox Live token from their Microsoft access token.
-  /// - Parameters:
-  ///   - accessToken: The user's Microsoft access token.
-  /// - Returns: The user's Xbox Live token.
-  public static func getXBoxLiveToken(_ accessToken: MicrosoftAccessToken) async throws -> XboxLiveToken {
-    guard !accessToken.hasExpired else {
-      throw MicrosoftAPIError.expiredAccessToken
-    }
-    
-    let payload = XboxLiveAuthenticationRequest(
-      properties: XboxLiveAuthenticationRequest.Properties(
-        authMethod: "RPS",
-        siteName: "user.auth.xboxlive.com",
-        accessToken: "\(accessToken.token)"),
-      relyingParty: "http://auth.xboxlive.com",
-      tokenType: "JWT")
-    
-    let (_, data) = try await RequestUtil.performJSONRequest(
-      url: xboxLiveAuthenticationURL,
-      body: payload,
-      method: .post)
-    
-    let response: XboxLiveAuthenticationResponse = try decodeResponse(data)
-    
-    guard let userHash = response.displayClaims.xui.first?.userHash else {
-      throw MicrosoftAPIError.noUserHashInResponse
-    }
-    
-    return XboxLiveToken(token: response.token, userHash: userHash)
-  }
-  
-  /// Gets the user's XSTS token from their Xbox Live token.
-  /// - Parameters:
-  ///   - xboxLiveToken: The user's Xbox Live token.
-  /// - Returns: The user's XSTS token.
-  public static func getXSTSToken(_ xboxLiveToken: XboxLiveToken) async throws -> String {
-    let payload = XSTSAuthenticationRequest(
-      properties: XSTSAuthenticationRequest.Properties(
-        sandboxId: xstsSandboxId,
-        userTokens: [xboxLiveToken.token]),
-      relyingParty: xstsRelyingParty,
-      tokenType: "JWT")
-    
-    let (_, data) = try await RequestUtil.performJSONRequest(
-      url: xstsAuthenticationURL,
-      body: payload,
-      method: .post)
-      
-    guard let response: XSTSAuthenticationResponse = try? decodeResponse(data) else {
-      let error: XSTSAuthenticationError
-      do {
-        error = try decodeResponse(data)
-      } catch {
-        throw MicrosoftAPIError.failedToDeserializeResponse(error, String(data: data, encoding: .utf8) ?? "")
-      }
-      
-      throw MicrosoftAPIError.xstsAuthenticationFailed(error)
-    }
-    
-    return response.token
-  }
-  
-  /// Gets the Minecraft access token from the user's XSTS token.
-  /// - Parameters:
-  ///   - xstsToken: The user's XSTS token.
-  ///   - xboxLiveToken: The user's Xbox Live token.
-  /// - Returns: The user's Minecraft access token.
-  public static func getMinecraftAccessToken(_ xstsToken: String, _ xboxLiveToken: XboxLiveToken) async throws -> MinecraftAccessToken {
-    let payload = MinecraftXboxAuthenticationRequest(
-      identityToken: "XBL3.0 x=\(xboxLiveToken.userHash);\(xstsToken)")
-    
-    let (_, data) = try await RequestUtil.performJSONRequest(
-      url: minecraftXboxAuthenticationURL,
-      body: payload,
-      method: .post)
-    
-    let response: MinecraftXboxAuthenticationResponse = try decodeResponse(data)
-    
-    let token = MinecraftAccessToken(
-      token: response.accessToken,
-      expiresIn: response.expiresIn)
-    
-    return token
-  }
-  
-  /// Gets the license attached to an account.
-  /// - Parameters:
-  ///   - accessToken: The user's Minecraft access token.
-  /// - Returns: The licenses attached to the user's Microsoft account.
-  public static func getAttachedLicenses(_ accessToken: MinecraftAccessToken) async throws -> [GameOwnershipResponse.License] {
-    var request = Request(gameOwnershipURL)
-    request.method = .get
-    request.headers["Authorization"] = "Bearer \(accessToken.token)"
-    
-    let (_, data) = try await RequestUtil.performRequest(request)
-    
-    let response: GameOwnershipResponse = try decodeResponse(data)
-        
-    return response.items
-  }
-  
-  /// Refreshes a Minecraft account which is attached to a Microsoft account.
-  /// - Parameter account: The account to refresh.
-  /// - Returns: The refreshed account.
-  public static func refreshMinecraftAccount(_ account: MicrosoftAccount) async throws -> MicrosoftAccount {
-    var account = account
-    if account.microsoftAccessToken.hasExpired {
-      account.microsoftAccessToken = try await MicrosoftAPI.refreshMicrosoftAccessToken(account.microsoftAccessToken)
-    }
-    
-    return try await MicrosoftAPI.getMinecraftAccount(account.microsoftAccessToken)
   }
   
   /// Gets the user's Minecraft account.
@@ -323,6 +143,190 @@ public enum MicrosoftAPI {
     }
     
     return account
+  }
+  
+  /// Refreshes a Minecraft account which is attached to a Microsoft account.
+  /// - Parameter account: The account to refresh.
+  /// - Returns: The refreshed account.
+  public static func refreshMinecraftAccount(_ account: MicrosoftAccount) async throws -> MicrosoftAccount {
+    var account = account
+    if account.microsoftAccessToken.hasExpired {
+      account.microsoftAccessToken = try await MicrosoftAPI.refreshMicrosoftAccessToken(account.microsoftAccessToken)
+    }
+    
+    return try await MicrosoftAPI.getMinecraftAccount(account.microsoftAccessToken)
+  }
+  
+  // MARK: Private methods
+  
+  /// Extracts the user's OAuth authorization code from the OAuth redirect URL's query parameters.
+  /// - Parameter url: The OAuth redirect URL.
+  /// - Returns: The user's OAuth code. `nil` if the URL doesn't contain an OAuth code.
+  private static func codeFromRedirectURL(_ url: URL) -> String? {
+    guard let components = URLComponents(string: url.absoluteString), let queryItems = components.queryItems else {
+      return nil
+    }
+    
+    for item in queryItems where item.name == "code" {
+      if let code = item.value {
+        return code
+      }
+    }
+    
+    return nil
+  }
+  
+  /// Gets the user's Microsoft access token from their OAuth authorization code.
+  /// - Parameters:
+  ///   - authorizationCode: The user's authorization code.
+  private static func getMicrosoftAccessToken(authorizationCode: String) async throws -> MicrosoftAccessToken {
+    let formData = [
+      "client_id": clientId,
+      "code": authorizationCode,
+      "grant_type": "authorization_code",
+      "scope": "service::user.auth.xboxlive.com::MBI_SSL"
+    ]
+    
+    let (_, data) = try await RequestUtil.performFormRequest(
+      url: authenticationURL,
+      body: formData,
+      method: .post)
+    
+    let response: MicrosoftAccessTokenResponse = try decodeResponse(data)
+    
+    let accessToken = MicrosoftAccessToken(
+      token: response.accessToken,
+      expiresIn: response.expiresIn,
+      refreshToken: response.refreshToken)
+    
+    return accessToken
+  }
+  
+  /// Acquires a new access token for the user's account using an existing refresh token.
+  /// - Parameter token: The access token to refresh.
+  /// - Returns: The refreshed access token.
+  private static func refreshMicrosoftAccessToken(_ token: MicrosoftAccessToken) async throws -> MicrosoftAccessToken {
+    let formData = [
+      "client_id": clientId,
+      "refresh_token": token.refreshToken,
+      "grant_type": "refresh_token",
+      "scope": "service::user.auth.xboxlive.com::MBI_SSL"
+    ]
+    
+    let (_, data) = try await RequestUtil.performFormRequest(
+      url: authenticationURL,
+      body: formData,
+      method: .post)
+    
+    let response: MicrosoftAccessTokenResponse = try decodeResponse(data)
+    
+    let accessToken = MicrosoftAccessToken(
+      token: response.accessToken,
+      expiresIn: response.expiresIn,
+      refreshToken: response.refreshToken)
+    
+    return accessToken
+  }
+  
+  /// Gets the user's Xbox Live token from their Microsoft access token.
+  /// - Parameters:
+  ///   - accessToken: The user's Microsoft access token.
+  /// - Returns: The user's Xbox Live token.
+  private static func getXBoxLiveToken(_ accessToken: MicrosoftAccessToken) async throws -> XboxLiveToken {
+    guard !accessToken.hasExpired else {
+      throw MicrosoftAPIError.expiredAccessToken
+    }
+    
+    let payload = XboxLiveAuthenticationRequest(
+      properties: XboxLiveAuthenticationRequest.Properties(
+        authMethod: "RPS",
+        siteName: "user.auth.xboxlive.com",
+        accessToken: "\(accessToken.token)"),
+      relyingParty: "http://auth.xboxlive.com",
+      tokenType: "JWT")
+    
+    let (_, data) = try await RequestUtil.performJSONRequest(
+      url: xboxLiveAuthenticationURL,
+      body: payload,
+      method: .post)
+    
+    let response: XboxLiveAuthenticationResponse = try decodeResponse(data)
+    
+    guard let userHash = response.displayClaims.xui.first?.userHash else {
+      throw MicrosoftAPIError.noUserHashInResponse
+    }
+    
+    return XboxLiveToken(token: response.token, userHash: userHash)
+  }
+  
+  /// Gets the user's XSTS token from their Xbox Live token.
+  /// - Parameters:
+  ///   - xboxLiveToken: The user's Xbox Live token.
+  /// - Returns: The user's XSTS token.
+  private static func getXSTSToken(_ xboxLiveToken: XboxLiveToken) async throws -> String {
+    let payload = XSTSAuthenticationRequest(
+      properties: XSTSAuthenticationRequest.Properties(
+        sandboxId: xstsSandboxId,
+        userTokens: [xboxLiveToken.token]),
+      relyingParty: xstsRelyingParty,
+      tokenType: "JWT")
+    
+    let (_, data) = try await RequestUtil.performJSONRequest(
+      url: xstsAuthenticationURL,
+      body: payload,
+      method: .post)
+    
+    guard let response: XSTSAuthenticationResponse = try? decodeResponse(data) else {
+      let error: XSTSAuthenticationError
+      do {
+        error = try decodeResponse(data)
+      } catch {
+        throw MicrosoftAPIError.failedToDeserializeResponse(error, String(data: data, encoding: .utf8) ?? "")
+      }
+      
+      throw MicrosoftAPIError.xstsAuthenticationFailed(error)
+    }
+    
+    return response.token
+  }
+  
+  /// Gets the Minecraft access token from the user's XSTS token.
+  /// - Parameters:
+  ///   - xstsToken: The user's XSTS token.
+  ///   - xboxLiveToken: The user's Xbox Live token.
+  /// - Returns: The user's Minecraft access token.
+  private static func getMinecraftAccessToken(_ xstsToken: String, _ xboxLiveToken: XboxLiveToken) async throws -> MinecraftAccessToken {
+    let payload = MinecraftXboxAuthenticationRequest(
+      identityToken: "XBL3.0 x=\(xboxLiveToken.userHash);\(xstsToken)")
+    
+    let (_, data) = try await RequestUtil.performJSONRequest(
+      url: minecraftXboxAuthenticationURL,
+      body: payload,
+      method: .post)
+    
+    let response: MinecraftXboxAuthenticationResponse = try decodeResponse(data)
+    
+    let token = MinecraftAccessToken(
+      token: response.accessToken,
+      expiresIn: response.expiresIn)
+    
+    return token
+  }
+  
+  /// Gets the license attached to an account.
+  /// - Parameters:
+  ///   - accessToken: The user's Minecraft access token.
+  /// - Returns: The licenses attached to the user's Microsoft account.
+  private static func getAttachedLicenses(_ accessToken: MinecraftAccessToken) async throws -> [GameOwnershipResponse.License] {
+    var request = Request(gameOwnershipURL)
+    request.method = .get
+    request.headers["Authorization"] = "Bearer \(accessToken.token)"
+    
+    let (_, data) = try await RequestUtil.performRequest(request)
+    
+    let response: GameOwnershipResponse = try decodeResponse(data)
+    
+    return response.items
   }
   
   /// A helper function for decoding JSON responses.

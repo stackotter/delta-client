@@ -1,8 +1,8 @@
-public struct XboxLiveToken {
-  public var token: String
-  public var userHash: String
+struct XboxLiveToken {
+  var token: String
+  var userHash: String
   
-  public init(token: String, userHash: String) {
+  init(token: String, userHash: String) {
     self.token = token
     self.userHash = userHash
   }

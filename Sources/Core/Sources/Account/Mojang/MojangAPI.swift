@@ -25,7 +25,6 @@ public enum MojangAPI {
     clientToken: String
   ) async throws -> Account {
     let payload = MojangAuthenticationRequest(
-      agent: MojangAgent(),
       username: email,
       password: password,
       clientToken: clientToken,

@@ -1,11 +1,11 @@
 import Foundation
 
-public struct XSTSAuthenticationResponse: Codable {
-  public struct Claims: Codable {
+struct XSTSAuthenticationResponse: Codable {
+  struct Claims: Codable {
     var xui: [XUIClaim]
   }
   
-  public struct XUIClaim: Codable {
+  struct XUIClaim: Codable {
     var userHash: String
     
     // swiftlint:disable nesting
@@ -15,12 +15,12 @@ public struct XSTSAuthenticationResponse: Codable {
     // swiftlint:enable nesting
   }
   
-  public var issueInstant: String
-  public var notAfter: String
-  public var token: String
-  public var displayClaims: Claims
+  var issueInstant: String
+  var notAfter: String
+  var token: String
+  var displayClaims: Claims
   
-  private enum CodingKeys: String, CodingKey {
+  enum CodingKeys: String, CodingKey {
     case issueInstant = "IssueInstant"
     case notAfter = "NotAfter"
     case token = "Token"
