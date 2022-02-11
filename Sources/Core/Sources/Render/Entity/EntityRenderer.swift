@@ -72,10 +72,21 @@ public struct EntityRenderer: Renderer {
     worldToClipUniformsBuffer: MTLBuffer,
     camera: Camera
   ) throws {
+    var isFirstPerson = false
+    client.game.accessPlayer { player in
+      isFirstPerson = player.camera.perspective == .firstPerson
+    }
+    
     // Get all renderable entities
     var entityUniforms: [Uniforms] = []
     client.game.accessNexus { nexus in
-      let entities = nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self, excludesAll: ClientPlayerEntity.self)
+      // If the player is in first person view we don't render them
+      let entities: Family<Requires2<EntityPosition, EntityHitBox>>
+      if isFirstPerson {
+        entities = nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self, excludesAll: ClientPlayerEntity.self)
+      } else {
+        entities = nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self)
+      }
       
       let renderDistance = client.configuration.render.renderDistance
       let cameraChunk = camera.entityPosition.chunk

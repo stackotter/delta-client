@@ -12,7 +12,8 @@ public struct Keymap: Codable {
     .jump: .space,
     .sneak: .leftShift,
     .sprint: .leftControl,
-    .toggleDebugHUD: .f3
+    .toggleDebugHUD: .f3,
+    .changePerspective: .f5
   ])
   
   /// The user's keybindings.
