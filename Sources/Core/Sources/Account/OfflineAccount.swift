@@ -5,6 +5,10 @@ public struct OfflineAccount: Codable {
   public var id: String
   public var username: String
   
+  /// Creates an offline account.
+  ///
+  /// The account's UUID is generated based on the username.
+  /// - Parameter username: The username for the account.
   public init(username: String) {
     self.username = username
     
