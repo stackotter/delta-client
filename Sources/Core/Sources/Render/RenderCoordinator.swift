@@ -30,13 +30,6 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   
   /// The time that the cpu started encoding the previous frame.
   private var previousFrameStartTime: Double = 0
-  /// A buffer used for sampling GPU counters.
-  private var gpuCounterBuffer: MTLCounterSampleBuffer?
-  
-  /// The callibration data used to convert the difference between two GPU timestamps to nanoseconds.
-  private var gpuTimeCallibrationFactor: Double
-  /// Whether GPU counters can be sampled at stage boundaries.
-  private var supportsStageBoundarySampling: Bool
   
   // MARK: Init
   
@@ -82,8 +75,6 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     } catch {
       fatalError("Failed to create depth state: \(error)")
     }
-    
-    gpuTimeCallibrationFactor = 0
     
     statistics = RenderStatistics(gpuCountersEnabled: false)
     
