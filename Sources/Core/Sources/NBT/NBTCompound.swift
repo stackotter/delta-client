@@ -5,8 +5,8 @@ public enum NBTError: LocalizedError {
   case invalidListType
   case invalidTagType
   case rootTagNotCompound
-  case failedToGetList
-  case failedToGetTag
+  case failedToGetList(String)
+  case failedToGetTag(String)
   case failedToOpenURL
 }
 
@@ -72,17 +72,17 @@ extension NBT {
     
     public func get<T>(_ key: String) throws -> T {
       guard let tag = tags[key]?.value as? T else {
-        throw NBTError.failedToGetTag
+        throw NBTError.failedToGetTag(key)
       }
       return tag
     }
     
     public func getList<T>(_ key: String) throws -> T {
       guard let nbtList = tags[key]!.value as? List else {
-        throw NBTError.failedToGetList
+        throw NBTError.failedToGetList(key)
       }
       guard let list = nbtList.list as? T else {
-        throw NBTError.failedToGetList
+        throw NBTError.failedToGetList(key)
       }
       return list
     }

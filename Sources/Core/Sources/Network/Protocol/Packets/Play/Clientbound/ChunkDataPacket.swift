@@ -1,6 +1,10 @@
 import Foundation
 import DeltaCoreC
 
+public enum ChunkDataError: LocalizedError {
+  case incompleteHeightMap(length: Int)
+}
+
 public struct ChunkDataPacket: ClientboundPacket {
   public static let id: Int = 0x21
   
@@ -21,52 +25,49 @@ public struct ChunkDataPacket: ClientboundPacket {
     let chunkX = Int(packetReader.readInt())
     let chunkZ = Int(packetReader.readInt())
     position = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
-    do {
-      fullChunk = packetReader.readBool()
-      ignoreOldData = packetReader.readBool()
-      primaryBitMask = packetReader.readVarInt()
-      
-      let heightMaps = try packetReader.readNBTCompound()
-      let heightMapCompact: [Int] = try heightMaps.get("WORLD_SURFACE")
-      let skyLightBlockingHeightMapCompact: [Int] = try heightMaps.get("MOTION_BLOCKING")
-      let heightMap = Self.unpackHeightMap(heightMapCompact)
-      let skyLightBlockingHeightMap = Self.unpackHeightMap(skyLightBlockingHeightMapCompact)
-      self.heightMap = HeightMap(heightMap: heightMap, skyLightBlockingHeightMap: skyLightBlockingHeightMap)
-      
-      biomeIds = []
-      if fullChunk {
-        // Biomes are stored as big endian ints but biome ids are never bigger than a UInt8, so it's easy to
-        let packedBiomes = packetReader.readByteArray(length: 1024 * 4)
-        for i in 0..<1024 {
-          biomeIds.append(packedBiomes[i * 4 + 3])
-        }
+    
+    fullChunk = packetReader.readBool()
+    ignoreOldData = packetReader.readBool()
+    primaryBitMask = packetReader.readVarInt()
+    
+    let heightMaps = try packetReader.readNBTCompound()
+    let heightMapCompact: [Int] = try heightMaps.get("MOTION_BLOCKING")
+    heightMap = try Self.unpackHeightMap(heightMapCompact)
+    
+    biomeIds = []
+    if fullChunk {
+      // Biomes are stored as big endian ints but biome ids are never bigger than a UInt8, so it's easy to
+      let packedBiomes = packetReader.readByteArray(length: 1024 * 4)
+      for i in 0..<1024 {
+        biomeIds.append(packedBiomes[i * 4 + 3])
       }
-      
-      _ = packetReader.readVarInt() // Data length (not used)
-      
-      sections = Self.readChunkSections(&packetReader, primaryBitMask: primaryBitMask)
-      
-      // Read block entities
-      let numBlockEntities = packetReader.readVarInt()
-      blockEntities = []
-      for _ in 0..<numBlockEntities {
+    }
+    
+    _ = packetReader.readVarInt() // Data length (not used)
+    
+    sections = Self.readChunkSections(&packetReader, primaryBitMask: primaryBitMask)
+    
+    // Read block entities
+    let numBlockEntities = packetReader.readVarInt()
+    blockEntities = []
+    for _ in 0..<numBlockEntities {
+      do {
         let blockEntityNBT = try packetReader.readNBTCompound()
-        do {
-          let x: Int = try blockEntityNBT.get("x")
-          let y: Int = try blockEntityNBT.get("y")
-          let z: Int = try blockEntityNBT.get("z")
-          let position = Position(x: x, y: y, z: z)
-          let identifierString: String = try blockEntityNBT.get("id")
-          let identifier = try Identifier(identifierString)
-          let blockEntity = BlockEntity(position: position, identifier: identifier, nbt: blockEntityNBT)
-          blockEntities.append(blockEntity)
-        } catch {
-          log.warning("Error decoding block entities: \(error)")
-        }
+        
+        let x: Int = try blockEntityNBT.get("x")
+        let y: Int = try blockEntityNBT.get("y")
+        let z: Int = try blockEntityNBT.get("z")
+        let position = Position(x: x, y: y, z: z)
+        
+        let identifierString: String = try blockEntityNBT.get("id")
+        let identifier = try Identifier(identifierString)
+        
+        let blockEntity = BlockEntity(position: position, identifier: identifier, nbt: blockEntityNBT)
+        
+        blockEntities.append(blockEntity)
+      } catch {
+        log.warning("Error decoding block entity: \(error)")
       }
-    } catch {
-      log.warning("Failed to unpack chunk: \(error)")
-      throw error
     }
   }
   
@@ -81,13 +82,7 @@ public struct ChunkDataPacket: ClientboundPacket {
   }
   
   /// Unpacks a heightmap in the format at https://wiki.vg/Chunk_Format. There are 256 values that are each 9 bits, compacted into longs.
-  ///
-  /// Pads incomplete heightmaps to a of 256 with -1s to always return an array of length 256. There are 7
-  /// values in each long. Least significant bits are first. Values are in order of increasing x and then increasing z.
-  /// The values are the y value of the heighest thing in the map plus 1 because otherwise an empty column would have
-  /// a value of -1 which is not possible in this format. This function subtracts 1 to make the heights correspond to the actual
-  /// heights of the blocks.
-  private static func unpackHeightMap(_ compact: [Int]) -> [Int] {
+  private static func unpackHeightMap(_ compact: [Int]) throws -> HeightMap {
     var output: [Int] = []
     let mask = 1 << 9 - 1
     for long in compact {
@@ -96,20 +91,12 @@ public struct ChunkDataPacket: ClientboundPacket {
         output.append(height - 1)
         
         if output.count == Chunk.blocksPerLayer {
-          return output
+          return HeightMap(heightMap: output)
         }
       }
     }
     
-    log.warning("Incomplete heightmap received, only \(output.count) values (expected \(Chunk.blocksPerLayer))")
-    
-    // TODO: this shouldn't be recovered from
-    
-    // Pad incomplete heightmap to recover
-    for _ in 0..<(Chunk.blocksPerLayer - output.count) {
-      output.append(-1)
-    }
-    return output
+    throw ChunkDataError.incompleteHeightMap(length: output.count)
   }
   
   /// Reads the chunk section data from the given packet. The bitmask contains which chunk sections are present.
