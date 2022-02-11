@@ -5,8 +5,8 @@ extension Block {
     public static var `default` = Shape(
       isDynamic: false,
       isLarge: false,
-      collisionShape: [],
-      outlineShape: [],
+      collisionShape: CompoundBoundingBox(),
+      outlineShape: CompoundBoundingBox(),
       occlusionShape: nil,
       isSturdy: nil)
     
@@ -14,10 +14,10 @@ extension Block {
     public var isDynamic: Bool
     /// Whether the collision shape is bigger than a block.
     public var isLarge: Bool
-    /// The bounding boxes to use as the collision shape for this block.
-    public var collisionShape: [AxisAlignedBoundingBox]
-    /// The bounding boxes that represent the outline to render for this block.
-    public var outlineShape: [AxisAlignedBoundingBox]
+    /// The shape to use as the collision shape for this block.
+    public var collisionShape: CompoundBoundingBox
+    /// The shape that represent the outline to render for this block.
+    public var outlineShape: CompoundBoundingBox
     
     /// The id of the shapes to use for occlusion. I don't really know how this works or why there are multiple.
     public var occlusionShapeIds: [Int]?
@@ -28,8 +28,8 @@ extension Block {
     public init(
       isDynamic: Bool,
       isLarge: Bool,
-      collisionShape: [AxisAlignedBoundingBox],
-      outlineShape: [AxisAlignedBoundingBox],
+      collisionShape: CompoundBoundingBox,
+      outlineShape: CompoundBoundingBox,
       occlusionShape: [Int]? = nil,
       isSturdy: [Bool]? = nil
     ) {

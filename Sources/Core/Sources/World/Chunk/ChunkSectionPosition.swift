@@ -1,4 +1,5 @@
 import Foundation
+import simd
 
 /// The position of a chunk section.
 public struct ChunkSectionPosition {
@@ -17,16 +18,16 @@ public struct ChunkSectionPosition {
   /// The axis aligned bounding box for this chunk section.
   public var axisAlignedBoundingBox: AxisAlignedBoundingBox {
     AxisAlignedBoundingBox(
-      position: [
-        Float(sectionX * Chunk.Section.width),
-        Float(sectionY * Chunk.Section.height),
-        Float(sectionZ * Chunk.Section.depth)
-      ],
-      size: [
-        Float(Chunk.Section.width),
-        Float(Chunk.Section.height),
-        Float(Chunk.Section.depth)
-      ])
+      position: SIMD3(
+        Double(sectionX * Chunk.Section.width),
+        Double(sectionY * Chunk.Section.height),
+        Double(sectionZ * Chunk.Section.depth)
+      ),
+      size: SIMD3(
+        Double(Chunk.Section.width),
+        Double(Chunk.Section.height),
+        Double(Chunk.Section.depth)
+      ))
   }
   
   /// Checks that the section's Y value is valid.

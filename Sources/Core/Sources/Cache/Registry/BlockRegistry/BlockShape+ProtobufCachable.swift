@@ -3,16 +3,16 @@ extension Block.Shape: ProtobufCachable {
     isDynamic = message.isDynamic
     isLarge = message.isLarge
     
-    collisionShape = []
-    collisionShape.reserveCapacity(message.collisionShape.count)
+    collisionShape = CompoundBoundingBox()
+    collisionShape.aabbs.reserveCapacity(message.collisionShape.count)
     for aabb in message.collisionShape {
-      collisionShape.append(AxisAlignedBoundingBox(from: aabb))
+      collisionShape.addAABB(AxisAlignedBoundingBox(from: aabb))
     }
     
-    outlineShape = []
-    outlineShape.reserveCapacity(message.outlineShape.count)
+    outlineShape = CompoundBoundingBox()
+    outlineShape.aabbs.reserveCapacity(message.outlineShape.count)
     for aabb in message.outlineShape {
-      outlineShape.append(AxisAlignedBoundingBox(from: aabb))
+      outlineShape.addAABB(AxisAlignedBoundingBox(from: aabb))
     }
     
     if message.hasOcclusionShapeIds {
@@ -34,13 +34,13 @@ extension Block.Shape: ProtobufCachable {
     message.isDynamic = isDynamic
     message.isLarge = isLarge
     
-    message.collisionShape.reserveCapacity(collisionShape.count)
-    for aabb in collisionShape {
+    message.collisionShape.reserveCapacity(collisionShape.aabbs.count)
+    for aabb in collisionShape.aabbs {
       message.collisionShape.append(aabb.cached())
     }
     
-    message.outlineShape.reserveCapacity(outlineShape.count)
-    for aabb in outlineShape {
+    message.outlineShape.reserveCapacity(outlineShape.aabbs.count)
+    for aabb in outlineShape.aabbs {
       message.outlineShape.append(aabb.cached())
     }
     
