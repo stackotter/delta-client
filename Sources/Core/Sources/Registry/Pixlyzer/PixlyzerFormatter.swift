@@ -5,7 +5,7 @@ public enum PixlyzerError: LocalizedError {
   /// The block with the specified id is missing.
   case missingBlock(Int)
   /// An AABB's vertex is of invalid length.
-  case invalidAABBVertex([Float])
+  case invalidAABBVertex([Double])
   /// The entity registry does not contain the player entity.
   case entityRegistryMissingPlayer
   /// The string could not be converted to data using UTF8.

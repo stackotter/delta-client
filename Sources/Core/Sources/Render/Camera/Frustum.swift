@@ -4,21 +4,21 @@ import simd
 // method from: http://web.archive.org/web/20120531231005/http://crazyjoke.free.fr/doc/3D/plane%20extraction.pdf
 public struct Frustum {
   public var worldToClip: matrix_float4x4
-  public var left: SIMD4<Float>
-  public var right: SIMD4<Float>
-  public var top: SIMD4<Float>
-  public var bottom: SIMD4<Float>
-  public var near: SIMD4<Float>
-  public var far: SIMD4<Float>
+  public var left: SIMD4<Double>
+  public var right: SIMD4<Double>
+  public var top: SIMD4<Double>
+  public var bottom: SIMD4<Double>
+  public var near: SIMD4<Double>
+  public var far: SIMD4<Double>
   
   public init(worldToClip: matrix_float4x4) {
     self.worldToClip = worldToClip
-    left = worldToClip.columns.3 + worldToClip.columns.0
-    right = worldToClip.columns.3 - worldToClip.columns.0
-    bottom = worldToClip.columns.3 + worldToClip.columns.1
-    top = worldToClip.columns.3 - worldToClip.columns.1
-    near = worldToClip.columns.2
-    far = worldToClip.columns.3 - worldToClip.columns.2
+    left = SIMD4<Double>(worldToClip.columns.3 + worldToClip.columns.0)
+    right = SIMD4<Double>(worldToClip.columns.3 - worldToClip.columns.0)
+    bottom = SIMD4<Double>(worldToClip.columns.3 + worldToClip.columns.1)
+    top = SIMD4<Double>(worldToClip.columns.3 - worldToClip.columns.1)
+    near = SIMD4<Double>(worldToClip.columns.2)
+    far = SIMD4<Double>(worldToClip.columns.3 - worldToClip.columns.2)
   }
   
   public func approximatelyContains(_ boundingBox: AxisAlignedBoundingBox) -> Bool {
