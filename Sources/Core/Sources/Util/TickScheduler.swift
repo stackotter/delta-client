@@ -62,7 +62,7 @@ public final class TickScheduler {
   /// Run all of the systems.
   private func tick() {
     nexusLock.acquireWriteLock()
-    nexusLock.unlock()
+    defer { nexusLock.unlock() }
     for system in systems {
       system.update(nexus)
     }
