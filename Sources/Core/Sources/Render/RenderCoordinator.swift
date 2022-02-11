@@ -215,8 +215,29 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       var eyePosition = SIMD3<Float>(player.position.smoothVector)
       eyePosition.y += 1.625 // TODO: don't hardcode this, use the player's eye height
       
-      camera.setPosition(eyePosition)
-      camera.setRotation(playerLook: player.rotation)
+      var cameraPosition = SIMD3<Float>(repeating: 0)
+      
+      var pitch = player.rotation.pitch
+      var yaw = player.rotation.yaw
+      
+      switch player.camera.perspective {
+        case .thirdPersonRear:
+          cameraPosition.z += 3
+          cameraPosition = simd_make_float3(SIMD4(cameraPosition, 1) * MatrixUtil.rotationMatrix(x: pitch) * MatrixUtil.rotationMatrix(y: Float.pi + yaw))
+          cameraPosition += eyePosition
+        case .thirdPersonFront:
+          pitch = -pitch
+          yaw += Float.pi
+          
+          cameraPosition.z += 3
+          cameraPosition = simd_make_float3(SIMD4(cameraPosition, 1) * MatrixUtil.rotationMatrix(x: pitch) * MatrixUtil.rotationMatrix(y: Float.pi + yaw))
+          cameraPosition += eyePosition
+        case .firstPerson:
+          cameraPosition = eyePosition
+      }
+      
+      camera.setPosition(cameraPosition)
+      camera.setRotation(xRot: pitch, yRot: yaw)
     }
     
     camera.cacheFrustum()

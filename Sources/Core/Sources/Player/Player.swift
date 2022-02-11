@@ -25,6 +25,8 @@ public struct Player {
   public private(set) var hitBox: EntityHitBox
   /// The component storing the player's rotation.
   public private(set) var rotation: EntityRotation
+  /// The component storing the player's camera properties (does not include any settings such as fov that affect all entities).
+  public private(set) var camera: EntityCamera
   /// The component storing the player's miscellaneous attributes.
   public private(set) var attributes: PlayerAttributes
   /// The component storing the player's gamemode related information.
@@ -48,6 +50,7 @@ public struct Player {
     health = EntityHealth()
     nutrition = EntityNutrition()
     attributes = PlayerAttributes()
+    camera = EntityCamera()
     gamemode = PlayerGamemode()
     inventory = PlayerInventory()
     input = PlayerInput()
@@ -72,6 +75,7 @@ public struct Player {
       health
       nutrition
       attributes
+      camera
       gamemode
       inventory
       input
@@ -95,6 +99,9 @@ public struct Player {
     switch event {
       case let .press(input):
         self.input.inputs.insert(input)
+        if input == .changePerspective {
+          camera.cyclePerspective()
+        }
       case let .release(input):
         self.input.inputs.remove(input)
     }

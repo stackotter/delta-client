@@ -11,6 +11,7 @@ public enum Input: Codable, CaseIterable {
   case sprint
   
   case toggleDebugHUD
+  case changePerspective
   
   public var humanReadableLabel: String {
     switch self {
@@ -32,6 +33,8 @@ public enum Input: Codable, CaseIterable {
         
       case .toggleDebugHUD:
         return "Toggle debug HUD"
+      case .changePerspective:
+        return "Change Perspective"
     }
   }
 }
