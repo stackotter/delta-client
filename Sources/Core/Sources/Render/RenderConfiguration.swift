@@ -4,7 +4,7 @@ public struct RenderConfiguration: Codable {
   public var fovY: Float
   /// The furthest distance that chunks should be rendered at.
   ///
-  /// The distance between a chunk and the camera is measure like so:
+  /// The distance between a chunk and the camera is measured like so:
   /// ```swift
   /// let difference = chunk - cameraChunk
   /// let distance = max(difference.x, difference.z)

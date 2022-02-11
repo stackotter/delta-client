@@ -159,7 +159,7 @@ public struct Game {
   }
   
   /// Allows thread safe access to the player.
-  /// - Parameter action: The actin to perform on the player.
+  /// - Parameter action: The action to perform on the player.
   public mutating func accessPlayer(action: (inout Player) -> Void) {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
