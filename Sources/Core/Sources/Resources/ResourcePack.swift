@@ -202,49 +202,73 @@ public struct ResourcePack {
   
   // MARK: Download
   
+  /// Tasks to be exectued during the `downloadVanillaAssets` process
+  private enum DownloadStep: CaseIterable, TaskStep {
+    case fetchManifest, downloadJar, extractJar, copyingAssets, creatingMcmeta
+    
+    public var relativeDuration: Double { 1 }
+    
+    public var message: String {
+      switch self {
+        case .fetchManifest: return "Fetching version manifest"
+        case .downloadJar: return "Downloading client jar"
+        case .extractJar: return "Extracting client jar"
+        case .copyingAssets: return "Copying assets"
+        case .creatingMcmeta: return "Creating pack.mcmeta"
+      }
+    }
+  }
+  
   /// Downloads the vanilla client and extracts its assets (textures, block models, etc.).
-  public static func downloadVanillaAssets(forVersion version: String, to directory: URL) throws {
+  public static func downloadVanillaAssets(forVersion version: String, to directory: URL, _ onProgress: ((Double, String) -> Void)?) throws {
+    var progress = TaskProgress<DownloadStep>()
+    
+    func updateProgressStatus(step: DownloadStep) {
+      progress.update(to: step)
+      log.info(progress.message)
+      onProgress?(progress.progress, progress.message)
+    }
     // Get the url for the client jar
-    log.info("Fetching version manifest for '\(version)'")
+    updateProgressStatus(step: .fetchManifest)
     let versionManifest = try getVersionManifest(for: version)
     let clientJarURL = versionManifest.downloads.client.url
     
     // Download the client jar
-    log.info("Downloading client jar")
+    updateProgressStatus(step: .downloadJar)
     let temporaryDirectory = FileManager.default.temporaryDirectory
     let clientJarTempFile = temporaryDirectory.appendingPathComponent("client.jar")
     do {
       let data = try Data(contentsOf: clientJarURL)
       try data.write(to: clientJarTempFile)
     } catch {
-      log.error("Failed to download client jar: \(error.localizedDescription)")
+      log.error("Failed to download client jar: \(error)")
       throw ResourcePackError.clientJarDownloadFailure
     }
     
     // Extract the contents of the client jar (jar files are just zip archives)
-    log.info("Extracting client jar")
+    updateProgressStatus(step: .extractJar)
     let extractedClientJarDirectory = temporaryDirectory.appendingPathComponent("client", isDirectory: true)
     try? FileManager.default.removeItem(at: extractedClientJarDirectory)
     do {
       try FileManager.default.unzipItem(at: clientJarTempFile, to: extractedClientJarDirectory, skipCRC32: true)
     } catch {
-      log.error("Failed to extract client jar: \(error.localizedDescription)")
+      log.error("Failed to extract client jar: \(error)")
       throw ResourcePackError.clientJarExtractionFailure
     }
     
     // Copy the assets from the extracted client jar to application support
-    log.info("Copying assets")
+    updateProgressStatus(step: .copyingAssets)
     do {
       try FileManager.default.copyItem(
         at: extractedClientJarDirectory.appendingPathComponent("assets"),
         to: directory)
     } catch {
-      log.error("Failed to copy assets from extracted client jar: \(error.localizedDescription)")
+      log.error("Failed to copy assets from extracted client jar: \(error)")
       throw ResourcePackError.assetCopyFailure
     }
     
     // Create a default pack.mcmeta for it
-    log.info("Creating pack.mcmeta")
+    updateProgressStatus(step: .creatingMcmeta)
     let contents = #"{"pack": {"pack_format": 5, "description": "The default vanilla assets"}}"#
     guard let data = contents.data(using: .utf8) else {
       throw ResourcePackError.failedToCreatePackMCMetaData

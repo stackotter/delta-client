@@ -13,12 +13,19 @@ struct ServerDetail: View {
       Text(descriptor.description)
         .padding(.bottom, 8)
       
-      if let result = pinger.pingResult {
+      if let result = pinger.response {
         switch result {
-          case let .success(info):
-            Text(verbatim: "\(info.numPlayers)/\(info.maxPlayers) online")
-            Text("version: \(info.versionName) \(info.protocolVersion == Constants.protocolVersion ? "" : "(incompatible)")")
+          case let .success(response):
+            LegacyFormattedText(legacyString: "\(response.description.text)", fontSize: NSFont.systemFontSize(for: .regular), alignment: .right)
               .padding(.bottom, 8)
+            
+            Text(verbatim: "\(response.players.online)/\(response.players.max) online")
+            
+            LegacyFormattedText(
+              legacyString: "Version: \(response.version.name) \(response.version.protocolVersion == Constants.protocolVersion ? "" : "(incompatible)")",
+              fontSize: NSFont.systemFontSize(for: .regular),
+              alignment: .center
+            ).padding(.bottom, 8)
             
             Button("Play") {
               appState.update(to: .playServer(descriptor))
@@ -26,7 +33,7 @@ struct ServerDetail: View {
               .buttonStyle(PrimaryButtonStyle())
               .frame(width: 150)
           case let .failure(error):
-            Text("Connection failed: \(error.localizedDescription)")
+            Text(String("Connection failed: \(error)"))
               .padding(.bottom, 8)
             Button("Play") { }
               .buttonStyle(DisabledButtonStyle())

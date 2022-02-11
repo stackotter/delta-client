@@ -8,7 +8,7 @@ struct GitHubWorkflowAPIResponse: Codable {
     var headBranch: String
     var headSha: String
     var status: String
-    var conclusion: String
+    var conclusion: String?
     var event: String
     var artifactsUrl: URL
     var checkSuiteId: Int

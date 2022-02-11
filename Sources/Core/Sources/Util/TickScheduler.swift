@@ -62,7 +62,7 @@ public final class TickScheduler {
   /// Run all of the systems.
   private func tick() {
     nexusLock.acquireWriteLock()
-    nexusLock.unlock()
+    defer { nexusLock.unlock() }
     for system in systems {
       system.update(nexus)
     }
@@ -73,13 +73,13 @@ public final class TickScheduler {
   
   private func configureThread() {
     mach_timebase_info(&timebaseInfo)
-    let clock2abs = Double(timebaseInfo.denom) / Double(timebaseInfo.numer) * Double(NSEC_PER_SEC)
+    let clockToAbs = Double(timebaseInfo.denom) / Double(timebaseInfo.numer) * Double(NSEC_PER_SEC)
     
-    let period      = UInt32(0.00 * clock2abs) // TODO: figure out what these three parameters do so that they can be optimised
-    let computation = UInt32(1 / ticksPerSecond * clock2abs) // TODO: adjust according to how strenuous ticks end up being
-    let constraint  = UInt32(1 / ticksPerSecond * clock2abs)
+    let period = UInt32(0.00 * clockToAbs)
+    let computation = UInt32(1 / ticksPerSecond * clockToAbs)
+    let constraint = UInt32(1 / ticksPerSecond * clockToAbs)
     
-    let THREAD_TIME_CONSTRAINT_POLICY_COUNT = mach_msg_type_number_t(MemoryLayout<thread_time_constraint_policy>.size / MemoryLayout<integer_t>.size)
+    let threadTimeConstraintPolicyCount = mach_msg_type_number_t(MemoryLayout<thread_time_constraint_policy>.size / MemoryLayout<integer_t>.size)
     
     var policy = thread_time_constraint_policy()
     var ret: Int32
@@ -91,8 +91,8 @@ public final class TickScheduler {
     policy.preemptible = 0
     
     ret = withUnsafeMutablePointer(to: &policy) {
-      $0.withMemoryRebound(to: integer_t.self, capacity: Int(THREAD_TIME_CONSTRAINT_POLICY_COUNT)) {
-        thread_policy_set(thread, UInt32(THREAD_TIME_CONSTRAINT_POLICY), $0, THREAD_TIME_CONSTRAINT_POLICY_COUNT)
+      $0.withMemoryRebound(to: integer_t.self, capacity: Int(threadTimeConstraintPolicyCount)) {
+        thread_policy_set(thread, UInt32(THREAD_TIME_CONSTRAINT_POLICY), $0, threadTimeConstraintPolicyCount)
       }
     }
     
@@ -100,6 +100,8 @@ public final class TickScheduler {
       mach_error("thread_policy_set:", ret)
       exit(1)
     }
+    
+    // TODO: properly handle error
   }
   
   private func nanosToAbs(_ nanos: UInt64) -> UInt64 {

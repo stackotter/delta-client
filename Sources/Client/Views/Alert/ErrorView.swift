@@ -9,7 +9,11 @@ struct ErrorView: View {
   
   var body: some View {
     VStack {
-      Text(message)
+      if message.contains("§") {
+        LegacyFormattedText(legacyString: message, fontSize: NSFont.systemFontSize(for: .regular))
+      } else {
+        Text(message)
+      }
       Button("OK") {
         if let nextState = safeState {
           appState.update(to: nextState)

@@ -2,14 +2,7 @@
 
 import PackageDescription
 
-let package = Package(
-  name: "DeltaCore",
-  platforms: [.macOS(.v11)],
-  products: [
-    .library(name: "DeltaCore", type: .dynamic, targets: ["DeltaCore", "DeltaCoreC"]),
-    .library(name: "StaticDeltaCore", type: .static, targets: ["DeltaCore", "DeltaCoreC"]),
-  ],
-  dependencies: [
+var dependencies: [Package.Dependency] = [
     .package(name: "ZIPFoundation", url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.0"),
     .package(name: "IDZSwiftCommonCrypto", url: "https://github.com/iosdevzone/IDZSwiftCommonCrypto", from: "0.13.1"),
     .package(name: "DeltaLogger", url: "https://github.com/stackotter/delta-logger", .branch("main")),
@@ -19,7 +12,21 @@ let package = Package(
     .package(name: "Concurrency", url: "https://github.com/uber/swift-concurrency.git", from: "0.7.1"),
     .package(name: "FirebladeECS", url: "https://github.com/fireblade-engine/ecs.git", from: "0.17.5"),
     .package(name: "ZippyJSON", url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
+]
+
+#if swift(>=5.6)
+// Add linter if swift version is high enough
+dependencies.append(.package(url: "https://github.com/stackotter/swift-lint-plugin", branch: "main"))
+#endif
+
+let package = Package(
+  name: "DeltaCore",
+  platforms: [.macOS(.v11)],
+  products: [
+    .library(name: "DeltaCore", type: .dynamic, targets: ["DeltaCore", "DeltaCoreC"]),
+    .library(name: "StaticDeltaCore", type: .static, targets: ["DeltaCore", "DeltaCoreC"]),
   ],
+  dependencies: dependencies,
   targets: [
     .target(
       name: "DeltaCore",

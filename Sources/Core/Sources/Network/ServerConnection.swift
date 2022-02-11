@@ -128,8 +128,8 @@ public class ServerConnection {
         }
       } catch {
         self.close()
-        self.eventBus.dispatch(PacketDecodingErrorEvent(packetId: packetReader.packetId, error: "\(error.localizedDescription)"))
-        log.warning("Failed to decode packet with id \(String(packetReader.packetId, radix: 16)): \(error.localizedDescription)")
+        self.eventBus.dispatch(PacketDecodingErrorEvent(packetId: packetReader.packetId, error: "\(error)"))
+        log.warning("Failed to decode packet with id \(String(packetReader.packetId, radix: 16)): \(error)")
       }
     }
   }

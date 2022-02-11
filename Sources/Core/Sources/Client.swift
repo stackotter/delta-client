@@ -1,9 +1,13 @@
 import Foundation
 
+// TODO: Make client actually Sendable
+
 /// A client creates and maintains a connection to a server and handles the received packets.
-public final class Client {
+public final class Client: @unchecked Sendable {
+  // MARK: Public properties
+  
   /// The resource pack to use.
-  public var resourcePack: ResourcePack
+  public let resourcePack: ResourcePack
   /// The account this client uses to join servers.
   public var account: Account?
   
@@ -41,7 +45,10 @@ public final class Client {
     
     // Create a connection to the server
     let connection = ServerConnection(descriptor: descriptor, locale: resourcePack.getDefaultLocale(), eventBus: eventBus)
-    connection.setPacketHandler(handlePacket(_:))
+    connection.setPacketHandler { [weak self] packet in
+      guard let self = self else { return }
+      self.handlePacket(packet)
+    }
     try connection.login(username: account.username)
     self.connection = connection
   }
@@ -70,8 +77,8 @@ public final class Client {
       try packet.handle(for: self)
     } catch {
       disconnect()
-      log.error("Failed to handle packet: \(error.localizedDescription)")
-      eventBus.dispatch(PacketHandlingErrorEvent(packetId: type(of: packet).id, error: "\(error.localizedDescription)"))
+      log.error("Failed to handle packet: \(error)")
+      eventBus.dispatch(PacketHandlingErrorEvent(packetId: type(of: packet).id, error: "\(error)"))
     }
   }
   

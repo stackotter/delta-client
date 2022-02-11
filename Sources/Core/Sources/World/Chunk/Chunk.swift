@@ -385,16 +385,16 @@ public final class Chunk {
   /// - Parameters:
   ///   - x: x coordinate of column.
   ///   - z: z coordinate of column.
-  /// - Returns: Height of the highest block in the specified colum that blocks light. Returns 0 if `x` or `z` are out of bounds.
+  /// - Returns: Height of the highest block in the specified column that blocks light. Returns -1 if `x` or `z` are out of bounds or if the column is fully transparent.
   public func highestLightBlockingBlock(atX x: Int, andZ z: Int, acquireLock: Bool = true) -> Int {
     guard x >= 0, x < Self.width, z >= 0, z < Self.depth else {
-      return 0
+      return -1
     }
     
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
     
-    return heightMap.getHighestLightBlocking(x, z)
+    return heightMap.getHighestLightBlockingBlock(x, z)
   }
   
   /// Gets the chunk's height map.

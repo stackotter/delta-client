@@ -8,14 +8,21 @@ final class InputDelegateWrapper {
   }
 }
 
+final class InputViewModel {
+  var monitorsAdded = false
+  var previousModifierFlags: NSEvent.ModifierFlags?
+  
+  init() {}
+}
+
 struct InputView<Content: View>: View {
   private var delegateWrapper = InputDelegateWrapper(nil)
   private var content: (_ enabled: Binding<Bool>, _ setDelegate: (InputDelegate) -> Void) -> Content
-  @State private var previousModifierFlags: NSEvent.ModifierFlags?
-  @State private var monitorsAdded = false
   
   /// Whether or not this view is intercepting input events. Defaults to false.
   @State private var enabled = false
+  
+  private var model = InputViewModel()
   
   init(@ViewBuilder _ content: @escaping (_ enabled: Binding<Bool>, _ setDelegate: (InputDelegate) -> Void) -> Content) {
     self.content = content
@@ -30,7 +37,7 @@ struct InputView<Content: View>: View {
       .frame(maxWidth: .infinity, maxHeight: .infinity)
       .onAppear {
         #if os(macOS)
-        if !monitorsAdded {
+        if !model.monitorsAdded {
           NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged], handler: { event in
             if !enabled {
               return event
@@ -78,7 +85,7 @@ struct InputView<Content: View>: View {
             }
             
             let raw = Int32(event.modifierFlags.rawValue)
-            let previousRaw = Int32(previousModifierFlags?.rawValue ?? 0)
+            let previousRaw = Int32(model.previousModifierFlags?.rawValue ?? 0)
             
             if raw & NX_DEVICELALTKEYMASK != 0 && previousRaw & NX_DEVICELALTKEYMASK == 0 {
               delegateWrapper.delegate?.onKeyDown(.leftOption)
@@ -128,12 +135,12 @@ struct InputView<Content: View>: View {
               delegateWrapper.delegate?.onKeyUp(.rightShift)
             }
             
-            previousModifierFlags = event.modifierFlags
+            model.previousModifierFlags = event.modifierFlags
             
             return event
           })
         }
-        monitorsAdded = true
+        model.monitorsAdded = true
         #endif
       }
   }

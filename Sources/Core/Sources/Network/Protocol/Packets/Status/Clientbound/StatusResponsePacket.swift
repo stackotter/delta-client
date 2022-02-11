@@ -3,38 +3,22 @@ import Foundation
 public struct StatusResponsePacket: ClientboundPacket {
   public static let id: Int = 0x00
   
-  public var json: JSON
+  public var response: StatusResponse
   
   public init(from packetReader: inout PacketReader) throws {
-    json = try packetReader.readJSON()
-  }
-  
-  public func handle(for pinger: Pinger) {
-    guard
-      let versionInfo = json.getJSON(forKey: "version"),
-      let versionName = versionInfo.getString(forKey: "name"),
-      let protocolVersion = versionInfo.getInt(forKey: "protocol"),
-      let players = json.getJSON(forKey: "players"),
-      let maxPlayers = players.getInt(forKey: "max"),
-      let numPlayers = players.getInt(forKey: "online")
-    else {
-      log.warning("failed to parse status response json")
-      return
+    let json = try packetReader.readString()
+    
+    guard let data = json.data(using: .utf8) else {
+      throw ClientboundPacketError.invalidJSONString
     }
     
-    // TODO: use a Codable struct instead of custom guard statement
-    
-    let pingInfo = PingInfo(
-      versionName: versionName,
-      protocolVersion: protocolVersion,
-      maxPlayers: maxPlayers,
-      numPlayers: numPlayers,
-      description: "Ping Complete", // TODO: decode server description chat component
-      modInfo: "")
-    
+    response = try JSONDecoder().decode(StatusResponse.self, from: data)
+  }
+  
+  public func handle(for pinger: Pinger) throws {
     ThreadUtil.runInMain {
-      log.debug("Received ping response from \(pinger.connection?.socketAddress ?? "Unknown??")")
-      pinger.pingResult = Result.success(pingInfo)
+      log.debug("Received ping response from \(pinger.descriptor.description)")
+      pinger.response = Result.success(response)
       pinger.closeConnection()
     }
   }

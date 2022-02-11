@@ -33,39 +33,78 @@ struct DeltaClientApp: App {
 
     // Load plugins, registries and resources
     taskQueue.async {
-      func updateLoadingMessage(_ message: String) {
-        Self.loadingState.update(to: .loadingWithMessage(message))
-        log.info(message)
+      var startupProgress = TaskProgress<StartupStep>()
+      
+      func updateLoadingState(step: StartupStep, message: String? = nil, taskProgress: Double = 1) {
+        let secretMessages: [String] = ["Frying eggs", "Baking cookies", "Planting trees", "Filling up oceans", "Brewing beer", "Painting clouds", "Dreaming of ancient worlds"]
+        let shouldShowSecretMessage = Double.random(in: 0...1) <= 0.05
+        
+        let loadingMessage: String
+        if shouldShowSecretMessage {
+          loadingMessage = secretMessages.randomElement() ?? step.message
+        } else if let message = message {
+          loadingMessage = message
+        } else {
+          loadingMessage = step.message
+        }
+        
+        startupProgress.update(to: step, stepProgress: taskProgress)
+        
+        Self.loadingState.update(to: .loadingWithMessage(
+          loadingMessage,
+          progress: startupProgress.progress)
+        )
+        
+        log.info(step.message)
       }
       
       do {
         let start = CFAbsoluteTimeGetCurrent()
         
+        // Refresh accounts if they're close to expiring (expire in the next 3 hours)
+        for account in ConfigManager.default.config.accounts.values {
+          guard let expiry = account.online?.accessToken.expiry else {
+            continue
+          }
+          
+          if expiry - Int(CFAbsoluteTimeGetCurrent()) < 10800 {
+            Task {
+              var account = account
+              try? await account.refreshIfExpired(withClientToken: ConfigManager.default.config.clientToken)
+              ConfigManager.default.addAccount(account)
+            }
+          }
+        }
+        
         // Load plugins first
-        updateLoadingMessage("Loading plugins")
+        updateLoadingState(step: .loadPlugins)
         do {
           try Self.pluginEnvironment.loadPlugins(
             from: StorageManager.default.pluginsDirectory,
             excluding: ConfigManager.default.config.unloadedPlugins)
           for (bundle, error) in Self.pluginEnvironment.errors {
-            log.error("Error occured when loading plugin '\(bundle)': \(error.localizedDescription)")
+            log.error("Error occured when loading plugin '\(bundle)': \(error)")
           }
         } catch {
-          Self.modalError("Error occurred during plugin loading, no plugins will be available: \(error.localizedDescription)")
+          Self.modalError("Error occurred during plugin loading, no plugins will be available: \(error)")
         }
         
         // Download vanilla assets if they haven't already been downloaded
         if !StorageManager.default.directoryExists(at: StorageManager.default.vanillaAssetsDirectory) {
-          updateLoadingMessage("Downloading vanilla assets (might take a little while)")
-          try ResourcePack.downloadVanillaAssets(forVersion: Constants.versionString, to: StorageManager.default.vanillaAssetsDirectory)
+          updateLoadingState(step: .downloadAssets)
+          try ResourcePack.downloadVanillaAssets(forVersion: Constants.versionString, to: StorageManager.default.vanillaAssetsDirectory) { progress, message in
+            updateLoadingState(step: .downloadAssets, message: message, taskProgress: progress)
+          }
         }
         
         // Load registries
-        updateLoadingMessage("Loading registries")
-        try RegistryStore.populateShared(StorageManager.default.registryDirectory)
+        updateLoadingState(step: .loadRegistries)
+        try RegistryStore.populateShared(StorageManager.default.registryDirectory) { progress, message in
+          updateLoadingState(step: .loadRegistries, message: message, taskProgress: progress)
+        }
         
         // Load resource pack and cache it if necessary
-        updateLoadingMessage("Loading resource pack")
+        updateLoadingState(step: .loadResourcePacks)
         let packCache = StorageManager.default.cacheDirectory.appendingPathComponent("vanilla.rpcache/")
         var cacheExists = StorageManager.default.directoryExists(at: packCache)
         let resourcePack = try ResourcePack.load(from: StorageManager.default.vanillaAssetsDirectory, cacheDirectory: cacheExists ? packCache : nil)
@@ -78,6 +117,8 @@ struct DeltaClientApp: App {
           }
         }
         
+        updateLoadingState(step: .finish)
+        
         // Get user to login if they haven't already
         if ConfigManager.default.config.accounts.isEmpty {
           Self.appState.update(to: .login)
@@ -85,11 +126,11 @@ struct DeltaClientApp: App {
         
         // Finish loading
         let elapsedMilliseconds = (CFAbsoluteTimeGetCurrent() - start) * 1000
-        let elapsedString = String(format: "%.2f", elapsedMilliseconds)
-        log.info("Done (\(elapsedString)ms)")
+        log.info(String(format: "Done (%.2fms)", elapsedMilliseconds))
+        
         Self.loadingState.update(to: .done(LoadedResources(resourcePack: resourcePack)))
       } catch {
-        Self.loadingState.update(to: .error("Failed to load: \(error.localizedDescription)"))
+        Self.loadingState.update(to: .error("Failed to load: \(error)"))
       }
     }
   }

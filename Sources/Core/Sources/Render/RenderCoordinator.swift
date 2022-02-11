@@ -35,6 +35,8 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   
   /// The callibration data used to convert the difference between two GPU timestamps to nanoseconds.
   private var gpuTimeCallibrationFactor: Double
+  /// Whether GPU counters can be sampled at stage boundaries.
+  private var supportsStageBoundarySampling: Bool
   
   // MARK: Init
   
@@ -58,27 +60,27 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     do {
       camera = try Camera(device)
     } catch {
-      fatalError("Failed to create camera: \(error.localizedDescription)")
+      fatalError("Failed to create camera: \(error)")
     }
     
     // Create world renderer
     do {
       worldRenderer = try WorldRenderer(client: client, device: device, commandQueue: commandQueue)
     } catch {
-      fatalError("Failed to create world renderer: \(error.localizedDescription)")
+      fatalError("Failed to create world renderer: \(error)")
     }
     
     do {
       entityRenderer = try EntityRenderer(client: client, device: device, commandQueue: commandQueue)
     } catch {
-      fatalError("Failed to create entity renderer: \(error.localizedDescription)")
+      fatalError("Failed to create entity renderer: \(error)")
     }
     
     // Create depth stencil state
     do {
       depthState = try MetalUtil.createDepthState(device: device)
     } catch {
-      fatalError("Failed to create depth state: \(error.localizedDescription)")
+      fatalError("Failed to create depth state: \(error)")
     }
     
     gpuTimeCallibrationFactor = 0
@@ -137,7 +139,6 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       ))
       return
     }
-    
     stopwatch.stopMeasurement("Create render encoder")
     
     // Configure the render encoder

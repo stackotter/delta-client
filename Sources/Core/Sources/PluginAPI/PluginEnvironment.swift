@@ -36,6 +36,9 @@ public class PluginEnvironment: ObservableObject {
   public func loadPlugins(from directory: URL, excluding excludedIdentifiers: [String] = []) throws {
     let contents = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil, options: [])
     for file in contents where file.pathExtension == "deltaplugin" {
+      if plugins.values.contains(where: { $0.1 == file }) {
+        continue
+      }
       do {
         let manifest = try loadPluginManifest(file)
         if excludedIdentifiers.contains(manifest.identifier) || unloadedPlugins.keys.contains(manifest.identifier) {

@@ -1,23 +1,18 @@
 import Foundation
 
-public struct MojangAccount: Account {
+/// A user account that authenticates using the old Mojang method.
+public struct MojangAccount: Codable, OnlineAccount {
   public var id: String
-  public var profileId: String
   public var username: String
-  public var email: String
-  public var accessToken: String
+  public var accessToken: MinecraftAccessToken
   
   public init(
     id: String,
-    profileId: String,
-    name: String,
-    email: String,
-    accessToken: String
+    username: String,
+    accessToken: MinecraftAccessToken
   ) {
     self.id = id
-    self.profileId = profileId
-    self.username = name
-    self.email = email
+    self.username = username
     self.accessToken = accessToken
   }
 }

@@ -6,11 +6,11 @@ struct ServerListItem: View {
   
   var indicatorColor: SwiftUI.Color {
     let color: SwiftUI.Color
-    if let result = pinger.pingResult {
+    if let result = pinger.response {
       switch result {
-        case let .success(info):
+        case let .success(response):
           // Ping succeeded
-          let isCompatible = info.protocolVersion == Constants.protocolVersion
+          let isCompatible = response.version.protocolVersion == Constants.protocolVersion
           color = isCompatible ? .green : .yellow
         case .failure:
           // Connection failed
