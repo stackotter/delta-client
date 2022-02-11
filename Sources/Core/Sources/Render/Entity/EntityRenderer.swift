@@ -82,9 +82,9 @@ public struct EntityRenderer: Renderer {
       
       // Create uniforms for each entity
       for (position, hitBox) in entities {
-        let size = hitBox.size
+        let size = SIMD3<Float>(hitBox.size)
         var position = SIMD3<Float>(position.smoothVector)
-        position -= SIMD3<Float>(hitBox.width, 0, hitBox.width) * 0.5
+        position -= SIMD3<Float>(SIMD3<Double>(hitBox.width, 0, hitBox.width)) * 0.5
         
         // Don't render entities that are outside of the render distance
         let chunkPosition = EntityPosition(SIMD3<Double>(position)).chunk

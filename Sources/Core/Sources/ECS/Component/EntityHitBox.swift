@@ -5,18 +5,31 @@ import FirebladeECS
 /// Entity hit boxes are axis aligned and their width and depth are always equal (``width``).
 public class EntityHitBox: Component {
   /// The width (and depth) of the entity's hit box.
-  public var width: Float
+  public var width: Double
   /// The height of the entity's hit box.
-  public var height: Float
+  public var height: Double
   
   /// The size of the hit box as a vector.
-  public var size: SIMD3<Float> {
+  public var size: SIMD3<Double> {
     SIMD3(width, height, width)
   }
   
   /// Creates a new hit box component.
-  public init(width: Float, height: Float) {
+  public init(width: Double, height: Double) {
     self.width = width
     self.height = height
+  }
+  
+  /// Creates a new hit box component.
+  public init(width: Float, height: Float) {
+    self.width = Double(width)
+    self.height = Double(height)
+  }
+  
+  /// The bounding box for this hitbox if it was at the given position.
+  /// - Parameter position: The position of the hitbox.
+  /// - Returns: A bounding box with the same size as the hitbox and the given position.
+  public func aabb(at position: SIMD3<Double>) -> AxisAlignedBoundingBox {
+    return AxisAlignedBoundingBox(position: position, size: size)
   }
 }

@@ -3,23 +3,14 @@ import simd
 
 /// A block position.
 public struct BlockPosition {
-  public var x: Int
-  public var y: Int
-  public var z: Int
+  // MARK: Public properties
   
-  /// Create a new block position.
-  ///
-  /// Coordinates are not validated.
-  ///
-  /// - Parameters:
-  ///   - x: The x coordinate.
-  ///   - y: The y coordinate.
-  ///   - z: The z coordinate.
-  public init(x: Int, y: Int, z: Int) {
-    self.x = x
-    self.y = y
-    self.z = z
-  }
+  /// The x component.
+  public var x: Int
+  /// The y component.
+  public var y: Int
+  /// The z component.
+  public var z: Int
   
   /// The position of the ``Chunk`` this position is in
   public var chunk: ChunkPosition {
@@ -51,7 +42,7 @@ public struct BlockPosition {
     return BlockPosition(x: relativeX, y: relativeY, z: relativeZ)
   }
   
-  /// This position as a float vector
+  /// This position as a vector.
   public var floatVector: SIMD3<Float> {
     return SIMD3<Float>(
       Float(x),
@@ -59,7 +50,15 @@ public struct BlockPosition {
       Float(z))
   }
   
-  /// This position as an int vector
+  /// This position as a vector.
+  public var doubleVector: SIMD3<Double> {
+    return SIMD3<Double>(
+      Double(x),
+      Double(y),
+      Double(z))
+  }
+  
+  /// This position as a vector.
   public var intVector: SIMD3<Int> {
     return SIMD3<Int>(x, y, z)
   }
@@ -95,6 +94,21 @@ public struct BlockPosition {
   /// The section Y of the section this position is in
   public var sectionIndex: Int {
     return y / Chunk.Section.height
+  }
+  
+  // MARK: Init
+  
+  /// Create a new block position.
+  ///
+  /// Coordinates are not validated.
+  /// - Parameters:
+  ///   - x: The x coordinate.
+  ///   - y: The y coordinate.
+  ///   - z: The z coordinate.
+  public init(x: Int, y: Int, z: Int) {
+    self.x = x
+    self.y = y
+    self.z = z
   }
 }
 

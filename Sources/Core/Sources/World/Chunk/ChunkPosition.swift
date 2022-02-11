@@ -31,14 +31,14 @@ public struct ChunkPosition {
   public var axisAlignedBoundingBox: AxisAlignedBoundingBox {
     AxisAlignedBoundingBox(
       position: [
-        Float(chunkX * Chunk.width),
+        Double(chunkX * Chunk.width),
         0.0,
-        Float(chunkZ * Chunk.depth)
+        Double(chunkZ * Chunk.depth)
       ],
       size: [
-        Float(Chunk.width),
-        Float(Chunk.height),
-        Float(Chunk.depth)
+        Double(Chunk.width),
+        Double(Chunk.height),
+        Double(Chunk.depth)
       ])
   }
   

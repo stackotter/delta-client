@@ -1,27 +1,27 @@
 import Foundation
 
 public struct PixlyzerAABB: Decodable {
-  public var from: SingleOrMultiple<Float>
-  public var to: SingleOrMultiple<Float>
+  public var from: SingleOrMultiple<Double>
+  public var to: SingleOrMultiple<Double>
   
   /// Convert a single of multiple to a vector.
-  static func singleOrMultipleToVector(_ singleOrMultiple: SingleOrMultiple<Float>) throws -> SIMD3<Float> {
+  static func singleOrMultipleToVector(_ singleOrMultiple: SingleOrMultiple<Double>) throws -> SIMD3<Double> {
     switch singleOrMultiple {
       case let .single(value):
-        return SIMD3<Float>(repeating: value)
+        return SIMD3<Double>(repeating: value)
       case let .multiple(values):
         guard values.count == 3 else {
           throw PixlyzerError.invalidAABBVertex(values)
         }
-        return SIMD3<Float>(values)
+        return SIMD3<Double>(values)
     }
   }
 }
 
 extension AxisAlignedBoundingBox {
   public init(from pixlyzerAABB: PixlyzerAABB) throws {
-    let from: SIMD3<Float> = try PixlyzerAABB.singleOrMultipleToVector(pixlyzerAABB.from)
-    let to: SIMD3<Float> = try PixlyzerAABB.singleOrMultipleToVector(pixlyzerAABB.to)
+    let from = try PixlyzerAABB.singleOrMultipleToVector(pixlyzerAABB.from)
+    let to = try PixlyzerAABB.singleOrMultipleToVector(pixlyzerAABB.to)
     
     self.init(
       minimum: from,

@@ -98,25 +98,17 @@ public enum Direction: Int {
     }
   }
   
-  /// Returns a normalized vector representing this direction.
+  /// A normalized vector representing this direction.
   public var vector: SIMD3<Float> {
-    switch self {
-      case .down:
-        return SIMD3<Float>(0, -1, 0)
-      case .up:
-        return SIMD3<Float>(0, 1, 0)
-      case .north:
-        return SIMD3<Float>(0, 0, -1)
-      case .south:
-        return SIMD3<Float>(0, 0, 1)
-      case .west:
-        return SIMD3<Float>(-1, 0, 0)
-      case .east:
-        return SIMD3<Float>(1, 0, 0)
-    }
+    SIMD3(intVector)
   }
   
-  /// Returns a normalized vector representing this direction.
+  /// A normalized vector representing this direction.
+  public var doubleVector: SIMD3<Double> {
+    SIMD3(intVector)
+  }
+  
+  /// A normalized vector representing this direction.
   public var intVector: SIMD3<Int> {
     switch self {
       case .down:

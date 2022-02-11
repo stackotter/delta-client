@@ -10,7 +10,7 @@ var dependencies: [Package.Dependency] = [
     .package(name: "SwiftProtobuf", url: "https://github.com/apple/swift-protobuf.git", from: "1.6.0"),
     .package(name: "swift-collections", url: "https://github.com/apple/swift-collections.git", from: "0.0.7"),
     .package(name: "Concurrency", url: "https://github.com/uber/swift-concurrency.git", from: "0.7.1"),
-    .package(name: "FirebladeECS", url: "https://github.com/fireblade-engine/ecs.git", from: "0.17.5"),
+    .package(name: "FirebladeECS", url: "https://github.com/stackotter/ecs.git", .branch("master")),
     .package(name: "ZippyJSON", url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
     .package(url: "https://github.com/pointfreeco/swift-parsing", from: "0.7.1"),
 ]

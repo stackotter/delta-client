@@ -89,14 +89,14 @@ extension Block {
       hitSound: pixlyzerState.hitSound,
       fallSound: pixlyzerState.fallSound)
     
-    var collisionShape: [AxisAlignedBoundingBox] = []
+    var collisionShape = CompoundBoundingBox()
     if let collisionShapeId = pixlyzerState.collisionShape {
-      collisionShape = shapes[collisionShapeId]
+      collisionShape.addAABBs(shapes[collisionShapeId])
     }
     
-    var outlineShape: [AxisAlignedBoundingBox] = []
+    var outlineShape = CompoundBoundingBox()
     if let outlineShapeId = pixlyzerState.outlineShape {
-      outlineShape = shapes[outlineShapeId]
+      outlineShape.addAABBs(shapes[outlineShapeId])
     }
     
     let shape = Block.Shape(
