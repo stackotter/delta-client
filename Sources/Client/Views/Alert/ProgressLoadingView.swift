@@ -21,7 +21,6 @@ struct ProgressLoadingView: View {
   
   // MARK: Inits
   
-  
   /// Struct init
   ///
   /// - Precondition: progress `$\in [0,1]$`
