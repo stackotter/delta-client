@@ -93,17 +93,20 @@ public struct EntityRenderer: Renderer {
       
       // Create uniforms for each entity
       for (position, hitBox) in entities {
-        let size = SIMD3<Float>(hitBox.size)
-        var position = SIMD3<Float>(position.smoothVector)
-        position -= SIMD3<Float>(SIMD3<Double>(hitBox.width, 0, hitBox.width)) * 0.5
+        let aabb = hitBox.aabb(at: position.smoothVector)
+//        let size = SIMD3<Float>(hitBox.size)
+//        var position = SIMD3<Float>(position.smoothVector)
+//        position -= SIMD3<Float>(SIMD3<Double>(hitBox.width, 0, hitBox.width)) * 0.5
+        let position = aabb.position
+        let size = aabb.size
         
         // Don't render entities that are outside of the render distance
-        let chunkPosition = EntityPosition(SIMD3<Double>(position)).chunk
+        let chunkPosition = EntityPosition(position).chunk
         if !chunkPosition.isWithinRenderDistance(renderDistance, of: cameraChunk) {
           continue
         }
         
-        let uniforms = Uniforms(transformation: MatrixUtil.scalingMatrix(size) * MatrixUtil.translationMatrix(position))
+        let uniforms = Uniforms(transformation: MatrixUtil.scalingMatrix(SIMD3(size)) * MatrixUtil.translationMatrix(SIMD3(position)))
         entityUniforms.append(uniforms)
       }
     }

@@ -30,6 +30,7 @@ public class EntityHitBox: Component {
   /// - Parameter position: The position of the hitbox.
   /// - Returns: A bounding box with the same size as the hitbox and the given position.
   public func aabb(at position: SIMD3<Double>) -> AxisAlignedBoundingBox {
+    let position = position - 0.5 * SIMD3(size.x, 0, size.z)
     return AxisAlignedBoundingBox(position: position, size: size)
   }
 }

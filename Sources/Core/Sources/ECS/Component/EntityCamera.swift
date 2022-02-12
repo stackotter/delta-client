@@ -17,7 +17,7 @@ public class EntityCamera: Component {
   
   /// Creates an entity's camera.
   /// - Parameter perspective: Defaults to ``Perspective-swift.enum/firstPerson``.
-  public init(perspective: Perspective = .thirdPersonRear) {
+  public init(perspective: Perspective = .firstPerson) {
     self.perspective = perspective
   }
   
