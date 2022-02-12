@@ -28,7 +28,7 @@ public class PhysicsSystem: System {
     
     for (position, hitbox, velocity, rotation, inputs, gamemode, flying, attributes, _) in currentPlayerEntities {
       updatePlayerVelocity(velocity: velocity, rotation: rotation, input: inputs, gamemode: gamemode, flying: flying, attributes: attributes)
-      collisionTest(position, velocity, hitbox)
+      handleCollisions(position, velocity, hitbox)
     }
     
     // Apply velocity to all moving entities.
@@ -104,7 +104,7 @@ public class PhysicsSystem: System {
     velocity.vector = velocityVector
   }
   
-  func collisionTest(_ position: EntityPosition, _ velocity: EntityVelocity, _ hitbox: EntityHitBox) {
+  func handleCollisions(_ position: EntityPosition, _ velocity: EntityVelocity, _ hitbox: EntityHitBox) {
     let positionVector = position.vector
     let velocityVector = velocity.vector
     let aabb = hitbox.aabb(at: positionVector)
@@ -149,25 +149,25 @@ public class PhysicsSystem: System {
   }
   
   func adjustComponent(_ value: Double, onAxis axis: Axis, collisionVolume: CompoundBoundingBox, aabb: AxisAlignedBoundingBox) -> Double {
-    if value == 0 || abs(value) < 0.0000001 {
+    if abs(value) < 0.0000001 {
       return 0
     }
     
     var value = value
     for otherAABB in collisionVolume.aabbs {
-      if !otherAABB.offset(by: value, along: axis).intersects(with: aabb) {
+      if !aabb.offset(by: value, along: axis).intersects(with: aabb) {
         continue
       }
       
       let aabbMin = aabb.minimum.component(along: axis)
       let aabbMax = aabb.maximum.component(along: axis)
-      let otherMin = aabb.minimum.component(along: axis)
-      let otherMax = aabb.maximum.component(along: axis)
+      let otherMin = otherAABB.minimum.component(along: axis)
+      let otherMax = otherAABB.maximum.component(along: axis)
       
-      if value > 0 && aabbMax <= otherMax + value {
-        value = min(aabbMin - otherMax, value)
-      } else if value < 0 && aabbMax >= otherMin + value {
-        value = max(aabbMax - otherMin, value)
+      if value > 0 && otherMin <= aabbMax + value {
+        value = min(otherMin - aabbMax, value)
+      } else if value < 0 && otherMax >= aabbMin + value {
+        value = max(otherMax - aabbMin, value)
       }
     }
     return value
