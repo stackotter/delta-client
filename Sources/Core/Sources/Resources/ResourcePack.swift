@@ -34,8 +34,6 @@ enum ResourcePackError: LocalizedError {
 }
 
 public struct ResourcePack {
-  /// The metadata of this resource pack.
-  public var metadata: PackMCMeta.Metadata
   /// The metadata of languages contained within this resource pack.
   public var languages: [String: PackMCMeta.Language]
   /// All resources contained in this resource pack, keyed by namespace.
@@ -44,6 +42,17 @@ public struct ResourcePack {
   /// Resources in the 'minecraft' namespace.
   public var vanillaResources: Resources {
     resources["minecraft"] ?? Resources()
+  }
+  
+  // MARK: Init
+  
+  /// Creates a resource pack with the given resources. Defaults to no resources.
+  /// - Parameters:
+  ///   - languages: The metadata of languages to include in the resource pack.
+  ///   - resources: The resources contained in the pack, keyed by namespace.
+  public init(languages: [String : ResourcePack.PackMCMeta.Language] = [:], resources: [String : ResourcePack.Resources] = [:]) {
+    self.languages = languages
+    self.resources = resources
   }
   
   // MARK: Access
@@ -89,7 +98,6 @@ public struct ResourcePack {
     
     // Create pack
     return ResourcePack(
-      metadata: mcMeta.metadata,
       languages: mcMeta.languages ?? [:],
       resources: namespacedResources)
   }

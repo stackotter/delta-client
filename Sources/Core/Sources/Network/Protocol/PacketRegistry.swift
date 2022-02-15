@@ -1,7 +1,11 @@
 import Foundation
 
-// TODO: Make PacketRegistry a singleton
-public class PacketRegistry {
+/// Stores the clientbound packet types for a given protocol version and assigns them ids.
+///
+/// Packets are also grouped by connection state. For example, packet 0x01 in the handshaking
+/// state is usually differnet to packet 0x01 in the status state.
+public struct PacketRegistry {
+  /// The client bound packets of this protocol.
   public var clientboundPackets: [PacketState: [Int: ClientboundPacket.Type]] = [
     .handshaking: [:],
     .status: [:],
@@ -9,10 +13,13 @@ public class PacketRegistry {
     .play: [:]
   ]
   
-  // TODO: make this part of a static variable definition
+  /// Creates an empty packet registry.
+  public init() {}
+  
   // swiftlint:disable function_body_length
+  /// Creates the packet registry for the 1.16.1 protocol version.
   public static func create_1_16_1() -> PacketRegistry {
-    let registry = PacketRegistry()
+    var registry = PacketRegistry()
     
     registry.addClientboundPackets([
       StatusResponsePacket.self,
@@ -124,15 +131,15 @@ public class PacketRegistry {
   }
   // swiftlint:enable function_body_length
   
-  // MARK: Helpers
-  
-  public func addClientboundPackets(_ packets: [ClientboundPacket.Type], toState state: PacketState) {
+  /// Adds an array of clientbound packets to the given connection state. Each packet is assigned the id which is stored as a static property on the type.
+  public mutating func addClientboundPackets(_ packets: [ClientboundPacket.Type], toState state: PacketState) {
     for packet in packets {
       addClientboundPacket(packet, toState: state)
     }
   }
   
-  public func addClientboundPacket(_ packet: ClientboundPacket.Type, toState state: PacketState) {
+  /// Adds a clientbound packet to the given connection state. The packet is assigned the id which is stored in the static property `id`.
+  public mutating func addClientboundPacket(_ packet: ClientboundPacket.Type, toState state: PacketState) {
     let id = packet.id
     if var packets = clientboundPackets[state] {
       packets[id] = packet
@@ -142,6 +149,7 @@ public class PacketRegistry {
     }
   }
   
+  /// Gets the packet type for the requested packet id and connection state.
   public func getClientboundPacketType(withId id: Int, andState state: PacketState) -> ClientboundPacket.Type? {
     return clientboundPackets[state]?[id]
   }

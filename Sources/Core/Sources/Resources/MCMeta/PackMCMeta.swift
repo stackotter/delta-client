@@ -19,6 +19,10 @@ extension ResourcePack.PackMCMeta {
   public struct Metadata: Decodable {
     public var formatVersion: Int
     
+    public init(formatVersion: Int) {
+      self.formatVersion = formatVersion
+    }
+    
     private enum CodingKeys: String, CodingKey {
       case formatVersion = "pack_format"
     }
