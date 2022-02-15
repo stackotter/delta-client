@@ -4,16 +4,9 @@ struct ProgressLoadingView: View {
   // MARK: Public properties
   
   /// Loader progress
-  public var progress: Double {
-    didSet {
-      if progress < 0 || progress > 1 {
-        log.error("Progress out of range: \(progress)")
-      }
-    }
-  }
-  
+  public let progress: Double
   /// Loading message
-  public var message: String
+  public let message: String
   
   // MARK: Private properties
   
@@ -23,6 +16,24 @@ struct ProgressLoadingView: View {
   private let loaderSize: CGFloat = 4
   /// Bar inset
   private let inset: CGFloat = 6
+  /// Progress bar width percentage
+  @State private var animatedProgress: Double = 0
+  
+  // MARK: Inits
+  
+  /// Struct init
+  ///
+  /// - Precondition: progress `$\in [0,1]$`
+  /// - Parameters:
+  ///   - progress: the `progress`
+  ///   - message: the `message`
+  init(progress: Double, message: String) {
+    if progress < 0 || progress > 1 {
+      log.error("Progress out of range: \(progress)")
+    }
+    self.progress = progress
+    self.message = message
+  }
   
   // MARK: View
   
@@ -37,9 +48,8 @@ struct ProgressLoadingView: View {
         
         HStack(alignment: .center) {
           Color.white
-            .frame(width: progressBarWidth * progress)
+            .frame(width: progressBarWidth * animatedProgress)
             .frame(maxHeight: .infinity, alignment: .leading)
-            .animation(.easeInOut(duration: 1))
           Spacer()
         }
         .padding(.horizontal, inset)
@@ -52,6 +62,11 @@ struct ProgressLoadingView: View {
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
       .background(Color.black)
+    }
+    .onChange(of: progress) { newProgress in
+      withAnimation(.easeInOut(duration: 1)) {
+        animatedProgress = newProgress
+      }
     }
   }
 }
