@@ -14,7 +14,7 @@ public enum PacketReaderError: LocalizedError {
 public struct PacketReader {
   public var packetId: Int
   public var buffer: Buffer
-  public var locale: MinecraftLocale // TODO: a bit weird having the locale as a property here, should probably be a singleton
+  public var locale: MinecraftLocale
   
   public var remaining: Int {
     get {

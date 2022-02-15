@@ -1,5 +1,4 @@
 import Foundation
-import DeltaCoreC
 
 public enum ChunkDataError: LocalizedError {
   case incompleteHeightMap(length: Int)
@@ -36,6 +35,8 @@ public struct ChunkDataPacket: ClientboundPacket {
     
     biomeIds = []
     if fullChunk {
+      biomeIds.reserveCapacity(1024)
+      
       // Biomes are stored as big endian ints but biome ids are never bigger than a UInt8, so it's easy to
       let packedBiomes = packetReader.readByteArray(length: 1024 * 4)
       for i in 0..<1024 {
@@ -50,6 +51,7 @@ public struct ChunkDataPacket: ClientboundPacket {
     // Read block entities
     let numBlockEntities = packetReader.readVarInt()
     blockEntities = []
+    blockEntities.reserveCapacity(numBlockEntities)
     for _ in 0..<numBlockEntities {
       do {
         let blockEntityNBT = try packetReader.readNBTCompound()
@@ -84,6 +86,7 @@ public struct ChunkDataPacket: ClientboundPacket {
   /// Unpacks a heightmap in the format at https://wiki.vg/Chunk_Format. There are 256 values that are each 9 bits, compacted into longs.
   private static func unpackHeightMap(_ compact: [Int]) throws -> HeightMap {
     var output: [Int] = []
+    output.reserveCapacity(Chunk.blocksPerLayer)
     let mask = 1 << 9 - 1
     for long in compact {
       for i in 0..<7 {
@@ -106,6 +109,8 @@ public struct ChunkDataPacket: ClientboundPacket {
   private static func readChunkSections(_ packetReader: inout PacketReader, primaryBitMask: Int) -> [Chunk.Section] {
     var sections: [Chunk.Section] = []
     let presentSections = BinaryUtil.setBits(of: primaryBitMask, n: Chunk.numSections)
+    sections.reserveCapacity(presentSections.count)
+    
     for sectionIndex in 0..<Chunk.numSections {
       if presentSections.contains(sectionIndex) {
         let blockCount = packetReader.readShort()
@@ -115,6 +120,7 @@ public struct ChunkDataPacket: ClientboundPacket {
         var palette: [UInt16] = []
         if bitsPerBlock <= 8 {
           let paletteLength = packetReader.readVarInt()
+          palette.reserveCapacity(paletteLength)
           for _ in 0..<paletteLength {
             palette.append(UInt16(packetReader.readVarInt()))
           }
@@ -123,11 +129,14 @@ public struct ChunkDataPacket: ClientboundPacket {
         // Read block states
         let dataArrayLength = packetReader.readVarInt()
         var dataArray: [UInt64] = []
+        dataArray.reserveCapacity(dataArrayLength)
         for _ in 0..<dataArrayLength {
           dataArray.append(UInt64(packetReader.buffer.readLong(endian: .big)))
         }
-        var blocks: [UInt16] = [UInt16](repeating: 0, count: 4096)
-        unpack_long_array(&dataArray, Int32(dataArray.count), Int32(bitsPerBlock), &blocks)
+        
+//        var blocks: [UInt16] = [UInt16](repeating: 0, count: 4096)
+//        unpack_long_array(&dataArray, Int32(dataArray.count), Int32(bitsPerBlock), &blocks)
+        let blocks = unpackLongArray(bitsPerBlock: Int(bitsPerBlock), longArray: dataArray)
         
         let section = Chunk.Section(blockIds: blocks, palette: palette, blockCount: Int(blockCount))
         sections.append(section)
@@ -139,5 +148,29 @@ public struct ChunkDataPacket: ClientboundPacket {
       }
     }
     return sections
+  }
+  
+  private static func unpackLongArray(bitsPerBlock: Int, longArray: [UInt64]) -> [UInt16] {
+    let mask = UInt16((1 << bitsPerBlock) - 1)
+    let blocksPerLong = 64 / bitsPerBlock
+    
+    var blocks: [UInt16] = []
+    blocks.reserveCapacity(Chunk.Section.numBlocks)
+    
+    if 4096 / blocksPerLong >= longArray.count {
+      // TODO: throw an error
+    }
+    
+    longArray.withUnsafeBufferPointer { pointer in
+      for blockNumber in 0..<Chunk.Section.numBlocks {
+        let index = blockNumber / blocksPerLong
+        let offset = (blockNumber % blocksPerLong) &* bitsPerBlock
+        
+        let block = UInt16(truncatingIfNeeded: pointer[index] &>> offset) & mask
+        blocks.append(block)
+      }
+    }
+    
+    return blocks
   }
 }
