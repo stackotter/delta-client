@@ -23,15 +23,14 @@ let package = Package(
   name: "DeltaCore",
   platforms: [.macOS(.v11)],
   products: [
-    .library(name: "DeltaCore", type: .dynamic, targets: ["DeltaCore", "DeltaCoreC"]),
-    .library(name: "StaticDeltaCore", type: .static, targets: ["DeltaCore", "DeltaCoreC"]),
+    .library(name: "DeltaCore", type: .dynamic, targets: ["DeltaCore"]),
+    .library(name: "StaticDeltaCore", type: .static, targets: ["DeltaCore"])
   ],
   dependencies: dependencies,
   targets: [
     .target(
       name: "DeltaCore",
       dependencies: [
-        "DeltaCoreC",
         "DeltaLogger",
         "ZIPFoundation",
         "IDZSwiftCommonCrypto",
@@ -40,19 +39,17 @@ let package = Package(
         "Concurrency",
         "FirebladeECS",
         "ZippyJSON",
-        .product(name: "Collections", package: "swift-collections")],
+        .product(name: "Collections", package: "swift-collections")
+      ],
       path: "Sources",
       exclude: [
         "Cache/Protobuf/BlockModelPalette.proto",
         "Cache/Protobuf/BlockRegistry.proto",
-        "Cache/Protobuf/Compile.sh",
-        "C"],
+        "Cache/Protobuf/Compile.sh"
+      ],
       resources: [
-        .process("Render/Shader/"),
-      ]),
-    .target(
-      name: "DeltaCoreC",
-      path: "Sources/C",
-      publicHeadersPath: "."),
+        .process("Render/Shader/")
+      ]
+    )
   ]
 )
