@@ -35,7 +35,6 @@ public struct HeightMap {
   public mutating func handleBlockUpdate(at position: Position, in chunk: Chunk, acquireChunkLock: Bool = true) {
     let newBlock = chunk.getBlock(at: position, acquireLock: acquireChunkLock)
     let columnIndex = self.columnIndex(position)
-    let highestBlock = heightMap[columnIndex]
     
     let highestLightBlockingBlock = heightMap[columnIndex]
     if position.y > highestLightBlockingBlock {

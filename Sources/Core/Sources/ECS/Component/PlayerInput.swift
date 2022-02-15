@@ -11,7 +11,7 @@ public class PlayerInput: Component {
   /// - Parameter isFlying: Whether the player is flying (spectator mode style flying not elytra) or not.
   /// - Returns: A vector representing the user's input.
   public func getVector(isFlying: Bool) -> SIMD3<Double> {
-    let isSneaking = !isFlying && inputs.contains(.sneak)
+    // let isSneaking = !isFlying && inputs.contains(.sneak)
     
     var velocityVector = SIMD3<Double>(0, 0, 0)
     
