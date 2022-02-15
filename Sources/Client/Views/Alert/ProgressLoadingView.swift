@@ -19,14 +19,12 @@ struct ProgressLoadingView: View {
   /// Progress bar width percentage
   @State private var animatedProgress: Double = 0
   
-  // MARK: Inits
+  // MARK: Init
   
-  /// Struct init
-  ///
-  /// - Precondition: progress `$\in [0,1]$`
+  /// Creates a new progress bar view.
   /// - Parameters:
-  ///   - progress: the `progress`
-  ///   - message: the `message`
+  ///   - progress: The progress from 0 to 1.
+  ///   - message: A description for the current task.
   init(progress: Double, message: String) {
     if progress < 0 || progress > 1 {
       log.error("Progress out of range: \(progress)")
