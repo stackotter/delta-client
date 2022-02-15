@@ -154,21 +154,22 @@ public struct ChunkDataPacket: ClientboundPacket {
     let mask = UInt16((1 << bitsPerBlock) - 1)
     let blocksPerLong = 64 / bitsPerBlock
     
-    var blocks: [UInt16] = []
-    blocks.reserveCapacity(Chunk.Section.numBlocks)
-    
     if 4096 / blocksPerLong >= longArray.count {
       // TODO: throw an error
     }
     
-    longArray.withUnsafeBufferPointer { pointer in
-      for blockNumber in 0..<Chunk.Section.numBlocks {
-        let index = blockNumber / blocksPerLong
-        let offset = (blockNumber % blocksPerLong) &* bitsPerBlock
-        
-        let block = UInt16(truncatingIfNeeded: pointer[index] &>> offset) & mask
-        blocks.append(block)
+    let blocks = Array<UInt16>(unsafeUninitializedCapacity: Chunk.Section.numBlocks) { blockBuffer, initializedCount in
+      longArray.withUnsafeBufferPointer { longPointer in
+        for blockNumber in 0..<Chunk.Section.numBlocks {
+          let index = blockNumber / blocksPerLong
+          let offset = (blockNumber % blocksPerLong) &* bitsPerBlock
+          
+          let block = UInt16(truncatingIfNeeded: longPointer[index] &>> offset) & mask
+          blockBuffer[blockNumber] = block
+        }
       }
+      
+      initializedCount = Chunk.Section.numBlocks
     }
     
     return blocks
