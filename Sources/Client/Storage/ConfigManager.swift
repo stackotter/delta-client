@@ -140,6 +140,15 @@ public final class ConfigManager {
       log.error("Failed to write config to file: \(error)")
     }
   }
+  
+  /// Resets the configuration to defaults.
+  public func resetConfig() throws {
+    log.info("Resetting config.json")
+    config = Config()
+    try commitConfig()
+  }
+  
+  // MARK: Private methods
 
   /// Commits the current config to this manager's config file.
   private func commitConfig() throws {
