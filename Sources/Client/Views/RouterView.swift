@@ -17,7 +17,7 @@ struct RouterView: View {
             case let .loadingWithMessage(message, progress):
               ProgressLoadingView(progress: progress, message: message)
             case let .error(message):
-              FatalErrorView(message: message)
+              TroubleshootingView(fatalErrorMessage: message)
             case let .done(loadedResources):
               mainView(loadedResources)
           }
@@ -67,8 +67,8 @@ struct RouterView: View {
           }
         case .fatalError(let message):
           FatalErrorView(message: message)
-        case .settings:
-          SettingsView(isInGame: false, client: nil, onDone: {
+        case .settings(let landingPage):
+          SettingsView(isInGame: false, client: nil, landingPage: landingPage, onDone: {
             appState.pop()
           })
       }
