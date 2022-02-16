@@ -66,5 +66,10 @@ struct ProgressLoadingView: View {
         animatedProgress = newProgress
       }
     }
+    .onAppear {
+      withAnimation(.easeInOut(duration: 1)) {
+        animatedProgress = progress
+      }
+    }
   }
 }

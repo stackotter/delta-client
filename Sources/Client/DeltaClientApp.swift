@@ -153,8 +153,8 @@ struct DeltaClientApp: App {
           if case .none = Self.modalState.current, case .done(_) = Self.loadingState.current {
             switch Self.appState.current {
               case .serverList, .editServerList, .accounts, .login, .directConnect:
-                Self.appState.update(to: .settings)
-              case .playServer(_), .settings, .fatalError(_):
+                Self.appState.update(to: .settings(nil))
+              case .playServer(_), .settings(_), .fatalError(_):
                 break
             }
           }

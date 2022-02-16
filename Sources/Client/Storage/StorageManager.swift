@@ -198,4 +198,23 @@ final class StorageManager {
       }
     }
   }
+  
+  // MARK: Troubleshooting methods
+  
+  /// Clears cache directory.
+  public func clearCache() throws {
+    log.info("Clearing cache")
+    
+    guard directoryExists(at: StorageManager.default.cacheDirectory) else {
+      return
+    }
+    
+    try FileManager.default.removeItem(at: StorageManager.default.cacheDirectory)
+  }
+  
+  /// Will perform a fresh install on next launch. No backup will be made.
+  public func factoryReset() throws {
+    log.info("Performing factory reset")
+    try FileManager.default.removeItem(at: storageDirectory)
+  }
 }
