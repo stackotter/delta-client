@@ -292,9 +292,37 @@ struct GameView: View {
         let averageGPUTime = (averageGPUTime * 1000.0).rounded(toPlaces: 1)
         Text("GPU time: \(String(format: "%.01f", averageGPUTime))ms")
       }
+      
+      Spacer().frame(height: 16)
+      
+      Text("Position: \(playerPositionString)")
+      Text("Chunk: \(playerChunkSectionString)")
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     .padding(16)
+  }
+  
+  var playerPositionString: String {
+    func string(_ value: Double) -> String {
+      String(format: "%.02f", value)
+    }
+    
+    let position = playerPosition
+    return "\(string(position.x)) \(string(position.y)) \(string(position.z))"
+  }
+  
+  var playerChunkSectionString: String {
+    let section = EntityPosition(playerPosition).chunkSection
+    
+    return "\(section.sectionX) \(section.sectionY) \(section.sectionZ)"
+  }
+  
+  var playerPosition: SIMD3<Double> {
+    var position = SIMD3<Double>(repeating: 0)
+    model.client.game.accessPlayer { player in
+      position = player.position.smoothVector
+    }
+    return position
   }
   
   var renderStats: RenderStatistics {
