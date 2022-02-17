@@ -19,17 +19,15 @@ public struct TaskProgress<Step: TaskStep> {
     return progress / Self.totalTaskDuration
   }
   
-  // MARK: Private properties
+  public private(set) var currentStep = Step.allCases.first!
   
-  private var currentStep = Step.allCases.first!
-  
-  private var stepProgress: Double = 1
+  public private(set) var stepProgress: Double = 0
   
   /// The total combined duration of all steps. There is no unit, it is just the sum of relative durations.
   private static var totalTaskDuration: Double {
     Step.allCases.map {
       $0.relativeDuration
-    }.reduce(0, { $0 + $1 })
+    }.reduce(into: 0, { $0 += $1 })
   }
   
   // MARK: Init
