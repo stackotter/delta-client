@@ -9,11 +9,11 @@ public struct ChunkLightingUpdateData {
   public var blockLightArrays: [Int: [UInt8]]
   
   public var updatedSections: [Int] {
-    var sections: [Int] = []
-    sections.append(contentsOf: emptySkyLightSections)
-    sections.append(contentsOf: emptyBlockLightSections)
-    sections.append(contentsOf: skyLightArrays.keys)
-    sections.append(contentsOf: blockLightArrays.keys)
-    return sections
+    var sections: Set<Int> = []
+    sections.formUnion(emptySkyLightSections)
+    sections.formUnion(emptyBlockLightSections)
+    sections.formUnion(skyLightArrays.keys)
+    sections.formUnion(blockLightArrays.keys)
+    return Array(sections)
   }
 }

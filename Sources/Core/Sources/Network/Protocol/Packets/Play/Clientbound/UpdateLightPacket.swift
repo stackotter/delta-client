@@ -69,7 +69,6 @@ public struct UpdateLightPacket: ClientboundPacket {
       throw ClientboundPacketError.invalidBlockLightMask
     }
     
-    
     var unpackedSkyLightArrays: [Int: [UInt8]] = [:]
     for (index, array) in zip(skyLightIndices, skyLightArrays) {
       unpackedSkyLightArrays[index] = Self.unpackLightingArray(array)

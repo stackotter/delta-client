@@ -144,6 +144,8 @@ public final class WorldRenderer: Renderer {
         }
         
       case _ as JoinWorldEvent:
+        // TODO: this has the possibility to cause crashes
+        log.debug("Created new world mesh")
         worldMesh = WorldMesh(client.game.world, resources: resources)
         
       default:
