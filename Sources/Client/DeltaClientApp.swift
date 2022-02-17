@@ -35,9 +35,9 @@ struct DeltaClientApp: App {
     taskQueue.async {
       var startupProgress = TaskProgress<StartupStep>()
       
-      func updateLoadingState(step: StartupStep, message: String? = nil, taskProgress: Double = 1) {
+      func updateLoadingState(step: StartupStep, message: String? = nil, taskProgress: Double = 0) {
         let secretMessages: [String] = ["Frying eggs", "Baking cookies", "Planting trees", "Filling up oceans", "Brewing beer", "Painting clouds", "Dreaming of ancient worlds"]
-        let shouldShowSecretMessage = Double.random(in: 0...1) <= 0.05
+        let shouldShowSecretMessage = Double.random(in: 0...1) <= 0.02
         
         let loadingMessage: String
         if shouldShowSecretMessage {
@@ -48,14 +48,16 @@ struct DeltaClientApp: App {
           loadingMessage = step.message
         }
         
+        if startupProgress.currentStep != step {
+          log.info(step.message)
+        }
+        
         startupProgress.update(to: step, stepProgress: taskProgress)
         
         Self.loadingState.update(to: .loadingWithMessage(
           loadingMessage,
-          progress: startupProgress.progress)
-        )
-        
-        log.info(step.message)
+          progress: startupProgress.progress
+        ))
       }
       
       do {
