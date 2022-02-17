@@ -21,13 +21,13 @@ public struct LightingEngine {
   
   /// Propagates lighting changes from an updated block. `position` is in world coordinates.
   public mutating func updateLighting(at position: Position, in world: World) {
-    increaseQueue = []
-    decreaseQueue = []
     updateLighting(at: [position], in: world)
   }
   
   /// Propagates lighting changes from multiple updated blocks. `positions` are in world coordinates.
   public mutating func updateLighting(at positions: [Position], in world: World) {
+    increaseQueue = []
+    decreaseQueue = []
     updateBlockLight(at: positions, in: world)
     updateSkyLight(at: positions, in: world)
   }
