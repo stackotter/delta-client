@@ -63,7 +63,7 @@ public final class NetworkStack {
           for buffer in buffers {
             let buffer = try self.compressionLayer.processInbound(buffer)
             let packetReader = PacketReader(buffer: buffer)
-            log.debug("Packet received, id=0x\(String(format: "%02x", packetReader.packetId))")
+            log.trace("Packet received, id=0x\(String(format: "%02x", packetReader.packetId))")
             self.packetHandler?(packetReader)
           }
         } catch {
