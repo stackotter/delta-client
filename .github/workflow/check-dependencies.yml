@@ -1,0 +1,26 @@
+name: Check dependencies
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  spm-dep-check:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check Swift package dependencies
+      id: spm-dep-check
+      uses: MarcoEidinger/swift-package-dependencies-check@2.1.0
+      with:
+         isMutating: true
+         failWhenOutdated: false
+    - name: Create Pull Request
+      if: steps.spm-dep-check.outputs.outdatedDependencies == 'true'
+      uses: peter-evans/create-pull-request@v3
+      with:
+        commit-message: 'Update package dependencies'
+        branch: updatePackageDepedencies
+        delete-branch: true
+        title: 'Update package dependencies'
+        body: ${{ steps.spm-dep-check.outputs.releaseNotes }}
