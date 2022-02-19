@@ -23,7 +23,7 @@ public struct UpdateLightPacket: ClientboundPacket {
     emptyBlockLightMask = packetReader.readVarInt()
     
     skyLightArrays = []
-    var numArrays = BinaryUtil.setBits(of: skyLightMask, n: Chunk.numSections).count
+    var numArrays = BinaryUtil.setBits(of: skyLightMask, n: Chunk.numSections + 2).count
     for _ in 0..<numArrays {
       let length = packetReader.readVarInt()
       let bytes = packetReader.readByteArray(length: length)
@@ -31,7 +31,7 @@ public struct UpdateLightPacket: ClientboundPacket {
     }
     
     blockLightArrays = []
-    numArrays = BinaryUtil.setBits(of: blockLightMask, n: Chunk.numSections).count
+    numArrays = BinaryUtil.setBits(of: blockLightMask, n: Chunk.numSections + 2).count
     for _ in 0..<numArrays {
       let length = packetReader.readVarInt()
       let bytes = packetReader.readByteArray(length: length)
@@ -58,16 +58,6 @@ public struct UpdateLightPacket: ClientboundPacket {
   public func handle(for client: Client) throws {
     let skyLightIndices = Self.sectionsPresent(in: skyLightMask)
     let blockLightIndices = Self.sectionsPresent(in: blockLightMask)
-    
-    guard skyLightIndices.count == skyLightArrays.count else {
-      log.error("Invalid sky light mask sent. \(skyLightIndices.count) bits set but \(skyLightArrays.count) sections received")
-      throw ClientboundPacketError.invalidSkyLightMask
-    }
-    
-    guard blockLightIndices.count == blockLightArrays.count else {
-      log.error("Invalid block light mask sent. \(blockLightIndices.count) bits set but \(blockLightArrays.count) sections received")
-      throw ClientboundPacketError.invalidBlockLightMask
-    }
     
     var unpackedSkyLightArrays: [Int: [UInt8]] = [:]
     for (index, array) in zip(skyLightIndices, skyLightArrays) {
