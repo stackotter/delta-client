@@ -81,7 +81,7 @@ public struct EntityRenderer: Renderer {
     var entityUniforms: [Uniforms] = []
     client.game.accessNexus { nexus in
       // If the player is in first person view we don't render them
-      let entities: Family<Requires3<EntityPosition, EntityHitBox>>
+      let entities: Family<Requires2<EntityPosition, EntityHitBox>>
       if isFirstPerson {
         entities = nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self, excludesAll: ClientPlayerEntity.self)
       } else {
