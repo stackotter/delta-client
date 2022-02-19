@@ -81,22 +81,19 @@ public struct EntityRenderer: Renderer {
     var entityUniforms: [Uniforms] = []
     client.game.accessNexus { nexus in
       // If the player is in first person view we don't render them
-      let entities: Family<Requires3<EntityPosition, EntityVelocity, EntityHitBox>>
+      let entities: Family<Requires3<EntityPosition, EntityHitBox>>
       if isFirstPerson {
-        entities = nexus.family(requiresAll: EntityPosition.self, EntityVelocity.self, EntityHitBox.self, excludesAll: ClientPlayerEntity.self)
+        entities = nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self, excludesAll: ClientPlayerEntity.self)
       } else {
-        entities = nexus.family(requiresAll: EntityPosition.self, EntityVelocity.self, EntityHitBox.self)
+        entities = nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self)
       }
       
       let renderDistance = client.configuration.render.renderDistance
       let cameraChunk = camera.entityPosition.chunk
       
       // Create uniforms for each entity
-      for (position, velocity, hitBox) in entities {
+      for (position, hitBox) in entities {
         let aabb = hitBox.aabb(at: position.smoothVector)
-//        let size = SIMD3<Float>(hitBox.size)
-//        var position = SIMD3<Float>(position.smoothVector)
-//        position -= SIMD3<Float>(SIMD3<Double>(hitBox.width, 0, hitBox.width)) * 0.5
         let position = aabb.position
         let size = aabb.size
         
