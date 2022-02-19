@@ -173,13 +173,15 @@ public class PhysicsSystem: System {
       
       if value > 0 && otherMin <= aabbMax + value {
         let newValue = otherMin - aabbMax
-        if newValue >= 0 {
+        if newValue >= -0.0000001 {
           value = min(newValue, value)
         }
       } else if value < 0 && otherMax >= aabbMin + value {
         let newValue = otherMax - aabbMin
-        if newValue <= 0 {
+        if newValue <= 0.0000001 {
           value = max(newValue, value)
+        } else if axis == .y {
+          print("Disregarded correction of \(newValue), original: \(value) on y axis")
         }
       }
     }
