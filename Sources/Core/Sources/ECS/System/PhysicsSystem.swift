@@ -152,18 +152,6 @@ public class PhysicsSystem: System {
       adjustedVelocity = .zero
     }
     
-//    if abs(adjustedVelocity.x) > abs(velocity.x) {
-//      adjustedVelocity.x = velocity.x
-//    }
-//
-//    if abs(adjustedVelocity.y) > abs(velocity.y) {
-//      adjustedVelocity.y = velocity.y
-//    }
-//
-//    if abs(adjustedVelocity.z) > abs(velocity.z) {
-//      adjustedVelocity.z = velocity.z
-//    }
-    
     return adjustedVelocity
   }
   
@@ -174,7 +162,7 @@ public class PhysicsSystem: System {
     
     var value = value
     for otherAABB in collisionVolume.aabbs {
-      if !aabb.offset(by: value, along: axis).intersects(with: otherAABB) {
+      if !aabb.offset(by: value, along: axis).shrink(by: 0.001).intersects(with: otherAABB) {
         continue
       }
       

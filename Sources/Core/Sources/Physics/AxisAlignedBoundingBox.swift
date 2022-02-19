@@ -142,7 +142,7 @@ public struct AxisAlignedBoundingBox: Codable {
   public func grow(by vector: SIMD3<Double>) -> AxisAlignedBoundingBox {
     var aabb = self
     aabb.position -= vector
-    aabb.size += vector
+    aabb.size += 2 * vector
     return aabb
   }
   
