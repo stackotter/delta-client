@@ -108,8 +108,8 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
 - [x] ui for switching accounts
 - [x] fix memory usage errors (when leaving a server or starting the app for the first time a lot of memory doesn't get freed for some reason)
 - [x] fluids
-- [ ] waterlogging
-- [ ] block id refactor (issue #25)
+- [x] waterlogging
+- [x] block id refactor (issue #25)
 
 ## Alpha 2 - Creative Mode Without Inventory
 
@@ -121,10 +121,10 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
 
 ### Todo
 
-- [ ] load hitboxes
-- [ ] wireframe hitboxes
-- [ ] detect player-block collisions
-- [ ] handle collisions
+- [x] load hitboxes
+- [x] wireframe hitboxes
+- [x] detect player-block collisions
+- [x] handle collisions
 - [ ] auto-jump
 - [ ] add gravity to physics
 
