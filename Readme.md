@@ -60,17 +60,17 @@ Not every version will be perfectly supported but I will try and have the most p
 
 ## Features
 
-- [ ] Networking
+- [x] Networking
   - [x] Basic networking
   - [x] Server list ping
   - [x] Encryption (for non-offline mode servers)
     - [x] Mojang accounts
-    - [ ] Microsoft accounts
+    - [x] Microsoft accounts
   - [x] LAN server detection
 - [x] Basic config system
   - [x] Multi-accounting
 - [ ] Rendering
-  - [ ] World
+  - [x] World
     - [x] Basic block rendering
     - [x] Basic chunk rendering
     - [x] Block culling
@@ -83,11 +83,11 @@ Not every version will be perfectly supported but I will try and have the most p
     - [x] Fluids (lava and water)
     - [x] Chunk frustum culling
     - [x] Biome blending (mostly)
-    - [ ] Block entities (e.g. chests)
   - [ ] Entities
     - [x] Basic entity rendering (just coloured cubes)
     - [ ] Render entity models
     - [ ] Entity animations
+    - [ ] Block entities (e.g. chests)
   - [ ] Particles
     - [ ] Basic particle system
     - [ ] Block break particles
@@ -110,10 +110,10 @@ Not every version will be perfectly supported but I will try and have the most p
       - [ ] Creative inventory
 - [ ] Sound
   - [ ] Basic sounds system
-- [ ] Physics
+- [x] Physics
   - [x] Physics loop
   - [x] Input system
-  - [ ] Collision system
+  - [x] Collision system
 - [ ] Interaction
   - [ ] Block placing
   - [ ] Block breaking
