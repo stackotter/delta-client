@@ -4,8 +4,6 @@ public enum ClientboundPacketError: LocalizedError {
   case invalidDifficulty
   case invalidGamemode
   case invalidServerId
-  case invalidSkyLightMask
-  case invalidBlockLightMask
   case invalidJSONString
   case disconnect(reason: String)
 }
