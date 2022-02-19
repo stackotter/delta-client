@@ -1,5 +1,10 @@
 import Foundation
 
+public enum RespawnPacketError: LocalizedError {
+  case invalidRawGamemode(Int8)
+  case invalidRawPreviousGamemode(Int8)
+}
+
 public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
   public static let id: Int = 0x3a
   
@@ -7,7 +12,7 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
   public var worldName: Identifier
   public var hashedSeed: Int
   public var gamemode: Gamemode
-  public var previousGamemode: Gamemode
+  public var previousGamemode: Gamemode?
   public var isDebug: Bool
   public var isFlat: Bool
   public var copyMetadata: Bool
@@ -16,17 +21,29 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
     dimension = try packetReader.readIdentifier()
     worldName = try packetReader.readIdentifier()
     hashedSeed = packetReader.readLong()
-    guard
-      let gamemode = Gamemode(rawValue: packetReader.readByte()),
-      let previousGamemode = Gamemode(rawValue: packetReader.readByte())
-    else {
-      throw ClientboundPacketError.invalidGamemode
+    
+    let rawGamemode = packetReader.readByte()
+    let rawPreviousGamemode = packetReader.readByte()
+    
+    guard let gamemode = Gamemode(rawValue: rawGamemode) else {
+      throw RespawnPacketError.invalidRawGamemode(rawGamemode)
     }
+    
     self.gamemode = gamemode
-    self.previousGamemode = previousGamemode
+    
+    if rawPreviousGamemode == -1 {
+      previousGamemode = nil
+    } else {
+      guard let previousGamemode = Gamemode(rawValue: rawPreviousGamemode) else {
+        throw RespawnPacketError.invalidRawPreviousGamemode(rawPreviousGamemode)
+      }
+      
+      self.previousGamemode = previousGamemode
+    }
+    
     isDebug = packetReader.readBool()
     isFlat = packetReader.readBool()
-    copyMetadata = packetReader.readBool() // TODO_LATER: not used yet
+    copyMetadata = packetReader.readBool() // TODO: not used yet
   }
   
   public func handle(for client: Client) throws {
