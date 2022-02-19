@@ -32,7 +32,7 @@ public class PhysicsSystem: System {
     }
     
     // Apply velocity to all moving entities.
-    let physicsEntities = nexus.family(requiresAll: EntityPosition.self, EntityVelocity.self)
+    let physicsEntities = nexus.family(requiresAll: EntityPosition.self, EntityVelocity.self, excludesAll: ClientPlayerEntity.self)
     for (position, velocity) in physicsEntities {
       position.move(by: velocity.vector)
     }
@@ -110,16 +110,30 @@ public class PhysicsSystem: System {
     let aabb = hitbox.aabb(at: positionVector)
     
     let collisionVolume = getCollisionVolume(positionVector, velocityVector, aabb)
-    adjustVelocity(velocity, collisionVolume, aabb)
+    let adjustedVelocity = adjustVelocity(velocity, collisionVolume, aabb)
+    
+    position.move(by: adjustedVelocity)
+    
+    if adjustedVelocity.x != velocity.x {
+      velocity.x = 0
+    }
+    
+    if adjustedVelocity.y != velocity.y {
+      velocity.y = 0
+    }
+    
+    if adjustedVelocity.z != velocity.z {
+      velocity.z = 0
+    }
   }
   
-  func adjustVelocity(_ velocity: EntityVelocity, _ collisionVolume: CompoundBoundingBox, _ aabb: AxisAlignedBoundingBox) {
+  func adjustVelocity(_ velocity: EntityVelocity, _ collisionVolume: CompoundBoundingBox, _ aabb: AxisAlignedBoundingBox) -> SIMD3<Double> {
     var adjustedVelocity = velocity.vector
     
     adjustedVelocity.y = adjustComponent(adjustedVelocity.y, onAxis: .y, collisionVolume: collisionVolume, aabb: aabb)
     var adjustedAABB = aabb.offset(by: adjustedVelocity.y, along: .y)
     
-    let prioritizeZ = velocity.z > velocity.x
+    let prioritizeZ = abs(velocity.z) > abs(velocity.x)
     
     if prioritizeZ {
       adjustedVelocity.z = adjustComponent(adjustedVelocity.z, onAxis: .z, collisionVolume: collisionVolume, aabb: adjustedAABB)
@@ -134,18 +148,23 @@ public class PhysicsSystem: System {
     }
     
     if adjustedVelocity.magnitudeSquared > velocity.vector.magnitudeSquared {
+      log.warning("Adjusted velocity was higher than original velocity, original: \(velocity.vector), adjusted: \(adjustedVelocity)")
       adjustedVelocity = .zero
     }
     
-    if adjustedVelocity.x != velocity.x {
-      velocity.x = 0
-    }
-    if adjustedVelocity.y != velocity.y {
-      velocity.y = 0
-    }
-    if adjustedVelocity.z != velocity.z {
-      velocity.z = 0
-    }
+//    if abs(adjustedVelocity.x) > abs(velocity.x) {
+//      adjustedVelocity.x = velocity.x
+//    }
+//
+//    if abs(adjustedVelocity.y) > abs(velocity.y) {
+//      adjustedVelocity.y = velocity.y
+//    }
+//
+//    if abs(adjustedVelocity.z) > abs(velocity.z) {
+//      adjustedVelocity.z = velocity.z
+//    }
+    
+    return adjustedVelocity
   }
   
   func adjustComponent(_ value: Double, onAxis axis: Axis, collisionVolume: CompoundBoundingBox, aabb: AxisAlignedBoundingBox) -> Double {
@@ -155,7 +174,7 @@ public class PhysicsSystem: System {
     
     var value = value
     for otherAABB in collisionVolume.aabbs {
-      if !aabb.offset(by: value, along: axis).intersects(with: aabb) {
+      if !aabb.offset(by: value, along: axis).intersects(with: otherAABB) {
         continue
       }
       
@@ -165,9 +184,15 @@ public class PhysicsSystem: System {
       let otherMax = otherAABB.maximum.component(along: axis)
       
       if value > 0 && otherMin <= aabbMax + value {
-        value = min(otherMin - aabbMax, value)
+        let newValue = otherMin - aabbMax
+        if newValue >= 0 {
+          value = min(newValue, value)
+        }
       } else if value < 0 && otherMax >= aabbMin + value {
-        value = max(otherMax - aabbMin, value)
+        let newValue = otherMax - aabbMin
+        if newValue <= 0 {
+          value = max(newValue, value)
+        }
       }
     }
     return value
@@ -177,9 +202,12 @@ public class PhysicsSystem: System {
     worldLock.acquireReadLock()
     defer { worldLock.unlock() }
     
+    let minimum = min(aabb.minimum, aabb.offset(by: velocity).minimum)
+    let maximum = max(aabb.maximum, aabb.offset(by: velocity).maximum)
+    
     // Extend the AABB down one block to account for blocks such as fences
-    let blockPositions = aabb.offset(by: velocity).grow(by: 0.001).extend(.down, amount: 1).blockPositions
-    let previousBlockPositions = aabb.shrink(by: 1E-7).blockPositions
+    let aabb = AxisAlignedBoundingBox(minimum: minimum, maximum: maximum).extend(.down, amount: 1)
+    let blockPositions = aabb.blockPositions
     
     var collisionShape = CompoundBoundingBox()
     for blockPosition in blockPositions {
@@ -189,10 +217,6 @@ public class PhysicsSystem: System {
       
       let block = world.getBlock(at: blockPosition)
       let blockShape = block.shape.collisionShape.offset(by: blockPosition.doubleVector)
-      
-      if previousBlockPositions.contains(blockPosition) && blockShape.intersects(with: aabb) {
-        continue
-      }
       
       collisionShape.formUnion(blockShape)
     }

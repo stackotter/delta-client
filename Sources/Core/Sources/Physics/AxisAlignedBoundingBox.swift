@@ -122,9 +122,9 @@ public struct AxisAlignedBoundingBox: Codable {
   /// Extends the bounding box by the given amount in the given direction.
   public func extend(_ direction: Direction, amount: Double) -> AxisAlignedBoundingBox {
     var aabb = self
-    aabb.size += direction.doubleVector * amount
+    aabb.size += abs(direction.doubleVector * amount)
     if !direction.isPositive {
-      aabb.position -= direction.doubleVector * amount
+      aabb.position += direction.doubleVector * amount
     }
     return aabb
   }
