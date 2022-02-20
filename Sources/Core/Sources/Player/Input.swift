@@ -1,5 +1,6 @@
 import Foundation
 
+/// A player input. On a laptop or desktop, this represents a key press.
 public enum Input: Codable, CaseIterable {
   case moveForward
   case moveBackward
