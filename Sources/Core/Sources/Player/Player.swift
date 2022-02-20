@@ -1,9 +1,9 @@
 import FirebladeECS
 import Foundation
 
-/// Information about the player. Allows easy access to the player's components.
+/// Allows easy access to the player's components.
 ///
-/// Please note, all components are classes.
+/// Please note that all components are classes.
 public struct Player {
   /// The component storing the player's entity id.
   public private(set) var entityId: EntityId
@@ -33,8 +33,6 @@ public struct Player {
   public private(set) var gamemode: PlayerGamemode
   /// The component storing the player's inventory.
   public private(set) var inventory: PlayerInventory
-  /// The component storing the player's current inputs (i.e. keyboard and mouse button input).
-  public private(set) var input: PlayerInput
   
   /// Creates a player.
   public init() {
@@ -53,7 +51,6 @@ public struct Player {
     camera = EntityCamera()
     gamemode = PlayerGamemode()
     inventory = PlayerInventory()
-    input = PlayerInput()
   }
   
   /// Adds the player to a game.
@@ -78,32 +75,6 @@ public struct Player {
       camera
       gamemode
       inventory
-      input
-    }
-  }
-  
-  /// Updates the direction the player is looking in with a mouse movement event.
-  public mutating func updateLook(with event: MouseMoveEvent) {
-    rotation.yaw += event.deltaX
-    rotation.pitch += event.deltaY
-    
-    // Clamp pitch between -90 and 90
-    rotation.pitch = min(max(-.pi / 2, rotation.pitch), .pi / 2)
-    // Wrap yaw to between 0 and 360
-    let remainder = rotation.yaw.truncatingRemainder(dividingBy: .pi * 2)
-    rotation.yaw = remainder < 0 ? .pi * 2 + remainder : remainder
-  }
-  
-  /// Updates the player's velocity with an input event.
-  public mutating func updateInput(with event: InputEvent) {
-    switch event {
-      case let .press(input):
-        self.input.inputs.insert(input)
-        if input == .changePerspective {
-          camera.cyclePerspective()
-        }
-      case let .release(input):
-        self.input.inputs.remove(input)
     }
   }
 }

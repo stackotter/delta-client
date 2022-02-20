@@ -34,8 +34,7 @@ final class ClientInputDelegate: InputDelegate {
     }
     
     if let input = keymap.getInput(for: key) {
-      let event = InputEvent.press(input)
-      client.eventBus.dispatch(event)
+      client.press(input)
     }
   }
   
@@ -43,22 +42,19 @@ final class ClientInputDelegate: InputDelegate {
     pressedKeys.remove(key)
     
     if let input = keymap.getInput(for: key) {
-      let event = InputEvent.release(input)
-      client.eventBus.dispatch(event)
+      client.release(input)
     }
   }
   
   func onMouseMove(_ deltaX: Float, _ deltaY: Float) {
     let sensitivity = sensitivityAdjustmentFactor * mouseSensitivity
-    let event = MouseMoveEvent(deltaX: sensitivity * deltaX, deltaY: sensitivity * deltaY)
-    client.eventBus.dispatch(event)
+    client.moveMouse(sensitivity * deltaX, sensitivity * deltaY)
   }
   
   func releaseCursor() {
     for key in pressedKeys {
       if let input = keymap.getInput(for: key) {
-        let event = InputEvent.release(input)
-        client.eventBus.dispatch(event)
+        client.release(input)
       }
     }
     
