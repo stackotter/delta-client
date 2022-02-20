@@ -40,9 +40,6 @@ public struct Game {
   /// Whether the server's difficulty is locked for the player or not.
   public var isDifficultyLocked = true
   
-  /// The system that handles entity physics.
-  public var physicsSystem: PhysicsSystem
-  
   // MARK: Private properties
   
   /// A locked for managing safe access of ``nexus``.
@@ -51,6 +48,8 @@ public struct Game {
   private let nexus = Nexus()
   /// The player.
   private var player: Player
+  /// The current input state (keyboard and mouse).
+  private let inputState: Single<InputState>
   
   // MARK: Init
   
@@ -60,8 +59,9 @@ public struct Game {
     
     world = World(eventBus: eventBus)
     
-    tickScheduler = TickScheduler(nexus, lock: nexusLock)
-    physicsSystem = PhysicsSystem(world: world)
+    tickScheduler = TickScheduler(nexus, nexusLock: nexusLock, world)
+    
+    inputState = nexus.single(InputState.self)
     
     player = Player()
     var player = player
@@ -69,18 +69,48 @@ public struct Game {
     self.player = player
     
     // Add systems
-    tickScheduler.addSystem(physicsSystem)
+    tickScheduler.addSystem(PlayerInputSystem())
+    tickScheduler.addSystem(PlayerPhysicsSystem())
+    tickScheduler.addSystem(VelocitySystem())
     
     // Start tick loop
     tickScheduler.ticksPerSecond = 20
     tickScheduler.startTickLoop()
   }
   
+  // MARK: Input
+  
+  /// Presses an input.
+  /// - Parameter input: The input to press.
+  public func press(_ input: Input) {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+    inputState.component.press(input)
+  }
+  
+  /// Releases an input.
+  /// - Parameter input: The input to release.
+  public func release(_ input: Input) {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+    inputState.component.release(input)
+  }
+  
+  /// Moves the mouse.
+  /// - Parameters:
+  ///   - deltaX: The change in mouse x.
+  ///   - deltaY: The change in mouse y.
+  public func moveMouse(_ deltaX: Float, _ deltaY: Float) {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+    inputState.component.moveMouse(deltaX, deltaY)
+  }
+  
   // MARK: Entity
   
-  /// A custom method for creating entities with value type components.
+  /// A method for creating entities in a thread-safe manor.
   ///
-  /// The builder can handle up to 20 components. This should be enough in most cases but if not, components can be added to the nexus directly, this is just more convenient.
+  /// The builder can handle up to 20 components. This should be enough in most cases but if not, components can be added to the entity directly, this is just more convenient.
   /// The builder can only work for up to 20 components because of a limitation regarding result builders.
   /// - Parameters:
   ///   - id: The id to create the entity with.
@@ -189,7 +219,7 @@ public struct Game {
       updateEntityId(playerEntityId, to: packet.playerEntityId)
     }
     
-    setWorld(World(from: packet, eventBus: client.eventBus))
+    changeWorld(to: World(from: packet, eventBus: client.eventBus))
   }
   
   /// Sets the game's event bus. This is a method in case the game ever needs to listen to the event bus, this way means that the listener can be added again.
@@ -198,8 +228,11 @@ public struct Game {
     self.world.eventBus = eventBus
   }
   
-  public mutating func setWorld(_ world: World) {
-    self.world = world
-    physicsSystem.setWorld(world)
+  /// Changes to a new world.
+  /// - Parameter world: The new world.
+  public mutating func changeWorld(to newWorld: World) {
+    // TODO: Make this threadsafe
+    self.world = newWorld
+    tickScheduler.setWorld(to: newWorld)
   }
 }

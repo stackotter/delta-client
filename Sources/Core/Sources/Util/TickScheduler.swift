@@ -5,29 +5,53 @@ import FirebladeECS
 
 /// A highly accurate timer used to implement the ticking mechanism.
 public final class TickScheduler {
-  /// The ECS nexus to perform operations on.
-  public var nexus: Nexus
-  /// The systems to run each tick. In execution order.
-  public var systems: [System] = []
+  // MARK: Public properties
   
   /// The number of ticks to perform per second.
   public var ticksPerSecond: Double = 20
   /// Incremented each tick.
-  public var tickNumber = 0
+  public private(set) var tickNumber = 0
   /// The time that the most recent tick began, in unix epoch seconds.
-  public var mostRecentTick: Double = CFAbsoluteTimeGetCurrent()
+  public private(set) var mostRecentTick: Double = CFAbsoluteTimeGetCurrent()
   
+  // MARK: Private properties
+  
+  /// The ECS nexus to perform operations on.
+  private var nexus: Nexus
+  /// The lock to acquire before accessing ``nexus``.
   private var nexusLock: ReadWriteLock
+  /// The current world.
+  private var world: World
+  /// The lock to acquire before accessing ``world``.
+  private var worldLock: ReadWriteLock
+  /// The systems to run each tick. In execution order.
+  public var systems: [System] = []
+  /// If `true`, the tick loop will be stopped at the start of the next tick.
   private var shouldCancel: AtomicBool = AtomicBool(initialValue: false)
+  /// Time base information used in time calculations.
   private var timebaseInfo = mach_timebase_info_data_t()
+  
+  // MARK: Init
   
   /// Creates a new tick scheduler.
   /// - Parameters:
   ///   - nexus: The nexus to run updates on.
-  ///   - lock: The lock to acquire for each tick to keep the nexus threadsafe.
-  public init(_ nexus: Nexus, lock: ReadWriteLock) {
+  ///   - nexusLock: The lock to acquire for each tick to keep the nexus threadsafe.
+  public init(_ nexus: Nexus, nexusLock: ReadWriteLock, _ world: World) {
     self.nexus = nexus
-    nexusLock = lock
+    self.nexusLock = nexusLock
+    self.world = world
+    worldLock = ReadWriteLock()
+  }
+  
+  // MARK: Public methods
+  
+  /// Sets the world to give to the systems each tick.
+  /// - Parameter newWorld: The new world.
+  public func setWorld(to newWorld: World) {
+    worldLock.acquireWriteLock()
+    defer { worldLock.unlock() }
+    world = newWorld
   }
   
   /// Adds a system to the tick loop. Systems are run in the order they are added.
@@ -59,18 +83,25 @@ public final class TickScheduler {
     }
   }
   
+  // MARK: Private methods
+  
   /// Run all of the systems.
   private func tick() {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
+    
+    worldLock.acquireReadLock()
+    let world = world
+    worldLock.unlock()
+    
     for system in systems {
-      system.update(nexus)
+      system.update(nexus, world)
     }
+    
     tickNumber += 1
   }
   
-  // MARK: Thread setup
-  
+  /// Configures the thread's time constraint policy.
   private func configureThread() {
     mach_timebase_info(&timebaseInfo)
     let clockToAbs = Double(timebaseInfo.denom) / Double(timebaseInfo.numer) * Double(NSEC_PER_SEC)
@@ -104,6 +135,7 @@ public final class TickScheduler {
     // TODO: properly handle error
   }
   
+  /// Converts nanoseconds to mach absolute time.
   private func nanosToAbs(_ nanos: UInt64) -> UInt64 {
     return nanos * UInt64(timebaseInfo.denom) / UInt64(timebaseInfo.numer)
   }
