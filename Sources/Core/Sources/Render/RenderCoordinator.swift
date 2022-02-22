@@ -217,8 +217,8 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       
       var cameraPosition = SIMD3<Float>(repeating: 0)
       
-      var pitch = player.rotation.pitch
-      var yaw = player.rotation.yaw
+      var pitch = player.rotation.smoothPitch
+      var yaw = player.rotation.smoothYaw
       
       switch player.camera.perspective {
         case .thirdPersonRear:

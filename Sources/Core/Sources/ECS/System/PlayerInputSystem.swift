@@ -41,15 +41,18 @@ public struct PlayerInputSystem: System {
   ///   - rotation: The player's rotation component.
   private func updateRotation(_ inputState: InputState, _ rotation: EntityRotation) {
     let mouseDelta = inputState.mouseDelta
-    rotation.yaw += mouseDelta.x
-    rotation.pitch += mouseDelta.y
+    var yaw = rotation.yaw + mouseDelta.x
+    var pitch = rotation.pitch + mouseDelta.y
     
     // Clamp pitch between -90 and 90
-    rotation.pitch = MathUtil.clamp(rotation.pitch, -.pi / 2, .pi / 2)
+    pitch = MathUtil.clamp(pitch, -.pi / 2, .pi / 2)
     
     // Wrap yaw to be between 0 and 360
-    let remainder = rotation.yaw.truncatingRemainder(dividingBy: .pi * 2)
-    rotation.yaw = remainder < 0 ? .pi * 2 + remainder : remainder
+    let remainder = yaw.truncatingRemainder(dividingBy: .pi * 2)
+    yaw = remainder < 0 ? .pi * 2 + remainder : remainder
+    
+    rotation.yaw = yaw
+    rotation.pitch = pitch
   }
   
   /// Updates the player's camera perspective.
