@@ -40,7 +40,7 @@ public struct Player {
     entityId = EntityId(-1) // Temporary value until the actual id is received from the server.
     onGround = EntityOnGround(true)
     position = EntityPosition(0, 0, 0, smoothingAmount: 1 / 18) // Having it set to slightly more than a tick smooths out any hick ups caused by late ticks
-    rotation = EntityRotation(pitch: 0.0, yaw: 0.0, smoothingAmount: 1 / 15)
+    rotation = EntityRotation(pitch: 0.0, yaw: 0.0, smoothingAmount: 1 / 18)
     velocity = EntityVelocity(0, 0.0, 0)
     hitBox = EntityHitBox(width: playerEntity.width, height: playerEntity.height)
     experience = EntityExperience()
