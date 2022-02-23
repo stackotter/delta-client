@@ -73,8 +73,8 @@ public class World {
   /// Create an empty world.
   public init(eventBus: EventBus) {
     _eventBus = eventBus
-    name = Identifier.null
-    dimension = Identifier.null
+    name = Identifier(name: "world")
+    dimension = Identifier(name: "overworld")
     hashedSeed = 0
     isFlat = false
     isDebug = false
