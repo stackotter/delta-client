@@ -1,18 +1,13 @@
 import Foundation
 
-public enum CardinalDirection {
+/// An axis aligned compass direction (i.e. either North, East, South or West).
+public enum CardinalDirection: CaseIterable {
   case north
   case east
   case south
   case west
   
-  // TODO: use case iterable instead
-  public static var allDirections: [CardinalDirection] = [
-    .north,
-    .east,
-    .south,
-    .west]
-  
+  /// The opposite direction.
   public var opposite: CardinalDirection {
     let oppositeMap: [CardinalDirection: CardinalDirection] = [
       .north: .south,

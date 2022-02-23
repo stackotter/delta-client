@@ -6,7 +6,6 @@ public struct EntityPropertiesPacket: ClientboundPacket {
   public var entityId: Int
   public var properties: [EntityProperty]
   
-  // TODO_LATER: this deserves it's own file
   public struct EntityProperty {
     public var key: Identifier
     public var value: Double
