@@ -9,15 +9,6 @@ public struct Identifier: Hashable, Equatable, Codable, CustomStringConvertible 
   public var namespace: String
   /// The name of the identifier.
   public var name: String
-  /// An identifier that is null is never equal to any other identifier (even another null identifier).
-  public var isNull = false
-  
-  /// An identifier that is never equal to any other identifier.
-  public static var null: Identifier {
-    var identifier = Identifier(namespace: "", name: "")
-    identifier.isNull = true
-    return identifier
-  }
   
   /// The string representation of this identifier.
   public var description: String {
@@ -70,6 +61,7 @@ public struct Identifier: Hashable, Equatable, Codable, CustomStringConvertible 
   }
   
   /// Creates an identifier from the given string. Throws if the string is not a valid identifier.
+  /// - Parameter string: String of the form `"namespace:name"` or `"name"`.
   public init(_ string: String) throws {
     do {
       let identifier = try Self.identifierParser.parse(string)
@@ -101,14 +93,9 @@ public struct Identifier: Hashable, Equatable, Codable, CustomStringConvertible 
   public func hash(into hasher: inout Hasher) {
     hasher.combine(namespace)
     hasher.combine(name)
-    hasher.combine(isNull)
   }
   
   public static func == (lhs: Identifier, rhs: Identifier) -> Bool {
-    if lhs.isNull || rhs.isNull {
-      return false
-    }
-    
     return lhs.namespace == rhs.namespace && lhs.name == rhs.name
   }
   
