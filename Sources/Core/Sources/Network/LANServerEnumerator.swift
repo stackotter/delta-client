@@ -1,5 +1,6 @@
 import Foundation
 import Network
+import Parsing
 
 /// An error that occured during LAN server enumeration.
 enum LANServerEnumeratorError: LocalizedError {
@@ -143,31 +144,14 @@ public class LANServerEnumerator: ObservableObject {
       let content = content,
       let messageContent = String(data: content, encoding: .utf8),
       case let .hostPort(host: host, port: _) = message.remoteEndpoint,
-      let motd = messageContent.slice(from: "[MOTD]", to: "[/MOTD]"),
-      var portString = messageContent.slice(from: "[AD]", to: "[/AD]")
+      let (motd, port) = parseMessage(messageContent)
     else {
       return
     }
     
     let hostString = String(describing: host)
-    
-    // If it's a full address, extract just the port
-    if portString.contains(":") {
-      portString = String(portString.split(separator: ":")[1])
-    }
-    
-    // Parse the port into an unsigned short
-    guard let port = UInt16(portString) else {
-      log.warning("Invalid port in LAN server broadcast packet: \(portString)")
-      return
-    }
-    
-    // Create server descriptor
-    log.trace("Received LAN server multicast packet: motd=`\(motd)`, address=`\(hostString):\(portString)`")
     let server = ServerDescriptor(name: motd, host: hostString, port: port)
-    
-    // If the server has already been discovered there's no need to handle it again
-    guard !servers.contains(server) else {
+    if servers.contains(server) {
       return
     }
     
@@ -178,6 +162,40 @@ public class LANServerEnumerator: ObservableObject {
     
     ThreadUtil.runInMain {
       pingers.append(pinger)
+    }
+    
+    log.trace("Received LAN server multicast packet: motd=`\(motd)`, address=`\(hostString):\(port)`")
+  }
+  
+  /// Parses a message of the form `"[MOTD]motd[/MOTD][AD]port[/AD]"`.
+  /// - Parameter message: The message to parse.
+  /// - Returns: The motd and port.
+  private func parseMessage(_ message: String) -> (String, UInt16)? {
+    let packetParser = Parse {
+      "[MOTD]"
+      Prefix { $0 != "["}
+      "[/MOTD][AD]"
+      OneOf {
+        // Sometimes the port also includes a host ("host:port") so we must handle that case
+        Parse {
+          Prefix { $0 != ":" }
+          ":"
+          UInt16.parser()
+        }.map { $0.1 }
+        
+        // Otherwise it's just a port
+        UInt16.parser()
+      }
+      "[/AD]"
+    }.map { tuple -> (String, UInt16) in
+      (String(tuple.0), tuple.1)
+    }
+    
+    do {
+      return try packetParser.parse(message)
+    } catch {
+      log.warning("Invalid LAN server broadcast message received: \"\(message)\", error: \(error)")
+      return nil
     }
   }
 }
