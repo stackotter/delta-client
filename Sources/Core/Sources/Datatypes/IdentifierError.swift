@@ -1,6 +1,5 @@
 import Foundation
 
 public enum IdentifierError: LocalizedError {
-  case invalidIdentifier
-  case invalidIdentifierString(String)
+  case invalidIdentifier(String, Error)
 }

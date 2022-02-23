@@ -128,6 +128,15 @@
         }
       },
       {
+        "package": "swift-parsing",
+        "repositoryURL": "https://github.com/pointfreeco/swift-parsing",
+        "state": {
+          "branch": null,
+          "revision": "85e1c50d03999a2b53d30ddae4d0f2a3d872b335",
+          "version": "0.7.1"
+        }
+      },
+      {
         "package": "SwiftProtobuf",
         "repositoryURL": "https://github.com/apple/swift-protobuf.git",
         "state": {
