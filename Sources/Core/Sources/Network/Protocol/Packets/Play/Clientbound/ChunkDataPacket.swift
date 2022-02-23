@@ -31,7 +31,7 @@ public struct ChunkDataPacket: ClientboundPacket {
     
     let heightMaps = try packetReader.readNBTCompound()
     let heightMapCompact: [Int] = try heightMaps.get("MOTION_BLOCKING")
-    heightMap = try Self.unpackHeightMap(heightMapCompact)
+    heightMap = try Self.unpackHeightMap(heightMapCompact.map { UInt64($0) })
     
     biomeIds = []
     if fullChunk {
@@ -84,22 +84,12 @@ public struct ChunkDataPacket: ClientboundPacket {
   }
   
   /// Unpacks a heightmap in the format at https://wiki.vg/Chunk_Format. There are 256 values that are each 9 bits, compacted into longs.
-  private static func unpackHeightMap(_ compact: [Int]) throws -> HeightMap {
-    var output: [Int] = []
-    output.reserveCapacity(Chunk.blocksPerLayer)
-    let mask = 1 << 9 - 1
-    for long in compact {
-      for i in 0..<7 {
-        let height = long >> (i * 9) & mask
-        output.append(height - 1)
-        
-        if output.count == Chunk.blocksPerLayer {
-          return HeightMap(heightMap: output)
-        }
-      }
-    }
-    
-    throw ChunkDataError.incompleteHeightMap(length: output.count)
+  private static func unpackHeightMap(_ compact: [UInt64]) throws -> HeightMap {
+    let values: [Int] = unpackLongArray(
+      bitsPerValue: 9,
+      longArray: compact,
+      count: Chunk.blocksPerLayer)
+    return HeightMap(heightMap: values)
   }
   
   /// Reads the chunk section data from the given packet. The bitmask contains which chunk sections are present.
@@ -134,9 +124,7 @@ public struct ChunkDataPacket: ClientboundPacket {
           dataArray.append(UInt64(packetReader.buffer.readLong(endian: .big)))
         }
         
-//        var blocks: [UInt16] = [UInt16](repeating: 0, count: 4096)
-//        unpack_long_array(&dataArray, Int32(dataArray.count), Int32(bitsPerBlock), &blocks)
-        let blocks = unpackLongArray(bitsPerBlock: Int(bitsPerBlock), longArray: dataArray)
+        let blocks: [UInt16] = unpackLongArray(bitsPerValue: Int(bitsPerBlock), longArray: dataArray, count: Chunk.Section.numBlocks)
         
         let section = Chunk.Section(blockIds: blocks, palette: palette, blockCount: Int(blockCount))
         sections.append(section)
@@ -150,28 +138,28 @@ public struct ChunkDataPacket: ClientboundPacket {
     return sections
   }
   
-  private static func unpackLongArray(bitsPerBlock: Int, longArray: [UInt64]) -> [UInt16] {
-    let mask = UInt16((1 << bitsPerBlock) - 1)
-    let blocksPerLong = 64 / bitsPerBlock
+  private static func unpackLongArray<T: FixedWidthInteger>(bitsPerValue: Int, longArray: [UInt64], count: Int) -> [T] {
+    let mask = T((1 << bitsPerValue) - 1)
+    let valuesPerLong = 64 / bitsPerValue
     
-    if 4096 / blocksPerLong >= longArray.count {
+    if count / valuesPerLong >= longArray.count {
       // TODO: throw an error
     }
     
-    let blocks = Array<UInt16>(unsafeUninitializedCapacity: Chunk.Section.numBlocks) { blockBuffer, initializedCount in
+    let values = Array<T>(unsafeUninitializedCapacity: Chunk.Section.numBlocks) { buffer, initializedCount in
       longArray.withUnsafeBufferPointer { longPointer in
-        for blockNumber in 0..<Chunk.Section.numBlocks {
-          let index = blockNumber / blocksPerLong
-          let offset = (blockNumber % blocksPerLong) &* bitsPerBlock
+        for i in 0..<count {
+          let index = i / valuesPerLong
+          let offset = (i % valuesPerLong) &* bitsPerValue
           
-          let block = UInt16(truncatingIfNeeded: longPointer[index] &>> offset) & mask
-          blockBuffer[blockNumber] = block
+          let value = T(truncatingIfNeeded: longPointer[index] &>> offset) & mask
+          buffer[i] = value
         }
       }
       
-      initializedCount = Chunk.Section.numBlocks
+      initializedCount = count
     }
     
-    return blocks
+    return values
   }
 }
