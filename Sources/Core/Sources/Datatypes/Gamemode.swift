@@ -7,8 +7,18 @@ public enum Gamemode: Int8 {
   case adventure = 2
   case spectator = 3
   
-  /// - Returns: Whether the player is always flying when in this gamemode.
+  /// Whether the player is always flying when in this gamemode.
   public var isAlwaysFlying: Bool {
     return self == .spectator
+  }
+  
+  /// The lowercase string representation of the gamemode.
+  public var string: String {
+    switch self {
+      case .survival: return "survival"
+      case .creative: return "creative"
+      case .adventure: return "adventure"
+      case .spectator: return "spectator"
+    }
   }
 }

@@ -13,10 +13,11 @@ public struct PlayerInputSystem: System {
       EntityFlying.self,
       PlayerAttributes.self,
       EntityCamera.self,
+      EntityOnGround.self,
       ClientPlayerEntity.self
     ).makeIterator()
     
-    guard let (velocity, rotation, gamemode, flying, attributes, camera, _) = familyIterator.next() else {
+    guard let (velocity, rotation, gamemode, flying, attributes, camera, onGround, _) = familyIterator.next() else {
       log.error("Failed to get player entity to handle input for")
       return
     }
@@ -26,13 +27,11 @@ public struct PlayerInputSystem: System {
     // Handle inputs
     updateRotation(inputState, rotation)
     updateCamera(inputState, camera)
-    updateVelocity(inputState, velocity, rotation, gamemode, flying, attributes)
+    updateVelocity(inputState, velocity, rotation, gamemode, flying, onGround, attributes)
     
     // Flush input state for the next tick
     inputState.resetMouseDelta()
     inputState.flushInputs()
-    
-    // TODO: Maybe make an acceleration component
   }
   
   /// Updates the direction which the player is looking.
@@ -72,8 +71,17 @@ public struct PlayerInputSystem: System {
   ///   - rotation: The player's rotation component.
   ///   - gamemode: The player's gamemode component.
   ///   - flying: The player's flying component.
+  ///   - onGround: The component storing whether the player is on the ground.
   ///   - attributes: The player's attributes component.
-  private func updateVelocity(_ inputState: InputState, _ velocity: EntityVelocity, _ rotation: EntityRotation, _ gamemode: PlayerGamemode, _ flying: EntityFlying, _ attributes: PlayerAttributes) {
+  private func updateVelocity(
+    _ inputState: InputState,
+    _ velocity: EntityVelocity,
+    _ rotation: EntityRotation,
+    _ gamemode: PlayerGamemode,
+    _ flying: EntityFlying,
+    _ onGround: EntityOnGround,
+    _ attributes: PlayerAttributes
+  ) {
     // TODO: Implement sprinting
     // TODO: Properly calculate friction
     
@@ -84,26 +92,46 @@ public struct PlayerInputSystem: System {
       flying.isFlying = false
     }
     
-    var velocityVector = getInputAcceleration(inputState.inputs, isFlying: flying.isFlying)
-    velocityVector *= PhysicsConstants.airResistanceMultiplier
+    // Find horizontal acceleration from the input state
+    var acceleration = getInputAcceleration(inputState.inputs, isFlying: flying.isFlying)
     
-    var magnitude = velocityVector.magnitudeSquared
-    if magnitude < 0.0000001 {
-      velocityVector = SIMD3<Double>(repeating: 0)
-      magnitude = 0
-    }
+    // Apply air resistance (the first time, it's also applied later because that's what vanilla Minecraft does)
+    acceleration *= PhysicsConstants.airResistanceMultiplier
     
-    if magnitude > 1 {
-      velocityVector = normalize(velocityVector)
+    // Normalize the velocity if the magnitude is greater than 1 or set it to 0 if the magnitude is sufficiently small
+    let magnitudeSquared = acceleration.magnitudeSquared
+    if magnitudeSquared < 0.0000001 {
+      acceleration = SIMD3.zero
+    } else if magnitudeSquared > 1 {
+      acceleration = normalize(acceleration)
     }
     
     // Adjust velocity to point in the correct direction
     let rotationMatrix = MatrixUtil.rotationMatrix(y: Double(rotation.yaw))
-    velocityVector = simd_make_double3(SIMD4<Double>(velocityVector, 1) * rotationMatrix)
+    acceleration = simd_make_double3(SIMD4<Double>(acceleration, 1) * rotationMatrix)
     
-    velocityVector *= Double(attributes.flyingSpeed)
-    velocityVector += velocity.vector
+    // Multiply by sped
+    acceleration *= Double(attributes.flyingSpeed)
     
+    // Apply sprinting modifier
+    if inputState.inputs.contains(.sprint) {
+      acceleration *= 1.3
+    }
+    
+    // Handle jumping and gravity if not flying
+    if !flying.isFlying {
+      if !onGround.onGround {
+        acceleration.y = -0.08
+      } else if inputState.inputs.contains(.jump) {
+        // TODO: implement sprint jumping
+        acceleration.y = 0.42
+      }
+    }
+    
+    // Apply acceleration
+    var velocityVector = velocity.vector + acceleration
+    
+    // Apply vertical acceleration
     if flying.isFlying {
       let jumpPressed = inputState.inputs.contains(.jump)
       let sneakPressed = inputState.inputs.contains(.sneak)
