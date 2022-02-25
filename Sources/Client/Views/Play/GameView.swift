@@ -297,6 +297,7 @@ struct GameView: View {
       
       Text("Position: \(playerPositionString)")
       Text("Chunk: \(playerChunkSectionString)")
+      Text("Gamemode: \(gamemode.string)")
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     .padding(16)
@@ -323,6 +324,14 @@ struct GameView: View {
       position = player.position.smoothVector
     }
     return position
+  }
+
+  var gamemode: Gamemode {
+    var gamemode = Gamemode.survival
+    model.client.game.accessPlayer { player in
+      gamemode = player.gamemode.gamemode
+    }
+    return gamemode
   }
   
   var renderStats: RenderStatistics {

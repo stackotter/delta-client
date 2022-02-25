@@ -10,16 +10,17 @@ public struct PlayerPhysicsSystem: System {
       requiresAll: EntityPosition.self,
       EntityHitBox.self,
       EntityVelocity.self,
+      EntityOnGround.self,
       ClientPlayerEntity.self
     ).makeIterator()
     
-    guard let (position, hitbox, velocity, _) = familyIterator.next() else {
+    guard let (position, hitbox, velocity, onGround, _) = familyIterator.next() else {
       log.error("Failed to get player entity to handle input for")
       return
     }
     
     applyFriction(velocity)
-    updatePositionAndVelocity(position, velocity, hitbox, world)
+    updatePositionAndVelocity(position, velocity, hitbox, onGround, world)
   }
   
   /// Applies air resistance along the y axis and friction along the x and z axes.
@@ -33,7 +34,9 @@ public struct PlayerPhysicsSystem: System {
   ///   - position: The player's position.
   ///   - velocity: The player's velocity.
   ///   - hitbox: The player's hitbox.
-  private func updatePositionAndVelocity(_ position: EntityPosition, _ velocity: EntityVelocity, _ hitbox: EntityHitBox, _ world: World) {
+  ///   - onGround: The component storing whether the player is on the ground.
+  ///   - world: The world to check for collisions with.
+  private func updatePositionAndVelocity(_ position: EntityPosition, _ velocity: EntityVelocity, _ hitbox: EntityHitBox, _ onGround: EntityOnGround, _ world: World) {
     let aabb = hitbox.aabb(at: position.vector)
     let adjustedVelocity = getAdjustedVelocity(position.vector, velocity.vector, aabb, world)
     
@@ -45,6 +48,9 @@ public struct PlayerPhysicsSystem: System {
     
     if adjustedVelocity.y != velocity.y {
       velocity.y = 0
+      onGround.onGround = true
+    } else {
+      onGround.onGround = false
     }
     
     if adjustedVelocity.z != velocity.z {
