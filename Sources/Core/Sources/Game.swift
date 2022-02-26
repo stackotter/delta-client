@@ -209,9 +209,9 @@ public struct Game {
     
     var playerEntityId: Int? = nil
     accessPlayer { player in
-      player.attributes.previousGamemode = packet.previousGamemode
+      player.playerAttributes.previousGamemode = packet.previousGamemode
       player.gamemode.gamemode = packet.gamemode
-      player.attributes.isHardcore = packet.isHardcore
+      player.playerAttributes.isHardcore = packet.isHardcore
       playerEntityId = player.entityId.id
     }
     

@@ -15,7 +15,7 @@ public struct PlayerAbilitiesPacket: ClientboundPacket {
   
   public func handle(for client: Client) throws {
     client.game.accessPlayer { player in
-      let attributes = player.attributes
+      let attributes = player.playerAttributes
       attributes.flyingSpeed = flyingSpeed
       attributes.fovModifier = fovModifier
       attributes.isInvulnerable = flags.contains(.invulnerable)

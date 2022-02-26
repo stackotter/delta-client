@@ -52,7 +52,7 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
     
     client.game.accessPlayer { player in
       player.gamemode.gamemode = gamemode
-      player.attributes.previousGamemode = previousGamemode
+      player.playerAttributes.previousGamemode = previousGamemode
     }
     
     // TODO: get auto respawn working

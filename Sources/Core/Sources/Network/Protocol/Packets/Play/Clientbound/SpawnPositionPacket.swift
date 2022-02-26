@@ -11,7 +11,7 @@ public struct SpawnPositionPacket: ClientboundPacket {
   
   public func handle(for client: Client) throws {
     client.game.accessPlayer { player in
-      player.attributes.spawnPosition = location
+      player.playerAttributes.spawnPosition = location
     }
     
     log.info("Finished downloading terrain")
