@@ -39,6 +39,7 @@ public struct SpawnLivingEntityPacket: ClientboundPacket {
       EntityHitBox(width: entity.width, height: entity.height)
       EntityRotation(pitch: pitch, yaw: yaw)
       EntityHeadYaw(headYaw)
+      EntityAttributes()
     }
   }
 }

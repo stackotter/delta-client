@@ -33,6 +33,7 @@ public struct SpawnEntityPacket: ClientboundPacket {
       return
     }
     
+    // TODO: implement if statements for component builder
     if let velocity = velocity {
       client.game.createEntity(id: entityId) {
         NonLivingEntity()
@@ -45,6 +46,7 @@ public struct SpawnEntityPacket: ClientboundPacket {
         EntityPosition(position)
         EntityVelocity(velocity)
         EntityRotation(pitch: pitch, yaw: yaw)
+        EntityAttributes()
       }
     } else {
       client.game.createEntity(id: entityId) {
@@ -57,6 +59,7 @@ public struct SpawnEntityPacket: ClientboundPacket {
         EntityOnGround(true)
         EntityPosition(position)
         EntityRotation(pitch: pitch, yaw: yaw)
+        EntityAttributes()
       }
     }
   }

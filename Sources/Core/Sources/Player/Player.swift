@@ -27,8 +27,10 @@ public struct Player {
   public private(set) var rotation: EntityRotation
   /// The component storing the player's camera properties (does not include any settings such as fov that affect all entities).
   public private(set) var camera: EntityCamera
-  /// The component storing the player's miscellaneous attributes.
-  public private(set) var attributes: PlayerAttributes
+  /// The component storing the player's player-specific attributes.
+  public private(set) var playerAttributes: PlayerAttributes
+  /// The component storing the player's entity attributes.
+  public private(set) var entityAttributes: EntityAttributes
   /// The component storing the player's gamemode related information.
   public private(set) var gamemode: PlayerGamemode
   /// The component storing the player's inventory.
@@ -47,7 +49,8 @@ public struct Player {
     flying = EntityFlying()
     health = EntityHealth()
     nutrition = EntityNutrition()
-    attributes = PlayerAttributes()
+    playerAttributes = PlayerAttributes()
+    entityAttributes = EntityAttributes()
     camera = EntityCamera()
     gamemode = PlayerGamemode()
     inventory = PlayerInventory()
@@ -71,7 +74,8 @@ public struct Player {
       flying
       health
       nutrition
-      attributes
+      playerAttributes
+      entityAttributes
       camera
       gamemode
       inventory

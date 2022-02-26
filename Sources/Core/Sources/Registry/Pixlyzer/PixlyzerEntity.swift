@@ -30,7 +30,7 @@ public extension EntityKind {
     
     attributes = [:]
     for (attribute, value) in pixlyzerEntity.attributes ?? [:] {
-      if let attribute = EntityAttribute(rawValue: attribute) {
+      if let attribute = EntityAttributeKey(rawValue: attribute) {
         attributes[attribute] = value
       } else {
         log.warning("Unknown entity attribute in pixlyzer registry: '\(attribute)'")
