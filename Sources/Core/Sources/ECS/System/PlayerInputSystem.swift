@@ -12,12 +12,13 @@ public struct PlayerInputSystem: System {
       PlayerGamemode.self,
       EntityFlying.self,
       PlayerAttributes.self,
+      EntityAttributes.self,
       EntityCamera.self,
       EntityOnGround.self,
       ClientPlayerEntity.self
     ).makeIterator()
     
-    guard let (velocity, rotation, gamemode, flying, attributes, camera, onGround, _) = familyIterator.next() else {
+    guard let (velocity, rotation, gamemode, flying, playerAttributes, entityAttributes, camera, onGround, _) = familyIterator.next() else {
       log.error("Failed to get player entity to handle input for")
       return
     }
@@ -27,7 +28,7 @@ public struct PlayerInputSystem: System {
     // Handle inputs
     updateRotation(inputState, rotation)
     updateCamera(inputState, camera)
-    updateVelocity(inputState, velocity, rotation, gamemode, flying, onGround, attributes)
+    updateVelocity(inputState, velocity, rotation, gamemode, flying, onGround, playerAttributes, entityAttributes)
     
     // Flush input state for the next tick
     inputState.resetMouseDelta()
@@ -80,12 +81,13 @@ public struct PlayerInputSystem: System {
     _ gamemode: PlayerGamemode,
     _ flying: EntityFlying,
     _ onGround: EntityOnGround,
-    _ attributes: PlayerAttributes
+    _ playerAttributes: PlayerAttributes,
+    _ entityAttributes: EntityAttributes
   ) {
     // Make suring the state of isFlying is allowed
     if gamemode.gamemode.isAlwaysFlying {
       flying.isFlying = true
-    } else if !attributes.canFly {
+    } else if !playerAttributes.canFly {
       flying.isFlying = false
     }
     
@@ -109,16 +111,16 @@ public struct PlayerInputSystem: System {
     
     // Apply sprinting modifier
     if inputState.inputs.contains(.sprint) {
+      print("Sprinting")
       acceleration *= 1.3
     }
     
     // Multiply by speed
     let speed: Double
     if flying.isFlying {
-      speed = Double(attributes.flyingSpeed)
+      speed = Double(playerAttributes.flyingSpeed)
     } else {
-      // Load player entity properties from the server
-      speed = 0.02
+      speed = entityAttributes[.movementSpeed].value
     }
     acceleration *= speed
     
@@ -141,9 +143,9 @@ public struct PlayerInputSystem: System {
       let sneakPressed = inputState.inputs.contains(.sneak)
       if jumpPressed != sneakPressed {
         if jumpPressed {
-          velocityVector.y = Double(attributes.flyingSpeed * 3)
+          velocityVector.y = Double(playerAttributes.flyingSpeed * 3)
         } else {
-          velocityVector.y = -Double(attributes.flyingSpeed * 3)
+          velocityVector.y = -Double(playerAttributes.flyingSpeed * 3)
         }
       } else {
         velocityVector.y = 0
