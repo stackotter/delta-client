@@ -122,7 +122,7 @@ public struct PacketRegistry {
       CollectItemPacket.self,
       EntityTeleportPacket.self,
       AdvancementsPacket.self,
-      EntityPropertiesPacket.self,
+      EntityAttributesPacket.self,
       EntityEffectPacket.self,
       DeclareRecipesPacket.self,
       TagsPacket.self

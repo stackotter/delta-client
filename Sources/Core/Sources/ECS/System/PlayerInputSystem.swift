@@ -82,10 +82,7 @@ public struct PlayerInputSystem: System {
     _ onGround: EntityOnGround,
     _ attributes: PlayerAttributes
   ) {
-    // TODO: Implement sprinting
-    // TODO: Properly calculate friction
-    
-    // TODO: move this to some sort of gamemode system
+    // Make suring the state of isFlying is allowed
     if gamemode.gamemode.isAlwaysFlying {
       flying.isFlying = true
     } else if !attributes.canFly {
@@ -110,13 +107,20 @@ public struct PlayerInputSystem: System {
     let rotationMatrix = MatrixUtil.rotationMatrix(y: Double(rotation.yaw))
     acceleration = simd_make_double3(SIMD4<Double>(acceleration, 1) * rotationMatrix)
     
-    // Multiply by sped
-    acceleration *= Double(attributes.flyingSpeed)
-    
     // Apply sprinting modifier
     if inputState.inputs.contains(.sprint) {
       acceleration *= 1.3
     }
+    
+    // Multiply by speed
+    let speed: Double
+    if flying.isFlying {
+      speed = Double(attributes.flyingSpeed)
+    } else {
+      // Load player entity properties from the server
+      speed = 0.02
+    }
+    acceleration *= speed
     
     // Handle jumping and gravity if not flying
     if !flying.isFlying {
