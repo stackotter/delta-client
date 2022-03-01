@@ -42,7 +42,7 @@ public struct BlockPosition {
     return BlockPosition(x: relativeX, y: relativeY, z: relativeZ)
   }
   
-  /// This position as a vector.
+  /// This position as a vector of floats.
   public var floatVector: SIMD3<Float> {
     return SIMD3<Float>(
       Float(x),
@@ -50,7 +50,7 @@ public struct BlockPosition {
       Float(z))
   }
   
-  /// This position as a vector.
+  /// This position as a vector of doubles.
   public var doubleVector: SIMD3<Double> {
     return SIMD3<Double>(
       Double(x),
@@ -58,7 +58,7 @@ public struct BlockPosition {
       Double(z))
   }
   
-  /// This position as a vector.
+  /// This position as a vector of ints.
   public var intVector: SIMD3<Int> {
     return SIMD3<Int>(x, y, z)
   }
@@ -66,10 +66,6 @@ public struct BlockPosition {
   /// The positions neighbouring this position.
   public var neighbours: [BlockPosition] {
     Direction.allDirections.map { self + $0.intVector }
-  }
-  
-  public static func + (lhs: BlockPosition, rhs: SIMD3<Int>) -> BlockPosition {
-    return BlockPosition(x: lhs.x &+ Int(rhs.x), y: lhs.y &+ Int(rhs.y), z: lhs.z &+ Int(rhs.z))
   }
   
   /// The block index of the position.
@@ -109,6 +105,13 @@ public struct BlockPosition {
     self.x = x
     self.y = y
     self.z = z
+  }
+  
+  // MARK: Public methods
+  
+  /// Component-wise addition of two block positions.
+  public static func + (lhs: BlockPosition, rhs: SIMD3<Int>) -> BlockPosition {
+    return BlockPosition(x: lhs.x &+ Int(rhs.x), y: lhs.y &+ Int(rhs.y), z: lhs.z &+ Int(rhs.z))
   }
 }
 
