@@ -30,27 +30,42 @@ struct ServerEditorView: EditorView {
   }
   
   var body: some View {
-    VStack {
-      TextField("Server name", text: $descriptor.name)
-      AddressField("Server address", host: $descriptor.host, port: $descriptor.port, isValid: $isAddressValid)
+    VStack(spacing: 16) {
+      HStack(alignment: .bottom) {
+        Text("Add server")
+          .font(Font.custom(.worksans, size: 25))
+          .foregroundColor(.white)
+        Spacer()
+      }
+      .frame(maxWidth: .infinity)
       
-      if let message = errorMessage {
-        Text(message)
-          .bold()
+      StyledTextfield(title: "Name", text: $descriptor.name)
+      AddressField("Address", host: $descriptor.host, port: $descriptor.port, isValid: $isAddressValid)
+      
+      HStack(spacing: 16) {
+        StyledButton(
+          action: { cancelationHandler?() },
+          height: 35,
+          text: "Cancel"
+        )
+        StyledButton(
+          action: { if verify() { completionHandler(descriptor) } },
+          height: 35,
+          text: "Save"
+        )
       }
       
-      HStack {
-        if let cancel = cancelationHandler {
-          Button("Cancel", action: cancel)
-            .buttonStyle(SecondaryButtonStyle())
+      if let errorMessage = errorMessage {
+        HStack {
+          Text(errorMessage)
+            .font(Font.custom(.worksans, size: 11))
+            .foregroundColor(.red)
+          Spacer()
         }
-        Button(isEditor ? "Save" : "Add") {
-          if verify() { completionHandler(descriptor) }
-        }
-        .buttonStyle(PrimaryButtonStyle())
+        .frame(maxWidth: .infinity)
       }
-      .padding(.top, 8)
     }
-    .frame(width: 200)
+    .padding(.top, 16)
+    .frame(width: 400)
   }
 }

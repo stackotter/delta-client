@@ -23,9 +23,17 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
   
   let save: (() -> Void)?
   let cancel: (() -> Void)?
+  /// If defined, callback is triggered on item add and `state` is not updated
+  let add: (() -> Void)?
+  /// If defined, callback is triggered on item edit and `state` is not updated
+  let edit: (() -> Void)?
   
   /// Message to display when the list is empty.
   let emptyMessage: String
+  /// List title
+  let title: String
+  /// Width of a single list cell
+  private let cellWidth: CGFloat = 400
   
   enum Action {
     case delete
@@ -48,15 +56,21 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
     ) -> Row,
     saveAction: (() -> Void)?,
     cancelAction: (() -> Void)?,
-    emptyMessage: String = "No items"
+    addAction: (() -> Void)? = nil,
+    editAction: (() -> Void)? = nil,
+    emptyMessage: String = "No items",
+    title: String
   ) {
     self._items = items
     self._selected = selected
     self.itemEditor = itemEditor
     self.row = row
     self.emptyMessage = emptyMessage
+    self.title = title
     save = saveAction
     cancel = cancelAction
+    edit = editAction
+    add = addAction
   }
   
   func handleItemAction(_ index: Int, _ action: Action) {
@@ -84,15 +98,27 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
     Group {
       switch state.current {
         case .list:
-          VStack(alignment: .center, spacing: 16) {
-            if items.count == 0 {
-              Text(emptyMessage).italic()
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .bottom) {
+              Text(title)
+                .font(Font.custom(.worksans, size: 25))
+                .foregroundColor(.white)
+              Spacer()
+              StyledButton(
+                action: {
+                  if let add = add { add() }
+                  else { state.update(to: .addItem) }
+                },
+                icon: Image(systemName: "square.and.pencil"),
+                text: "Edit"
+              )
+                .frame(width: 120)
             }
+            .frame(maxWidth: .infinity)
             
             ScrollView(showsIndicators: true) {
               ForEach(items.indices, id: \.self) { index in
                 VStack(alignment: .leading) {
-                  Divider()
                   
                   let isFirst = index == 0
                   let isLast = index == items.count - 1
@@ -100,35 +126,13 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
                     handleItemAction(index, action)
                   })
                   
-                  if index == items.count - 1 {
-                    Divider()
-                  }
                 }
               }
             }
-            
-            VStack {
-              Button("Add") {
-                state.update(to: .addItem)
-              }
-              .buttonStyle(SecondaryButtonStyle())
-              
-              if save != nil || cancel != nil {
-                HStack {
-                  if let cancel = cancel {
-                    Button("Cancel", action: cancel)
-                      .buttonStyle(SecondaryButtonStyle())
-                  }
-                  if let save = save {
-                    Button("Save", action: save)
-                      .buttonStyle(PrimaryButtonStyle())
-                  }
-                }
-              }
-            }
-            .frame(width: 200)
+            .frame(maxWidth: .infinity, maxHeight: 400)
           }
         case .addItem:
+        VStack(spacing: 0) {
           itemEditor.init(nil, completion: { newItem in
             items.append(newItem)
             if selected == nil {
@@ -138,15 +142,19 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
           }, cancelation: {
             state.update(to: .list)
           })
+        }
+          
         case let .editItem(index):
+        VStack(spacing: 0) {
           itemEditor.init(items[index], completion: { editedItem in
             items[index] = editedItem
             state.update(to: .list)
           }, cancelation: {
             state.update(to: .list)
           })
+        }
       }
     }
-    .frame(width: 400)
+    .frame(width: cellWidth)
   }
 }
