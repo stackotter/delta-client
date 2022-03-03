@@ -7,7 +7,7 @@ struct LANServerList: View {
   var body: some View {
     if !lanServerEnumerator.pingers.isEmpty {
       ForEach(lanServerEnumerator.pingers, id: \.self) { pinger in
-        NavigationLink(destination: ServerDetail(pinger: pinger)) {
+        NavigationLink(destination: Text("Empty")) {
           ServerListItem(pinger: pinger)
         }
       }

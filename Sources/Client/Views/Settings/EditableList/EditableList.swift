@@ -29,11 +29,20 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
     _ handler: @escaping (EditableListAction) -> Void
   ) -> Row
 
+  /// If defined, callback is triggered on save.
   let save: (() -> Void)?
+  /// If defined, callback is triggered on edit cancel.
   let cancel: (() -> Void)?
+  /// If defined, callback is triggered on item add.
+  let add: (() -> Void)?
+  /// If defined, callback is triggered on item edit.
+  let edit: (() -> Void)?
 
   /// Message to display when the list is empty.
   let emptyMessage: String
+  
+  /// List title
+  let title: String
 
   init(
     _ items: Binding<[ItemEditor.Item]>,
@@ -48,15 +57,21 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
     ) -> Row,
     saveAction: (() -> Void)?,
     cancelAction: (() -> Void)?,
-    emptyMessage: String = "No items"
+    addAction: (() -> Void)? = nil,
+    editAction: (() -> Void)? = nil,
+    emptyMessage: String = "No items",
+    title: String
   ) {
     self._items = items
     self._selected = selected
     self.itemEditor = itemEditor
     self.row = row
     self.emptyMessage = emptyMessage
+    self.title = title
     save = saveAction
     cancel = cancelAction
+    edit = editAction
+    add = addAction
   }
 
   func handleItemAction(_ index: Int, _ action: EditableListAction) {
@@ -93,16 +108,30 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
     Group {
       switch state.current {
         case .list:
-          VStack(alignment: .center, spacing: 16) {
-            if items.count == 0 {
-              Text(emptyMessage).italic()
+          VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .bottom) {
+              Text(title)
+                .font(Font.custom(.worksans, size: 25))
+                .foregroundColor(.white)
+              Spacer()
+              StyledButton(
+                action: {
+                  if let add = add {
+                    add()
+                  } else {
+                    state.update(to: .addItem)
+                  }
+                },
+                icon: Image(systemName: "square.and.pencil"),
+                text: "Edit"
+              )
+                .frame(width: 120)
             }
-
+            .frame(maxWidth: .infinity)
+            
             ScrollView(showsIndicators: true) {
               ForEach(items.indices, id: \.self) { index in
                 VStack(alignment: .leading) {
-                  Divider()
-
                   let isFirst = index == 0
                   let isLast = index == items.count - 1
                   row(items[index], selected == index, isFirst, isLast, { action in
@@ -135,23 +164,29 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
                 }
               }
             }
-            .frame(width: 200)
+            .frame(maxWidth: .infinity, maxHeight: 400)
           }
+
         case .addItem:
-          itemEditor.init(nil, completion: { newItem in
-            items.append(newItem)
-            selected = items.count - 1
-            state.update(to: .list)
-          }, cancelation: {
-            state.update(to: .list)
-          })
+          VStack(spacing: 0) {
+            itemEditor.init(nil, completion: { newItem in
+              items.append(newItem)
+              selected = items.count - 1
+              state.update(to: .list)
+            }, cancelation: {
+              state.update(to: .list)
+            })
+          }
+          
         case let .editItem(index):
-          itemEditor.init(items[index], completion: { editedItem in
-            items[index] = editedItem
-            state.update(to: .list)
-          }, cancelation: {
-            state.update(to: .list)
-          })
+          VStack(spacing: 0) {
+            itemEditor.init(items[index], completion: { editedItem in
+              items[index] = editedItem
+              state.update(to: .list)
+            }, cancelation: {
+              state.update(to: .list)
+            })
+          }
       }
     }
     .frame(width: 400)
