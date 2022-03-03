@@ -1,13 +1,18 @@
 import SwiftUI
 
 struct PrimaryButtonStyle: ButtonStyle {
+  var height: CGFloat? = nil
+  
   func makeBody(configuration: Configuration) -> some View {
     HStack {
       Spacer()
-      configuration.label.foregroundColor(.white)
+      configuration.label
       Spacer()
     }
-    .padding(6)
-    .background(Color.accentColor.brightness(configuration.isPressed ? 0.15 : 0).cornerRadius(4))
+    .padding(.horizontal, 10)
+    .padding(.vertical, 5)
+    .frame(height: height)
+    .background(Color.darkGray)
+    .cornerRadius(4)
   }
 }

@@ -20,30 +20,30 @@ struct DirectConnectView: View {
   }
   
   var body: some View {
-    VStack {
-      AddressField("Server address", host: $host, port: $port, isValid: $isAddressValid)
-      
-      if let message = errorMessage {
-        Text(message)
-          .bold()
-      }
-      
+    VStack(alignment: .leading, spacing: 16) {
+      Text("Direct connect")
+        .font(Font.custom(.worksans, size: 25))
+        .foregroundColor(.white)
+      AddressField("Adress", host: $host, port: $port, isValid: $isAddressValid)
       HStack {
-        Button("Cancel") {
-          appState.update(to: .serverList)
+        StyledButton(
+          action: {
+            if verify() {
+              let descriptor = ServerDescriptor(name: "Direct Connect", host: host, port: port)
+              appState.update(to: .playServer(descriptor))
+            }
+          },
+          text: "Connect"
+        )
+          .frame(width: 120)
+        Spacer()
+        if let message = errorMessage {
+          Text(message)
+            .font(Font.custom(.worksans, size: 11))
+            .foregroundColor(.red)
+            .frame(maxWidth: 250)
         }
-        .buttonStyle(SecondaryButtonStyle())
-        
-        Button("Connect") {
-          if verify() {
-            let descriptor = ServerDescriptor(name: "Direct Connect", host: host, port: port)
-            appState.update(to: .playServer(descriptor))
-          }
-        }
-        .buttonStyle(PrimaryButtonStyle())
       }
-      .padding(.top, 16)
     }
-    .frame(width: 200)
   }
 }

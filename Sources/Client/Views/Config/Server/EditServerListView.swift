@@ -6,6 +6,7 @@ struct EditServerListView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
   
   @State var servers = ConfigManager.default.config.servers
+  @State var isAddingServer = false
   
   func save() {
     var config = ConfigManager.default.config
@@ -15,37 +16,68 @@ struct EditServerListView: View {
   }
   
   var body: some View {
-    VStack {
-      EditableList(
-        $servers,
-        itemEditor: ServerEditorView.self,
-        row: { item, selected, isFirst, isLast, handler in
-          HStack {
-            VStack {
-              IconButton("chevron.up", isDisabled: isFirst) { handler(.moveUp) }
-              IconButton("chevron.down", isDisabled: isLast) { handler(.moveDown) }
-            }
-            
-            VStack(alignment: .leading) {
-              Text(item.name)
-                .font(.headline)
-              Text(item.description)
-                .font(.subheadline)
-            }
-            
-            Spacer()
-            
+    VStack(spacing: 50) {
+      if isAddingServer {
+        ServerEditorView(nil) { newItem in
+          servers.append(newItem)
+          save()
+          isAddingServer = false
+        } cancelation: {
+          isAddingServer = false
+        }
+      } else {
+        DirectConnectView()
+        .frame(width: 400, alignment: .leading)
+        
+        EditableList(
+          $servers,
+          itemEditor: ServerEditorView.self,
+          row: { item, selected, isFirst, isLast, handler in
             HStack {
-              IconButton("square.and.pencil") { handler(.edit) }
-              IconButton("xmark") { handler(.delete) }
+              
+              VStack(alignment: .leading, spacing: 3.5) {
+                Text(item.name)
+                  .font(Font.custom(.worksans, size: 15.5))
+                  .foregroundColor(.white)
+                Text(item.description)
+                  .font(Font.custom(.worksans, size: 13))
+                  .foregroundColor(.white)
+              }
+              
+              Spacer()
+              
+              HStack(spacing: 12.5) {
+                Button { handler(.delete) } label: {
+                  Image(systemName: "trash")
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundColor(.white)
+                }
+                .buttonStyle(PlainButtonStyle())
+                Button { appState.update(to: .playServer(item)) } label: {
+                  Image(systemName: "play")
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundColor(.white)
+                }
+                .buttonStyle(PlainButtonStyle())
+              }
             }
-          }
-        },
-        saveAction: save,
-        cancelAction: appState.pop,
-        emptyMessage: "No servers")
+            .padding(.horizontal, 15)
+            .padding(.vertical, 7.5)
+            .background(Color.lightGray)
+            .cornerRadius(4)
+            .padding(.bottom, 5)
+          },
+          saveAction: save,
+          cancelAction: appState.pop,
+          addAction: { isAddingServer.toggle() },
+          emptyMessage: "No servers",
+          title: "Server list")
+          .background(Color.black)
+      }
     }
-    .padding()
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    .padding(.vertical, 50)
+    .background(Color.black)
     .navigationTitle("Edit Servers")
   }
 }
