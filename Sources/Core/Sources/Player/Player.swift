@@ -13,6 +13,8 @@ public struct Player {
   public private(set) var experience: EntityExperience
   /// The component storing whether the player is flying.
   public private(set) var flying: EntityFlying
+  /// The component storing whether the player is sprinting.
+  public private(set) var sprinting: EntitySprinting
   /// The component storing the player's health.
   public private(set) var health: EntityHealth
   /// The component storing the player's hunger and saturation.
@@ -21,6 +23,8 @@ public struct Player {
   public private(set) var position: EntityPosition
   /// The component storing the player's velocity.
   public private(set) var velocity: EntityVelocity
+  /// The component storing the player's acceleration.
+  public private(set) var acceleration: EntityAcceleration
   /// The component storing the plyaer's hit box.
   public private(set) var hitBox: EntityHitBox
   /// The component storing the player's rotation.
@@ -43,10 +47,12 @@ public struct Player {
     onGround = EntityOnGround(true)
     position = EntityPosition(0, 0, 0, smoothingAmount: 1 / 18) // Having it set to slightly more than a tick smooths out any hick ups caused by late ticks
     rotation = EntityRotation(pitch: 0.0, yaw: 0.0, smoothingAmount: 1 / 18)
-    velocity = EntityVelocity(0, 0.0, 0)
+    velocity = EntityVelocity(0, 0, 0)
+    acceleration = EntityAcceleration(0, 0, 0)
     hitBox = EntityHitBox(width: playerEntity.width, height: playerEntity.height)
     experience = EntityExperience()
     flying = EntityFlying()
+    sprinting = EntitySprinting()
     health = EntityHealth()
     nutrition = EntityNutrition()
     playerAttributes = PlayerAttributes()
@@ -69,9 +75,11 @@ public struct Player {
       position
       rotation
       velocity
+      acceleration
       hitBox
       experience
       flying
+      sprinting
       health
       nutrition
       playerAttributes

@@ -8,54 +8,38 @@ import FirebladeECS
 public class EntityPosition: Component {
   // MARK: Public properties
   
-  /// The raw position (not smoothed).
-  public var vector: SIMD3<Double> {
-    get { _vector }
-    set {
-      previousVector = smoothVector
-      _vector = newValue
-      lastUpdated = CFAbsoluteTimeGetCurrent()
-    }
-  }
+  /// The underlying vector.
+  public var vector: SIMD3<Double>
+  
+  /// The previous position.
+  public var previousVector: SIMD3<Double>
   
   /// The amount of time taken (in seconds) for ``smoothVector`` to transition from one position to the next.
   public var smoothingAmount: Double
   
-  /// A vector that smoothly interpolates from the previous position to the next position in an amount of time described by ``smoothingAmount``.
+  /// A vector that smoothly interpolates from the previous position (set by calling ``save()``) to the next position in an amount of time described by ``smoothingAmount``.
   public var smoothVector: SIMD3<Double> {
     let delta = CFAbsoluteTimeGetCurrent() - lastUpdated
     let tickProgress = min(max(delta / smoothingAmount, 0), 1)
-    return tickProgress * (_vector - previousVector) + previousVector
+    return tickProgress * (vector - previousVector) + previousVector
   }
   
   /// The raw x component (not smoothed).
   public var x: Double {
     get { vector.x }
-    set {
-      var copy = vector
-      copy.x = newValue
-      vector = copy
-    }
+    set { vector.x = newValue }
   }
   
   /// The raw y component (not smoothed).
   public var y: Double {
     get { vector.y }
-    set {
-      var copy = vector
-      copy.y = newValue
-      vector = copy
-    }
+    set { vector.y = newValue }
   }
   
   /// The raw z component (not smoothed).
   public var z: Double {
     get { vector.z }
-    set {
-      var copy = vector
-      copy.z = newValue
-      vector = copy
-    }
+    set { vector.z = newValue }
   }
   
   /// The position of the chunk this position is in.
@@ -75,10 +59,6 @@ public class EntityPosition: Component {
   
   // MARK: Private properties
   
-  /// The underlying vector.
-  private var _vector: SIMD3<Double>
-  /// The previous position.
-  private var previousVector: SIMD3<Double>
   /// The time the vector was last updated. Used for smoothing.
   private var lastUpdated: CFAbsoluteTime
   
@@ -89,7 +69,7 @@ public class EntityPosition: Component {
   ///   - vector: A vector representing the position.
   ///   - smoothingAmount: The amount of time (in seconds) for ``smoothVector`` to transition from one position to the next. Defaults to one 15th of a second.
   public init(_ vector: SIMD3<Double>, smoothingAmount: Double = 1 / 15) {
-    _vector = vector
+    self.vector = vector
     previousVector = vector
     lastUpdated = CFAbsoluteTimeGetCurrent()
     self.smoothingAmount = smoothingAmount
@@ -120,5 +100,13 @@ public class EntityPosition: Component {
   /// Offsets the position by a specified amount. This will smoothly transition to the new position over the course of a ``smoothingDelay``.
   public func move(by offset: SIMD3<Double>) {
     vector += offset
+  }
+  
+  // MARK: Smoothing
+  
+  /// Saves the current value as the value to smooth from.
+  public func save() {
+    previousVector = vector
+    lastUpdated = CFAbsoluteTimeGetCurrent()
   }
 }
