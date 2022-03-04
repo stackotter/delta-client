@@ -88,7 +88,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     let frameTime = time - previousFrameStartTime
     previousFrameStartTime = time
     
-    var stopwatch = Stopwatch(mode: .verbose, name: "RenderCoordinator.draw")
+    var stopwatch = Stopwatch(mode: .summary, name: "RenderCoordinator.draw")
     
     stopwatch.startMeasurement("Get render pass descriptor")
     // Get current render pass descriptor

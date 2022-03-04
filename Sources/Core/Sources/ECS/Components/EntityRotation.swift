@@ -7,58 +7,37 @@ public class EntityRotation: Component {
   public var smoothingAmount: Float
   
   /// Pitch in radians.
-  public var pitch: Float {
-    get {
-      _pitch
-    }
-    set(newValue) {
-      previousPitch = _pitch
-      _pitch = newValue
-      pitchLastUpdated = CFAbsoluteTimeGetCurrent()
-    }
-  }
+  public var pitch: Float
   
   /// Yaw in radians.
-  public var yaw: Float {
-    get {
-      _yaw
-    }
-    set(newValue) {
-      previousYaw = _yaw
-      _yaw = newValue
-      yawLastUpdated = CFAbsoluteTimeGetCurrent()
-    }
-  }
+  public var yaw: Float
+  
+  /// The previous pitch.
+  public var previousPitch: Float
+  
+  /// The previous yaw.
+  public var previousYaw: Float
   
   /// The smoothly interpolated pitch.
   public var smoothPitch: Float {
-    let delta = Float(CFAbsoluteTimeGetCurrent() - pitchLastUpdated)
+    let delta = Float(CFAbsoluteTimeGetCurrent() - lastUpdated)
     let progress = MathUtil.clamp(delta / smoothingAmount, 0, 1)
-    return MathUtil.lerpAngle(from: previousPitch, to: _pitch, progress: progress)
+    return MathUtil.lerpAngle(from: previousPitch, to: pitch, progress: progress)
   }
   
   /// The smoothly interpolated yaw.
   public var smoothYaw: Float {
-    let delta = Float(CFAbsoluteTimeGetCurrent() - yawLastUpdated)
+    let delta = Float(CFAbsoluteTimeGetCurrent() - lastUpdated)
     let progress = MathUtil.clamp(delta / smoothingAmount, 0, 1)
-    return MathUtil.lerpAngle(from: previousYaw, to: _yaw, progress: progress)
+    return MathUtil.lerpAngle(from: previousYaw, to: yaw, progress: progress)
   }
   
   // MARK: Private properties
   
-  /// The current pitch.
-  private var _pitch: Float
-  /// The previous pitch.
-  private var previousPitch: Float
-  /// The time pitch was last updated. Used for smoothing.
-  private var pitchLastUpdated: CFAbsoluteTime
+  /// The time that the rotation was last updated. Used for smoothing. Set by ``save()``.
+  private var lastUpdated: CFAbsoluteTime
   
-  /// The current yaw.
-  private var _yaw: Float
-  /// The previous yaw.
-  private var previousYaw: Float
-  /// The time yaw was last updated. Used for smoothing.
-  private var yawLastUpdated: CFAbsoluteTime
+  // MARK: Init
   
   /// Creates an entity's rotation.
   /// - Parameters:
@@ -66,12 +45,20 @@ public class EntityRotation: Component {
   ///   - yaw: The yaw in radians. Measured counterclockwise from the positive z axis.
   ///   - smoothingAmount: The amount of time (in seconds) for ``smoothYaw`` and ``smoothPitch`` to transition from one position to the next. Defaults to 0 seconds.
   public init(pitch: Float, yaw: Float, smoothingAmount: Float = 0) {
-    self._pitch = pitch
-    self._yaw = yaw
+    self.pitch = pitch
+    self.yaw = yaw
     self.previousPitch = pitch
     self.previousYaw = yaw
-    self.pitchLastUpdated = CFAbsoluteTimeGetCurrent()
-    self.yawLastUpdated = CFAbsoluteTimeGetCurrent()
     self.smoothingAmount = smoothingAmount
+    lastUpdated = CFAbsoluteTimeGetCurrent()
+  }
+  
+  // MARK: Public methods
+  
+  /// Saves the current pitch and yaw as the values to smooth from.
+  public func save() {
+    previousPitch = pitch
+    previousYaw = yaw
+    lastUpdated = CFAbsoluteTimeGetCurrent()
   }
 }
