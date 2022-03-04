@@ -69,8 +69,16 @@ public struct Game {
     self.player = player
     
     // Add systems
+    tickScheduler.addSystem(PlayerSmoothingSystem())
     tickScheduler.addSystem(PlayerInputSystem())
-    tickScheduler.addSystem(PlayerPhysicsSystem())
+    tickScheduler.addSystem(PlayerFlightSystem())
+    tickScheduler.addSystem(PlayerAccelerationSystem())
+    tickScheduler.addSystem(PlayerJumpSystem())
+    tickScheduler.addSystem(PlayerGravitySystem())
+    tickScheduler.addSystem(PlayerVelocitySystem())
+    tickScheduler.addSystem(PlayerCollisionSystem())
+    tickScheduler.addSystem(PlayerPositionSystem())
+    
     tickScheduler.addSystem(VelocitySystem())
     
     // Start tick loop

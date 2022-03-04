@@ -1,60 +1,32 @@
-import Foundation
 import FirebladeECS
 import simd
 
-/// The system that handles physics for the client's player.
-public struct PlayerPhysicsSystem: System {
-  /// Updates the player's position and velocity according to friction and collisions.
+public struct PlayerCollisionSystem: System {
   public func update(_ nexus: Nexus, _ world: World) {
-    var familyIterator = nexus.family(
+    var family = nexus.family(
       requiresAll: EntityPosition.self,
-      EntityHitBox.self,
       EntityVelocity.self,
+      EntityHitBox.self,
       EntityOnGround.self,
       ClientPlayerEntity.self
     ).makeIterator()
     
-    guard let (position, hitbox, velocity, onGround, _) = familyIterator.next() else {
-      log.error("Failed to get player entity to handle input for")
+    guard let (position, velocity, hitbox, onGround, _) = family.next() else {
+      log.error("PlayerCollisionSystem failed to get player to tick")
       return
     }
     
-    applyFriction(velocity)
-    updatePositionAndVelocity(position, velocity, hitbox, onGround, world)
-  }
-  
-  /// Applies air resistance along the y axis and friction along the x and z axes.
-  /// - Parameter velocity: The player's velocity.
-  private func applyFriction(_ velocity: EntityVelocity) {
-    velocity.vector *= SIMD3(PhysicsConstants.frictionMultiplier, PhysicsConstants.airResistanceMultiplier, PhysicsConstants.frictionMultiplier)
-  }
-  
-  /// Updates the player's position after adjusting the velocity. And sets velocity along any colliding axes to 0.
-  /// - Parameters:
-  ///   - position: The player's position.
-  ///   - velocity: The player's velocity.
-  ///   - hitbox: The player's hitbox.
-  ///   - onGround: The component storing whether the player is on the ground.
-  ///   - world: The world to check for collisions with.
-  private func updatePositionAndVelocity(_ position: EntityPosition, _ velocity: EntityVelocity, _ hitbox: EntityHitBox, _ onGround: EntityOnGround, _ world: World) {
-    let aabb = hitbox.aabb(at: position.vector)
-    let adjustedVelocity = getAdjustedVelocity(position.vector, velocity.vector, aabb, world)
+    let original = velocity.vector
+    velocity.vector = Self.getAdjustedVelocity(
+      position.vector,
+      velocity.vector,
+      hitbox.aabb(at: position.vector),
+      world)
     
-    position.move(by: adjustedVelocity)
-    
-    if adjustedVelocity.x != velocity.x {
-      velocity.x = 0
-    }
-    
-    if adjustedVelocity.y != velocity.y {
-      velocity.y = 0
+    if original.y < 0 && original.y != velocity.y {
       onGround.onGround = true
     } else {
       onGround.onGround = false
-    }
-    
-    if adjustedVelocity.z != velocity.z {
-      velocity.z = 0
     }
   }
   
@@ -64,7 +36,7 @@ public struct PlayerPhysicsSystem: System {
   ///   - velocity: The player's velocity.
   ///   - hitbox: The player's hitbox.
   /// - Returns: The adjusted velocity, the magnitude will be between 0 and the magnitude of the original velocity.
-  private func getAdjustedVelocity(_ position: SIMD3<Double>, _ velocity: SIMD3<Double>, _ aabb: AxisAlignedBoundingBox, _ world: World) -> SIMD3<Double> {
+  private static func getAdjustedVelocity(_ position: SIMD3<Double>, _ velocity: SIMD3<Double>, _ aabb: AxisAlignedBoundingBox, _ world: World) -> SIMD3<Double> {
     let collisionVolume = getCollisionVolume(position, velocity, aabb, world)
     
     var adjustedVelocity = velocity
@@ -100,7 +72,7 @@ public struct PlayerPhysicsSystem: System {
   ///   - collisionVolume: The volume to avoid collisions with.
   ///   - aabb: The player aabb.
   /// - Returns: The adjusted velocity along the given axis. The adjusted value will be between 0 and the original velocity.
-  private func adjustComponent(_ value: Double, onAxis axis: Axis, collisionVolume: CompoundBoundingBox, aabb: AxisAlignedBoundingBox) -> Double {
+  private static func adjustComponent(_ value: Double, onAxis axis: Axis, collisionVolume: CompoundBoundingBox, aabb: AxisAlignedBoundingBox) -> Double {
     if abs(value) < 0.0000001 {
       return 0
     }
@@ -138,7 +110,7 @@ public struct PlayerPhysicsSystem: System {
   /// It creates the smallest bounding box containing the current player AABB and the player AABB
   /// after adding the current velocity (pre-collisions). It then creates a compound bounding box
   /// containing all blocks within that volume.
-  private func getCollisionVolume(_ position: SIMD3<Double>, _ velocity: SIMD3<Double>, _ aabb: AxisAlignedBoundingBox, _ world: World) -> CompoundBoundingBox {
+  private static func getCollisionVolume(_ position: SIMD3<Double>, _ velocity: SIMD3<Double>, _ aabb: AxisAlignedBoundingBox, _ world: World) -> CompoundBoundingBox {
     let nextAABB = aabb.offset(by: velocity)
     let minimum = min(aabb.minimum, nextAABB.minimum)
     let maximum = max(aabb.maximum, nextAABB.maximum)

@@ -69,7 +69,7 @@ public final class WorldRenderer: Renderer {
     worldToClipUniformsBuffer: MTLBuffer,
     camera: Camera
   ) throws {
-    var stopwatch = Stopwatch(mode: .verbose, name: "WorldRenderer.render")
+    var stopwatch = Stopwatch(mode: .summary, name: "WorldRenderer.render")
     
     stopwatch.startMeasurement("worldMesh.update")
     worldMesh.update(camera: camera, renderDistance: client.configuration.render.renderDistance)
