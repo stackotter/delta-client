@@ -26,7 +26,7 @@ struct EditServerListView: View {
           isAddingServer = false
         }
       } else {
-          DirectConnectView()
+        DirectConnectView()
           .frame(width: 400, alignment: .leading)
         
         EditableList(

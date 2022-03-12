@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct StyledTextfield: View {
+struct StyledTextField: View {
   /// Textfield placeholder
   let title: String
   /// Textfield's text
