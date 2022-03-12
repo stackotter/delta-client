@@ -1,8 +1,6 @@
 import SwiftUI
 
-
 struct StyledTextfield: View {
-  
   /// Textfield placeholder
   let title: String
   /// Textfield's text
@@ -22,5 +20,4 @@ struct StyledTextfield: View {
           .stroke(Color.lightGray, lineWidth: 2)
       )
   }
-  
 }
