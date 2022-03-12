@@ -26,15 +26,14 @@ struct EditServerListView: View {
           isAddingServer = false
         }
       } else {
-        DirectConnectView()
-        .frame(width: 400, alignment: .leading)
+          DirectConnectView()
+          .frame(width: 400, alignment: .leading)
         
         EditableList(
           $servers,
           itemEditor: ServerEditorView.self,
           row: { item, selected, isFirst, isLast, handler in
             HStack {
-              
               VStack(alignment: .leading, spacing: 3.5) {
                 Text(item.name)
                   .font(Font.custom(.worksans, size: 15.5))

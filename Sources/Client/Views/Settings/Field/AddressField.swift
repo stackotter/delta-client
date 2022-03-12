@@ -83,6 +83,5 @@ struct AddressField: View {
       .onAppear {
         update(string)
       }
-      
   }
 }
