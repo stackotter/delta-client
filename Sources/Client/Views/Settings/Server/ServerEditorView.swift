@@ -39,7 +39,7 @@ struct ServerEditorView: EditorView {
       }
       .frame(maxWidth: .infinity)
       
-      StyledTextfield(title: "Name", text: $descriptor.name)
+        StyledTextField(title: "Name", text: $descriptor.name)
       AddressField("Address", host: $descriptor.host, port: $descriptor.port, isValid: $isAddressValid)
       
       HStack(spacing: 16) {

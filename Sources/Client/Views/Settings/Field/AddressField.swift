@@ -78,7 +78,7 @@ struct AddressField: View {
   }
 
   var body: some View {
-    StyledTextfield(title: title, text: $string)
+    StyledTextField(title: title, text: $string)
       .onReceive(Just(string), perform: update)
       .onAppear {
         update(string)
