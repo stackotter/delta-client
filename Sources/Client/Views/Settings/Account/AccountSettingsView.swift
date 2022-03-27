@@ -24,6 +24,10 @@ struct AccountSettingsView: View {
         title: "Account settings")
     }
     .navigationTitle("Accounts")
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .padding(.vertical, 50)
+    .padding(.horizontal, 100)
+    .background(Color.black)
     .onAppear {
       accounts = Array(ConfigManager.default.config.accounts.values)
       selectedIndex = getSelectedIndex()
@@ -32,23 +36,25 @@ struct AccountSettingsView: View {
 
   func row(item: Account, selected: Bool, isFirst: Bool, isLast: Bool, handler: @escaping (EditableListAction) -> Void) -> some View {
     HStack {
-      Image(systemName: "chevron.right")
-        .opacity(selected ? 1 : 0)
-
-      VStack(alignment: .leading) {
-        Text(item.username)
-          .font(.headline)
+      HStack(spacing: 0) {
+        Text("\(item.username) • ")
+          .font(Font.custom(.worksans, size: 14))
+          .foregroundColor(Color.white)
         Text(item.type)
-          .font(.subheadline)
+          .font(Font.custom(.worksans, size: 14))
+          .foregroundColor(Color.white)
       }
 
       Spacer()
 
-      Button("Select") { handler(.select) }
-        .disabled(selected)
-        .buttonStyle(BorderlessButtonStyle())
       IconButton("xmark") { handler(.delete) }
     }
+      .padding(.vertical, 5)
+      .padding(.horizontal, 15)
+      .background(selected ? Color.darkGray : Color.clear)
+      .cornerRadius(4)
+      .contentShape(Rectangle())
+      .onTapGesture { handler(.select) }
   }
 
   /// Saves the given accounts to the config file.

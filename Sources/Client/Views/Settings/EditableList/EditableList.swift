@@ -164,9 +164,9 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
                 }
               }
             }
-            .frame(maxWidth: .infinity, maxHeight: 400)
+              .frame(maxWidth: .infinity, maxHeight: 400)
           }
-
+            .frame(maxWidth: .infinity)
         case .addItem:
           VStack(spacing: 0) {
             itemEditor.init(nil, completion: { newItem in

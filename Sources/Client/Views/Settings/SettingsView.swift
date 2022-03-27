@@ -48,7 +48,7 @@ struct SettingsView: View {
         if !isInGame {
           NavigationLink(
             "Accounts",
-            destination: AccountSettingsView().padding(),
+            destination: AccountSettingsView(),
             tag: SettingsState.accounts,
             selection: $currentPage
           )
