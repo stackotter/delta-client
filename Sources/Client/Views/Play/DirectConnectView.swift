@@ -24,7 +24,7 @@ struct DirectConnectView: View {
       Text("Direct connect")
         .font(Font.custom(.worksans, size: 25))
         .foregroundColor(.white)
-      AddressField("Adress", host: $host, port: $port, isValid: $isAddressValid)
+      AddressField("Address", host: $host, port: $port, isValid: $isAddressValid)
       HStack {
         StyledButton(
           action: {

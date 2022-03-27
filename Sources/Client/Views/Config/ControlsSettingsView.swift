@@ -1,30 +1,43 @@
 import SwiftUI
 
 struct ControlsSettingsView: View {
-  @State var sensitivity = ConfigManager.default.config.mouseSensitivity
+  @State private var sensitivity: Float = 0
   
   var body: some View {
+    let sliderWidth: CGFloat = 400
+    let sliderHeight: CGFloat = 25
     ScrollView {
-      HStack {
-        Text("Sensitivity: \(Self.formatSensitivity(sensitivity))")
-          .frame(width: 150)
-        
-        Slider(value: $sensitivity, in: 0...10, onEditingChanged: { isEditing in
-          if !isEditing {
-            sensitivity = Self.roundSensitivity(sensitivity)
+      VStack(spacing: 30) {
+        // Mouse sensitivity
+        StyledSlider(
+          min: 0,
+          max: 1000,
+          initialValue: sensitivity,
+          title: "Sensitivity",
+          onDragEnded: { v in
             var config = ConfigManager.default.config
-            config.mouseSensitivity = sensitivity
+            config.mouseSensitivity = v
             ConfigManager.default.setConfig(to: config)
           }
-        })
+        )
+          .frame(width: sliderWidth, height: sliderHeight)
+          .thumbFrame(width: sliderWidth*0.035, height: sliderHeight*1.35)
+          .thumbFill(Color.black)
+        // Key maps
+        InputView { inputCaptured, delegateSetter in
+          KeymapEditorView(
+            inputCaptured: inputCaptured,
+            inputDelegateSetter: delegateSetter
+          )
+        }
       }
-      .frame(width: 450)
-      
-      InputView { inputCaptured, delegateSetter in
-        KeymapEditorView(
-          inputCaptured: inputCaptured,
-          inputDelegateSetter: delegateSetter)
-      }
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .padding(.vertical, 50)
+    .padding(.horizontal, 100)
+    .background(Color.black)
+    .onAppear {
+      sensitivity = ConfigManager.default.config.mouseSensitivity
     }
   }
   
@@ -34,9 +47,5 @@ struct ControlsSettingsView: View {
       return 1
     }
     return Float(Int(round(sensitivity * 100 / 2)) * 2) / 100
-  }
-  
-  private static func formatSensitivity(_ sensitivity: Float) -> String {
-    return "\(Int(roundSensitivity(sensitivity) * 100))%"
   }
 }

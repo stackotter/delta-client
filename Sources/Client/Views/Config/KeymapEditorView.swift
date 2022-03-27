@@ -2,11 +2,12 @@ import SwiftUI
 import DeltaCore
 
 struct KeymapEditorView: View {
+  
   /// Whether key inputs are being captured by the view
   @Binding var inputCaptured: Bool
-  
   /// A wrapper for the current keymap and the currently selected input
   @ObservedObject var state: KeymapEditorState
+  
   
   init(inputCaptured: Binding<Bool>, inputDelegateSetter setInputDelegate: (InputDelegate) -> Void) {
     _inputCaptured = inputCaptured
@@ -15,59 +16,59 @@ struct KeymapEditorView: View {
     setInputDelegate(inputDelegate)
   }
   
+  
   var body: some View {
-    VStack {
+    VStack(spacing: 15) {
       ForEach(Input.allCases, id: \.self) { input in
         let key = state.keymap[input]
         let isUnique = key == nil ? true : state.keymap.values.filter({ $0 == key }).count == 1
         let isBound = state.keymap[input] != nil
         let isSelected = state.selectedInput == input
-        
+        let keyName = key?.rawValue ?? "Unbound"
         let labelColor = Self.labelColor(isUnique: isUnique, isBound: isBound, isSelected: isSelected)
+        let unboundable = isBound && !isSelected
         
         HStack {
-          // Input name (e.g. 'Sneak')
-          Text(input.humanReadableLabel)
-            .frame(width: 150)
-          
-          // Button to set a new binding
-          let keyName = state.keymap[input]?.rawValue ?? "Unbound"
-          Button(action: {
-            if isSelected {
-              state.selectedInput = nil
-              inputCaptured = false
-            } else {
-              state.selectedInput = input
-              inputCaptured = true
-            }
-          }, label: {
+          HStack {
+            // Input name
+            Text(input.humanReadableLabel)
+              .font(Font.custom(.worksans, size: 15))
+              .foregroundColor(.white)
+            Spacer()
+            // Input button
             Text(isSelected ? "> Press key <" : keyName)
+              .font(Font.custom(.worksans, size: 14))
               .foregroundColor(labelColor)
-          })
-          .buttonStyle(SecondaryButtonStyle())
-          
-          // Button to unbind an input
-          IconButton("xmark", isDisabled: !isBound || isSelected) {
-            state.keymap.removeValue(forKey: input)
-            var config = ConfigManager.default.config
-            config.keymap.bindings = state.keymap
-            ConfigManager.default.setConfig(to: config)
+              .frame(width: 150, height: 30)
+              .background(Color.lightGray)
+              .cornerRadius(4)
+              .contentShape(Rectangle())
+              .onTapGesture {
+                inputCaptured = !isSelected
+                state.selectedInput = isSelected ? nil : input
+              }
+          }
+          .frame(width: 400)
+          // Remove input button
+          if unboundable {
+            Button {  } label: {
+              Image(systemName: "trash")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.white)
+            }
+            .buttonStyle(PlainButtonStyle())
           }
         }
-        .frame(width: 400)
+        .offset(x: unboundable ? -4 : -15)
       }
     }
   }
   
+  
   static func labelColor(isUnique: Bool, isBound: Bool, isSelected: Bool) -> Color {
-    if isSelected {
-      return .white
-    } else if !isBound {
-      return .yellow
-    } else if !isUnique {
-      return .red
-    } else {
-      return .white
-    }
+    if isSelected { return .white }
+    else if !isBound { return .yellow }
+    else if !isUnique { return .red }
+    else { return .white }
   }
 }

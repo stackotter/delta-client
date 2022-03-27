@@ -16,7 +16,7 @@ struct SettingsView: View {
     NavigationView {
       List {
         NavigationLink("Video", destination: VideoSettingsView(client: client))
-        NavigationLink("Controls", destination: ControlsSettingsView().padding())
+        NavigationLink("Controls", destination: ControlsSettingsView())
         
         if !isInGame {
           NavigationLink("Accounts", destination: AccountSettingsView().padding())
