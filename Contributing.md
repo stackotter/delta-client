@@ -1,6 +1,5 @@
 # Contributing
 
-<<<<<<< HEAD
 Delta Client is completely open source and I welcome contributions of all kinds. If you're
 interested in contributing, you can checkout the [delta client issues](https://github.com/stackotter/delta-client/issues)
 and [delta client website issues](https://github.com/stackotter/delta-website) ( on GitHub for some

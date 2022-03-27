@@ -8,7 +8,8 @@ struct VideoSettingsView: View {
   @State var renderDistance: Float = 0
   @State var fov: Float = 0
   @State var renderMode: RenderMode = .normal
-  @State var enableOrderIndependentTransparency: Bool = false
+  @State var enableOrderIndependentTransparency = false
+  @State var dropdownExpanded = false
 
   var config: RenderConfiguration {
     return RenderConfiguration(
@@ -32,11 +33,9 @@ struct VideoSettingsView: View {
   }
 
   /// Handles when the user stops/starts editing.
-  func onEditingChanged(_ newValue: Bool) {
+  func onEditingEnded(_ newValue: Float) {
     // If the user has stopped editing, update config
-    if newValue == false {
-      save()
-    }
+    save()
   }
 
   /// Saves the user's choices to the config file.
@@ -47,72 +46,109 @@ struct VideoSettingsView: View {
   }
 
   var body: some View {
+    let hPadding: CGFloat = 100
+    let dropdownHeight: CGFloat = 30
     ScrollView {
-      HStack {
-        Text("Render distance: \(Int(renderDistance))")
-        Spacer()
-        Slider(
+      VStack(spacing: 30) {
+        // Render distance
+        buildSlider(
+          min: 0,
+          max: 32,
+          initial: renderDistance,
+          title: "Render distance",
           value: $renderDistance.onChange(onValueChanged),
-          in: 0...32,
-          step: 1,
-          onEditingChanged: onEditingChanged
+          onEditingEnded: onEditingEnded
         )
-          .frame(width: 220)
-      }
-
-      HStack {
-        Text("FOV: \(Int(fov.rounded()))")
-        Spacer()
-        Slider(
+        // Field of view
+        buildSlider(
+          min: 30,
+          max: 110,
+          initial: fov,
+          title: "Field of view",
           value: $fov.onChange(onValueChanged),
-          in: 30...110,
-          onEditingChanged: onEditingChanged
+          onEditingEnded: onEditingEnded
         )
-          .frame(width: 220)
-      }
+          
+ 
+        HStack {
+          Text("Render mode")
+            .font(Font.custom(.worksans, size: 15))
+            .foregroundColor(Color.white)
+            .position(x: hPadding/2, y: dropdownHeight/2)
 
-      HStack {
-        Text("Render mode")
-        Spacer()
-        Picker("Render mode", selection: $renderMode.onChange({ newValue in
-          onValueChanged(newValue)
-          save()
-        })) {
-          ForEach(RenderMode.allCases) { mode in
-            Text(mode.rawValue.capitalized)
-          }
+          Spacer()
+
+          StyledDropdown(
+            title: renderMode.rawValue,
+            placeholder: "Pick a render mode...",
+            isExpanded: $dropdownExpanded,
+            pickables: RenderMode.allCases.map({ $0.rawValue }),
+            onSelection: { index in
+              renderMode = RenderMode.allCases[index]
+              onValueChanged(renderMode)
+              save()
+              dropdownExpanded = false
+            }
+          )
+            .dropdownFrame(width: 200, height: dropdownHeight)
+            .padding(.trailing, 15)
         }
-        #if os(macOS)
-          .pickerStyle(RadioGroupPickerStyle())
-        #elseif os(iOS)
-          .pickerStyle(DefaultPickerStyle())
-        #endif
-          .frame(width: 220)
-      }
 
-      HStack {
-        Text("Order independent transparency")
-        Spacer()
-        Toggle(
-          "Order independent transparency",
-          isOn: $enableOrderIndependentTransparency.onChange { newValue in
-            onValueChanged(newValue)
-            save()
-          }
-        )
-          .labelsHidden()
-          .toggleStyle(.switch)
-          .frame(width: 220)
+        HStack {
+          Text("Order independent transparency")
+          Spacer()
+          Toggle(
+            "Order independent transparency",
+            isOn: $enableOrderIndependentTransparency.onChange { newValue in
+              onValueChanged(newValue)
+              save()
+            }
+          )
+            .labelsHidden()
+            .toggleStyle(.switch)
+            .frame(width: 220)
+        }
       }
     }
-    .frame(width: 450)
-    .navigationTitle("Video")
-    .onAppear {
-      let config = ConfigManager.default.config.render
-      renderDistance = Float(config.renderDistance)
-      fov = config.fovY
-      renderMode = config.mode
-      enableOrderIndependentTransparency = config.enableOrderIndependentTransparency
-    }
+      .navigationTitle("Video")
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .padding(.top, 15)
+      .padding(.vertical, 50)
+      .padding(.horizontal, hPadding)
+      .background(Color.black)
+      .onAppear {
+        let config = ConfigManager.default.config.render
+        renderDistance = Float(config.renderDistance)
+        fov = config.fovY
+        renderMode = config.mode
+        enableOrderIndependentTransparency = config.enableOrderIndependentTransparency
+      }
+  }
+  
+  /// Builds a styled slider
+  @ViewBuilder private func buildSlider(
+    min: Int,
+    max: Int,
+    initial: Float,
+    title: String,
+    value: Binding<Float>,
+    onEditingEnded: @escaping ((Float) -> Void)
+  ) -> some View {
+    let sliderWidth: CGFloat = 400
+    let sliderHeight: CGFloat = 25
+    
+    StyledSlider(
+      min: min,
+      max: max,
+      initialValue: initial,
+      title: title,
+      onDragChanged: { newValue in
+        value.wrappedValue = newValue
+      },
+      onDragEnded: onEditingEnded
+    )
+      .frame(width: sliderWidth, height: sliderHeight)
+      .thumbFrame(width: sliderWidth*0.035, height: sliderHeight*1.35)
+      .thumbFill(Color.black)
   }
 }
