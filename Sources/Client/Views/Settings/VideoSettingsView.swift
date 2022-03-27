@@ -9,6 +9,7 @@ struct VideoSettingsView: View {
   @State var fov: Float = 0
   @State var renderMode: RenderMode = .normal
   @State var enableOrderIndependentTransparency = false
+  /// Whether render mode pickable options are displayed or not
   @State var dropdownExpanded = false
 
   var config: RenderConfiguration {
@@ -68,8 +69,7 @@ struct VideoSettingsView: View {
           value: $fov.onChange(onValueChanged),
           onEditingEnded: onEditingEnded
         )
-          
- 
+
         HStack {
           Text("Render mode")
             .font(Font.custom(.worksans, size: 15))
