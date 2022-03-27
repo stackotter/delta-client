@@ -5,16 +5,27 @@ struct VideoSettingsView: View {
   /// Config updates are sent straight to the client as soon as they are made if a client is provided.
   var client: Client?
   
+  /// Initial render distance
   @State private var renderDistance: Float = 0
+  /// Initial field of view
   @State private var fov: Float = 0
+  /// Initial render mode
   @State private var renderMode: RenderMode = .normal
+  /// Whether render mode pickable options are displayed or not
   @State private var dropdownExpanded = false
+  /// Updated render distance value
+  static private var kRenderDistance: Float = 0
+  /// Updated field of view value
+  static private var kFov: Float = 0
+  /// Updated render mode value
+  static private var kRenderMode: RenderMode = .normal
+  
   
   var config: RenderConfiguration {
     return RenderConfiguration(
-      fovY: Float(fov.rounded()),
-      renderDistance: Int(renderDistance),
-      mode: renderMode)
+      fovY: Float(Self.kFov.rounded()),
+      renderDistance: Int(Self.kRenderDistance),
+      mode: Self.kRenderMode)
   }
   
   /// - Parameter client: If present, config updates are sent to this client.
@@ -43,7 +54,7 @@ struct VideoSettingsView: View {
           initial: renderDistance,
           title: "Render distance",
           onValueChanged: { v in
-            renderDistance = v
+            Self.kRenderDistance = v
             saveConfig()
           }
         )
@@ -53,7 +64,7 @@ struct VideoSettingsView: View {
           max: 110,
           initial: fov,
           title: "Field of view") { v in
-            fov = v
+            Self.kFov = v
             saveConfig()
           }
         // Render mode
@@ -69,7 +80,7 @@ struct VideoSettingsView: View {
             isExpaned: $dropdownExpanded,
             pickables: RenderMode.allCases.map({ $0.rawValue }),
             onSelection: { index in
-              renderMode = RenderMode.allCases[index]
+              Self.kRenderMode = RenderMode.allCases[index]
               saveConfig()
               dropdownExpanded = false
             }

@@ -16,7 +16,7 @@ struct ControlsSettingsView: View {
           title: "Sensitivity",
           onDragEnded: { v in
             var config = ConfigManager.default.config
-            config.mouseSensitivity = v
+            config.mouseSensitivity = v / 100
             ConfigManager.default.setConfig(to: config)
           }
         )
