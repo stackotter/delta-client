@@ -81,6 +81,10 @@ struct ServerListView: View {
           IconButton("personalhotspot") {
             appState.update(to: .directConnect)
           }
+            
+          IconButton("gear") {
+            appState.update(to: .settings)
+          }
         }
       }
       .listStyle(SidebarListStyle())

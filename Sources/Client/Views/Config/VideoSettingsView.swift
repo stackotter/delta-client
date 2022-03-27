@@ -5,9 +5,10 @@ struct VideoSettingsView: View {
   /// Config updates are sent straight to the client as soon as they are made if a client is provided.
   var client: Client?
   
-  @State var renderDistance: Float = 0
-  @State var fov: Float = 0
-  @State var renderMode: RenderMode = .normal
+  @State private var renderDistance: Float = 0
+  @State private var fov: Float = 0
+  @State private var renderMode: RenderMode = .normal
+  @State private var dropdownExpanded = false
   
   var config: RenderConfiguration {
     return RenderConfiguration(
@@ -21,75 +22,103 @@ struct VideoSettingsView: View {
     self.client = client
   }
   
-  /// Handles when the user changes a value.
-  func onValueChanged<T>(_ newValue: T) {
-    if let client = client {
-      client.configuration.render = config
-    }
-  }
-  
-  /// Handles when the user stops/starts editing.
-  func onEditingChanged(_ newValue: Bool) {
-    // If the user has stopped editing, update config
-    if newValue == false {
-      save()
-    }
-  }
-  
-  /// Saves the user's choices to the config file.
-  func save() {
+  /// Saves updated config
+  func saveConfig() {
+    client?.configuration.render = config
     var config = ConfigManager.default.config
     config.render = self.config
     ConfigManager.default.setConfig(to: config)
   }
   
   var body: some View {
-    ScrollView {
-      HStack {
-        Text("Render distance: \(Int(renderDistance))")
-        Spacer()
-        Slider(
-          value: $renderDistance.onChange(onValueChanged),
-          in: 0...32,
-          step: 1,
-          onEditingChanged: onEditingChanged
-        )
-          .frame(width: 220)
-      }
-      
-      HStack {
-        Text("FOV: \(Int(fov.rounded()))")
-        Spacer()
-        Slider(
-          value: $fov.onChange(onValueChanged),
-          in: 30...110,
-          onEditingChanged: onEditingChanged
-        )
-          .frame(width: 220)
-      }
-      
-      HStack {
-        Text("Render mode")
-        Spacer()
-        Picker("Render mode", selection: $renderMode.onChange({ newValue in
-          onValueChanged(newValue)
-          save()
-        })) {
-          ForEach(RenderMode.allCases) { mode in
-            Text(mode.rawValue.capitalized)
+    let hPadding: CGFloat = 100
+    let dropdownHeight: CGFloat = 30
+    
+    ScrollView() {
+      VStack(spacing: 30) {
+        // Render distance
+        buildSlider(
+          min: 0,
+          max: 32,
+          initial: renderDistance,
+          title: "Render distance",
+          onValueChanged: { v in
+            renderDistance = v
+            saveConfig()
           }
+        )
+        // Field of view
+        buildSlider(
+          min: 30,
+          max: 110,
+          initial: fov,
+          title: "Field of view") { v in
+            fov = v
+            saveConfig()
+          }
+        // Render mode
+        HStack {
+          Text("Render mode")
+            .font(Font.custom(.worksans, size: 15))
+            .foregroundColor(Color.white)
+            .position(x: hPadding/2, y: dropdownHeight/2)
+          Spacer()
+          StyledDropdown(
+            title: renderMode.rawValue,
+            placeholder: "Pick a render mode...",
+            isExpaned: $dropdownExpanded,
+            pickables: RenderMode.allCases.map({ $0.rawValue }),
+            onSelection: { index in
+              renderMode = RenderMode.allCases[index]
+              saveConfig()
+              dropdownExpanded = false
+            }
+          )
+            .dropdownFrame(width: 200, height: dropdownHeight)
+            .padding(.trailing, 15)
         }
-          .pickerStyle(RadioGroupPickerStyle())
-          .frame(width: 220)
+        .frame(width: 400)
+        .padding(.top, 15)
       }
     }
-    .frame(width: 400)
-    .navigationTitle("Video")
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .padding(.vertical, 50)
+    .padding(.horizontal, hPadding)
+    .background(Color.black)
     .onAppear {
       let config = ConfigManager.default.config.render
       renderDistance = Float(config.renderDistance)
       fov = config.fovY
       renderMode = config.mode
     }
+  }
+  
+  /// Builds a styled slider
+  ///
+  /// - Parameters:
+  ///   - min: the slider's min value
+  ///   - max: the slider's max value
+  ///   - initial: the slider's initial value
+  ///   - title: the slider's title
+  @ViewBuilder private func buildSlider(
+    min: Int,
+    max: Int,
+    initial: Float,
+    title: String,
+    onValueChanged: @escaping ((Float) -> Void)
+  ) -> some View {
+    let sliderWidth: CGFloat = 400
+    let sliderHeight: CGFloat = 25
+    
+    StyledSlider(
+      min: min,
+      max: max,
+      initialValue: initial,
+      title: title,
+      onDragEnded: onValueChanged
+    )
+      .frame(width: sliderWidth, height: sliderHeight)
+      .thumbFrame(width: sliderWidth*0.035, height: sliderHeight*1.35)
+      .thumbFill(Color.black)
   }
 }
