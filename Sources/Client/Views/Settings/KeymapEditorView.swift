@@ -2,6 +2,7 @@ import SwiftUI
 import DeltaCore
 
 struct KeymapEditorView: View {
+  
   /// Whether key inputs are being captured by the view
   @Binding var inputCaptured: Bool
 
@@ -16,7 +17,7 @@ struct KeymapEditorView: View {
   }
 
   var body: some View {
-    VStack {
+    VStack(spacing: 15) {
       ForEach(Input.allCases.filter(\.isBindable), id: \.self) { input in
         let key = state.keymap[input]
         let isUnique = key == nil ? true : state.keymap.values.filter({ $0 == key }).count == 1
@@ -28,7 +29,8 @@ struct KeymapEditorView: View {
         HStack {
           // Input name (e.g. 'Sneak')
           Text(input.humanReadableLabel)
-            .frame(width: 150)
+            .font(Font.custom(.worksans, size: 15))
+            .foregroundColor(.white)
 
           // Button to set a new binding
           let keyName = state.keymap[input]?.rawValue ?? "Unbound"
@@ -43,9 +45,11 @@ struct KeymapEditorView: View {
             }
           }, label: {
             Text(isSelected ? "> Press key <" : keyName)
+              .font(Font.custom(.worksans, size: 14))
               .foregroundColor(labelColor)
           })
           .buttonStyle(SecondaryButtonStyle())
+          .frame(width: 150)
 
           // Button to unbind an input
           IconButton("xmark", isDisabled: !isBound || isSelected) {
@@ -55,20 +59,14 @@ struct KeymapEditorView: View {
             ConfigManager.default.setConfig(to: config)
           }
         }
-        .frame(width: 400)
       }
     }
   }
 
   static func labelColor(isUnique: Bool, isBound: Bool, isSelected: Bool) -> Color {
-    if isSelected {
-      return .white
-    } else if !isBound {
-      return .yellow
-    } else if !isUnique {
-      return .red
-    } else {
-      return .white
-    }
+    if isSelected { return .white }
+    else if !isBound { return .yellow }
+    else if !isUnique { return .red }
+    else { return .white }
   }
 }

@@ -34,13 +34,13 @@ struct SettingsView: View {
       List {
         NavigationLink(
           "Video",
-          destination: VideoSettingsView(client: client).padding(),
+          destination: VideoSettingsView(client: client),
           tag: SettingsState.video,
           selection: $currentPage
         )
         NavigationLink(
           "Controls",
-          destination: ControlsSettingsView().padding(),
+          destination: ControlsSettingsView(),
           tag: SettingsState.controls,
           selection: $currentPage
         )

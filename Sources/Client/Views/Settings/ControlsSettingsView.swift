@@ -4,21 +4,31 @@ struct ControlsSettingsView: View {
   @State var sensitivity = ConfigManager.default.config.mouseSensitivity
 
   var body: some View {
-    ScrollView {
-      HStack {
-        Text("Sensitivity: \(Self.formatSensitivity(sensitivity))")
-          .frame(width: 150)
+    let sliderWidth: CGFloat = 400
+    let sliderHeight: CGFloat = 25
 
-        Slider(value: $sensitivity, in: 0...10, onEditingChanged: { isEditing in
-          if !isEditing {
-            sensitivity = Self.roundSensitivity(sensitivity)
+    ScrollView {
+      VStack(spacing: 30) {
+        // Mouse sensitivity
+        StyledSlider(
+          min: 0,
+          max: 1000,
+          initialValue: sensitivity,
+          title: "Sensitivity",
+          onDragChanged: { value in
+            sensitivity = value
+          },
+          onDragEnded: { value in
+            sensitivity = Self.roundSensitivity(value)
             var config = ConfigManager.default.config
             config.mouseSensitivity = sensitivity
             ConfigManager.default.setConfig(to: config)
           }
-        })
+        )
+          .frame(width: sliderWidth, height: sliderHeight)
+          .thumbFrame(width: sliderWidth*0.035, height: sliderHeight*1.35)
+          .thumbFill(Color.black)
       }
-      .frame(width: 450)
 
       InputView(passthroughMouseClicks: false) { inputCaptured, delegateSetter in
         KeymapEditorView(
@@ -27,6 +37,13 @@ struct ControlsSettingsView: View {
         )
       }
     }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .padding(.vertical, 50)
+      .padding(.horizontal, 100)
+      .background(Color.black)
+      .onAppear {
+        sensitivity = ConfigManager.default.config.mouseSensitivity
+      }
   }
 
   /// Rounds sensitivity to the nearest even number percentage.
@@ -35,9 +52,5 @@ struct ControlsSettingsView: View {
       return 1
     }
     return Float(Int(round(sensitivity * 100 / 2)) * 2) / 100
-  }
-
-  private static func formatSensitivity(_ sensitivity: Float) -> String {
-    return "\(Int(roundSensitivity(sensitivity) * 100))%"
   }
 }
