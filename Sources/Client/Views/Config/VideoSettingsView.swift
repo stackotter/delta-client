@@ -75,7 +75,7 @@ struct VideoSettingsView: View {
             }
           )
             .dropdownFrame(width: 200, height: dropdownHeight)
-            .padding(.trailing, 15)
+            .padding(.trailing, 16)
         }
         .frame(width: 400)
         .padding(.top, 15)

@@ -36,10 +36,10 @@ struct EditServerListView: View {
             HStack {
               VStack(alignment: .leading, spacing: 3.5) {
                 Text(item.name)
-                  .font(Font.custom(.worksans, size: 15.5))
+                  .font(Font.custom(.worksans, size: 14))
                   .foregroundColor(.white)
                 Text(item.description)
-                  .font(Font.custom(.worksans, size: 13))
+                  .font(Font.custom(.worksans, size: 10))
                   .foregroundColor(.white)
               }
               
@@ -48,13 +48,13 @@ struct EditServerListView: View {
               HStack(spacing: 12.5) {
                 Button { handler(.delete) } label: {
                   Image(systemName: "trash")
-                    .font(.system(size: 17, weight: .medium))
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.white)
                 }
                 .buttonStyle(PlainButtonStyle())
                 Button { appState.update(to: .playServer(item)) } label: {
                   Image(systemName: "play")
-                    .font(.system(size: 17, weight: .medium))
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.white)
                 }
                 .buttonStyle(PlainButtonStyle())

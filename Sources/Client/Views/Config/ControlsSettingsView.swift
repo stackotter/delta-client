@@ -37,7 +37,7 @@ struct ControlsSettingsView: View {
     .padding(.horizontal, 100)
     .background(Color.black)
     .onAppear {
-      sensitivity = ConfigManager.default.config.mouseSensitivity
+      sensitivity = ConfigManager.default.config.mouseSensitivity * 100
     }
   }
   

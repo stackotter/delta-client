@@ -51,7 +51,12 @@ struct KeymapEditorView: View {
           .frame(width: 400)
           // Remove input button
           if unboundable {
-            Button {  } label: {
+            Button {
+              state.keymap.removeValue(forKey: input)
+              var config = ConfigManager.default.config
+              config.keymap.bindings = state.keymap
+              ConfigManager.default.setConfig(to: config)
+            } label: {
               Image(systemName: "trash")
                 .font(.system(size: 13, weight: .medium))
                 .foregroundColor(.white)

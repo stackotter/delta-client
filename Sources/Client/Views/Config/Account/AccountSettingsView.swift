@@ -83,33 +83,42 @@ struct AccountSettingsView: View {
         itemEditor: AccountLoginView.self,
         row: { item, selected, isFirst, isLast, handler in
           HStack {
-            Image(systemName: "chevron.right")
-              .opacity(selected ? 1 : 0)
-            
-            VStack(alignment: .leading) {
-              Text(item.username)
-                .font(.headline)
+            // Account name
+            HStack(spacing: 0) {
+              Text("\(item.username) • ")
+                .font(Font.custom(.worksans, size: 14))
+                .foregroundColor(Color.white)
               Text(item.type)
-                .font(.subheadline)
+                .font(Font.custom(.worksans, size: 10))
+                .foregroundColor(Color.white)
             }
-            
             Spacer()
-            
-            Button("Select") { handler(.select) }
-              .disabled(selected)
-              .buttonStyle(BorderlessButtonStyle())
-            IconButton("xmark") { handler(.delete) }
+            Button {  handler(.delete) } label: {
+              Image(systemName: "trash")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.white)
+            }
+            .buttonStyle(PlainButtonStyle())
           }
+          .frame(width: 400, height: 30)
+          .padding(.vertical, 5)
+          .padding(.horizontal, 15)
+          .background(selected ? Color.darkGray : Color.clear)
+          .cornerRadius(4)
+          .contentShape(Rectangle())
+          .onTapGesture { handler(.select) }
         },
         saveAction: saveAction,
         cancelAction: nil,
         emptyMessage: "No accounts",
         title: "Account settings")
     }
-    .navigationTitle("Accounts")
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .padding(.vertical, 50)
+    .padding(.horizontal, 100)
+    .background(Color.black)
     .onAppear {
       accounts = ConfigManager.default.config.accounts
-      
       selectedIndex = getSelectedIndex()
     }
   }

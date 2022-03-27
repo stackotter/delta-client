@@ -19,8 +19,7 @@ struct SettingsView: View {
         NavigationLink("Controls", destination: ControlsSettingsView())
         
         if !isInGame {
-          NavigationLink("Accounts", destination: AccountSettingsView().padding())
-          NavigationLink("Update", destination: UpdateView().padding())
+          NavigationLink("Accounts", destination: AccountSettingsView())
           NavigationLink("Plugins", destination: PluginSettingsView().padding())
         }
         
