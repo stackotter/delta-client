@@ -20,7 +20,7 @@ public class EntityPosition: Component {
   /// A vector that smoothly interpolates from the previous position (set by calling ``save()``) to the next position in an amount of time described by ``smoothingAmount``.
   public var smoothVector: SIMD3<Double> {
     let delta = CFAbsoluteTimeGetCurrent() - lastUpdated
-    let tickProgress = min(max(delta / smoothingAmount, 0), 1)
+    let tickProgress = MathUtil.clamp(delta / smoothingAmount, 0, 1)
     return tickProgress * (vector - previousVector) + previousVector
   }
   
@@ -87,17 +87,17 @@ public class EntityPosition: Component {
   
   // MARK: Updating
   
-  /// Moves the position to a new specified smoothing and will interpolate the position between the two over the course of a ``smoothingDelay``.
+  /// Moves the position to a new position.
   public func move(to position: EntityPosition) {
     vector = position.vector
   }
   
-  /// Moves the position to a new specified smoothing and will interpolate the position between the two over the course of a ``smoothingDelay``.
+  /// Moves the position to a new position.
   public func move(to position: SIMD3<Double>) {
     vector = position
   }
   
-  /// Offsets the position by a specified amount. This will smoothly transition to the new position over the course of a ``smoothingDelay``.
+  /// Offsets the position by a specified amount.
   public func move(by offset: SIMD3<Double>) {
     vector += offset
   }
