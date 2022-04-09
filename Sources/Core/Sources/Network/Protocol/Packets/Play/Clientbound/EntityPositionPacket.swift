@@ -28,6 +28,7 @@ public struct EntityPositionPacket: ClientboundPacket {
     let z = Double(deltaZ) / 4096
     
     client.game.accessComponent(entityId: entityId, EntityPosition.self) { position in
+      position.save()
       position.move(by: SIMD3<Double>(x, y, z))
     }
     
