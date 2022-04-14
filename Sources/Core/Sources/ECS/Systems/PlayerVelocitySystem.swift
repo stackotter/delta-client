@@ -28,19 +28,5 @@ public struct PlayerVelocitySystem: System {
     }
     
     velocity.vector += acceleration.vector
-    
-    var multiplier: Double = 0.91
-    if onGround.onGround {
-      let blockPosition = BlockPosition(
-        x: Int(position.x.rounded(.down)),
-        y: Int((position.y - 0.5).rounded(.down)),
-        z: Int(position.z.rounded(.down)))
-      let material = world.getBlock(at: blockPosition).material
-
-      multiplier *= Double(material.velocityMultiplier * material.slipperiness)
-    }
-
-    velocity.x *= multiplier
-    velocity.z *= multiplier
   }
 }

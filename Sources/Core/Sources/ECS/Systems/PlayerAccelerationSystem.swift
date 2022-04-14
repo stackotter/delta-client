@@ -84,9 +84,9 @@ public struct PlayerAccelerationSystem: System {
         y: Int(floor(position.y - 0.5)),
         z: Int(floor(position.z)))
       let block = world.getBlock(at: blockPosition)
-      let slipperiness = block.material.slipperiness * 0.91
+      let slipperiness = block.material.slipperiness
       
-      speed = movementSpeed * 2 * 0.216 / (slipperiness * slipperiness * slipperiness)
+      speed = movementSpeed * 0.216 / (slipperiness * slipperiness * slipperiness)
       if isSprinting {
         speed *= 1.3
       }
