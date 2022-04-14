@@ -15,7 +15,7 @@ public struct PlayerVelocitySystem: System {
       return
     }
     
-    velocity.vector *= 0.98
+    // velocity.vector *= 0.98
     
     if abs(velocity.x) < 0.003 {
       velocity.x = 0

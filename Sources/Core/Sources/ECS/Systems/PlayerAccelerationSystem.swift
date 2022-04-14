@@ -68,7 +68,14 @@ public struct PlayerAccelerationSystem: System {
     acceleration.vector = impulse
   }
   
-  private static func calculatePlayerSpeed(_ position: SIMD3<Double>, _ world: World, _ movementSpeed: Double, _ flyingSpeed: Double, _ isSprinting: Bool, _ onGround: Bool) -> Double {
+  private static func calculatePlayerSpeed(
+    _ position: SIMD3<Double>,
+    _ world: World,
+    _ movementSpeed: Double,
+    _ flyingSpeed: Double,
+    _ isSprinting: Bool,
+    _ onGround: Bool
+  ) -> Double {
     var speed: Double
     if onGround {
       // TODO: make get block below function once there is a Position protocol (and make vectors conform to it)
@@ -80,9 +87,6 @@ public struct PlayerAccelerationSystem: System {
       let slipperiness = block.material.slipperiness * 0.91
       
       speed = movementSpeed * 2 * 0.216 / (slipperiness * slipperiness * slipperiness)
-      print("Speed: \(speed)")
-      print("Movement speed: \(movementSpeed)")
-      print("Slipperiness: \(slipperiness)")
       if isSprinting {
         speed *= 1.3
       }
