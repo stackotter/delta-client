@@ -97,8 +97,6 @@ public struct PlayerCollisionSystem: System {
         let newValue = otherMax - aabbMin
         if newValue <= 0.0000001 {
           value = max(newValue, value)
-        } else if axis == .y {
-          print("Disregarded correction of \(newValue), original: \(value) on y axis")
         }
       }
     }

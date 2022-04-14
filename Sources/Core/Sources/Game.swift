@@ -74,10 +74,10 @@ public struct Game {
     tickScheduler.addSystem(PlayerFlightSystem())
     tickScheduler.addSystem(PlayerAccelerationSystem())
     tickScheduler.addSystem(PlayerJumpSystem())
-    tickScheduler.addSystem(PlayerGravitySystem())
     tickScheduler.addSystem(PlayerVelocitySystem())
     tickScheduler.addSystem(PlayerCollisionSystem())
     tickScheduler.addSystem(PlayerPositionSystem())
+    tickScheduler.addSystem(PlayerGravitySystem())
     
     tickScheduler.addSystem(VelocitySystem())
     
