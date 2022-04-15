@@ -77,6 +77,7 @@ public struct Game {
     tickScheduler.addSystem(PlayerVelocitySystem())
     tickScheduler.addSystem(PlayerCollisionSystem())
     tickScheduler.addSystem(PlayerPositionSystem())
+    tickScheduler.addSystem(PlayerFrictionSystem())
     tickScheduler.addSystem(PlayerGravitySystem())
     
     tickScheduler.addSystem(VelocitySystem())
@@ -118,7 +119,8 @@ public struct Game {
   
   /// A method for creating entities in a thread-safe manor.
   ///
-  /// The builder can handle up to 20 components. This should be enough in most cases but if not, components can be added to the entity directly, this is just more convenient.
+  /// The builder can handle up to 20 components. This should be enough in most cases but if not,
+  /// components can be added to the entity directly, this is just more convenient.
   /// The builder can only work for up to 20 components because of a limitation regarding result builders.
   /// - Parameters:
   ///   - id: The id to create the entity with.
