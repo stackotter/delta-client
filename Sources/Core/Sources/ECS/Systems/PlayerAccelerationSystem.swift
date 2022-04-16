@@ -42,24 +42,23 @@ public struct PlayerAccelerationSystem: System {
     }
     
     sprinting.isSprinting = impulse.z >= 0.8 && (nutrition.food > Self.sprintingFoodLevel || playerAttributes.canFly) && inputs.contains(.sprint)
-    
-    impulse.x *= 0.98
-    impulse.z *= 0.98
-    
+
     if impulse.magnitude < 0.0000001 {
       impulse = .zero
     } else if impulse.magnitudeSquared > 1 {
       impulse = normalize(impulse)
     }
+
+    impulse.x *= 0.98
+    impulse.z *= 0.98
     
     let speed = Self.calculatePlayerSpeed(
       position.vector,
       world,
       entityAttributes[.movementSpeed].value,
-      Double(playerAttributes.flyingSpeed), // TODO: make all the things loaded from the server Doubles (because conversions are annoying)
       sprinting.isSprinting,
       onGround.onGround)
-    
+
     impulse *= speed
     
     let rotationMatrix = MatrixUtil.rotationMatrix(y: Double(rotation.yaw))
@@ -72,7 +71,6 @@ public struct PlayerAccelerationSystem: System {
     _ position: SIMD3<Double>,
     _ world: World,
     _ movementSpeed: Double,
-    _ flyingSpeed: Double,
     _ isSprinting: Bool,
     _ onGround: Bool
   ) -> Double {
@@ -91,9 +89,9 @@ public struct PlayerAccelerationSystem: System {
         speed *= 1.3
       }
     } else {
-      speed = flyingSpeed
+      speed = 0.02
       if isSprinting {
-        speed *= 2
+        speed += 0.006
       }
     }
     return speed

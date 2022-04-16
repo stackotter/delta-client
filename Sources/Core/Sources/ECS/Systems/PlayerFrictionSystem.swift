@@ -15,7 +15,7 @@ public struct PlayerFrictionSystem: System {
     }
     
     var multiplier: Double = 0.91
-    if onGround.onGround {
+    if onGround.previousOnGround {
       let blockPosition = BlockPosition(
         x: Int(position.x.rounded(.down)),
         y: Int((position.y - 0.5).rounded(.down)),
