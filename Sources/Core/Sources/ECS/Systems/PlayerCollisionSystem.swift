@@ -36,7 +36,12 @@ public struct PlayerCollisionSystem: System {
   ///   - velocity: The player's velocity.
   ///   - hitbox: The player's hitbox.
   /// - Returns: The adjusted velocity, the magnitude will be between 0 and the magnitude of the original velocity.
-  private static func getAdjustedVelocity(_ position: SIMD3<Double>, _ velocity: SIMD3<Double>, _ aabb: AxisAlignedBoundingBox, _ world: World) -> SIMD3<Double> {
+  private static func getAdjustedVelocity(
+    _ position: SIMD3<Double>,
+    _ velocity: SIMD3<Double>,
+    _ aabb: AxisAlignedBoundingBox,
+    _ world: World
+  ) -> SIMD3<Double> {
     let collisionVolume = getCollisionVolume(position, velocity, aabb, world)
     
     var adjustedVelocity = velocity

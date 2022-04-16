@@ -21,8 +21,5 @@ public struct PlayerGravitySystem: System {
     
     velocity.y -= 0.08
     velocity.y *= 0.98
-
-    print("position: (\(position.x), \(position.y), \(position.z))")
-    print("velocity: (\(velocity.x), \(velocity.y), \(velocity.z))")
   }
 }
