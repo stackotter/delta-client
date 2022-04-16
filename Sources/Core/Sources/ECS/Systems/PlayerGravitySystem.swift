@@ -5,12 +5,11 @@ public struct PlayerGravitySystem: System {
   public func update(_ nexus: Nexus, _ world: World) {
     var family = nexus.family(
       requiresAll: EntityFlying.self,
-      EntityPosition.self,
       EntityVelocity.self,
       ClientPlayerEntity.self
     ).makeIterator()
     
-    guard let (flying, position, velocity, _) = family.next() else {
+    guard let (flying, velocity, _) = family.next() else {
       log.error("PlayerGravitySystem failed to get player to tick")
       return
     }
