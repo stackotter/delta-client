@@ -8,11 +8,16 @@ public struct PlayerCollisionSystem: System {
       EntityVelocity.self,
       EntityHitBox.self,
       EntityOnGround.self,
+      PlayerGamemode.self,
       ClientPlayerEntity.self
     ).makeIterator()
     
-    guard let (position, velocity, hitbox, onGround, _) = family.next() else {
+    guard let (position, velocity, hitbox, onGround, gamemode, _) = family.next() else {
       log.error("PlayerCollisionSystem failed to get player to tick")
+      return
+    }
+
+    guard gamemode.gamemode.hasCollisions else {
       return
     }
     
