@@ -55,12 +55,11 @@ public struct ChunkDataPacket: ClientboundPacket {
     for _ in 0..<numBlockEntities {
       do {
         let blockEntityNBT = try packetReader.readNBTCompound()
-<<<<<<< HEAD
         
         let x: Int = try blockEntityNBT.get("x")
         let y: Int = try blockEntityNBT.get("y")
         let z: Int = try blockEntityNBT.get("z")
-        let position = Position(x: x, y: y, z: z)
+        let position = BlockPosition(x: x, y: y, z: z)
         
         let identifierString: String = try blockEntityNBT.get("id")
         let identifier = try Identifier(identifierString)
@@ -70,20 +69,6 @@ public struct ChunkDataPacket: ClientboundPacket {
         blockEntities.append(blockEntity)
       } catch {
         log.warning("Error decoding block entity: \(error)")
-=======
-        do {
-          let x: Int = try blockEntityNBT.get("x")
-          let y: Int = try blockEntityNBT.get("y")
-          let z: Int = try blockEntityNBT.get("z")
-          let position = BlockPosition(x: x, y: y, z: z)
-          let identifierString: String = try blockEntityNBT.get("id")
-          let identifier = try Identifier(identifierString)
-          let blockEntity = BlockEntity(position: position, identifier: identifier, nbt: blockEntityNBT)
-          blockEntities.append(blockEntity)
-        } catch {
-          log.warning("Error decoding block entities: \(error.localizedDescription)")
-        }
->>>>>>> 65ce6be (Rename Position to BlockPosition)
       }
     }
   }
