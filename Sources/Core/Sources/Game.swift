@@ -68,7 +68,9 @@ public struct Game {
     player.add(to: &self)
     self.player = player
     
-    // Add systems
+    // The order of the systems may seem weird, but it has to be this way so that the physics behaves identically to vanilla
+    tickScheduler.addSystem(PlayerFrictionSystem())
+    tickScheduler.addSystem(PlayerGravitySystem())
     tickScheduler.addSystem(PlayerSmoothingSystem())
     tickScheduler.addSystem(PlayerInputSystem())
     tickScheduler.addSystem(PlayerFlightSystem())
@@ -77,9 +79,7 @@ public struct Game {
     tickScheduler.addSystem(PlayerVelocitySystem())
     tickScheduler.addSystem(PlayerCollisionSystem())
     tickScheduler.addSystem(PlayerPositionSystem())
-    tickScheduler.addSystem(PlayerFrictionSystem())
-    tickScheduler.addSystem(PlayerGravitySystem())
-    
+        
     tickScheduler.addSystem(VelocitySystem())
     
     // Start tick loop
