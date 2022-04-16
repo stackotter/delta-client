@@ -11,6 +11,11 @@ public enum Gamemode: Int8 {
   public var isAlwaysFlying: Bool {
     return self == .spectator
   }
+
+  /// Whether the player collides with the world or not when in this gamemode.
+  public var hasCollisions: Bool {
+    return self != .spectator
+  }
   
   /// The lowercase string representation of the gamemode.
   public var string: String {

@@ -215,7 +215,7 @@ public struct VisibilityGraph {
     lock.acquireReadLock()
     defer { lock.unlock() }
     
-    // Move the position of the initial chunk to a more sensible position.
+    // Move the position of the camera chunk to an equivalent position which is adjacent to or within a loaded chunk
     var position = camera.entityPosition.chunkSection
     let cameraChunk = position.chunk
     if position.sectionX < minimumX - 1 {
@@ -237,8 +237,13 @@ public struct VisibilityGraph {
     }
     
     // Traverse the graph to find all potentially visible sections
-    var visible: [ChunkSectionPosition] = [position]
+    var visible: [ChunkSectionPosition] = []
     visible.reserveCapacity(sectionCount)
+    
+    if sections[position]?.isEmpty == false && position.isValid {
+      visible.append(position)
+    }
+
     var visited = Set<ChunkSectionPosition>(minimumCapacity: sectionCount)
     var queue: Deque = [SearchQueueEntry(position: position, entryFace: nil, directions: [])]
     
@@ -285,7 +290,7 @@ public struct VisibilityGraph {
           directions: directions
         ))
         
-        if !(sections[neighbourPosition]?.isEmpty == true) && neighbourPosition.isValid {
+        if sections[neighbourPosition]?.isEmpty == false && neighbourPosition.isValid {
           visible.append(neighbourPosition)
         }
       }
