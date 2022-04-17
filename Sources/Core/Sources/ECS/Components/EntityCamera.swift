@@ -27,4 +27,3 @@ public class EntityCamera: Component {
     perspective = Perspective.allCases[index]
   }
 }
-

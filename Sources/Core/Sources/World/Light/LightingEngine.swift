@@ -184,7 +184,13 @@ public struct LightingEngine {
           setLightLevel(neighbourPosition, newNeighbourLight)
           
           if newNeighbourLight > 1 {
-            increaseQueue.append(IncreaseQueueEntry(position: neighbourPosition, lightLevel: newNeighbourLight, flags: [], skipDirections: [direction.opposite]))
+            increaseQueue.append(
+              IncreaseQueueEntry(
+                position: neighbourPosition,
+                lightLevel: newNeighbourLight,
+                flags: [],
+                skipDirections: [direction.opposite]
+              ))
           }
         }
       }

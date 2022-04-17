@@ -1,16 +1,17 @@
+excluded:
+- "**/*.pb.swift"
+
 disabled_rules:
 - switch_case_alignment
 - trailing_whitespace
+- identifier_name
 
 # Re-enable these rules later once more warnings are fixed
 - nesting
 - todo
 
-line_length: 150
+line_length: 160
 type_body_length: 300
 function_parameter_count: 8
 file_length: 500
-identifier_name:
-  max_length: 60
-  min_length: 1
 function_body_length: 50 

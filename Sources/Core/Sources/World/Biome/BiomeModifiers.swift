@@ -18,14 +18,12 @@ public struct BiomeModifiers<Modifier>: ExpressibleByDictionaryLiteral {
   }
   
   public subscript(_ biome: Biome) -> Modifier? {
-    get {
-      if let modifier = storage[.identifier(biome.identifier)] {
-        return modifier
-      } else if let modifier = storage[.category(biome.category)] {
-        return modifier
-      } else {
-        return nil
-      }
+    if let modifier = storage[.identifier(biome.identifier)] {
+      return modifier
+    } else if let modifier = storage[.category(biome.category)] {
+      return modifier
+    } else {
+      return nil
     }
   }
   

@@ -82,7 +82,12 @@ public struct PlayerCollisionSystem: System {
   ///   - collisionVolume: The volume to avoid collisions with.
   ///   - aabb: The player aabb.
   /// - Returns: The adjusted velocity along the given axis. The adjusted value will be between 0 and the original velocity.
-  private static func adjustComponent(_ value: Double, onAxis axis: Axis, collisionVolume: CompoundBoundingBox, aabb: AxisAlignedBoundingBox) -> Double {
+  private static func adjustComponent(
+    _ value: Double,
+    onAxis axis: Axis,
+    collisionVolume: CompoundBoundingBox,
+    aabb: AxisAlignedBoundingBox
+  ) -> Double {
     if abs(value) < 0.0000001 {
       return 0
     }
@@ -118,7 +123,12 @@ public struct PlayerCollisionSystem: System {
   /// It creates the smallest bounding box containing the current player AABB and the player AABB
   /// after adding the current velocity (pre-collisions). It then creates a compound bounding box
   /// containing all blocks within that volume.
-  private static func getCollisionVolume(_ position: SIMD3<Double>, _ velocity: SIMD3<Double>, _ aabb: AxisAlignedBoundingBox, _ world: World) -> CompoundBoundingBox {
+  private static func getCollisionVolume(
+    _ position: SIMD3<Double>,
+    _ velocity: SIMD3<Double>,
+    _ aabb: AxisAlignedBoundingBox,
+    _ world: World
+  ) -> CompoundBoundingBox {
     let nextAABB = aabb.offset(by: velocity)
     let minimum = min(aabb.minimum, nextAABB.minimum)
     let maximum = max(aabb.maximum, nextAABB.maximum)

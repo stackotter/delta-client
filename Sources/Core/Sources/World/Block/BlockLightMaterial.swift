@@ -7,7 +7,8 @@ extension Block {
     public var opacity: Int
     /// How much light the block emits from 0 to 15. 0 emits no light and 15 emits the maximum possible block light level (15).
     public var luminance: Int
-    /// Whether the block is only transparent under some conditions. E.g. slabs have conditional transparency (light only passes through in certain directions).
+    /// Whether the block is only transparent under some conditions. E.g. slabs have conditional
+    /// transparency (light only passes through in certain directions).
     public var isConditionallyTransparent: Bool
     
     /// Whether this material is opaque.
