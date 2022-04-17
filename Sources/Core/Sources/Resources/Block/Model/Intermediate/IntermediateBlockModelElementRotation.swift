@@ -20,7 +20,7 @@ public struct IntermediateBlockModelElementRotation {
     
     // Clamp angle to between -45 and 45 then round to nearest 22.5
     var degrees = min(max(-45, Float(mojangRotation.angle)), 45)
-    degrees = degrees - (degrees.truncatingRemainder(dividingBy: 22.5))
+    degrees -= (degrees.truncatingRemainder(dividingBy: 22.5))
     radians = MathUtil.radians(from: Float(degrees))
     
     // For some reason in our renderer we need x and y rotation to be reversed but only
