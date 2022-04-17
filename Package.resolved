@@ -95,9 +95,9 @@
         "package": "SwiftLintPlugin",
         "repositoryURL": "https://github.com/stackotter/swift-lint-plugin",
         "state": {
-          "branch": "main",
-          "revision": "cbed46cc69b88ec61a051a2f908f396ae451244c",
-          "version": null
+          "branch": null,
+          "revision": "f887b764032df4862fc56d831ca1ed0e2e8cdf86",
+          "version": "0.1.1"
         }
       },
       {

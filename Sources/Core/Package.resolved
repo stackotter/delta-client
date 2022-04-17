@@ -86,9 +86,9 @@
         "package": "SwiftLintPlugin",
         "repositoryURL": "https://github.com/stackotter/swift-lint-plugin",
         "state": {
-          "branch": "main",
-          "revision": "cbed46cc69b88ec61a051a2f908f396ae451244c",
-          "version": null
+          "branch": null,
+          "revision": "f887b764032df4862fc56d831ca1ed0e2e8cdf86",
+          "version": "0.1.1"
         }
       },
       {
@@ -123,8 +123,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-parsing",
         "state": {
           "branch": null,
-          "revision": "85e1c50d03999a2b53d30ddae4d0f2a3d872b335",
-          "version": "0.7.1"
+          "revision": "1d3aa2f359388b67c16000556830645382cd5c4f",
+          "version": "0.8.0"
         }
       },
       {
