@@ -12,7 +12,7 @@ var dependencies: [Package.Dependency] = [
 
 #if swift(>=5.6)
 // Add linter if swift version is high enough
-dependencies.append(.package(url: "https://github.com/stackotter/swift-lint-plugin", branch: "main"))
+dependencies.append(.package(url: "https://github.com/stackotter/swift-lint-plugin", from: "0.1.0"))
 #endif
 
 let package = Package(
