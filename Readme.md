@@ -4,9 +4,9 @@
 
 An open source rewrite of the *Minecraft: Java Edition* client, written in Swift for macOS. Currently Delta Client only supports connecting to 1.16.1 servers.
 
-## Disclaimer
+## Disclaimers
 
-This client is not useable yet. If you're looking for a client to use to play Minecraft today, then this is not for you. However, the plan is that one day it does get to a useable state.
+This client is not finished yet. If you're looking for a client to use to play Minecraft today, then this is not for you.
 
 **I am NOT responsible for anti-cheat bans, the client has not been thoroughly tested yet and is still deep in development.**
 
@@ -14,15 +14,17 @@ This client is not useable yet. If you're looking for a client to use to play Mi
 
 ## Overview
 
-The main focus of this project is to create a highly efficient Java Edition compatible client written in Swift for macOS. Using Swift means that in the future the client may be able to run on iOS, iPadOS and maybe tvOS. This would allow playing on Java Edition servers, on platforms normally limited to Bedrock Edition.
+The main focus of this project is to create a highly efficient Java Edition compatible client written in Swift for macOS. Using Swift means that in the future the client may be able to run on iOS, iPadOS and maybe tvOS. This would allow playing on Java Edition servers with devices usually limited to Bedrock Edition. If there is sufficient interest, a separate renderer and UI could be created to support Linux and Windows as well (likely using the WebGPU graphics API instead of Metal).
 
 If you want to have a say in the development of the client or have any questions, feel free to join the community on [Discord](https://discord.gg/xZPyDbmR6k).
 
-![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/hypixel-1.png?raw=true)
+![Playing with Delta Client in a Hypixel lobby](https://github.com/stackotter/delta-client/blob/main/Screenshots/hypixel-1.png?raw=true)
 
 ## Installation
 
-1. Visit [the Delta Client website's download page](https://delta.stackotter.dev/downloads) and download the latest unstable build (the stable releases are very outdated).
+### Prebuilt
+
+1. Visit [Delta Client's GitHub Actions page](https://delta.stackotter.dev/downloads) and download the `DeltaClient.zip` artifact from the latest successful build (you must be signed in to GitHub to download the artifact).
 2. Unzip the downloaded zip archive and open the app inside
 3. You will get a security alert, click ok
 4. Right click the app in finder and select open
@@ -30,7 +32,7 @@ If you want to have a say in the development of the client or have any questions
 6. Delta Client will now open and start downloading the required assets (this only has to happen once and should take around 40s with a mediocre internet speed)
 7. You can move Delta Client to your Applications folder for ease of use if you want
 
-## Building
+### Building from source
 
 To build Delta Client you'll first need to install Xcode and the latest version of [swift-bundler](https://github.com/stackotter/swift-bundler). Once you've installed both of those, run the following commands in terminal;
 
@@ -40,10 +42,10 @@ git clone https://github.com/stackotter/delta-client
 cd delta-client
 git checkout dev # choose a different branch if you desire
 
-# Perform a release build, output the .app to the current directory, and show a fancy progress bar in a pop-up window
-swift bundler build -c release -o . -p
+# Perform a release build, output the bundled app to the current directory
+swift bundler bundle -c release -o .
 
-# If you want to work on it in Xcode
+# If you want to develop Delta Client using Xcode, run the following command
 swift bundler generate-xcode-support
 # And then open Package.swift with Xcode and you'll be able to build it from Xcode too
 ```
@@ -88,13 +90,6 @@ Not every version will be perfectly supported but I will try and have the most p
     - [ ] Render entity models
     - [ ] Entity animations
     - [ ] Block entities (e.g. chests)
-  - [ ] Particles
-    - [ ] Basic particle system
-    - [ ] Block break particles
-    - [ ] Ambient particles
-    - [ ] Hit particles
-    - [ ] Particles from server
-  - [ ] Items (like in the inventory and hotbar)
   - [ ] GUI
     - [ ] Chat
     - [ ] F3-style stuff
@@ -119,10 +114,16 @@ Not every version will be perfectly supported but I will try and have the most p
   - [ ] Block breaking
   - [ ] Block entity interaction
   - [ ] Entity interaction
+- [ ] Particles
+  - [ ] Basic particle system
+  - [ ] Block break particles
+  - [ ] Ambient particles
+  - [ ] Hit particles
+  - [ ] Particles from server
 
 ## Contributing
 
-First, please check out the [contributing guidelines](Contributing.md). Then you can checkout the [issues](https://github.com/stackotter/delta-client/issues) for a place to get started. Make sure to leave a comment on the issue you choose, so that people know that someone's already working on it. All changes should be made on the dev branch or a branch created from dev.
+First, please check out the [contributing guidelines](Contributing.md). Then you can checkout the [issues](https://github.com/stackotter/delta-client/issues) for a place to get started. Make sure to leave a comment on the issue you choose, so that people know that someone's already working on it.
 
 ## Servers
 
@@ -130,7 +131,7 @@ We now have an official test server made by @ninjadev64! The address is `play.st
 
 To start a test server, download a 1.16.1 server jar from [here](https://mcversions.net/download/1.16.1). Then in Terminal type `java -jar ` and then drag the download .jar file onto the terminal window and then hit enter. Wait for the server to start up. Now add a new server with the address `127.0.0.1` in Delta Client and you should be able to connect to it. Keep in mind the server may use a significant amount of resources and slow down Delta Client.
 
-To run Delta Client from terminal you can run `/path/to/DeltaClient.app/Contents/MacOS/DeltaClient` in terminal. This allows you to see the logs as the app is running.
+To run Delta Client from terminal you can run this command: `/path/to/DeltaClient.app/Contents/MacOS/DeltaClient`. This allows you to see the logs as the app is running.
 
 ## Troubleshooting
 

@@ -4,8 +4,6 @@ Delta Client is completely open source and I welcome contributions of all kinds.
 
 Note: when you've decided on an issue to work on, please leave a comment on it so that everyone else knows not to work on it.
 
-Another note: all changes should either be made on the dev branch or a branch created from the dev branch (if you like branching workflows).
-
 ## Guidelines
 
 If your contributions follow these guidelines, they'll be much more likely to get accepted first try :thumbsup:
@@ -24,13 +22,7 @@ If your contributions follow these guidelines, they'll be much more likely to ge
 
 **Important**: Only Xcode 13 is supported, Xcode 12 builds don't work because Delta Client uses new automatic `Codable` conformance and there are some weird discrepancies between Xcode 12's swift compiler and Xcode 13's swift compiler
 
-[Delta Client](https://github.com/stackotter/delta-client) uses the `swift-bundler` build system. The first step is to install that on your machine;
-
-```sh
-git clone https://github.com/stackotter/swift-bundler
-cd swift-bundler
-sh ./build_and_install.sh
-```
+[Delta Client](https://github.com/stackotter/delta-client) uses the [swift-bundler](https://github.com/stackotter/swift-bundler) build system. 
 
 You can use any ide you want to work on Delta Client (vscode and xcode are the best supported), but you'll need Xcode installed anyway because sadly that's currently the only way to get Metal and SwiftUI build support.
 
@@ -41,7 +33,7 @@ git clone [url of your delta-client fork]
 cd delta-client
 ```
 
-To run Delta Client, you can now run `swift bundler run`. See the [swift-bundler repo](https://github.com/stackotter/swift-bundler) for more commands and options.
+To run Delta Client, you can run `swift bundler run -c release`. If you are working on the UI you can leave out the `-c release`, it is only required when working with computationally intense parts of the client such as rendering, because without optimizations those parts of the client are unusable. See the [swift-bundler repo](https://github.com/stackotter/swift-bundler) for more commands and options.
 
 If you are using Xcode as your IDE run `swift bundler generate-xcode-support` and then open Package.swift with Xcode (`open Package.swift` should work unless you've changed your default program for opening swift files). **Make sure to choose the `DeltaClient` target in the top bar instead of the `DeltaClient-Package` target.**
 
