@@ -10,11 +10,14 @@ public enum PixlyzerError: LocalizedError {
   case entityRegistryMissingPlayer
   /// The string could not be converted to data using UTF8.
   case invalidUTF8BlockName(String)
+  /// Either lava or water is missing from the pixlyzer fluid registry.
+  case missingExpectedFluids
+  /// Failed to get the water fluid from the fluid registry.
+  case failedToGetWaterFluid
 }
 
 /// A utility for downloading and reformatting data from the Pixlyzer data repository.
 public enum PixlyzerFormatter {
-  // swiftlint:disable function_body_length
   /// Downloads the pixlyzer registries, reformats them, and caches them to an output directory.
   /// - Parameter version: The minecraft version string (e.g. '1.16.1').
   public static func downloadAndFormatRegistries(_ version: String) throws -> RegistryStore {
@@ -42,6 +45,34 @@ public enum PixlyzerFormatter {
     
     // Process fluids
     log.info("Processing pixlyzer fluid registry")
+    let (fluidRegistry, pixlyzerFluidIdToFluidId) = try Self.createFluidRegistry(from: pixlyzerFluids)
+    
+    // Process biomes
+    log.info("Processing pixlyzer biome registry")
+    let biomeRegistry = try Self.createBiomeRegistry(from: pixlyzerBiomes)
+    
+    // Process entities
+    log.info("Processing pixlyzer entity registry")
+    let entityRegistry = try Self.createEntityRegistry(from: pixlyzerEntities)
+    
+    // Process blocks
+    log.info("Processing pixlyzer block registry")
+    let blockRegistry = try Self.createBlockRegistry(
+      from: pixlyzerBlocks,
+      shapes: pixlyzerShapeRegistry,
+      pixlyzerFluidIdToFluidId: pixlyzerFluidIdToFluidId,
+      fluidRegistry: fluidRegistry) 
+    
+    return RegistryStore(
+      blockRegistry: blockRegistry,
+      biomeRegistry: biomeRegistry,
+      fluidRegistry: fluidRegistry,
+      entityRegistry: entityRegistry)
+  }
+
+  private static func createFluidRegistry(
+    from pixlyzerFluids: [String: PixlyzerFluid]
+  ) throws -> (fluidRegistry: FluidRegistry, pixlyzerFluidIdToFluidId: [Int: Int]) {
     guard
       let waterStill = pixlyzerFluids["minecraft:water"],
       let lavaStill = pixlyzerFluids["minecraft:lava"]
@@ -72,18 +103,22 @@ public enum PixlyzerFormatter {
         pixlyzerFluidIdToFluidId[pixlyzerFluid.id] = lava.id
       }
     }
-    
-    // Process biomes
-    log.info("Processing pixlyzer biome registry")
+
+    return (fluidRegistry: FluidRegistry(fluids: fluids), pixlyzerFluidIdToFluidId: pixlyzerFluidIdToFluidId)
+  }
+
+  private static func createBiomeRegistry(from pixlyzerBiomes: [String: PixlyzerBiome]) throws -> BiomeRegistry {
     var biomes: [Int: Biome] = [:]
     for (identifier, pixlyzerBiome) in pixlyzerBiomes {
       let identifier = try Identifier(identifier)
       let biome = Biome(from: pixlyzerBiome, identifier: identifier)
       biomes[biome.id] = biome
     }
-    
-    // Process entities
-    log.info("Processing pixlyzer entity registry")
+
+    return BiomeRegistry(biomes: biomes)
+  }
+
+  private static func createEntityRegistry(from pixlyzerEntities: [String: PixlyzerEntity]) throws -> EntityRegistry {
     var entities: [Int: EntityKind] = [:]
     for (identifier, pixlyzerEntity) in pixlyzerEntities {
       if let identifier = try? Identifier(identifier) {
@@ -92,9 +127,17 @@ public enum PixlyzerFormatter {
         }
       }
     }
-    
-    // Process shapes
-    log.info("Processing pixlyzer shape registry")
+
+    return try EntityRegistry(entities: entities)
+  }
+
+  private static func createBlockRegistry(
+    from pixlyzerBlocks: [String: PixlyzerBlock],
+    shapes pixlyzerShapeRegistry: PixlyzerShapeRegistry,
+    pixlyzerFluidIdToFluidId: [Int: Int],
+    fluidRegistry: FluidRegistry
+  ) throws -> BlockRegistry {
+    // Process block shapes
     var aabbs: [AxisAlignedBoundingBox] = []
     for pixlyzerAABB in pixlyzerShapeRegistry.aabbs {
       aabbs.append(try AxisAlignedBoundingBox(from: pixlyzerAABB))
@@ -109,9 +152,12 @@ public enum PixlyzerFormatter {
       }
       shapes.append(boxes)
     }
-    
+
+    guard let water = fluidRegistry.fluid(for: Identifier(name: "water")) else {
+      throw PixlyzerError.failedToGetWaterFluid
+    }
+
     // Process blocks
-    log.info("Processing pixlyzer block registry")
     var blocks: [Int: Block] = [:]
     var blockModelRenderDescriptors: [Int: [[BlockModelRenderDescriptor]]] = [:]
     for (identifier, pixlyzerBlock) in pixlyzerBlocks {
@@ -123,7 +169,7 @@ public enum PixlyzerFormatter {
           Foundation.exit(1)
         }
         
-        fluid = fluids[fluidId]
+        fluid = fluidRegistry.fluid(withId: fluidId)
       } else {
         fluid = nil
       }
@@ -131,12 +177,21 @@ public enum PixlyzerFormatter {
       for (stateId, pixlyzerState) in pixlyzerBlock.states {
         let isWaterlogged = pixlyzerState.properties?.waterlogged == true || BlockRegistry.waterloggedBlockClasses.contains(pixlyzerBlock.className)
         let fluid = isWaterlogged ? water : fluid
-        let block = Block(pixlyzerBlock, pixlyzerState, shapes: shapes, stateId: stateId, fluid: fluid, isWaterlogged: isWaterlogged, identifier: identifier)
+        let block = Block(
+          pixlyzerBlock,
+          pixlyzerState,
+          shapes: shapes,
+          stateId: stateId,
+          fluid: fluid,
+          isWaterlogged: isWaterlogged,
+          identifier: identifier)
+
         let descriptors = pixlyzerState.blockModelVariantDescriptors.map {
           $0.map {
             BlockModelRenderDescriptor(from: $0)
           }
         }
+
         blocks[stateId] = block
         blockModelRenderDescriptors[stateId] = descriptors
       }
@@ -152,19 +207,9 @@ public enum PixlyzerFormatter {
       blockArray.append(block)
       renderDescriptors.append(blockModelRenderDescriptors[i] ?? [])
     }
-    
-    let fluidRegistry = FluidRegistry(fluids: fluids)
-    let biomeRegistry = BiomeRegistry(biomes: biomes)
-    let blockRegistry = BlockRegistry(blocks: blockArray, renderDescriptors: renderDescriptors)
-    let entityRegistry = try EntityRegistry(entities: entities)
-    
-    return RegistryStore(
-      blockRegistry: blockRegistry,
-      biomeRegistry: biomeRegistry,
-      fluidRegistry: fluidRegistry,
-      entityRegistry: entityRegistry)
+
+    return BlockRegistry(blocks: blockArray, renderDescriptors: renderDescriptors)
   }
-  // swiftlint:enable function_body_length
   
   private static func downloadJSON<T: Decodable>(_ url: URL, convertSnakeCase: Bool, useZippyJSON: Bool = true) throws -> T {
     let contents = try Data(contentsOf: url)

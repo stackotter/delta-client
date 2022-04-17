@@ -45,7 +45,8 @@ public struct Player {
     let playerEntity = RegistryStore.shared.entityRegistry.playerEntityKind
     entityId = EntityId(-1) // Temporary value until the actual id is received from the server.
     onGround = EntityOnGround(true)
-    position = EntityPosition(0, 0, 0, smoothingAmount: 1 / 18) // Having it set to slightly more than a tick smooths out any hick ups caused by late ticks
+    // Having smoothing set to slightly more than a tick smooths out any hick ups caused by late ticks
+    position = EntityPosition(0, 0, 0, smoothingAmount: 1 / 18) 
     rotation = EntityRotation(pitch: 0.0, yaw: 0.0, smoothingAmount: 1 / 18)
     velocity = EntityVelocity(0, 0, 0)
     acceleration = EntityAcceleration(0, 0, 0)
