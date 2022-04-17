@@ -12,7 +12,7 @@ var dependencies: [Package.Dependency] = [
     .package(name: "Concurrency", url: "https://github.com/uber/swift-concurrency.git", from: "0.7.1"),
     .package(name: "FirebladeECS", url: "https://github.com/stackotter/ecs.git", .branch("master")),
     .package(name: "ZippyJSON", url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
-    .package(url: "https://github.com/pointfreeco/swift-parsing", from: "0.7.1"),
+    .package(url: "https://github.com/pointfreeco/swift-parsing", .exact("0.8.0")),
 ]
 
 #if swift(>=5.6)
