@@ -142,7 +142,6 @@ public class World {
     }
   }
   
-  
   /// Get the block id of the block at the specified position.
   /// - Parameters:
   ///   - position: A block position in world coordinates.

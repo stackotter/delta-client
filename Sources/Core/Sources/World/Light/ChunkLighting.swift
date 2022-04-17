@@ -26,7 +26,7 @@ public struct ChunkLighting {
   /// - Parameters:
   ///   - skyLightData: Sky lighting data for each chunk section in the chunk (possibly with a section above and below the world too).
   ///   - blockLightData: Block lighting data for each chunk section in the chunk (possibly with a section above and below the world too).
-  public init(skyLightData: [Int : [UInt8]] = [:], blockLightData: [Int : [UInt8]] = [:]) {
+  public init(skyLightData: [Int: [UInt8]] = [:], blockLightData: [Int: [UInt8]] = [:]) {
     self.skyLightData = skyLightData
     self.blockLightData = blockLightData
     isPopulated = true

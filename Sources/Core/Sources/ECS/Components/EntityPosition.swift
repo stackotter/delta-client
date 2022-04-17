@@ -17,7 +17,8 @@ public class EntityPosition: Component {
   /// The amount of time taken (in seconds) for ``smoothVector`` to transition from one position to the next.
   public var smoothingAmount: Double
   
-  /// A vector that smoothly interpolates from the previous position (set by calling ``save()``) to the next position in an amount of time described by ``smoothingAmount``.
+  /// A vector that smoothly interpolates from the previous position (set by calling ``save()``)
+  /// to the next position in an amount of time described by ``smoothingAmount``.
   public var smoothVector: SIMD3<Double> {
     let delta = CFAbsoluteTimeGetCurrent() - lastUpdated
     let tickProgress = MathUtil.clamp(delta / smoothingAmount, 0, 1)

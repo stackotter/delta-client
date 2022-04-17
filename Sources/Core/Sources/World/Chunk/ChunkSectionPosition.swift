@@ -102,7 +102,7 @@ extension ChunkSectionPosition: Hashable {
 }
 
 extension ChunkSectionPosition: Equatable {
-  public static func ==(_ lhs: ChunkSectionPosition, _ rhs: ChunkSectionPosition) -> Bool {
+  public static func == (_ lhs: ChunkSectionPosition, _ rhs: ChunkSectionPosition) -> Bool {
     return lhs.sectionX == rhs.sectionX && lhs.sectionZ == rhs.sectionZ && lhs.sectionY == rhs.sectionY
   }
 }
