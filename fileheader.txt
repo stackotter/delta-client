@@ -1,6 +1,0 @@
-// Delta Client - An open-source Minecraft Java Edition client written in Swift.
-// Copyright (C) 2021 Rohan van Klinken <stackotter@stackotter.dev>
-//
-// Delta Client is published under the terms of the GNU General Public License version 3.
-// See LICENSE or https://www.gnu.org/licenses/gpl-3.0.md for full license details.
-// This software is not affiliated with Mojang AB, the original developer of Minecraft.
