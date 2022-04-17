@@ -2,6 +2,10 @@ disabled_rules:
 - switch_case_alignment
 - trailing_whitespace
 
+# Re-enable these rules later once more warnings are fixed
+- nesting
+- todo
+
 line_length: 150
 type_body_length: 300
 function_parameter_count: 8
@@ -9,4 +13,4 @@ file_length: 500
 identifier_name:
   max_length: 60
   min_length: 1
-function_body_length: 45
+function_body_length: 50 
