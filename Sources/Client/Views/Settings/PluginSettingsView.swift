@@ -20,7 +20,7 @@ struct PluginSettingsView: View {
 					ScrollView {
             ForEach(Array(pluginEnvironment.plugins), id: \.key) { (identifier, plugin) in
 							HStack {
-                Text(plugin.2.name)
+                Text(plugin.manifest.name)
                 
 								Button("Unload") {
                   pluginEnvironment.unloadPlugin(identifier)
@@ -42,11 +42,11 @@ struct PluginSettingsView: View {
           ScrollView {
             ForEach(Array(pluginEnvironment.unloadedPlugins), id: \.key) { (identifier, plugin) in
               HStack {
-                Text(plugin.1.name)
+                Text(plugin.manifest.name)
                 
                 Button("Load") {
                   do {
-                    try pluginEnvironment.loadPlugin(plugin.0)
+                    try pluginEnvironment.loadPlugin(from: plugin.bundle)
                   } catch {
                     DeltaClientApp.modalError("Failed to load plugin '\(identifier)': \(error)")
                   }
@@ -73,9 +73,9 @@ struct PluginSettingsView: View {
             
             ScrollView {
               VStack(alignment: .leading) {
-                ForEach(pluginEnvironment.errors, id: \.0) { (bundle, error) in
-                  Text("\(bundle):").font(.title3)
-                  Text(String("\(error)"))
+                ForEach(Array(pluginEnvironment.errors.enumerated()), id: \.0) { (_, error) in
+                  Text("\(error.bundle):").font(.title)
+                  Text(String("\(error.underlyingError)"))
                 }
               }
             }

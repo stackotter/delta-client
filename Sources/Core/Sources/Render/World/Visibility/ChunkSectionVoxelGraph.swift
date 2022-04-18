@@ -25,7 +25,9 @@ public struct ChunkSectionVoxelGraph {
   /// - Parameter section: Section to create graph for.
   /// - Parameter blockModelPalette: Used to determine which blocks are solid.
   public init(for section: Chunk.Section, blockModelPalette: BlockModelPalette) {
-    assert(Chunk.Section.width == Chunk.Section.height && Chunk.Section.height == Chunk.Section.depth, "Attempted to create a ChunkSectionVoxelGraph from non-cubic chunk section")
+    assert(
+      Chunk.Section.width == Chunk.Section.height && Chunk.Section.height == Chunk.Section.depth,
+      "Attempted to create a ChunkSectionVoxelGraph from non-cubic chunk section")
     
     dimension = Chunk.Section.width
     voxelsPerLayer = dimension * dimension
@@ -45,7 +47,9 @@ public struct ChunkSectionVoxelGraph {
     
     mutableVoxelsPointer = self.voxels.withUnsafeMutableBufferPointer { $0 }
     
-    assert(dimension * dimension * dimension == voxels.count, "Attempted to initialise a ChunkSectionVoxelGraph with an invalid number of voxels for its dimension (dimension=\(dimension), voxel_count=\(voxels.count)")
+    assert(
+      dimension * dimension * dimension == voxels.count,
+      "Attempted to initialise a ChunkSectionVoxelGraph with an invalid number of voxels for its dimension (dimension=\(dimension), voxel_count=\(voxels.count)")
   }
   
   // MARK: Public methods
@@ -67,9 +71,9 @@ public struct ChunkSectionVoxelGraph {
     
   outerLoop:
     while true {
-      var seedX: Int? = nil
-      var seedY: Int? = nil
-      var seedZ: Int? = nil
+      var seedX: Int?
+      var seedY: Int?
+      var seedZ: Int?
       
       // Find the next voxel that hasn't been filled yet
       while true {
@@ -143,7 +147,8 @@ public struct ChunkSectionVoxelGraph {
   ///   - group: Stores which faces the flood fill has reached. Should be empty to start off.
   private mutating func iterativeFloodFill(x: Int, y: Int, z: Int, group: inout DirectionSet) {
     var stack: [(Int, Int, Int)] = [(x, y, z)]
-    // 256 is just a rough estimate of how deep the stack might get. In reality the stack actually varies from under 80 to over 20000 depending on the chunk section.
+    // 256 is just a rough estimate of how deep the stack might get. In reality the stack actually
+    // varies from under 80 to over 20000 depending on the chunk section.
     stack.reserveCapacity(256)
     
     while let position = stack.popLast() {
@@ -210,4 +215,3 @@ public struct ChunkSectionVoxelGraph {
     return coordinates
   }
 }
-

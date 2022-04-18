@@ -138,7 +138,14 @@ public struct EntityRenderer: Renderer {
     encoder.setRenderPipelineState(renderPipelineState)
     encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
     encoder.setVertexBuffer(instanceUniformsBuffer, offset: 0, index: 2)
-    encoder.drawIndexedPrimitives(type: .triangle, indexCount: indexCount, indexType: .uint32, indexBuffer: indexBuffer, indexBufferOffset: 0, instanceCount: entityUniforms.count)
+
+    encoder.drawIndexedPrimitives(
+      type: .triangle,
+      indexCount: indexCount,
+      indexType: .uint32,
+      indexBuffer: indexBuffer,
+      indexBufferOffset: 0,
+      instanceCount: entityUniforms.count)
     
     // A hack to solve https://bugs.swift.org/browse/SR-15613
     // If this isn't done, `entityUniforms` gets freed somewhere around the line with `var instanceUniformsBuffer: MTLBuffer` in release builds

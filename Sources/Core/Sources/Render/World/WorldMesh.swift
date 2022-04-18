@@ -155,7 +155,10 @@ public struct WorldMesh {
   /// Perform an arbitrary action that mutates each of the world's visible meshes.
   /// - Parameter action: Action to perform on each visible mesh.
   /// - Parameter shouldReverseOrder: If `true`, the sections will be mutated from furthest to closest.
-  public mutating func mutateVisibleMeshes(fromBackToFront shouldReverseOrder: Bool = false, _ action: (ChunkSectionPosition, inout ChunkSectionMesh) throws -> Void) rethrows {
+  public mutating func mutateVisibleMeshes(
+    fromBackToFront shouldReverseOrder: Bool = false,
+    _ action: (ChunkSectionPosition, inout ChunkSectionMesh) throws -> Void
+  ) rethrows {
     lock.acquireWriteLock()
     defer { lock.unlock() }
     
