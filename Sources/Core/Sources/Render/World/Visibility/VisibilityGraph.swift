@@ -102,39 +102,27 @@ public struct VisibilityGraph {
       maximumZ = 0
     } else {
       if position.chunkX == minimumX {
-        var minimum = Int.max
-        for chunk in chunks {
-          if chunk.chunkX < minimum {
-            minimum = chunk.chunkX
-          }
+        minimumX = Int.max
+        for chunk in chunks where chunk.chunkX < minimumX {
+          minimumX = chunk.chunkX
         }
-        minimumX = minimum
       } else if position.chunkX == maximumX {
-        var maximum = Int.min
-        for chunk in chunks {
-          if chunk.chunkX > maximum {
-            maximum = chunk.chunkX
-          }
+        maximumX = Int.min
+        for chunk in chunks where chunk.chunkX > maximumX {
+          maximumX = chunk.chunkX
         }
-        maximumX = maximum
       }
       
       if position.chunkZ == minimumZ {
-        var minimum = Int.max
-        for chunk in chunks {
-          if chunk.chunkZ < minimum {
-            minimum = chunk.chunkZ
-          }
+        minimumZ = Int.max
+        for chunk in chunks where chunk.chunkZ < minimumZ {
+          minimumZ = chunk.chunkZ
         }
-        minimumZ = minimum
       } else if position.chunkZ == maximumZ {
-        var maximum = Int.min
-        for chunk in chunks {
-          if chunk.chunkZ > maximum {
-            maximum = chunk.chunkZ
-          }
+        maximumZ = Int.min
+        for chunk in chunks where chunk.chunkZ > maximumZ {
+          maximumZ = chunk.chunkZ
         }
-        maximumZ = maximum
       }
     }
     
@@ -215,26 +203,9 @@ public struct VisibilityGraph {
     lock.acquireReadLock()
     defer { lock.unlock() }
     
-    // Move the position of the camera chunk to an equivalent position which is adjacent to or within a loaded chunk
-    var position = camera.entityPosition.chunkSection
-    let cameraChunk = position.chunk
-    if position.sectionX < minimumX - 1 {
-      position.sectionX = minimumX - 1
-    } else if position.sectionX > maximumX + 1 {
-      position.sectionX = maximumX + 1
-    }
-    
-    if position.sectionY < -1 {
-      position.sectionY = -1
-    } else if position.sectionY > Chunk.numSections + 1 {
-      position.sectionY = Chunk.numSections + 1
-    }
-    
-    if position.sectionZ < minimumZ - 1 {
-      position.sectionZ = minimumZ - 1
-    } else if position.sectionZ > maximumZ + 1 {
-      position.sectionZ = maximumZ + 1
-    }
+    // Get the camera's position and swap it for an equivalent position to minimise the number of empty sections traversed if possible.
+    let position = simplifyCameraPosition(camera.entityPosition.chunkSection)
+    let cameraChunk = camera.entityPosition.chunk
     
     // Traverse the graph to find all potentially visible sections
     var visible: [ChunkSectionPosition] = []
@@ -297,5 +268,33 @@ public struct VisibilityGraph {
     }
     
     return visible
+  }
+
+  /// Moves the camera to an equivalent position which requires less traversing of empty chunk sections.
+  ///
+  /// If the camera is within the bounding box containing all non-empty chunks, it isn't moved. Otherwise,
+  /// the camera is moved to be in a chunk adjacent to the bounding box (including diagonally adjacent).
+  private func simplifyCameraPosition(_ position: ChunkSectionPosition) -> ChunkSectionPosition {
+    var position = position
+
+    if position.sectionX < minimumX - 1 {
+      position.sectionX = minimumX - 1
+    } else if position.sectionX > maximumX + 1 {
+      position.sectionX = maximumX + 1
+    }
+    
+    if position.sectionY < -1 {
+      position.sectionY = -1
+    } else if position.sectionY > Chunk.numSections + 1 {
+      position.sectionY = Chunk.numSections + 1
+    }
+    
+    if position.sectionZ < minimumZ - 1 {
+      position.sectionZ = minimumZ - 1
+    } else if position.sectionZ > maximumZ + 1 {
+      position.sectionZ = maximumZ + 1
+    }
+
+    return position
   }
 }
