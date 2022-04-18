@@ -7,12 +7,45 @@ public class PluginEnvironment: ObservableObject {
   /// Used to typecast the builder function in plugin dylibs.
   private typealias BuilderFunction = @convention(c) () -> UnsafeMutableRawPointer
   
-  /// A map from plugin identifier to the current instance of that plugin, its bundle url and its manifest.
-  @Published public var plugins: OrderedDictionary<String, (Plugin, URL, PluginManifest)> = [:]
-  /// Plugins that are unloaded
-  @Published public var unloadedPlugins: OrderedDictionary<String, (URL, PluginManifest)> = [:]
+  /// The plugins that are currently loaded (keyed by plugin identifier).
+  @Published public var plugins: OrderedDictionary<String, LoadedPlugin> = [:]
+  /// Plugins that are unloaded.
+  @Published public var unloadedPlugins: OrderedDictionary<String, UnloadedPlugin> = [:]
   /// Errors encountered while loading plugins. `bundle` is the filename of the plugin's bundle.
-  @Published public var errors: [(bundle: String, error: Error)] = []
+  @Published public var errors: [PluginError] = []
+
+  /// A plugin which has been loaded.
+  public struct LoadedPlugin {
+    /// The plugin which was loaded.
+    public var plugin: Plugin
+    /// The location of the plugin.
+    public var bundle: URL
+    /// Information about the plugin loaded from its manifest file.
+    public var manifest: PluginManifest
+
+    /// The unloaded version of this plugin.
+    public var unloaded: UnloadedPlugin {
+      UnloadedPlugin(bundle: bundle, manifest: manifest)
+    }
+  }
+
+  /// A plugin which has been unloaded.
+  public struct UnloadedPlugin {
+    /// The location of the plugin.
+    public var bundle: URL
+    /// Information about the plugin loaded from its manifest file.
+    public var manifest: PluginManifest
+  }
+
+  /// An error related to a particular plugin.
+  public struct PluginError: LocalizedError {
+    /// The bundle of the plugin that the error occurred for.
+    public var bundle: String 
+    /// The underlying error that caused this error to be thrown if any.
+    public var underlyingError: Error
+  }
+
+  // MARK: Init
   
   /// Creates an empty plugin environment.
   public init() {}
@@ -21,7 +54,7 @@ public class PluginEnvironment: ObservableObject {
   
   /// Returns the specified plugin if it's loaded.
   public func plugin(_ identifier: String) -> Plugin? {
-    return plugins[identifier]?.0
+    return plugins[identifier]?.plugin
   }
   
   // MARK: Loading
@@ -36,7 +69,7 @@ public class PluginEnvironment: ObservableObject {
   public func loadPlugins(from directory: URL, excluding excludedIdentifiers: [String] = []) throws {
     let contents = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil, options: [])
     for file in contents where file.pathExtension == "deltaplugin" {
-      if plugins.values.contains(where: { $0.1 == file }) {
+      if plugins.values.contains(where: { $0.bundle == file }) {
         continue
       }
       do {
@@ -44,14 +77,14 @@ public class PluginEnvironment: ObservableObject {
         if excludedIdentifiers.contains(manifest.identifier) || unloadedPlugins.keys.contains(manifest.identifier) {
           log.info("Skipping plugin '\(manifest.identifier)' (\(file.lastPathComponent))")
           ThreadUtil.runInMain {
-            unloadedPlugins[manifest.identifier] = (file, manifest)
+            unloadedPlugins[manifest.identifier] = UnloadedPlugin(bundle: file, manifest: manifest)
           }
           continue
         }
-        try loadPlugin(file, manifest)
+        try loadPlugin(from: file, manifest)
       } catch {
         ThreadUtil.runInMain {
-          errors.append((bundle: file.lastPathComponent, error: error))
+          errors.append(PluginError(bundle: file.lastPathComponent, underlyingError: error))
         }
       }
     }
@@ -60,7 +93,7 @@ public class PluginEnvironment: ObservableObject {
   /// Loads a plugin from its bundle.
   /// - Parameter pluginBundle: The plugin's bundle directory.
   /// - Parameter manifest: The plugin's manifest. If not provided, the manifest is loaded from the bundle.
-  public func loadPlugin(_ pluginBundle: URL, _ manifest: PluginManifest? = nil) throws {
+  public func loadPlugin(from pluginBundle: URL, _ manifest: PluginManifest? = nil) throws {
     let manifest = try manifest ?? loadPluginManifest(pluginBundle)
     
     log.info("Loading plugin '\(manifest.identifier)' ('\(pluginBundle.lastPathComponent)')")
@@ -79,7 +112,7 @@ public class PluginEnvironment: ObservableObject {
       }
     }
     
-    // Make sure the dylib gets closed when this function exits
+    // Make sure the dylib gets closed when it's not required anymore
     defer {
       dlclose(pluginLibrary)
     }
@@ -94,7 +127,7 @@ public class PluginEnvironment: ObservableObject {
     let plugin = builder.build()
     
     ThreadUtil.runInMain {
-      plugins[manifest.identifier] = (plugin, pluginBundle, manifest)
+      plugins[manifest.identifier] = LoadedPlugin(plugin: plugin, bundle: pluginBundle, manifest: manifest)
       unloadedPlugins.removeValue(forKey: manifest.identifier)
     }
     plugin.finishLoading()
@@ -111,7 +144,6 @@ public class PluginEnvironment: ObservableObject {
     }
   }
   
-  
   /// Reloads all currently loaded plugins.
   /// - Parameter directory: A directory to check for new plugins in (any plugins that are currently unloaded will be skipped).
   public func reloadAll(_ directory: URL? = nil) {
@@ -122,11 +154,11 @@ public class PluginEnvironment: ObservableObject {
     let plugins = self.plugins
     unloadAll(keepRegistered: false)
     
-    for (_, (_, bundle, _)) in plugins {
+    for (_, plugin) in plugins {
       do {
-        try loadPlugin(bundle)
+        try loadPlugin(from: plugin.bundle)
       } catch {
-        errors.append((bundle: bundle.lastPathComponent, error: error))
+        errors.append(PluginError(bundle: plugin.bundle.lastPathComponent, underlyingError: error))
       }
     }
     
@@ -138,6 +170,7 @@ public class PluginEnvironment: ObservableObject {
   // MARK: Unloading
   
   /// Unloads all loaded plugins.
+  /// - Parameter keepRegistered: If `true`, the client will remember the plugins and keep them in ``unloadedPlugins``. This keeps the plugins unloaded across sessions.
   public func unloadAll(keepRegistered: Bool = true) {
     log.debug("Unloading all plugins")
     for identifier in plugins.keys {
@@ -147,15 +180,15 @@ public class PluginEnvironment: ObservableObject {
   
   /// Unloads the specified plugin if it's loaded. Does nothing if the plugin does not exist.
   /// - Parameter identifier: The identifier of the plugin to unload.
-  /// - Parameter keepRegistered: If `true`, the client will remember the plugin and keep it in ``unloadedPlugins``.
+  /// - Parameter keepRegistered: If `true`, the client will remember the plugin and keep it in ``unloadedPlugins``. This keeps the plugin unloaded across sessions.
   public func unloadPlugin(_ identifier: String, keepRegistered: Bool = true) {
     log.debug("Unloading plugin '\(identifier)'")
     if let plugin = plugins[identifier] {
-      plugin.0.willUnload()
+      plugin.plugin.willUnload()
       ThreadUtil.runInMain {
         plugins.removeValue(forKey: identifier)
         if keepRegistered {
-          unloadedPlugins[identifier] = (plugin.1, plugin.2)
+          unloadedPlugins[identifier] = plugin.unloaded
         }
       }
     }
@@ -169,7 +202,7 @@ public class PluginEnvironment: ObservableObject {
   ///   - client: The client that is going to connect to the server.
   public func handleWillJoinServer(server: ServerDescriptor, client: Client) {
     for (_, plugin) in plugins {
-      plugin.0.willJoinServer(server, client: client)
+      plugin.plugin.willJoinServer(server, client: client)
     }
   }
   
@@ -185,8 +218,8 @@ public class PluginEnvironment: ObservableObject {
   /// Notifies all loaded plugins of an event.
   /// - Parameter event: The event to notify all loaded plugins of.
   public func handle(event: Event) {
-    for (_, (plugin, _, _)) in plugins {
-      plugin.handle(event)
+    for (_, plugin) in plugins {
+      plugin.plugin.handle(event)
     }
   }
 }

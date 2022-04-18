@@ -53,7 +53,11 @@ public struct Mesh {
   ///   - encoder: Render encode to encode commands into.
   ///   - device: Device to use.
   ///   - commandQueue: Command queue used to create buffers if not created already.
-  public mutating func render(into encoder: MTLRenderCommandEncoder, with device: MTLDevice, commandQueue: MTLCommandQueue) throws {
+  public mutating func render(
+    into encoder: MTLRenderCommandEncoder,
+    with device: MTLDevice,
+    commandQueue: MTLCommandQueue
+  ) throws {
     if isEmpty {
       return
     }
@@ -61,7 +65,9 @@ public struct Mesh {
 //    var stopwatch = Stopwatch(mode: .verbose, name: "Mesh.render")
     
 //    stopwatch.startMeasurement("vertexBuffer")
-    // Get buffers. If the buffer is valid and not nil, it is used. If the buffer is invalid and not nil, it is repopulated with the new data (if big enough, otherwise a new buffer is created). If the buffer is nil, a new one is created.
+    // Get buffers. If the buffer is valid and not nil, it is used. If the buffer is invalid and not nil,
+    // it is repopulated with the new data (if big enough, otherwise a new buffer is created). If the
+    // buffer is nil, a new one is created.
     let vertexBuffer = try ((vertexBufferIsValid ? vertexBuffer : nil) ?? Self.createPrivateBuffer(
       labelled: "vertexBuffer",
       containing: vertices,
@@ -139,7 +145,13 @@ public struct Mesh {
   
   /// Creates a buffer on the GPU containing a given array. Reuses the supplied private buffer if it's big enough.
   /// - Returns: A new private buffer.
-  private static func createPrivateBuffer<T>(labelled label: String = "buffer", containing items: [T], reusing existingBuffer: MTLBuffer? = nil, device: MTLDevice, commandQueue: MTLCommandQueue) throws -> MTLBuffer {
+  private static func createPrivateBuffer<T>(
+    labelled label: String = "buffer",
+    containing items: [T],
+    reusing existingBuffer: MTLBuffer? = nil,
+    device: MTLDevice,
+    commandQueue: MTLCommandQueue
+  ) throws -> MTLBuffer {
     // First copy the array to a scratch buffer (accessible from both CPU and GPU)
     let bufferSize = MemoryLayout<T>.stride * items.count
     guard let sharedBuffer = device.makeBuffer(bytes: items, length: bufferSize, options: [.storageModeShared]) else {

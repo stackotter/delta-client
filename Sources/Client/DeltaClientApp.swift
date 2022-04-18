@@ -84,8 +84,8 @@ struct DeltaClientApp: App {
           try Self.pluginEnvironment.loadPlugins(
             from: StorageManager.default.pluginsDirectory,
             excluding: ConfigManager.default.config.unloadedPlugins)
-          for (bundle, error) in Self.pluginEnvironment.errors {
-            log.error("Error occured when loading plugin '\(bundle)': \(error)")
+          for error in Self.pluginEnvironment.errors {
+            log.error("Error occured when loading plugin '\(error.bundle)': \(error.underlyingError)")
           }
         } catch {
           Self.modalError("Error occurred during plugin loading, no plugins will be available: \(error)")
