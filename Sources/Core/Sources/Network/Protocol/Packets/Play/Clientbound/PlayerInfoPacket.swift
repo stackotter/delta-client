@@ -22,42 +22,16 @@ public struct PlayerInfoPacket: ClientboundPacket {
       let playerAction: PlayerInfoAction
       switch actionId {
         case 0: // add player
-          let playerName = try packetReader.readString()
-          let numProperties = packetReader.readVarInt()
-          var properties: [PlayerProperty] = []
-          for _ in 0..<numProperties {
-            let propertyName = try packetReader.readString()
-            let value = try packetReader.readString()
-            var signature: String?
-            if packetReader.readBool() {
-              signature = try packetReader.readString()
-            }
-            let property = PlayerProperty(name: propertyName, value: value, signature: signature)
-            properties.append(property)
-          }
-          guard let gamemode = Gamemode(rawValue: Int8(packetReader.readVarInt())) else {
-            throw ClientboundPacketError.invalidGamemode
-          }
-          let ping = packetReader.readVarInt()
-          var displayName: ChatComponent?
-          if packetReader.readBool() {
-            displayName = try packetReader.readChat()
-          }
-          let playerInfo = PlayerInfo(uuid: uuid, name: playerName, properties: properties, gamemode: gamemode, ping: ping, displayName: displayName)
+          let playerInfo = try Self.readPlayerInfo(from: &packetReader, uuid: uuid)
           playerAction = .addPlayer(playerInfo: playerInfo)
         case 1: // update gamemode
-          guard let gamemode = Gamemode(rawValue: Int8(packetReader.readVarInt())) else {
-            throw ClientboundPacketError.invalidGamemode
-          }
+          let gamemode = try Self.readGamemode(from: &packetReader)
           playerAction = .updateGamemode(gamemode: gamemode)
         case 2: // update latency
           let ping = packetReader.readVarInt()
           playerAction = .updateLatency(ping: ping)
         case 3: // update display name
-          var displayName: ChatComponent?
-          if packetReader.readBool() {
-            displayName = try packetReader.readChat()
-          }
+          let displayName = try Self.readDisplayName(from: &packetReader)
           playerAction = .updateDisplayName(displayName: displayName)
         case 4: // remove player
           playerAction = .removePlayer
@@ -87,5 +61,50 @@ public struct PlayerInfoPacket: ClientboundPacket {
           client.game.tabList.removePlayer(uuid: uuid)
       }
     }
+  }
+
+  private static func readGamemode(from packetReader: inout PacketReader) throws -> Gamemode {
+    guard let gamemode = Gamemode(rawValue: Int8(packetReader.readVarInt())) else {
+      throw ClientboundPacketError.invalidGamemode
+    }    
+    return gamemode
+  }
+           
+  private static func readDisplayName(from packetReader: inout PacketReader) throws -> ChatComponent? {
+    var displayName: ChatComponent?
+    if packetReader.readBool() {
+      displayName = try packetReader.readChat()
+    }
+    return displayName
+  }
+
+  private static func readPlayerInfo(from packetReader: inout PacketReader, uuid: UUID) throws -> PlayerInfo {
+    let playerName = try packetReader.readString()
+
+    let numProperties = packetReader.readVarInt()
+    var properties: [PlayerProperty] = []
+    for _ in 0..<numProperties {
+      let propertyName = try packetReader.readString()
+      let value = try packetReader.readString()
+      var signature: String?
+      if packetReader.readBool() {
+        signature = try packetReader.readString()
+      }
+      let property = PlayerProperty(name: propertyName, value: value, signature: signature)
+      properties.append(property)
+    }
+
+    let gamemode = try Self.readGamemode(from: &packetReader)
+    let ping = packetReader.readVarInt()
+    let displayName = try Self.readDisplayName(from: &packetReader)
+
+    return PlayerInfo(
+      uuid: uuid,
+      name: playerName,
+      properties: properties,
+      gamemode: gamemode,
+      ping: ping,
+      displayName: displayName
+    )
   }
 }
