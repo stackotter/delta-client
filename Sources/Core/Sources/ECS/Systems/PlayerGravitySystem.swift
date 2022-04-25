@@ -6,10 +6,11 @@ public struct PlayerGravitySystem: System {
     var family = nexus.family(
       requiresAll: EntityFlying.self,
       EntityVelocity.self,
+      EntityPosition.self,
       ClientPlayerEntity.self
     ).makeIterator()
     
-    guard let (flying, velocity, _) = family.next() else {
+    guard let (flying, velocity, position, _) = family.next() else {
       log.error("PlayerGravitySystem failed to get player to tick")
       return
     }
@@ -17,8 +18,11 @@ public struct PlayerGravitySystem: System {
     guard !flying.isFlying else {
       return
     }
-    
-    velocity.y -= 0.08
+
+    if world.chunk(at: position.chunk) != nil {
+      velocity.y -= 0.08
+    }
+
     velocity.y *= 0.98
   }
 }
