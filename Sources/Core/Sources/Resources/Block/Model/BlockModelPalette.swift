@@ -192,13 +192,14 @@ public struct BlockModelPalette {
         throw BlockModelPaletteError.invalidTexture(flatFace.texture)
       }
       
-      guard let textureIndex = blockTexturePalette.textureIndex(for: textureIdentifier) ?? blockTexturePalette.textureIndex(for: Identifier(name: "block/debug")) else {
+      let debugBlock = blockTexturePalette.textureIndex(for: Identifier(name: "block/debug"))
+      guard let textureIndex = blockTexturePalette.textureIndex(for: textureIdentifier) ?? debugBlock else {
         log.error("Failed to get texture for '\(textureIdentifier)' and failed to get debug texture (very sus)")
         throw BlockModelPaletteError.invalidTextureIdentifier(textureIdentifier)
       }
       
       // Update the cullface with the block rotation (ignoring element rotation)
-      var cullface: Direction? = nil
+      var cullface: Direction?
       if let flatCullface = flatFace.cullface {
         cullface = rotate(flatCullface, byRotationFrom: renderDescriptor)
       }
@@ -343,7 +344,7 @@ public struct BlockModelPalette {
   // TODO: make this an extension of arrays or something
   /// Rotates the given array. Positive k is right rotation and negative k is left rotation.
   private static func rotate<T>(_ array: [T], by k: Int) -> [T] {
-    var initialDigits : Int = 0
+    var initialDigits: Int = 0
     k >= 0 ? (initialDigits = array.count - (k % array.count)) : (initialDigits = (abs(k) % array.count))
     let elementToPutAtEnd = Array(array[0..<initialDigits])
     let elementsToPutAtBeginning = Array(array[initialDigits..<array.count])

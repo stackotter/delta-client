@@ -17,9 +17,7 @@ public struct PacketReader {
   public var locale: MinecraftLocale
   
   public var remaining: Int {
-    get {
-      return buffer.remaining
-    }
+    return buffer.remaining
   }
   
   // Init

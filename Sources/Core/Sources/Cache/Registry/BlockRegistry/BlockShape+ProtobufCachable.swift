@@ -58,4 +58,3 @@ extension Block.Shape: ProtobufCachable {
     return message
   }
 }
-

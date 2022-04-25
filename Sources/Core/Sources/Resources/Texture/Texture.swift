@@ -44,8 +44,14 @@ public struct Texture {
   ///   - pngFile: The png file containing the texture.
   ///   - type: The type of the texture. Calculated if not specified.
   ///   - targetWidth: Scales the image to this width.
-  ///   - checkDimensions: If `true`, the texture's width must be a power of two, and the height must be a multiple of the width. `targetWidth` must also be a power of two if present.
-  public init(pngFile: URL, type: TextureType? = nil, scaledToWidth targetWidth: Int? = nil, checkDimensions: Bool = false) throws {
+  ///   - checkDimensions: If `true`, the texture's width must be a power of two, and the height must be a multiple of the width.
+  ///                      `targetWidth` must also be a power of two if present.
+  public init(
+    pngFile: URL,
+    type: TextureType? = nil,
+    scaledToWidth targetWidth: Int? = nil,
+    checkDimensions: Bool = false
+  ) throws {
     let image = try CGImage(pngFile: pngFile)
     try self.init(image: image, type: type, scaledToWidth: targetWidth, checkDimensions: checkDimensions)
   }
@@ -55,8 +61,14 @@ public struct Texture {
   ///   - image: The image containing the texture.
   ///   - type: The type of the texture. Calculated if not specified.
   ///   - targetWidth: Scales the image to this width.
-  ///   - checkDimensions: If `true`, the texture's width must be a power of two, and the height must be a multiple of the width. `targetWidth` must also be a power of two if present.
-  public init(image: CGImage, type: TextureType? = nil, scaledToWidth targetWidth: Int? = nil, checkDimensions: Bool = false) throws {
+  ///   - checkDimensions: If `true`, the texture's width must be a power of two, and the height must be a multiple of the width.
+  ///                      `targetWidth` must also be a power of two if present.
+  public init(
+    image: CGImage,
+    type: TextureType? = nil,
+    scaledToWidth targetWidth: Int? = nil,
+    checkDimensions: Bool = false
+  ) throws {
     if checkDimensions {
       // The height of the texture must be a multiple of the width
       guard image.height % image.width == 0 else {

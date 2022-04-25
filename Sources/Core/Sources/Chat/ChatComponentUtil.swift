@@ -1,6 +1,5 @@
 import Foundation
 
-
 struct ChatComponentUtil {
   static func parseJSON(_ json: JSON, locale: MinecraftLocale) throws -> ChatComponent {
     if json.containsKey("text") {

@@ -7,7 +7,7 @@ extension TextureType: ProtobufCachableEnum {
         self = .transparent
       case .translucent:
         self = .translucent
-      case .UNRECOGNIZED(_):
+      case .UNRECOGNIZED:
         throw BlockModelPaletteError.invalidTextureType
     }
   }

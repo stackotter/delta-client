@@ -1,6 +1,5 @@
 import Foundation
 
-
 public struct KeepAliveClientboundPacket: ClientboundPacket {
   public static let id: Int = 0x20
   

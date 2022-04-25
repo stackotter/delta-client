@@ -7,7 +7,9 @@ import ZippyJSON
 /// and it's acceptable for smaller registries. Try it out, and if it's not fast
 /// enough, use Protobuf instead (or something better).
 public protocol JSONCachableRegistry: CachableRegistry, Codable {
-  /// File to cache the registry to. Should just be a file name ending in ".json" (e.g. "blocks.json"). It's a function so that `JSONCachableRegistry` can be implemented in extensions.
+  /// File to cache the registry to. Should just be a file name ending in ".json" (e.g. "blocks.json").
+  ///
+  /// It's a function so that `JSONCachableRegistry` can be implemented in extensions.
   static func getCacheFileName() -> String
 }
 

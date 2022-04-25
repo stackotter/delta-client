@@ -50,7 +50,7 @@ public struct ResourcePack {
   /// - Parameters:
   ///   - languages: The metadata of languages to include in the resource pack.
   ///   - resources: The resources contained in the pack, keyed by namespace.
-  public init(languages: [String : ResourcePack.PackMCMeta.Language] = [:], resources: [String : ResourcePack.Resources] = [:]) {
+  public init(languages: [String: ResourcePack.PackMCMeta.Language] = [:], resources: [String: ResourcePack.Resources] = [:]) {
     self.languages = languages
     self.resources = resources
   }
@@ -71,7 +71,10 @@ public struct ResourcePack {
   
   // MARK: Loading
   
-  /// Loads the resource pack in the given directory. If provided, cached resources are loaded from the given cache directory if present. To create a resource pack cache use ``cache(to:)``. Resource pack caches do not cache the whole pack yet, only the most resource intensive parts to load.
+  /// Loads the resource pack in the given directory.
+  ///
+  /// If provided, cached resources are loaded from the given cache directory if present. To create a resource pack cache use ``cache(to:)``.
+  /// Resource pack caches do not cache the whole pack yet, only the most resource intensive parts to load.
   ///
   /// ``RegistryStore/shared`` must be populated for this to work.
   public static func load(from directory: URL, cacheDirectory: URL?) throws -> ResourcePack {
@@ -291,9 +294,7 @@ public struct ResourcePack {
   
   /// Get the manifest describing all versions.
   private static func getVersionsManifest() throws -> VersionsManifest {
-    // swiftlint:disable force_unwrap
     let versionsManifestURL = URL(string: "https://launchermeta.mojang.com/mc/game/version_manifest.json")!
-    // swiftlint:enable force_unwrap
     
     let versionsManifest: VersionsManifest
     do {

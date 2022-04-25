@@ -93,6 +93,7 @@ public struct Random {
 
 infix operator >>> : BitwiseShiftPrecedence
 
+// swiftlint:disable:next:private_over_fileprivate
 fileprivate func >>> (lhs: Int64, rhs: Int64) -> Int64 {
   return Int64(bitPattern: UInt64(bitPattern: lhs) >> UInt64(rhs))
 }

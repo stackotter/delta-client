@@ -51,4 +51,3 @@ extension BlockModel: ProtobufCachable {
     return message
   }
 }
-

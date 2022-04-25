@@ -12,9 +12,7 @@ extension NBT {
     }
     
     public var count: Int {
-      get {
-        return list.count
-      }
+      return list.count
     }
     
     public mutating func append(_ elem: Any) {
