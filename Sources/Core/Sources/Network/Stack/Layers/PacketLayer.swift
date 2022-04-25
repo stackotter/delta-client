@@ -5,13 +5,13 @@ public struct PacketLayer {
   // MARK: Private properties
   
   /// Keeps track of the state of the receiver across calls to ``processInbound(_:)``.
-  private var receiveState = ReceiveState(lengthBytes: [], length: 0, packet: [])
+  private var receiveState = ReceiveState()
   
   /// The state of the receiver.
   private struct ReceiveState {
-    var lengthBytes: [UInt8]
-    var length: Int
-    var packet: [UInt8]
+    var lengthBytes: [UInt8] = []
+    var length: Int? = nil
+    var packet: [UInt8] = []
   }
   
   // MARK: Init
@@ -32,41 +32,23 @@ public struct PacketLayer {
     
     var buffer = buffer // mutable copy
     while true {
-      if receiveState.length == -1 {
-        while buffer.remaining != 0 {
-          let byte = buffer.readByte()
-          receiveState.lengthBytes.append(byte)
-          if byte & 0x80 == 0x00 {
-            break
-          }
-        }
-        
-        if !receiveState.lengthBytes.isEmpty, let lastLengthByte = receiveState.lengthBytes.last {
-          if lastLengthByte & 0x80 == 0x00 {
-            // Using standalone implementation of varint decoding to hopefully reduce networking overheads slightly?
-            receiveState.length = 0
-            for i in 0..<receiveState.lengthBytes.count {
-              let byte = receiveState.lengthBytes[i]
-              receiveState.length += Int(byte & 0x7f) << (i * 7)
-            }
-          }
-        }
+      guard let length = receiveState.length else {
+        receiveState.length = readLength(from: &buffer)
+        continue
       }
       
-      if receiveState.length == 0 {
+      if length == 0 {
         log.trace("Received empty packet")
-        receiveState.length = -1
+        receiveState.length = nil
         receiveState.lengthBytes = []
-      } else if receiveState.length != -1 && buffer.remaining != 0 {
+      } else if buffer.remaining != 0 {
         while buffer.remaining != 0 {
           let byte = buffer.readByte()
           receiveState.packet.append(byte)
           
           if receiveState.packet.count == receiveState.length {
             packets.append(Buffer(receiveState.packet))
-            receiveState.packet = []
-            receiveState.length = -1
-            receiveState.lengthBytes = []
+            receiveState = ReceiveState()
             break
           }
         }
@@ -88,5 +70,31 @@ public struct PacketLayer {
     packed.writeVarInt(Int32(buffer.length))
     packed.writeBytes(buffer.bytes)
     return packed
+  }
+
+  // MARK: Private methods
+
+  private mutating func readLength(from buffer: inout Buffer) -> Int? {
+    while buffer.remaining != 0 {
+      let byte = buffer.readByte()
+      receiveState.lengthBytes.append(byte)
+      if byte & 0x80 == 0x00 {
+        break
+      }
+    }
+    
+    if !receiveState.lengthBytes.isEmpty, let lastLengthByte = receiveState.lengthBytes.last {
+      if lastLengthByte & 0x80 == 0x00 {
+        // Using standalone implementation of varint decoding to hopefully reduce networking overheads slightly?
+        var length = 0
+        for i in 0..<receiveState.lengthBytes.count {
+          let byte = receiveState.lengthBytes[i]
+          length += Int(byte & 0x7f) << (i * 7)
+        }
+        return length
+      }
+    }
+
+    return nil
   }
 }
