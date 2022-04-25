@@ -170,7 +170,8 @@ public class PluginEnvironment: ObservableObject {
   // MARK: Unloading
   
   /// Unloads all loaded plugins.
-  /// - Parameter keepRegistered: If `true`, the client will remember the plugins and keep them in ``unloadedPlugins``. This keeps the plugins unloaded across sessions.
+  /// - Parameter keepRegistered: If `true`, the client will remember the plugins and keep them in ``unloadedPlugins``.
+  ///                             This keeps the plugins unloaded across sessions.
   public func unloadAll(keepRegistered: Bool = true) {
     log.debug("Unloading all plugins")
     for identifier in plugins.keys {
@@ -180,7 +181,8 @@ public class PluginEnvironment: ObservableObject {
   
   /// Unloads the specified plugin if it's loaded. Does nothing if the plugin does not exist.
   /// - Parameter identifier: The identifier of the plugin to unload.
-  /// - Parameter keepRegistered: If `true`, the client will remember the plugin and keep it in ``unloadedPlugins``. This keeps the plugin unloaded across sessions.
+  /// - Parameter keepRegistered: If `true`, the client will remember the plugin and keep it in ``unloadedPlugins``.
+  ///                             This keeps the plugin unloaded across sessions.
   public func unloadPlugin(_ identifier: String, keepRegistered: Bool = true) {
     log.debug("Unloading plugin '\(identifier)'")
     if let plugin = plugins[identifier] {

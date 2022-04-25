@@ -1,6 +1,5 @@
 import Foundation
 
-
 public struct PlayDisconnectPacket: ClientboundPacket {
   public static let id: Int = 0x1a
   
