@@ -40,61 +40,74 @@ public struct TeamsPacket: ClientboundPacket {
     let mode = packetReader.readByte()
     switch mode {
       case 0: // create
-        let teamDisplayName = try packetReader.readChat()
-        let friendlyFlags = packetReader.readByte()
-        let nameTagVisibility = try packetReader.readString()
-        let collisionRule = try packetReader.readString()
-        let teamColor = packetReader.readVarInt()
-        let teamPrefix = try packetReader.readChat()
-        let teamSuffix = try packetReader.readChat()
-        let entityCount = packetReader.readVarInt()
-        var entities: [String] = []
-        for _ in 0..<entityCount {
-          let entity = try packetReader.readString()
-          entities.append(entity)
-        }
-        let createAction = TeamAction.Create(
-          teamDisplayName: teamDisplayName, friendlyFlags: friendlyFlags,
-          nameTagVisibility: nameTagVisibility, collisionRule: collisionRule,
-          teamColor: teamColor, teamPrefix: teamPrefix, teamSuffix: teamSuffix,
-          entities: entities
-        )
+        let createAction = try Self.readCreateAction(from: &packetReader)
         action = .create(action: createAction)
       case 1: // remove
         action = .remove
       case 2: // update info
-        let teamDisplayName = try packetReader.readChat()
-        let friendlyFlags = packetReader.readByte()
-        let nameTagVisibility = try packetReader.readString()
-        let collisionRule = try packetReader.readString()
-        let teamColor = packetReader.readVarInt()
-        let teamPrefix = try packetReader.readChat()
-        let teamSuffix = try packetReader.readChat()
-        let updateInfoAction = TeamAction.UpdateInfo(
-          teamDisplayName: teamDisplayName, friendlyFlags: friendlyFlags,
-          nameTagVisibility: nameTagVisibility, collisionRule: collisionRule,
-          teamColor: teamColor, teamPrefix: teamPrefix, teamSuffix: teamSuffix
-        )
+        let updateInfoAction = try Self.readUpdateInfoAction(from: &packetReader)
         action = .updateInfo(action: updateInfoAction)
       case 3: // add players
-        let entityCount = packetReader.readVarInt()
-        var entities: [String] = []
-        for _ in 0..<entityCount {
-          let entity = try packetReader.readString()
-          entities.append(entity)
-        }
+        let entities = try Self.readEntities(from: &packetReader)
         action = .addPlayers(entities: entities)
       case 4: // remove players
-        let entityCount = packetReader.readVarInt()
-        var entities: [String] = []
-        for _ in 0..<entityCount {
-          let entity = try packetReader.readString()
-          entities.append(entity)
-        }
+        let entities = try Self.readEntities(from: &packetReader)
         action = .removePlayers(entities: entities)
       default:
         log.debug("invalid team action")
         action = .remove
     }
+  }
+
+  private static func readEntities(from packetReader: inout PacketReader) throws -> [String] {
+    let entityCount = packetReader.readVarInt()
+    var entities: [String] = []
+    for _ in 0..<entityCount {
+      let entity = try packetReader.readString()
+      entities.append(entity)
+    }
+    return entities
+  }
+
+  private static func readCreateAction(from packetReader: inout PacketReader) throws -> TeamAction.Create {
+    let teamDisplayName = try packetReader.readChat()
+    let friendlyFlags = packetReader.readByte()
+    let nameTagVisibility = try packetReader.readString()
+    let collisionRule = try packetReader.readString()
+    let teamColor = packetReader.readVarInt()
+    let teamPrefix = try packetReader.readChat()
+    let teamSuffix = try packetReader.readChat()
+    let entities = try Self.readEntities(from: &packetReader)
+    
+    return TeamAction.Create(
+      teamDisplayName: teamDisplayName,
+      friendlyFlags: friendlyFlags,
+      nameTagVisibility: nameTagVisibility,
+      collisionRule: collisionRule,
+      teamColor: teamColor,
+      teamPrefix: teamPrefix,
+      teamSuffix: teamSuffix,
+      entities: entities
+    )
+  }
+
+  private static func readUpdateInfoAction(from packetReader: inout PacketReader) throws -> TeamAction.UpdateInfo {
+    let teamDisplayName = try packetReader.readChat()
+    let friendlyFlags = packetReader.readByte()
+    let nameTagVisibility = try packetReader.readString()
+    let collisionRule = try packetReader.readString()
+    let teamColor = packetReader.readVarInt()
+    let teamPrefix = try packetReader.readChat()
+    let teamSuffix = try packetReader.readChat()
+
+    return TeamAction.UpdateInfo(
+      teamDisplayName: teamDisplayName,
+      friendlyFlags: friendlyFlags,
+      nameTagVisibility: nameTagVisibility,
+      collisionRule: collisionRule,
+      teamColor: teamColor,
+      teamPrefix: teamPrefix,
+      teamSuffix: teamSuffix
+    )
   }
 }
