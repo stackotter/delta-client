@@ -10,15 +10,11 @@ public struct Buffer {
   public var index = 0
   
   public var length: Int {
-    get {
-      return self.bytes.count
-    }
+    return self.bytes.count
   }
   
   public var remaining: Int {
-    get {
-      return length - index
-    }
+    return length - index
   }
   
   // Init

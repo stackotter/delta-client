@@ -217,7 +217,7 @@ public struct Game {
     respawnScreenEnabled = packet.enableRespawnScreen
     isHardcore = packet.isHardcore
     
-    var playerEntityId: Int? = nil
+    var playerEntityId: Int?
     accessPlayer { player in
       player.playerAttributes.previousGamemode = packet.previousGamemode
       player.gamemode.gamemode = packet.gamemode

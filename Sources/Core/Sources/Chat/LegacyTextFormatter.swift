@@ -15,8 +15,8 @@ public enum LegacyTextFormatter {
       return NSAttributedString(string: string, attributes: [.font: font])
     }
     
-    var currentColor: FormattingCode.ColorCode? = nil
-    var currentStyle: FormattingCode.StyleCode? = nil
+    var currentColor: FormattingCode.ColorCode?
+    var currentStyle: FormattingCode.StyleCode?
     var formattedTokens: [(String, FormattingCode.ColorCode?, FormattingCode.StyleCode?)] = []
     
     for token in tokenized {

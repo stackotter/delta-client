@@ -15,4 +15,3 @@ extension Block.LightMaterial: ProtobufCachable {
     return message
   }
 }
-

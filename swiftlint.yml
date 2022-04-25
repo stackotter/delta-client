@@ -9,6 +9,7 @@ disabled_rules:
   - trailing_whitespace
   - switch_case_alignment
   - identifier_name
+  - type_name
 
 # Enabled rules
 opt_in_rules:

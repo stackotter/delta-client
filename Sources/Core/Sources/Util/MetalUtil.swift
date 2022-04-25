@@ -73,7 +73,13 @@ public enum MetalUtil {
   ///   - options: Resource options for the buffer
   ///   - label: Label to give the buffer.
   /// - Returns: A new buffer.
-  public static func makeBuffer(_ device: MTLDevice, bytes: UnsafeRawPointer, length: Int, options: MTLResourceOptions, label: String? = nil) throws -> MTLBuffer {
+  public static func makeBuffer(
+    _ device: MTLDevice,
+    bytes: UnsafeRawPointer,
+    length: Int,
+    options: MTLResourceOptions,
+    label: String? = nil
+  ) throws -> MTLBuffer {
     guard let buffer = device.makeBuffer(bytes: bytes, length: length, options: options) else {
       throw RenderError.failedToCreateBuffer(label: label)
     }
@@ -88,8 +94,12 @@ public enum MetalUtil {
   ///   - commonCounterSet: The counter set that the buffer will be used to sample.
   ///   - sampleCount: The size of sampling buffer to create.
   /// - Returns: A buffer for storing counter samples.
-  public static func makeCounterSampleBuffer(_ device: MTLDevice, counterSet commonCounterSet: MTLCommonCounterSet, sampleCount: Int) throws -> MTLCounterSampleBuffer {
-    var counterSet: MTLCounterSet? = nil
+  public static func makeCounterSampleBuffer(
+    _ device: MTLDevice,
+    counterSet commonCounterSet: MTLCommonCounterSet,
+    sampleCount: Int
+  ) throws -> MTLCounterSampleBuffer {
+    var counterSet: MTLCounterSet?
     for deviceCounterSet in device.counterSets ?? [] {
       if deviceCounterSet.name.caseInsensitiveCompare(commonCounterSet.rawValue) == .orderedSame {
         counterSet = deviceCounterSet
@@ -120,7 +130,12 @@ public enum MetalUtil {
   ///   - options: Resource options for the buffer.
   ///   - label: Label to give the buffer.
   /// - Returns: An empty buffer.
-  public static func makeBuffer(_ device: MTLDevice, length: Int, options: MTLResourceOptions, label: String? = nil) throws -> MTLBuffer {
+  public static func makeBuffer(
+    _ device: MTLDevice,
+    length: Int,
+    options: MTLResourceOptions,
+    label: String? = nil
+  ) throws -> MTLBuffer {
     guard let buffer = device.makeBuffer(length: length, options: options) else {
       throw RenderError.failedToCreateBuffer(label: label)
     }

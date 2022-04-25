@@ -43,7 +43,18 @@ public struct TradeListPacket: ClientboundPacket {
       let specialPrice = packetReader.readInt()
       let priceMultiplier = packetReader.readFloat()
       let demand = packetReader.readInt()
-      let trade = Trade(firstInputItem: firstInputItem, outputItem: outputItem, secondInputItem: secondInputItem, tradeDisabled: tradeDisabled, numUses: numUses, maxUses: maxUses, xp: xp, specialPrice: specialPrice, priceMultiplier: priceMultiplier, demand: demand)
+      let trade = Trade(
+        firstInputItem: firstInputItem,
+        outputItem: outputItem,
+        secondInputItem: secondInputItem,
+        tradeDisabled: tradeDisabled,
+        numUses: numUses,
+        maxUses: maxUses,
+        xp: xp,
+        specialPrice: specialPrice,
+        priceMultiplier: priceMultiplier,
+        demand: demand
+      )
       trades.append(trade)
     }
     

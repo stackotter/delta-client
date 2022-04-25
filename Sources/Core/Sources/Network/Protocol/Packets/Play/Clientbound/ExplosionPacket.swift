@@ -7,7 +7,7 @@ public struct ExplosionPacket: ClientboundPacket {
   public var y: Float
   public var z: Float
   public var strength: Float
-  public var records: [(Int8, Int8, Int8)]
+  public var records: [(Int8, Int8, Int8)] // swiftlint:disable:this large_tuple
   public var playerMotionX: Float
   public var playerMotionY: Float
   public var playerMotionZ: Float

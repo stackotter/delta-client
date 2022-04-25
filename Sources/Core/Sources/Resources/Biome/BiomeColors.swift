@@ -64,9 +64,11 @@ public struct BiomeColors {
   /// Creates a new biome colors resource from the colormaps in a resource pack directory.
   /// - Parameter colormapDirectory: The colormap directory of a resource pack. Must contain `foliage.png` and `grass.png`.
   /// - Parameter grassColorOverrides: Overrides for the grass colors of specific biomes. If `nil`, the vanilla ones are used.
-  /// - Parameter grassColorFilters: Filters to apply to the grass colors of specific biomes after retrieving them from the resource pack's color map. If `nil`, the vanilla ones are used.
+  /// - Parameter grassColorFilters: Filters to apply to the grass colors of specific biomes after retrieving them from the resource pack's
+  ///                                color map. If `nil`, the vanilla ones are used.
   /// - Parameter foliageColorOverrides: Overrides for the foliage colors of specific biomes. If `nil`, the vanilla ones are used.
-  /// - Parameter foliageColorFilters: Filters to apply to the foliage colors of specific biomes after retrieving them from the resource pack's color map. If `nil`, the vanilla ones are used.
+  /// - Parameter foliageColorFilters: Filters to apply to the foliage colors of specific biomes after retrieving them from the resource pack's
+  ///                                  color map. If `nil`, the vanilla ones are used.
   /// - Parameter blockColorOverrides: Overrides the colors of any blocks specified.
   /// - Parameter defaultFoliageColor: Color to use for foliage when something fails.
   /// - Parameter defaultGrassColor: Color to use for grass when something fails.
@@ -118,7 +120,8 @@ public struct BiomeColors {
   ///   - block: The block.
   ///   - position: The position of the block. Currently ignored.
   ///   - biome: The biome the block is in.
-  /// - Returns: A tint color. Returns `nil` if the block doesn't need a tint to be applied and in some cases where biome color look ups fail which could happen if plugins mess with this.
+  /// - Returns: A tint color. Returns `nil` if the block doesn't need a tint to be applied and in some cases where biome color look ups
+  ///            fail which could happen if plugins mess with this.
   public func color(for block: Block, at position: BlockPosition, in biome: Biome) -> RGBColor? {
     if let tintColor = blockColorOverrides[block.identifier] {
       return tintColor

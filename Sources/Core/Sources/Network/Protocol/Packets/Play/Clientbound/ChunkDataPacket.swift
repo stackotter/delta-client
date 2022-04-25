@@ -146,7 +146,7 @@ public struct ChunkDataPacket: ClientboundPacket {
       // TODO: throw an error
     }
     
-    let values = Array<T>(unsafeUninitializedCapacity: Chunk.Section.numBlocks) { buffer, initializedCount in
+    let values = [T](unsafeUninitializedCapacity: Chunk.Section.numBlocks) { buffer, initializedCount in
       longArray.withUnsafeBufferPointer { longPointer in
         for i in 0..<count {
           let index = i / valuesPerLong

@@ -12,7 +12,7 @@ public struct EntityKind: Codable {
   public var attributes: [EntityAttributeKey: Float]
   
   /// Creates a new entity kind with the given properties.
-  public init(identifier: Identifier, id: Int, width: Float, height: Float, attributes: [EntityAttributeKey : Float]) {
+  public init(identifier: Identifier, id: Int, width: Float, height: Float, attributes: [EntityAttributeKey: Float]) {
     self.identifier = identifier
     self.id = id
     self.width = width

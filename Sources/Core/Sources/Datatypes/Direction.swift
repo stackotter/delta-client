@@ -137,12 +137,10 @@ public enum Direction: Int {
       case referenceDirection, referenceDirection.opposite:
         return self
       default:
-        // swiftlint:disable force_unwrap
         // This is safe because all axes are defined in the dictionary
         let loop = loops[referenceDirection.axis]!
         // This is safe because all four directions that are handled by this case will be in the loop
         let index = loop.firstIndex(of: self)!
-        // swiftlint:enable force_unwrap
         var newIndex: Int
         if referenceDirection.isPositive {
           newIndex = index - n

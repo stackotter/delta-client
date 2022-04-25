@@ -42,7 +42,7 @@ public struct IntermediateBlockModelPalette {
     with jsonBlockPalette: [Identifier: JSONBlockModel]
   ) throws -> IntermediateBlockModel {
     // Flatten the parent first if this model has a parent.
-    var parent: IntermediateBlockModel? = nil
+    var parent: IntermediateBlockModel?
     if let parentIdentifier = jsonBlockModel.parent {
       guard let parentJSONBlockModel = jsonBlockPalette[parentIdentifier] else {
         throw BlockModelPaletteError.noSuchParent(parentIdentifier)
@@ -77,7 +77,7 @@ public struct IntermediateBlockModelPalette {
     }
     
     // Flatten the display transforms
-    var displayTransformsIndex: Int? = nil
+    var displayTransformsIndex: Int?
     if let jsonDisplayTransforms = jsonBlockModel.display {
       let flattenedDisplayTransforms = try BlockModelDisplayTransforms(from: jsonDisplayTransforms)
       displayTransformsIndex = displayTransforms.count

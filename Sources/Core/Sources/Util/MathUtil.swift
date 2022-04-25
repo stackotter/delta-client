@@ -45,10 +45,10 @@ public enum MathUtil {
   ///   - progress: The progress from the initial angle to the target angle (gets clamped between 0 and 1).
   /// - Returns: The current angle, linearly interpolated between the initial and target angles.
   public static func lerpAngle<T: FloatingPoint>(from initial: T, to target: T, progress: T) -> T {
-    let max: T = .pi * 2;
+    let max: T = .pi * 2
     // Difference is the smallest angle between the initial and target angles (for example, lerping from 359 degrees to 0, the difference would be 1)
-    var difference = (target - initial).remainder(dividingBy: max);
-    difference = (2 * difference).remainder(dividingBy: max) - difference;
+    var difference = (target - initial).remainder(dividingBy: max)
+    difference = (2 * difference).remainder(dividingBy: max) - difference
     let progress = MathUtil.clamp(progress, 0, 1)
     return initial + progress * difference
   }
@@ -100,7 +100,7 @@ public enum MathUtil {
   ///   - maxValue: The maximum value.
   /// - Returns: The clamped value.
   @_specialize(where T:_Trivial)
-  public static func clamp<T>(_ value: T, _ minValue: T, _ maxValue: T) -> T where T : Comparable {
+  public static func clamp<T>(_ value: T, _ minValue: T, _ maxValue: T) -> T where T: Comparable {
     return min(max(value, minValue), maxValue)
   }
 }
