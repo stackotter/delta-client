@@ -50,7 +50,8 @@ public struct JoinGamePacket: ClientboundPacket, WorldDescriptor {
   public func handle(for client: Client) throws {
     client.game.update(packet: self, client: client)
     
-    // TODO: the event below should be dispatched from game instead of here. Event dispatching should be done in a way that makes it clear what will and what won't emit an event.
+    // TODO: the event below should be dispatched from game instead of here. Event dispatching should
+    //       be done in a way that makes it clear what will and what won't emit an event.
     client.eventBus.dispatch(JoinWorldEvent())
   }
 }

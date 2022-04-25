@@ -4,9 +4,9 @@ public struct AdvancementsPacket: ClientboundPacket {
   public static let id: Int = 0x57
   
   public var shouldReset: Bool
-  public var advancementMapping: [Identifier: Advancement]
-  public var toRemove: [Identifier]
-  public var progressMapping: [Identifier: AdvancementProgress]
+  public var advancements: [Identifier: Advancement]
+  public var advancementsToRemove: [Identifier]
+  public var advancementProgresses: [Identifier: AdvancementProgress]
   
   public struct Advancement {
     public var hasParent: Bool
@@ -39,9 +39,14 @@ public struct AdvancementsPacket: ClientboundPacket {
 
   public init(from packetReader: inout PacketReader) throws {
     shouldReset = packetReader.readBool()
-    
+    advancements = try Self.readAdvancements(from: &packetReader)
+    advancementsToRemove = try Self.readAdvancementsToRemove(from: &packetReader)
+    advancementProgresses = try Self.readAdvancementProgresses(from: &packetReader)
+  }
+
+  private static func readAdvancements(from packetReader: inout PacketReader) throws -> [Identifier: Advancement] {
     let mappingSize = packetReader.readVarInt()
-    advancementMapping = [:]
+    var advancements: [Identifier: Advancement] = [:]
     for _ in 0..<mappingSize {
       let key = try packetReader.readIdentifier()
       
@@ -88,18 +93,24 @@ public struct AdvancementsPacket: ClientboundPacket {
         hasParent: hasParent, parentId: parentId, hasDisplay: hasDisplay,
         displayData: displayData, criteria: criteria, requirements: requirements
       )
-      advancementMapping[key] = value
+      advancements[key] = value
     }
-    
+    return advancements
+  }
+
+  private static func readAdvancementsToRemove(from packetReader: inout PacketReader) throws -> [Identifier] {
     let listSize = packetReader.readVarInt()
-    toRemove = []
+    var advancementsToRemove: [Identifier] = []
     for _ in 0..<listSize {
       let identifier = try packetReader.readIdentifier()
-      toRemove.append(identifier)
+      advancementsToRemove.append(identifier)
     }
-    
+    return advancementsToRemove
+  }
+
+  private static func readAdvancementProgresses(from packetReader: inout PacketReader) throws -> [Identifier: AdvancementProgress] {
     let progressSize = packetReader.readVarInt()
-    progressMapping = [:]
+    var progressMapping: [Identifier: AdvancementProgress] = [:]
     for _ in 0..<progressSize {
       let key = try packetReader.readIdentifier()
       
@@ -120,5 +131,6 @@ public struct AdvancementsPacket: ClientboundPacket {
       let advancementProgress = AdvancementProgress(criteria: criteria)
       progressMapping[key] = advancementProgress
     }
+    return progressMapping
   }
 }
