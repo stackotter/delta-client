@@ -18,12 +18,14 @@ public enum PixlyzerFormatter {
   /// Downloads the pixlyzer registries, reformats them, and caches them to an output directory.
   /// - Parameter version: The minecraft version string (e.g. '1.16.1').
   public static func downloadAndFormatRegistries(_ version: String) throws -> RegistryStore {
+    let pixlyzerCommit = "7cceb5481e6f035d274204494030a76f47af9bb5"
+    let baseURL = "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/\(pixlyzerCommit)/version/\(version)"
     // swiftlint:disable force_unwrapping
-    let fluidsDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/fluids.min.json")!
-    let blocksDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/blocks.min.json")!
-    let biomesDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/biomes.min.json")!
-    let entitiesDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/entities.min.json")!
-    let shapeRegistryDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/master/version/\(version)/shapes.min.json")!
+    let fluidsDownloadURL = URL(string: "\(baseURL)/fluids.min.json")!
+    let blocksDownloadURL = URL(string: "\(baseURL)/blocks.min.json")!
+    let biomesDownloadURL = URL(string: "\(baseURL)/biomes.min.json")!
+    let entitiesDownloadURL = URL(string: "\(baseURL)/entities.min.json")!
+    let shapeRegistryDownloadURL = URL(string: "\(baseURL)/shapes.min.json")!
     // swiftlint:enable force_unwrapping
     
     // Load and decode pixlyzer data
