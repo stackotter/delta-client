@@ -22,7 +22,7 @@ final class MetalView: NSViewRepresentable {
     }
     
     mtkView.delegate = context.coordinator
-    mtkView.preferredFramesPerSecond = 60
+    mtkView.preferredFramesPerSecond = 10000
     mtkView.framebufferOnly = true
     mtkView.clearColor = MTLClearColorMake(0.65, 0.8, 1, 1) // Sky colour
     mtkView.drawableSize = mtkView.frame.size
