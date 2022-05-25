@@ -25,11 +25,11 @@ public struct Identifier: Hashable, Equatable, Codable, CustomStringConvertible 
   /// The parser used to parse identifiers from strings.
   private static let identifierParser = OneOf {
     Parse {
-      Prefix { namespaceAllowedCharacters.contains($0) }
+      Prefix(1...) { namespaceAllowedCharacters.contains($0) }
       
       Optionally {
         ":"
-        Prefix { nameAllowedCharacters.contains($0) }
+        Prefix(1...) { nameAllowedCharacters.contains($0) }
       }
       
       End()
@@ -41,6 +41,7 @@ public struct Identifier: Hashable, Equatable, Codable, CustomStringConvertible 
       }
     }
     
+    // Required for the case where an identifier has no namespace and the name contains characters not allowed in a namespace
     Parse {
       Prefix { nameAllowedCharacters.contains($0) }
       End()
