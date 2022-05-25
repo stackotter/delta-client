@@ -33,7 +33,8 @@ final class IdentifierTests: XCTestCase {
       "minecraft:block:dirt",
       "block:",
       "minecraft:diamond$sword",
-      "%"
+      "%",
+      ":iron_shovel"
     ]
 
     for identifier in identifiers {
