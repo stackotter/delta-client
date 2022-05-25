@@ -3,16 +3,16 @@
 import PackageDescription
 
 var dependencies: [Package.Dependency] = [
-    .package(name: "ZIPFoundation", url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.0"),
-    .package(name: "IDZSwiftCommonCrypto", url: "https://github.com/iosdevzone/IDZSwiftCommonCrypto", from: "0.13.1"),
-    .package(name: "DeltaLogger", url: "https://github.com/stackotter/delta-logger", .branch("main")),
-    .package(name: "NioDNS", url: "https://github.com/OpenKitten/NioDNS", from: "1.0.2"),
-    .package(name: "SwiftProtobuf", url: "https://github.com/apple/swift-protobuf.git", from: "1.6.0"),
-    .package(name: "swift-collections", url: "https://github.com/apple/swift-collections.git", from: "0.0.7"),
-    .package(name: "Concurrency", url: "https://github.com/uber/swift-concurrency.git", from: "0.7.1"),
-    .package(name: "FirebladeECS", url: "https://github.com/stackotter/ecs.git", .branch("master")),
-    .package(name: "ZippyJSON", url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
-    .package(url: "https://github.com/pointfreeco/swift-parsing", .exact("0.8.0")),
+  .package(name: "ZIPFoundation", url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.0"),
+  .package(name: "IDZSwiftCommonCrypto", url: "https://github.com/iosdevzone/IDZSwiftCommonCrypto", from: "0.13.1"),
+  .package(name: "DeltaLogger", url: "https://github.com/stackotter/delta-logger", .branch("main")),
+  .package(name: "NioDNS", url: "https://github.com/OpenKitten/NioDNS", from: "1.0.2"),
+  .package(name: "SwiftProtobuf", url: "https://github.com/apple/swift-protobuf.git", from: "1.6.0"),
+  .package(name: "swift-collections", url: "https://github.com/apple/swift-collections.git", from: "0.0.7"),
+  .package(name: "Concurrency", url: "https://github.com/uber/swift-concurrency.git", from: "0.7.1"),
+  .package(name: "FirebladeECS", url: "https://github.com/stackotter/ecs.git", .branch("master")),
+  .package(name: "ZippyJSON", url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
+  .package(url: "https://github.com/pointfreeco/swift-parsing", .exact("0.8.0"))
 ]
 
 #if swift(>=5.6)
@@ -52,6 +52,11 @@ let package = Package(
       resources: [
         .process("Render/Shader/")
       ]
+    ),
+
+    .testTarget(
+      name: "DeltaCoreUnitTests",
+      dependencies: ["DeltaCore"]
     )
   ]
 )
