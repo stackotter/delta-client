@@ -1,4 +1,6 @@
 import XCTest
+import Foundation
+
 @testable import struct DeltaCore.Identifier
 
 final class IdentifierTests: XCTestCase {
@@ -45,5 +47,52 @@ final class IdentifierTests: XCTestCase {
         continue
       }
     }
+  }
+
+  func testDecoding() throws {
+    struct Payload: Codable {
+      let identifierString: Identifier
+      let identifierParts: Identifier
+    }
+
+    let namespace = "minecraft"
+    let name = "block/dirt.png"
+    let identifier = Identifier(namespace: namespace, name: name)
+
+    let json = """
+{
+  "identifierString": "\(namespace):\(name)",
+  "identifierParts": ["\(namespace)", "\(name)"]
+}
+""".data(using: .utf8)!
+    
+    let decoded = try JSONDecoder().decode(Payload.self, from: json)
+
+    XCTAssertEqual(
+      decoded.identifierString,
+      identifier,
+      "Failed to decode identifier '\(identifier)' encoded as a JSON string. Got '\(decoded.identifierString)'"
+    )
+
+    XCTAssertEqual(
+      decoded.identifierParts,
+      identifier,
+      "Failed to decode identifier '\(identifier)' encoded as a JSON array. Got '\(decoded.identifierParts)'"
+    )
+  }
+
+  func testEncoding() throws {
+    let namespace = "minecraft"
+    let name = "block/dirt.png"
+    let identifier = Identifier(namespace: namespace, name: name)
+
+    let json = String(data: try JSONEncoder().encode(identifier), encoding: .utf8)!
+    
+    let expected = "[\"\(namespace)\",\"\(name.replacingOccurrences(of: "/", with: "\\/"))\"]"
+    XCTAssertEqual(
+      json,
+      expected,
+      "Incorrectly encoded identifier '\(identifier)'. Expected '\(expected)'. Got '\(json)'"
+    )
   }
 }
