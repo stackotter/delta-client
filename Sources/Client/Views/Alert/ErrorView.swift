@@ -10,7 +10,7 @@ struct ErrorView: View {
   var body: some View {
     VStack {
       if message.contains("§") {
-        LegacyFormattedText(legacyString: message, fontSize: NSFont.systemFontSize(for: .regular))
+        LegacyFormattedTextView(legacyString: message, fontSize: NSFont.systemFontSize(for: .regular))
       } else {
         Text(message)
       }
