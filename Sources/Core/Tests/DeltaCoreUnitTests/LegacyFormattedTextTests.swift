@@ -15,6 +15,11 @@ final class LegacyFormattedTextTests: XCTestCase {
       ("§nX§cY", [
         Token(string: "X", color: nil, style: .underline),
         Token(string: "Y", color: .red, style: nil)
+      ]),
+      ("first§csecond§a§lthird", [
+        Token(string: "first", color: nil, style: nil),
+        Token(string: "second", color: .red, style: nil),
+        Token(string: "third", color: .green, style: .bold)
       ])
     ]
 
