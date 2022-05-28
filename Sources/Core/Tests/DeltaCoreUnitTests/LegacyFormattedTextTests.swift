@@ -3,7 +3,7 @@ import Foundation
 
 @testable import struct DeltaCore.LegacyFormattedText
 
-fileprivate typealias Token = LegacyFormattedText.Token
+private typealias Token = LegacyFormattedText.Token
 
 final class LegacyFormattedTextTests: XCTestCase {
   func testValidText() throws {

@@ -5,7 +5,7 @@ import SwiftUI
 /// SwiftUI view for displaying text that is formatted using Legacy formatting codes.
 ///
 /// See ``LegacyTextFormatter``.
-struct LegacyFormattedText: View {
+struct LegacyFormattedTextView: View {
   /// The legacy formatted string.
   var string: String
   /// The formatted text.
@@ -17,7 +17,7 @@ struct LegacyFormattedText: View {
   
   init(legacyString: String, fontSize: CGFloat, alignment: NSTextAlignment = .center) {
     self.string = legacyString
-    self.attributedString = LegacyTextFormatter.attributedString(from: legacyString, fontSize: fontSize)
+    self.attributedString = LegacyFormattedText(legacyString).attributedString(fontSize: fontSize)
     self.fontSize = fontSize
     self.alignment = alignment
   }
@@ -26,12 +26,11 @@ struct LegacyFormattedText: View {
     NSAttributedTextView(
       attributedString: attributedString,
       alignment: alignment
-    )
-      .frame(width: attributedString.size().width)
+    ).frame(width: attributedString.size().width)
   }
 }
 
-fileprivate struct NSAttributedTextView: NSViewRepresentable {
+struct NSAttributedTextView: NSViewRepresentable {
   var attributedString: NSAttributedString
   var alignment: NSTextAlignment
   
