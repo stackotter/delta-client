@@ -5,9 +5,9 @@ public struct UpdateViewPositionPacket: ClientboundPacket {
   
   public var chunkPosition: ChunkPosition
   
-  public init(from packetReader: inout PacketReader) {
-    let chunkX = Int(packetReader.readVarInt())
-    let chunkZ = Int(packetReader.readVarInt())
+  public init(from packetReader: inout PacketReader) throws {
+    let chunkX = Int(try packetReader.readVarInt())
+    let chunkZ = Int(try packetReader.readVarInt())
     chunkPosition = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
   }
   

@@ -21,13 +21,13 @@ public struct ChunkDataPacket: ClientboundPacket {
   }
   
   public init(from packetReader: inout PacketReader) throws {
-    let chunkX = Int(packetReader.readInt())
-    let chunkZ = Int(packetReader.readInt())
+    let chunkX = Int(try packetReader.readInt())
+    let chunkZ = Int(try packetReader.readInt())
     position = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
     
-    fullChunk = packetReader.readBool()
-    ignoreOldData = packetReader.readBool()
-    primaryBitMask = packetReader.readVarInt()
+    fullChunk = try packetReader.readBool()
+    ignoreOldData = try packetReader.readBool()
+    primaryBitMask = try packetReader.readVarInt()
     
     let heightMaps = try packetReader.readNBTCompound()
     let heightMapCompact: [Int] = try heightMaps.get("MOTION_BLOCKING")
@@ -38,18 +38,18 @@ public struct ChunkDataPacket: ClientboundPacket {
       biomeIds.reserveCapacity(1024)
       
       // Biomes are stored as big endian ints but biome ids are never bigger than a UInt8, so it's easy to
-      let packedBiomes = packetReader.readByteArray(length: 1024 * 4)
+      let packedBiomes = try packetReader.readByteArray(length: 1024 * 4)
       for i in 0..<1024 {
         biomeIds.append(packedBiomes[i * 4 + 3])
       }
     }
     
-    _ = packetReader.readVarInt() // Data length (not used)
+    _ = try packetReader.readVarInt() // Data length (not used)
     
-    sections = Self.readChunkSections(&packetReader, primaryBitMask: primaryBitMask)
+    sections = try Self.readChunkSections(&packetReader, primaryBitMask: primaryBitMask)
     
     // Read block entities
-    let numBlockEntities = packetReader.readVarInt()
+    let numBlockEntities = try packetReader.readVarInt()
     blockEntities = []
     blockEntities.reserveCapacity(numBlockEntities)
     for _ in 0..<numBlockEntities {
@@ -96,32 +96,32 @@ public struct ChunkDataPacket: ClientboundPacket {
   ///
   /// Some C code is used to quickly unpack the compacted long arrays which contain the block data. This
   /// is because Swift was too slow for the tight loop and c was so many times faster.
-  private static func readChunkSections(_ packetReader: inout PacketReader, primaryBitMask: Int) -> [Chunk.Section] {
+  private static func readChunkSections(_ packetReader: inout PacketReader, primaryBitMask: Int) throws -> [Chunk.Section] {
     var sections: [Chunk.Section] = []
     let presentSections = BinaryUtil.setBits(of: primaryBitMask, n: Chunk.numSections)
     sections.reserveCapacity(presentSections.count)
     
     for sectionIndex in 0..<Chunk.numSections {
       if presentSections.contains(sectionIndex) {
-        let blockCount = packetReader.readShort()
-        let bitsPerBlock = packetReader.readUnsignedByte()
+        let blockCount = try packetReader.readShort()
+        let bitsPerBlock = try packetReader.readUnsignedByte()
         
         // Read palette if present
         var palette: [UInt16] = []
         if bitsPerBlock <= 8 {
-          let paletteLength = packetReader.readVarInt()
+          let paletteLength = try packetReader.readVarInt()
           palette.reserveCapacity(paletteLength)
           for _ in 0..<paletteLength {
-            palette.append(UInt16(packetReader.readVarInt()))
+            palette.append(UInt16(try packetReader.readVarInt()))
           }
         }
         
         // Read block states
-        let dataArrayLength = packetReader.readVarInt()
+        let dataArrayLength = try packetReader.readVarInt()
         var dataArray: [UInt64] = []
         dataArray.reserveCapacity(dataArrayLength)
         for _ in 0..<dataArrayLength {
-          dataArray.append(UInt64(packetReader.buffer.readLong(endian: .big)))
+          dataArray.append(UInt64(try packetReader.buffer.readLong(endianness: .big)))
         }
         
         let blocks: [UInt16] = unpackLongArray(bitsPerValue: Int(bitsPerBlock), longArray: dataArray, count: Chunk.Section.numBlocks)

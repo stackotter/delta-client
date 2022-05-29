@@ -38,49 +38,49 @@ public struct AdvancementsPacket: ClientboundPacket {
   }
 
   public init(from packetReader: inout PacketReader) throws {
-    shouldReset = packetReader.readBool()
+    shouldReset = try packetReader.readBool()
     advancements = try Self.readAdvancements(from: &packetReader)
     advancementsToRemove = try Self.readAdvancementsToRemove(from: &packetReader)
     advancementProgresses = try Self.readAdvancementProgresses(from: &packetReader)
   }
 
   private static func readAdvancements(from packetReader: inout PacketReader) throws -> [Identifier: Advancement] {
-    let mappingSize = packetReader.readVarInt()
+    let mappingSize = try packetReader.readVarInt()
     var advancements: [Identifier: Advancement] = [:]
     for _ in 0..<mappingSize {
       let key = try packetReader.readIdentifier()
       
       // read advancement
-      let hasParent = packetReader.readBool()
+      let hasParent = try packetReader.readBool()
       let parentId = hasParent ? try packetReader.readIdentifier() : nil
-      let hasDisplay = packetReader.readBool()
+      let hasDisplay = try packetReader.readBool()
       var displayData: AdvancementDisplay?
       if hasDisplay {
         let title = try packetReader.readChat()
         let description = try packetReader.readChat()
         let icon = try packetReader.readItemStack()
-        let frameType = packetReader.readVarInt()
-        let flags = packetReader.readInt() // 0x1: has background texture, 0x2: show toast, 0x4: hidden
+        let frameType = try packetReader.readVarInt()
+        let flags = try packetReader.readInt() // 0x1: has background texture, 0x2: show toast, 0x4: hidden
         let backgroundTexture = flags & 0x1 == 0x1 ? try packetReader.readIdentifier() : nil
-        let xCoord = packetReader.readFloat()
-        let yCoord = packetReader.readFloat()
+        let xCoord = try packetReader.readFloat()
+        let yCoord = try packetReader.readFloat()
         displayData = AdvancementDisplay(
           title: title, description: description, icon: icon, frameType: frameType,
           flags: flags, backgroundTexture: backgroundTexture, xCoord: xCoord, yCoord: yCoord
         )
       }
       
-      let numCriteria = packetReader.readVarInt()
+      let numCriteria = try packetReader.readVarInt()
       var criteria: [Identifier] = []
       for _ in 0..<numCriteria {
         let criterion = try packetReader.readIdentifier()
         criteria.append(criterion)
       }
 
-      let arrayLength = packetReader.readVarInt()
+      let arrayLength = try packetReader.readVarInt()
       var requirements: [[String]] = []
       for _ in 0..<arrayLength {
-        let arrayLength2 = packetReader.readVarInt()
+        let arrayLength2 = try packetReader.readVarInt()
         var requirement: [String] = []
         for _ in 0..<arrayLength2 {
           let criterion = try packetReader.readString()
@@ -99,7 +99,7 @@ public struct AdvancementsPacket: ClientboundPacket {
   }
 
   private static func readAdvancementsToRemove(from packetReader: inout PacketReader) throws -> [Identifier] {
-    let listSize = packetReader.readVarInt()
+    let listSize = try packetReader.readVarInt()
     var advancementsToRemove: [Identifier] = []
     for _ in 0..<listSize {
       let identifier = try packetReader.readIdentifier()
@@ -109,20 +109,20 @@ public struct AdvancementsPacket: ClientboundPacket {
   }
 
   private static func readAdvancementProgresses(from packetReader: inout PacketReader) throws -> [Identifier: AdvancementProgress] {
-    let progressSize = packetReader.readVarInt()
+    let progressSize = try packetReader.readVarInt()
     var progressMapping: [Identifier: AdvancementProgress] = [:]
     for _ in 0..<progressSize {
       let key = try packetReader.readIdentifier()
       
       // read advancement progress
-      let size = packetReader.readVarInt()
+      let size = try packetReader.readVarInt()
       var criteria: [Identifier: CriterionProgress] = [:]
       for _ in 0..<size {
         let identifier = try packetReader.readIdentifier()
         
         // read criterion progress
-        let achieved = packetReader.readBool()
-        let dateOfAchieving = achieved ? packetReader.readLong() : nil
+        let achieved = try packetReader.readBool()
+        let dateOfAchieving = try achieved ? packetReader.readLong() : nil
         
         let progress = CriterionProgress(achieved: achieved, dateOfAchieving: dateOfAchieving)
         criteria[identifier] = progress

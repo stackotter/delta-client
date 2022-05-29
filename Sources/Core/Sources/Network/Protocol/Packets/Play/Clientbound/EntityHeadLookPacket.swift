@@ -7,8 +7,8 @@ public struct EntityHeadLookPacket: ClientboundPacket {
   public var headYaw: Float
 
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
-    headYaw = packetReader.readAngle()
+    entityId = try packetReader.readVarInt()
+    headYaw = try packetReader.readAngle()
   }
   
   public func handle(for client: Client) throws {

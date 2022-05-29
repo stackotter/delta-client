@@ -6,6 +6,6 @@ public struct OpenBookPacket: ClientboundPacket {
   public var hand: Int
   
   public init(from packetReader: inout PacketReader) throws {
-    hand = packetReader.readVarInt()
+    hand = try packetReader.readVarInt()
   }
 }

@@ -7,11 +7,11 @@ public struct ServerDifficultyPacket: ClientboundPacket {
   public var isLocked: Bool
   
   public init(from packetReader: inout PacketReader) throws {
-    guard let difficulty = Difficulty(rawValue: packetReader.readUnsignedByte()) else {
+    guard let difficulty = Difficulty(rawValue: try packetReader.readUnsignedByte()) else {
       throw ClientboundPacketError.invalidDifficulty
     }
     self.difficulty = difficulty
-    isLocked = packetReader.readBool()
+    isLocked = try packetReader.readBool()
   }
   
   public func handle(for client: Client) throws {

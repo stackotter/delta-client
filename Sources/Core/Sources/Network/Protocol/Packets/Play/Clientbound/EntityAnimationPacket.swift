@@ -7,7 +7,7 @@ public struct EntityAnimationPacket: ClientboundPacket {
   public var animationId: UInt8
   
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
-    animationId = packetReader.readUnsignedByte()
+    entityId = try packetReader.readVarInt()
+    animationId = try packetReader.readUnsignedByte()
   }
 }

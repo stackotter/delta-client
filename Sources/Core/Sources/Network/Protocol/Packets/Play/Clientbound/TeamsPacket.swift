@@ -37,7 +37,7 @@ public struct TeamsPacket: ClientboundPacket {
 
   public init(from packetReader: inout PacketReader) throws {
     teamName = try packetReader.readString()
-    let mode = packetReader.readByte()
+    let mode = try packetReader.readByte()
     switch mode {
       case 0: // create
         let createAction = try Self.readCreateAction(from: &packetReader)
@@ -60,7 +60,7 @@ public struct TeamsPacket: ClientboundPacket {
   }
 
   private static func readEntities(from packetReader: inout PacketReader) throws -> [String] {
-    let entityCount = packetReader.readVarInt()
+    let entityCount = try packetReader.readVarInt()
     var entities: [String] = []
     for _ in 0..<entityCount {
       let entity = try packetReader.readString()
@@ -71,10 +71,10 @@ public struct TeamsPacket: ClientboundPacket {
 
   private static func readCreateAction(from packetReader: inout PacketReader) throws -> TeamAction.Create {
     let teamDisplayName = try packetReader.readChat()
-    let friendlyFlags = packetReader.readByte()
+    let friendlyFlags = try packetReader.readByte()
     let nameTagVisibility = try packetReader.readString()
     let collisionRule = try packetReader.readString()
-    let teamColor = packetReader.readVarInt()
+    let teamColor = try packetReader.readVarInt()
     let teamPrefix = try packetReader.readChat()
     let teamSuffix = try packetReader.readChat()
     let entities = try Self.readEntities(from: &packetReader)
@@ -93,10 +93,10 @@ public struct TeamsPacket: ClientboundPacket {
 
   private static func readUpdateInfoAction(from packetReader: inout PacketReader) throws -> TeamAction.UpdateInfo {
     let teamDisplayName = try packetReader.readChat()
-    let friendlyFlags = packetReader.readByte()
+    let friendlyFlags = try packetReader.readByte()
     let nameTagVisibility = try packetReader.readString()
     let collisionRule = try packetReader.readString()
-    let teamColor = packetReader.readVarInt()
+    let teamColor = try packetReader.readVarInt()
     let teamPrefix = try packetReader.readChat()
     let teamSuffix = try packetReader.readChat()
 

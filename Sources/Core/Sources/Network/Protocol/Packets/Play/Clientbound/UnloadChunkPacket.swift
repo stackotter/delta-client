@@ -6,8 +6,8 @@ public struct UnloadChunkPacket: ClientboundPacket {
   public var chunkPosition: ChunkPosition
   
   public init(from packetReader: inout PacketReader) throws {
-    let chunkX = Int(packetReader.readInt())
-    let chunkZ = Int(packetReader.readInt())
+    let chunkX = Int(try packetReader.readInt())
+    let chunkZ = Int(try packetReader.readInt())
     chunkPosition = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
   }
   

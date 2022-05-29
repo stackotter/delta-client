@@ -19,19 +19,19 @@ public struct MapDataPacket: ClientboundPacket {
   }
   
   public init(from packetReader: inout PacketReader) throws {
-    mapId = packetReader.readVarInt()
-    scale = packetReader.readByte()
-    trackingPosition = packetReader.readBool()
-    locked = packetReader.readBool()
+    mapId = try packetReader.readVarInt()
+    scale = try packetReader.readByte()
+    trackingPosition = try packetReader.readBool()
+    locked = try packetReader.readBool()
     
     icons = []
-    let iconCount = packetReader.readVarInt()
+    let iconCount = try packetReader.readVarInt()
     for _ in 0..<iconCount {
-      let type = packetReader.readVarInt()
-      let x = packetReader.readByte()
-      let z = packetReader.readByte()
-      let direction = packetReader.readByte()
-      let hasDisplayName = packetReader.readBool()
+      let type = try packetReader.readVarInt()
+      let x = try packetReader.readByte()
+      let z = try packetReader.readByte()
+      let direction = try packetReader.readByte()
+      let hasDisplayName = try packetReader.readBool()
       var displayName: ChatComponent?
       if hasDisplayName {
         displayName = try packetReader.readChat()
@@ -40,15 +40,15 @@ public struct MapDataPacket: ClientboundPacket {
       icons.append(icon)
     }
     
-    columns = packetReader.readUnsignedByte()
+    columns = try packetReader.readUnsignedByte()
     if columns > 0 {
-      _ = packetReader.readByte() // rows
-      _ = packetReader.readByte() // x
-      _ = packetReader.readByte() // z
-      let length = packetReader.readVarInt()
+      _ = try packetReader.readByte() // rows
+      _ = try packetReader.readByte() // x
+      _ = try packetReader.readByte() // z
+      let length = try packetReader.readVarInt()
       var data: [UInt8] = []
       for _ in 0..<length {
-        data.append(packetReader.readUnsignedByte())
+        data.append(try packetReader.readUnsignedByte())
       }
     }
   }

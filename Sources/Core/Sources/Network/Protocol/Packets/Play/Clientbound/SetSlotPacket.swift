@@ -8,8 +8,8 @@ public struct SetSlotPacket: ClientboundPacket {
   public var slotData: ItemStack
   
   public init(from packetReader: inout PacketReader) throws {
-    windowId = packetReader.readByte()
-    slot = packetReader.readShort()
+    windowId = try packetReader.readByte()
+    slot = try packetReader.readShort()
     slotData = try packetReader.readItemStack()
   }
 }

@@ -1,6 +1,7 @@
 import Foundation
 import simd
 
+// TODO: document packet writer
 public struct PacketWriter {
   public var buffer = Buffer([])
   
@@ -24,27 +25,27 @@ public struct PacketWriter {
   }
   
   public mutating func writeShort(_ short: Int16) {
-    buffer.writeSignedShort(short, endian: .big)
+    buffer.writeSignedShort(short, endianness: .big)
   }
   
   public mutating func writeUnsignedShort(_ unsignedShort: UInt16) {
-    buffer.writeShort(unsignedShort, endian: .big)
+    buffer.writeShort(unsignedShort, endianness: .big)
   }
   
   public mutating func writeInt(_ int: Int32) {
-    buffer.writeSignedInt(int, endian: .big)
+    buffer.writeSignedInt(int, endianness: .big)
   }
   
   public mutating func writeLong(_ long: Int64) {
-    buffer.writeSignedLong(long, endian: .big)
+    buffer.writeSignedLong(long, endianness: .big)
   }
   
   public mutating func writeFloat(_ float: Float) {
-    buffer.writeFloat(float, endian: .big)
+    buffer.writeFloat(float, endianness: .big)
   }
   
   public mutating func writeDouble(_ double: Double) {
-    buffer.writeDouble(double, endian: .big)
+    buffer.writeDouble(double, endianness: .big)
   }
   
   public mutating func writeString(_ string: String) {
@@ -96,7 +97,7 @@ public struct PacketWriter {
     var val: UInt64 = (UInt64(position.x) & 0x3FFFFFF) << 38
     val |= (UInt64(position.z) & 0x3FFFFFF) << 12
     val |= UInt64(position.y) & 0xFFF
-    buffer.writeLong(val, endian: .big)
+    buffer.writeLong(val, endianness: .big)
   }
   
   public mutating func writeEntityPosition(_ position: SIMD3<Double>) {

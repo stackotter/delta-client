@@ -10,10 +10,10 @@ public struct EntityEffectPacket: ClientboundPacket {
   public var flags: Int8
 
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
-    effectId = packetReader.readByte()
-    amplifier = packetReader.readByte()
-    duration = packetReader.readVarInt()
-    flags = packetReader.readByte()
+    entityId = try packetReader.readVarInt()
+    effectId = try packetReader.readByte()
+    amplifier = try packetReader.readByte()
+    duration = try packetReader.readVarInt()
+    flags = try packetReader.readByte()
   }
 }

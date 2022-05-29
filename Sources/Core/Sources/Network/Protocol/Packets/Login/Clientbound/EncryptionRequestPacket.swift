@@ -15,11 +15,11 @@ public struct EncryptionRequestPacket: ClientboundPacket, Sendable {
   public init(from packetReader: inout PacketReader) throws {
     serverId = try packetReader.readString()
     
-    let publicKeyLength = packetReader.readVarInt()
-    publicKey = packetReader.readByteArray(length: publicKeyLength)
+    let publicKeyLength = try packetReader.readVarInt()
+    publicKey = try packetReader.readByteArray(length: publicKeyLength)
     
-    let verifyTokenLength = packetReader.readVarInt()
-    verifyToken = packetReader.readByteArray(length: verifyTokenLength)
+    let verifyTokenLength = try packetReader.readVarInt()
+    verifyToken = try packetReader.readByteArray(length: verifyTokenLength)
   }
   
   public func handle(for client: Client) throws {

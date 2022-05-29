@@ -7,7 +7,7 @@ public struct SetCooldownPacket: ClientboundPacket {
   public var cooldownTicks: Int
   
   public init(from packetReader: inout PacketReader) throws {
-    itemId = packetReader.readVarInt()
-    cooldownTicks = packetReader.readVarInt()
+    itemId = try packetReader.readVarInt()
+    cooldownTicks = try packetReader.readVarInt()
   }
 }

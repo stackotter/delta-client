@@ -20,10 +20,10 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
   public init(from packetReader: inout PacketReader) throws {
     dimension = try packetReader.readIdentifier()
     worldName = try packetReader.readIdentifier()
-    hashedSeed = packetReader.readLong()
+    hashedSeed = try packetReader.readLong()
     
-    let rawGamemode = packetReader.readByte()
-    let rawPreviousGamemode = packetReader.readByte()
+    let rawGamemode = try packetReader.readByte()
+    let rawPreviousGamemode = try packetReader.readByte()
     
     guard let gamemode = Gamemode(rawValue: rawGamemode) else {
       throw RespawnPacketError.invalidRawGamemode(rawGamemode)
@@ -41,9 +41,9 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
       self.previousGamemode = previousGamemode
     }
     
-    isDebug = packetReader.readBool()
-    isFlat = packetReader.readBool()
-    copyMetadata = packetReader.readBool() // TODO: not used yet
+    isDebug = try packetReader.readBool()
+    isFlat = try packetReader.readBool()
+    copyMetadata = try packetReader.readBool() // TODO: not used yet
   }
   
   public func handle(for client: Client) throws {

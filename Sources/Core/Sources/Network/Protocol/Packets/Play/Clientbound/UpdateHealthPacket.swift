@@ -8,9 +8,9 @@ public struct UpdateHealthPacket: ClientboundPacket {
   public var foodSaturation: Float
 
   public init(from packetReader: inout PacketReader) throws {
-    health = packetReader.readFloat()
-    food = packetReader.readVarInt() 
-    foodSaturation = packetReader.readFloat()
+    health = try packetReader.readFloat()
+    food = try packetReader.readVarInt() 
+    foodSaturation = try packetReader.readFloat()
   }
   
   public func handle(for client: Client) throws {

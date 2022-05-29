@@ -27,7 +27,7 @@ public struct PacketLayer {
   /// packets are split across multiple packets.
   /// - Parameter buffer: The buffer of data received from the server.
   /// - Returns: An array of buffers, each representing a Minecraft packet.
-  public mutating func processInbound(_ buffer: Buffer) -> [Buffer] {
+  public mutating func processInbound(_ buffer: Buffer) throws -> [Buffer] {
     var packets: [Buffer] = []
     
     var buffer = buffer // mutable copy
@@ -37,7 +37,7 @@ public struct PacketLayer {
       }
 
       guard let length = receiveState.length else {
-        receiveState.length = readLength(from: &buffer)
+        receiveState.length = try readLength(from: &buffer)
         continue
       }
       
@@ -46,7 +46,7 @@ public struct PacketLayer {
         receiveState = ReceiveState()
       } else if buffer.remaining != 0 {
         let byteCount = min(buffer.remaining, length - receiveState.packet.count)
-        let bytes = buffer.readBytes(n: byteCount)
+        let bytes = try buffer.readBytes(byteCount)
         receiveState.packet.append(contentsOf: bytes)
           
         if receiveState.packet.count == length {
@@ -71,9 +71,9 @@ public struct PacketLayer {
 
   // MARK: Private methods
 
-  private mutating func readLength(from buffer: inout Buffer) -> Int? {
+  private mutating func readLength(from buffer: inout Buffer) throws -> Int? {
     while buffer.remaining != 0 {
-      let byte = buffer.readByte()
+      let byte = try buffer.readByte()
       receiveState.lengthBytes.append(byte)
       if byte & 0x80 == 0x00 {
         break

@@ -8,8 +8,8 @@ public struct VehicleMoveClientboundPacket: ClientboundPacket {
   public var pitch: Float
   
   public init(from packetReader: inout PacketReader) throws {
-    position = packetReader.readEntityPosition()
-    yaw = packetReader.readFloat()
-    pitch = packetReader.readFloat()
+    position = try packetReader.readEntityPosition()
+    yaw = try packetReader.readFloat()
+    pitch = try packetReader.readFloat()
   }
 }

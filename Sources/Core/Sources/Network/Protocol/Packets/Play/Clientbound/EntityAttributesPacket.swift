@@ -12,24 +12,24 @@ public struct EntityAttributesPacket: ClientboundPacket {
   public var attributes: [EntityAttributeKey: EntityAttributeValue]
 
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
+    entityId = try packetReader.readVarInt()
     
     attributes = [:]
-    let numProperties = packetReader.readInt()
+    let numProperties = try packetReader.readInt()
     for _ in 0..<numProperties {
       let key = try packetReader.readIdentifier()
       guard let attributeKey = EntityAttributeKey(rawValue: key.description) else {
         throw EntityAttributesPacketError.invalidAttributeKey(key.description)
       }
       
-      let value = packetReader.readDouble()
+      let value = try packetReader.readDouble()
       
       var modifiers: [EntityAttributeModifier] = []
-      let numModifiers = packetReader.readVarInt()
+      let numModifiers = try packetReader.readVarInt()
       for _ in 0..<numModifiers {
         let uuid = try packetReader.readUUID()
-        let amount = packetReader.readDouble()
-        let rawOperation = packetReader.readUnsignedByte()
+        let amount = try packetReader.readDouble()
+        let rawOperation = try packetReader.readUnsignedByte()
         guard let operation = EntityAttributeModifier.Operation(rawValue: rawOperation) else {
           throw EntityAttributesPacketError.invalidModifierOperation(rawOperation)
         }

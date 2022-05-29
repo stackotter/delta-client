@@ -7,7 +7,7 @@ public struct NBTQueryResponsePacket: ClientboundPacket {
   public var nbt: NBT.Compound
 
   public init(from packetReader: inout PacketReader) throws {
-    transactionId = packetReader.readVarInt()
+    transactionId = try packetReader.readVarInt()
     nbt = try packetReader.readNBTCompound()
   }
 }

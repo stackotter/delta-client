@@ -7,10 +7,10 @@ public struct PlayerAbilitiesPacket: ClientboundPacket {
   public var flyingSpeed: Float
   public var fovModifier: Float
   
-  public init(from packetReader: inout PacketReader) {
-    flags = PlayerFlags(rawValue: packetReader.readUnsignedByte())
-    flyingSpeed = packetReader.readFloat()
-    fovModifier = packetReader.readFloat()
+  public init(from packetReader: inout PacketReader) throws {
+    flags = PlayerFlags(rawValue: try packetReader.readUnsignedByte())
+    flyingSpeed = try packetReader.readFloat()
+    fovModifier = try packetReader.readFloat()
   }
   
   public func handle(for client: Client) throws {

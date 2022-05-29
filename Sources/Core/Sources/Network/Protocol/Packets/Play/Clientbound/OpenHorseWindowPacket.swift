@@ -8,8 +8,8 @@ public struct OpenHorseWindowPacket: ClientboundPacket {
   public var entityId: Int
   
   public init(from packetReader: inout PacketReader) throws {
-    windowId = packetReader.readByte()
-    numberOfSlots = packetReader.readVarInt()
-    entityId = packetReader.readInt()
+    windowId = try packetReader.readByte()
+    numberOfSlots = try packetReader.readVarInt()
+    entityId = try packetReader.readInt()
   }
 }

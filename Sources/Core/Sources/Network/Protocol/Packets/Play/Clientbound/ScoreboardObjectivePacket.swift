@@ -10,10 +10,10 @@ public struct ScoreboardObjectivePacket: ClientboundPacket {
 
   public init(from packetReader: inout PacketReader) throws {
     objectiveName = try packetReader.readString()
-    mode = packetReader.readUnsignedByte()
+    mode = try packetReader.readUnsignedByte()
     if mode == 0 || mode == 2 {
       objectiveValue = try packetReader.readChat()
-      type = packetReader.readVarInt()
+      type = try packetReader.readVarInt()
     }
   }
 }

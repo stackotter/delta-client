@@ -8,8 +8,8 @@ public struct SpawnExperienceOrbPacket: ClientboundPacket {
   public var count: Int16
   
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
-    position = packetReader.readEntityPosition()
-    count = packetReader.readShort()
+    entityId = try packetReader.readVarInt()
+    position = try packetReader.readEntityPosition()
+    count = try packetReader.readShort()
   }
 }

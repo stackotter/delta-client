@@ -6,6 +6,6 @@ public struct UpdateViewDistancePacket: ClientboundPacket {
   public var viewDistance: Int
 
   public init(from packetReader: inout PacketReader) throws {
-    viewDistance = packetReader.readVarInt()
+    viewDistance = try packetReader.readVarInt()
   }
 }

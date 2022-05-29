@@ -12,12 +12,12 @@ public struct SoundEffectPacket: ClientboundPacket {
   public var pitch: Float
 
   public init(from packetReader: inout PacketReader) throws {
-    soundId = packetReader.readVarInt()
-    soundCategory = packetReader.readVarInt()
-    effectPositionX = packetReader.readInt()
-    effectPositionY = packetReader.readInt()
-    effectPositionZ = packetReader.readInt()
-    volume = packetReader.readFloat()
-    pitch = packetReader.readFloat()
+    soundId = try packetReader.readVarInt()
+    soundCategory = try packetReader.readVarInt()
+    effectPositionX = try packetReader.readInt()
+    effectPositionY = try packetReader.readInt()
+    effectPositionZ = try packetReader.readInt()
+    volume = try packetReader.readFloat()
+    pitch = try packetReader.readFloat()
   }
 }

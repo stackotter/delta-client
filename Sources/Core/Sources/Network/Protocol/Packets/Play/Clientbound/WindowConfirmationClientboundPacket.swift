@@ -8,8 +8,8 @@ public struct WindowConfirmationClientboundPacket: ClientboundPacket {
   public var accepted: Bool
   
   public init(from packetReader: inout PacketReader) throws {
-    windowId = packetReader.readByte()
-    actionNumber = packetReader.readShort()
-    accepted = packetReader.readBool()
+    windowId = try packetReader.readByte()
+    actionNumber = try packetReader.readShort()
+    accepted = try packetReader.readBool()
   }
 }

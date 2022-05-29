@@ -8,8 +8,8 @@ public struct BlockEntityDataPacket: ClientboundPacket {
   public var nbtData: NBT.Compound
   
   public init(from packetReader: inout PacketReader) throws {
-    location = packetReader.readPosition()
-    action = packetReader.readUnsignedByte()
+    location = try packetReader.readBlockPosition()
+    action = try packetReader.readUnsignedByte()
     nbtData = try packetReader.readNBTCompound()
   }
 }

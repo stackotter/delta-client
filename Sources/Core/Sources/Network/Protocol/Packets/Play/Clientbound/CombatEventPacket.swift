@@ -12,17 +12,17 @@ public struct CombatEventPacket: ClientboundPacket {
   }
   
   public init(from packetReader: inout PacketReader) throws {
-    let eventId = packetReader.readVarInt()
+    let eventId = try packetReader.readVarInt()
     switch eventId {
       case 0: // enter combat
         event = .enterCombat
       case 1: // end combat
-        let duration = packetReader.readVarInt()
-        let entityId = packetReader.readInt()
+        let duration = try packetReader.readVarInt()
+        let entityId = try packetReader.readInt()
         event = .endCombat(duration: duration, entityId: entityId)
       case 2: // entity dead
-        let playerId = packetReader.readVarInt()
-        let entityId = packetReader.readInt()
+        let playerId = try packetReader.readVarInt()
+        let entityId = try packetReader.readInt()
         let message = try packetReader.readChat()
         event = .entityDead(playerId: playerId, entityId: entityId, message: message)
       default:

@@ -13,7 +13,7 @@ public struct DeclareRecipesPacket: ClientboundPacket {
   
   public init(from packetReader: inout PacketReader) throws {
     recipeRegistry = RecipeRegistry()
-    let numRecipes = packetReader.readVarInt()
+    let numRecipes = try packetReader.readVarInt()
     for _ in 0..<numRecipes {
       let type = try packetReader.readIdentifier()
       let recipeId = try packetReader.readString()
@@ -53,9 +53,9 @@ public struct DeclareRecipesPacket: ClientboundPacket {
     let group = try packetReader.readString()
 
     var ingredients: [Ingredient] = []
-    let ingredientCount = packetReader.readVarInt()
+    let ingredientCount = try packetReader.readVarInt()
     for _ in 0..<ingredientCount {
-      let count = packetReader.readVarInt()
+      let count = try packetReader.readVarInt()
       var itemStacks: [ItemStack] = []
       for _ in 0..<count {
         let itemStack = try packetReader.readItemStack()
@@ -71,14 +71,14 @@ public struct DeclareRecipesPacket: ClientboundPacket {
   }
 
   private static func readShapedCraftingRecipe(from packetReader: inout PacketReader) throws -> CraftingShaped {
-    let width = Int(packetReader.readVarInt())
-    let height = Int(packetReader.readVarInt())
+    let width = Int(try packetReader.readVarInt())
+    let height = Int(try packetReader.readVarInt())
     let group = try packetReader.readString()
     
     var ingredients: [Ingredient] = []
     let ingredientCount = width * height
     for _ in 0..<ingredientCount {
-      let count = packetReader.readVarInt()
+      let count = try packetReader.readVarInt()
       var itemStacks: [ItemStack] = []
       for _ in 0..<count {
         let itemStack = try packetReader.readItemStack()
@@ -97,7 +97,7 @@ public struct DeclareRecipesPacket: ClientboundPacket {
     let group = try packetReader.readString()
 
     var itemStacks: [ItemStack] = []
-    let count = packetReader.readVarInt()
+    let count = try packetReader.readVarInt()
     for _ in 0..<count {
       let itemStack = try packetReader.readItemStack()
       itemStacks.append(itemStack)
@@ -105,8 +105,8 @@ public struct DeclareRecipesPacket: ClientboundPacket {
     let ingredient = Ingredient(ingredients: itemStacks)
 
     let result = try packetReader.readItemStack()
-    let experience = packetReader.readFloat()
-    let cookingTime = Int(packetReader.readVarInt())
+    let experience = try packetReader.readFloat()
+    let cookingTime = Int(try packetReader.readVarInt())
     
     var recipe: HeatRecipe
     switch type.name {
@@ -129,7 +129,7 @@ public struct DeclareRecipesPacket: ClientboundPacket {
     let group = try packetReader.readString()
 
     var itemStacks: [ItemStack] = []
-    let count = packetReader.readVarInt()
+    let count = try packetReader.readVarInt()
     for _ in 0..<count {
       let itemStack = try packetReader.readItemStack()
       itemStacks.append(itemStack)
@@ -143,7 +143,7 @@ public struct DeclareRecipesPacket: ClientboundPacket {
 
   private static func readSmithingRecipe(from packetReader: inout PacketReader) throws -> SmithingRecipe {
     var baseItemStacks: [ItemStack] = []
-    let baseCount = packetReader.readVarInt()
+    let baseCount = try packetReader.readVarInt()
     for _ in 0..<baseCount {
       let itemStack = try packetReader.readItemStack()
       baseItemStacks.append(itemStack)
@@ -151,7 +151,7 @@ public struct DeclareRecipesPacket: ClientboundPacket {
     let baseIngredient = Ingredient(ingredients: baseItemStacks)
     
     var additionItemStacks: [ItemStack] = []
-    let additionCount = packetReader.readVarInt()
+    let additionCount = try packetReader.readVarInt()
     for _ in 0..<additionCount {
       let itemStack = try packetReader.readItemStack()
       additionItemStacks.append(itemStack)

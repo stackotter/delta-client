@@ -7,7 +7,7 @@ public struct ChangeGameStatePacket: ClientboundPacket {
   public var value: Float
   
   public init(from packetReader: inout PacketReader) throws {
-    reason = packetReader.readUnsignedByte()
-    value = packetReader.readFloat()
+    reason = try packetReader.readUnsignedByte()
+    value = try packetReader.readFloat()
   }
 }

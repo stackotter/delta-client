@@ -8,8 +8,8 @@ public struct OpenWindowPacket: ClientboundPacket {
   public var windowTitle: ChatComponent
   
   public init(from packetReader: inout PacketReader) throws {
-    windowId = packetReader.readVarInt()
-    windowType = packetReader.readVarInt()
+    windowId = try packetReader.readVarInt()
+    windowType = try packetReader.readVarInt()
     windowTitle = try packetReader.readChat()
   }
 }

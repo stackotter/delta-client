@@ -30,38 +30,45 @@ public struct WorldBorderPacket: ClientboundPacket {
   }
   
   public init(from packetReader: inout PacketReader) throws {
-    let actionId = packetReader.readVarInt()
+    let actionId = try packetReader.readVarInt()
     switch actionId {
       case 0: // set size
-        let diameter = packetReader.readDouble()
+        let diameter = try packetReader.readDouble()
         action = .setSize(diameter: diameter)
       case 1: // lerp size
-        let oldDiameter = packetReader.readDouble()
-        let newDiameter = packetReader.readDouble()
-        let speed = packetReader.readVarLong()
+        let oldDiameter = try packetReader.readDouble()
+        let newDiameter = try packetReader.readDouble()
+        let speed = try packetReader.readVarLong()
         action = .lerpSize(oldDiameter: oldDiameter, newDiameter: newDiameter, speed: speed)
       case 2: // set center
-        let x = packetReader.readDouble()
-        let z = packetReader.readDouble()
+        let x = try packetReader.readDouble()
+        let z = try packetReader.readDouble()
         action = .setCenter(x: x, z: z)
       case 3: // initialise
-        let x = packetReader.readDouble()
-        let z = packetReader.readDouble()
-        let oldDiameter = packetReader.readDouble()
-        let newDiameter = packetReader.readDouble()
-        let speed = packetReader.readVarLong()
-        let portalTeleportBoundary = packetReader.readVarInt()
-        let warningTime = packetReader.readVarInt()
-        let warningBlocks = packetReader.readVarInt()
-        let initAction = WorldBorderAction.InitialiseAction(x: x, z: z, oldDiameter: oldDiameter, newDiameter: newDiameter,
-                                                            speed: speed, portalTeleportBoundary: portalTeleportBoundary,
-                                                            warningTime: warningTime, warningBlocks: warningBlocks)
+        let x = try packetReader.readDouble()
+        let z = try packetReader.readDouble()
+        let oldDiameter = try packetReader.readDouble()
+        let newDiameter = try packetReader.readDouble()
+        let speed = try packetReader.readVarLong()
+        let portalTeleportBoundary = try packetReader.readVarInt()
+        let warningTime = try packetReader.readVarInt()
+        let warningBlocks = try packetReader.readVarInt()
+        let initAction = WorldBorderAction.InitialiseAction(
+          x: x,
+          z: z,
+          oldDiameter: oldDiameter,
+          newDiameter: newDiameter,
+          speed: speed,
+          portalTeleportBoundary: portalTeleportBoundary,
+          warningTime: warningTime,
+          warningBlocks: warningBlocks
+        )
         action = .initialise(action: initAction)
       case 4: // set warning time
-        let warningTime = packetReader.readVarInt()
+        let warningTime = try packetReader.readVarInt()
         action = .setWarningTime(warningTime: warningTime)
       case 5: // set warning blocks
-        let warningBlocks = packetReader.readVarInt()
+        let warningBlocks = try packetReader.readVarInt()
         action = .setWarningBlocks(warningBlocks: warningBlocks)
       default:
         throw WorldBorderPacketError.invalidActionId

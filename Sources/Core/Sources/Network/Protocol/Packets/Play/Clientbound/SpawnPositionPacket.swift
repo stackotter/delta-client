@@ -6,7 +6,7 @@ public struct SpawnPositionPacket: ClientboundPacket {
   public var location: BlockPosition
 
   public init(from packetReader: inout PacketReader) throws {
-    location = packetReader.readPosition()
+    location = try packetReader.readBlockPosition()
   }
   
   public func handle(for client: Client) throws {

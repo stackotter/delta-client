@@ -6,7 +6,7 @@ public struct EntityMetadataPacket: ClientboundPacket {
   public var entityId: Int
 
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
+    entityId = try packetReader.readVarInt()
     // IMPLEMENT: the rest of this packet
   }
 }

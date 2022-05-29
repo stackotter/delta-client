@@ -10,10 +10,10 @@ public struct SpawnPaintingPacket: ClientboundPacket {
   public var direction: UInt8 // TODO_LATER
   
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
+    entityId = try packetReader.readVarInt()
     entityUUID = try packetReader.readUUID()
-    motive = packetReader.readVarInt()
-    location = packetReader.readPosition()
-    direction = packetReader.readUnsignedByte()
+    motive = try packetReader.readVarInt()
+    location = try packetReader.readBlockPosition()
+    direction = try packetReader.readUnsignedByte()
   }
 }

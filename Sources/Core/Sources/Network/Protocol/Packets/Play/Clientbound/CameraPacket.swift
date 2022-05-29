@@ -6,6 +6,6 @@ public struct CameraPacket: ClientboundPacket {
   public var cameraEntityId: Int
 
   public init(from packetReader: inout PacketReader) throws {
-    cameraEntityId = packetReader.readVarInt()
+    cameraEntityId = try packetReader.readVarInt()
   }
 }

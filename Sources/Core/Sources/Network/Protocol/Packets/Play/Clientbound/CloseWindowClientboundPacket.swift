@@ -6,6 +6,6 @@ public struct CloseWindowClientboundPacket: ClientboundPacket {
   public var windowId: UInt8
   
   public init(from packetReader: inout PacketReader) throws {
-    windowId = packetReader.readUnsignedByte()
+    windowId = try packetReader.readUnsignedByte()
   }
 }

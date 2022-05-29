@@ -8,9 +8,9 @@ public struct SetExperiencePacket: ClientboundPacket {
   public var totalExperience: Int
 
   public init(from packetReader: inout PacketReader) throws {
-    experienceBar = packetReader.readFloat()
-    level = packetReader.readVarInt()
-    totalExperience = packetReader.readVarInt()
+    experienceBar = try packetReader.readFloat()
+    level = try packetReader.readVarInt()
+    totalExperience = try packetReader.readVarInt()
   }
   
   public func handle(for client: Client) throws {

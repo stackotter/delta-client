@@ -8,9 +8,9 @@ public struct StopSoundPacket: ClientboundPacket {
   public var sound: Identifier?
 
   public init(from packetReader: inout PacketReader) throws {
-    flags = packetReader.readByte()
+    flags = try packetReader.readByte()
     if flags & 0x1 == 0x1 {
-      source = packetReader.readVarInt()
+      source = try packetReader.readVarInt()
     }
     if flags & 0x2 == 0x2 {
       sound = try packetReader.readIdentifier()

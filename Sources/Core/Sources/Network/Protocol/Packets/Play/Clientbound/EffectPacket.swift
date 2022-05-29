@@ -9,9 +9,9 @@ public struct EffectPacket: ClientboundPacket {
   public var disableRelativeVolume: Bool
   
   public init(from packetReader: inout PacketReader) throws {
-    effectId = packetReader.readInt()
-    location = packetReader.readPosition()
-    data = packetReader.readInt()
-    disableRelativeVolume = packetReader.readBool()
+    effectId = try packetReader.readInt()
+    location = try packetReader.readBlockPosition()
+    data = try packetReader.readInt()
+    disableRelativeVolume = try packetReader.readBool()
   }
 }

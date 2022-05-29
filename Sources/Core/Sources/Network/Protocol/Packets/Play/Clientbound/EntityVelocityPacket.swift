@@ -9,8 +9,8 @@ public struct EntityVelocityPacket: ClientboundPacket {
   public var velocity: SIMD3<Double>
 
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
-    velocity = packetReader.readEntityVelocity()
+    entityId = try packetReader.readVarInt()
+    velocity = try packetReader.readEntityVelocity()
   }
   
   public func handle(for client: Client) throws {
