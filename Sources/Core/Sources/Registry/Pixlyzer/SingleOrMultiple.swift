@@ -1,5 +1,10 @@
 import Foundation
 
+/// An error thrown by ``SingleOrMultiple``.
+public enum SingleOrMultipleError: Error {
+  case invalidSingleOrMultipleElement
+}
+
 /// A type container for Mojang and Pixlyzer's weird JSON formats. The formats sometimes have
 /// keys that can either contain a single value or an array depending on context.
 public enum SingleOrMultiple<T: Decodable>: Decodable {
@@ -9,7 +14,7 @@ public enum SingleOrMultiple<T: Decodable>: Decodable {
   case multiple([T])
   
   /// The container's elements as an array.
-  var items: [T] {
+  public var items: [T] {
     switch self {
       case let .single(item):
         return [item]
@@ -27,7 +32,7 @@ public enum SingleOrMultiple<T: Decodable>: Decodable {
     } else if let item = try? container.decode(T.self) {
       self = .single(item)
     } else {
-      throw JSONError.invalidSingleOrMultipleElement
+      throw SingleOrMultipleError.invalidSingleOrMultipleElement
     }
   }
 }
