@@ -133,7 +133,7 @@ public struct Buffer {
   /// - Returns: The unsigned short.
   /// - Throws: ``BufferError/outOfBounds`` if ``index`` is out of bounds.
   public mutating func readShort(endianness: Endianness) throws -> UInt16 {
-    return UInt16(try readInteger(size: 2, endianness: endianness))
+    return UInt16(try readInteger(size: MemoryLayout<UInt16>.stride, endianness: endianness))
   }
   
   /// Reads a signed short (2 byte integer).
@@ -149,7 +149,7 @@ public struct Buffer {
   /// - Returns: The unsigned integer.
   /// - Throws: ``BufferError/outOfBounds`` if ``index`` is out of bounds.
   public mutating func readInteger(endianness: Endianness) throws -> UInt32 {
-    return UInt32(try readInteger(size: 4, endianness: endianness))
+    return UInt32(try readInteger(size: MemoryLayout<UInt32>.stride, endianness: endianness))
   }
 
   /// Reads a signed integer (4 bytes).
@@ -165,7 +165,7 @@ public struct Buffer {
   /// - Returns: The unsigned long.
   /// - Throws: ``BufferError/outOfBounds`` if ``index`` is out of bounds.
   public mutating func readLong(endianness: Endianness) throws -> UInt64 {
-    return try readInteger(size: 8, endianness: endianness)
+    return try readInteger(size: MemoryLayout<UInt64>.stride, endianness: endianness)
   }
   
   /// Reads a signed long (8 bytes).
@@ -193,22 +193,43 @@ public struct Buffer {
   }
   
   /// Reads a variable length integer.
-  /// - Parameter maximumSize: The maximum number of bytes that the integer should be.
+  /// - Parameter maximumSize: The maximum number of bytes after decoding (i.e. a maximum of 4 could
+  ///   require reading 5 bytes because only 7 bits are encoded per byte).
   /// - Returns: The integer stored as a 64 bit integer.
-  /// - Throws: ``BufferError/outOfBounds`` if ``index`` is out of bounds. ``BufferError/variableIntegerTooLarge`` if the integer is larger than `maximumSize`.
+  /// - Throws: ``BufferError/outOfBounds`` if ``index`` is out of bounds. ``BufferError/variableIntegerTooLarge``
+  ///   if the integer is larger than `maximumSize`.
+  /// - Precondition: `maximumSize` is no more than 8 (the number of bytes in a `UInt64`).
   public mutating func readVariableLengthInteger(maximumSize: Int) throws -> UInt64 {
-    var count = 0
+    precondition(maximumSize <= MemoryLayout<UInt64>.stride)
+    
+    let maximumBits = UInt64(maximumSize * 8)
+    
+    var bitCount: UInt64 = 0
     var bitPattern: UInt64 = 0
-
     while true {
-      guard count < maximumSize else {
+      guard bitCount < maximumBits else {
         throw BufferError.variableIntegerTooLarge(maximum: maximumSize)
       }
 
+      // Read byte and remove continuation bit
       let byte = try readByte()
-      bitPattern += UInt64(byte & 0x7f) << (count * 7)
-      count += 1
+      let newBits = UInt64(byte & 0x7f)
 
+      // Ensure that the new bits would not overflow the integer
+      let remainingBits: UInt64 = maximumBits - bitCount
+      if remainingBits < 8 {
+        // mask is 0b11...11 where the number of 1s is remainingBits
+        let mask: UInt64 = (1 << remainingBits) - 1 
+        guard newBits & mask == newBits else {
+          throw BufferError.variableIntegerTooLarge(maximum: maximumSize)
+        }
+      }
+      
+      // Prepend bits to the bit pattern
+      bitPattern += newBits << bitCount
+      bitCount += 7
+
+      // Check for continuation bit (most significant bit)
       if byte & 0x80 != 0x80 {
         break
       }
@@ -222,23 +243,25 @@ public struct Buffer {
   /// - Throws: ``BufferError/outOfBounds`` if ``index`` is out of bounds. ``BufferError/variableIntegerTooLarge``
   ///   if the integer is encoded as more than 5 bytes.
   public mutating func readVariableLengthInteger() throws -> Int32 {
-    let int = try readVariableLengthInteger(maximumSize: 5)
+    let int = try readVariableLengthInteger(maximumSize: MemoryLayout<Int32>.stride)
     let bitPattern = UInt32(int)
     return Int32(bitPattern: bitPattern)
   }
   
   /// Reads a variable length long (8 bytes, stored as up to 10 bytes).
   /// - Returns: The integer stored as a 64 bit integer.
-  /// - Throws: ``BufferError/outOfBounds`` if ``index`` is out of bounds. ``BufferError/variableIntegerTooLarge`` if the long is encoded as more than 10 bytes.
+  /// - Throws: ``BufferError/outOfBounds`` if ``index`` is out of bounds. ``BufferError/variableIntegerTooLarge``
+  ///   if the long is encoded as more than 10 bytes.
   public mutating func readVariableLengthLong() throws -> Int64 {
-    let bitPattern = try readVariableLengthInteger(maximumSize: 10)
+    let bitPattern = try readVariableLengthInteger(maximumSize: MemoryLayout<Int64>.stride)
     return Int64(bitPattern: bitPattern)
   }
   
   /// Reads a string.
   /// - Parameter length: The length of the string in bytes.
   /// - Returns: The string.
-  /// - Throws: ``BufferError/outOfBounds`` if ``index`` is out of bounds. ``BufferError/invalidByteInUTF8String`` if the bytes cannot be converted to a strig.
+  /// - Throws: ``BufferError/outOfBounds`` if ``index`` is out of bounds. ``BufferError/invalidByteInUTF8String``
+  ///   if the bytes cannot be converted to a strig.
   public mutating func readString(length: Int) throws -> String {
     let stringBytes = try readBytes(length)
     guard let string = String(bytes: stringBytes, encoding: .utf8) else {
