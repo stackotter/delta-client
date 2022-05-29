@@ -53,23 +53,21 @@ public struct Buffer {
   public mutating func readInteger(size: Int, endianness: Endianness) throws -> UInt64 {
     assert(size <= 8)
 
-    var patternBytes = try readBytes(size)
-    if patternBytes.count < 8 {
-      let padLength = 8 - patternBytes.count
-      patternBytes = [UInt8](repeating: 0, count: padLength) + patternBytes
+    let patternBytes = try readBytes(size)
+    let littleEndianBytes: [UInt8]
+    switch endianness {
+      case .little:
+        littleEndianBytes = patternBytes
+      case .big:
+        littleEndianBytes = patternBytes.reversed()
     }
 
     var bitPattern: UInt64 = 0
-    patternBytes.withUnsafeBytes {
-      bitPattern = $0.load(as: UInt64.self)
+    for (index, byte) in littleEndianBytes.enumerated() {
+      bitPattern |= UInt64(byte) << (index * 8)
     }
-    
-    switch endianness {
-      case .big:
-        return bitPattern.bigEndian
-      case .little:
-        return bitPattern.littleEndian
-    }
+
+    return bitPattern
   }
   
   /// Reads the byte at ``index``.
@@ -211,7 +209,7 @@ public struct Buffer {
       bitPattern += UInt64(byte & 0x7f) << (count * 7)
       count += 1
 
-      if byte & 0x80 == 0x80 {
+      if byte & 0x80 != 0x80 {
         break
       }
     }
@@ -221,9 +219,11 @@ public struct Buffer {
   
   /// Reads a variable length integer (4 bytes, stored as up to 5 bytes).
   /// - Returns: The integer stored as a 64 bit integer.
-  /// - Throws: ``BufferError/outOfBounds`` if ``index`` is out of bounds. ``BufferError/variableIntegerTooLarge`` if the integer is encoded as more than 5 bytes.
+  /// - Throws: ``BufferError/outOfBounds`` if ``index`` is out of bounds. ``BufferError/variableIntegerTooLarge``
+  ///   if the integer is encoded as more than 5 bytes.
   public mutating func readVariableLengthInteger() throws -> Int32 {
-    let bitPattern = UInt32(try readVariableLengthInteger(maximumSize: 5))
+    let int = try readVariableLengthInteger(maximumSize: 5)
+    let bitPattern = UInt32(int)
     return Int32(bitPattern: bitPattern)
   }
   

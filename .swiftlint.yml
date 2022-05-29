@@ -5,6 +5,7 @@ disabled_rules:
 - switch_case_alignment
 - trailing_whitespace
 - identifier_name
+- opening_brace # Has false positives in the code base
 
 # Re-enable these rules later once more warnings are fixed
 - nesting
