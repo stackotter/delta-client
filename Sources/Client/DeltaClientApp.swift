@@ -135,14 +135,8 @@ struct DeltaClientApp: App {
   }
 
   static func handleCommandLineArguments() {
-    // Process command line arguments
     let arguments = CommandLineArguments.parseOrExit()
-    
-    if arguments.help {
-      print(CommandLineArguments.helpMessage())
-      Foundation.exit(0)
-    }
-    
+
     if let pluginsDirectory = arguments.pluginsDirectory {
       StorageManager.default.pluginsDirectory = pluginsDirectory
     }
