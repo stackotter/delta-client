@@ -14,6 +14,9 @@ public struct ChatMessageClientboundPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) throws {
-    log.info("Chat message received: \(message.toText())")
+    let locale = client.resourcePack.getDefaultLocale()
+    let message = message.toText(with: locale)
+
+    log.info("Chat message received: \(message)")
   }
 }

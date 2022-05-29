@@ -10,7 +10,10 @@ public struct LoginDisconnectPacket: ClientboundPacket {
   }
   
   public func handle(for client: Client) {
-    log.trace("Disconnected from server: \(reason.toText())")
-    client.eventBus.dispatch(LoginDisconnectEvent(reason: reason.toText()))
+    let locale = client.resourcePack.getDefaultLocale()
+    let message = reason.toText(with: locale)
+
+    log.trace("Disconnected from server: \(message)")
+    client.eventBus.dispatch(LoginDisconnectEvent(reason: message))
   }
 }

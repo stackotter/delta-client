@@ -10,7 +10,7 @@ public struct LegacyFormattedText {
   public var tokens: [Token]
 
   /// A parser that splits a string into formatted tokens.
-  static let tokenizer = Many {
+  private static let tokenizer = Many {
     OneOf {
       Parse {
         "§"

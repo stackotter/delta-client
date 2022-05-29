@@ -114,14 +114,13 @@ public class ServerConnection {
         if let packetState = self.state.packetState {
           // Create a mutable packet reader
           var reader = packetReader
-          reader.locale = self.locale
-          
+
           // Get the correct type of packet
           guard let packetType = self.packetRegistry.getClientboundPacketType(withId: reader.packetId, andState: packetState) else {
             log.warning("Non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
             return
           }
-          
+
           // Read the packet and then run its handler
           let packet = try packetType.init(from: &reader)
           handler(packet)

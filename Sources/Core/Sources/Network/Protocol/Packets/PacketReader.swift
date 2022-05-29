@@ -9,36 +9,26 @@ public enum PacketReaderError: LocalizedError {
   case chatStringTooLong
   case identifierTooLong
   case invalidUUIDString
+  case failedToConvertStringToData
 }
 
 public struct PacketReader {
   public var packetId: Int
   public var buffer: Buffer
-  public var locale: MinecraftLocale
   
   public var remaining: Int {
     return buffer.remaining
   }
   
-  // Init
+  // MARK: Init
   
   public init(bytes: [UInt8]) {
-    self.init(bytes: bytes, locale: MinecraftLocale())
-  }
-  
-  public init(bytes: [UInt8], locale: MinecraftLocale) {
     self.buffer = Buffer(bytes)
     self.packetId = buffer.readVarInt()
-    self.locale = locale
   }
   
   public init(buffer: Buffer) {
-    self.init(buffer: buffer, locale: MinecraftLocale())
-  }
-  
-  public init(buffer: Buffer, locale: MinecraftLocale) {
     self.buffer = buffer
-    self.locale = locale
     self.packetId = self.buffer.readVarInt()
   }
   
@@ -99,16 +89,24 @@ public struct PacketReader {
   // Complex datatypes
   
   public mutating func readChat() throws -> ChatComponent {
+    // TODO: check all string lengths
     let string = try readString()
     if string.count > 32767 {
       log.warning("chat string of length \(string.count) is longer than max of 32767")
     }
+
     do {
-      let json = try JSON.fromString(string)
-      let chat = try ChatComponentUtil.parseJSON(json, locale: locale)
+      guard let data = string.data(using: .utf8) else {
+        throw PacketReaderError.failedToConvertStringToData
+      }
+
+      let chat = try JSONDecoder().decode(ChatComponent.self, from: data)
       return chat
     } catch {
-      return ChatStringComponent(fromString: "invalid json in chat component")
+      log.warning("Failed to decode chat message: '\(string)' with error '\(error)'")
+
+      // TODO: Remove fallback once all chat components are handled
+      return ChatComponent(style: .init(), content: .string("<invalid chat message>"), children: [])
     }
   }
   
@@ -175,15 +173,7 @@ public struct PacketReader {
   public mutating func readByteArray(length: Int) -> [UInt8] {
     return buffer.readBytes(n: length)
   }
-  
-  public mutating func readJSON() throws -> JSON {
-    let jsonString = try readString()
-    guard let json = try? JSON.fromString(jsonString) else {
-      throw PacketReaderError.invalidJSON
-    }
-    return json
-  }
-  
+    
   // reads x, y and z from a packed integer (each is signed)
   public mutating func readPosition() -> BlockPosition {
     let val = buffer.readLong(endian: .big)
