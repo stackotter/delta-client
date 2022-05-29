@@ -1,6 +1,9 @@
 excluded:
-- "**/*.pb.swift"
 - "**/.build"
+- "Sources/Core/Sources/Cache/Protobuf/Generated/BlockRegistry.pb.swift"
+- "Sources/Core/Sources/Cache/Protobuf/Generated/BlockModelPalette.pb.swift"
+# TODO: Reexclude once swiftlint github action is updated to support globs
+# - "**/*.pb.swift"
 
 disabled_rules:
 - switch_case_alignment
