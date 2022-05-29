@@ -1,5 +1,6 @@
 excluded:
 - "**/*.pb.swift"
+- "**/.build"
 
 disabled_rules:
 - switch_case_alignment
@@ -16,3 +17,13 @@ type_body_length: 300
 function_parameter_count: 8
 file_length: 500
 function_body_length: 50 
+
+# Custom rules
+custom_rules:
+  comments_space: # from https://github.com/brandenr/swiftlintconfig
+    name: "Space After Comment"
+    regex: '(^ *//\w+)'
+    message: "There should be a space after //"
+    severity: error
+
+# TODO: Once there are less warnings and violations, make the rules stricter and add some opt in ones
