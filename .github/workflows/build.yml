@@ -11,10 +11,10 @@ jobs:
     steps:
       - name: Checkout delta-client
         uses: actions/checkout@v2
-      - name: Check Xcode versions
-        run: ls /Applications
       - name: Force Xcode 13.2
         run: sudo xcode-select -switch /Applications/Xcode_13.2.app
+      - name: Version
+        run: swift --version
       - name: Download swift-bundler
         run: |
           curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v2.0.2/swift-bundler
