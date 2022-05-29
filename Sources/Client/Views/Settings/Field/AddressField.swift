@@ -2,8 +2,15 @@ import SwiftUI
 import Combine
 
 struct AddressField: View {
-  static private let ipRegex = try! NSRegularExpression(pattern: "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}$")
-  static private let domainRegex = try! NSRegularExpression(pattern: "^[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*$")
+  // swiftlint:disable:next force_try
+  static private let ipRegex = try! NSRegularExpression(
+    pattern: "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}$"
+  )
+
+  // swiftlint:disable:next force_try
+  static private let domainRegex = try! NSRegularExpression(
+    pattern: "^[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*$"
+  )
   
   let title: String
   
