@@ -1,4 +1,3 @@
-import Foundation
 import SwiftUI
 import DeltaCore
 import ZippyJSON
@@ -21,7 +20,7 @@ public final class Updater: ObservableObject {
   
   // MARK: SwiftUI
   
-  @Published public var fractionCompleted: Double? = nil
+  @Published public var fractionCompleted: Double?
   @Published public var stepDescription = ""
   @Published public var version: String?
   @Published public var canCancel = true
@@ -145,8 +144,14 @@ public final class Updater: ObservableObject {
       let newApp = temp2.appendingPathComponent("DeltaClient.app").path.replacingOccurrences(of: " ", with: "\\ ")
       let currentApp = Bundle.main.bundlePath.replacingOccurrences(of: " ", with: "\\ ")
       if !self.queue.isSuspended {
-        let logFile = StorageManager.default.storageDirectory.appendingPathComponent("output.log").path.replacingOccurrences(of: " ", with: "\\ ")
-        Utils.shell(#"nohup sh -c 'sleep 3; rm -rf \#(currentApp); mv \#(newApp) \#(currentApp); open \#(currentApp); open \#(currentApp)' >\#(logFile) 2>&1 &"#)
+        let logFile = StorageManager.default.storageDirectory
+          .appendingPathComponent("output.log").path
+          .replacingOccurrences(of: " ", with: "\\ ")
+
+        Utils.shell(
+          #"nohup sh -c 'sleep 3; rm -rf \#(currentApp); mv \#(newApp) \#(currentApp); open \#(currentApp); open \#(currentApp)' >\#(logFile) 2>&1 &"#
+        )
+
         Foundation.exit(0)
       }
     }
@@ -228,7 +233,8 @@ public final class Updater: ObservableObject {
       throw UpdateError.failedToGetWorkflowArtifact
     }
     
-    // nightly.link exposes public download links to artifacts, because for whatever reason, GitHub requires you to login with a GitHub account to download artifacts
+    // nightly.link exposes public download links to artifacts, because for whatever reason,
+    // GitHub requires you to login with a GitHub account to download artifacts
     let url = URL(string: "https://nightly.link/stackotter/delta-client/suites/\(run.checkSuiteId)/artifacts/\(artifact.id)")!
     return (url, "commit \(run.headSha)")
   }
@@ -241,7 +247,7 @@ public final class Updater: ObservableObject {
     decoder.keyDecodingStrategy = .convertFromSnakeCase
     
     // Get a list of all workflow runs
-    let apiURL = URL(string: "https://api.github.com/repos/stackotter/delta-client/actions/workflows/main.yml/runs")!
+    let apiURL = URL(string: "https://api.github.com/repos/stackotter/delta-client/actions/workflows/build.yml/runs")!
     do {
       let data = try Data(contentsOf: apiURL)
       let response = try decoder.decode(GitHubWorkflowAPIResponse.self, from: data)
@@ -256,13 +262,12 @@ public final class Updater: ObservableObject {
       self.hasErrored = false
       do {
         let workflowRuns = try Self.getWorkflowRuns()
-        
         var branches = workflowRuns.map(\.headBranch)
         
-        //remove duplicates while maintaining order
+        // Remove duplicates but maintain order
         var seen = Set<String>()
-        
         branches = branches.filter { seen.insert($0).inserted }
+
         ThreadUtil.runInMain {
           self.branches = branches
           self.hasErrored = false

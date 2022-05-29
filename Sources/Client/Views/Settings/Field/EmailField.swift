@@ -2,7 +2,10 @@ import SwiftUI
 import Combine
 
 struct EmailField: View {
-  static private let regex = try! NSRegularExpression(pattern: "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}")
+  // swiftlint:disable:next force_try
+  static private let regex = try! NSRegularExpression(
+    pattern: "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+  )
   
   private let title: String
   
