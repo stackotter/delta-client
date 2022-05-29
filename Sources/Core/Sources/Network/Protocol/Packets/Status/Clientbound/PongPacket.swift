@@ -6,6 +6,6 @@ public struct PongPacket: ClientboundPacket {
   public var payload: Int
   
   public init(from packetReader: inout PacketReader) throws {
-    payload = packetReader.readLong()
+    payload = try packetReader.readLong()
   }
 }

@@ -22,37 +22,39 @@ public struct MultiBlockChangePacket: ClientboundPacket {
   public var records: [BlockChangeRecord]
   
   public init(from packetReader: inout PacketReader) throws {
-    let chunkX = packetReader.readInt()
-    let chunkZ = packetReader.readInt()
+    let chunkX = try packetReader.readInt()
+    let chunkZ = try packetReader.readInt()
     chunkPosition = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
     
     records = []
     
-    let recordCount = packetReader.readVarInt()
+    let recordCount = try packetReader.readVarInt()
     for _ in 0..<recordCount {
-      let val = packetReader.readUnsignedByte()
-      let x = val >> 4 & 0x0f
-      let z = val & 0x0f
-      let y = packetReader.readUnsignedByte()
-      let blockId = packetReader.readVarInt()
+      let value = try packetReader.readUnsignedByte()
+      let x = value >> 4 & 0x0f
+      let z = value & 0x0f
+      let y = try packetReader.readUnsignedByte()
+      let blockId = try packetReader.readVarInt()
       let record = BlockChangeRecord(x: x, y: y, z: z, blockId: blockId)
       records.append(record)
     }
   }
   
   public func handle(for client: Client) throws {
-    records.forEach { record in
+    for record in records {
       var absolutePosition = BlockPosition(
         x: Int(record.x),
         y: Int(record.y),
-        z: Int(record.z))
+        z: Int(record.z)
+      )
       absolutePosition.x += chunkPosition.chunkX * Chunk.width
       absolutePosition.z += chunkPosition.chunkZ * Chunk.depth
       
       // TODO: Group multiblock changes
       client.game.world.setBlockId(
         at: absolutePosition,
-        to: record.blockId)
+        to: record.blockId
+      )
     }
   }
 }

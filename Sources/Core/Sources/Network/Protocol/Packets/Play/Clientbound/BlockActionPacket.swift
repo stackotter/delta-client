@@ -9,9 +9,9 @@ public struct BlockActionPacket: ClientboundPacket {
   public var blockType: Int // this is the block id not the block state
   
   public init(from packetReader: inout PacketReader) throws {
-    location = packetReader.readPosition()
-    actionId = packetReader.readUnsignedByte()
-    actionParam = packetReader.readUnsignedByte()
-    blockType = packetReader.readVarInt()
+    location = try packetReader.readBlockPosition()
+    actionId = try packetReader.readUnsignedByte()
+    actionParam = try packetReader.readUnsignedByte()
+    blockType = try packetReader.readVarInt()
   }
 }

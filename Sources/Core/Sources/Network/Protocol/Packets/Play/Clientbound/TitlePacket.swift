@@ -15,7 +15,7 @@ public struct TitlePacket: ClientboundPacket {
   }
   
   public init(from packetReader: inout PacketReader) throws {
-    let actionId = packetReader.readVarInt()
+    let actionId = try packetReader.readVarInt()
     switch actionId {
       case 0: // set title
         let text = try packetReader.readChat()
@@ -27,9 +27,9 @@ public struct TitlePacket: ClientboundPacket {
         let text = try packetReader.readChat()
         action = .setActionBar(text: text)
       case 3: // set times and display
-        let fadeIn = packetReader.readInt()
-        let stay = packetReader.readInt()
-        let fadeOut = packetReader.readInt()
+        let fadeIn = try packetReader.readInt()
+        let stay = try packetReader.readInt()
+        let fadeOut = try packetReader.readInt()
         action = .setTimesAndDisplay(fadeIn: fadeIn, stay: stay, fadeOut: fadeOut)
       case 4: // hide
         action = .hide

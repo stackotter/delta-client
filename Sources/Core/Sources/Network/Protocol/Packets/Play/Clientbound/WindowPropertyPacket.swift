@@ -8,8 +8,8 @@ public struct WindowPropertyPacket: ClientboundPacket {
   public var value: Int16
   
   public init(from packetReader: inout PacketReader) throws {
-    windowId = packetReader.readUnsignedByte()
-    property = packetReader.readShort()
-    value = packetReader.readShort()
+    windowId = try packetReader.readUnsignedByte()
+    property = try packetReader.readShort()
+    value = try packetReader.readShort()
   }
 }

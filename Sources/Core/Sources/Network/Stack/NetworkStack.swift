@@ -58,11 +58,11 @@ public final class NetworkStack {
         var buffer = buffer
         do {
           buffer = try self.encryptionLayer.processInbound(buffer)
-          let buffers = self.packetLayer.processInbound(buffer)
+          let buffers = try self.packetLayer.processInbound(buffer)
           
           for buffer in buffers {
             let buffer = try self.compressionLayer.processInbound(buffer)
-            let packetReader = PacketReader(buffer: buffer)
+            let packetReader = try PacketReader(buffer: buffer)
             log.trace("Packet received, id=0x\(String(format: "%02x", packetReader.packetId))")
             self.packetHandler?(packetReader)
           }

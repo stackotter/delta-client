@@ -15,10 +15,10 @@ public struct SpawnPlayerPacket: ClientboundPacket {
   public var yaw: Float
   
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
+    entityId = try packetReader.readVarInt()
     playerUUID = try packetReader.readUUID()
-    position = packetReader.readEntityPosition()
-    (pitch, yaw) = packetReader.readEntityRotation()
+    position = try packetReader.readEntityPosition()
+    (pitch, yaw) = try packetReader.readEntityRotation()
   }
   
   public func handle(for client: Client) throws {

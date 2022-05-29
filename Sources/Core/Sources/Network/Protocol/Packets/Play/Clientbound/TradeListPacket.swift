@@ -24,25 +24,25 @@ public struct TradeListPacket: ClientboundPacket {
   }
   
   public init(from packetReader: inout PacketReader) throws {
-    windowId = packetReader.readVarInt()
+    windowId = try packetReader.readVarInt()
     
     trades = []
-    let count = packetReader.readUnsignedByte()
+    let count = try packetReader.readUnsignedByte()
     for _ in 0..<count {
       let firstInputItem = try packetReader.readItemStack()
       let outputItem = try packetReader.readItemStack()
-      let hasSecondInputItem = packetReader.readBool()
+      let hasSecondInputItem = try packetReader.readBool()
       var secondInputItem: ItemStack?
       if hasSecondInputItem {
         secondInputItem = try packetReader.readItemStack()
       }
-      let tradeDisabled = packetReader.readBool()
-      let numUses = packetReader.readInt()
-      let maxUses = packetReader.readInt()
-      let xp = packetReader.readInt()
-      let specialPrice = packetReader.readInt()
-      let priceMultiplier = packetReader.readFloat()
-      let demand = packetReader.readInt()
+      let tradeDisabled = try packetReader.readBool()
+      let numUses = try packetReader.readInt()
+      let maxUses = try packetReader.readInt()
+      let xp = try packetReader.readInt()
+      let specialPrice = try packetReader.readInt()
+      let priceMultiplier = try packetReader.readFloat()
+      let demand = try packetReader.readInt()
       let trade = Trade(
         firstInputItem: firstInputItem,
         outputItem: outputItem,
@@ -58,9 +58,9 @@ public struct TradeListPacket: ClientboundPacket {
       trades.append(trade)
     }
     
-    villagerLevel = packetReader.readVarInt()
-    experience = packetReader.readVarInt()
-    isRegularVillager = packetReader.readBool()
-    canRestock = packetReader.readBool()
+    villagerLevel = try packetReader.readVarInt()
+    experience = try packetReader.readVarInt()
+    isRegularVillager = try packetReader.readBool()
+    canRestock = try packetReader.readBool()
   }
 }

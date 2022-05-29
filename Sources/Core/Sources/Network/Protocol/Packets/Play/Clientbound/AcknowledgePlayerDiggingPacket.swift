@@ -9,9 +9,9 @@ public struct AcknowledgePlayerDiggingPacket: ClientboundPacket {
   public var successful: Bool
   
   public init(from packetReader: inout PacketReader) throws {
-    location = packetReader.readPosition()
-    block = packetReader.readVarInt()
-    status = packetReader.readVarInt()
-    successful = packetReader.readBool()
+    location = try packetReader.readBlockPosition()
+    block = try packetReader.readVarInt()
+    status = try packetReader.readVarInt()
+    successful = try packetReader.readBool()
   }
 }

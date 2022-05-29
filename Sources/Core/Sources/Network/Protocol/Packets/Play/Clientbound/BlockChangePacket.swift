@@ -7,8 +7,8 @@ public struct BlockChangePacket: ClientboundPacket {
   public var blockId: Int
   
   public init(from packetReader: inout PacketReader) throws {
-    location = packetReader.readPosition()
-    blockId = packetReader.readVarInt()
+    location = try packetReader.readBlockPosition()
+    blockId = try packetReader.readVarInt()
   }
   
   public func handle(for client: Client) throws {

@@ -7,7 +7,7 @@ public struct AttachEntityPacket: ClientboundPacket {
   public var holdingEntityId: Int
 
   public init(from packetReader: inout PacketReader) throws {
-    attachedEntityId = packetReader.readInt()
-    holdingEntityId = packetReader.readInt()
+    attachedEntityId = try packetReader.readInt()
+    holdingEntityId = try packetReader.readInt()
   }
 }

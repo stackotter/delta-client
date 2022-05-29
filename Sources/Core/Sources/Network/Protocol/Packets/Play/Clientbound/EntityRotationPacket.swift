@@ -13,9 +13,9 @@ public struct EntityRotationPacket: ClientboundPacket {
   public var onGround: Bool
   
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
-    (pitch, yaw) = packetReader.readEntityRotation()
-    onGround = packetReader.readBool()
+    entityId = try packetReader.readVarInt()
+    (pitch, yaw) = try packetReader.readEntityRotation()
+    onGround = try packetReader.readBool()
   }
   
   public func handle(for client: Client) throws {

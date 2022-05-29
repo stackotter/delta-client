@@ -6,7 +6,7 @@ public struct EntityMovementPacket: ClientboundPacket {
   public var entityId: Int
   
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
+    entityId = try packetReader.readVarInt()
   }
   
   public func handle(for client: Client) throws {

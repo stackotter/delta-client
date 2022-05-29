@@ -7,10 +7,10 @@ public struct WindowItemsPacket: ClientboundPacket {
   public var slotData: [ItemStack]
   
   public init(from packetReader: inout PacketReader) throws {
-    windowId = packetReader.readUnsignedByte()
+    windowId = try packetReader.readUnsignedByte()
     
     slotData = []
-    let count = packetReader.readShort()
+    let count = try packetReader.readShort()
     for _ in 0..<count {
       let slot = try packetReader.readItemStack()
       slotData.append(slot)

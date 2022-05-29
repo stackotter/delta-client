@@ -8,8 +8,8 @@ public struct CollectItemPacket: ClientboundPacket {
   public var pickupItemCount: Int
 
   public init(from packetReader: inout PacketReader) throws {
-    collectedEntityId = packetReader.readVarInt()
-    collectorEntityId = packetReader.readVarInt()
-    pickupItemCount = packetReader.readVarInt()
+    collectedEntityId = try packetReader.readVarInt()
+    collectorEntityId = try packetReader.readVarInt()
+    pickupItemCount = try packetReader.readVarInt()
   }
 }

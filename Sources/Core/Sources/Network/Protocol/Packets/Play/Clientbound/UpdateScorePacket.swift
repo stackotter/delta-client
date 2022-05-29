@@ -11,10 +11,10 @@ public struct UpdateScorePacket: ClientboundPacket {
   public init(from packetReader: inout PacketReader) throws {
     // TODO: implement strings with max length in packetreader
     entityName = try packetReader.readString()
-    action = packetReader.readByte()
+    action = try packetReader.readByte()
     objectiveName = try packetReader.readString()
     if action != 1 {
-      value = packetReader.readVarInt()
+      value = try packetReader.readVarInt()
     }
   }
 }

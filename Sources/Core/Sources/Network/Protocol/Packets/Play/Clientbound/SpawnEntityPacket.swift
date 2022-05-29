@@ -14,16 +14,16 @@ public struct SpawnEntityPacket: ClientboundPacket {
   public var velocity: SIMD3<Double>?
   
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
+    entityId = try packetReader.readVarInt()
     objectUUID = try packetReader.readUUID()
-    type = packetReader.readVarInt()
-    position = packetReader.readEntityPosition()
+    type = try packetReader.readVarInt()
+    position = try packetReader.readEntityPosition()
     // Seems a lil sus that this is the only packet that has pitch and yaw in the other order
-    (pitch, yaw) = packetReader.readEntityRotation(pitchFirst: true)
-    data = packetReader.readInt()
+    (pitch, yaw) = try packetReader.readEntityRotation(pitchFirst: true)
+    data = try packetReader.readInt()
     
     if data > 0 {
-      velocity = packetReader.readEntityVelocity()
+      velocity = try packetReader.readEntityVelocity()
     }
   }
   

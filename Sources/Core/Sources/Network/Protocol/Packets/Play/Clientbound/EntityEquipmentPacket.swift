@@ -7,11 +7,11 @@ public struct EntityEquipmentPacket: ClientboundPacket {
   public var equipments: [Equipment]
 
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
+    entityId = try packetReader.readVarInt()
     equipments = []
     var isLastEquipment = false
     while !isLastEquipment {
-      var slot = packetReader.readUnsignedByte()
+      var slot = try packetReader.readUnsignedByte()
       if slot & 0x80 != 0x80 {
         isLastEquipment = true
       }

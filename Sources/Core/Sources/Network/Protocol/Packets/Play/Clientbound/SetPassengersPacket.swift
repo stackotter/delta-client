@@ -7,12 +7,12 @@ public struct SetPassengersPacket: ClientboundPacket {
   public var passengers: [Int]
 
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
+    entityId = try packetReader.readVarInt()
     
     passengers = []
-    let count = packetReader.readVarInt()
+    let count = try packetReader.readVarInt()
     for _ in 0..<count {
-      let passenger = packetReader.readVarInt()
+      let passenger = try packetReader.readVarInt()
       passengers.append(passenger)
     }
   }

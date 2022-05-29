@@ -13,13 +13,13 @@ public struct SpawnLivingEntityPacket: ClientboundPacket {
   public var velocity: SIMD3<Double>
   
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
+    entityId = try packetReader.readVarInt()
     entityUUID = try packetReader.readUUID()
-    type = packetReader.readVarInt()
-    position = packetReader.readEntityPosition()
-    (pitch, yaw) = packetReader.readEntityRotation()
-    headYaw = packetReader.readAngle()
-    velocity = packetReader.readEntityVelocity()
+    type = try packetReader.readVarInt()
+    position = try packetReader.readEntityPosition()
+    (pitch, yaw) = try packetReader.readEntityRotation()
+    headYaw = try packetReader.readAngle()
+    velocity = try packetReader.readEntityVelocity()
   }
   
   public func handle(for client: Client) {

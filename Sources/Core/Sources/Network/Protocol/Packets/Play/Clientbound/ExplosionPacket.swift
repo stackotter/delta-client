@@ -13,24 +13,24 @@ public struct ExplosionPacket: ClientboundPacket {
   public var playerMotionZ: Float
   
   public init(from packetReader: inout PacketReader) throws {
-    x = packetReader.readFloat()
-    y = packetReader.readFloat()
-    z = packetReader.readFloat()
-    strength = packetReader.readFloat()
+    x = try packetReader.readFloat()
+    y = try packetReader.readFloat()
+    z = try packetReader.readFloat()
+    strength = try packetReader.readFloat()
     
     records = []
-    let recordCount = packetReader.readInt()
+    let recordCount = try packetReader.readInt()
     for _ in 0..<recordCount {
       let record = (
-        packetReader.readByte(),
-        packetReader.readByte(),
-        packetReader.readByte()
+        try packetReader.readByte(),
+        try packetReader.readByte(),
+        try packetReader.readByte()
       )
       records.append(record)
     }
     
-    playerMotionX = packetReader.readFloat()
-    playerMotionY = packetReader.readFloat()
-    playerMotionZ = packetReader.readFloat()
+    playerMotionX = try packetReader.readFloat()
+    playerMotionY = try packetReader.readFloat()
+    playerMotionZ = try packetReader.readFloat()
   }
 }

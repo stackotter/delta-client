@@ -15,15 +15,15 @@ public struct TabCompleteClientboundPacket: ClientboundPacket {
   public var matches: [TabCompleteMatch]
   
   public init(from packetReader: inout PacketReader) throws {
-    id = packetReader.readVarInt()
-    start = packetReader.readVarInt()
-    length = packetReader.readVarInt()
+    id = try packetReader.readVarInt()
+    start = try packetReader.readVarInt()
+    length = try packetReader.readVarInt()
     
     matches = []
-    let count = packetReader.readVarInt()
+    let count = try packetReader.readVarInt()
     for _ in 0..<count {
       let match = try packetReader.readString()
-      let hasTooltip = packetReader.readBool()
+      let hasTooltip = try packetReader.readBool()
       var tooltip: ChatComponent?
       if hasTooltip {
         tooltip = try packetReader.readChat()

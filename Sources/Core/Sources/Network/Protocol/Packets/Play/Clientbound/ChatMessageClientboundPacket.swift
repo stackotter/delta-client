@@ -9,7 +9,7 @@ public struct ChatMessageClientboundPacket: ClientboundPacket {
   
   public init(from packetReader: inout PacketReader) throws {
     message = try packetReader.readChat()
-    position = packetReader.readByte()
+    position = try packetReader.readByte()
     sender = try packetReader.readUUID()
   }
   

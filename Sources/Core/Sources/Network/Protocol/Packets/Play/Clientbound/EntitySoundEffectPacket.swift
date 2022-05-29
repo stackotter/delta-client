@@ -10,10 +10,10 @@ public struct EntitySoundEffectPacket: ClientboundPacket {
   public var pitch: Float
 
   public init(from packetReader: inout PacketReader) throws {
-    soundId = packetReader.readVarInt()
-    soundCategory = packetReader.readVarInt()
-    entityId = packetReader.readVarInt()
-    volume = packetReader.readFloat()
-    pitch = packetReader.readFloat()
+    soundId = try packetReader.readVarInt()
+    soundCategory = try packetReader.readVarInt()
+    entityId = try packetReader.readVarInt()
+    volume = try packetReader.readFloat()
+    pitch = try packetReader.readFloat()
   }
 }

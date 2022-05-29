@@ -14,8 +14,8 @@ public struct PlayerInfoPacket: ClientboundPacket {
   }
   
   public init(from packetReader: inout PacketReader) throws {
-    let actionId = packetReader.readVarInt()
-    let numPlayers = packetReader.readVarInt()
+    let actionId = try packetReader.readVarInt()
+    let numPlayers = try packetReader.readVarInt()
     playerActions = []
     for _ in 0..<numPlayers {
       let uuid = try packetReader.readUUID()
@@ -28,7 +28,7 @@ public struct PlayerInfoPacket: ClientboundPacket {
           let gamemode = try Self.readGamemode(from: &packetReader)
           playerAction = .updateGamemode(gamemode: gamemode)
         case 2: // update latency
-          let ping = packetReader.readVarInt()
+          let ping = try packetReader.readVarInt()
           playerAction = .updateLatency(ping: ping)
         case 3: // update display name
           let displayName = try Self.readDisplayName(from: &packetReader)
@@ -64,7 +64,7 @@ public struct PlayerInfoPacket: ClientboundPacket {
   }
 
   private static func readGamemode(from packetReader: inout PacketReader) throws -> Gamemode {
-    guard let gamemode = Gamemode(rawValue: Int8(packetReader.readVarInt())) else {
+    guard let gamemode = Gamemode(rawValue: Int8(try packetReader.readVarInt())) else {
       throw ClientboundPacketError.invalidGamemode
     }    
     return gamemode
@@ -72,7 +72,7 @@ public struct PlayerInfoPacket: ClientboundPacket {
            
   private static func readDisplayName(from packetReader: inout PacketReader) throws -> ChatComponent? {
     var displayName: ChatComponent?
-    if packetReader.readBool() {
+    if try packetReader.readBool() {
       displayName = try packetReader.readChat()
     }
     return displayName
@@ -81,13 +81,13 @@ public struct PlayerInfoPacket: ClientboundPacket {
   private static func readPlayerInfo(from packetReader: inout PacketReader, uuid: UUID) throws -> PlayerInfo {
     let playerName = try packetReader.readString()
 
-    let numProperties = packetReader.readVarInt()
+    let numProperties = try packetReader.readVarInt()
     var properties: [PlayerProperty] = []
     for _ in 0..<numProperties {
       let propertyName = try packetReader.readString()
       let value = try packetReader.readString()
       var signature: String?
-      if packetReader.readBool() {
+      if try packetReader.readBool() {
         signature = try packetReader.readString()
       }
       let property = PlayerProperty(name: propertyName, value: value, signature: signature)
@@ -95,7 +95,7 @@ public struct PlayerInfoPacket: ClientboundPacket {
     }
 
     let gamemode = try Self.readGamemode(from: &packetReader)
-    let ping = packetReader.readVarInt()
+    let ping = try packetReader.readVarInt()
     let displayName = try Self.readDisplayName(from: &packetReader)
 
     return PlayerInfo(

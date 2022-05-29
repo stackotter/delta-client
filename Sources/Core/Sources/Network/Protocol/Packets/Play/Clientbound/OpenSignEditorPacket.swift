@@ -6,6 +6,6 @@ public struct OpenSignEditorPacket: ClientboundPacket {
   public var location: BlockPosition
   
   public init(from packetReader: inout PacketReader) throws {
-    location = packetReader.readPosition()
+    location = try packetReader.readBlockPosition()
   }
 }

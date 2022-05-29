@@ -8,8 +8,8 @@ public struct LoginPluginRequestPacket: ClientboundPacket {
   public var data: [UInt8]
 
   public init(from packetReader: inout PacketReader) throws {
-    messageId = packetReader.readVarInt()
+    messageId = try packetReader.readVarInt()
     channel = try packetReader.readIdentifier()
-    data = packetReader.readByteArray(length: packetReader.remaining)
+    data = try packetReader.readByteArray(length: packetReader.remaining)
   }
 }

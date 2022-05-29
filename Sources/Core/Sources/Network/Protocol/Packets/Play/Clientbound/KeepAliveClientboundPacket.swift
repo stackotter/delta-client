@@ -6,7 +6,7 @@ public struct KeepAliveClientboundPacket: ClientboundPacket {
   public var keepAliveId: Int
   
   public init(from packetReader: inout PacketReader) throws {
-    keepAliveId = packetReader.readLong()
+    keepAliveId = try packetReader.readLong()
   }
   
   public func handle(for client: Client) throws {

@@ -15,10 +15,10 @@ public struct EntityTeleportPacket: ClientboundPacket {
   public var onGround: Bool
 
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
-    position = packetReader.readEntityPosition()
-    (pitch, yaw) = packetReader.readEntityRotation()
-    onGround = packetReader.readBool()
+    entityId = try packetReader.readVarInt()
+    position = try packetReader.readEntityPosition()
+    (pitch, yaw) = try packetReader.readEntityRotation()
+    onGround = try packetReader.readBool()
   }
   
   public func handle(for client: Client) throws {

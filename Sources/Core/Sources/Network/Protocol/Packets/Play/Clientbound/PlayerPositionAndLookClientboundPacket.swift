@@ -24,11 +24,11 @@ public struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
   }
 
   public init(from packetReader: inout PacketReader) throws {
-    position = packetReader.readEntityPosition()
-    yaw = packetReader.readFloat()
-    pitch = packetReader.readFloat()
-    flags = PositionAndLookFlags(rawValue: packetReader.readUnsignedByte())
-    teleportId = packetReader.readVarInt()
+    position = try packetReader.readEntityPosition()
+    yaw = try packetReader.readFloat()
+    pitch = try packetReader.readFloat()
+    flags = try PositionAndLookFlags(rawValue: packetReader.readUnsignedByte())
+    teleportId = try packetReader.readVarInt()
   }
   
   public func handle(for client: Client) throws {

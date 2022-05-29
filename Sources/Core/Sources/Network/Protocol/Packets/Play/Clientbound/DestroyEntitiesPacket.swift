@@ -6,9 +6,9 @@ public struct DestroyEntitiesPacket: ClientboundPacket {
 
   public init(from packetReader: inout PacketReader) throws {
     entityIds = []
-    let count = packetReader.readVarInt()
+    let count = try packetReader.readVarInt()
     for _ in 0..<count {
-      let entityId = packetReader.readVarInt()
+      let entityId = try packetReader.readVarInt()
       entityIds.append(entityId)
     }
   }

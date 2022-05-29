@@ -24,7 +24,7 @@ public struct CompressionLayer {
   public func processInbound(_ buffer: Buffer) throws -> Buffer {
     if compressionThreshold > 0 {
       var buffer = buffer
-      let dataLength = buffer.readVarInt()
+      let dataLength = Int(try buffer.readVariableLengthInteger())
       if dataLength == 0 { // Packet isn't compressed
         return buffer
       } else { // Packet is compressed

@@ -11,7 +11,7 @@ public enum NBTError: LocalizedError {
 }
 
 // all tags are assumed to be big endian and signed unless otherwise specified
-// TODO_LATER: clean up this code
+// TODO: Clean up NBT decoder
 
 extension NBT {
   /// An container for NBT tags. A bit like an object in JSON.
@@ -92,12 +92,12 @@ extension NBT {
     public mutating func unpack() throws {
       var n = 0
       while true {
-        let typeId = buffer.readByte()
+        let typeId = try buffer.readByte()
         if let type = TagType(rawValue: typeId) {
           if type == .end {
             break
           }
-          let nameLength = Int(buffer.readShort(endian: .big))
+          let nameLength = Int(try buffer.readShort(endianness: .big))
           let name = try buffer.readString(length: nameLength)
           
           tags[name] = try readTag(ofType: type, withId: n, andName: name)
@@ -119,27 +119,27 @@ extension NBT {
         case .end:
           break
         case .byte:
-          value = buffer.readByte()
+          value = try buffer.readByte()
         case .short:
-          value = buffer.readSignedShort(endian: .big)
+          value = try buffer.readSignedShort(endianness: .big)
         case .int:
-          value = buffer.readSignedInt(endian: .big)
+          value = try buffer.readSignedInteger(endianness: .big)
         case .long:
-          value = buffer.readLong(endian: .big)
+          value = try buffer.readLong(endianness: .big)
         case .float:
-          value = buffer.readFloat(endian: .big)
+          value = try buffer.readFloat(endianness: .big)
         case .double:
-          value = buffer.readDouble(endian: .big)
+          value = try buffer.readDouble(endianness: .big)
         case .byteArray:
-          let length = Int(buffer.readSignedInt(endian: .big))
-          value = buffer.readSignedBytes(n: length)
+          let length = Int(try buffer.readSignedInteger(endianness: .big))
+          value = try buffer.readSignedBytes(length)
         case .string:
-          let length = Int(buffer.readShort(endian: .big))
+          let length = Int(try buffer.readShort(endianness: .big))
           value = try buffer.readString(length: length)
         case .list:
-          let typeId = buffer.readByte()
+          let typeId = try buffer.readByte()
           if let listType = TagType(rawValue: typeId) {
-            let length = buffer.readSignedInt(endian: .big)
+            let length = try buffer.readSignedInteger(endianness: .big)
             if length < 0 {
               throw NBTError.emptyList
             }
@@ -157,21 +157,21 @@ extension NBT {
           }
         case .compound:
           let compound = try Compound(fromBuffer: buffer, withName: name, isRoot: false)
-          buffer.skip(nBytes: compound.numBytes)
+          try buffer.skip(compound.numBytes)
           value = compound
         case .intArray:
-          let count = buffer.readSignedInt(endian: .big)
+          let count = try buffer.readSignedInteger(endianness: .big)
           var array: [Int] = []
           for _ in 0..<count {
-            let int = buffer.readSignedInt(endian: .big)
-            array.append(int)
+            let integer = Int(try buffer.readSignedInteger(endianness: .big))
+            array.append(integer)
           }
           value = array
         case .longArray:
-          let count = buffer.readSignedInt(endian: .big)
+          let count = try buffer.readSignedInteger(endianness: .big)
           var array: [Int] = []
           for _ in 0..<count {
-            let long = buffer.readSignedLong(endian: .big)
+            let long = Int(try buffer.readSignedLong(endianness: .big))
             array.append(long)
           }
           value = array
@@ -200,12 +200,11 @@ extension NBT {
     }
     
     private mutating func writeName(_ name: String) {
-      buffer.writeShort(UInt16(name.utf8.count), endian: .big)
+      buffer.writeShort(UInt16(name.utf8.count), endianness: .big)
       buffer.writeString(name)
     }
     
-    // TODO: remove force casts
-    // TODO: split into NBTWriter, NBTReader and NBTCompound
+    // TODO: Remove force casts
     // swiftlint:disable force_cast
     private mutating func writeTag(_ tag: Tag) {
       switch tag.type {
@@ -214,20 +213,20 @@ extension NBT {
         case .byte:
           buffer.writeSignedByte(tag.value as! Int8)
         case .short:
-          buffer.writeSignedShort(tag.value as! Int16, endian: .big)
+          buffer.writeSignedShort(tag.value as! Int16, endianness: .big)
         case .int:
-          buffer.writeSignedInt(tag.value as! Int32, endian: .big)
+          buffer.writeSignedInt(tag.value as! Int32, endianness: .big)
         case .long:
-          buffer.writeSignedLong(tag.value as! Int64, endian: .big)
+          buffer.writeSignedLong(tag.value as! Int64, endianness: .big)
         case .float:
-          buffer.writeFloat(tag.value as! Float, endian: .big)
+          buffer.writeFloat(tag.value as! Float, endianness: .big)
         case .double:
-          buffer.writeDouble(tag.value as! Double, endian: .big)
+          buffer.writeDouble(tag.value as! Double, endianness: .big)
         case .byteArray:
           buffer.writeBytes(tag.value as! [UInt8])
         case .string:
           let string = tag.value as! String
-          buffer.writeShort(UInt16(string.utf8.count), endian: .big)
+          buffer.writeShort(UInt16(string.utf8.count), endianness: .big)
           buffer.writeString(string)
         case .list:
           let list = tag.value as! List
@@ -235,7 +234,7 @@ extension NBT {
           let listLength = list.count
           
           buffer.writeByte(listType.rawValue)
-          buffer.writeSignedInt(Int32(listLength), endian: .big)
+          buffer.writeSignedInt(Int32(listLength), endianness: .big)
           
           for elem in list.list {
             let value = Tag(id: 0, type: listType, value: elem)
@@ -247,16 +246,16 @@ extension NBT {
         case .intArray:
           let array = tag.value as! [Int32]
           let length = Int32(array.count)
-          buffer.writeSignedInt(length, endian: .big)
+          buffer.writeSignedInt(length, endianness: .big)
           for int in array {
-            buffer.writeSignedInt(int, endian: .big)
+            buffer.writeSignedInt(int, endianness: .big)
           }
         case .longArray:
           let array = tag.value as! [Int64]
           let length = Int32(array.count)
-          buffer.writeSignedInt(length, endian: .big)
+          buffer.writeSignedInt(length, endianness: .big)
           for int in array {
-            buffer.writeSignedLong(int, endian: .big)
+            buffer.writeSignedLong(int, endianness: .big)
           }
       }
     }

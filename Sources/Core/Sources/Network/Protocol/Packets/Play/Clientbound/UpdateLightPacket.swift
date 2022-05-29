@@ -13,28 +13,28 @@ public struct UpdateLightPacket: ClientboundPacket {
   public var blockLightArrays: [[UInt8]]
   
   public init(from packetReader: inout PacketReader) throws {
-    let chunkX = packetReader.readVarInt()
-    let chunkZ = packetReader.readVarInt()
+    let chunkX = try packetReader.readVarInt()
+    let chunkZ = try packetReader.readVarInt()
     chunkPosition = ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
-    trustEdges = packetReader.readBool()
-    skyLightMask = packetReader.readVarInt()
-    blockLightMask = packetReader.readVarInt()
-    emptySkyLightMask = packetReader.readVarInt()
-    emptyBlockLightMask = packetReader.readVarInt()
+    trustEdges = try packetReader.readBool()
+    skyLightMask = try packetReader.readVarInt()
+    blockLightMask = try packetReader.readVarInt()
+    emptySkyLightMask = try packetReader.readVarInt()
+    emptyBlockLightMask = try packetReader.readVarInt()
     
     skyLightArrays = []
     var numArrays = BinaryUtil.setBits(of: skyLightMask, n: Chunk.numSections + 2).count
     for _ in 0..<numArrays {
-      let length = packetReader.readVarInt()
-      let bytes = packetReader.readByteArray(length: length)
+      let length = try packetReader.readVarInt()
+      let bytes = try packetReader.readByteArray(length: length)
       skyLightArrays.append(bytes)
     }
     
     blockLightArrays = []
     numArrays = BinaryUtil.setBits(of: blockLightMask, n: Chunk.numSections + 2).count
     for _ in 0..<numArrays {
-      let length = packetReader.readVarInt()
-      let bytes = packetReader.readByteArray(length: length)
+      let length = try packetReader.readVarInt()
+      let bytes = try packetReader.readByteArray(length: length)
       blockLightArrays.append(bytes)
     }
   }

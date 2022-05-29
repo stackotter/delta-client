@@ -5,8 +5,8 @@ public struct HeldItemChangePacket: ClientboundPacket {
   
   public var slot: Int8
   
-  public init(from packetReader: inout PacketReader) {
-    slot = packetReader.readByte()
+  public init(from packetReader: inout PacketReader) throws {
+    slot = try packetReader.readByte()
   }
   
   public func handle(for client: Client) throws {

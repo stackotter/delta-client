@@ -7,8 +7,8 @@ public struct TimeUpdatePacket: ClientboundPacket {
   public var timeOfDay: Int
 
   public init(from packetReader: inout PacketReader) throws {
-    worldAge = packetReader.readLong()
-    timeOfDay = packetReader.readLong()
+    worldAge = try packetReader.readLong()
+    timeOfDay = try packetReader.readLong()
   }
   
   public func handle(for client: Client) throws {

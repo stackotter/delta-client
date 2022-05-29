@@ -8,8 +8,8 @@ public struct BlockBreakAnimationPacket: ClientboundPacket {
   public var destroyStage: Int8
   
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
-    location = packetReader.readPosition()
-    destroyStage = packetReader.readByte()
+    entityId = try packetReader.readVarInt()
+    location = try packetReader.readBlockPosition()
+    destroyStage = try packetReader.readByte()
   }
 }

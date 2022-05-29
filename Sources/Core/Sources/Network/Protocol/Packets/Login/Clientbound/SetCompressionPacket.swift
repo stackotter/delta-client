@@ -6,7 +6,7 @@ public struct SetCompressionPacket: ClientboundPacket {
   public var threshold: Int
   
   public init(from packetReader: inout PacketReader) throws {
-    threshold = packetReader.readVarInt()
+    threshold = try packetReader.readVarInt()
   }
   
   public func handle(for client: Client) throws {

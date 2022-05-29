@@ -15,11 +15,11 @@ public struct EntityPositionPacket: ClientboundPacket {
   public var onGround: Bool
   
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
-    deltaX = packetReader.readShort()
-    deltaY = packetReader.readShort()
-    deltaZ = packetReader.readShort()
-    onGround = packetReader.readBool()
+    entityId = try packetReader.readVarInt()
+    deltaX = try packetReader.readShort()
+    deltaY = try packetReader.readShort()
+    deltaZ = try packetReader.readShort()
+    onGround = try packetReader.readBool()
   }
   
   public func handle(for client: Client) throws {

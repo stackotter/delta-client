@@ -12,14 +12,14 @@ public struct UnlockRecipesPacket: ClientboundPacket {
   public var initRecipeIds: [Identifier]?
 
   public init(from packetReader: inout PacketReader) throws {
-    action = packetReader.readVarInt()
-    craftingRecipeBookOpen = packetReader.readBool()
-    craftingRecipeBookFilterActive = packetReader.readBool()
-    smeltingRecipeBookOpen = packetReader.readBool()
-    smeltingRecipeBookFilterActive = packetReader.readBool()
+    action = try packetReader.readVarInt()
+    craftingRecipeBookOpen = try packetReader.readBool()
+    craftingRecipeBookFilterActive = try packetReader.readBool()
+    smeltingRecipeBookOpen = try packetReader.readBool()
+    smeltingRecipeBookFilterActive = try packetReader.readBool()
     
     recipeIds = []
-    var count = packetReader.readVarInt()
+    var count = try packetReader.readVarInt()
     for _ in 0..<count {
       let identifier = try packetReader.readIdentifier()
       recipeIds.append(identifier)
@@ -27,7 +27,7 @@ public struct UnlockRecipesPacket: ClientboundPacket {
     
     if action == 0 { // init
       var initRecipeIds = [Identifier]()
-      count = packetReader.readVarInt()
+      count = try packetReader.readVarInt()
       for _ in 0..<count {
         let identifier = try packetReader.readIdentifier()
         initRecipeIds.append(identifier)

@@ -21,16 +21,16 @@ public struct JoinGamePacket: ClientboundPacket, WorldDescriptor {
   public var isFlat: Bool
   
   public init(from packetReader: inout PacketReader) throws {
-    playerEntityId = packetReader.readInt()
-    let gamemodeInt = Int8(packetReader.readUnsignedByte())
+    playerEntityId = try packetReader.readInt()
+    let gamemodeInt = Int8(try packetReader.readUnsignedByte())
     isHardcore = gamemodeInt & 0x8 == 0x8
     guard let gamemode = Gamemode(rawValue: gamemodeInt) else {
       throw ClientboundPacketError.invalidGamemode
     }
     self.gamemode = gamemode
-    let previousGamemodeInt = packetReader.readByte()
+    let previousGamemodeInt = try packetReader.readByte()
     previousGamemode = Gamemode(rawValue: previousGamemodeInt)
-    worldCount = packetReader.readVarInt()
+    worldCount = try packetReader.readVarInt()
     worldNames = []
     for _ in 0..<worldCount {
       worldNames.append(try packetReader.readIdentifier())
@@ -38,13 +38,13 @@ public struct JoinGamePacket: ClientboundPacket, WorldDescriptor {
     dimensionCodec = try packetReader.readNBTCompound()
     dimension = try packetReader.readIdentifier()
     worldName = try packetReader.readIdentifier()
-    hashedSeed = packetReader.readLong()
-    maxPlayers = packetReader.readUnsignedByte()
-    viewDistance = packetReader.readVarInt()
-    reducedDebugInfo = packetReader.readBool()
-    enableRespawnScreen = packetReader.readBool()
-    isDebug = packetReader.readBool()
-    isFlat = packetReader.readBool()
+    hashedSeed = try packetReader.readLong()
+    maxPlayers = try packetReader.readUnsignedByte()
+    viewDistance = try packetReader.readVarInt()
+    reducedDebugInfo = try packetReader.readBool()
+    enableRespawnScreen = try packetReader.readBool()
+    isDebug = try packetReader.readBool()
+    isFlat = try packetReader.readBool()
   }
   
   public func handle(for client: Client) throws {

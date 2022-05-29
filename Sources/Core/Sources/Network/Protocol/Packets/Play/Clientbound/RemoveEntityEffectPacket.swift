@@ -7,7 +7,7 @@ public struct RemoveEntityEffectPacket: ClientboundPacket {
   public var effectId: Int8
 
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readVarInt()
-    effectId = packetReader.readByte()
+    entityId = try packetReader.readVarInt()
+    effectId = try packetReader.readByte()
   }
 }

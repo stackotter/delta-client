@@ -10,12 +10,12 @@ public struct FacePlayerPacket: ClientboundPacket {
   public var entityFeetOrEyes: Int?
   
   public init(from packetReader: inout PacketReader) throws {
-    feetOrEyes = packetReader.readVarInt()
-    targetPosition = packetReader.readEntityPosition()
-    isEntity = packetReader.readBool()
+    feetOrEyes = try packetReader.readVarInt()
+    targetPosition = try packetReader.readEntityPosition()
+    isEntity = try packetReader.readBool()
     if isEntity {
-      entityId = packetReader.readVarInt()
-      entityFeetOrEyes = packetReader.readVarInt()
+      entityId = try packetReader.readVarInt()
+      entityFeetOrEyes = try packetReader.readVarInt()
     }
   }
 }

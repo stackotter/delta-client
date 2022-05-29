@@ -7,7 +7,7 @@ public struct EntityStatusPacket: ClientboundPacket {
   public var status: Int8
   
   public init(from packetReader: inout PacketReader) throws {
-    entityId = packetReader.readInt()
-    status = packetReader.readByte()
+    entityId = try packetReader.readInt()
+    status = try packetReader.readByte()
   }
 }

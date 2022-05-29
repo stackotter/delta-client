@@ -8,11 +8,11 @@ public struct StatisticsPacket: ClientboundPacket {
   public init(from packetReader: inout PacketReader) throws {
     statistics = []
     
-    let count = packetReader.readVarInt()
+    let count = try packetReader.readVarInt()
     for _ in 0..<count {
-      let categoryId = packetReader.readVarInt()
-      let statisticId = packetReader.readVarInt()
-      let value = packetReader.readVarInt()
+      let categoryId = try packetReader.readVarInt()
+      let statisticId = try packetReader.readVarInt()
+      let value = try packetReader.readVarInt()
       let statistic = Statistic(categoryId: categoryId, statisticId: statisticId, value: value)
       statistics.append(statistic)
     }

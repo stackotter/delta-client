@@ -13,15 +13,15 @@ public struct ParticlePacket: ClientboundPacket {
   public var particleCount: Int
 
   public init(from packetReader: inout PacketReader) throws {
-    particleId = packetReader.readInt()
-    isLongDistance = packetReader.readBool()
-    position = packetReader.readEntityPosition()
-    offsetX = packetReader.readFloat()
-    offsetY = packetReader.readFloat()
-    offsetZ = packetReader.readFloat()
-    particleData = packetReader.readFloat()
-    particleCount = packetReader.readInt()
+    particleId = try packetReader.readInt()
+    isLongDistance = try packetReader.readBool()
+    position = try packetReader.readEntityPosition()
+    offsetX = try packetReader.readFloat()
+    offsetY = try packetReader.readFloat()
+    offsetZ = try packetReader.readFloat()
+    particleData = try packetReader.readFloat()
+    particleCount = try packetReader.readInt()
     
-    // IMPLEMENT: there is also a data field but i really don't feel like decoding it rn
+    // TODO: there is also a data field but i really don't feel like decoding it rn
   }
 }
