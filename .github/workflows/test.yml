@@ -15,7 +15,7 @@ jobs:
         run: sudo xcode-select -switch /Applications/Xcode_13.2.app
       - name: Version
         run: swift --version
-      - name: Change directory
-        run: cd Sources/Core
       - name: Test
-        run: swift test
+        run: |
+          cd Sources/Core
+          swift test
