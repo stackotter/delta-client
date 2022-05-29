@@ -15,7 +15,9 @@ enum CommandLineArgumentsError: LocalizedError {
 }
 
 /// The command line arguments for Delta Client.
-struct CommandLineArguments: ParsableArguments {
+struct CommandLineArguments: ParsableCommand {
+  static let configuration = CommandConfiguration(commandName: "DeltaClient")
+
   /// A replacement for the default plugins directory.
   @Option(
     name: .customLong("plugins-dir"),
