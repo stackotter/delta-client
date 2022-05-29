@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: macOS-11
     steps:
-      - name: Checkout delta-client
+      - name: Checkout
         uses: actions/checkout@v2
       - name: Force Xcode 13.2
         run: sudo xcode-select -switch /Applications/Xcode_13.2.app
@@ -17,7 +17,7 @@ jobs:
         run: swift --version
       - name: Download swift-bundler
         run: |
-          curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v2.0.2/swift-bundler
+          curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v2.0.4/swift-bundler
           chmod +x ./swift-bundler
           cp ./swift-bundler /usr/local/bin
       - name: Build
