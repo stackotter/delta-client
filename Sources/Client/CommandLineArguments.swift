@@ -16,12 +16,6 @@ enum CommandLineArgumentsError: LocalizedError {
 
 /// The command line arguments for Delta Client.
 struct CommandLineArguments: ParsableArguments {
-  /// If true, prints the help message and then exits.
-  @Flag(
-    name: .shortAndLong,
-    help: "Show help")
-  var help = false
-  
   /// A replacement for the default plugins directory.
   @Option(
     name: .customLong("plugins-dir"),
