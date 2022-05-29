@@ -17,17 +17,7 @@ struct DeltaClientApp: App {
   init() {
     let taskQueue = DispatchQueue(label: "dev.stackotter.delta-client.startupTasks")
     
-    // Process command line arguments
-    let arguments = CommandLineArguments.parseOrExit()
-    
-    if arguments.help {
-      print(CommandLineArguments.helpMessage())
-      Foundation.exit(0)
-    }
-    
-    if let pluginsDirectory = arguments.pluginsDirectory {
-      StorageManager.default.pluginsDirectory = pluginsDirectory
-    }
+    Self.handleCommandLineArguments()
     
     DiscordManager.shared.updateRichPresence(to: .menu)
 
@@ -36,8 +26,15 @@ struct DeltaClientApp: App {
       var startupProgress = TaskProgress<StartupStep>()
       
       func updateLoadingState(step: StartupStep, message: String? = nil, taskProgress: Double = 0) {
-        let secretMessages: [String] = ["Frying eggs", "Baking cookies", "Planting trees", "Filling up oceans", "Brewing beer", "Painting clouds", "Dreaming of ancient worlds"]
-        let shouldShowSecretMessage = Double.random(in: 0...1) <= 0.02
+        let secretMessages: [String] = [
+          "Frying eggs",
+          "Baking cookies",
+          "Planting trees",
+          "Filling up oceans",
+          "Painting clouds",
+          "Dreaming of ancient worlds"
+        ]
+        let shouldShowSecretMessage = Double.random(in: 0...1) <= 0.005
         
         let loadingMessage: String
         if shouldShowSecretMessage {
@@ -136,6 +133,22 @@ struct DeltaClientApp: App {
       }
     }
   }
+
+  static func handleCommandLineArguments() {
+    // Process command line arguments
+    let arguments = CommandLineArguments.parseOrExit()
+    
+    if arguments.help {
+      print(CommandLineArguments.helpMessage())
+      Foundation.exit(0)
+    }
+    
+    if let pluginsDirectory = arguments.pluginsDirectory {
+      StorageManager.default.pluginsDirectory = pluginsDirectory
+    }
+
+    setLogLevel(arguments.logLevel)
+  }
   
   var body: some Scene {
     WindowGroup {
@@ -152,11 +165,11 @@ struct DeltaClientApp: App {
       CommandGroup(after: .appSettings, addition: {
         Button("Preferences") {
           // Check if it makes sense to be able to open settings right now
-          if case .none = Self.modalState.current, case .done(_) = Self.loadingState.current {
+          if case .none = Self.modalState.current, case .done = Self.loadingState.current {
             switch Self.appState.current {
               case .serverList, .editServerList, .accounts, .login, .directConnect:
                 Self.appState.update(to: .settings(nil))
-              case .playServer(_), .settings(_), .fatalError(_):
+              case .playServer, .settings, .fatalError:
                 break
             }
           }
