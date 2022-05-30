@@ -36,7 +36,15 @@ public enum MetalUtil {
   ///
   /// The default library is at `DeltaClient.app/Contents/Resources/DeltaCore_DeltaCore.bundle/Resources/default.metallib`.
   public static func loadDefaultLibrary(_ device: MTLDevice) throws -> MTLLibrary {
-    guard let bundle = Bundle(url: Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/DeltaCore_DeltaCore.bundle")) else {
+    #if os(macOS)
+    let bundlePath = "Contents/Resources/DeltaCore_DeltaCore.bundle"
+    #elseif os(iOS)
+    let bundlePath = "DeltaCore_DeltaCore.bundle"
+    #else
+    #error("Unsupported platform, unknown DeltaCore bundle location")
+    #endif
+
+    guard let bundle = Bundle(url: Bundle.main.bundleURL.appendingPathComponent(bundlePath)) else {
       throw RenderError.failedToGetBundle
     }
     
