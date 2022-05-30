@@ -26,7 +26,8 @@ public struct PlayerJumpSystem: System {
     let blockPosition = BlockPosition(
       x: Int(position.x.rounded(.down)),
       y: Int((position.y - 0.5).rounded(.down)),
-      z: Int(position.z.rounded(.down)))
+      z: Int(position.z.rounded(.down))
+    )
     let block = world.getBlock(at: blockPosition)
     
     let jumpPower = 0.42 * Double(block.material.jumpVelocityMultiplier)

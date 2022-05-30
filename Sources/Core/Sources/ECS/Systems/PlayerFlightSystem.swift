@@ -34,6 +34,8 @@ public struct PlayerFlightSystem: System {
         } else {
           velocity.y = Double(attributes.flyingSpeed * 3)
         }
+      } else if !sneakPressed && !jumpPressed {
+        velocity.y = 0
       }
     }
   }

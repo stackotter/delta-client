@@ -35,7 +35,8 @@ public struct PlayerAccelerationSystem: System {
     var impulse = SIMD3<Double>(
       leftImpulse - rightImpulse,
       0,
-      forwardsImpulse - backwardsImpulse)
+      forwardsImpulse - backwardsImpulse
+    )
     
     if !flying.isFlying && inputs.contains(.sneak) {
       impulse *= Self.sneakMultiplier
@@ -57,7 +58,8 @@ public struct PlayerAccelerationSystem: System {
       world,
       entityAttributes[.movementSpeed].value,
       sprinting.isSprinting,
-      onGround.onGround)
+      onGround.onGround
+    )
 
     impulse *= speed
     
@@ -80,7 +82,8 @@ public struct PlayerAccelerationSystem: System {
       let blockPosition = BlockPosition(
         x: Int(floor(position.x)),
         y: Int(floor(position.y - 0.5)),
-        z: Int(floor(position.z)))
+        z: Int(floor(position.z))
+      )
       let block = world.getBlock(at: blockPosition)
       let slipperiness = block.material.slipperiness
       
