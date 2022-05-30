@@ -79,7 +79,11 @@ struct VideoSettingsView: View {
             Text(mode.rawValue.capitalized)
           }
         }
+        #if os(macOS)
           .pickerStyle(RadioGroupPickerStyle())
+        #elseif os(iOS)
+          .pickerStyle(DefaultPickerStyle())
+        #endif
           .frame(width: 220)
       }
     }

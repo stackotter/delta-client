@@ -1,11 +1,11 @@
+format_version = 2
+
 [apps.DeltaClient]
+category = 'public.app-category.games'
+icon = 'AppIcon.icns'
+identifier = 'dev.stackotter.delta-client'
 product = 'DeltaClient'
 version = 'v0.1.0-alpha.1'
-bundle_identifier = 'dev.stackotter.delta-client'
-category = 'public.app-category.games'
-minimum_macos_version = '11.0'
-icon = 'AppIcon.icns'
 
-[apps.DeltaClient.extra_plist_entries]
-# Append the current commit hash to the user-facing version string
-CFBundleShortVersionString = "{VERSION}, commit: {COMMIT_HASH}"
+[apps.DeltaClient.plist]
+CFBundleShortVersionString = '$(VERSION), commit: $(COMMIT_HASH)'

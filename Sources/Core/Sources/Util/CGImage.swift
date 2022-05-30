@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 
 extension CGImage {
   public func getBytes(with colorSpace: CGColorSpace, and bitmapInfo: UInt32, scaledBy scaleFactor: Int = 1) throws -> [UInt8] {

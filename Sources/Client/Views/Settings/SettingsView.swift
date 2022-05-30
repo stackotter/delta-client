@@ -36,34 +36,44 @@ struct SettingsView: View {
           "Video",
           destination: VideoSettingsView(client: client).padding(),
           tag: SettingsState.video,
-          selection: $currentPage)
+          selection: $currentPage
+        )
         NavigationLink(
           "Controls",
           destination: ControlsSettingsView().padding(),
           tag: SettingsState.controls,
-          selection: $currentPage)
+          selection: $currentPage
+        )
         
         if !isInGame {
           NavigationLink(
             "Accounts",
             destination: AccountSettingsView().padding(),
             tag: SettingsState.accounts,
-            selection: $currentPage)
+            selection: $currentPage
+          )
+          
+          #if os(macOS)
           NavigationLink(
             "Update",
             destination: UpdateView().padding(),
             tag: SettingsState.update,
-            selection: $currentPage)
+            selection: $currentPage
+          )
           NavigationLink(
             "Plugins",
             destination: PluginSettingsView().padding(),
             tag: SettingsState.plugins,
-            selection: $currentPage)
+            selection: $currentPage
+          )
+          #endif
+
           NavigationLink(
             "Troubleshooting",
             destination: TroubleshootingView().padding(),
             tag: SettingsState.troubleshooting,
-            selection: $currentPage)
+            selection: $currentPage
+          )
         }
         
         Button("Done", action: {

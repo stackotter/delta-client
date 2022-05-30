@@ -107,9 +107,13 @@ struct TroubleshootingView: View {
       do {
         try StorageManager.default.factoryReset()
         message = "Relaunching..."
+        #if os(macOS)
         taskQueue.asyncAfter(deadline: .now() + 1) {
           Utils.relaunch()
         }
+        #else
+        message = "Please relaunch the app manually"
+        #endif
       } catch let error {
         onFailure(error)
       }

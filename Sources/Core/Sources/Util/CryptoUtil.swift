@@ -53,8 +53,16 @@ struct CryptoUtil {
       kSecAttrKeyType: kSecAttrKeyTypeRSA,
       kSecAttrKeySizeInBits: 1024
     ]
-    
-    guard let key = SecKeyCreateFromData(attributes as CFDictionary, derData as NSData, nil) else {
+
+    #if os(macOS)
+    let optionalKey = SecKeyCreateFromData(attributes as CFDictionary, derData as NSData, nil)
+    #elseif os(iOS)
+    let optionalKey = SecKeyCreateWithData(derData as CFData, attributes as CFDictionary, nil)
+    #else
+    #error("Unsupported platform, neither SecKeyCreateFromData or SecKeyCreateWithData available")
+    #endif
+
+    guard let key = optionalKey else {
       throw CryptoError.invalidDERCertificate
     }
     return key

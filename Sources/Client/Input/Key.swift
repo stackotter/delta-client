@@ -1,5 +1,4 @@
 import Foundation
-import Carbon
 
 public enum Key: String, Hashable, Codable {
   case leftShift = "Left shift"

@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "Socket",
-        "repositoryURL": "https://github.com/stackotter/BlueSocket.git",
-        "state": {
-          "branch": "master",
-          "revision": "31e92ab743a9ffc2a4a6e7e2f1043f5fe1d97e80",
-          "version": null
-        }
-      },
-      {
         "package": "DeltaLogger",
         "repositoryURL": "https://github.com/stackotter/delta-logger",
         "state": {
@@ -161,15 +152,6 @@
           "branch": null,
           "revision": "c6df6cf533d120716bff38f8ff9885e1ce2a4ac3",
           "version": "0.9.0"
-        }
-      },
-      {
-        "package": "SwordRPC",
-        "repositoryURL": "https://github.com/stackotter/SwordRPC",
-        "state": {
-          "branch": null,
-          "revision": "3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed",
-          "version": null
         }
       },
       {

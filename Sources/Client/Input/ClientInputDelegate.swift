@@ -1,8 +1,9 @@
 import SwiftUI
 import DeltaCore
-import Carbon
 
 #if os(macOS)
+import Carbon
+
 final class ClientInputDelegate: InputDelegate {
   /// ``mouseSensitivity`` is multiplied by this factor before use.
   let sensitivityAdjustmentFactor: Float = 0.004
@@ -75,4 +76,44 @@ final class ClientInputDelegate: InputDelegate {
     cursorCaptured = true
   }
 }
+#elseif os(iOS)
+final class ClientInputDelegate: InputDelegate {
+  /// ``mouseSensitivity`` is multiplied by this factor before use.
+  let sensitivityAdjustmentFactor: Float = 0.004
+
+  var keymap = ConfigManager.default.config.keymap
+  var mouseSensitivity = ConfigManager.default.config.mouseSensitivity
+  
+  var client: Client
+  
+  @Binding var cursorCaptured: Bool
+  
+  init(for client: Client) {
+    self.client = client
+    _cursorCaptured = Binding<Bool>(get: { true }, set: { _ in })
+  }
+  
+  func bind(_ cursorCaptured: Binding<Bool>) {
+    _cursorCaptured = cursorCaptured
+  }
+  
+  func onKeyDown(_ key: Key) {
+  }
+  
+  func onKeyUp(_ key: Key) {
+  }
+  
+  func onMouseMove(_ deltaX: Float, _ deltaY: Float) {
+  }
+  
+  func releaseCursor() {
+    cursorCaptured = false
+  }
+  
+  func captureCursor() {
+    cursorCaptured = true
+  }
+}
+#else
+#error("Unsupported platform, no input delegate")
 #endif

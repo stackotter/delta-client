@@ -2,6 +2,7 @@ import SwiftUI
 import ZIPFoundation
 import DeltaCore
 
+#if os(macOS)
 enum UpdateViewState {
   case selectUpdate
   case performUpdate
@@ -102,3 +103,4 @@ struct UpdateView: View {
     }
   }
 }
+#endif

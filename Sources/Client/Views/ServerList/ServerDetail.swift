@@ -16,14 +16,17 @@ struct ServerDetail: View {
       if let result = pinger.response {
         switch result {
           case let .success(response):
-            LegacyFormattedTextView(legacyString: "\(response.description.text)", fontSize: NSFont.systemFontSize(for: .regular), alignment: .right)
-              .padding(.bottom, 8)
+            LegacyFormattedTextView(
+              legacyString: "\(response.description.text)",
+              fontSize: FontUtil.systemFontSize(for: .regular),
+              alignment: .right
+            ).padding(.bottom, 8)
             
             Text(verbatim: "\(response.players.online)/\(response.players.max) online")
             
             LegacyFormattedTextView(
               legacyString: "Version: \(response.version.name) \(response.version.protocolVersion == Constants.protocolVersion ? "" : "(incompatible)")",
-              fontSize: NSFont.systemFontSize(for: .regular),
+              fontSize: FontUtil.systemFontSize(for: .regular),
               alignment: .center
             ).padding(.bottom, 8)
             

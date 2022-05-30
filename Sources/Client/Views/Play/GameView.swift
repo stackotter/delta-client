@@ -252,9 +252,15 @@ struct GameView: View {
             Text("GPU frame capture complete")
 
             Group {
+              #if os(macOS)
               Button("Show in finder") {
                 NSWorkspace.shared.activateFileViewerSelecting([file])
               }.buttonStyle(SecondaryButtonStyle())
+              #elseif os(iOS)
+              Text("I have no clue how to get hold of the file")
+              #else
+              #error("Unsupported platform, no file opening method")
+              #endif
 
               Button("OK") {
                 model.state.pop()

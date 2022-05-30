@@ -50,10 +50,18 @@ public struct TexturePalette {
   // MARK: Loading
   
   /// Loads the texture palette present in the given directory. `type` refers to the part before the slash in the name. Like `block` in `minecraft:block/dirt`.
-  public static func load(from directory: URL, inNamespace namespace: String, withType type: String) throws -> TexturePalette {
+  public static func load(
+    from directory: URL,
+    inNamespace namespace: String,
+    withType type: String
+  ) throws -> TexturePalette {
     let files: [URL]
     do {
-      files = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil, options: [])
+      files = try FileManager.default.contentsOfDirectory(
+        at: directory,
+        includingPropertiesForKeys: nil,
+        options: []
+      )
     } catch {
       throw ResourcePackError.failedToEnumerateTextures(error)
     }
@@ -89,7 +97,8 @@ public struct TexturePalette {
           image: image,
           type: hardcodeOpaque ? .opaque : nil,
           scaledToWidth: maxWidth,
-          checkDimensions: true)
+          checkDimensions: true
+        )
         
         if texture.type == .opaque {
           texture.setAlpha(255)
@@ -97,7 +106,7 @@ public struct TexturePalette {
           // Change the color of transparent pixels to make mipmaps look more natural
           texture.fixTransparentPixels()
         }
-        
+
         if FileManager.default.fileExists(atPath: animationMetadataFile.path) {
           try texture.setAnimation(file: animationMetadataFile)
         }
@@ -114,14 +123,25 @@ public struct TexturePalette {
   // MARK: Metal
   
   /// Returns a metal texture array on the given device, containing the first frame of each texture.
-  public func createTextureArray(device: MTLDevice, animationState: ArrayTextureAnimationState, commandQueue: MTLCommandQueue) throws -> MTLTexture {
+  public func createTextureArray(
+    device: MTLDevice,
+    animationState: ArrayTextureAnimationState,
+    commandQueue: MTLCommandQueue
+  ) throws -> MTLTexture {
     let textureDescriptor = MTLTextureDescriptor()
     textureDescriptor.width = width
     textureDescriptor.height = width
     textureDescriptor.pixelFormat = .bgra8Unorm
     textureDescriptor.textureType = .type2DArray
     textureDescriptor.arrayLength = textures.count
+    #if os(macOS)
     textureDescriptor.storageMode = .managed
+    #elseif os(iOS)
+    textureDescriptor.storageMode = .shared
+    #else
+    #error("Unsupported platform, can't determine storageMode for texture")
+    #endif
+
     textureDescriptor.mipmapLevelCount = 1 + Int(log2(Double(width)).rounded(.down))
     
     guard let arrayTexture = device.makeTexture(descriptor: textureDescriptor) else {
@@ -142,7 +162,8 @@ public struct TexturePalette {
         slice: index,
         withBytes: texture.bytes.withUnsafeBytes({ $0.baseAddress!.advanced(by: offset) }),
         bytesPerRow: bytesPerRow,
-        bytesPerImage: bytesPerFrame)
+        bytesPerImage: bytesPerFrame
+      )
     }
     
     if let commandBuffer = commandQueue.makeCommandBuffer() {
@@ -180,7 +201,8 @@ public struct TexturePalette {
         slice: index,
         withBytes: texture.bytes.withUnsafeBytes({ $0.baseAddress!.advanced(by: offset) }),
         bytesPerRow: bytesPerRow,
-        bytesPerImage: bytesPerFrame)
+        bytesPerImage: bytesPerFrame
+      )
     }
     
     // TODO: only regenerate necessary mipmaps
