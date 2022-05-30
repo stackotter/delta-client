@@ -42,7 +42,7 @@ let package = Package(
       name: "DeltaClient",
       dependencies: [
         "DynamicShim",
-        "SwordRPC",
+        .product(name: "SwordRPC", package: "SwordRPC", condition: .when(platforms: [.macOS])),
         .product(name: "ArgumentParser", package: "swift-argument-parser")
       ],
       path: "Sources/Client"
