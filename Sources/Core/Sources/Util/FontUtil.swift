@@ -24,7 +24,7 @@ extension FontUtil {
   }
 
   public static func systemFontSize(for size: NSControl.ControlSize) -> CGFloat {
-    return UIFont.systemFontSize(for: size)
+    return NSFont.systemFontSize(for: size)
   }
 }
 #elseif os(iOS)

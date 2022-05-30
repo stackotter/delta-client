@@ -1,3 +1,4 @@
+#if os(macOS)
 import Foundation
 
 extension DiscordManager {
@@ -32,3 +33,4 @@ extension DiscordManager {
     }
   }
 }
+#endif
