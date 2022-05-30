@@ -13,7 +13,8 @@ public struct Keymap: Codable {
     .sneak: .leftShift,
     .sprint: .leftControl,
     .toggleDebugHUD: .f3,
-    .changePerspective: .f5
+    .changePerspective: .f5,
+    .performGPUFrameCapture: .semicolon
   ])
   
   /// The user's keybindings.
@@ -21,16 +22,14 @@ public struct Keymap: Codable {
   
   /// Creates a new keymap.
   /// - Parameter bindings: Bindings for the new keymap.
-  init(bindings: [Input : Key]) {
+  init(bindings: [Input: Key]) {
     self.bindings = bindings
   }
   
   /// - Returns: The input action for the given key if bound.
   public func getInput(for key: Key) -> Input? {
-    for (input, inputKey) in bindings {
-      if key == inputKey {
-        return input
-      }
+    for (input, inputKey) in bindings where key == inputKey {
+      return input
     }
     return nil
   }

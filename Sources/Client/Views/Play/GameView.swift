@@ -7,6 +7,7 @@ enum GameState {
   case loggingIn
   case downloadingChunks(numberReceived: Int, total: Int)
   case playing
+  case gpuFrameCaptureComplete(file: URL)
 }
 
 enum OverlayState {
@@ -50,7 +51,7 @@ class GameViewModel: ObservableObject {
   var downloadedChunksCount = Box(0)
   var serverDescriptor: ServerDescriptor
   
-  var cancellables : [AnyCancellable] = []
+  var cancellables: [AnyCancellable] = []
   
   init(client: Client, inputDelegate: ClientInputDelegate, renderCoordinator: RenderCoordinator, serverDescriptor: ServerDescriptor) {
     self.client = client
@@ -143,9 +144,15 @@ class GameViewModel: ObservableObject {
       case let disconnectEvent as LoginDisconnectEvent:
         DeltaClientApp.modalError("Disconnected from server during login:\n\n\(disconnectEvent.reason)", safeState: .serverList)
       case let packetError as PacketHandlingErrorEvent:
-        DeltaClientApp.modalError("Failed to handle packet with id 0x\(String(packetError.packetId, radix: 16)):\n\n\(packetError.error)", safeState: .serverList)
+        DeltaClientApp.modalError(
+          "Failed to handle packet with id 0x\(String(packetError.packetId, radix: 16)):\n\n\(packetError.error)",
+          safeState: .serverList
+        )
       case let packetError as PacketDecodingErrorEvent:
-        DeltaClientApp.modalError("Failed to decode packet with id 0x\(String(packetError.packetId, radix: 16)):\n\n\(packetError.error)", safeState: .serverList)
+        DeltaClientApp.modalError(
+          "Failed to decode packet with id 0x\(String(packetError.packetId, radix: 16)):\n\n\(packetError.error)",
+          safeState: .serverList
+        )
       case let generalError as ErrorEvent:
         if let message = generalError.message {
           DeltaClientApp.modalError("\(message); \(generalError.error)")
@@ -156,6 +163,16 @@ class GameViewModel: ObservableObject {
         ThreadUtil.runInMain {
           hudState.showDebugHUD.toggle()
         }
+      case .press(.performGPUFrameCapture) as InputEvent:
+        let outputFile = StorageManager.default.getUniqueGPUCaptureFile()
+        do {
+          try renderCoordinator.captureFrames(count: 10, to: outputFile)
+        } catch {
+          DeltaClientApp.modalError("Failed to start frame capture: \(error)", safeState: .serverList)
+        }
+      case let event as FinishFrameCaptureEvent:
+        inputDelegate.releaseCursor()
+        state.update(to: .gpuFrameCaptureComplete(file: event.file))
       default:
         break
     }
@@ -168,7 +185,12 @@ struct GameView: View {
   @ObservedObject var model: GameViewModel
   @Binding var cursorCaptured: Bool
   
-  init(serverDescriptor: ServerDescriptor, resourcePack: ResourcePack, inputCaptureEnabled: Binding<Bool>, delegateSetter setDelegate: (InputDelegate) -> Void) {
+  init(
+    serverDescriptor: ServerDescriptor,
+    resourcePack: ResourcePack,
+    inputCaptureEnabled: Binding<Bool>,
+    delegateSetter setDelegate: (InputDelegate) -> Void
+  ) {
     let client = Client(resourcePack: resourcePack)
     client.configuration.render = ConfigManager.default.config.render
     
@@ -183,7 +205,8 @@ struct GameView: View {
       client: client,
       inputDelegate: inputDelegate,
       renderCoordinator: renderCoordinator,
-      serverDescriptor: serverDescriptor)
+      serverDescriptor: serverDescriptor
+    )
     
     _cursorCaptured = inputCaptureEnabled
     
@@ -223,6 +246,20 @@ struct GameView: View {
             }
             
             overlayView
+          }
+        case .gpuFrameCaptureComplete(let file):
+          VStack {
+            Text("GPU frame capture complete")
+
+            Group {
+              Button("Show in finder") {
+                NSWorkspace.shared.activateFileViewerSelecting([file])
+              }.buttonStyle(SecondaryButtonStyle())
+
+              Button("OK") {
+                model.state.pop()
+              }.buttonStyle(PrimaryButtonStyle())
+            }.frame(width: 200)
           }
       }
     }

@@ -19,6 +19,8 @@ final class StorageManager {
   public var pluginsDirectory: URL
   /// Directory that should be used for caching.
   public var cacheDirectory: URL
+  /// The directory containing gpu captures.
+  public var gpuCaptureDirectory: URL
   
   private init() {
     // Get the url of the storage directory
@@ -35,6 +37,7 @@ final class StorageManager {
     registryDirectory = storageDirectory.appendingPathComponent("registries")
     pluginsDirectory = storageDirectory.appendingPathComponent("plugins")
     cacheDirectory = storageDirectory.appendingPathComponent("cache")
+    gpuCaptureDirectory = storageDirectory.appendingPathComponent("captures")
     
     let storagePath = storageDirectory.path
     log.trace("Using \(storagePath) as storage directory")
@@ -155,6 +158,16 @@ final class StorageManager {
   /// Returns the absolute URL of a path relative to the storage directory.
   public func absoluteFromRelative(_ relativePath: String) -> URL {
     return storageDirectory.appendingPathComponent(relativePath)
+  }
+  
+  /// Creates a unique GPU capture output file path of the form `capture dd-MM-yyyy HH-mm-ss.gputrace`.
+  public func getUniqueGPUCaptureFile() -> URL {
+    let date = Date()
+    let formatter = DateFormatter()
+    formatter.dateFormat = "dd-MM-yyyy HH-mm-ss"
+    
+    let fileName = "capture \(formatter.string(from: date)).gputrace"
+    return gpuCaptureDirectory.appendingPathComponent(fileName)
   }
   
   /// Create a zip backup of the storage directory.

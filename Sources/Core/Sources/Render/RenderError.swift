@@ -41,4 +41,8 @@ public enum RenderError: LocalizedError {
   case failedToMakeCounterSampleBuffer(Error)
   /// Failed to sample the GPU counters used to calculate FPS.
   case failedToSampleCounters
+  /// The current device does not support capturing a gpu trace and outputting to a file.
+  case gpuTraceNotSupported
+  /// Failed to start GPU frame capture.
+  case failedToStartCapture(Error)
 }
