@@ -43,8 +43,8 @@ public class EntityRotation: Component {
   /// - Parameters:
   ///   - pitch: The pitch in radians. -pi/2 is straight up, 0 is straight ahead, and pi/2 is straight down.
   ///   - yaw: The yaw in radians. Measured counterclockwise from the positive z axis.
-  ///   - smoothingAmount: The amount of time (in seconds) for ``smoothYaw`` and ``smoothPitch`` to transition from one position to the next.
-  ///                      Defaults to 0 seconds.
+  ///   - smoothingAmount: The amount of time (in seconds) for ``smoothYaw`` and ``smoothPitch``
+  ///     to transition from one position to the next. Defaults to 0 seconds.
   public init(pitch: Float, yaw: Float, smoothingAmount: Float = 0) {
     self.pitch = pitch
     self.yaw = yaw

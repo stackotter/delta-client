@@ -37,6 +37,18 @@ struct InputView<Content: View>: View {
   var body: some View {
     content($enabled, setDelegate)
       .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .gesture(TapGesture(count: 2).onEnded { _ in
+        delegateWrapper.delegate?.onKeyDown(.escape)
+      })
+      .gesture(TapGesture(count: 3).onEnded { _ in
+        delegateWrapper.delegate?.onKeyDown(.f3)
+      })
+      .gesture(DragGesture(minimumDistance: 10, coordinateSpace: .global).onChanged { value in
+        delegateWrapper.delegate?.onMouseMove(
+          Float(value.translation.width),
+          Float(value.translation.height)
+        )
+      })
       .onAppear {
         #if os(macOS)
         if !model.monitorsAdded {
