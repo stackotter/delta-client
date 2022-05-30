@@ -40,10 +40,9 @@ To build Delta Client you'll first need to install Xcode and the latest version 
 # Clone Delta Client
 git clone https://github.com/stackotter/delta-client
 cd delta-client
-git checkout dev # choose a different branch if you desire
 
 # Perform a release build, output the bundled app to the current directory
-swift bundler bundle -c release -o .
+sh ./build.sh
 
 # If you want to develop Delta Client using Xcode, run the following command
 swift bundler generate-xcode-support

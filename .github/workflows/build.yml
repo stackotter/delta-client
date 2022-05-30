@@ -21,7 +21,9 @@ jobs:
           chmod +x ./swift-bundler
           cp ./swift-bundler /usr/local/bin
       - name: Build
-        run: ./swift-bundler bundle -c release -o . -u
+        run: |
+          ./swift-bundler bundle -c release -o . -u
+          plutil -insert MetalCaptureEnabled -bool YES DeltaClient.app/Contents/Info.plist
       - name: Zip .app
         run: zip -r DeltaClient.zip DeltaClient.app
       - name: Upload artifact
