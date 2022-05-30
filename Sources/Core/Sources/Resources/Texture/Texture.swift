@@ -1,5 +1,11 @@
 import Foundation
+#if os(macOS)
 import ColorSync
+#elseif os(iOS)
+import UIKit
+#else
+#error("Unsupported platform, ColorSync not available")
+#endif
 import ZippyJSON
 
 public enum TextureError: LocalizedError {
@@ -100,10 +106,15 @@ public struct Texture {
     height = scaleFactor * image.height
     
     let colorSpace = CGColorSpaceCreateDeviceRGB()
-    let bitmapInfo = UInt32(Int(kColorSyncAlphaPremultipliedFirst.rawValue) | kColorSyncByteOrder32Little)
+    let bitmapInfo = CGImageAlphaInfo.premultipliedFirst.rawValue | CGImageByteOrderInfo.order32Little.rawValue
     
     bytes = try image.getBytes(with: colorSpace, and: bitmapInfo, scaledBy: scaleFactor)
-    self.type = type ?? Self.typeOfTexture(withBytes: bytes, width: width, height: height, bytesPerPixel: image.bitsPerPixel / 8)
+    self.type = type ?? Self.typeOfTexture(
+      withBytes: bytes,
+      width: width,
+      height: height,
+      bytesPerPixel: image.bitsPerPixel / 8
+    )
     
     if self.type == .translucent {
       unpremultiply()

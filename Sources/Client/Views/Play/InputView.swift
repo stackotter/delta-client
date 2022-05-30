@@ -10,7 +10,9 @@ final class InputDelegateWrapper {
 
 final class InputViewModel {
   var monitorsAdded = false
+  #if os(macOS)
   var previousModifierFlags: NSEvent.ModifierFlags?
+  #endif
   
   init() {}
 }

@@ -1,6 +1,10 @@
 import Foundation
 import Parsing
-import AppKit
+
+#if os(iOS)
+import CoreGraphics
+import UIKit
+#endif
 
 /// Text formatted using legacy formatting codes.
 ///
@@ -73,7 +77,7 @@ public struct LegacyFormattedText {
   /// Parameter fontSize: The size of font to use.
   /// Returns: The formatted string.
   public func attributedString(fontSize: CGFloat) -> NSAttributedString {
-    let font = NSFont.systemFont(ofSize: fontSize)
+    let font = FontUtil.systemFont(ofSize: fontSize)
 
     let output = NSMutableAttributedString(string: "")
     for token in tokens {
@@ -81,7 +85,7 @@ public struct LegacyFormattedText {
       var font = font
       
       if let color = token.color {
-        let color = NSColor(hexString: color.hex)
+        let color = ColorUtil.color(fromHexString: color.hex)
         attributes[.foregroundColor] = color
         attributes[.strikethroughColor] = color
         attributes[.underlineColor] = color

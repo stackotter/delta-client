@@ -1,6 +1,7 @@
 import SwiftUI
 import DeltaCore
 
+#if os(macOS)
 struct PluginSettingsView: View {
   @EnvironmentObject var pluginEnvironment: PluginEnvironment
   
@@ -100,3 +101,4 @@ struct PluginSettingsView: View {
 		}
 	}
 }
+#endif

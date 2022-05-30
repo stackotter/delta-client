@@ -1,6 +1,7 @@
 import Foundation
 
 enum Utils {
+  #if os(macOS)
   /// Runs a shell command.
   static func shell(_ command: String) {
     let task = Process()
@@ -20,4 +21,5 @@ enum Utils {
     task.launch()
     exit(0)
   }
+  #endif
 }

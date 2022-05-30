@@ -1,4 +1,5 @@
 import SwiftUI
+import DeltaCore
 
 struct ErrorView: View {
   @EnvironmentObject var modalState: StateWrapper<ModalState>
@@ -10,7 +11,7 @@ struct ErrorView: View {
   var body: some View {
     VStack {
       if message.contains("§") {
-        LegacyFormattedTextView(legacyString: message, fontSize: NSFont.systemFontSize(for: .regular))
+        LegacyFormattedTextView(legacyString: message, fontSize: FontUtil.systemFontSize(for: .regular))
       } else {
         Text(message)
       }

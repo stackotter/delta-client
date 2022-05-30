@@ -30,6 +30,7 @@ struct LegacyFormattedTextView: View {
   }
 }
 
+#if os(macOS)
 struct NSAttributedTextView: NSViewRepresentable {
   var attributedString: NSAttributedString
   var alignment: NSTextAlignment
@@ -48,3 +49,23 @@ struct NSAttributedTextView: NSViewRepresentable {
     label.alignment = .left
   }
 }
+#elseif os(iOS)
+struct NSAttributedTextView: UIViewRepresentable {
+  var attributedString: NSAttributedString
+  var alignment: NSTextAlignment
+  
+  func makeUIView(context: Context) -> some UIView {
+    let label = UILabel()
+    label.backgroundColor = .clear
+    label.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    return label
+  }
+  
+  func updateUIView(_ uiView: UIViewType, context: Context) {
+    guard let label = uiView as? UILabel else { return }
+    label.attributedText = attributedString
+  }
+}
+#else
+#error("Unsupported platform, no NSAttributedTextView")
+#endif
