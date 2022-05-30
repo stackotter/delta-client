@@ -1,8 +1,8 @@
+#if os(macOS)
 import SwiftUI
 import DeltaCore
 import ZippyJSON
 
-#if os(macOS)
 /// Used to update the client to either the latest successful CI build or the latest GitHub release.
 public final class Updater: ObservableObject {
   /// The type of update this updater will perform.
