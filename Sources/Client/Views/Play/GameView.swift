@@ -257,6 +257,7 @@ struct GameView: View {
                 NSWorkspace.shared.activateFileViewerSelecting([file])
               }.buttonStyle(SecondaryButtonStyle())
               #elseif os(iOS)
+              // TODO: Add a file sharing menu for iOS
               Text("I have no clue how to get hold of the file")
               #else
               #error("Unsupported platform, no file opening method")
@@ -314,6 +315,10 @@ struct GameView: View {
           .font(.system(size: 20))
           .blendMode(.difference)
       }
+
+      #if os(iOS)
+      movementControls
+      #endif
     }
   }
   
@@ -330,7 +335,7 @@ struct GameView: View {
       Text("Frame time: \(String(format: "%.01f", averageFrameTime))ms")
       let averageCPUTime = (renderStats.averageCPUTime * 1000.0).rounded(toPlaces: 1)
       Text("CPU time: \(String(format: "%.01f", averageCPUTime))ms")
-      
+
       if let averageGPUTime = renderStats.averageGPUTime {
         let averageGPUTime = (averageGPUTime * 1000.0).rounded(toPlaces: 1)
         Text("GPU time: \(String(format: "%.01f", averageGPUTime))ms")
@@ -405,6 +410,47 @@ struct GameView: View {
       }
     }
   }
+
+  #if os(iOS)
+  var movementControls: some View {
+    VStack {
+      Spacer()
+      HStack {
+        HStack(alignment: .bottom) {
+          movementControl("a", .strafeLeft)
+          VStack {
+            movementControl("w", .moveForward)
+            movementControl("s", .moveBackward)
+          }
+          movementControl("d", .strafeRight)
+        }
+        Spacer()
+        VStack {
+          movementControl("*", .jump)
+          movementControl("_", .sneak)
+        }
+      }
+    }
+  }
+
+  func movementControl(_ label: String, _ input: Input) -> some View {
+    return ZStack {
+      Color.blue.frame(width: 50, height: 50)
+      Text(label)
+    }.onLongPressGesture(
+      minimumDuration: 100000000000,
+      maximumDistance: 50,
+      perform: { return },
+      onPressingChanged: { isPressing in
+        if isPressing {
+          model.client.press(input)
+        } else {
+          model.client.release(input)    
+        }
+      }  
+    )
+  }
+  #endif
   
   func disconnect() {
     appState.update(to: .serverList)
