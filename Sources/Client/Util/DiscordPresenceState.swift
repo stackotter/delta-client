@@ -1,4 +1,3 @@
-#if os(macOS)
 import Foundation
 
 extension DiscordManager {
@@ -7,7 +6,7 @@ extension DiscordManager {
     /// The user is not currently connected to a server.
     case menu
     /// The user is playing on a server.
-    case game(server:String?)
+    case game(server: String?)
     
     /// Shown as the state of the game in Discord. Displayed under the name 'Delta Client'.
     var title: String {
@@ -33,4 +32,3 @@ extension DiscordManager {
     }
   }
 }
-#endif
