@@ -37,10 +37,11 @@ struct InputView<Content: View>: View {
   var body: some View {
     content($enabled, setDelegate)
       .frame(maxWidth: .infinity, maxHeight: .infinity)
+      #if os(iOS)
       .gesture(TapGesture(count: 2).onEnded { _ in
         delegateWrapper.delegate?.onKeyDown(.escape)
       })
-      .gesture(TapGesture(count: 3).onEnded { _ in
+      .gesture(LongPressGesture(minimumDuration: 2, maximumDistance: 9).onEnded { _ in
         delegateWrapper.delegate?.onKeyDown(.f3)
       })
       .gesture(DragGesture(minimumDistance: 10, coordinateSpace: .global).onChanged { value in
@@ -49,8 +50,9 @@ struct InputView<Content: View>: View {
           Float(value.translation.height)
         )
       })
+      #endif
+      #if os(macOS)
       .onAppear {
-        #if os(macOS)
         if !model.monitorsAdded {
           NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged], handler: { event in
             if !enabled {
@@ -155,7 +157,7 @@ struct InputView<Content: View>: View {
           })
         }
         model.monitorsAdded = true
-        #endif
       }
+      #endif
   }
 }

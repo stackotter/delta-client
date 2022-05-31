@@ -157,7 +157,8 @@ public struct TexturePalette {
       arrayTexture.replace(
         region: MTLRegion(
           origin: MTLOrigin(x: 0, y: 0, z: 0),
-          size: MTLSize(width: width, height: width, depth: 1)),
+          size: MTLSize(width: width, height: width, depth: 1)
+        ),
         mipmapLevel: 0,
         slice: index,
         withBytes: texture.bytes.withUnsafeBytes({ $0.baseAddress!.advanced(by: offset) }),
@@ -196,7 +197,8 @@ public struct TexturePalette {
       arrayTexture.replace(
         region: MTLRegion(
           origin: MTLOrigin(x: 0, y: 0, z: 0),
-          size: MTLSize(width: width, height: width, depth: 1)),
+          size: MTLSize(width: width, height: width, depth: 1)
+        ),
         mipmapLevel: 0,
         slice: index,
         withBytes: texture.bytes.withUnsafeBytes({ $0.baseAddress!.advanced(by: offset) }),

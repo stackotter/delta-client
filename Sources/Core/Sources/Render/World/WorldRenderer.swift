@@ -47,7 +47,8 @@ public final class WorldRenderer: Renderer {
       label: "dev.stackotter.delta-client.WorldRenderer",
       vertexFunction: vertexFunction,
       fragmentFunction: fragmentFunction,
-      blendingEnabled: true)
+      blendingEnabled: true
+    )
     
     // Create world mesh
     worldMesh = WorldMesh(client.game.world, resources: resources)
@@ -77,7 +78,10 @@ public final class WorldRenderer: Renderer {
     
     stopwatch.startMeasurement("arrayTexture.update")
     // Update animated textures
+    #if os(macOS)
+    // TODO: Figure out why array texture updates perform so terribly on iOS
     arrayTexture.update(tick: client.game.tickScheduler.tickNumber, device: device, commandQueue: commandQueue)
+    #endif
     stopwatch.stopMeasurement("arrayTexture.update")
     
     stopwatch.startMeasurement("setup render pass")

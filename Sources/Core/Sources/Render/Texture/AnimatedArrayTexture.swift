@@ -25,6 +25,7 @@ public struct AnimatedArrayTexture {
       arrayTexture: texture,
       animationState: state,
       updatedTextures: updatedTextures,
-      commandQueue: commandQueue)
+      commandQueue: commandQueue
+    )
   }
 }
