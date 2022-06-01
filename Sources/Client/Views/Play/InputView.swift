@@ -44,7 +44,7 @@ struct InputView<Content: View>: View {
       .gesture(LongPressGesture(minimumDuration: 2, maximumDistance: 9).onEnded { _ in
         delegateWrapper.delegate?.onKeyDown(.f3)
       })
-      .gesture(DragGesture(minimumDistance: 10, coordinateSpace: .global).onChanged { value in
+      .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global).onChanged { value in
         delegateWrapper.delegate?.onMouseMove(
           Float(value.translation.width),
           Float(value.translation.height)
