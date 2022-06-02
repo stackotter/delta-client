@@ -1,19 +1,6 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.6
 
 import PackageDescription
-
-var dependencies: [Package.Dependency] = [
-    // See Notes/PluginSystem.md for more details on the architecture of the project in regards to dependencies, targets and linking
-    // In short, the dependencies for DeltaCore can be found in Sources/Core/Package.swift
-    .package(name: "DeltaCore", path: "Sources/Core"),
-    .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
-    .package(url: "https://github.com/stackotter/SwordRPC", .revision("3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed")),
-]
-
-#if swift(>=5.6)
-// Add linter if swift version is high enough
-dependencies.append(.package(url: "https://github.com/stackotter/swift-lint-plugin", from: "0.1.0"))
-#endif
 
 let package = Package(
   name: "DeltaClient",
@@ -21,41 +8,73 @@ let package = Package(
   products: [
     .executable(
       name: "DeltaClient",
-      targets: ["DeltaClient"]),
-
-    // Importing DynamicShim as a dependency in your own project will in effect just import DeltaCore, DeltaCoreC and PluginAPI but will use dynamic linking
+      targets: ["DeltaClient"]
+    ),
     .library(
-      name: "DynamicShim",
-      targets: ["DynamicShim"]),
-    
-    // Importing StaticShim as a dependency in your own project will just import DeltaCore, DeltaCoreC and PluginAPI and will use static linking
+      name: "DeltaCore",
+      type: .dynamic,
+      targets: ["DeltaCore"]
+    ),
     .library(
-      name: "StaticShim",
-      targets: ["StaticShim"]),
+      name: "StaticDeltaCore",
+      type: .static,
+      targets: ["DeltaCore"]
+    )
   ],
-  dependencies: dependencies,
+  dependencies: [
+    .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
+    .package(url: "https://github.com/stackotter/SwordRPC", .revision("3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed")),
+    .package(name: "ZIPFoundation", url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.0"),
+    .package(name: "IDZSwiftCommonCrypto", url: "https://github.com/iosdevzone/IDZSwiftCommonCrypto", from: "0.13.1"),
+    .package(name: "DeltaLogger", url: "https://github.com/stackotter/delta-logger", .branch("main")),
+    .package(name: "NioDNS", url: "https://github.com/OpenKitten/NioDNS", from: "1.0.2"),
+    .package(name: "SwiftProtobuf", url: "https://github.com/apple/swift-protobuf.git", from: "1.6.0"),
+    .package(name: "swift-collections", url: "https://github.com/apple/swift-collections.git", from: "0.0.7"),
+    .package(name: "Concurrency", url: "https://github.com/uber/swift-concurrency.git", from: "0.7.1"),
+    .package(name: "FirebladeECS", url: "https://github.com/stackotter/ecs.git", .branch("master")),
+    .package(name: "ZippyJSON", url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
+    .package(url: "https://github.com/pointfreeco/swift-parsing", .exact("0.8.0")),
+    .package(url: "https://github.com/stackotter/swift-lint-plugin", from: "0.1.0")
+  ],
   targets: [
     .executableTarget(
       name: "DeltaClient",
       dependencies: [
-        "DynamicShim",
         "SwordRPC",
-        .product(name: "ArgumentParser", package: "swift-argument-parser"),
+        .product(name: "DeltaCore", package: "DeltaClient"),
+        .product(name: "ArgumentParser", package: "swift-argument-parser")
       ],
-      path: "Sources/Client"),
+      path: "Sources/Client"
+    ),
     
     .target(
-      name: "DynamicShim",
+      name: "DeltaCore",
       dependencies: [
-        .product(name: "DeltaCore", package: "DeltaCore"),
+        "DeltaLogger",
+        "ZIPFoundation",
+        "IDZSwiftCommonCrypto",
+        "NioDNS",
+        "SwiftProtobuf",
+        "Concurrency",
+        "FirebladeECS",
+        "ZippyJSON",
+        .product(name: "Parsing", package: "swift-parsing"),
+        .product(name: "Collections", package: "swift-collections")
       ],
-      path: "Sources/Exporters/DynamicShim"),
-    
-    .target(
-      name: "StaticShim",
-      dependencies: [
-        .product(name: "StaticDeltaCore", package: "DeltaCore"),
+      path: "Sources/Core",
+      exclude: [
+        "Cache/Protobuf/BlockModelPalette.proto",
+        "Cache/Protobuf/BlockRegistry.proto",
+        "Cache/Protobuf/Compile.sh"
       ],
-      path: "Sources/Exporters/StaticShim"),
+      resources: [
+        .process("Render/Shader/")
+      ]
+    ),
+
+    .testTarget(
+      name: "DeltaCoreUnitTests",
+      dependencies: ["DeltaCore"]
+    )
   ]
 )
