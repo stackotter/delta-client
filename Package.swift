@@ -3,11 +3,11 @@
 import PackageDescription
 
 var dependencies: [Package.Dependency] = [
-    // See Notes/PluginSystem.md for more details on the architecture of the project in regards to dependencies, targets and linking
-    // In short, the dependencies for DeltaCore can be found in Sources/Core/Package.swift
-    .package(name: "DeltaCore", path: "Sources/Core"),
-    .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
-    .package(url: "https://github.com/stackotter/SwordRPC", .revision("3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed"))
+  // See Notes/PluginSystem.md for more details on the architecture of the project in regards to dependencies, targets and linking
+  // In short, the dependencies for DeltaCore can be found in Sources/Core/Package.swift
+  .package(name: "DeltaCore", path: "Sources/Core"),
+  .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
+  .package(url: "https://github.com/stackotter/SwordRPC", .revision("3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed"))
 ]
 
 #if swift(>=5.6)

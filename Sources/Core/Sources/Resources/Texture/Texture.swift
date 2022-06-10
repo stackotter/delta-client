@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 #if os(macOS)
 import ColorSync
 #elseif os(iOS)
