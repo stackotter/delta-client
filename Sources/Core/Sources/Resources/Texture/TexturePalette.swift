@@ -1,5 +1,6 @@
 import Foundation
 import MetalKit
+import CoreGraphics
 
 public struct TexturePalette {
   /// The width of the textures in this palette. The heights will be multiples of this number.
