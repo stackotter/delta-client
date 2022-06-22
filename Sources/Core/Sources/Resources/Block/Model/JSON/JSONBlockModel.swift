@@ -1,5 +1,4 @@
 import Foundation
-import ZippyJSON
 
 /// The structure of a block model as read from a resource pack.
 public struct JSONBlockModel: Codable {
@@ -84,7 +83,7 @@ extension JSONBlockModel {
     // swiftlint:enable force_unwrapping
     
     // Load JSON
-    let models: [String: JSONBlockModel] = try ZippyJSONDecoder().decode([String: JSONBlockModel].self, from: json)
+    let models: [String: JSONBlockModel] = try CustomJSONDecoder().decode([String: JSONBlockModel].self, from: json)
     
     // Convert from [String: JSONBlockModel] to [Identifier: JSONBlockModel]
     var identifiedModels: [Identifier: JSONBlockModel] = [:]

@@ -1,5 +1,4 @@
 import Foundation
-import ZippyJSON
 
 /// Allows `Codable` registries to automatically be cached using JSON.
 ///
@@ -24,7 +23,7 @@ public extension JSONCachableRegistry {
   static func loadCached(from cacheDirectory: URL) throws -> Self {
     do {
       let data = try Data(contentsOf: cacheDirectory.appendingPathComponent(getCacheFileName()))
-      return try ZippyJSONDecoder().decode(Self.self, from: data)
+      return try CustomJSONDecoder().decode(Self.self, from: data)
     } catch {
       throw JSONCachableRegistryError.failedToLoadFromCache(Self.self, error)
     }

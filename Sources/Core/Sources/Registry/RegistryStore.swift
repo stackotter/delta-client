@@ -1,5 +1,4 @@
 import Foundation
-import ZippyJSON
 
 /// Holds static Minecraft data such as biomes, fluids and blocks. Delta Client populates it launch.
 public struct RegistryStore {

@@ -1,5 +1,4 @@
 import Foundation
-import ZippyJSON
 
 public enum MojangAPIError: LocalizedError {
   case failedToDeserializeResponse(String)
@@ -32,7 +31,7 @@ public enum MojangAPI {
     
     let (_, data) = try await RequestUtil.performJSONRequest(url: authenticationURL, body: payload, method: .post)
     
-    guard let response = try? ZippyJSONDecoder().decode(MojangAuthenticationResponse.self, from: data) else {
+    guard let response = try? CustomJSONDecoder().decode(MojangAuthenticationResponse.self, from: data) else {
       throw MojangAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
     }
     
@@ -82,7 +81,7 @@ public enum MojangAPI {
     
     let (_, data) = try await RequestUtil.performJSONRequest(url: refreshURL, body: payload, method: .post)
     
-    guard let response = try? ZippyJSONDecoder().decode(MojangRefreshTokenResponse.self, from: data) else {
+    guard let response = try? CustomJSONDecoder().decode(MojangRefreshTokenResponse.self, from: data) else {
       throw MojangAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
     }
     

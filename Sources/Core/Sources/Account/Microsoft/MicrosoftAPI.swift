@@ -1,5 +1,4 @@
 import Foundation
-import ZippyJSON
 
 public enum MicrosoftAPIError: LocalizedError {
   case invalidRedirectURL
@@ -334,7 +333,7 @@ public enum MicrosoftAPI {
   /// - Returns: The decoded response.
   private static func decodeResponse<Response: Decodable>(_ data: Data) throws -> Response {
     do {
-      return try ZippyJSONDecoder().decode(Response.self, from: data)
+      return try CustomJSONDecoder().decode(Response.self, from: data)
     } catch {
       throw MicrosoftAPIError.failedToDeserializeResponse(error, String(data: data, encoding: .utf8) ?? "")
     }
