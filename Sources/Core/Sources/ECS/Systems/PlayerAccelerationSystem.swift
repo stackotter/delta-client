@@ -1,5 +1,5 @@
 import FirebladeECS
-import simd
+import FirebladeMath
 
 public struct PlayerAccelerationSystem: System {
   static let sneakMultiplier: Double = 0.3
@@ -64,8 +64,8 @@ public struct PlayerAccelerationSystem: System {
     impulse *= speed
     
     let rotationMatrix = MatrixUtil.rotationMatrix(y: Double(rotation.yaw))
-    impulse = simd_make_double3(SIMD4<Double>(impulse, 1) * rotationMatrix)
-    
+    impulse = Vec3d(SIMD4<Double>(impulse, 1) * rotationMatrix)
+
     acceleration.vector = impulse
   }
   

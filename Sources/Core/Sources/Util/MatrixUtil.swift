@@ -1,8 +1,8 @@
 import Foundation
-import simd
+import FirebladeMath
 
 public enum MatrixUtil {
-  public static var identity = matrix_float4x4(1)
+  public static var identity = Mat4x4f([1])
   
   public static func translationMatrix(_ translation: SIMD3<Float>) -> matrix_float4x4 {
     var matrix = matrix_float4x4(1)
@@ -71,7 +71,7 @@ public enum MatrixUtil {
   }
   
   /// Returns the rotation matrix applying the rotations in the order of x, then y and then z.
-  public static func rotationMatrix(_ rotation: SIMD3<Float>) -> matrix_float4x4 {
+  public static func rotationMatrix(_ rotation: SIMD3<Float>) -> Mat4x4f {
     let matrix = rotationMatrix(x: rotation.x)
       * rotationMatrix(y: rotation.y)
       * rotationMatrix(z: rotation.z)
@@ -79,14 +79,14 @@ public enum MatrixUtil {
   }
   
   /// Returns the rotation matrix applying the rotations in the order of x, then y and then z.
-  public static func rotationMatrix(_ rotation: SIMD3<Double>) -> matrix_double4x4 {
+  public static func rotationMatrix(_ rotation: SIMD3<Double>) -> Mat4x4f {
     let matrix = rotationMatrix(x: rotation.x)
     * rotationMatrix(y: rotation.y)
     * rotationMatrix(z: rotation.z)
     return matrix
   }
   
-  public static func rotationMatrix(_ radians: Float, around axis: Axis) -> matrix_float4x4 {
+  public static func rotationMatrix(_ radians: Float, around axis: Axis) -> Mat4x4f {
     switch axis {
       case .x:
         return rotationMatrix(x: radians)
@@ -97,7 +97,7 @@ public enum MatrixUtil {
     }
   }
   
-  public static func rotationMatrix(_ radians: Double, around axis: Axis) -> matrix_double4x4 {
+  public static func rotationMatrix(_ radians: Double, around axis: Axis) -> Mat4x4f {
     switch axis {
       case .x:
         return rotationMatrix(x: radians)
@@ -108,7 +108,7 @@ public enum MatrixUtil {
     }
   }
   
-  public static func rotationMatrix(x: Float) -> matrix_float4x4 {
+  public static func rotationMatrix(x: Float) -> Mat4x4f {
     var matrix = matrix_float4x4(1)
     matrix.columns.1 = [
       0,
@@ -126,7 +126,7 @@ public enum MatrixUtil {
     return matrix
   }
   
-  public static func rotationMatrix(x: Double) -> matrix_double4x4 {
+  public static func rotationMatrix(x: Double) -> Mat4x4f {
     var matrix = matrix_double4x4(1)
     matrix.columns.1 = [
       0,
@@ -144,7 +144,7 @@ public enum MatrixUtil {
     return matrix
   }
   
-  public static func rotationMatrix(y: Float) -> matrix_float4x4 {
+  public static func rotationMatrix(y: Float) -> Mat4x4f {
     var matrix = matrix_float4x4(1)
     matrix.columns.0 = [
       cos(y),
@@ -162,7 +162,7 @@ public enum MatrixUtil {
     return matrix
   }
   
-  public static func rotationMatrix(y: Double) -> matrix_double4x4 {
+  public static func rotationMatrix(y: Double) -> Mat4x4d {
     var matrix = matrix_double4x4(1)
     matrix.columns.0 = [
       cos(y),
@@ -180,7 +180,7 @@ public enum MatrixUtil {
     return matrix
   }
   
-  public static func rotationMatrix(z: Float) -> matrix_float4x4 {
+  public static func rotationMatrix(z: Float) -> Mat4x4f {
     var matrix = matrix_float4x4(1)
     matrix.columns.0 = [
       cos(z),
@@ -198,7 +198,7 @@ public enum MatrixUtil {
     return matrix
   }
   
-  public static func rotationMatrix(z: Double) -> matrix_double4x4 {
+  public static func rotationMatrix(z: Double) -> Mat4x4f {
     var matrix = matrix_double4x4(1)
     matrix.columns.0 = [
       cos(z),

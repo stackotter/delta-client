@@ -1,10 +1,10 @@
 import Foundation
-import simd
+import FirebladeMath
 
-extension matrix_float4x4 {
+extension Mat4x4f {
   func data() -> Data {
     var mutableSelf = self
-    let data = Data(bytes: &mutableSelf, count: MemoryLayout<matrix_float4x4>.size)
+    let data = Data(bytes: &mutableSelf, count: MemoryLayout<Mat4x4f>.size)
     return data
   }
   
@@ -13,8 +13,9 @@ extension matrix_float4x4 {
       throw BlockModelPaletteError.invalidMatrixDataLength(data.count)
     }
     
-    self.init()
-    _ = withUnsafeMutableBytes(of: &self.columns) {
+    self.init(scale: .one)
+    var columns = self.columns
+    _ = withUnsafeMutableBytes(of: &columns) {
       data.copyBytes(to: $0)
     }
   }

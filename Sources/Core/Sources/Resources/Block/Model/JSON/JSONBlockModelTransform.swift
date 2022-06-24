@@ -1,5 +1,5 @@
 import Foundation
-import simd
+import FirebladeMath
 
 /// Block model transform as read from block model json file in resource packs.
 /// Translation is applied before rotation.
@@ -12,7 +12,7 @@ public struct JSONBlockModelTransform: Codable {
   public var scale: [Double]?
   
   /// Returns a transformation matrix representing this transform.
-  public func toMatrix() throws -> matrix_float4x4 {
+  public func toMatrix() throws -> Mat4x4f {
     var matrix = MatrixUtil.identity
     
     if let translation = self.translation {

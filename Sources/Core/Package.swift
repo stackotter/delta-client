@@ -11,6 +11,7 @@ var dependencies: [Package.Dependency] = [
   .package(name: "swift-collections", url: "https://github.com/apple/swift-collections.git", from: "0.0.7"),
   .package(name: "Concurrency", url: "https://github.com/uber/swift-concurrency.git", from: "0.7.1"),
   .package(name: "FirebladeECS", url: "https://github.com/stackotter/ecs.git", .branch("master")),
+  .package(name: "FirebladeMath", url: "https://github.com/fireblade-engine/math", .branch("master")),
   .package(name: "ZippyJSON", url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
   .package(url: "https://github.com/pointfreeco/swift-parsing", .exact("0.8.0"))
 ]
@@ -39,6 +40,7 @@ let package = Package(
         "SwiftProtobuf",
         "Concurrency",
         "FirebladeECS",
+        "FirebladeMath",
         .product(name: "ZippyJSON", package: "ZippyJSON", condition: .when(platforms: [.macOS])),
         .product(name: "Parsing", package: "swift-parsing"),
         .product(name: "Collections", package: "swift-collections")

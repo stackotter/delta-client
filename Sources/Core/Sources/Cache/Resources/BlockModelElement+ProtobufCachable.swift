@@ -1,8 +1,8 @@
-import simd
+import FirebladeMath
 
 extension BlockModelElement: ProtobufCachable {
   public init(from message: ProtobufBlockModelElement) throws {
-    transformation = try matrix_float4x4(from: message.transformation)
+    transformation = try Mat4x4f(from: message.transformation)
     shade = message.shade
     
     faces.reserveCapacity(message.faces.count)

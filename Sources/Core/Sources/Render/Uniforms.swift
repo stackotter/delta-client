@@ -1,14 +1,14 @@
 import Foundation
-import simd
+import FirebladeMath
 
 public struct Uniforms {
-  public var transformation: matrix_float4x4
+  public var transformation: Mat4x4f
   
-  public init(transformation: matrix_float4x4) {
+  public init(transformation: Mat4x4f) {
     self.transformation = transformation
   }
   
   public init() {
-    transformation = matrix_float4x4(1)
+    transformation = Mat4x4f(1)
   }
 }

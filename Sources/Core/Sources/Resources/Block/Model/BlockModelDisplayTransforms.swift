@@ -1,33 +1,33 @@
 import Foundation
-import simd
+import FirebladeMath
 
 public struct BlockModelDisplayTransforms {
   /// Transform to use for block in right hand in third person.
-  public var thirdPersonRightHand: matrix_float4x4
+  public var thirdPersonRightHand: Mat4x4f
   /// Transform to use for block in left hand in third person.
-  public var thirdPersonLeftHand: matrix_float4x4
+  public var thirdPersonLeftHand: Mat4x4f
   /// Transform to use for block in right hand in first person.
-  public var firstPersonRightHand: matrix_float4x4
+  public var firstPersonRightHand: Mat4x4f
   /// Transform to use for block in left hand in first person.
-  public var firstPersonLeftHand: matrix_float4x4
+  public var firstPersonLeftHand: Mat4x4f
   /// Transform to use for block in inventory.
-  public var gui: matrix_float4x4
+  public var gui: Mat4x4f
   /// Transform to use for block on head?
-  public var head: matrix_float4x4
+  public var head: Mat4x4f
   /// Transform to use for block on the ground.
-  public var ground: matrix_float4x4
+  public var ground: Mat4x4f
   /// Transform to use for block in item frames.
-  public var fixed: matrix_float4x4
+  public var fixed: Mat4x4f
   
   public init(
-    thirdPersonRightHand: matrix_float4x4,
-    thirdPersonLeftHand: matrix_float4x4,
-    firstPersonRightHand: matrix_float4x4,
-    firstPersonLeftHand: matrix_float4x4,
-    gui: matrix_float4x4,
-    head: matrix_float4x4,
-    ground: matrix_float4x4,
-    fixed: matrix_float4x4
+    thirdPersonRightHand: Mat4x4f,
+    thirdPersonLeftHand: Mat4x4f,
+    firstPersonRightHand: Mat4x4f,
+    firstPersonLeftHand: Mat4x4f,
+    gui: Mat4x4f,
+    head: Mat4x4f,
+    ground: Mat4x4f,
+    fixed: Mat4x4f
   ) {
     self.thirdPersonRightHand = thirdPersonRightHand
     self.thirdPersonLeftHand = thirdPersonLeftHand

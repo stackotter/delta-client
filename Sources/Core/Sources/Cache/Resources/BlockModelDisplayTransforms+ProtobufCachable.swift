@@ -1,15 +1,15 @@
-import simd
+import FirebladeMath
 
 extension BlockModelDisplayTransforms: ProtobufCachable {
   public init(from message: ProtobufDisplayTransforms) throws {
-    thirdPersonRightHand = try matrix_float4x4(from: message.thirdPersonRightHand)
-    thirdPersonLeftHand = try matrix_float4x4(from: message.thirdPersonLeftHand)
-    firstPersonRightHand = try matrix_float4x4(from: message.firstPersonRightHand)
-    firstPersonLeftHand = try matrix_float4x4(from: message.firstPersonLeftHand)
-    gui = try matrix_float4x4(from: message.gui)
-    head = try matrix_float4x4(from: message.head)
-    ground = try matrix_float4x4(from: message.ground)
-    fixed = try matrix_float4x4(from: message.fixed)
+    thirdPersonRightHand = try Mat4x4f(from: message.thirdPersonRightHand)
+    thirdPersonLeftHand = try Mat4x4f(from: message.thirdPersonLeftHand)
+    firstPersonRightHand = try Mat4x4f(from: message.firstPersonRightHand)
+    firstPersonLeftHand = try Mat4x4f(from: message.firstPersonLeftHand)
+    gui = try Mat4x4f(from: message.gui)
+    head = try Mat4x4f(from: message.head)
+    ground = try Mat4x4f(from: message.ground)
+    fixed = try Mat4x4f(from: message.fixed)
   }
   
   public func cached() -> ProtobufDisplayTransforms {

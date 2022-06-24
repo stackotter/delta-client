@@ -1,5 +1,5 @@
 import Foundation
-import simd
+import FirebladeMath
 
 public enum MathError: LocalizedError {
   case invalidVector
@@ -102,5 +102,23 @@ public enum MathUtil {
   @_specialize(where T:_Trivial)
   public static func clamp<T>(_ value: T, _ minValue: T, _ maxValue: T) -> T where T: Comparable {
     return min(max(value, minValue), maxValue)
+  }
+}
+
+public func * (lhs: Vec4d, rhs: Mat4x4d) -> Vec4d {
+  multiply(lhs, rhs)
+}
+
+extension SIMD3: Comparable where Scalar: Comparable {
+  static func < (lhs: Self, rhs: Self) -> Bool {
+    if lhs.x != rhs.x {
+      return lhs.x < rhs.x
+    }
+    if lhs.y != rhs.y {
+      return lhs.y < rhs.y
+    }
+    if lhs.z != rhs.z {
+      return lhs.z < rhs.z
+    }
   }
 }

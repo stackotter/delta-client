@@ -1,5 +1,3 @@
-import simd
-
 extension SIMD3: ProtobufCachable where Scalar == Float {
   public init(from message: ProtobufVec3f) {
     self.init(
