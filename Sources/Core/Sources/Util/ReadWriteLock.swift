@@ -1,5 +1,8 @@
-import Darwin
-import Concurrency
+#if os(macOS)
+  import Darwin
+#else
+  import SwiftGlibc
+#endif
 
 /// A wrapper around the rwlock C api (`pthread_rwlock_t`).
 public final class ReadWriteLock {
