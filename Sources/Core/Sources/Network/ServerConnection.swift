@@ -100,8 +100,8 @@ public class ServerConnection {
   }
   
   /// Enables the packet encryption layer.
-  public func enableEncryption(sharedSecret: [UInt8]) {
-    networkStack.encryptionLayer.enableEncryption(sharedSecret: sharedSecret)
+  public func enableEncryption(sharedSecret: [UInt8]) throws {
+    try networkStack.encryptionLayer.enableEncryption(sharedSecret: sharedSecret)
   }
   
   // MARK: Packet
@@ -117,6 +117,10 @@ public class ServerConnection {
 
           // Get the correct type of packet
           guard let packetType = self.packetRegistry.getClientboundPacketType(withId: reader.packetId, andState: packetState) else {
+            self.eventBus.dispatch(PacketDecodingErrorEvent(
+              packetId: packetReader.packetId,
+              error: "Invalid packet id 0x\(String(reader.packetId, radix: 16))"
+            ))
             log.warning("Non-existent packet received with id 0x\(String(reader.packetId, radix: 16))")
             return
           }
