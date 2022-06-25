@@ -1,5 +1,20 @@
 import Foundation
-import Network
+import NIOCore
+import NIOPosix
+
+private final class MessageHandler: ChannelInboundHandler {
+  public typealias InboundIn = ByteBuffer
+  public typealias OutboundOut = ByteBuffer
+  private var sendBytes = 0
+  private var receiveBuffer: ByteBuffer = ByteBuffer()
+
+  public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
+    var buffer = self.unwrapInboundIn(data)
+    while let byte: UInt8 = buffer.readInteger() {
+      fputc(Int32(byte), stdout)
+    }
+  }
+}
 
 /// The network layer that handles a socket connection to a server.
 ///
@@ -28,18 +43,10 @@ public final class SocketLayer {
   private var port: UInt16
   
   /// The socket connection to the server.
-  private var connection: NWConnection
-  /// The connection state of the socket.
-  private var state: State = .idle
-  
-  /// A socket connection state.
-  private enum State {
-    case idle
-    case connecting
-    case connected
-    case disconnected
-  }
-  
+  private var connection: SocketAddress
+  private var channel: Channel
+  private var bootstrap: NIOClientTCPBootstrapProtocol
+
   // MARK: Init
   
   /// Creates a new socket layer for connecting to the given server.
@@ -55,72 +62,63 @@ public final class SocketLayer {
     self.host = host
     self.port = port
     self.eventBus = eventBus
-    
-    guard let nwPort = NWEndpoint.Port(rawValue: port) else {
-      fatalError("Failed to create port from int: \(port). This really shouldn't happen.")
-    }
-    
+
     ioQueue = DispatchQueue(label: "NetworkStack.ioThread")
-    
-    // Decrease the TCP timeout from the default
-    let options = NWProtocolTCP.Options()
-    options.connectionTimeout = 10
-    self.connection = NWConnection(
-      host: NWEndpoint.Host(host),
-      port: nwPort,
-      using: NWParameters(tls: nil, tcp: options))
-    
-    self.connection.stateUpdateHandler = { [weak self] newState in
-      guard let self = self else { return }
-      self.stateUpdateHandler(newState: newState)
+
+    let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+    bootstrap = ClientBootstrap(group: group)
+            .channelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
+            .channelOption(ChannelOptions.connectTimeout, value: ConnectTimeoutOption.Value(10))
+            .channelInitializer { channel in
+              channel.pipeline.addHandler(MessageHandler())
+            }
+  }
+
+    deinit {
+      try! disconnect()
     }
-  }
-  
-  deinit {
-    disconnect()
-  }
-  
-  // MARK: Public methods
-  
-  /// Connect to the server.
-  public func connect() {
-    state = .connecting
-    packetQueue = []
-    connection.start(queue: ioQueue)
-  }
-  
-  /// Disconnect from the server.
-  public func disconnect() {
-    state = .disconnected
-    connection.cancel()
-  }
-  
-  /// Starts the packet receiving loop.
-  public func receive() {
-    connection.receive(minimumIncompleteLength: 0, maximumLength: 4096, completion: { [weak self] (data, _, _, error) in
-      guard let self = self else { return }
-      if let error = error {
-        self.handleNWError(error)
-        return
-      } else if let data = data {
-        let bytes = [UInt8](data)
-        let buffer = Buffer(bytes)
-        self.packetHandler?(buffer)
-        
-        if self.state != .disconnected {
-          self.receive()
+
+
+    // MARK: Public methods
+
+    /// Connect to the server.
+    public func connect() throws {
+      channel = try bootstrap.connect(host: host, port: port).wait()
+    }
+
+    /// Disconnect from the server.
+    public func disconnect() throws {
+      try channel.close().wait()
+    }
+
+    /// Starts the packet receiving loop.
+    public func receive() {
+      connection.receive(minimumIncompleteLength: 0, maximumLength: 4096, completion: { [weak self] (data, _, _, error) in
+        guard let self = self else {
+          return
         }
-      }
-    })
-  }
-  
-  /// Sends the given buffer to the connected server.
-  ///
-  /// If the connection is in a disconnected state, the packet is ignored. If the connection is
-  /// idle or connecting, the packet is stored to be sent once a connection is established.
-  /// - Parameter buffer: The buffer to send.
-  public func send(_ buffer: Buffer) {
-    switch state {
+        if let error = error {
+          self.handleNWError(error)
+          return
+        } else if let data = data {
+          let bytes = [UInt8](data)
+          let buffer = Buffer(bytes)
+          self.packetHandler?(buffer)
+
+          if self.state != .disconnected {
+            self.receive()
+          }
+        }
+      })
+    }
+
+    /// Sends the given buffer to the connected server.
+    ///
+    /// If the connection is in a disconnected state, the packet is ignored. If the connection is
+    /// idle or connecting, the packet is stored to be sent once a connection is established.
+    /// - Parameter buffer: The buffer to send.
+    public func send(_ buffer: Buffer) {
+      switch state {
       case .connected:
         let bytes = buffer.bytes
         connection.send(content: Data(bytes), completion: .idempotent)
@@ -128,45 +126,6 @@ public final class SocketLayer {
         packetQueue.append(buffer)
       case .disconnected:
         break
-    }
-  }
-  
-  // MARK: Private methods
-  
-  /// Handles a socket connection state update.
-  /// - Parameter newState: The socket's new state.
-  private func stateUpdateHandler(newState: NWConnection.State) {
-    switch newState {
-      case .ready:
-        state = .connected
-        receive()
-        for packet in packetQueue {
-          send(packet)
-        }
-      case .waiting(let error):
-        handleNWError(error)
-      case .failed(let error):
-        state = .disconnected
-        handleNWError(error)
-        eventBus.dispatch(ConnectionFailedEvent(networkError: error))
-      case .cancelled:
-        state = .disconnected
-      default:
-        break
-    }
-  }
-  
-  /// Handles a network error.
-  /// - Parameter error: The error to handle.
-  private func handleNWError(_ error: NWError) {
-    if state != .disconnected {
-      disconnect()
-      eventBus.dispatch(ConnectionFailedEvent(networkError: error))
-      if error == NWError.posix(.ECONNREFUSED) {
-        log.error("Connection refused: '\(self.host):\(self.port)'")
-      } else if error == NWError.dns(-65554) {
-        log.error("DNS failed for server at '\(self.host):\(self.port)'")
       }
     }
   }
-}

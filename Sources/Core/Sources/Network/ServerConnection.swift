@@ -1,6 +1,5 @@
 import Foundation
-import Network
-import NioDNS
+import DNSClient
 import NIO
 
 public class ServerConnection {

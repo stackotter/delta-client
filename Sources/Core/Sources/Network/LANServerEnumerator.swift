@@ -1,13 +1,33 @@
 import Foundation
-import Network
+import NIOPosix
+import NIOCore
 import Parsing
 
-/// An error that occured during LAN server enumeration.
-enum LANServerEnumeratorError: LocalizedError {
-  /// Failed to create the multicast group descriptor for the group that LAN servers broadcast on.
-  case failedToCreateMulticastGroup(Error)
-  /// Failed to connect to the multicast group that LAN servers broadcast on.
-  case connectionFailed(NWError)
+private final class MessageDecoder: ChannelInboundHandler {
+  public typealias InboundIn = AddressedEnvelope<ByteBuffer>
+
+  public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
+    let enveloppe = self.unwrapInboundIn(data)
+    var buffer = enveloppe.data
+
+    guard let message = buffer.readString(length: buffer.readableBytes) else {
+      print("Error")
+      return
+    }
+
+    print("thing")
+  }
+}
+
+private final class MessageEncoder: ChannelInboundHandler {
+  public typealias OutboundIn = AddressedEnvelope<String>
+  public typealias OutboundOut = AddressedEnvelope<ByteBuffer>
+
+  func write(context: ChannelHandlerContext, data: NIOAny, promise: EventLoopPromise<Void>?) {
+    let message = self.unwrapOutboundIn(data)
+    let buffer = context.channel.allocator.buffer(capacity: message.data)
+    context.write(self.wrapOutboundOut(AddressedEnvelope(remoteAddress: message.remoteAddress, data: buffer)), promise: promise)
+  }
 }
 
 /// Used to discover LAN servers (servers on the same network as the client).
@@ -34,9 +54,7 @@ public class LANServerEnumerator: ObservableObject {
   public var servers: [ServerDescriptor] = []
   
   // MARK: Private properties
-  
-  /// Multicast connection group for receiving packets.
-  private let group: NWConnectionGroup
+
   /// Whether the enumerator is listening already or not.
   private var isListening = false
   
@@ -51,19 +69,18 @@ public class LANServerEnumerator: ObservableObject {
   /// - Parameter eventBus: Event bus to dispatch errors to.
   public init(eventBus: EventBus) throws {
     self.eventBus = eventBus
-    
-    // Create multicast group
-    let multicast: NWMulticastGroup
-    do {
-      multicast = try NWMulticastGroup(
-        for: [.hostPort(host: "224.0.2.60", port: 4445)],
-        disableUnicast: false)
-    } catch {
-      throw LANServerEnumeratorError.failedToCreateMulticastGroup(error)
+
+    let multicast = try! SocketAddress(ipAddress: "224.0.2.60", port: 4445)
+    let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+
+    var datagramBootstrap = DatagramBootstrap(group: group)
+            .channelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
+    .channelInitializer { channel in
+      return channel.pipeline.addHandler(MessageEncoder()).flatmap {
+        channel.pipeline.addHandler(MessageDecoder())
+      }
     }
-    
-    group = NWConnectionGroup(with: multicast, using: .udp)
-    
+
     // Handle packets
     group.setReceiveHandler(maximumMessageSize: 16384, rejectOversizedMessages: true) { [weak self] message, content, isComplete in
       guard let self = self else {
