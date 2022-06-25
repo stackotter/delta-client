@@ -1,78 +1,67 @@
 import Foundation
-import IDZSwiftCommonCrypto
 
 /// An error related to packet encryption and decryption.
 public enum EncryptionLayerError: LocalizedError {
   /// Failed to decrypt a packet.
-  case failedToDecryptPacket(Status)
+  case failedToDecryptPacket(Error)
   /// Failed to encrypt a packet.
-  case failedToEncryptPacket(Status)
+  case failedToEncryptPacket(Error)
+  /// Failed to create cipher.
+  case failedToInitializeCipher
+  /// Failed to update cipher for encryption of decryption.
+  case failedToUpdateCipher
+  /// Failed to create uninitialized buffer as output buffer.
+  case failedToCreateUninitializedBuffer
 }
 
 /// Handles the encryption and decryption of packets (outbound and inbound respectively).
 public struct EncryptionLayer {
   // MARK: Private properties
-  
-  /// The cryptor used for decrypting inbound packets.
-  private var inputCryptor: StreamCryptor?
-  /// The cryptor used for encryption outbound packets.
-  private var outputCryptor: StreamCryptor?
-  
+
+  /// The cipher used for decrypting inbound packets.
+  private var inputCipher: Cipher?
+  /// The cipher used for encryption outbound packets.
+  private var outputCipher: Cipher?
+
   // MARK: Init
-  
+
   /// Creates a new encryption layer.
   public init() {}
-  
+
   // MARK: Public methods
-  
+
   /// Enables the encryption layer.
-  /// - Parameter sharedSecret: The shared secret to initialize the stream cryptors with.
-  public mutating func enableEncryption(sharedSecret: [UInt8]) {
-    inputCryptor = createCryptor(sharedSecret: sharedSecret, operation: .decrypt)
-    outputCryptor = createCryptor(sharedSecret: sharedSecret, operation: .encrypt)
+  /// - Parameter sharedSecret: The shared secret to initialize the stream ciphers with.
+  public mutating func enableEncryption(sharedSecret: [UInt8]) throws {
+    inputCipher = try Cipher(.decrypt, key: sharedSecret, iv: sharedSecret)
+    outputCipher = try Cipher(.encrypt, key: sharedSecret, iv: sharedSecret)
   }
-  
+
   /// Decrypts a packet.
   public func processInbound(_ buffer: Buffer) throws -> Buffer {
-    if let cryptor = inputCryptor {
-      var decrypted = [UInt8](repeating: 0, count: buffer.bytes.count)
-      let (_, status) = cryptor.update(byteArrayIn: buffer.bytes, byteArrayOut: &decrypted)
-      if status == .success {
+    if let cipher = inputCipher {
+      do {
+        let decrypted = try cipher.update(with: buffer.bytes)
         return Buffer(decrypted)
-      } else {
-        throw EncryptionLayerError.failedToDecryptPacket(status)
+      } catch {
+        throw EncryptionLayerError.failedToDecryptPacket(error)
       }
     } else {
       return buffer
     }
   }
-  
+
   /// Encrypts a packet.
   public func processOutbound(_ buffer: Buffer) throws -> Buffer {
-    if let cryptor = outputCryptor {
-      var encrypted = [UInt8](repeating: 0, count: buffer.bytes.count)
-      let (_, status) = cryptor.update(byteArrayIn: buffer.bytes, byteArrayOut: &encrypted)
-      if status == .success {
+    if let cipher = outputCipher {
+      do {
+        let encrypted = try cipher.update(with: buffer.bytes)
         return Buffer(encrypted)
-      } else {
-        throw EncryptionLayerError.failedToEncryptPacket(status)
+      } catch {
+        throw EncryptionLayerError.failedToEncryptPacket(error)
       }
     } else {
       return buffer
     }
-  }
-  
-  // MARK: Private methods
-  
-  /// Creates a stream cryptor.
-  private func createCryptor(sharedSecret: [UInt8], operation: StreamCryptor.Operation) -> StreamCryptor {
-    return StreamCryptor(
-      operation: operation,
-      algorithm: .aes,
-      mode: .CFB8,
-      padding: .NoPadding,
-      key: sharedSecret,
-      iv: sharedSecret
-    )
   }
 }
