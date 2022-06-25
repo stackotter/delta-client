@@ -1,6 +1,7 @@
 import Foundation
 import NIOPosix
 import NIOCore
+import OpenCombine
 import Parsing
 
 private final class MessageDecoder: ChannelInboundHandler {
@@ -150,7 +151,7 @@ public class LANServerEnumerator: ObservableObject {
   /// They are expected to be of the form: `[MOTD]message of the day[/MOTD][AD]port[/AD]`.
   /// Apparently sometimes the entire address is included in the `AD` section so that is
   /// handled too.
-  private func handlePacket(message: NWConnectionGroup.Message, content: Data?, isComplete: Bool) {
+  private func handlePacket(message: String, content: Data?, isComplete: Bool) {
     // Cap the maximum number of LAN servers that can be discovered
     guard servers.count < Self.maximumServerCount else {
       return

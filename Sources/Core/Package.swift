@@ -14,7 +14,8 @@ var dependencies: [Package.Dependency] = [
   .package(name: "ZippyJSON", url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
   .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
   .package(url: "https://github.com/pointfreeco/swift-parsing", .exact("0.8.0")),
-  .package(url: "https://github.com/stackotter/swift-openssl", from: "4.0.4")
+  .package(url: "https://github.com/stackotter/swift-openssl", from: "4.0.4"),
+  .package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.13.0")
 ]
 
 #if swift(>=5.6)
@@ -38,7 +39,7 @@ let package = Package(
         "ZIPFoundation",
         .product(name: "DNSClient", package: "DNSClient"),
         "SwiftProtobuf",
-        "Concurrency",
+        .product(name: "Concurrency", package: "Concurrency", condition: .when(platforms: [.macOS])),
         "FirebladeECS",
         "FirebladeMath",
         .product(name: "ZippyJSON", package: "ZippyJSON", condition: .when(platforms: [.macOS])),
@@ -46,7 +47,8 @@ let package = Package(
         .product(name: "NIOCore", package: "swift-nio"),
         .product(name: "NIOPosix", package: "swift-nio"),
         .product(name: "Collections", package: "swift-collections"),
-        .product(name: "OpenSSL", package: "swift-openssl")
+        .product(name: "OpenSSL", package: "swift-openssl"),
+        "OpenCombine",
       ],
       path: "Sources",
       exclude: [

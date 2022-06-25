@@ -1,4 +1,5 @@
 import Foundation
+import OpenCombine
 import OrderedCollections
 
 /// Storage and manager for all currently loaded plugins.
