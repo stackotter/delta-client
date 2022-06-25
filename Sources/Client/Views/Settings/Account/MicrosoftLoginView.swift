@@ -1,55 +1,89 @@
 import SwiftUI
 import DeltaCore
 
+#if os(macOS)
+import AppKit
+#elseif os(iOS)
+import UIKit
+#endif
+
 enum MicrosoftState {
-  case login
-  case authenticating
+  case authorizingDevice
+  case login(MicrosoftDeviceAuthorizationResponse)
+  case authenticatingUser
 }
 
 struct MicrosoftLoginView: View {
   @ObservedObject var loginViewState: StateWrapper<LoginViewState>
   var completionHandler: (Account) -> Void
-  
-  @StateObject private var state = StateWrapper<MicrosoftState>(initial: .login)
-  @State private var errorMessage: String?
-  
+
+  @StateObject private var state = StateWrapper<MicrosoftState>(initial: .authorizingDevice)
+
   var body: some View {
-    switch state.current {
-      case .login:
-        if let errorMessage = errorMessage {
-          Text(errorMessage)
-            .foregroundColor(.red)
-        }
-        
-        WebView(request: URLRequest(url: MicrosoftAPI.getAuthorizationURL()), urlChangeHandler: processURLChange)
-      case .authenticating:
-        Text("Authenticating...")
-    }
-    
-    Button("Cancel") {
-      loginViewState.update(to: .chooseAccountType)
-    }
-    .buttonStyle(SecondaryButtonStyle())
-    .frame(width: 200)
-  }
-  
-  func processURLChange(_ url: URL) {
-    Task {
-      guard url.absoluteString.starts(with: MicrosoftAPI.redirectURL.absoluteString) else {
-        return
+    VStack {
+      switch state.current {
+        case .authorizingDevice:
+          Text("Fetching device authorization code")
+        case .login(let response):
+          Text(response.message)
+          Link("Open in browser", destination: response.verificationURI)
+          Button("Copy code") {
+            #if os(macOS)
+            NSPasteboard.general.setString(response.userCode, forType: .string)
+            #elseif os(iOS)
+            UIPasteboard.general.string = response.userCode
+            #else
+            #error("Unsupported platform, unknown clipboard implementation")
+            #endif
+          }
+          .buttonStyle(PrimaryButtonStyle())
+          .frame(width: 200)
+
+          Spacer().frame(height: 16)
+
+          Button("Done") {
+            state.update(to: .authenticatingUser)
+            authenticate(with: response)
+          }
+          .buttonStyle(PrimaryButtonStyle())
+          .frame(width: 200)
+        case .authenticatingUser:
+          Text("Authenticating...")
       }
-      
-      state.update(to: .authenticating)
-      
+
+      Button("Cancel") {
+        loginViewState.update(to: .chooseAccountType)
+      }
+      .buttonStyle(SecondaryButtonStyle())
+      .frame(width: 200)
+    }.onAppear {
+      authorizeDevice()
+    }
+  }
+
+  func authorizeDevice() {
+    Task {
+      do {
+        let response = try await MicrosoftAPI.authorizeDevice()
+        state.update(to: .login(response))
+      } catch {
+        DeltaClientApp.modalError("Failed to authorize device: \(error)", safeState: .serverList)
+      }
+    }
+  }
+
+  func authenticate(with response: MicrosoftDeviceAuthorizationResponse) {
+    Task {
       let account: MicrosoftAccount
       do {
-        account = try await MicrosoftAPI.getMinecraftAccount(url)
+        let accessToken = try await MicrosoftAPI.getMicrosoftAccessToken(response.deviceCode)
+        account = try await MicrosoftAPI.getMinecraftAccount(accessToken)
       } catch {
         guard case let .failedToGetXSTSToken(MicrosoftAPIError.xstsAuthenticationFailed(xstsError)) = error as? MicrosoftAPIError else {
           DeltaClientApp.modalError("Failed to authenticate Microsoft account: \(error)", safeState: .serverList)
           return
         }
-        
+
         // TODO: Add localized descriptions to all authentication related errors
         // XSTS errors are the most common so they get nice user-friendly errors
         switch xstsError.code {
@@ -62,7 +96,7 @@ struct MicrosoftLoginView: View {
         }
         return
       }
-      
+
       completionHandler(Account.microsoft(account))
     }
   }

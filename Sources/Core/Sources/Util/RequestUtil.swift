@@ -85,6 +85,7 @@ enum RequestUtil {
 
         if httpResponse.statusCode >= 400 {
           continuation.resume(throwing: RequestError.unsuccessfulRequest(httpResponse.statusCode))
+          log.debug(String(data: data, encoding: .utf8) ?? "Empty error response received")
           return
         }
 
