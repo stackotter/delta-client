@@ -16,12 +16,7 @@ public struct FontPalette {
   /// - Parameter fonts: The palette's fonts.
   public init(_ fonts: [String: Font] = [:]) {
     self.fonts = fonts
-
-    if let defaultFont = fonts["default"] {
-      self.defaultFont = defaultFont
-    } else {
-      self.defaultFont = Font()
-    }
+    defaultFont = fonts["default"] ?? Font()
   }
 
   /// Load a font palette from a resource pack.

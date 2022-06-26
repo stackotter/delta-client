@@ -3,9 +3,6 @@ import MetalKit
 
 /// A protocol that renderers should conform to.
 public protocol Renderer {
-  /// Creates a renderer for the specified client.
-  init(client: Client, device: MTLDevice, commandQueue: MTLCommandQueue) throws
-  
   /// Renders a frame.
   ///
   /// Should not call `renderEncoder.endEncoding()` or `commandBuffer.commit()`.

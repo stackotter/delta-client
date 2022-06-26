@@ -23,7 +23,7 @@ public struct Font {
   public var textures: [Texture]
 
   /// Creates an empty font.
-  init(characters: [Character: CharacterDescriptor] = [:], textures: [Texture] = []) {
+  public init(characters: [Character: CharacterDescriptor] = [:], textures: [Texture] = []) {
     self.characters = characters
     self.textures = textures
   }
@@ -144,7 +144,7 @@ public struct Font {
   ///   - texture: The texture containing the characters.
   ///   - textureIndex: The index of the texture in the font's array texture.
   /// - Returns: The character descriptors.
-  static func descriptors(
+  private static func descriptors(
     from atlas: BitmapFontProvider,
     texture: Texture,
     textureIndex: Int
@@ -172,7 +172,7 @@ public struct Font {
   ///   - texture: The texture conatining the character.
   ///   - textureIndex: Tte texture's index.
   /// - Returns: A character descriptor.
-  static func descriptor(
+  private static func descriptor(
     for character: Character,
     xIndex: Int,
     yIndex: Int,
@@ -222,7 +222,7 @@ public struct Font {
       y: yIndex * Self.defaultCharacterHeight + minY,
       width: width,
       height: height,
-      verticalOffset: Self.defaultCharacterHeight - maxY
+      verticalOffset: Self.defaultCharacterHeight - maxY - 1
     )
   }
 }

@@ -17,6 +17,8 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   private var worldRenderer: WorldRenderer
   /// The renderer for rendering entities.
   private var entityRenderer: EntityRenderer
+  /// The renderer for rendering the GUI.
+  private var guiRenderer: GUIRenderer
 
   /// The camera that is rendered from.
   private var camera: Camera
@@ -72,13 +74,19 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       fatalError("Failed to create entity renderer: \(error)")
     }
 
+    do {
+      guiRenderer = try GUIRenderer(client: client, device: device, commandQueue: commandQueue)
+    } catch {
+      fatalError("Failed to create GUI renderer: \(error)")
+    }
+
     // Create depth stencil state
     do {
       depthState = try MetalUtil.createDepthState(device: device)
     } catch {
       fatalError("Failed to create depth state: \(error)")
     }
-    
+
     statistics = RenderStatistics(gpuCountersEnabled: false)
 
     super.init()
@@ -149,7 +157,6 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     }
 
     stopwatch.startMeasurement("Render world")
-    // Render world
     do {
       try worldRenderer.render(
         view: view,
@@ -166,7 +173,6 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     stopwatch.stopMeasurement("Render world")
 
     stopwatch.startMeasurement("Render entities")
-    // Render entities
     do {
       try entityRenderer.render(
         view: view,
@@ -182,6 +188,22 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     }
     stopwatch.stopMeasurement("Render entities")
 
+    stopwatch.startMeasurement("Render GUI")
+    do {
+      try guiRenderer.render(
+        view: view,
+        encoder: renderEncoder,
+        commandBuffer: commandBuffer,
+        worldToClipUniformsBuffer: uniformsBuffer,
+        camera: camera
+      )
+    } catch {
+      log.error("Failed to render GUI: \(error)")
+      client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render GUI"))
+      return
+    }
+    stopwatch.stopMeasurement("Render GUI")
+
     stopwatch.startMeasurement("Finish frame")
     // Finish measurements for render statistics
     let cpuFinishTime = CFAbsoluteTimeGetCurrent()
@@ -191,10 +213,10 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       log.warning("Failed to get current drawable")
       return
     }
-    
+
     renderEncoder.endEncoding()
     commandBuffer.present(drawable)
-    
+
     self.statistics.addMeasurement(
       frameTime: frameTime,
       cpuTime: cpuFinishTime - cpuStartTime,
@@ -266,7 +288,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         case .thirdPersonFront:
           pitch = -pitch
           yaw += Float.pi
-          
+
           cameraPosition.z += 3
           cameraPosition = simd_make_float3(SIMD4(cameraPosition, 1) * MatrixUtil.rotationMatrix(x: pitch) * MatrixUtil.rotationMatrix(y: Float.pi + yaw))
           cameraPosition += eyePosition

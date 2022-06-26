@@ -39,14 +39,14 @@ public struct ResourcePack {
   public var languages: [String: PackMCMeta.Language]
 
   /// All resources contained in this resource pack, keyed by namespace.
-  public var resources: [String: Resources] {
+  public var resources: [String: Resources] = [:] {
     didSet {
-      vanillaResources = resources["vanilla"] ?? Resources()
+      vanillaResources = resources["minecraft"] ?? Resources()
     }
   }
   
   /// Resources in the 'minecraft' namespace.
-  public private(set) var vanillaResources = Resources()
+  public private(set) var vanillaResources: Resources
   
   // MARK: Init
   
@@ -60,6 +60,7 @@ public struct ResourcePack {
   ) {
     self.languages = languages
     self.resources = resources
+    self.vanillaResources = resources["minecraft"] ?? Resources()
   }
   
   // MARK: Access

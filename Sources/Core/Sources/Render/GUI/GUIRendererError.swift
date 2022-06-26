@@ -1,0 +1,31 @@
+import Foundation
+
+/// An error thrown by ``GUIRenderer``.
+enum GUIRendererError: LocalizedError {
+  case failedToCreateVertexBuffer
+  case failedToCreateIndexBuffer
+  case failedToCreateUniformsBuffer
+  case failedToCreateCharacterUniformsBuffer
+  case emptyText
+  case invalidCharacter(Character)
+  case failedToCreateTextMeshBuffer
+
+  var errorDescription: String? {
+    switch self {
+      case .failedToCreateVertexBuffer:
+        return "Failed to create vertex buffer"
+      case .failedToCreateIndexBuffer:
+        return "Failed to create index buffer"
+      case .failedToCreateUniformsBuffer:
+        return "Failed to create uniforms buffer"
+      case .failedToCreateCharacterUniformsBuffer:
+        return "Failed to create character uniforms buffer"
+      case .emptyText:
+        return "Text was empty"
+      case .invalidCharacter(let character):
+        return "The selected font does not include '\(character)'"
+      case .failedToCreateTextMeshBuffer:
+        return "Failed to create text mesh buffer"
+    }
+  }
+}
