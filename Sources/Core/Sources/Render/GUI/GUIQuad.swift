@@ -13,7 +13,7 @@ enum GUIQuadGeometry {
     2, 3, 0
   ]
 
-  public static func getVertexBuffer(device: MTLDevice) throws -> any MTLBuffer {
+  public static func getVertexBuffer(device: MTLDevice) throws -> MTLBuffer {
     return try MetalUtil.makeBuffer(
       device,
       bytes: &vertices,
@@ -23,7 +23,7 @@ enum GUIQuadGeometry {
     )
   }
 
-  public static func getIndexBuffer(device: MTLDevice) throws -> any MTLBuffer {
+  public static func getIndexBuffer(device: MTLDevice) throws -> MTLBuffer {
     return try MetalUtil.makeBuffer(
       device,
       bytes: &indices,

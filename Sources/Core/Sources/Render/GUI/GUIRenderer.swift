@@ -48,7 +48,7 @@ public final class GUIRenderer: Renderer {
   }
 
   // TODO: move to GUI
-  func handleEvent(_ event: any Event) {
+  func handleEvent(_ event: Event) {
     switch event {
       case .press(.toggleDebugHUD) as InputEvent:
         gui.showDebugScreen = !gui.showDebugScreen
