@@ -217,11 +217,14 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     renderEncoder.endEncoding()
     commandBuffer.present(drawable)
 
-    self.statistics.addMeasurement(
+    statistics.addMeasurement(
       frameTime: frameTime,
       cpuTime: cpuFinishTime - cpuStartTime,
       gpuTime: nil
     )
+
+    // Update statistics in gui
+    guiRenderer.gui.renderStatistics = statistics
 
     commandBuffer.commit()
     stopwatch.stopMeasurement("Finish frame")

@@ -1,7 +1,7 @@
 import MetalKit
 
 /// The renderer for the GUI (chat, f3, scoreboard etc.).
-public struct GUIRenderer: Renderer {
+public final class GUIRenderer: Renderer {
   var device: MTLDevice
   var font: Font
   var scale: Float
@@ -40,9 +40,21 @@ public struct GUIRenderer: Renderer {
       blendingEnabled: false
     )
 
-    scale = 5
+    scale = 2
 
     gui = GUI(client: client)
+
+    client.eventBus.registerHandler(handleEvent)
+  }
+
+  // TODO: move to GUI
+  func handleEvent(_ event: any Event) {
+    switch event {
+      case .press(.toggleDebugHUD) as InputEvent:
+        gui.showDebugScreen = !gui.showDebugScreen
+      default:
+        break
+    }
   }
 
   public func render(
@@ -76,6 +88,7 @@ public struct GUIRenderer: Renderer {
     encoder.setRenderPipelineState(pipelineState)
 
     // Render meshes
+    gui.update()
     let meshes = try gui.meshes(
       device: device,
       scale: scale,

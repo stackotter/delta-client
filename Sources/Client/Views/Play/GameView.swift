@@ -15,23 +15,6 @@ enum OverlayState {
   case settings
 }
 
-class HUDState: ObservableObject {
-  @Published var dummy = false
-  @Published var showDebugHUD = false
-  
-  var timer: Timer?
-  
-  init() {
-    timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
-      if self.showDebugHUD {
-        ThreadUtil.runInMain {
-          self.dummy.toggle()
-        }
-      }
-    }
-  }
-}
-
 class Box<T> {
   var value: T
   
@@ -41,7 +24,6 @@ class Box<T> {
 }
 
 class GameViewModel: ObservableObject {
-  @Published var hudState = HUDState()
   @Published var state = StateWrapper<GameState>(initial: .connecting)
   @Published var overlayState = StateWrapper<OverlayState>(initial: .menu)
   
@@ -64,7 +46,6 @@ class GameViewModel: ObservableObject {
       self.handleClientEvent(event)
     }
     
-    watch(hudState)
     watch(state)
     watch(overlayState)
   }
@@ -159,10 +140,6 @@ class GameViewModel: ObservableObject {
         } else {
           DeltaClientApp.modalError("\(generalError.error)")
         }
-      case .press(.toggleDebugHUD) as InputEvent:
-        ThreadUtil.runInMain {
-          hudState.showDebugHUD.toggle()
-        }
       case .press(.performGPUFrameCapture) as InputEvent:
         let outputFile = StorageManager.default.getUniqueGPUCaptureFile()
         do {
@@ -241,10 +218,6 @@ struct GameView: View {
           ZStack {
             gameView.opacity(cursorCaptured ? 1 : 0.2)
             
-            if model.hudState.showDebugHUD {
-              debugHUDView.opacity(cursorCaptured ? 1 : 0.2)
-            }
-            
             overlayView
           }
         case .gpuFrameCaptureComplete(let file):
@@ -320,35 +293,6 @@ struct GameView: View {
       movementControls
       #endif
     }
-  }
-  
-  var debugHUDView: some View {
-    VStack(alignment: .leading) {
-      Text("FPS: \(Int(renderStats.averageFPS))")
-      if let averageTheoreticalFPS = renderStats.averageTheoreticalFPS {
-        Text("Theoretical FPS: \(Int(averageTheoreticalFPS))")
-      }
-      
-      Spacer().frame(height: 16)
-      
-      let averageFrameTime = (renderStats.averageFrameTime * 1000.0).rounded(toPlaces: 1)
-      Text("Frame time: \(String(format: "%.01f", averageFrameTime))ms")
-      let averageCPUTime = (renderStats.averageCPUTime * 1000.0).rounded(toPlaces: 1)
-      Text("CPU time: \(String(format: "%.01f", averageCPUTime))ms")
-
-      if let averageGPUTime = renderStats.averageGPUTime {
-        let averageGPUTime = (averageGPUTime * 1000.0).rounded(toPlaces: 1)
-        Text("GPU time: \(String(format: "%.01f", averageGPUTime))ms")
-      }
-      
-      Spacer().frame(height: 16)
-      
-      Text("Position: \(playerPositionString)")
-      Text("Chunk: \(playerChunkSectionString)")
-      Text("Gamemode: \(gamemode.string)")
-    }
-    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .padding(16)
   }
   
   var playerPositionString: String {

@@ -47,7 +47,8 @@ public class EntityPosition: Component {
   public var chunk: ChunkPosition {
     return ChunkPosition(
       chunkX: Int((x / 16).rounded(.down)),
-      chunkZ: Int((z / 16).rounded(.down)))
+      chunkZ: Int((z / 16).rounded(.down))
+    )
   }
   
   /// The position of the chunk section this position is in.
@@ -55,7 +56,17 @@ public class EntityPosition: Component {
     return ChunkSectionPosition(
       sectionX: Int((x / 16).rounded(.down)),
       sectionY: Int((y / 16).rounded(.down)),
-      sectionZ: Int((z / 16).rounded(.down)))
+      sectionZ: Int((z / 16).rounded(.down))
+    )
+  }
+
+  /// The block underneath the entity position.
+  public var blockUnderneath: BlockPosition {
+    return BlockPosition(
+      x: Int(x.rounded(.down)),
+      y: Int((y - 0.5).rounded(.down)),
+      z: Int(z.rounded(.down))
+    )
   }
   
   // MARK: Private properties

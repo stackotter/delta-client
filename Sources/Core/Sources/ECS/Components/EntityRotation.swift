@@ -31,6 +31,12 @@ public class EntityRotation: Component {
     let progress = MathUtil.clamp(delta / smoothingAmount, 0, 1)
     return MathUtil.lerpAngle(from: previousYaw, to: yaw, progress: progress)
   }
+
+  /// The compass heading.
+  public var heading: Direction {
+    let index = Int((yaw / (.pi / 2)).rounded()) % 4
+    return [.south, .west, .north, .east][index]
+  }
   
   // MARK: Private properties
   

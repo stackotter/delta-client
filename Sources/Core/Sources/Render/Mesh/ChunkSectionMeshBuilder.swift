@@ -59,7 +59,8 @@ public struct ChunkSectionMeshBuilder {
     let position = SIMD3<Float>(
       Float(sectionPosition.sectionX) * 16,
       Float(sectionPosition.sectionY) * 16,
-      Float(sectionPosition.sectionZ) * 16)
+      Float(sectionPosition.sectionZ) * 16
+    )
     let modelToWorldMatrix = MatrixUtil.translationMatrix(position)
     let uniforms = Uniforms(transformation: modelToWorldMatrix)
     
@@ -91,7 +92,8 @@ public struct ChunkSectionMeshBuilder {
             transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
             translucentMesh: &mesh.translucentMesh,
             indexToNeighbourIndices: indexToNeighbourIndices,
-            containsFluids: &mesh.containsFluids)
+            containsFluids: &mesh.containsFluids
+          )
         }
       }
       let elapsed = CFAbsoluteTimeGetCurrent() - startTime

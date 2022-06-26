@@ -16,10 +16,7 @@ public struct PlayerFrictionSystem: System {
     
     var multiplier: Double = 0.91
     if onGround.previousOnGround {
-      let blockPosition = BlockPosition(
-        x: Int(position.x.rounded(.down)),
-        y: Int((position.y - 0.5).rounded(.down)),
-        z: Int(position.z.rounded(.down)))
+      let blockPosition = position.blockUnderneath
       let material = world.getBlock(at: blockPosition).material
 
       multiplier *= material.slipperiness
