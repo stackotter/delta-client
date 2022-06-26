@@ -13,6 +13,8 @@ extension ResourcePack {
     public var locales: [String: MinecraftLocale] = [:]
     /// The colors of biomes.
     public var biomeColors = BiomeColors()
+    /// The fonts.
+    public var fontPalette = FontPalette()
 
     /// Creates a new empty namespace of resources.
     public init() {}

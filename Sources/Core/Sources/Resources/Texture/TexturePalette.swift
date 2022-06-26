@@ -2,6 +2,8 @@ import Foundation
 import MetalKit
 import CoreGraphics
 
+/// A palette containing textures that can be animated. All of the textures must be the same size or
+/// multiples of 2 of eachother. Textures are assumed to be square.
 public struct TexturePalette {
   /// The width of the textures in this palette. The heights will be multiples of this number.
   public var width: Int

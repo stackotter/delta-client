@@ -33,16 +33,20 @@ enum ResourcePackError: LocalizedError {
   case versionsManifestFailure(Error)
 }
 
+/// A resource pack.
 public struct ResourcePack {
   /// The metadata of languages contained within this resource pack.
   public var languages: [String: PackMCMeta.Language]
+
   /// All resources contained in this resource pack, keyed by namespace.
-  public var resources: [String: Resources]
+  public var resources: [String: Resources] {
+    didSet {
+      vanillaResources = resources["vanilla"] ?? Resources()
+    }
+  }
   
   /// Resources in the 'minecraft' namespace.
-  public var vanillaResources: Resources {
-    resources["minecraft"] ?? Resources()
-  }
+  public private(set) var vanillaResources = Resources()
   
   // MARK: Init
   
@@ -50,7 +54,10 @@ public struct ResourcePack {
   /// - Parameters:
   ///   - languages: The metadata of languages to include in the resource pack.
   ///   - resources: The resources contained in the pack, keyed by namespace.
-  public init(languages: [String: ResourcePack.PackMCMeta.Language] = [:], resources: [String: ResourcePack.Resources] = [:]) {
+  public init(
+    languages: [String: ResourcePack.PackMCMeta.Language] = [:],
+    resources: [String: ResourcePack.Resources] = [:]
+  ) {
     self.languages = languages
     self.resources = resources
   }
@@ -71,12 +78,10 @@ public struct ResourcePack {
   
   // MARK: Loading
   
-  /// Loads the resource pack in the given directory.
+  /// Loads the resource pack in the given directory. ``RegistryStore/shared`` must be populated for this to work.
   ///
   /// If provided, cached resources are loaded from the given cache directory if present. To create a resource pack cache use ``cache(to:)``.
   /// Resource pack caches do not cache the whole pack yet, only the most resource intensive parts to load.
-  ///
-  /// ``RegistryStore/shared`` must be populated for this to work.
   public static func load(from directory: URL, cacheDirectory: URL?) throws -> ResourcePack {
     // Check resource pack exists
     guard FileManager.default.directoryExists(at: directory) else {
@@ -95,14 +100,19 @@ public struct ResourcePack {
     var namespacedResources: [String: ResourcePack.Resources] = [:]
     for directory in contents where FileManager.default.directoryExists(at: directory) {
       let namespace = directory.lastPathComponent
-      let resources = try loadResources(from: directory, inNamespace: namespace, cacheDirectory: cacheDirectory?.appendingPathComponent(namespace))
+      let resources = try loadResources(
+        from: directory,
+        inNamespace: namespace,
+        cacheDirectory: cacheDirectory?.appendingPathComponent(namespace)
+      )
       namespacedResources[namespace] = resources
     }
     
     // Create pack
     return ResourcePack(
       languages: mcMeta.languages ?? [:],
-      resources: namespacedResources)
+      resources: namespacedResources
+    )
   }
   
   /// Loads the resources in the given directory and gives them the specified namespace.
@@ -114,7 +124,7 @@ public struct ResourcePack {
     log.debug("Loading resources from '\(namespace)' namespace")
     var resources = Resources()
     
-    // Load textures if the pack contains any
+    // Load block textures if the pack contains any
     log.debug("Loading textures")
     let textureDirectory = directory.appendingPathComponent("textures")
     if FileManager.default.directoryExists(at: textureDirectory) {
@@ -173,11 +183,23 @@ public struct ResourcePack {
     // Load locales if present
     let localeDirectory = directory.appendingPathComponent("lang")
     if FileManager.default.directoryExists(at: localeDirectory) {
-      let contents = try FileManager.default.contentsOfDirectory(at: localeDirectory, includingPropertiesForKeys: nil, options: [])
+      log.debug("Loading locales")
+      let contents = try FileManager.default.contentsOfDirectory(at: localeDirectory, includingPropertiesForKeys: nil)
       for file in contents where file.pathExtension == "json" {
         let locale = try MinecraftLocale(localeFile: file)
         resources.locales[file.deletingPathExtension().lastPathComponent] = locale
       }
+    }
+
+    // Load fonts if present
+    let fontDirectory = directory.appendingPathComponent("font")
+    if FileManager.default.directoryExists(at: fontDirectory) {
+      log.debug("Loading fonts")
+      let fontPalette = try FontPalette.load(
+        from: fontDirectory,
+        textureDirectory: textureDirectory
+      )
+      resources.fontPalette = fontPalette
     }
     
     return resources
