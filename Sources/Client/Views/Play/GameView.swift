@@ -281,13 +281,6 @@ struct GameView: View {
           
           model.inputDelegate.captureCursor()
         }
-      
-      // Cross hair
-      if cursorCaptured {
-        Image(systemName: "plus")
-          .font(.system(size: 20))
-          .blendMode(.difference)
-      }
 
       #if os(iOS)
       movementControls

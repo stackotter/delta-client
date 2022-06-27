@@ -66,6 +66,9 @@ struct GUI {
         }
       }
     }
+
+    // Render crosshair
+    elements.append(GUIElement(.sprite(.crossHair), .center))
   }
 
   mutating func debugScreen() -> [GUIElement] {
