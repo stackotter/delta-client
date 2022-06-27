@@ -16,6 +16,16 @@ public enum Gamemode: Int8 {
   public var hasCollisions: Bool {
     return self != .spectator
   }
+
+  /// Whether the gamemode has visible health.
+  public var hasHealth: Bool {
+    switch self {
+      case .survival, .adventure:
+        return true
+      case .creative, .spectator:
+        return false
+    }
+  }
   
   /// The lowercase string representation of the gamemode.
   public var string: String {

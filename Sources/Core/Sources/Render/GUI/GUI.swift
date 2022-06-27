@@ -40,7 +40,32 @@ struct GUI {
       elements.append(contentsOf: debugScreen())
     }
 
-    elements.append(GUIElement(.sprite(.fullHeart), .center))
+    var health: Float = 0
+    var gamemode: Gamemode = .adventure
+    client.game.accessPlayer { player in
+      gamemode = player.gamemode.gamemode
+      health = player.health.health
+    }
+
+    // Render health
+    let heartsLeft = 4
+    let heartsBottom = 4
+    if gamemode.hasHealth {
+      let fullHeartCount = Int(health.rounded(.down))
+      let hasHalfHeart = Float(fullHeartCount) != health
+      for i in 0..<10 {
+        // Outline
+        let position = Constraints(.bottom(heartsBottom), .left(heartsLeft + i * 8))
+        elements.append(GUIElement(.sprite(.heartOutline), position))
+
+        // Full and half hearts
+        if i < fullHeartCount {
+          elements.append(GUIElement(.sprite(.fullHeart), position))
+        } else if i == fullHeartCount && hasHalfHeart {
+          elements.append(GUIElement(.sprite(.halfHeart), position))
+        }
+      }
+    }
   }
 
   mutating func debugScreen() -> [GUIElement] {
