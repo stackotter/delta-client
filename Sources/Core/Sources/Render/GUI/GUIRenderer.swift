@@ -9,7 +9,6 @@ public final class GUIRenderer: Renderer {
   var device: MTLDevice
   var font: Font
   var scale: Float
-  var fontArrayTexture: MTLTexture
   var quadIndexBuffer: MTLBuffer
   var quadVertexBuffer: MTLBuffer
   var uniformsBuffer: MTLBuffer
@@ -21,7 +20,6 @@ public final class GUIRenderer: Renderer {
 
     // Create array texture
     font = client.resourcePack.vanillaResources.fontPalette.defaultFont
-    fontArrayTexture = try font.createArrayTexture(device)
 
     // Create quad geometry (for instancing)
     quadIndexBuffer = try GUIQuadGeometry.getIndexBuffer(device: device)
@@ -46,7 +44,7 @@ public final class GUIRenderer: Renderer {
 
     scale = 2
 
-    gui = GUI(client: client)
+    gui = try GUI(client: client, device: device, commandQueue: commandQueue)
 
     client.eventBus.registerHandler(handleEvent)
   }

@@ -14,9 +14,9 @@ enum ResourcePackError: LocalizedError {
   /// Failed to convert an image into a texture.
   case failedToLoadTexture(Identifier, Error)
   /// Failed to read the image for the given texture from a file.
-  case failedToReadTextureImage
+  case failedToReadTextureImage(URL)
   /// Failed to create a `CGDataProvider` for the given image file.
-  case failedToCreateImageProvider
+  case failedToCreateImageProvider(URL)
   /// Failed to download the specified client jar.
   case clientJarDownloadFailure
   /// Failed to extract assets from a client jar.
@@ -133,6 +133,12 @@ public struct ResourcePack {
       let blockTextureDirectory = textureDirectory.appendingPathComponent("block")
       if FileManager.default.directoryExists(at: blockTextureDirectory) {
         resources.blockTexturePalette = try TexturePalette.load(from: blockTextureDirectory, inNamespace: namespace, withType: "block")
+      }
+
+      // Load GUI textures if pack contains them
+      let guiTextureDirectory = textureDirectory.appendingPathComponent("gui")
+      if FileManager.default.directoryExists(at: guiTextureDirectory) && namespace == "minecraft" {
+        resources.guiTexturePalette = try TexturePalette.load(from: guiTextureDirectory, inNamespace: namespace, withType: "gui")
       }
     }
     

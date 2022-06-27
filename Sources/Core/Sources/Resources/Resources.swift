@@ -15,6 +15,8 @@ extension ResourcePack {
     public var biomeColors = BiomeColors()
     /// The fonts.
     public var fontPalette = FontPalette()
+    /// The GUI texture palette.
+    public var guiTexturePalette = TexturePalette()
 
     /// Creates a new empty namespace of resources.
     public init() {}

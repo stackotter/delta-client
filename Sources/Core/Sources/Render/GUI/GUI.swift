@@ -3,7 +3,6 @@ import simd
 
 struct GUI {
   var elements: [GUIElement] = []
-  var font: Font
   var client: Client
 
   var showDebugScreen = false
@@ -13,10 +12,24 @@ struct GUI {
   var lastFPSUpdate: CFAbsoluteTime = 0
   var savedRenderStatistics = RenderStatistics(gpuCountersEnabled: false)
 
-  init(client: Client) {
-    font = client.resourcePack.vanillaResources.fontPalette.defaultFont
+  var font: Font
+  var fontArrayTexture: MTLTexture
+  var guiTexturePalette: GUITexturePalette
+  var guiArrayTexture: MTLTexture
+
+  init(client: Client, device: MTLDevice, commandQueue: MTLCommandQueue) throws {
     self.client = client
     elements = []
+
+    font = client.resourcePack.vanillaResources.fontPalette.defaultFont
+    fontArrayTexture = try font.createArrayTexture(device)
+
+    guiTexturePalette = try GUITexturePalette(client.resourcePack.vanillaResources.guiTexturePalette)
+    guiArrayTexture = try guiTexturePalette.palette.createTextureArray(
+      device: device,
+      animationState: ArrayTextureAnimationState(for: guiTexturePalette.palette),
+      commandQueue: commandQueue
+    )
 
     populate()
   }
@@ -115,7 +128,7 @@ struct GUI {
       var mesh: GUIElementMesh
       switch element.content {
         case .text(let text):
-          mesh = try GUIElementMesh(text: text, font: font, device: device)
+          mesh = try GUIElementMesh(text: text, font: font, fontArrayTexture: fontArrayTexture, device: device)
       }
 
       let x: Float

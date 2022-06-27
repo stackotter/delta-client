@@ -18,12 +18,12 @@ struct GUIElementMesh {
   var height: Float
 
   /// Creates a mesh from some text and a font.
-  init(text: String, font: Font, device: MTLDevice) throws {
+  init(text: String, font: Font, fontArrayTexture: MTLTexture, device: MTLDevice) throws {
     guard !text.isEmpty else {
       throw GUIRendererError.emptyText
     }
 
-    arrayTexture = try font.createArrayTexture(device)
+    arrayTexture = fontArrayTexture
 
     quads = []
 
