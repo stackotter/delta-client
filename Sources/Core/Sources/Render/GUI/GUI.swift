@@ -39,6 +39,8 @@ struct GUI {
     if showDebugScreen {
       elements.append(contentsOf: debugScreen())
     }
+
+    elements.append(GUIElement(.sprite(.fullHeart), .center))
   }
 
   mutating func debugScreen() -> [GUIElement] {
@@ -122,13 +124,38 @@ struct GUI {
     populate()
   }
 
-  func meshes(device: MTLDevice, scale: Float, effectiveDrawableSize: SIMD2<Float>) throws -> [GUIElementMesh] {
+  func mesh(
+    for sprite: GUISpriteDescriptor,
+    device: MTLDevice
+  ) throws -> GUIElementMesh {
+    return try GUIElementMesh(
+      sprite: sprite,
+      guiTexturePalette: guiTexturePalette,
+      guiArrayTexture: guiArrayTexture,
+      device: device
+    )
+  }
+
+  func meshes(
+    device: MTLDevice,
+    scale: Float,
+    effectiveDrawableSize: SIMD2<Float>
+  ) throws -> [GUIElementMesh] {
     var meshes: [GUIElementMesh] = []
     for element in elements {
       var mesh: GUIElementMesh
       switch element.content {
         case .text(let text):
-          mesh = try GUIElementMesh(text: text, font: font, fontArrayTexture: fontArrayTexture, device: device)
+          mesh = try GUIElementMesh(
+            text: text,
+            font: font,
+            fontArrayTexture: fontArrayTexture,
+            device: device
+          )
+        case .sprite(let sprite):
+          mesh = try self.mesh(for: sprite.descriptor, device: device)
+        case .customSprite(let descriptor):
+          mesh = try self.mesh(for: descriptor, device: device)
       }
 
       let x: Float
