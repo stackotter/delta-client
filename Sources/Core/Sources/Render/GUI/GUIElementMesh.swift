@@ -3,26 +3,23 @@ import MetalKit
 /// A generic texture-backed GUI element.
 struct GUIElementMesh {
   /// The element's position.
-  var position: SIMD2<Float> = .zero
+  var position: SIMD2<Int> = .zero
+  /// The unscaled size.
+  var size: SIMD2<Int>
   /// The quads making up the element.
   var quads: [GUIQuadInstance] = []
   /// The mesh's uniforms.
-  var uniformsBuffer: MTLBuffer
+  var uniformsBuffer: MTLBuffer?
   /// The array texture used to render this element.
   var arrayTexture: MTLTexture
   /// The buffer containing ``quads``.
-  var buffer: MTLBuffer
-  /// The unscaled width.
-  var width: Float
-  /// The unscaled height.
-  var height: Float
+  var buffer: MTLBuffer?
 
   /// Creates a mesh from some text and a font.
   init(
     text: String,
     font: Font,
-    fontArrayTexture: MTLTexture,
-    device: MTLDevice
+    fontArrayTexture: MTLTexture
   ) throws {
     guard !text.isEmpty else {
       throw GUIRendererError.emptyText
@@ -30,39 +27,34 @@ struct GUIElementMesh {
 
     arrayTexture = fontArrayTexture
 
-    var currentX: Float = 0
-    let currentY: Float = 0
-    let spacing: Float = 1
+    var currentX = 0
+    let currentY = 0
+    let spacing = 1
     for character in text {
       var quad = try GUIQuadInstance(
         for: character,
         with: font,
         fontArrayTexture: arrayTexture
       )
-      quad.translate(amount: [
+      quad.translate(amount: SIMD2([
         currentX,
         currentY
-      ])
+      ]))
       quads.append(quad)
-      currentX += quad.size.x + spacing
+      currentX += Int(quad.size.x) + spacing
     }
 
-    width = currentX - spacing
-    height = Float(Font.defaultCharacterHeight)
-
-    (buffer, uniformsBuffer) = try Self.createBuffers(quads: &quads, device: device)
+    let width = currentX - spacing
+    let height = Font.defaultCharacterHeight
+    size = [width, height]
   }
 
   init(
     sprite: GUISpriteDescriptor,
     guiTexturePalette: GUITexturePalette,
-    guiArrayTexture: MTLTexture,
-    device: MTLDevice
+    guiArrayTexture: MTLTexture
   ) throws {
     arrayTexture = guiArrayTexture
-
-    width = Float(sprite.size.x)
-    height = Float(sprite.size.y)
 
     let textureSize: SIMD2 = [
       Float(guiArrayTexture.width),
@@ -77,7 +69,9 @@ struct GUIElementMesh {
       textureIndex: UInt8(guiTexturePalette.textureIndex(for: sprite.slice))
     )]
 
-    (buffer, uniformsBuffer) = try Self.createBuffers(quads: &quads, device: device)
+    let width = sprite.size.x
+    let height = sprite.size.y
+    size = [width, height]
   }
 
   static func createBuffers(
@@ -103,14 +97,26 @@ struct GUIElementMesh {
   /// Renders the text. Expects ``GUIQuadGeometry/vertices`` to be bound at vertex buffer index 0 and
   /// ``GUIUniforms`` to be bound at vertex buffer index 1. Also expects pipeline state to be set to
   /// ``GUIRenderer/pipelineState``.
-  func render(
+  mutating func render(
     into encoder: MTLRenderCommandEncoder,
     with device: MTLDevice,
     quadIndexBuffer: MTLBuffer
   ) throws {
-    var uniforms = GUIElementUniforms(position: position)
+    // Create buffers if necesary
+    let buffer: MTLBuffer
+    let uniformsBuffer: MTLBuffer
+    if let bufferTemp = self.buffer, let uniformsBufferTemp = self.uniformsBuffer {
+      buffer = bufferTemp
+      uniformsBuffer = uniformsBufferTemp
+    } else {
+      (buffer, uniformsBuffer) = try Self.createBuffers(quads: &quads, device: device)
+    }
+
+    // Update uniforms
+    var uniforms = GUIElementUniforms(position: SIMD2(position))
     uniformsBuffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<GUIElementUniforms>.stride)
 
+    // Render instanced quads
     encoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 2)
     encoder.setVertexBuffer(buffer, offset: 0, index: 3)
     encoder.setFragmentTexture(arrayTexture, index: 0)

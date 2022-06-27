@@ -2,7 +2,7 @@ import Metal
 import simd
 
 struct GUI {
-  var elements: [GUIElement] = []
+  var root: GUIGroupElement
   var client: Client
 
   var showDebugScreen = false
@@ -19,7 +19,8 @@ struct GUI {
 
   init(client: Client, device: MTLDevice, commandQueue: MTLCommandQueue) throws {
     self.client = client
-    elements = []
+
+    root = GUIGroupElement([0, 0])
 
     font = client.resourcePack.vanillaResources.fontPalette.defaultFont
     fontArrayTexture = try font.createArrayTexture(device)
@@ -30,16 +31,25 @@ struct GUI {
       animationState: ArrayTextureAnimationState(for: guiTexturePalette.palette),
       commandQueue: commandQueue
     )
-
-    populate()
   }
 
-  mutating func populate() {
-    elements = []
+  mutating func update(_ screenSize: SIMD2<Int>) {
+    root = GUIGroupElement(screenSize)
+
+    // Debug screen
     if showDebugScreen {
-      elements.append(contentsOf: debugScreen())
+      root.add(debugScreen(), .position(0, 0))
     }
 
+    // Hot bar area (hot bar, health, food, etc.)
+    root.add(hotbarArea(), .bottom(4), .center)
+
+    // Render crosshair
+    root.add(GUISprite.crossHair, .center)
+  }
+
+  func hotbarArea() -> GUIGroupElement {
+    var group = GUIGroupElement([182, 9])
     var health: Float = 0
     var food: Int = 0
     var gamemode: Gamemode = .adventure
@@ -51,26 +61,30 @@ struct GUI {
 
     if gamemode.hasHealth {
       // Render health
-      elements.append(contentsOf: statBar(
-        value: Int(health.rounded()),
-        outline: .heartOutline,
-        fullIcon: .fullHeart,
-        halfIcon: .halfHeart,
-        verticalConstraint: .bottom(4),
-        horizontalConstraint: HorizontalConstraint.left,
-        horizontalOffset: 4
-      ))
+      group.add(
+        statBar(
+          value: Int(health.rounded()),
+          outline: .heartOutline,
+          fullIcon: .fullHeart,
+          halfIcon: .halfHeart,
+          horizontalConstraint: HorizontalConstraint.left
+        ),
+        .bottom(0),
+        .left(0)
+      )
 
       // Render hunger
-      elements.append(contentsOf: statBar(
-        value: food,
-        outline: .foodOutline,
-        fullIcon: .fullFood,
-        halfIcon: .halfFood,
-        verticalConstraint: .bottom(4),
-        horizontalConstraint: HorizontalConstraint.right,
-        horizontalOffset: 4
-      ))
+      group.add(
+        statBar(
+          value: food,
+          outline: .foodOutline,
+          fullIcon: .fullFood,
+          halfIcon: .halfFood,
+          horizontalConstraint: HorizontalConstraint.right
+        ),
+        .bottom(0),
+        .right(0)
+      )
 
       // Render armor amount
       // elements.append(contentsOf: statBar(
@@ -78,15 +92,12 @@ struct GUI {
       //   outline: .armorOutline,
       //   fullIcon: .fullArmor,
       //   halfIcon: .halfArmor,
-      //   verticalConstraint: .bottom(17),
       //   horizontalConstraint: HorizontalConstraint.left,
-      //   horizontalOffset: 4,
       //   alwaysHasOutline: false
       // ))
     }
 
-    // Render crosshair
-    elements.append(GUIElement(.sprite(.crossHair), .center))
+    return group
   }
 
   func statBar(
@@ -94,33 +105,32 @@ struct GUI {
     outline: GUISprite,
     fullIcon: GUISprite,
     halfIcon: GUISprite,
-    verticalConstraint: VerticalConstraint,
     horizontalConstraint: (Int) -> HorizontalConstraint,
-    horizontalOffset: Int,
     alwaysHasOutline: Bool = true
-  ) -> [GUIElement] {
-    var elements: [GUIElement] = []
+  ) -> GUIGroupElement {
+    var group = GUIGroupElement([81, 9])
+
     let fullIconCount = value / 2
     let hasHalfIcon = value % 2 == 1
     for i in 0..<10 {
       // Outline
-      let position = Constraints(verticalConstraint, horizontalConstraint(horizontalOffset + i * 8))
+      let position = Constraints(.top(0), horizontalConstraint(i * 8))
       if alwaysHasOutline || i > fullIconCount {
-        elements.append(GUIElement(.sprite(outline), position))
+        group.add(outline, position)
       }
 
       // Full and half icons
       if i < fullIconCount {
-        elements.append(GUIElement(.sprite(fullIcon), position))
+        group.add(fullIcon, position)
       } else if i == fullIconCount && hasHalfIcon {
-        elements.append(GUIElement(.sprite(halfIcon), position))
+        group.add(halfIcon, position)
       }
     }
 
-    return elements
+    return group
   }
 
-  mutating func debugScreen() -> [GUIElement] {
+  mutating func debugScreen() -> GUIList {
     // Fetch relevant player properties
     var blockPosition = BlockPosition(x: 0, y: 0, z: 0)
     var chunkSectionPosition = ChunkSectionPosition(sectionX: 0, sectionY: 0, sectionZ: 0)
@@ -147,8 +157,8 @@ struct GUI {
     let renderStatistics = savedRenderStatistics
 
     // Version
-    var listBuilder = GUIListBuilder(x: 4, y: 4, spacing: 2)
-    listBuilder.add("Minecraft \(Constants.versionString) (Delta Client)")
+    var list = GUIList(rowHeight: 10)
+    list.add("Minecraft \(Constants.versionString) (Delta Client)")
 
     // FPS
     var theoreticalFPSString = ""
@@ -161,105 +171,53 @@ struct GUI {
       gpuTimeString = String(format: ", %.02fms gpu", gpuTime)
     }
     let fpsString = String(format: "%.00f", renderStatistics.averageFPS)
-    listBuilder.add("\(fpsString) fps\(theoreticalFPSString) (\(cpuTimeString)ms cpu\(gpuTimeString))")
+    list.add("\(fpsString) fps\(theoreticalFPSString) (\(cpuTimeString)ms cpu\(gpuTimeString))")
 
     // Dimension
-    listBuilder.add("Dimension: \(client.game.world.dimension)")
-    listBuilder.add(spacer: 6)
+    list.add("Dimension: \(client.game.world.dimension)")
+    list.add(spacer: 6)
 
     // Position
     let x = String(format: "%.02f", position.x)
     let y = String(format: "%.02f", position.y)
     let z = String(format: "%.02f", position.z)
-    listBuilder.add("XYZ: \(x) / \(y) / \(z)")
+    list.add("XYZ: \(x) / \(y) / \(z)")
 
     // Block under feet
-    listBuilder.add("Block: \(blockPosition.x) \(blockPosition.y) \(blockPosition.z)")
+    list.add("Block: \(blockPosition.x) \(blockPosition.y) \(blockPosition.z)")
 
     // Chunk section and relative position
     let relativePosition = blockPosition.relativeToChunk
     let relativePositionString = "\(relativePosition.x) \(relativePosition.y) \(relativePosition.z)"
     let chunkSectionString = "\(chunkSectionPosition.sectionX) \(chunkSectionPosition.sectionY) \(chunkSectionPosition.sectionZ)"
-    listBuilder.add("Chunk: \(relativePositionString) in \(chunkSectionString)")
+    list.add("Chunk: \(relativePositionString) in \(chunkSectionString)")
 
     // Heading and rotation
     let yawString = String(format: "%.01f", yaw)
     let pitchString = String(format: "%.01f", pitch)
-    listBuilder.add("Facing: \(heading) (Towards \(heading.isPositive ? "positive" : "negative") \(heading.axis)) (\(yawString) / \(pitchString))")
+    list.add("Facing: \(heading) (Towards \(heading.isPositive ? "positive" : "negative") \(heading.axis)) (\(yawString) / \(pitchString))")
 
     // Biome
     let biome = client.game.world.chunk(at: chunkSectionPosition.chunk)?.biome(at: blockPosition)
-    listBuilder.add("Biome: \(biome?.identifier.description ?? "not loaded")")
+    list.add("Biome: \(biome?.identifier.description ?? "not loaded")")
 
     // Gamemode
-    listBuilder.add("Gamemode: \(gamemode.string)")
+    list.add("Gamemode: \(gamemode.string)")
 
-    return listBuilder.elements
+    return list
   }
 
-  mutating func update() {
-    populate()
-  }
-
-  func mesh(
-    for sprite: GUISpriteDescriptor,
-    device: MTLDevice
-  ) throws -> GUIElementMesh {
-    return try GUIElementMesh(
-      sprite: sprite,
-      guiTexturePalette: guiTexturePalette,
-      guiArrayTexture: guiArrayTexture,
-      device: device
-    )
-  }
-
-  func meshes(
-    device: MTLDevice,
-    scale: Float,
-    effectiveDrawableSize: SIMD2<Float>
+  mutating func meshes(
+    effectiveDrawableSize: SIMD2<Int>
   ) throws -> [GUIElementMesh] {
-    var meshes: [GUIElementMesh] = []
-    for element in elements {
-      var mesh: GUIElementMesh
-      switch element.content {
-        case .text(let text):
-          mesh = try GUIElementMesh(
-            text: text,
-            font: font,
-            fontArrayTexture: fontArrayTexture,
-            device: device
-          )
-        case .sprite(let sprite):
-          mesh = try self.mesh(for: sprite.descriptor, device: device)
-        case .customSprite(let descriptor):
-          mesh = try self.mesh(for: descriptor, device: device)
-      }
+    update(effectiveDrawableSize)
+    let context = GUIContext(
+      font: font,
+      fontArrayTexture: fontArrayTexture,
+      guiTexturePalette: guiTexturePalette,
+      guiArrayTexture: guiArrayTexture
+    )
 
-      let x: Float
-      switch element.constraints.horizontal {
-        case .left(let distance):
-          x = Float(distance)
-        case .center:
-          x = (effectiveDrawableSize.x - mesh.width) / 2
-        case .right(let distance):
-          x = effectiveDrawableSize.x - mesh.width - Float(distance)
-      }
-
-      let y: Float
-      switch element.constraints.vertical {
-        case .top(let distance):
-          y = Float(distance)
-        case .center:
-          y = (effectiveDrawableSize.y - mesh.height) / 2
-        case .bottom(let distance):
-          y = effectiveDrawableSize.y - mesh.height - Float(distance)
-      }
-
-      mesh.position = [x, y]
-
-      meshes.append(mesh)
-    }
-
-    return meshes
+    return try root.meshes(context: context)
   }
 }

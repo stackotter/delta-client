@@ -1,5 +1,5 @@
 /// A sprite in the GUI texture palette.
-enum GUISprite {
+enum GUISprite: GUIElement {
   case heartOutline
   case fullHeart
   case halfHeart
@@ -35,5 +35,9 @@ enum GUISprite {
       case .crossHair:
         return GUISpriteDescriptor(slice: .icons, position: [3, 3], size: [9, 9])
     }
+  }
+
+  func meshes(context: GUIContext) throws -> [GUIElementMesh] {
+    return try descriptor.meshes(context: context)
   }
 }

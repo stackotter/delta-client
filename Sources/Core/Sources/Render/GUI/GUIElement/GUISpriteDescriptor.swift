@@ -1,7 +1,7 @@
 import simd
 
 /// Describes how to render a specific sprite from a ``GUITexturePalette``.
-struct GUISpriteDescriptor {
+struct GUISpriteDescriptor: GUIElement {
   /// The slice containing the sprite.
   var slice: GUITextureSlice
   /// The position of the sprite in the texture. Origin is at the top left.
@@ -21,5 +21,13 @@ struct GUISpriteDescriptor {
       position: [xIndex * 9 + 16, yIndex * 9],
       size: [9, 9]
     )
+  }
+
+  func meshes(context: GUIContext) throws -> [GUIElementMesh] {
+    return try [GUIElementMesh(
+      sprite: self,
+      guiTexturePalette: context.guiTexturePalette,
+      guiArrayTexture: context.guiArrayTexture
+    )]
   }
 }

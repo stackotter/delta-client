@@ -100,14 +100,11 @@ public final class GUIRenderer: Renderer {
     encoder.setRenderPipelineState(pipelineState)
 
     // Render meshes
-    gui.update()
     let meshes = try gui.meshes(
-      device: device,
-      scale: scale,
-      effectiveDrawableSize: [drawableWidth / scale, drawableHeight / scale]
+      effectiveDrawableSize: SIMD2([drawableWidth / scale, drawableHeight / scale])
     )
 
-    for mesh in meshes {
+    for var mesh in meshes {
       try mesh.render(into: encoder, with: device, quadIndexBuffer: quadIndexBuffer)
     }
   }
