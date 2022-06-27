@@ -49,49 +49,60 @@ struct GUI {
       food = player.nutrition.food
     }
 
-    // Render health
-    let heartsLeftPadding = 4
-    let heartsBottomPadding = 4
     if gamemode.hasHealth {
-      let heartCount = Int(health.rounded())
-      let fullHeartCount = heartCount / 2
-      let hasHalfHeart = fullHeartCount % 2 == 1
-      for i in 0..<10 {
-        // Outline
-        let position = Constraints(.bottom(heartsBottomPadding), .left(heartsLeftPadding + i * 8))
-        elements.append(GUIElement(.sprite(.heartOutline), position))
+      // Render health
+      elements.append(contentsOf: statBar(
+        value: Int(health.rounded()),
+        outline: .heartOutline,
+        fullIcon: .fullHeart,
+        halfIcon: .halfHeart,
+        verticalConstraint: .bottom(4),
+        horizontalConstraint: HorizontalConstraint.left,
+        horizontalOffset: 4
+      ))
 
-        // Full and half hearts
-        if i < fullHeartCount {
-          elements.append(GUIElement(.sprite(.fullHeart), position))
-        } else if i == fullHeartCount && hasHalfHeart {
-          elements.append(GUIElement(.sprite(.halfHeart), position))
-        }
-      }
-    }
-
-    // Render hunger
-    let foodRightPadding = 4
-    let foodBottomPadding = 4
-    if gamemode.hasHealth {
-      let fullFoodCount = food / 2
-      let hasHalfFood = food % 2 == 1
-      for i in 0..<10 {
-        // Outline
-        let position = Constraints(.bottom(foodBottomPadding), .right(foodRightPadding + i * 8))
-        elements.append(GUIElement(.sprite(.foodOutline), position))
-
-        // Full and half foods
-        if i < fullFoodCount {
-          elements.append(GUIElement(.sprite(.fullFood), position))
-        } else if i == fullFoodCount && hasHalfFood {
-          elements.append(GUIElement(.sprite(.halfFood), position))
-        }
-      }
+      // Render hunger
+      elements.append(contentsOf: statBar(
+        value: food,
+        outline: .foodOutline,
+        fullIcon: .fullFood,
+        halfIcon: .halfFood,
+        verticalConstraint: .bottom(4),
+        horizontalConstraint: HorizontalConstraint.right,
+        horizontalOffset: 4
+      ))
     }
 
     // Render crosshair
     elements.append(GUIElement(.sprite(.crossHair), .center))
+  }
+
+  func statBar(
+    value: Int,
+    outline: GUISprite,
+    fullIcon: GUISprite,
+    halfIcon: GUISprite,
+    verticalConstraint: VerticalConstraint,
+    horizontalConstraint: (Int) -> HorizontalConstraint,
+    horizontalOffset: Int
+  ) -> [GUIElement] {
+    var elements: [GUIElement] = []
+    let fullIconCount = value / 2
+    let hasHalfIcon = value % 2 == 1
+    for i in 0..<10 {
+      // Outline
+      let position = Constraints(verticalConstraint, horizontalConstraint(horizontalOffset + i * 8))
+      elements.append(GUIElement(.sprite(outline), position))
+
+      // Full and half icons
+      if i < fullIconCount {
+        elements.append(GUIElement(.sprite(fullIcon), position))
+      } else if i == fullIconCount && hasHalfIcon {
+        elements.append(GUIElement(.sprite(halfIcon), position))
+      }
+    }
+
+    return elements
   }
 
   mutating func debugScreen() -> [GUIElement] {
