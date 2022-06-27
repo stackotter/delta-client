@@ -26,7 +26,12 @@ struct GUIGroupElement: GUIElement {
     for (element, constraints) in children {
       var elementMeshes = try element.meshes(context: context)
 
-      let elementSize = elementMeshes.size()
+      let elementSize: SIMD2<Int>
+      if let group = element as? GUIGroupElement {
+        elementSize = group.size
+      } else {
+        elementSize = elementMeshes.size()
+      }
       for (i, var mesh) in elementMeshes.enumerated() {
         mesh.position &+= constraints.solve(innerSize: elementSize, outerSize: size)
         elementMeshes[i] = mesh
