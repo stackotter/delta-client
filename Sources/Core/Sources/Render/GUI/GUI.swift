@@ -71,6 +71,18 @@ struct GUI {
         horizontalConstraint: HorizontalConstraint.right,
         horizontalOffset: 4
       ))
+
+      // Render armor amount
+      // elements.append(contentsOf: statBar(
+      //   value: food,
+      //   outline: .armorOutline,
+      //   fullIcon: .fullArmor,
+      //   halfIcon: .halfArmor,
+      //   verticalConstraint: .bottom(17),
+      //   horizontalConstraint: HorizontalConstraint.left,
+      //   horizontalOffset: 4,
+      //   alwaysHasOutline: false
+      // ))
     }
 
     // Render crosshair
@@ -84,7 +96,8 @@ struct GUI {
     halfIcon: GUISprite,
     verticalConstraint: VerticalConstraint,
     horizontalConstraint: (Int) -> HorizontalConstraint,
-    horizontalOffset: Int
+    horizontalOffset: Int,
+    alwaysHasOutline: Bool = true
   ) -> [GUIElement] {
     var elements: [GUIElement] = []
     let fullIconCount = value / 2
@@ -92,7 +105,9 @@ struct GUI {
     for i in 0..<10 {
       // Outline
       let position = Constraints(verticalConstraint, horizontalConstraint(horizontalOffset + i * 8))
-      elements.append(GUIElement(.sprite(outline), position))
+      if alwaysHasOutline || i > fullIconCount {
+        elements.append(GUIElement(.sprite(outline), position))
+      }
 
       // Full and half icons
       if i < fullIconCount {

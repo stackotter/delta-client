@@ -6,6 +6,9 @@ enum GUISprite {
   case foodOutline
   case fullFood
   case halfFood
+  case armorOutline
+  case fullArmor
+  case halfArmor
   case crossHair
 
   /// The descriptor for the sprite.
@@ -23,6 +26,12 @@ enum GUISprite {
         return .icon(4, 3)
       case .halfFood:
         return .icon(5, 3)
+      case .armorOutline:
+        return .icon(0, 1)
+      case .fullArmor:
+        return .icon(2, 1)
+      case .halfArmor:
+        return .icon(1, 1)
       case .crossHair:
         return GUISpriteDescriptor(slice: .icons, position: [3, 3], size: [9, 9])
     }
