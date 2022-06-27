@@ -38,66 +38,38 @@ struct GUI {
 
     // Debug screen
     if showDebugScreen {
-      root.add(debugScreen(), .position(0, 0))
+      root.add(debugScreen(), .position(4, 4))
     }
 
     // Hot bar area (hot bar, health, food, etc.)
-    root.add(hotbarArea(), .bottom(4), .center)
+    hotbarArea(&root)
 
     // Render crosshair
     root.add(GUISprite.crossHair, .center)
   }
 
-  func hotbarArea() -> GUIGroupElement {
-    var group = GUIGroupElement([182, 9])
+  func hotbarArea(_ parentGroup: inout GUIGroupElement) {
+    var group = GUIGroupElement([184, 36])
     var health: Float = 0
     var food: Int = 0
     var gamemode: Gamemode = .adventure
+    var selectedSlot: Int = 0
     client.game.accessPlayer { player in
       gamemode = player.gamemode.gamemode
       health = player.health.health
       food = player.nutrition.food
+      selectedSlot = player.inventory.hotbarSlot
     }
 
-    if gamemode.hasHealth {
-      // Render health
-      group.add(
-        statBar(
-          value: Int(health.rounded()),
-          outline: .heartOutline,
-          fullIcon: .fullHeart,
-          halfIcon: .halfHeart,
-          horizontalConstraint: HorizontalConstraint.left
-        ),
-        .bottom(0),
-        .left(0)
-      )
+    stats(&group, gamemode: gamemode, health: health, food: food)
+    hotbar(&group, selectedSlot: selectedSlot)
 
-      // Render hunger
-      group.add(
-        statBar(
-          value: food,
-          outline: .foodOutline,
-          fullIcon: .fullFood,
-          halfIcon: .halfFood,
-          horizontalConstraint: HorizontalConstraint.right
-        ),
-        .bottom(0),
-        .right(0)
-      )
+    parentGroup.add(group, .bottom(-1), .center)
+  }
 
-      // Render armor amount
-      // elements.append(contentsOf: statBar(
-      //   value: food,
-      //   outline: .armorOutline,
-      //   fullIcon: .fullArmor,
-      //   halfIcon: .halfArmor,
-      //   horizontalConstraint: HorizontalConstraint.left,
-      //   alwaysHasOutline: false
-      // ))
-    }
-
-    return group
+  func hotbar(_ group: inout GUIGroupElement, selectedSlot: Int) {
+    group.add(GUISprite.hotbar, .bottom(1), .center)
+    group.add(GUISprite.selectedHotbarSlot, .bottom(0), .left(20 * selectedSlot))
   }
 
   func statBar(
@@ -128,6 +100,51 @@ struct GUI {
     }
 
     return group
+  }
+
+  func stats(
+    _ group: inout GUIGroupElement,
+    gamemode: Gamemode,
+    health: Float,
+    food: Int
+  ) {
+    if gamemode.hasHealth {
+      // Render health
+      group.add(
+        statBar(
+          value: Int(health.rounded()),
+          outline: .heartOutline,
+          fullIcon: .fullHeart,
+          halfIcon: .halfHeart,
+          horizontalConstraint: HorizontalConstraint.left
+        ),
+        .top(0),
+        .left(0)
+      )
+
+      // Render hunger
+      group.add(
+        statBar(
+          value: food,
+          outline: .foodOutline,
+          fullIcon: .fullFood,
+          halfIcon: .halfFood,
+          horizontalConstraint: HorizontalConstraint.right
+        ),
+        .top(0),
+        .right(0)
+      )
+
+      // Render armor amount
+      // elements.append(contentsOf: statBar(
+      //   value: food,
+      //   outline: .armorOutline,
+      //   fullIcon: .fullArmor,
+      //   halfIcon: .halfArmor,
+      //   horizontalConstraint: HorizontalConstraint.left,
+      //   alwaysHasOutline: false
+      // ))
+    }
   }
 
   mutating func debugScreen() -> GUIList {

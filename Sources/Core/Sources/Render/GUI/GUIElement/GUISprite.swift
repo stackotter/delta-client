@@ -10,6 +10,8 @@ enum GUISprite: GUIElement {
   case fullArmor
   case halfArmor
   case crossHair
+  case hotbar
+  case selectedHotbarSlot
 
   /// The descriptor for the sprite.
   var descriptor: GUISpriteDescriptor {
@@ -34,6 +36,10 @@ enum GUISprite: GUIElement {
         return .icon(1, 1)
       case .crossHair:
         return GUISpriteDescriptor(slice: .icons, position: [3, 3], size: [9, 9])
+      case .hotbar:
+        return GUISpriteDescriptor(slice: .widgets, position: [0, 0], size: [182, 22])
+      case .selectedHotbarSlot:
+        return GUISpriteDescriptor(slice: .widgets, position: [0, 22], size: [24, 24])
     }
   }
 
