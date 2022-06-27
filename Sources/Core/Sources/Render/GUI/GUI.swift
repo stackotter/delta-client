@@ -41,21 +41,24 @@ struct GUI {
     }
 
     var health: Float = 0
+    var food: Int = 0
     var gamemode: Gamemode = .adventure
     client.game.accessPlayer { player in
       gamemode = player.gamemode.gamemode
       health = player.health.health
+      food = player.nutrition.food
     }
 
     // Render health
-    let heartsLeft = 4
-    let heartsBottom = 4
+    let heartsLeftPadding = 4
+    let heartsBottomPadding = 4
     if gamemode.hasHealth {
-      let fullHeartCount = Int(health.rounded(.down))
-      let hasHalfHeart = Float(fullHeartCount) != health
+      let heartCount = Int(health.rounded())
+      let fullHeartCount = heartCount / 2
+      let hasHalfHeart = fullHeartCount % 2 == 1
       for i in 0..<10 {
         // Outline
-        let position = Constraints(.bottom(heartsBottom), .left(heartsLeft + i * 8))
+        let position = Constraints(.bottom(heartsBottomPadding), .left(heartsLeftPadding + i * 8))
         elements.append(GUIElement(.sprite(.heartOutline), position))
 
         // Full and half hearts
@@ -63,6 +66,26 @@ struct GUI {
           elements.append(GUIElement(.sprite(.fullHeart), position))
         } else if i == fullHeartCount && hasHalfHeart {
           elements.append(GUIElement(.sprite(.halfHeart), position))
+        }
+      }
+    }
+
+    // Render hunger
+    let foodRightPadding = 4
+    let foodBottomPadding = 4
+    if gamemode.hasHealth {
+      let fullFoodCount = food / 2
+      let hasHalfFood = food % 2 == 1
+      for i in 0..<10 {
+        // Outline
+        let position = Constraints(.bottom(foodBottomPadding), .right(foodRightPadding + i * 8))
+        elements.append(GUIElement(.sprite(.foodOutline), position))
+
+        // Full and half foods
+        if i < fullFoodCount {
+          elements.append(GUIElement(.sprite(.fullFood), position))
+        } else if i == fullFoodCount && hasHalfFood {
+          elements.append(GUIElement(.sprite(.halfFood), position))
         }
       }
     }
