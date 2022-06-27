@@ -1,5 +1,9 @@
 import MetalKit
 
+#if os(iOS)
+import UIKit
+#endif
+
 /// The renderer for the GUI (chat, f3, scoreboard etc.).
 public final class GUIRenderer: Renderer {
   var device: MTLDevice
@@ -71,10 +75,20 @@ public final class GUIRenderer: Renderer {
     let width = drawableWidth
     let height = drawableHeight
     let screenSpaceToNormalized = matrix_float3x3([
-        [2 / width, 0, -1],
-        [0, -2 / height, 1],
-        [0, 0, 1]
+      [2 / width, 0, -1],
+      [0, -2 / height, 1],
+      [0, 0, 1]
     ])
+
+    // Adjust scale per screen scale factor
+    #if os(macOS)
+    let screenScaleFactor = Float(NSScreen.main?.backingScaleFactor ?? 1)
+    #elseif os(iOS)
+    let screenScaleFactor = Float(UIScreen.main.scale)
+    #else
+    #error("Unsupported platform, unknown screen scale factor")
+    #endif
+    let scale = screenScaleFactor * scale
 
     let transformation = screenSpaceToNormalized
     var uniforms = GUIUniforms(screenSpaceToNormalized: transformation, scale: scale)
