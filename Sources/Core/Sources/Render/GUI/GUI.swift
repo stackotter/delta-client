@@ -24,81 +24,85 @@ struct GUI {
   mutating func populate() {
     elements = []
     if showDebugScreen {
-      // Fetch relevant player properties
-      var blockPosition = BlockPosition(x: 0, y: 0, z: 0)
-      var chunkSectionPosition = ChunkSectionPosition(sectionX: 0, sectionY: 0, sectionZ: 0)
-      var position: SIMD3<Double> = .zero
-      var pitch: Float = 0
-      var yaw: Float = 0
-      var heading: Direction = .north
-      var gamemode: Gamemode = .adventure
-      client.game.accessPlayer { player in
-        position = player.position.vector
-        blockPosition = player.position.blockUnderneath
-        chunkSectionPosition = player.position.chunkSection
-        pitch = MathUtil.degrees(from: player.rotation.pitch)
-        yaw = MathUtil.degrees(from: player.rotation.yaw)
-        heading = player.rotation.heading
-        gamemode = player.gamemode.gamemode
-      }
-
-      // Slow down updating of render stats to be easier to read
-      if CFAbsoluteTimeGetCurrent() - lastFPSUpdate > fpsUpdateInterval {
-        lastFPSUpdate = CFAbsoluteTimeGetCurrent()
-        savedRenderStatistics = renderStatistics
-      }
-      let renderStatistics = savedRenderStatistics
-
-      // Version
-      var listBuilder = GUIListBuilder(x: 4, y: 4, spacing: 2)
-      listBuilder.add("Minecraft \(Constants.versionString) (Delta Client)")
-
-      // FPS
-      var theoreticalFPSString = ""
-      if let theoreticalFPS = renderStatistics.averageTheoreticalFPS {
-        theoreticalFPSString = " (\(theoreticalFPS) theoretical)"
-      }
-      let cpuTimeString = String(format: "%.02f", renderStatistics.averageCPUTime * 1000.0)
-      var gpuTimeString = ""
-      if let gpuTime = renderStatistics.averageGPUTime {
-        gpuTimeString = String(format: ", %.02fms gpu", gpuTime)
-      }
-      let fpsString = String(format: "%.00f", renderStatistics.averageFPS)
-      listBuilder.add("\(fpsString) fps\(theoreticalFPSString) (\(cpuTimeString)ms cpu\(gpuTimeString))")
-
-      // Dimension
-      listBuilder.add("Dimension: \(client.game.world.dimension)")
-      listBuilder.add(spacer: 6)
-
-      // Position
-      let x = String(format: "%.02f", position.x)
-      let y = String(format: "%.02f", position.y)
-      let z = String(format: "%.02f", position.z)
-      listBuilder.add("XYZ: \(x) / \(y) / \(z)")
-
-      // Block under feet
-      listBuilder.add("Block: \(blockPosition.x) \(blockPosition.y) \(blockPosition.z)")
-
-      // Chunk section and relative position
-      let relativePosition = blockPosition.relativeToChunk
-      let relativePositionString = "\(relativePosition.x) \(relativePosition.y) \(relativePosition.z)"
-      let chunkSectionString = "\(chunkSectionPosition.sectionX) \(chunkSectionPosition.sectionY) \(chunkSectionPosition.sectionZ)"
-      listBuilder.add("Chunk: \(relativePositionString) in \(chunkSectionString)")
-
-      // Heading and rotation
-      let yawString = String(format: "%.01f", yaw)
-      let pitchString = String(format: "%.01f", pitch)
-      listBuilder.add("Facing: \(heading) (Towards \(heading.isPositive ? "positive" : "negative") \(heading.axis)) (\(yawString) / \(pitchString))")
-
-      // Biome
-      let biome = client.game.world.chunk(at: chunkSectionPosition.chunk)?.biome(at: blockPosition)
-      listBuilder.add("Biome: \(biome?.identifier.description ?? "not loaded")")
-
-      // Gamemode
-      listBuilder.add("Gamemode: \(gamemode.string)")
-
-      elements = listBuilder.elements
+      elements.append(contentsOf: debugScreen())
     }
+  }
+
+  mutating func debugScreen() -> [GUIElement] {
+    // Fetch relevant player properties
+    var blockPosition = BlockPosition(x: 0, y: 0, z: 0)
+    var chunkSectionPosition = ChunkSectionPosition(sectionX: 0, sectionY: 0, sectionZ: 0)
+    var position: SIMD3<Double> = .zero
+    var pitch: Float = 0
+    var yaw: Float = 0
+    var heading: Direction = .north
+    var gamemode: Gamemode = .adventure
+    client.game.accessPlayer { player in
+      position = player.position.vector
+      blockPosition = player.position.blockUnderneath
+      chunkSectionPosition = player.position.chunkSection
+      pitch = MathUtil.degrees(from: player.rotation.pitch)
+      yaw = MathUtil.degrees(from: player.rotation.yaw)
+      heading = player.rotation.heading
+      gamemode = player.gamemode.gamemode
+    }
+
+    // Slow down updating of render stats to be easier to read
+    if CFAbsoluteTimeGetCurrent() - lastFPSUpdate > fpsUpdateInterval {
+      lastFPSUpdate = CFAbsoluteTimeGetCurrent()
+      savedRenderStatistics = renderStatistics
+    }
+    let renderStatistics = savedRenderStatistics
+
+    // Version
+    var listBuilder = GUIListBuilder(x: 4, y: 4, spacing: 2)
+    listBuilder.add("Minecraft \(Constants.versionString) (Delta Client)")
+
+    // FPS
+    var theoreticalFPSString = ""
+    if let theoreticalFPS = renderStatistics.averageTheoreticalFPS {
+      theoreticalFPSString = " (\(theoreticalFPS) theoretical)"
+    }
+    let cpuTimeString = String(format: "%.02f", renderStatistics.averageCPUTime * 1000.0)
+    var gpuTimeString = ""
+    if let gpuTime = renderStatistics.averageGPUTime {
+      gpuTimeString = String(format: ", %.02fms gpu", gpuTime)
+    }
+    let fpsString = String(format: "%.00f", renderStatistics.averageFPS)
+    listBuilder.add("\(fpsString) fps\(theoreticalFPSString) (\(cpuTimeString)ms cpu\(gpuTimeString))")
+
+    // Dimension
+    listBuilder.add("Dimension: \(client.game.world.dimension)")
+    listBuilder.add(spacer: 6)
+
+    // Position
+    let x = String(format: "%.02f", position.x)
+    let y = String(format: "%.02f", position.y)
+    let z = String(format: "%.02f", position.z)
+    listBuilder.add("XYZ: \(x) / \(y) / \(z)")
+
+    // Block under feet
+    listBuilder.add("Block: \(blockPosition.x) \(blockPosition.y) \(blockPosition.z)")
+
+    // Chunk section and relative position
+    let relativePosition = blockPosition.relativeToChunk
+    let relativePositionString = "\(relativePosition.x) \(relativePosition.y) \(relativePosition.z)"
+    let chunkSectionString = "\(chunkSectionPosition.sectionX) \(chunkSectionPosition.sectionY) \(chunkSectionPosition.sectionZ)"
+    listBuilder.add("Chunk: \(relativePositionString) in \(chunkSectionString)")
+
+    // Heading and rotation
+    let yawString = String(format: "%.01f", yaw)
+    let pitchString = String(format: "%.01f", pitch)
+    listBuilder.add("Facing: \(heading) (Towards \(heading.isPositive ? "positive" : "negative") \(heading.axis)) (\(yawString) / \(pitchString))")
+
+    // Biome
+    let biome = client.game.world.chunk(at: chunkSectionPosition.chunk)?.biome(at: blockPosition)
+    listBuilder.add("Biome: \(biome?.identifier.description ?? "not loaded")")
+
+    // Gamemode
+    listBuilder.add("Gamemode: \(gamemode.string)")
+
+    return listBuilder.elements
   }
 
   mutating func update() {
