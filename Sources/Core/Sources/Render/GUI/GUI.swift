@@ -49,19 +49,22 @@ struct GUI {
   }
 
   func hotbarArea(_ parentGroup: inout GUIGroupElement) {
-    var group = GUIGroupElement([184, 36])
+    var group = GUIGroupElement([184, 40])
+
+    var gamemode: Gamemode = .adventure
     var health: Float = 0
     var food: Int = 0
-    var gamemode: Gamemode = .adventure
     var selectedSlot: Int = 0
+    var xpBarProgress: Float = 0
     client.game.accessPlayer { player in
       gamemode = player.gamemode.gamemode
       health = player.health.health
       food = player.nutrition.food
       selectedSlot = player.inventory.hotbarSlot
+      xpBarProgress = player.experience.experienceBarProgress
     }
 
-    stats(&group, gamemode: gamemode, health: health, food: food)
+    stats(&group, gamemode: gamemode, health: health, food: food, xpBarProgress: xpBarProgress)
     hotbar(&group, selectedSlot: selectedSlot)
 
     parentGroup.add(group, .bottom(-1), .center)
@@ -106,7 +109,8 @@ struct GUI {
     _ group: inout GUIGroupElement,
     gamemode: Gamemode,
     health: Float,
-    food: Int
+    food: Int,
+    xpBarProgress: Float
   ) {
     if gamemode.hasHealth {
       // Render health
@@ -119,7 +123,7 @@ struct GUI {
           horizontalConstraint: HorizontalConstraint.left
         ),
         .top(0),
-        .left(0)
+        .left(1)
       )
 
       // Render hunger
@@ -132,19 +136,28 @@ struct GUI {
           horizontalConstraint: HorizontalConstraint.right
         ),
         .top(0),
-        .right(0)
+        .right(1)
       )
 
-      // Render armor amount
-      // elements.append(contentsOf: statBar(
-      //   value: food,
-      //   outline: .armorOutline,
-      //   fullIcon: .fullArmor,
-      //   halfIcon: .halfArmor,
-      //   horizontalConstraint: HorizontalConstraint.left,
-      //   alwaysHasOutline: false
-      // ))
+      xpBar(&group, progress: xpBarProgress)
     }
+  }
+
+  func xpBar(_ group: inout GUIGroupElement, progress: Float) {
+    group.add(
+      GUISprite.xpBarBackground,
+      .top(10),
+      .center
+    )
+
+    var foreground = GUISprite.xpBarForeground.descriptor
+    foreground.size.x = Int(Float(foreground.size.x) * progress)
+
+    group.add(
+      foreground,
+      .top(10),
+      .left(1)
+    )
   }
 
   mutating func debugScreen() -> GUIList {

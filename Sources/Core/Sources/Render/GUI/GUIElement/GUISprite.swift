@@ -12,6 +12,8 @@ enum GUISprite: GUIElement {
   case crossHair
   case hotbar
   case selectedHotbarSlot
+  case xpBarBackground
+  case xpBarForeground
 
   /// The descriptor for the sprite.
   var descriptor: GUISpriteDescriptor {
@@ -40,6 +42,10 @@ enum GUISprite: GUIElement {
         return GUISpriteDescriptor(slice: .widgets, position: [0, 0], size: [182, 22])
       case .selectedHotbarSlot:
         return GUISpriteDescriptor(slice: .widgets, position: [0, 22], size: [24, 24])
+      case .xpBarBackground:
+        return GUISpriteDescriptor(slice: .icons, position: [0, 64], size: [182, 5])
+      case .xpBarForeground:
+        return GUISpriteDescriptor(slice: .icons, position: [0, 69], size: [182, 5])
     }
   }
 
