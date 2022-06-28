@@ -15,7 +15,6 @@ public class ServerConnection {
   public private(set) var eventBus: EventBus
   
   public var version = ProtocolVersion.v1_16_1
-  public var locale: MinecraftLocale
   
   /// The string representation of the socket this connection is connecting to.
   public var socketAddress: String {
@@ -25,7 +24,7 @@ public class ServerConnection {
   // MARK: Init
   
   /// Create a new connection to the specified server.
-  public init(descriptor: ServerDescriptor, locale: MinecraftLocale? = nil, eventBus: EventBus? = nil) {
+  public init(descriptor: ServerDescriptor, eventBus: EventBus? = nil) {
     let address = Self.resolve(descriptor)
     
     host = address.host
@@ -34,7 +33,6 @@ public class ServerConnection {
     self.eventBus = eventBus ?? EventBus()
     packetRegistry = PacketRegistry.create_1_16_1()
     networkStack = NetworkStack(host, port, eventBus: self.eventBus)
-    self.locale = locale ?? MinecraftLocale()
   }
   
   // MARK: Lifecycle

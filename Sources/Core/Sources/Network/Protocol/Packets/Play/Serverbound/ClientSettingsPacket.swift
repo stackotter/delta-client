@@ -2,27 +2,54 @@ import Foundation
 
 public struct ClientSettingsPacket: ServerboundPacket {
   public static let id: Int = 0x05
-  
+
   public var locale: String
   public var viewDistance: Int8
   public var chatMode: ChatMode
   public var chatColors: Bool
   public var displayedSkinParts: SkinParts
   public var mainHand: DominantHand
-  
+
+  public init(
+    locale: String,
+    viewDistance: Int8,
+    chatMode: ChatMode,
+    chatColors: Bool,
+    displayedSkinParts: SkinParts,
+    mainHand: DominantHand
+  ) {
+    self.locale = locale
+    self.viewDistance = viewDistance
+    self.chatMode = chatMode
+    self.chatColors = chatColors
+    self.displayedSkinParts = displayedSkinParts
+    self.mainHand = mainHand
+  }
+
+  public init(
+    _ configuration: ClientConfiguration
+  ) {
+    self.locale = Constants.locale
+    self.viewDistance = Int8(configuration.render.renderDistance)
+    self.chatMode = .enabled
+    self.chatColors = true
+    self.displayedSkinParts = [.cape, .hat, .jacket, .leftSleeve, .rightSleeve, .leftPantsLeg, .rightPantsLeg]
+    self.mainHand = .right
+  }
+
   public enum ChatMode: Int32 {
     case enabled = 0
     case commandsOnly = 1
     case hidden = 2
   }
-  
+
   public struct SkinParts: OptionSet {
     public let rawValue: UInt8
-    
+
     public init(rawValue: UInt8) {
       self.rawValue = rawValue
     }
-    
+
     public static let cape = SkinParts(rawValue: 0x01)
     public static let jacket = SkinParts(rawValue: 0x02)
     public static let leftSleeve = SkinParts(rawValue: 0x04)
@@ -31,7 +58,7 @@ public struct ClientSettingsPacket: ServerboundPacket {
     public static let rightPantsLeg = SkinParts(rawValue: 0x20)
     public static let hat = SkinParts(rawValue: 0x40)
   }
-  
+
   public func writePayload(to writer: inout PacketWriter) {
     writer.writeString(locale)
     writer.writeByte(viewDistance)

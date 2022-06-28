@@ -2,7 +2,7 @@ import Foundation
 
 public struct JoinGamePacket: ClientboundPacket, WorldDescriptor {
   public static let id: Int = 0x25
-  
+
   public var playerEntityId: Int
   public var isHardcore: Bool
   public var gamemode: Gamemode
@@ -19,7 +19,7 @@ public struct JoinGamePacket: ClientboundPacket, WorldDescriptor {
   public var enableRespawnScreen: Bool
   public var isDebug: Bool
   public var isFlat: Bool
-  
+
   public init(from packetReader: inout PacketReader) throws {
     playerEntityId = try packetReader.readInt()
     let gamemodeInt = Int8(try packetReader.readUnsignedByte())
@@ -46,12 +46,14 @@ public struct JoinGamePacket: ClientboundPacket, WorldDescriptor {
     isDebug = try packetReader.readBool()
     isFlat = try packetReader.readBool()
   }
-  
+
   public func handle(for client: Client) throws {
     client.game.update(packet: self, client: client)
-    
+
     // TODO: the event below should be dispatched from game instead of here. Event dispatching should
     //       be done in a way that makes it clear what will and what won't emit an event.
     client.eventBus.dispatch(JoinWorldEvent())
+
+    try client.connection?.sendPacket(ClientSettingsPacket(client.configuration))
   }
 }
