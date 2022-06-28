@@ -13,5 +13,7 @@ public struct EntityMovementPacket: ClientboundPacket {
     client.game.accessComponent(entityId: entityId, EntityVelocity.self) { velocity in
       velocity.vector = SIMD3<Double>.zero
     }
+
+    print("\(entityId): Set velocity to 0")
   }
 }

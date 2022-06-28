@@ -9,9 +9,15 @@ public struct VelocitySystem: System {
     let physicsEntities = nexus.family(
       requiresAll: EntityPosition.self,
       EntityVelocity.self,
-      excludesAll: ClientPlayerEntity.self)
+      EntityOnGround.self,
+      excludesAll: ClientPlayerEntity.self
+    )
 
-    for (position, velocity) in physicsEntities {
+    for (position, velocity, onGround) in physicsEntities {
+      if onGround.onGround {
+        velocity.vector.y = 0
+      }
+
       position.save()
       position.move(by: velocity.vector)
     }

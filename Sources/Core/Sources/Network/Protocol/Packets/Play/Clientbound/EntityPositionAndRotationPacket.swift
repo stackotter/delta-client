@@ -52,5 +52,7 @@ public struct EntityPositionAndRotationPacket: ClientboundPacket {
         velocity.y = 0
       }
     }
+
+    print("\(entityId): Set position and rotation")
   }
 }
