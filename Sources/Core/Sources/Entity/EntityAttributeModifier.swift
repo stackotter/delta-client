@@ -8,7 +8,7 @@ public struct EntityAttributeModifier {
   public var amount: Double
   /// The operation used to apply the modifier.
   public var operation: Operation
-  
+
   /// The operation used to apply a modifier.
   public enum Operation: UInt8 {
     /// Adds an amount to the value.
@@ -18,7 +18,7 @@ public struct EntityAttributeModifier {
     /// Multiplies the value by an amount.
     case multiply = 2
   }
-  
+
   /// Creates a new modifier.
   public init(uuid: UUID, amount: Double, operation: EntityAttributeModifier.Operation) {
     self.uuid = uuid

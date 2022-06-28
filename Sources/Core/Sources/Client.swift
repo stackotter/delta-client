@@ -16,6 +16,10 @@ public final class Client: @unchecked Sendable {
   /// The client's configuration
   public var configuration = ClientConfiguration() {
     didSet {
+      guard connection?.hasJoined == true else {
+        return
+      }
+
       // Send update to server if connected
       do {
         try connection?.sendPacket(ClientSettingsPacket(configuration))

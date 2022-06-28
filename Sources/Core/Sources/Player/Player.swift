@@ -15,6 +15,8 @@ public struct Player {
   public private(set) var flying: EntityFlying
   /// The component storing whether the player is sprinting.
   public private(set) var sprinting: EntitySprinting
+  /// The component storing whether the player is sneaking
+  public private(set) var sneaking: EntitySneaking
   /// The component storing the player's health.
   public private(set) var health: EntityHealth
   /// The component storing the player's hunger and saturation.
@@ -39,14 +41,14 @@ public struct Player {
   public private(set) var gamemode: PlayerGamemode
   /// The component storing the player's inventory.
   public private(set) var inventory: PlayerInventory
-  
+
   /// Creates a player.
   public init() {
     let playerEntity = RegistryStore.shared.entityRegistry.playerEntityKind
     entityId = EntityId(-1) // Temporary value until the actual id is received from the server.
     onGround = EntityOnGround(true)
     // Having smoothing set to slightly more than a tick smooths out any hick ups caused by late ticks
-    position = EntityPosition(0, 0, 0, smoothingAmount: 1 / 18) 
+    position = EntityPosition(0, 0, 0, smoothingAmount: 1 / 18)
     rotation = EntityRotation(pitch: 0.0, yaw: 0.0, smoothingAmount: 1 / 18)
     velocity = EntityVelocity(0, 0, 0)
     acceleration = EntityAcceleration(0, 0, 0)
@@ -54,6 +56,7 @@ public struct Player {
     experience = EntityExperience()
     flying = EntityFlying()
     sprinting = EntitySprinting()
+    sneaking = EntitySneaking()
     health = EntityHealth()
     nutrition = EntityNutrition()
     playerAttributes = PlayerAttributes()
@@ -62,7 +65,7 @@ public struct Player {
     gamemode = PlayerGamemode()
     inventory = PlayerInventory()
   }
-  
+
   /// Adds the player to a game.
   /// - Parameter nexus: The game to create the player's entity in.
   public mutating func add(to game: inout Game) {
@@ -81,6 +84,7 @@ public struct Player {
       experience
       flying
       sprinting
+      sneaking
       health
       nutrition
       playerAttributes

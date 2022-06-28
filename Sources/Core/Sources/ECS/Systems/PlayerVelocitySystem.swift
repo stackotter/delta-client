@@ -9,12 +9,12 @@ public struct PlayerVelocitySystem: System {
       EntityOnGround.self,
       ClientPlayerEntity.self
     ).makeIterator()
-    
+
     guard let (position, velocity, acceleration, onGround, _) = family.next() else {
       log.error("PlayerVelocitySystem failed to get player to tick")
       return
     }
-    
+
     if abs(velocity.x) < 0.003 {
       velocity.x = 0
     }
@@ -24,9 +24,9 @@ public struct PlayerVelocitySystem: System {
     if abs(velocity.z) < 0.003 {
       velocity.z = 0
     }
-    
+
     velocity.vector += acceleration.vector
-    
+
     if onGround.onGround {
       let blockPosition = BlockPosition(
         x: Int(position.x.rounded(.down)),

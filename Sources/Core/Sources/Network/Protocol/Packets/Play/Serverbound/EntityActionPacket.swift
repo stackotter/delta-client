@@ -5,7 +5,7 @@ public struct EntityActionPacket: ServerboundPacket {
   
   public var entityId: Int32
   public var action: PlayerEntityAction
-  public var jumpBoost: Int32
+  public var jumpBoost: Int32 = 0
   
   public func writePayload(to writer: inout PacketWriter) {
     writer.writeVarInt(entityId)

@@ -12,28 +12,29 @@ public struct PacketRegistry {
     .login: [:],
     .play: [:]
   ]
-  
+
   /// Creates an empty packet registry.
   public init() {}
-  
+
   // swiftlint:disable function_body_length
   /// Creates the packet registry for the 1.16.1 protocol version.
   public static func create_1_16_1() -> PacketRegistry {
     var registry = PacketRegistry()
-    
+
     registry.addClientboundPackets([
       StatusResponsePacket.self,
       PongPacket.self
     ], toState: .status)
-    
+
     registry.addClientboundPackets([
       LoginDisconnectPacket.self,
       EncryptionRequestPacket.self,
       LoginSuccessPacket.self,
       SetCompressionPacket.self,
-      LoginPluginRequestPacket.self
+      LoginPluginRequestPacket.self,
+      PlayDisconnectPacket.self
     ], toState: .login)
-    
+
     registry.addClientboundPackets([
       SpawnEntityPacket.self,
       SpawnExperienceOrbPacket.self,
@@ -130,14 +131,14 @@ public struct PacketRegistry {
     return registry
   }
   // swiftlint:enable function_body_length
-  
+
   /// Adds an array of clientbound packets to the given connection state. Each packet is assigned the id which is stored as a static property on the type.
   public mutating func addClientboundPackets(_ packets: [ClientboundPacket.Type], toState state: PacketState) {
     for packet in packets {
       addClientboundPacket(packet, toState: state)
     }
   }
-  
+
   /// Adds a clientbound packet to the given connection state. The packet is assigned the id which is stored in the static property `id`.
   public mutating func addClientboundPacket(_ packet: ClientboundPacket.Type, toState state: PacketState) {
     let id = packet.id
@@ -148,7 +149,7 @@ public struct PacketRegistry {
       clientboundPackets[state] = [id: packet]
     }
   }
-  
+
   /// Gets the packet type for the requested packet id and connection state.
   public func getClientboundPacketType(withId id: Int, andState state: PacketState) -> ClientboundPacket.Type? {
     return clientboundPackets[state]?[id]

@@ -55,5 +55,7 @@ public struct JoinGamePacket: ClientboundPacket, WorldDescriptor {
     client.eventBus.dispatch(JoinWorldEvent())
 
     try client.connection?.sendPacket(ClientSettingsPacket(client.configuration))
+
+    client.connection?.hasJoined = true
   }
 }

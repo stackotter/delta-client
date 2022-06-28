@@ -4,29 +4,29 @@ public struct EntityAttributeValue {
   public var baseValue: Double
   /// Modifiers that are currently affecting the value.
   public var modifiers: [EntityAttributeModifier]
-  
+
   /// The value after applying ``modifiers``.
   public var value: Double {
     var value = baseValue
-    
+
     let additiveModifiers = modifiers.filter { $0.operation == .add }
     for modifier in additiveModifiers {
       value += modifier.amount
     }
-    
+
     let relativeAdditiveModifiers = modifiers.filter { $0.operation == .addPercent }
     for modifier in relativeAdditiveModifiers {
-      value *= 1 + modifier.amount
+      value += modifier.amount * baseValue
     }
-    
+
     let multiplicativeModifiers = modifiers.filter { $0.operation == .multiply }
     for modifier in multiplicativeModifiers {
-      value *= modifier.amount
+      value *= modifier.amount + 1
     }
-    
+
     return value
   }
-  
+
   /// Creates a new value.
   /// - Parameters:
   ///   - baseValue: The base value without modifiers applied.
