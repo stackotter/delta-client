@@ -120,6 +120,10 @@ public struct Game {
         player.inventory.hotbarSlot = 7
       case .slot9:
         player.inventory.hotbarSlot = 8
+      case .nextSlot:
+        player.inventory.hotbarSlot = (player.inventory.hotbarSlot + 1) % 9
+      case .previousSlot:
+        player.inventory.hotbarSlot = (player.inventory.hotbarSlot + 8) % 9
       default:
         break
     }

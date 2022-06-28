@@ -21,6 +21,8 @@ public enum Input: Codable, CaseIterable {
   case slot7
   case slot8
   case slot9
+  case nextSlot
+  case previousSlot
 
   public var humanReadableLabel: String {
     switch self {
@@ -62,6 +64,10 @@ public enum Input: Codable, CaseIterable {
         return "Slot 8"
       case .slot9:
         return "Slot 9"
+      case .nextSlot:
+        return "Next slot"
+      case .previousSlot:
+        return "Previous slot"
     }
   }
 }

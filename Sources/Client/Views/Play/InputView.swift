@@ -66,6 +66,17 @@ struct InputView<Content: View>: View {
             
             return event
           })
+
+          NSEvent.addLocalMonitorForEvents(matching: [.scrollWheel], handler: { event in
+            if !enabled {
+              return event
+            }
+
+            let deltaY = Float(event.scrollingDeltaY)
+            delegateWrapper.delegate?.onScroll(deltaY)
+
+            return event
+          })
           
           NSEvent.addLocalMonitorForEvents(matching: [.keyDown], handler: { event in
             if !enabled {
