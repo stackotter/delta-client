@@ -25,8 +25,8 @@ public struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
 
   public init(from packetReader: inout PacketReader) throws {
     position = try packetReader.readEntityPosition()
-    yaw = try packetReader.readFloat()
-    pitch = try packetReader.readFloat()
+    yaw = MathUtil.radians(from: try packetReader.readFloat())
+    pitch = MathUtil.radians(from: try packetReader.readFloat())
     flags = try PositionAndLookFlags(rawValue: packetReader.readUnsignedByte())
     teleportId = try packetReader.readVarInt()
   }
