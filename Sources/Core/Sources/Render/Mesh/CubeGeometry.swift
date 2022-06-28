@@ -3,7 +3,7 @@ import simd
 
 struct CubeGeometry {
   static let faceWinding: [UInt32] = [0, 1, 2, 2, 3, 0]
-  
+
   static let cubeVertices: [SIMD3<Float>] = [
     SIMD3<Float>([0, 1, 0]),
     SIMD3<Float>([0, 0, 0]),
@@ -14,7 +14,7 @@ struct CubeGeometry {
     SIMD3<Float>([1, 0, 1]),
     SIMD3<Float>([1, 1, 1])
   ]
-  
+
   /// Indexed by ``Direction/rawValue``.
   static let faceVertices: [[SIMD3<Float>]] = [
     CubeGeometry.generateFaceVertices(facing: .down),
@@ -24,14 +24,14 @@ struct CubeGeometry {
     CubeGeometry.generateFaceVertices(facing: .west),
     CubeGeometry.generateFaceVertices(facing: .east)
   ]
-  
+
   public static let shades: [Float] = [
     0.6, // down
     1.0, // up
     0.9, 0.9, // north, south
     0.7, 0.7  // east, west
   ]
-  
+
   static func generateFaceVertices(facing: Direction) -> [SIMD3<Float>] {
     let vertexIndices: [Int]
     switch facing {
@@ -42,11 +42,11 @@ struct CubeGeometry {
       case .north: vertexIndices = [0, 1, 2, 3]
       case .south: vertexIndices = [7, 6, 5, 4]
     }
-    
+
     let vertices = vertexIndices.map { index in
       return cubeVertices[index]
     }
-    
+
     return vertices
   }
 }

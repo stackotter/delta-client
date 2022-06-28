@@ -13,7 +13,7 @@ public struct ChunkSectionMeshBuilder {
   private static let indexToPosition = generateIndexLookup()
   /// A lookup tp quickly get the block indices for blocks' neighbours.
   private static let indexToNeighbourIndicesLookup = (0..<Chunk.numSections).map { generateNeighbourIndices(sectionIndex: $0) }
-  
+
   /// The world containing the chunk section to prepare.
   public var world: World
   /// The chunk containing the section to prepare.
@@ -22,10 +22,10 @@ public struct ChunkSectionMeshBuilder {
   public var sectionPosition: ChunkSectionPosition
   /// The chunks surrounding ``chunk``.
   public var neighbourChunks: ChunkNeighbours
-  
+
   /// The resources containing the textures and block models for the builds to use.
   private let resources: ResourcePack.Resources
-  
+
   /// Create a new mesh builder.
   ///
   /// Assumes that all chunks required to prepare this section have been locked. See ``WorldMesh/chunksRequiredToPrepare(chunkAt:)``.
@@ -48,7 +48,7 @@ public struct ChunkSectionMeshBuilder {
     self.neighbourChunks = neighbourChunks
     self.resources = resources
   }
-  
+
   /// Builds a mesh for the section at ``sectionPosition`` in ``chunk``.
   ///
   /// Assumes that the chunk has been locked already.
@@ -63,18 +63,18 @@ public struct ChunkSectionMeshBuilder {
     )
     let modelToWorldMatrix = MatrixUtil.translationMatrix(position)
     let uniforms = Uniforms(transformation: modelToWorldMatrix)
-    
+
     var mesh = existingMesh ?? ChunkSectionMesh(uniforms)
     mesh.clearGeometry()
-    
+
     // Populate mesh with geometry
     let section = chunk.getSections(acquireLock: false)[sectionPosition.sectionY]
     let indexToNeighbourIndices = Self.indexToNeighbourIndicesLookup[sectionPosition.sectionY]
-    
+
     let xOffset = sectionPosition.sectionX * Chunk.Section.width
     let yOffset = sectionPosition.sectionY * Chunk.Section.height
     let zOffset = sectionPosition.sectionZ * Chunk.Section.depth
-    
+
     if section.blockCount != 0 {
       var transparentAndOpaqueGeometry = Geometry()
       let startTime = CFAbsoluteTimeGetCurrent()
@@ -101,16 +101,16 @@ public struct ChunkSectionMeshBuilder {
       mesh.transparentAndOpaqueMesh.vertices = transparentAndOpaqueGeometry.vertices
       mesh.transparentAndOpaqueMesh.indices = transparentAndOpaqueGeometry.indices
     }
-    
+
     if mesh.isEmpty {
       return nil
     }
-    
+
     return mesh
   }
-  
+
   // MARK: Block mesh building
-  
+
   /// Adds a block to the mesh.
   private func addBlock(
     at position: BlockPosition,
@@ -126,13 +126,13 @@ public struct ChunkSectionMeshBuilder {
       log.warning("Skipping block with no block models")
       return
     }
-    
+
     // Get block
     guard let block = RegistryStore.shared.blockRegistry.block(withId: blockId) else {
       log.warning("Skipping block with non-existent state id \(blockId), failed to get block information")
       return
     }
-    
+
     // Render fluid if present
     if let fluidState = block.fluidState {
       containsFluids = true
@@ -141,60 +141,63 @@ public struct ChunkSectionMeshBuilder {
         return
       }
     }
-    
+
     // Return early if block model is empty (such as air)
     if blockModel.cullableFaces.isEmpty && blockModel.nonCullableFaces.isEmpty {
       return
     }
-    
+
     // Get block indices of neighbouring blocks
     let neighbourIndices = indexToNeighbourIndices[blockIndex]
 
     // Calculate face visibility
     let culledFaces = getCullingNeighbours(at: position, blockId: blockId, neighbourIndices: neighbourIndices)
-    
+
     // Return early if there can't possibly be any visible faces
     if blockModel.cullableFaces.count == 6 && culledFaces.count == 6 && blockModel.nonCullableFaces.isEmpty {
       return
     }
-    
+
     // Find the cullable faces which are visible
     var visibleFaces = blockModel.cullableFaces.subtracting(culledFaces)
-    
+
     // Return early if there are no always visible faces and no non-culled faces
     if blockModel.nonCullableFaces.isEmpty && visibleFaces.isEmpty {
       return
     }
-    
+
     // Add non cullable faces to the visible faces set (they are always rendered)
     if !blockModel.nonCullableFaces.isEmpty {
       visibleFaces = visibleFaces.union(blockModel.nonCullableFaces)
     }
-    
+
     // Return early if no faces are visible
     if visibleFaces.isEmpty {
       return
     }
-    
+
     // Get lighting
     let positionRelativeToChunkSection = position.relativeToChunkSection
-    let lightLevel = chunk.getLighting(acquireLock: false).getLightLevel(at: positionRelativeToChunkSection, inSectionAt: sectionPosition.sectionY)
+    let lightLevel = chunk.getLighting(acquireLock: false).getLightLevel(
+      at: positionRelativeToChunkSection,
+      inSectionAt: sectionPosition.sectionY
+    )
     let neighbourLightLevels = getNeighbourLightLevels(neighbourIndices: neighbourIndices, visibleFaces: visibleFaces)
-    
+
     // Get tint color
     guard let biome = chunk.biome(at: position.relativeToChunk, acquireLock: false) else {
       log.warning("Block at \(position) has invalid biome with id \(chunk.biomeId(at: position, acquireLock: false))")
       return
     }
-    
+
     let tintColor = resources.biomeColors.color(for: block, at: position, in: biome)
-    
+
     // Create model to world transformation matrix
     let offset = block.getModelOffset(at: position)
     let modelToWorld = MatrixUtil.translationMatrix(positionRelativeToChunkSection.floatVector + offset)
-    
+
     // Add block model to mesh
-    var translucentGeometry = Geometry()
+    var translucentGeometry: [(size: Float, geometry: Geometry)] = []
     for part in blockModel.parts {
       addModelPart(
         part,
@@ -204,39 +207,77 @@ public struct ChunkSectionMeshBuilder {
         culledFaces: culledFaces,
         lightLevel: lightLevel,
         neighbourLightLevels: neighbourLightLevels,
-        tintColor: tintColor?.floatVector ?? SIMD3<Float>(1, 1, 1))
+        tintColor: tintColor?.floatVector ?? SIMD3<Float>(1, 1, 1)
+      )
     }
-    
+
     if !translucentGeometry.isEmpty {
-      let element = SortableMeshElement(geometry: translucentGeometry, centerPosition: position.floatVector + SIMD3<Float>(0.5, 0.5, 0.5))
-      translucentMesh.add(element)
+      // Sort the geometry assuming that smaller translucent elements are always inside of bigger
+      // elements in the same block (e.g. honey block, slime block). The geometry is then combined
+      // into a single element to add to the final mesh to reduce sorting calculations while
+      // rendering.
+      translucentGeometry.sort { first, second in
+        return second.size > first.size
+      }
+
+      var vertexCount = 0
+      var indexCount = 0
+      for (_, geometry) in translucentGeometry {
+        vertexCount += geometry.vertices.count
+        indexCount += geometry.indices.count
+      }
+
+      var vertices: [BlockVertex] = []
+      var indices: [UInt32] = []
+      vertices.reserveCapacity(vertexCount)
+      indices.reserveCapacity(indexCount)
+
+      for (_, geometry) in translucentGeometry {
+        let startingIndex = UInt32(vertices.count)
+        vertices.append(contentsOf: geometry.vertices)
+        indices.append(contentsOf: geometry.indices.map { $0 + startingIndex })
+      }
+
+      let geometry = Geometry(vertices: vertices, indices: indices)
+      translucentMesh.add(SortableMeshElement(
+        geometry: geometry,
+        centerPosition: position.floatVector + SIMD3<Float>(0.5, 0.5, 0.5)
+      ))
     }
   }
-  
+
   /// Adds the given block model to the mesh, positioned by the given model to world matrix.
   private func addModelPart(
     _ blockModel: BlockModelPart,
     transformedBy modelToWorld: matrix_float4x4,
     transparentAndOpaqueGeometry: inout Geometry,
-    translucentGeometry: inout Geometry,
+    translucentGeometry: inout [(size: Float, geometry: Geometry)],
     culledFaces: Set<Direction>,
     lightLevel: LightLevel,
     neighbourLightLevels: [Direction: LightLevel],
     tintColor: SIMD3<Float>
   ) {
     for element in blockModel.elements {
+      var elementTranslucentGeometry = Geometry()
       addElement(
         element,
         transformedBy: modelToWorld,
         transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
-        translucentGeometry: &translucentGeometry,
+        translucentGeometry: &elementTranslucentGeometry,
         culledFaces: culledFaces,
         lightLevel: lightLevel,
         neighbourLightLevels: neighbourLightLevels,
-        tintColor: tintColor)
+        tintColor: tintColor
+      )
+      if !elementTranslucentGeometry.isEmpty {
+        let minimum = simd_make_float3(SIMD4<Float>(0, 0, 0, 1) * element.transformation * modelToWorld)
+        let maximum = simd_make_float3(SIMD4<Float>(1, 1, 1, 1) * element.transformation * modelToWorld)
+        let size = (maximum - minimum).magnitude
+        translucentGeometry.append((size: size, geometry: elementTranslucentGeometry))
+      }
     }
   }
-  
+
   /// Adds the given block model element to the mesh, positioned by the given model to world matrix.
   private func addElement(
     _ element: BlockModelElement,
@@ -253,7 +294,7 @@ public struct ChunkSectionMeshBuilder {
       if let cullFace = face.cullface, culledFaces.contains(cullFace) {
         continue
       }
-      
+
       var faceLightLevel = neighbourLightLevels[face.actualDirection] ?? LightLevel()
       faceLightLevel = LightLevel.max(faceLightLevel, lightLevel)
       addFace(
@@ -263,10 +304,11 @@ public struct ChunkSectionMeshBuilder {
         translucentGeometry: &translucentGeometry,
         shouldShade: element.shade,
         lightLevel: faceLightLevel,
-        tintColor: tintColor)
+        tintColor: tintColor
+      )
     }
   }
-  
+
   /// Adds a face to some geometry.
   /// - Parameters:
   ///   - face: A face to add to the mesh.
@@ -294,7 +336,8 @@ public struct ChunkSectionMeshBuilder {
         textureType: textureType,
         shouldShade: shouldShade,
         lightLevel: lightLevel,
-        tintColor: tintColor)
+        tintColor: tintColor
+      )
     } else {
       addFace(
         face,
@@ -303,10 +346,11 @@ public struct ChunkSectionMeshBuilder {
         textureType: textureType,
         shouldShade: shouldShade,
         lightLevel: lightLevel,
-        tintColor: tintColor)
+        tintColor: tintColor
+      )
     }
   }
-  
+
   /// Adds a face to a mesh.
   /// - Parameters:
   ///   - face: A face to add to the mesh.
@@ -329,9 +373,9 @@ public struct ChunkSectionMeshBuilder {
     for index in CubeGeometry.faceWinding {
       geometry.indices.append(index &+ offset)
     }
-    
+
     let faceVertexPositions = CubeGeometry.faceVertices[face.direction.rawValue]
-    
+
     // Calculate shade of face
     let lightLevel = max(lightLevel.block, lightLevel.sky)
     let faceDirection = face.actualDirection.rawValue
@@ -340,7 +384,7 @@ public struct ChunkSectionMeshBuilder {
       shade = CubeGeometry.shades[faceDirection]
     }
     shade *= Float(lightLevel) / 15
-    
+
     // Calculate the tint color to apply to the face
     let tint: SIMD3<Float>
     if face.isTinted {
@@ -348,10 +392,10 @@ public struct ChunkSectionMeshBuilder {
     } else {
       tint = SIMD3<Float>(repeating: shade)
     }
-    
+
     let textureIndex = UInt16(face.texture)
     let isTransparent = textureType == .transparent
-    
+
     // Add vertices to mesh
     for (uvIndex, vertexPosition) in faceVertexPositions.enumerated() {
       let position = simd_make_float3(SIMD4<Float>(vertexPosition, 1) * transformation)
@@ -366,15 +410,16 @@ public struct ChunkSectionMeshBuilder {
         g: tint.y,
         b: tint.z,
         textureIndex: textureIndex,
-        isTransparent: isTransparent)
+        isTransparent: isTransparent
+      )
       geometry.vertices.append(vertex)
     }
   }
-  
+
   // MARK: Fluid rendering (please refactor)
-  
+
   // TODO: Clean this up (maybe make a FluidMeshBuilder?). This also isn't fully vanilla behaviour. But it's close enough for now.
-  
+
   /// Adds a fluid block to the mesh.
   /// - Parameters:
   ///   - position: The position of the block in world coordinates.
@@ -396,7 +441,7 @@ public struct ChunkSectionMeshBuilder {
       log.warning("Failed to get fluid block with block id \(blockId)")
       return
     }
-    
+
     var tint = SIMD3<Float>(1, 1, 1)
     if block.fluidState?.fluid.identifier.name == "water" {
       guard let tintColor = chunk.biome(at: position.relativeToChunk, acquireLock: false)?.waterColor.floatVector else {
@@ -406,24 +451,24 @@ public struct ChunkSectionMeshBuilder {
       }
       tint = tintColor
     }
-    
+
     // Lighting
     let lightLevel = chunk.getLighting(acquireLock: false).getLightLevel(atIndex: blockIndex, inSectionAt: sectionPosition.sectionY)
     let neighbourLightLevels = getNeighbourLightLevels(neighbourIndices: indexToNeighbourIndices[blockIndex], visibleFaces: [.up, .down, .north, .east, .south, .west])
-    
+
     // UVs
     let flowingUVs: [SIMD2<Float>] = [
       [0.75, 0.25],
       [0.25, 0.25],
       [0.25, 0.75],
       [0.75, 0.75]]
-    
+
     let stillUVs: [SIMD2<Float>] = [
       [1, 0],
       [0, 0],
       [0, 1],
       [1, 1]]
-    
+
     let neighbouringBlockIds = getNeighbouringBlockIds(neighbourIndices: indexToNeighbourIndices[blockIndex])
     var cullingNeighbours = getCullingNeighbours(at: position.relativeToChunkSection, blockId: blockId, neighbouringBlocks: neighbouringBlockIds)
     var neighbourBlocks = [Direction: Block](minimumCapacity: 6)
@@ -434,7 +479,7 @@ public struct ChunkSectionMeshBuilder {
         cullingNeighbours.insert(direction)
       }
     }
-    
+
     // If block is surrounded by the same fluid on all sides, don't render anything.
     if neighbourBlocks.count == 6 {
       let neighbourFluids = Set<Int?>(neighbourBlocks.values.map { $0.fluidId })
@@ -443,11 +488,11 @@ public struct ChunkSectionMeshBuilder {
         return
       }
     }
-    
+
     let heights = calculateHeights(position: position, block: block, neighbourBlocks: neighbourBlocks)
     let isFlowing = Set(heights).count > 1
     let topCornerPositions = calculatePositions(position, heights)
-    
+
     // Get textures
     guard
       let flowingTextureIndex = resources.blockTexturePalette.textureIndex(for: fluid.flowingTexture),
@@ -456,10 +501,10 @@ public struct ChunkSectionMeshBuilder {
       log.warning("Failed to get textures for fluid")
       return
     }
-    
+
     let flowingTexture = UInt16(flowingTextureIndex)
     let stillTexture = UInt16(stillTextureIndex)
-    
+
     // Create faces
     let basePosition = position.relativeToChunkSection.floatVector + SIMD3<Float>(0.5, 0, 0.5)
     for direction in Direction.allDirections where !cullingNeighbours.contains(direction) {
@@ -467,7 +512,7 @@ public struct ChunkSectionMeshBuilder {
       var shade = CubeGeometry.shades[direction.rawValue]
       shade *= Float(max(lightLevel.block, lightLevel.sky)) / 15
       let tint = tint * shade
-      
+
       var geometry = Geometry()
       switch direction {
         case .up:
@@ -487,10 +532,10 @@ public struct ChunkSectionMeshBuilder {
                 lowestCornersCount += 1
               }
             }
-            
+
             texture = flowingTexture
             uvs = flowingUVs
-            
+
             let previousCornerIndex = (lowestCornerIndex - 1) & 0x3
             if lowestCornersCount == 2 {
               // If there are two lowest corners next to eachother, take the first (when going anticlockwise)
@@ -506,7 +551,7 @@ public struct ChunkSectionMeshBuilder {
                 lowestCornerIndex = (lowestCornerIndex + 2) & 0x3
               }
             }
-            
+
             // Rotate UVs 45 degrees if necessary
             if lowestCornersCount == 1 || lowestCornersCount == 3 {
               let uvRotation = MatrixUtil.rotationMatrix2d(lowestCornersCount == 1 ? Float.pi / 4 : 3 * Float.pi / 4)
@@ -515,7 +560,7 @@ public struct ChunkSectionMeshBuilder {
                 uvs[index] = (uv - center) * uvRotation + center
               }
             }
-            
+
             // Rotate corner positions so that the lowest and the opposite from the lowest are on both triangles
             positions = []
             for i in 0..<4 {
@@ -526,7 +571,7 @@ public struct ChunkSectionMeshBuilder {
             uvs = stillUVs
             texture = stillTexture
           }
-          
+
           for (index, position) in positions.reversed().enumerated() {
             let vertex = BlockVertex(
               x: position.x,
@@ -541,14 +586,14 @@ public struct ChunkSectionMeshBuilder {
               isTransparent: false)
             geometry.vertices.append(vertex)
           }
-          
+
           geometry.indices.append(contentsOf: CubeGeometry.faceWinding)
         case .north, .east, .south, .west:
           // The lookup will never be nil because directionCorners contains values for north, east, south and west
           // swiftlint:disable force_unwrapping
           let cornerIndices = Self.directionCorners[direction]!
           // swiftlint:enable force_unwrapping
-          
+
           var uvs = flowingUVs
           uvs[0][1] += (1 - heights[cornerIndices[0]]) / 2
           uvs[1][1] += (1 - heights[cornerIndices[1]]) / 2
@@ -557,7 +602,7 @@ public struct ChunkSectionMeshBuilder {
           for offset in offsets {
             positions.append(basePosition + offset[0].vector/2 + offset[1].vector/2)
           }
-          
+
           for (index, position) in positions.enumerated() {
             let vertex = BlockVertex(
               x: position.x,
@@ -572,7 +617,7 @@ public struct ChunkSectionMeshBuilder {
               isTransparent: false)
             geometry.vertices.append(vertex)
           }
-          
+
           geometry.indices.append(contentsOf: CubeGeometry.faceWinding)
         case .down:
           let uvs = [SIMD2<Float>](stillUVs.reversed())
@@ -592,30 +637,30 @@ public struct ChunkSectionMeshBuilder {
               isTransparent: false)
             geometry.vertices.append(vertex)
           }
-          
+
           geometry.indices.append(contentsOf: CubeGeometry.faceWinding)
       }
-      
+
       translucentMesh.add(SortableMeshElement(
         geometry: geometry,
         centerPosition: position.floatVector + SIMD3<Float>(0.5, 0.5, 0.5)))
     }
   }
-  
+
   /// The component directions of the direction to each corner. The index of each is used as the corner's 'index' in arrays.
   private static let cornerDirections: [[Direction]] = [
     [.north, .east],
     [.north, .west],
     [.south, .west],
     [.south, .east]]
-  
+
   /// Maps directions to the indices of the corners connected to that edge.
   private static let directionCorners: [Direction: [Int]] = [
     .north: [0, 1],
     .west: [1, 2],
     .south: [2, 3],
     .east: [3, 0]]
-  
+
   /// Convert corner heights to corner positions relative to the current chunk section.
   private func calculatePositions(_ blockPosition: BlockPosition, _ heights: [Float]) -> [SIMD3<Float>] {
     let basePosition = blockPosition.relativeToChunkSection.floatVector + SIMD3<Float>(0.5, 0, 0.5)
@@ -631,24 +676,24 @@ public struct ChunkSectionMeshBuilder {
     }
     return positions
   }
-  
+
   /// Calculate the height of each corner of a fluid.
   private func calculateHeights(position: BlockPosition, block: Block, neighbourBlocks: [Direction: Block]) -> [Float] {
     // If under a fluid block of the same type, all corners are 1
     if neighbourBlocks[.up]?.fluidId == block.fluidId {
       return [1, 1, 1, 1]
     }
-    
+
     // Begin with all corners as the height of the current fluid
     let height = getFluidLevel(block)
     var heights = [height, height, height, height]
-    
+
     // Loop through corners
     for (index, directions) in Self.cornerDirections.enumerated() {
       if heights[index] == 1 {
         continue
       }
-      
+
       // Get positions of blocks surrounding the current corner
       let zOffset = directions[0].intVector
       let xOffset = directions[1].intVector
@@ -656,7 +701,7 @@ public struct ChunkSectionMeshBuilder {
         position + xOffset,
         position + zOffset,
         position + xOffset + zOffset]
-      
+
       // Get the highest fluid level around the corner
       var maxHeight = height
       for neighbourPosition in positions {
@@ -666,7 +711,7 @@ public struct ChunkSectionMeshBuilder {
           maxHeight = 1
           break
         }
-        
+
         let neighbourBlock = world.getBlock(at: neighbourPosition, acquireLock: false)
         if block.fluidId == neighbourBlock.fluidId {
           let neighbourHeight = getFluidLevel(neighbourBlock)
@@ -677,10 +722,10 @@ public struct ChunkSectionMeshBuilder {
       }
       heights[index] = maxHeight
     }
-    
+
     return heights
   }
-  
+
   /// Returns the height of a fluid from 0 to 1.
   /// - Parameter block: Block containing the fluid.
   /// - Returns: A height.
@@ -691,9 +736,9 @@ public struct ChunkSectionMeshBuilder {
       return 0.8125
     }
   }
-  
+
   // MARK: Helper
-  
+
   /// Gets the block id of each block neighbouring a block using the given neighbour indices.
   ///
   /// Blocks in neighbouring chunks are also included. Neighbours in cardinal directions will
@@ -705,7 +750,7 @@ public struct ChunkSectionMeshBuilder {
     // Convert a section relative index to a chunk relative index
     var neighbouringBlocks: [(Direction, Int)] = []
     neighbouringBlocks.reserveCapacity(6)
-    
+
     for (faceDirection, neighbourChunkDirection, neighbourIndex) in neighbourIndices {
       if let direction = neighbourChunkDirection {
         let neighbourChunk = neighbourChunks.neighbour(in: direction)
@@ -714,10 +759,10 @@ public struct ChunkSectionMeshBuilder {
         neighbouringBlocks.append((faceDirection, chunk.getBlockId(at: neighbourIndex, acquireLock: false)))
       }
     }
-    
+
     return neighbouringBlocks
   }
-  
+
   /// Returns a map from each direction to a cardinal direction and a chunk relative block index.
   ///
   /// The cardinal direction is which chunk a neighbour resides in. If the cardinal direction for
@@ -728,44 +773,44 @@ public struct ChunkSectionMeshBuilder {
     let indexInChunk = index &+ sectionIndex &* Chunk.Section.numBlocks
     var neighbouringIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)] = []
     neighbouringIndices.reserveCapacity(6)
-    
+
     let indexInLayer = indexInChunk % Chunk.blocksPerLayer
     if indexInLayer >= Chunk.width {
       neighbouringIndices.append((direction: .north, nil, indexInChunk &- Chunk.width))
     } else {
       neighbouringIndices.append((direction: .north, chunkDirection: .north, index: indexInChunk + Chunk.blocksPerLayer - Chunk.width))
     }
-    
+
     if indexInLayer < Chunk.blocksPerLayer &- Chunk.width {
       neighbouringIndices.append((direction: .south, nil, indexInChunk &+ Chunk.width))
     } else {
       neighbouringIndices.append((direction: .south, chunkDirection: .south, index: indexInChunk - Chunk.blocksPerLayer + Chunk.width))
     }
-    
+
     let indexInRow = indexInChunk % Chunk.width
     if indexInRow != Chunk.width &- 1 {
       neighbouringIndices.append((direction: .east, nil, indexInChunk &+ 1))
     } else {
       neighbouringIndices.append((direction: .east, chunkDirection: .east, index: indexInChunk &- 15))
     }
-    
+
     if indexInRow != 0 {
       neighbouringIndices.append((direction: .west, nil, indexInChunk &- 1))
     } else {
       neighbouringIndices.append((direction: .west, chunkDirection: .west, index: indexInChunk &+ 15))
     }
-    
+
     if indexInChunk < Chunk.numBlocks &- Chunk.blocksPerLayer {
       neighbouringIndices.append((direction: .up, nil, indexInChunk &+ Chunk.blocksPerLayer))
-      
+
       if indexInChunk >= Chunk.blocksPerLayer {
         neighbouringIndices.append((direction: .down, nil, indexInChunk &- Chunk.blocksPerLayer))
       }
     }
-    
+
     return neighbouringIndices
   }
-  
+
   /// Gets the light levels of the blocks surrounding a block.
   /// - Parameters:
   ///   - neighbourIndices: The lookup table for finding the indices of neighbouring blocks.
@@ -784,7 +829,7 @@ public struct ChunkSectionMeshBuilder {
     }
     return lightLevels
   }
-  
+
   /// Gets an array of the direction of all blocks neighbouring the block at `position` that have
   /// full faces facing the block at `position`.
   /// - Parameters:
@@ -792,25 +837,30 @@ public struct ChunkSectionMeshBuilder {
   ///   - blockId: The id of the block at the given position.
   ///   - neighbouringBlocks: The block ids of neighbouring blocks.
   /// - Returns: The set of directions of neighbours that can possibly cull a face.
-  func getCullingNeighbours(at position: BlockPosition, blockId: Int, neighbouringBlocks: [(Direction, Int)]) -> Set<Direction> {
+  func getCullingNeighbours(
+    at position: BlockPosition,
+    blockId: Int,
+    neighbouringBlocks: [(Direction, Int)]
+  ) -> Set<Direction> {
     var cullingNeighbours = Set<Direction>(minimumCapacity: 6)
     let blockCullsSameKind = RegistryStore.shared.blockRegistry.selfCullingBlocks.contains(blockId)
-    
+
     for (direction, neighbourBlockId) in neighbouringBlocks where neighbourBlockId != 0 {
-      // We assume that block model variants always have the same culling faces as eachother, so no position is passed to getModel.
+      // We assume that block model variants always have the same culling faces as eachother, so
+      // no position is passed to getModel.
       guard let blockModel = resources.blockModelPalette.model(for: neighbourBlockId, at: nil) else {
         log.debug("Skipping neighbour with no block models.")
         continue
       }
-      
+
       if blockModel.cullingFaces.contains(direction.opposite) || (blockCullsSameKind && blockId == neighbourBlockId) {
         cullingNeighbours.insert(direction)
       }
     }
-    
+
     return cullingNeighbours
   }
-  
+
   /// Gets an array of the direction of all blocks neighbouring the block at `position` that have
   /// full faces facing the block at `position`.
   /// - Parameters:
@@ -818,11 +868,15 @@ public struct ChunkSectionMeshBuilder {
   ///   - blockId: The id of the block at the given position.
   ///   - neighbourIndices: The neighbour indices lookup table to use.
   /// - Returns: The set of directions of neighbours that can possibly cull a face.
-  func getCullingNeighbours(at position: BlockPosition, blockId: Int, neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]) -> Set<Direction> {
+  func getCullingNeighbours(
+    at position: BlockPosition,
+    blockId: Int,
+    neighbourIndices: [(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]
+  ) -> Set<Direction> {
     let neighbouringBlocks = getNeighbouringBlockIds(neighbourIndices: neighbourIndices)
     return getCullingNeighbours(at: position, blockId: blockId, neighbouringBlocks: neighbouringBlocks)
   }
-  
+
   /// Generates a lookup table to quickly convert from section block index to block position.
   private static func generateIndexLookup() -> [BlockPosition] {
     var lookup: [BlockPosition] = []
@@ -837,7 +891,7 @@ public struct ChunkSectionMeshBuilder {
     }
     return lookup
   }
-  
+
   private static func generateNeighbourIndices(sectionIndex: Int) -> [[(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]] {
     var neighbourIndices: [[(direction: Direction, chunkDirection: CardinalDirection?, index: Int)]] = []
     for i in 0..<Chunk.Section.numBlocks {
