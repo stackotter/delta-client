@@ -1,6 +1,6 @@
 import Foundation
 
-public struct EntityHeadLookPacket: ClientboundPacket {
+public struct EntityHeadLookPacket: ClientboundPacket, TickPacketMarker {
   public static let id: Int = 0x3b
   
   public var entityId: Int

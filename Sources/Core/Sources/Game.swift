@@ -44,7 +44,8 @@ public struct Game {
 
   /// A locked for managing safe access of ``nexus``.
   private let nexusLock = ReadWriteLock()
-  /// The container for the game's entities. Strictly only contains what Minecraft counts as entities. Doesn't include block entities.
+  /// The container for the game's entities. Strictly only contains what Minecraft counts as
+  /// entities. Doesn't include block entities.
   private let nexus = Nexus()
   /// The player.
   private var player: Player
@@ -68,7 +69,8 @@ public struct Game {
     player.add(to: &self)
     self.player = player
 
-    // The order of the systems may seem weird, but it has to be this way so that the physics behaves identically to vanilla
+    // The order of the systems may seem weird, but it has to be this way so that the physics
+    // behaves identically to vanilla
     tickScheduler.addSystem(PlayerFrictionSystem())
     tickScheduler.addSystem(PlayerGravitySystem())
     tickScheduler.addSystem(PlayerSmoothingSystem())
@@ -80,7 +82,9 @@ public struct Game {
     tickScheduler.addSystem(PlayerCollisionSystem())
     tickScheduler.addSystem(PlayerPositionSystem())
 
-    tickScheduler.addSystem(VelocitySystem())
+    tickScheduler.addSystem(EntitySmoothingSystem())
+    tickScheduler.addSystem(PacketHandlingSystem())
+    tickScheduler.addSystem(EntityMovementSystem())
 
     if let connection = connection {
       tickScheduler.addSystem(PlayerPacketSystem(connection))
@@ -156,13 +160,17 @@ public struct Game {
   /// A method for creating entities in a thread-safe manor.
   ///
   /// The builder can handle up to 20 components. This should be enough in most cases but if not,
-  /// components can be added to the entity directly, this is just more convenient.
-  /// The builder can only work for up to 20 components because of a limitation regarding result builders.
+  /// components can be added to the entity directly, this is just more convenient. The builder can
+  /// only work for up to 20 components because of a limitation regarding result builders.
   /// - Parameters:
   ///   - id: The id to create the entity with.
   ///   - builder: The builder that creates the components for the entity.
   ///   - action: An action to perform on the entity once it's created.
-  public mutating func createEntity(id: Int, @ComponentsBuilder using builder: () -> [Component], action: ((Entity) -> Void)? = nil) {
+  public mutating func createEntity(
+    id: Int,
+    @ComponentsBuilder using builder: () -> [Component],
+    action: ((Entity) -> Void)? = nil
+  ) {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
 
@@ -243,6 +251,14 @@ public struct Game {
     action(&player)
   }
 
+  public mutating func queueTickPacket(_ packet: ClientboundPacket, client: Client) {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+
+    let packetStore = nexus.single(TickPacketStore.self).component
+    packetStore.add(packet, client: client)
+  }
+
   // MARK: Lifecycle
 
   /// Updates the game with information received in a ``JoinGamePacket``.
@@ -268,7 +284,8 @@ public struct Game {
     changeWorld(to: World(from: packet, eventBus: client.eventBus))
   }
 
-  /// Sets the game's event bus. This is a method in case the game ever needs to listen to the event bus, this way means that the listener can be added again.
+  /// Sets the game's event bus. This is a method in case the game ever needs to listen to the event
+  /// bus, this way means that the listener can be added again.
   public mutating func setEventBus(_ eventBus: EventBus) {
     self.eventBus = eventBus
     self.world.eventBus = eventBus

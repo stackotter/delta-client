@@ -1,6 +1,6 @@
 import Foundation
 
-public struct EntityPositionPacket: ClientboundPacket {
+public struct EntityPositionPacket: ClientboundPacket, TickPacketMarker {
   public static let id: Int = 0x28
 
   /// The entity's id.
@@ -29,7 +29,6 @@ public struct EntityPositionPacket: ClientboundPacket {
     let relativePosition = SIMD3<Double>(x, y, z)
 
     client.game.accessComponent(entityId: entityId, EntityPosition.self) { position in
-      position.save() // TODO: handle movement packets in a system
       position.move(by: relativePosition)
     }
 
@@ -40,7 +39,5 @@ public struct EntityPositionPacket: ClientboundPacket {
     client.game.accessComponent(entityId: entityId, EntityVelocity.self) { velocity in
       velocity.vector = .zero
     }
-
-    print("\(entityId): Set relative position to \(x), \(y), \(z), onGround: \(onGround)")
   }
 }

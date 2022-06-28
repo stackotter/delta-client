@@ -1,6 +1,6 @@
 import Foundation
 
-public struct EntityVelocityPacket: ClientboundPacket {
+public struct EntityVelocityPacket: ClientboundPacket, TickPacketMarker {
   public static let id: Int = 0x46
 
   /// The entity's id.
@@ -17,7 +17,5 @@ public struct EntityVelocityPacket: ClientboundPacket {
     client.game.accessComponent(entityId: entityId, EntityVelocity.self) { velocityComponent in
       velocityComponent.vector = velocity
     }
-
-    print("\(entityId): Set velocity to \(velocity)")
   }
 }

@@ -1,5 +1,7 @@
 import FirebladeECS
 
+/// Sends update packets to the server depending on which client and player properties have changed.
+/// Mostly sends movement packets.
 public struct PlayerPacketSystem: System {
   var connection: ServerConnection
 

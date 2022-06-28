@@ -1,6 +1,6 @@
 import Foundation
 
-public struct EntityRotationPacket: ClientboundPacket {
+public struct EntityRotationPacket: ClientboundPacket, TickPacketMarker {
   public static let id: Int = 0x2a
 
   /// The entity's id.

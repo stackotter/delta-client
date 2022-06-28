@@ -89,7 +89,11 @@ public final class Client: @unchecked Sendable {
   /// The client's packet handler.
   public func handlePacket(_ packet: ClientboundPacket) {
     do {
-      try packet.handle(for: self)
+      if packet is TickPacketMarker {
+        game.queueTickPacket(packet, client: self)
+      } else {
+        try packet.handle(for: self)
+      }
     } catch {
       disconnect()
       log.error("Failed to handle packet: \(error)")
