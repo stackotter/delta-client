@@ -54,7 +54,7 @@ public struct Game {
   // MARK: Init
 
   /// Creates a game with default properties. Creates the player. Starts the tick loop.
-  public init(eventBus: EventBus) {
+  public init(eventBus: EventBus, connection: ServerConnection? = nil) {
     self.eventBus = eventBus
 
     world = World(eventBus: eventBus)
@@ -81,6 +81,10 @@ public struct Game {
     tickScheduler.addSystem(PlayerPositionSystem())
 
     tickScheduler.addSystem(VelocitySystem())
+
+    if let connection = connection {
+      tickScheduler.addSystem(PlayerPacketSystem(connection))
+    }
 
     // Start tick loop
     tickScheduler.ticksPerSecond = 20

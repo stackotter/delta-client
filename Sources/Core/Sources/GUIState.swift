@@ -1,4 +1,3 @@
-public struct GUIState {
-  public var showDebugScreen: Bool
-  public var 
-}
+// public struct GUIState {
+//   public var showDebugScreen: Bool
+// }

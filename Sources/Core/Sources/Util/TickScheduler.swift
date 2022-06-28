@@ -95,7 +95,12 @@ public final class TickScheduler {
     worldLock.unlock()
     
     for system in systems {
-      system.update(nexus, world)
+      do {
+        try system.update(nexus, world)
+      } catch {
+        log.error("Failed to run \(type(of: system)): \(error)")
+        world.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to run \(type(of: system))"))
+      }
     }
     
     tickNumber += 1

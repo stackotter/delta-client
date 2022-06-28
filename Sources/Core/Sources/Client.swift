@@ -47,6 +47,7 @@ public final class Client: @unchecked Sendable {
       guard let self = self else { return }
       self.handlePacket(packet)
     }
+    game = Game(eventBus: eventBus, connection: connection)
     try connection.login(username: account.username)
     self.connection = connection
   }
