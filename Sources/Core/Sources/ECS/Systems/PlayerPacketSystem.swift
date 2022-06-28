@@ -10,6 +10,7 @@ public struct PlayerPacketSystem: System {
     var wasSprinting = false
     var wasSneaking = false
     var ticksUntilForcedPositionUpdate = 20
+    var lastPositionSent = SIMD3<Double>.zero
   }
 
   public init(_ connection: ServerConnection) {
@@ -64,7 +65,7 @@ public struct PlayerPacketSystem: System {
     }
 
     // Send position update if player has moved fast enough
-    let positionDelta = (position.vector - position.previousVector).magnitudeSquared
+    let positionDelta = (position.vector - state.lastPositionSent).magnitudeSquared
     state.ticksUntilForcedPositionUpdate -= 1
     let mustSendPositionUpdate = positionDelta > 0.0009 || state.ticksUntilForcedPositionUpdate == 0
     let hasRotated = rotation.previousPitch != rotation.pitch || rotation.previousYaw != rotation.yaw
@@ -95,6 +96,7 @@ public struct PlayerPacketSystem: System {
 
     if positionUpdateSent {
       state.ticksUntilForcedPositionUpdate = 20
+      state.lastPositionSent = position.vector
     }
   }
 }

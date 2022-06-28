@@ -30,7 +30,7 @@ public enum PixlyzerFormatter {
     let entitiesDownloadURL = URL(string: "\(baseURL)/entities.min.json")!
     let shapeRegistryDownloadURL = URL(string: "\(baseURL)/shapes.min.json")!
     // swiftlint:enable force_unwrapping
-    
+
     // Load and decode pixlyzer data
     log.info("Downloading and decoding pixlyzer fluids")
     let pixlyzerFluids: [String: PixlyzerFluid] = try downloadJSON(fluidsDownloadURL, convertSnakeCase: true)
@@ -42,27 +42,27 @@ public enum PixlyzerFormatter {
     let pixlyzerEntities: [String: PixlyzerEntity] = try downloadJSON(entitiesDownloadURL, convertSnakeCase: true)
     log.info("Downloading and decoding pixlyzer shapes")
     let pixlyzerShapeRegistry: PixlyzerShapeRegistry = try downloadJSON(shapeRegistryDownloadURL, convertSnakeCase: false)
-    
+
     // Process fluids
     log.info("Processing pixlyzer fluid registry")
     let (fluidRegistry, pixlyzerFluidIdToFluidId) = try Self.createFluidRegistry(from: pixlyzerFluids)
-    
+
     // Process biomes
     log.info("Processing pixlyzer biome registry")
     let biomeRegistry = try Self.createBiomeRegistry(from: pixlyzerBiomes)
-    
+
     // Process entities
     log.info("Processing pixlyzer entity registry")
     let entityRegistry = try Self.createEntityRegistry(from: pixlyzerEntities)
-    
+
     // Process blocks
     log.info("Processing pixlyzer block registry")
     let blockRegistry = try Self.createBlockRegistry(
       from: pixlyzerBlocks,
       shapes: pixlyzerShapeRegistry,
       pixlyzerFluidIdToFluidId: pixlyzerFluidIdToFluidId,
-      fluidRegistry: fluidRegistry) 
-    
+      fluidRegistry: fluidRegistry)
+
     return RegistryStore(
       blockRegistry: blockRegistry,
       biomeRegistry: biomeRegistry,
@@ -80,7 +80,7 @@ public enum PixlyzerFormatter {
       log.error("Failed to locate all required fluids")
       Foundation.exit(1)
     }
-    
+
     let water = Fluid(
       id: 0,
       identifier: Identifier(name: "water"),
@@ -94,7 +94,7 @@ public enum PixlyzerFormatter {
       stillTexture: Identifier(name: "block/lava_still"),
       dripParticleType: lavaStill.dripParticleType)
     let fluids = [water, lava]
-    
+
     var pixlyzerFluidIdToFluidId: [Int: Int] = [:]
     for (identifier, pixlyzerFluid) in pixlyzerFluids {
       if identifier.contains("water") {
@@ -142,7 +142,7 @@ public enum PixlyzerFormatter {
     for pixlyzerAABB in pixlyzerShapeRegistry.aabbs {
       aabbs.append(try AxisAlignedBoundingBox(from: pixlyzerAABB))
     }
-    
+
     var shapes: [[AxisAlignedBoundingBox]] = []
     for shape in pixlyzerShapeRegistry.shapes {
       let ids = shape.items
@@ -168,12 +168,12 @@ public enum PixlyzerFormatter {
           log.error("Failed to get fluid from pixlyzer flowing fluid id")
           Foundation.exit(1)
         }
-        
+
         fluid = fluidRegistry.fluid(withId: fluidId)
       } else {
         fluid = nil
       }
-      
+
       for (stateId, pixlyzerState) in pixlyzerBlock.states {
         let isWaterlogged = pixlyzerState.properties?.waterlogged == true || BlockRegistry.waterloggedBlockClasses.contains(pixlyzerBlock.className)
         let fluid = isWaterlogged ? water : fluid
@@ -196,24 +196,24 @@ public enum PixlyzerFormatter {
         blockModelRenderDescriptors[stateId] = descriptors
       }
     }
-    
+
     var blockArray: [Block] = []
     var renderDescriptors: [[[BlockModelRenderDescriptor]]] = []
     for i in 0..<blocks.count {
       guard let block = blocks[i] else {
         throw PixlyzerError.missingBlock(i)
       }
-      
+
       blockArray.append(block)
       renderDescriptors.append(blockModelRenderDescriptors[i] ?? [])
     }
 
     return BlockRegistry(blocks: blockArray, renderDescriptors: renderDescriptors)
   }
-  
+
   private static func downloadJSON<T: Decodable>(_ url: URL, convertSnakeCase: Bool, useZippyJSON: Bool = true) throws -> T {
     let contents = try Data(contentsOf: url)
-    
+
     if useZippyJSON {
       let decoder = ZippyJSONDecoder()
       if convertSnakeCase {
