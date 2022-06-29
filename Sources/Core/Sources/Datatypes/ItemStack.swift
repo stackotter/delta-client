@@ -1,19 +1,22 @@
 import Foundation
 
+// TODO: Refactor item stacks and recipes
 public struct ItemStack {
-  public var item: Item?
+  public var itemId: Int?
+  public var itemNBT: NBT.Compound?
   public var count: Int
-  
+
   public var isEmpty: Bool {
-    return item == nil
+    return itemId == nil
   }
-  
+
   public init() {
     self.count = 0
   }
-  
+
   public init(itemId: Int, itemCount: Int, nbt: NBT.Compound) {
-    self.item = Item(id: itemId, nbt: nbt)
+    self.itemId = itemId
+    self.itemNBT = nbt
     self.count = itemCount
   }
 }

@@ -22,16 +22,21 @@ public enum PixlyzerFormatter {
   /// - Parameter version: The minecraft version string (e.g. '1.16.1').
   public static func downloadAndFormatRegistries(_ version: String) throws -> RegistryStore {
     let pixlyzerCommit = "7cceb5481e6f035d274204494030a76f47af9bb5"
+    let pixlyzerItemCommit = "c623c21be12aa1f9be3f36f0e32fbc61f8f16bd1"
     let baseURL = "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/\(pixlyzerCommit)/version/\(version)"
+
     // swiftlint:disable force_unwrapping
     let fluidsDownloadURL = URL(string: "\(baseURL)/fluids.min.json")!
     let blocksDownloadURL = URL(string: "\(baseURL)/blocks.min.json")!
     let biomesDownloadURL = URL(string: "\(baseURL)/biomes.min.json")!
     let entitiesDownloadURL = URL(string: "\(baseURL)/entities.min.json")!
     let shapeRegistryDownloadURL = URL(string: "\(baseURL)/shapes.min.json")!
+    let itemsDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/\(pixlyzerItemCommit)/version/\(version)/items.min.json")!
     // swiftlint:enable force_unwrapping
 
     // Load and decode pixlyzer data
+    log.info("Downloading and decoding pixlyzer items")
+    let pixlyzerItems: [String: PixlyzerItem] = try downloadJSON(itemsDownloadURL, convertSnakeCase: false)
     log.info("Downloading and decoding pixlyzer fluids")
     let pixlyzerFluids: [String: PixlyzerFluid] = try downloadJSON(fluidsDownloadURL, convertSnakeCase: true)
     log.info("Downloading and decoding pixlyzer biomes")
@@ -61,13 +66,20 @@ public enum PixlyzerFormatter {
       from: pixlyzerBlocks,
       shapes: pixlyzerShapeRegistry,
       pixlyzerFluidIdToFluidId: pixlyzerFluidIdToFluidId,
-      fluidRegistry: fluidRegistry)
+      fluidRegistry: fluidRegistry
+    )
+
+    // Process items
+    log.info("Processing pixlyzer item registry")
+    let itemRegistry = try Self.createItemRegistry(from: pixlyzerItems)
 
     return RegistryStore(
       blockRegistry: blockRegistry,
       biomeRegistry: biomeRegistry,
       fluidRegistry: fluidRegistry,
-      entityRegistry: entityRegistry)
+      entityRegistry: entityRegistry,
+      itemRegistry: itemRegistry
+    )
   }
 
   private static func createFluidRegistry(
@@ -86,13 +98,15 @@ public enum PixlyzerFormatter {
       identifier: Identifier(name: "water"),
       flowingTexture: Identifier(name: "block/water_flow"),
       stillTexture: Identifier(name: "block/water_still"),
-      dripParticleType: waterStill.dripParticleType)
+      dripParticleType: waterStill.dripParticleType
+    )
     let lava = Fluid(
       id: 1,
       identifier: Identifier(name: "lava"),
       flowingTexture: Identifier(name: "block/lava_flow"),
       stillTexture: Identifier(name: "block/lava_still"),
-      dripParticleType: lavaStill.dripParticleType)
+      dripParticleType: lavaStill.dripParticleType
+    )
     let fluids = [water, lava]
 
     var pixlyzerFluidIdToFluidId: [Int: Int] = [:]
@@ -184,7 +198,8 @@ public enum PixlyzerFormatter {
           stateId: stateId,
           fluid: fluid,
           isWaterlogged: isWaterlogged,
-          identifier: identifier)
+          identifier: identifier
+        )
 
         let descriptors = pixlyzerState.blockModelVariantDescriptors.map {
           $0.map {
@@ -211,7 +226,22 @@ public enum PixlyzerFormatter {
     return BlockRegistry(blocks: blockArray, renderDescriptors: renderDescriptors)
   }
 
-  private static func downloadJSON<T: Decodable>(_ url: URL, convertSnakeCase: Bool, useZippyJSON: Bool = true) throws -> T {
+  private static func createItemRegistry(from pixlyzerItems: [String: PixlyzerItem]) throws -> ItemRegistry {
+    var items: [Int: Item] = [:]
+    for (identifierString, pixlyzerItem) in pixlyzerItems {
+      let identifier = try Identifier(identifierString)
+      let item = Item(from: pixlyzerItem, identifier: identifier)
+      items[item.id] = item
+    }
+
+    return try ItemRegistry(items: items)
+  }
+
+  private static func downloadJSON<T: Decodable>(
+    _ url: URL,
+    convertSnakeCase: Bool,
+    useZippyJSON: Bool = true
+  ) throws -> T {
     let contents = try Data(contentsOf: url)
 
     if useZippyJSON {

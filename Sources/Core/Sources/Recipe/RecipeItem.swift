@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Item {
+public struct RecipeItem {
   public var id: Int
   public var nbt: NBT.Compound?
 }

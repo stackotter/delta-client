@@ -10,9 +10,15 @@ public struct EntityKind: Codable {
   public var height: Float
   /// Attributes that are the same for every entity of this kind (e.g. maximum health).
   public var attributes: [EntityAttributeKey: Float]
-  
+
   /// Creates a new entity kind with the given properties.
-  public init(identifier: Identifier, id: Int, width: Float, height: Float, attributes: [EntityAttributeKey: Float]) {
+  public init(
+    identifier: Identifier,
+    id: Int,
+    width: Float,
+    height: Float,
+    attributes: [EntityAttributeKey: Float]
+  ) {
     self.identifier = identifier
     self.id = id
     self.width = width
