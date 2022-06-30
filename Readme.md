@@ -89,13 +89,14 @@ Not every version will be perfectly supported but I will try and have the most p
     - [ ] Render entity models
     - [ ] Entity animations
     - [ ] Block entities (e.g. chests)
-  - [ ] GUI
+    - [ ] Item entities
+  - [x] GUI
     - [ ] Chat
-    - [ ] F3-style stuff
+    - [x] F3-style stuff
     - [ ] Bossbars
     - [ ] Scoreboard
-    - [ ] Health, hunger and experience
-    - [ ] Hotbar
+    - [x] Health, hunger and experience
+    - [x] Hotbar
     - [ ] Inventory
       - [ ] Basic inventory
       - [ ] Basic crafting

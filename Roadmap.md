@@ -126,7 +126,7 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
 - [x] detect player-block collisions
 - [x] handle collisions
 - [ ] auto-jump
-- [ ] add gravity to physics
+- [x] add gravity to physics
 
 ## Alpha 3 - Basic Survival Mode
 
@@ -141,13 +141,13 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
 
 ### Todo
 
-- [ ] font rendering
-- [ ] modular hud system
-- [ ] bars
-  - [ ] health
-  - [ ] hunger
-  - [ ] xp
+- [x] font rendering
+- [x] modular hud system
+- [x] bars
+  - [x] health
+  - [x] hunger
+  - [x] xp
   - [ ] bubbles
 - [ ] item rendering
-- [ ] hotbar
+- [x] hotbar
 - [ ] basic inventory (just for viewing)
