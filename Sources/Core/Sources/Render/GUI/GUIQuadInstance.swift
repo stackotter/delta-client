@@ -27,7 +27,12 @@ struct GUIQuadInstance {
   }
 
   /// Creates a quad instance for the given character.
-  init(for character: Character, with font: Font, fontArrayTexture: MTLTexture) throws {
+  init(
+    for character: Character,
+    with font: Font,
+    fontArrayTexture: MTLTexture,
+    tint: SIMD3<Float> = [1, 1, 1]
+  ) throws {
     guard let descriptor = font.characters[character] else {
       throw GUIRendererError.invalidCharacter(character)
     }
@@ -52,7 +57,7 @@ struct GUIQuadInstance {
       Float(descriptor.height) / arrayTextureHeight
     ]
     textureIndex = UInt16(descriptor.texture)
-    tint = [1, 1, 1]
+    self.tint = tint
   }
 
   /// Translates the quad by the given amount.

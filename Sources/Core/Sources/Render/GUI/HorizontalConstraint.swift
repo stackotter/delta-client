@@ -1,5 +1,7 @@
 enum HorizontalConstraint {
   case left(Int)
-  case center
+  case center(HorizontalOffset?)
   case right(Int)
+
+  static let center = Self.center(nil)
 }

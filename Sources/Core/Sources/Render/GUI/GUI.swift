@@ -71,6 +71,7 @@ struct GUI {
     var food: Int = 0
     var selectedSlot: Int = 0
     var xpBarProgress: Float = 0
+    var xpLevel: Int = 0
     var hotbarSlots: [Slot] = []
     client.game.accessPlayer { player in
       gamemode = player.gamemode.gamemode
@@ -78,10 +79,18 @@ struct GUI {
       food = player.nutrition.food
       selectedSlot = player.inventory.selectedHotbarSlot
       xpBarProgress = player.experience.experienceBarProgress
+      xpLevel = player.experience.experienceLevel
       hotbarSlots = player.inventory.hotbar
     }
 
-    stats(&group, gamemode: gamemode, health: health, food: food, xpBarProgress: xpBarProgress)
+    stats(
+      &group,
+      gamemode: gamemode,
+      health: health,
+      food: food,
+      xpBarProgress: xpBarProgress,
+      xpLevel: xpLevel
+    )
     hotbar(&group, selectedSlot: selectedSlot, slots: hotbarSlots)
 
     parentGroup.add(group, .bottom(-1), .center)
@@ -133,7 +142,8 @@ struct GUI {
     gamemode: Gamemode,
     health: Float,
     food: Int,
-    xpBarProgress: Float
+    xpBarProgress: Float,
+    xpLevel: Int
   ) {
     if gamemode.hasHealth {
       // Render health
@@ -162,11 +172,11 @@ struct GUI {
         .right(1)
       )
 
-      xpBar(&group, progress: xpBarProgress)
+      xpBar(&group, progress: xpBarProgress, level: xpLevel)
     }
   }
 
-  func xpBar(_ group: inout GUIGroupElement, progress: Float) {
+  func xpBar(_ group: inout GUIGroupElement, progress: Float, level: Int) {
     group.add(
       GUISprite.xpBarBackground,
       .top(10),
@@ -181,6 +191,40 @@ struct GUI {
       .top(10),
       .left(1)
     )
+
+    if level > 0 {
+      // Level number outline
+      group.add(
+        GUIColoredString(String(level), [0, 0, 0]),
+        .top(3),
+        .center
+      )
+
+      group.add(
+        GUIColoredString(String(level), [0, 0, 0]),
+        .top(5),
+        .center
+      )
+
+      group.add(
+        GUIColoredString(String(level), [0, 0, 0]),
+        .top(4),
+        .center(.left(1))
+      )
+
+      group.add(
+        GUIColoredString(String(level), [0, 0, 0]),
+        .top(4),
+        .center(.right(1))
+      )
+
+      // Level number
+      group.add(
+        GUIColoredString(String(level), [126, 252, 31] / 255),
+        .top(4),
+        .center
+      )
+    }
   }
 
   mutating func debugScreen() -> GUIList {

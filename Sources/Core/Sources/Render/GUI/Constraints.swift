@@ -20,8 +20,8 @@ struct Constraints {
     switch horizontal {
       case .left(let distance):
         x = distance
-      case .center:
-        x = (outerSize.x - innerSize.x) / 2
+      case .center(let offset):
+        x = (outerSize.x - innerSize.x) / 2 + (offset?.value ?? 0)
       case .right(let distance):
         x = outerSize.x - innerSize.x - distance
     }
@@ -30,8 +30,8 @@ struct Constraints {
     switch vertical {
       case .top(let distance):
         y = distance
-      case .center:
-        y = (outerSize.y - innerSize.y) / 2
+      case .center(let offset):
+        y = (outerSize.y - innerSize.y) / 2 + (offset?.value ?? 0)
       case .bottom(let distance):
         y = outerSize.y - innerSize.y - distance
     }

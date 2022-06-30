@@ -19,7 +19,8 @@ struct GUIElementMesh {
   init(
     text: String,
     font: Font,
-    fontArrayTexture: MTLTexture
+    fontArrayTexture: MTLTexture,
+    color: SIMD3<Float> = [1, 1, 1]
   ) throws {
     guard !text.isEmpty else {
       throw GUIRendererError.emptyText
@@ -34,7 +35,8 @@ struct GUIElementMesh {
       var quad = try GUIQuadInstance(
         for: character,
         with: font,
-        fontArrayTexture: arrayTexture
+        fontArrayTexture: arrayTexture,
+        tint: color
       )
       quad.translate(amount: SIMD2([
         currentX,
@@ -67,8 +69,7 @@ struct GUIElementMesh {
       size: SIMD2<Float>(sprite.size),
       uvMin: SIMD2<Float>(sprite.position) / textureSize,
       uvSize: SIMD2<Float>(sprite.size) / textureSize,
-      textureIndex: UInt16(guiTexturePalette.textureIndex(for: sprite.slice)),
-      tint: [1, 0, 0]
+      textureIndex: UInt16(guiTexturePalette.textureIndex(for: sprite.slice))
     )]
 
     let width = sprite.size.x
