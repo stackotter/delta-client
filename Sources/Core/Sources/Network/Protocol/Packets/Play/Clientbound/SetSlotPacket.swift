@@ -17,13 +17,14 @@ public struct SetSlotPacket: ClientboundPacket {
     let slot = Int(slot)
     let windowId = Int(windowId)
 
-    guard slot >= 0 && slot < PlayerInventory.slotCount else {
-      throw ClientboundPacketError.invalidInventorySlotIndex(slot, window: windowId)
+    // Only player inventory is handled at the moment
+    guard windowId == PlayerInventory.windowId || windowId == -2 else {
+      return
     }
 
-    // Only player inventory is handled at the moment
-    guard slot == PlayerInventory.windowId || slot == -1 else {
-      return
+    // Check for out-of-bounds
+    guard slot >= 0 && slot < PlayerInventory.slotCount else {
+      throw ClientboundPacketError.invalidInventorySlotIndex(slot, window: windowId)
     }
 
     // If window id is 0, only hotbar slots can be sent (and should be animated)

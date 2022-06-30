@@ -9,11 +9,17 @@ extension Array where Element == GUIElementMesh {
   }
 
   func size() -> SIMD2<Int> {
-    var minX = Int.max
-    var maxX = Int.min
-    var minY = Int.max
-    var maxY = Int.min
-    for mesh in self {
+    var iterator = makeIterator()
+    guard let first = iterator.next() else {
+      return [0, 0]
+    }
+
+    var minX = first.position.x
+    var maxX = minX + first.size.x
+    var minY = first.position.y
+    var maxY = minY + first.size.y
+
+    while let mesh = iterator.next() {
       let position = mesh.position
       let size = mesh.size
       let meshMaxX = position.x + size.x
@@ -31,6 +37,7 @@ extension Array where Element == GUIElementMesh {
         minY = position.y
       }
     }
+
     return [maxX - minX, maxY - minY]
   }
 }

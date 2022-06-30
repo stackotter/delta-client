@@ -16,8 +16,8 @@ public class PlayerInventory: Component {
   /// The player's currently selected hotbar slot.
   public var selectedHotbarSlot: Int
   /// The inventory's hotbar.
-  public var hotbar: ArraySlice<Slot> {
-    slots[Self.hotbarSlotStartIndex...Self.hotbarSlotEndIndex]
+  public var hotbar: [Slot] {
+    return Array(slots[Self.hotbarSlotStartIndex...Self.hotbarSlotEndIndex])
   }
 
   /// Creates the player's inventory state.

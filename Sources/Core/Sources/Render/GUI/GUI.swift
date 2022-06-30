@@ -71,24 +71,31 @@ struct GUI {
     var food: Int = 0
     var selectedSlot: Int = 0
     var xpBarProgress: Float = 0
+    var hotbarSlots: [Slot] = []
     client.game.accessPlayer { player in
       gamemode = player.gamemode.gamemode
       health = player.health.health
       food = player.nutrition.food
       selectedSlot = player.inventory.selectedHotbarSlot
       xpBarProgress = player.experience.experienceBarProgress
+      hotbarSlots = player.inventory.hotbar
     }
 
     stats(&group, gamemode: gamemode, health: health, food: food, xpBarProgress: xpBarProgress)
-    hotbar(&group, selectedSlot: selectedSlot)
+    hotbar(&group, selectedSlot: selectedSlot, slots: hotbarSlots)
 
     parentGroup.add(group, .bottom(-1), .center)
   }
 
-  func hotbar(_ group: inout GUIGroupElement, selectedSlot: Int) {
+  func hotbar(_ group: inout GUIGroupElement, selectedSlot: Int, slots: [Slot]) {
     group.add(GUISprite.hotbar, .bottom(1), .center)
     group.add(GUISprite.selectedHotbarSlot, .bottom(0), .left(20 * selectedSlot))
-    group.add(InventoryItem(itemId: 944), .bottom(4), .left(20 * selectedSlot + 4))
+
+    for (i, slot) in slots.enumerated() {
+      if let stack = slot.stack {
+        group.add(InventoryItem(itemId: stack.itemId), .bottom(4), .left(20 * i + 4))
+      }
+    }
   }
 
   func statBar(
