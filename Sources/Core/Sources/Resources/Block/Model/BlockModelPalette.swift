@@ -12,17 +12,17 @@ public struct BlockModelPalette {
   public var displayTransforms: [BlockModelDisplayTransforms] = []
   /// Contains true for each block that is full and opaque (e.g. dirt, but not slabs). Indexed by block state id.
   public var fullyOpaqueBlocks: [Bool] = []
-  
+
   // MARK: Init
-  
+
   /// Create an empty palette.
   public init() {}
-  
+
   /// Create a populated palette.
   public init(models: [[BlockModel]], displayTransforms: [BlockModelDisplayTransforms]) {
     self.models = models
     self.displayTransforms = displayTransforms
-    
+
     fullyOpaqueBlocks.reserveCapacity(models.count)
     for model in models {
       var isFull = false
@@ -35,9 +35,9 @@ public struct BlockModelPalette {
       fullyOpaqueBlocks.append(isFull)
     }
   }
-  
+
   // MARK: Access
-  
+
   /// Returns the model to render for the given block state. The position is used
   /// to determine which variant to use in the cases where there are multiple.
   ///
@@ -57,10 +57,10 @@ public struct BlockModelPalette {
         return variants[Int(index)]
       }
     }
-    
+
     return variants.first
   }
-  
+
   /// Returns whether the given block is fully opaque (cannot be seen through and takes up a full block).
   ///
   /// Does not perform any bounds checks (fatally crashes if `id` is out of range.
@@ -69,9 +69,9 @@ public struct BlockModelPalette {
   public func isBlockFullyOpaque(_ id: Int) -> Bool {
     return fullyOpaqueBlocks[id]
   }
-  
+
   // MARK: Loading
-  
+
   public static func load(
     from modelDirectory: URL,
     namespace: String,
@@ -80,7 +80,7 @@ public struct BlockModelPalette {
     // Load block models from the pack into an intermediate format
     let jsonBlockModels = try JSONBlockModel.loadModels(from: modelDirectory, namespace: namespace)
     let intermediateBlockModelPalette = try IntermediateBlockModelPalette(from: jsonBlockModels)
-    
+
     // Convert intermediate block models to final format
     var blockModels = [[BlockModel]](repeating: [], count: RegistryStore.shared.blockRegistry.renderDescriptors.count)
     for (blockId, variants) in RegistryStore.shared.blockRegistry.renderDescriptors.enumerated() {
@@ -97,15 +97,15 @@ public struct BlockModelPalette {
           throw error
         }
       }
-      
+
       blockModels[blockId] = blockModelVariants
     }
-    
+
     return BlockModelPalette(
       models: blockModels,
       displayTransforms: intermediateBlockModelPalette.displayTransforms)
   }
-  
+
   /// Creates the block model for the given pixlyzer block model descriptor.
   private static func blockModel(
     for partDescriptors: [BlockModelRenderDescriptor],
@@ -117,15 +117,15 @@ public struct BlockModelPalette {
     var cullableFaces: Set<Direction> = []
     var nonCullableFaces: Set<Direction> = []
     var textureType = TextureType.opaque
-    
+
     let parts: [BlockModelPart] = try partDescriptors.map { renderDescriptor in
       // Get the block model data in its intermediate 'flattened' format
       guard let intermediateModel = intermediateBlockModelPalette.blockModel(for: renderDescriptor.model) else {
         throw BlockModelPaletteError.invalidIdentifier
       }
-      
+
       let modelMatrix = renderDescriptor.transformationMatrix
-      
+
       // Convert the elements to the correct format and identify culling faces
       var rotatedCullingFaces: Set<Direction> = []
       let elements: [BlockModelElement] = try intermediateModel.elements.map { intermediateElement in
@@ -133,13 +133,13 @@ public struct BlockModelPalette {
         if block.lightMaterial.isOpaque || block.className == "LeavesBlock" { // TODO: don't hardcode leaves' rendering behaviour
           rotatedCullingFaces.formUnion(intermediateElement.getCullingFaces())
         }
-        
+
         let element = try blockModelElement(
           from: intermediateElement,
           with: blockTexturePalette,
           modelMatrix: modelMatrix,
           renderDescriptor: renderDescriptor)
-        
+
         for face in element.faces {
           let texture = blockTexturePalette.textures[face.texture]
           if textureType == .opaque && texture.type != .opaque {
@@ -147,28 +147,28 @@ public struct BlockModelPalette {
           } else if textureType == .transparent && texture.type == .translucent {
             textureType = .translucent
           }
-                
+
           if let cullFace = face.cullface {
             cullableFaces.insert(cullFace)
           } else {
             nonCullableFaces.insert(face.actualDirection)
           }
         }
-        
+
         return element
       }
-      
+
       // Rotate the culling face directions to correctly match the block
       cullingFaces.formUnion(Set<Direction>(rotatedCullingFaces.map { direction in
         rotate(direction, byRotationFrom: renderDescriptor)
       }))
-      
+
       return BlockModelPart(
         ambientOcclusion: intermediateModel.ambientOcclusion,
         displayTransformsIndex: intermediateModel.displayTransformsIndex,
         elements: elements)
     }
-    
+
     return BlockModel(
       parts: parts,
       cullingFaces: cullingFaces,
@@ -176,7 +176,7 @@ public struct BlockModelPalette {
       nonCullableFaces: nonCullableFaces,
       textureType: textureType)
   }
-  
+
   /// Converts a flattened block model element to a block model element format ready for rendering.
   private static func blockModelElement(
     from flatElement: IntermediateBlockModelElement,
@@ -191,27 +191,27 @@ public struct BlockModelPalette {
         log.error("Invalid texture identifier string '\(flatFace.texture)'")
         throw BlockModelPaletteError.invalidTexture(flatFace.texture)
       }
-      
+
       let debugBlock = blockTexturePalette.textureIndex(for: Identifier(name: "block/debug"))
       guard let textureIndex = blockTexturePalette.textureIndex(for: textureIdentifier) ?? debugBlock else {
         log.error("Failed to get texture for '\(textureIdentifier)' and failed to get debug texture (very sus)")
         throw BlockModelPaletteError.invalidTextureIdentifier(textureIdentifier)
       }
-      
+
       // Update the cullface with the block rotation (ignoring element rotation)
       var cullface: Direction?
       if let flatCullface = flatFace.cullface {
         cullface = rotate(flatCullface, byRotationFrom: renderDescriptor)
       }
-      
+
       let uvs = try uvsForFace(
         flatFace,
         on: flatElement,
         from: renderDescriptor)
-      
+
       // The actual direction the face will be facing after rotations are applied.
       let actualDirection = rotate(flatFace.direction, byRotationFrom: renderDescriptor)
-      
+
       return BlockModelFace(
         direction: flatFace.direction,
         actualDirection: actualDirection,
@@ -220,13 +220,13 @@ public struct BlockModelPalette {
         cullface: cullface,
         isTinted: flatFace.isTinted)
     }
-    
+
     return BlockModelElement(
       transformation: flatElement.transformationMatrix * modelMatrix,
       shade: flatElement.shouldShade,
       faces: faces)
   }
-  
+
   /// Returns the given direction with the rotations in a model descriptor applied to it.
   private static func rotate(
     _ direction: Direction,
@@ -241,7 +241,7 @@ public struct BlockModelPalette {
     }
     return newDirection
   }
-  
+
   /// Calculates texture uvs for a face on a specific element and model.
   ///
   /// - Returns: One texture coordinate for each face vertex (4 total) starting at the top left
@@ -254,7 +254,7 @@ public struct BlockModelPalette {
     let direction = face.direction
     let minimumPoint = element.from
     let maximumPoint = element.to
-    
+
     // If the block model defines uvs we use those, otherwise we generate our own from the geometry
     var uvs: [Float]
     if let uvArray = face.uv {
@@ -310,18 +310,18 @@ public struct BlockModelPalette {
           ]
       }
     }
-    
+
     // The uv coordinates for each corner of the face starting at top left going clockwise
     var coordinates = [
       SIMD2<Float>(uvs[2], uvs[1]),
       SIMD2<Float>(uvs[2], uvs[3]),
       SIMD2<Float>(uvs[0], uvs[3]),
       SIMD2<Float>(uvs[0], uvs[1])]
-    
+
     // Rotate the array of coordinates (samples the same part of the texture just changes the rotation of the sampled region on the face
     let rotation = face.textureRotation
     coordinates = rotate(coordinates, by: rotation / 90)
-    
+
     // UV lock makes sure textures don't rotate with the model (like stairs where the planks always face east-west
     // We rotate counter-clockwise this time
     if renderDescriptor.uvLock {
@@ -337,10 +337,10 @@ public struct BlockModelPalette {
       }
       coordinates = rotateTextureCoordinates(coordinates, by: uvLockRotationDegrees)
     }
-    
+
     return coordinates
   }
-  
+
   // TODO: make this an extension of arrays or something
   /// Rotates the given array. Positive k is right rotation and negative k is left rotation.
   private static func rotate<T>(_ array: [T], by k: Int) -> [T] {
@@ -350,7 +350,7 @@ public struct BlockModelPalette {
     let elementsToPutAtBeginning = Array(array[initialDigits..<array.count])
     return elementsToPutAtBeginning + elementToPutAtEnd
   }
-  
+
   /// Rotates each of the texture coordinates by the specified amount around the center of the texture (clockwise).
   /// The angle should be a positive multiple of 90 degrees. Used for UV locking (works different to texture rotation).
   private static func rotateTextureCoordinates(
@@ -362,7 +362,7 @@ public struct BlockModelPalette {
     if angle == 0 {
       return coordinates
     }
-    
+
     let center = SIMD2<Float>(0.5, 0.5)
     // The rotation rounded to nearest 90 degrees
     let rotation = angle - angle % 90
@@ -381,7 +381,7 @@ public struct BlockModelPalette {
       }
       return rotatedPoint + center
     }
-    
+
     return rotatedCoordinates
   }
 }

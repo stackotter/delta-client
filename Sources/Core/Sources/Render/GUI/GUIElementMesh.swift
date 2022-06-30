@@ -49,6 +49,7 @@ struct GUIElementMesh {
     size = [width, height]
   }
 
+  /// Creates a mesh that displays the specified gui sprite.
   init(
     sprite: GUISpriteDescriptor,
     guiTexturePalette: GUITexturePalette,
@@ -66,12 +67,28 @@ struct GUIElementMesh {
       size: SIMD2<Float>(sprite.size),
       uvMin: SIMD2<Float>(sprite.position) / textureSize,
       uvSize: SIMD2<Float>(sprite.size) / textureSize,
-      textureIndex: UInt8(guiTexturePalette.textureIndex(for: sprite.slice))
+      textureIndex: UInt16(guiTexturePalette.textureIndex(for: sprite.slice))
     )]
 
     let width = sprite.size.x
     let height = sprite.size.y
     size = [width, height]
+  }
+
+  /// Creates a mesh that displays a single slice of a texture.
+  init(
+    slice: Int,
+    texture: MTLTexture
+  ) {
+    arrayTexture = texture
+    size = [16, 16]
+    quads = [GUIQuadInstance(
+      position: [0, 0],
+      size: [16, 16],
+      uvMin: [0, 0],
+      uvSize: [1, 1],
+      textureIndex: UInt16(slice)
+    )]
   }
 
   static func createBuffers(

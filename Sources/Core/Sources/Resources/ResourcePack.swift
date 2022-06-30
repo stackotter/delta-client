@@ -44,12 +44,12 @@ public struct ResourcePack {
       vanillaResources = resources["minecraft"] ?? Resources()
     }
   }
-  
+
   /// Resources in the 'minecraft' namespace.
   public private(set) var vanillaResources: Resources
-  
+
   // MARK: Init
-  
+
   /// Creates a resource pack with the given resources. Defaults to no resources.
   /// - Parameters:
   ///   - languages: The metadata of languages to include in the resource pack.
@@ -62,23 +62,23 @@ public struct ResourcePack {
     self.resources = resources
     self.vanillaResources = resources["minecraft"] ?? Resources()
   }
-  
+
   // MARK: Access
-  
+
   public func getBlockModel(for stateId: Int, at position: BlockPosition) -> BlockModel? {
     return vanillaResources.blockModelPalette.model(for: stateId, at: position)
   }
-  
+
   public func getBlockTexturePalette() -> TexturePalette {
     return vanillaResources.blockTexturePalette
   }
-  
+
   public func getDefaultLocale() -> MinecraftLocale {
     return vanillaResources.locales[Constants.locale] ?? MinecraftLocale()
   }
-  
+
   // MARK: Loading
-  
+
   /// Loads the resource pack in the given directory. ``RegistryStore/shared`` must be populated for this to work.
   ///
   /// If provided, cached resources are loaded from the given cache directory if present. To create a resource pack cache use ``cache(to:)``.
@@ -88,16 +88,16 @@ public struct ResourcePack {
     guard FileManager.default.directoryExists(at: directory) else {
       throw ResourcePackError.noSuchDirectory
     }
-    
+
     // Read pack.mcmeta
     let mcMetaFile = directory.appendingPathComponent("pack.mcmeta")
     let mcMeta = try readPackMCMeta(at: mcMetaFile)
-    
+
     // Read resources from present namespaces
     guard let contents = try? FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil, options: []) else {
       throw ResourcePackError.failedToEnumerateNamespaces
     }
-    
+
     var namespacedResources: [String: ResourcePack.Resources] = [:]
     for directory in contents where FileManager.default.directoryExists(at: directory) {
       let namespace = directory.lastPathComponent
@@ -108,14 +108,14 @@ public struct ResourcePack {
       )
       namespacedResources[namespace] = resources
     }
-    
+
     // Create pack
     return ResourcePack(
       languages: mcMeta.languages ?? [:],
       resources: namespacedResources
     )
   }
-  
+
   /// Loads the resources in the given directory and gives them the specified namespace.
   public static func loadResources(
     from directory: URL,
@@ -124,7 +124,7 @@ public struct ResourcePack {
   ) throws -> ResourcePack.Resources {
     log.debug("Loading resources from '\(namespace)' namespace")
     var resources = Resources()
-    
+
     // Load block textures if the pack contains any
     log.debug("Loading textures")
     let textureDirectory = directory.appendingPathComponent("textures")
@@ -140,8 +140,14 @@ public struct ResourcePack {
       if FileManager.default.directoryExists(at: guiTextureDirectory) && namespace == "minecraft" {
         resources.guiTexturePalette = try TexturePalette.load(from: guiTextureDirectory, inNamespace: namespace, withType: "gui")
       }
+
+      /// Load item textures if pack contains any
+      let itemTextureDirectory = textureDirectory.appendingPathComponent("item")
+      if FileManager.default.directoryExists(at: itemTextureDirectory) && namespace == "minecraft" {
+        resources.itemTexturePalette = try TexturePalette.load(from: itemTextureDirectory, inNamespace: namespace, withType: "item")
+      }
     }
-    
+
     // Load biome colors
     log.debug("Loading biome colors")
     let colorMapDirectory = textureDirectory.appendingPathComponent("colormap")
@@ -149,7 +155,7 @@ public struct ResourcePack {
       let biomeColors = try BiomeColors(from: colorMapDirectory)
       resources.biomeColors = biomeColors
     }
-    
+
     // Attempt to load block model palette from the resource pack cache if it exists
     var loadedFromCache = false
     if let cacheDirectory = cacheDirectory {
@@ -169,7 +175,7 @@ public struct ResourcePack {
         }
       }
     }
-    
+
     // Load models if present and not loaded from cache
     if !loadedFromCache {
       log.debug("Loading block models from resourcepack")
@@ -186,7 +192,7 @@ public struct ResourcePack {
         }
       }
     }
-    
+
     // Load locales if present
     let localeDirectory = directory.appendingPathComponent("lang")
     if FileManager.default.directoryExists(at: localeDirectory) {
@@ -208,10 +214,10 @@ public struct ResourcePack {
       )
       resources.fontPalette = fontPalette
     }
-    
+
     return resources
   }
-  
+
   /// Reads a pack.mcmeta file.
   public static func readPackMCMeta(at mcMetaFile: URL) throws -> ResourcePack.PackMCMeta {
     let mcMeta: ResourcePack.PackMCMeta
@@ -221,33 +227,33 @@ public struct ResourcePack {
     } catch {
       throw ResourcePackError.failedToReadMCMeta(error)
     }
-    
+
     return mcMeta
   }
-  
+
   // MARK: Caching
-  
+
   /// Caches the parts of the pack that are most resource intensive to process (such as block models).
   public func cache(to directory: URL) throws {
     for (namespace, resources) in resources {
       log.debug("Caching resources from '\(namespace)' namespace")
       let cacheDirectory = directory.appendingPathComponent(namespace)
       try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true, attributes: nil)
-      
+
       // Cache block models
       let blockModelCacheFile = cacheDirectory.appendingPathComponent("block_models.bin")
       try resources.blockModelPalette.cache(toFile: blockModelCacheFile)
     }
   }
-  
+
   // MARK: Download
-  
+
   /// Tasks to be exectued during the `downloadVanillaAssets` process
   private enum DownloadStep: CaseIterable, TaskStep {
     case fetchManifest, downloadJar, extractJar, copyingAssets, creatingMcmeta
-    
+
     public var relativeDuration: Double { 1 }
-    
+
     public var message: String {
       switch self {
         case .fetchManifest: return "Fetching version manifest"
@@ -258,11 +264,11 @@ public struct ResourcePack {
       }
     }
   }
-  
+
   /// Downloads the vanilla client and extracts its assets (textures, block models, etc.).
   public static func downloadVanillaAssets(forVersion version: String, to directory: URL, _ onProgress: ((Double, String) -> Void)?) throws {
     var progress = TaskProgress<DownloadStep>()
-    
+
     func updateProgressStatus(step: DownloadStep) {
       progress.update(to: step)
       log.info(progress.message)
@@ -272,7 +278,7 @@ public struct ResourcePack {
     updateProgressStatus(step: .fetchManifest)
     let versionManifest = try getVersionManifest(for: version)
     let clientJarURL = versionManifest.downloads.client.url
-    
+
     // Download the client jar
     updateProgressStatus(step: .downloadJar)
     let temporaryDirectory = FileManager.default.temporaryDirectory
@@ -284,7 +290,7 @@ public struct ResourcePack {
       log.error("Failed to download client jar: \(error)")
       throw ResourcePackError.clientJarDownloadFailure
     }
-    
+
     // Extract the contents of the client jar (jar files are just zip archives)
     updateProgressStatus(step: .extractJar)
     let extractedClientJarDirectory = temporaryDirectory.appendingPathComponent("client", isDirectory: true)
@@ -295,7 +301,7 @@ public struct ResourcePack {
       log.error("Failed to extract client jar: \(error)")
       throw ResourcePackError.clientJarExtractionFailure
     }
-    
+
     // Copy the assets from the extracted client jar to application support
     updateProgressStatus(step: .copyingAssets)
     do {
@@ -306,25 +312,25 @@ public struct ResourcePack {
       log.error("Failed to copy assets from extracted client jar: \(error)")
       throw ResourcePackError.assetCopyFailure
     }
-    
+
     // Create a default pack.mcmeta for it
     updateProgressStatus(step: .creatingMcmeta)
     let contents = #"{"pack": {"pack_format": 5, "description": "The default vanilla assets"}}"#
     guard let data = contents.data(using: .utf8) else {
       throw ResourcePackError.failedToCreatePackMCMetaData
     }
-    
+
     do {
       try data.write(to: directory.appendingPathComponent("pack.mcmeta"))
     } catch {
       log.error("Failed to write pack.mcmeta file to vanilla assets")
     }
   }
-  
+
   /// Get the manifest describing all versions.
   private static func getVersionsManifest() throws -> VersionsManifest {
     let versionsManifestURL = URL(string: "https://launchermeta.mojang.com/mc/game/version_manifest.json")!
-    
+
     let versionsManifest: VersionsManifest
     do {
       let data = try Data(contentsOf: versionsManifestURL)
@@ -332,19 +338,19 @@ public struct ResourcePack {
     } catch {
       throw ResourcePackError.versionsManifestFailure(error)
     }
-    
+
     return versionsManifest
   }
-  
+
   /// Get the manifest for the specified version.
   private static func getVersionManifest(for versionString: String) throws -> VersionManifest {
     let versionURLs = try getVersionURLs()
-    
+
     guard let versionURL = versionURLs[versionString] else {
       log.error("Failed to find manifest download url for version \(versionString)")
       throw ResourcePackError.noURLForVersion(versionString)
     }
-    
+
     let versionManifest: VersionManifest
     do {
       let data = try Data(contentsOf: versionURL)
@@ -352,10 +358,10 @@ public struct ResourcePack {
     } catch {
       throw ResourcePackError.versionManifestFailure(error)
     }
-    
+
     return versionManifest
   }
-  
+
   /// Returns a map from version name to the version's manifest url.
   private static func getVersionURLs() throws -> [String: URL] {
     let manifest = try getVersionsManifest()

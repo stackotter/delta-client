@@ -9,14 +9,16 @@ extension ResourcePack {
     public var blockTexturePalette = TexturePalette()
     /// The palette holding block models.
     public var blockModelPalette = BlockModelPalette()
+    /// The item texture palette.
+    public var itemTexturePalette = TexturePalette()
+    /// The GUI texture palette.
+    public var guiTexturePalette = TexturePalette()
     /// The locales.
     public var locales: [String: MinecraftLocale] = [:]
     /// The colors of biomes.
     public var biomeColors = BiomeColors()
     /// The fonts.
     public var fontPalette = FontPalette()
-    /// The GUI texture palette.
-    public var guiTexturePalette = TexturePalette()
 
     /// Creates a new empty namespace of resources.
     public init() {}

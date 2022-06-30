@@ -12,24 +12,39 @@ struct GUI {
   var lastFPSUpdate: CFAbsoluteTime = 0
   var savedRenderStatistics = RenderStatistics(gpuCountersEnabled: false)
 
-  var font: Font
-  var fontArrayTexture: MTLTexture
-  var guiTexturePalette: GUITexturePalette
-  var guiArrayTexture: MTLTexture
+  var context: GUIContext
 
-  init(client: Client, device: MTLDevice, commandQueue: MTLCommandQueue) throws {
+  init(
+    client: Client,
+    device: MTLDevice,
+    commandQueue: MTLCommandQueue
+  ) throws {
     self.client = client
 
     root = GUIGroupElement([0, 0])
 
-    font = client.resourcePack.vanillaResources.fontPalette.defaultFont
-    fontArrayTexture = try font.createArrayTexture(device)
+    let font = client.resourcePack.vanillaResources.fontPalette.defaultFont
+    let fontArrayTexture = try font.createArrayTexture(device)
 
-    guiTexturePalette = try GUITexturePalette(client.resourcePack.vanillaResources.guiTexturePalette)
-    guiArrayTexture = try guiTexturePalette.palette.createTextureArray(
+    let guiTexturePalette = try GUITexturePalette(client.resourcePack.vanillaResources.guiTexturePalette)
+    let guiArrayTexture = try guiTexturePalette.palette.createArrayTexture(
       device: device,
-      animationState: ArrayTextureAnimationState(for: guiTexturePalette.palette),
       commandQueue: commandQueue
+    )
+
+    let itemTexturePalette = client.resourcePack.vanillaResources.itemTexturePalette
+    let itemArrayTexture = try itemTexturePalette.createArrayTexture(
+      device: device,
+      commandQueue: commandQueue
+    )
+
+    context = GUIContext(
+      font: font,
+      fontArrayTexture: fontArrayTexture,
+      guiTexturePalette: guiTexturePalette,
+      guiArrayTexture: guiArrayTexture,
+      itemTexturePalette: itemTexturePalette,
+      itemArrayTexture: itemArrayTexture
     )
   }
 
@@ -73,6 +88,7 @@ struct GUI {
   func hotbar(_ group: inout GUIGroupElement, selectedSlot: Int) {
     group.add(GUISprite.hotbar, .bottom(1), .center)
     group.add(GUISprite.selectedHotbarSlot, .bottom(0), .left(20 * selectedSlot))
+    group.add(InventoryItem(itemId: 944), .bottom(4), .left(20 * selectedSlot + 4))
   }
 
   func statBar(
@@ -241,13 +257,6 @@ struct GUI {
     effectiveDrawableSize: SIMD2<Int>
   ) throws -> [GUIElementMesh] {
     update(effectiveDrawableSize)
-    let context = GUIContext(
-      font: font,
-      fontArrayTexture: fontArrayTexture,
-      guiTexturePalette: guiTexturePalette,
-      guiArrayTexture: guiArrayTexture
-    )
-
     return try root.meshes(context: context)
   }
 }

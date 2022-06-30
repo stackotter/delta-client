@@ -8,6 +8,8 @@ enum GUIRendererError: LocalizedError {
   case failedToCreateCharacterUniformsBuffer
   case emptyText
   case invalidCharacter(Character)
+  case invalidItemId(Int)
+  case missingItemTexture(Int)
   case failedToCreateTextMeshBuffer
 
   var errorDescription: String? {
@@ -24,6 +26,10 @@ enum GUIRendererError: LocalizedError {
         return "Text was empty"
       case .invalidCharacter(let character):
         return "The selected font does not include '\(character)'"
+      case .invalidItemId(let id):
+        return "No item exists with id \(id)"
+      case .missingItemTexture(let id):
+        return "Missing texture for item with id \(id)"
       case .failedToCreateTextMeshBuffer:
         return "Failed to create text mesh buffer"
     }

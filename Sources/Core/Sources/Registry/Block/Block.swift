@@ -25,12 +25,12 @@ public struct Block: Codable {
   public var soundMaterial: SoundMaterial
   /// Information about the shape of the block.
   public var shape: Shape
-  
+
   /// The id of the fluid in this block.
   public var fluidId: Int? {
     return fluidState?.fluidId
   }
-  
+
   /// Create a new block with the specified properties.
   public init(
     id: Int,
@@ -57,7 +57,7 @@ public struct Block: Codable {
     self.soundMaterial = soundMaterial
     self.shape = shape
   }
-  
+
   /// Returns the offset to apply to the given block at the given position when rendering.
   public func getModelOffset(at position: BlockPosition) -> SIMD3<Float> {
     if let offset = offset {
@@ -77,14 +77,14 @@ public struct Block: Codable {
       return SIMD3<Float>()
     }
   }
-  
+
   /// Returns the seed to use for choosing block models. Identical behaviour to vanilla.
   public static func getPositionRandom(_ position: BlockPosition) -> Int64 {
     var seed = Int64(position.x &* 3129871) ^ (Int64(position.z) &* 116129781) ^ Int64(position.y)
     seed = (seed &* seed &* 42317861) &+ (seed &* 11)
     return seed >> 16
   }
-  
+
   /// Used when a block does not exist (e.g. when an invalid block id is received from the server).
   public static var missing = Block(
     id: -1,
@@ -97,5 +97,6 @@ public struct Block: Codable {
     material: PhysicalMaterial.default,
     lightMaterial: LightMaterial.default,
     soundMaterial: SoundMaterial.default,
-    shape: Shape.default)
+    shape: Shape.default
+  )
 }

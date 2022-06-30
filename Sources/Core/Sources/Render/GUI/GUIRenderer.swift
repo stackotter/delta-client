@@ -15,7 +15,11 @@ public final class GUIRenderer: Renderer {
   var pipelineState: MTLRenderPipelineState
   var gui: GUI
 
-  public init(client: Client, device: MTLDevice, commandQueue: MTLCommandQueue) throws {
+  public init(
+    client: Client,
+    device: MTLDevice,
+    commandQueue: MTLCommandQueue
+  ) throws {
     self.device = device
 
     // Create array texture

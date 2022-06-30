@@ -21,11 +21,11 @@ struct GUIQuadInstance {
   float2 size;
   float2 uvMin;
   float2 uvSize;
-  uint8_t textureIndex;
+  uint16_t textureIndex;
 };
 
 struct FragmentInput {
   float4 position [[position]];
   float2 uv;
-  uint8_t textureIndex;
+  uint16_t textureIndex;
 };

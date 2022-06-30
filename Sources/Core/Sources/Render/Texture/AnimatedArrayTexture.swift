@@ -10,14 +10,18 @@ public struct AnimatedArrayTexture {
   ///
   /// Updated everytime ``update(tick:device:commandQueue:)`` is called.
   public var state: ArrayTextureAnimationState
-  
+
   /// Creates a new animated array texture for the given texture palette.
   public init(palette: TexturePalette, device: MTLDevice, commandQueue: MTLCommandQueue) throws {
     self.palette = palette
     state = ArrayTextureAnimationState(for: palette)
-    texture = try palette.createTextureArray(device: device, animationState: state, commandQueue: commandQueue)
+    texture = try palette.createArrayTexture(
+      device: device,
+      commandQueue: commandQueue,
+      animationState: state
+    )
   }
-  
+
   /// Updates any frames that have changed between the last update and the current tick.
   public mutating func update(tick: Int, device: MTLDevice, commandQueue: MTLCommandQueue) {
     let updatedTextures = state.update(tick: tick)
