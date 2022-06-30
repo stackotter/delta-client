@@ -8,19 +8,22 @@ struct GUIQuadInstance {
   var uvMin: SIMD2<Float>
   var uvSize: SIMD2<Float>
   var textureIndex: UInt16
+  var tint: SIMD3<Float>
 
   init(
     position: SIMD2<Float>,
     size: SIMD2<Float>,
     uvMin: SIMD2<Float>,
     uvSize: SIMD2<Float>,
-    textureIndex: UInt16
+    textureIndex: UInt16,
+    tint: SIMD3<Float> = [1, 1, 1]
   ) {
     self.position = position
     self.size = size
     self.uvMin = uvMin
     self.uvSize = uvSize
     self.textureIndex = textureIndex
+    self.tint = tint
   }
 
   /// Creates a quad instance for the given character.
@@ -49,6 +52,7 @@ struct GUIQuadInstance {
       Float(descriptor.height) / arrayTextureHeight
     ]
     textureIndex = UInt16(descriptor.texture)
+    tint = [1, 1, 1]
   }
 
   /// Translates the quad by the given amount.

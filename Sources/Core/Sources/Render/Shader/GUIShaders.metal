@@ -30,6 +30,8 @@ vertex FragmentInput guiVertex(constant GUIQuadVertex *vertices [[buffer(0)]],
   output.uv.y *= quad.uvSize.y;
   output.uv.y += quad.uvMin.y;
 
+  output.tint = quad.tint;
+
   output.textureIndex = quad.textureIndex;
   return output;
 }
@@ -42,5 +44,6 @@ fragment float4 guiFragment(FragmentInput in [[stage_in]],
     if (color.w == 0) {
         discard_fragment();
     }
+    color *= float4(in.tint, 1);
     return color;
 }

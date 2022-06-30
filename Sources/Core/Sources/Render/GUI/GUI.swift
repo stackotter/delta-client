@@ -93,7 +93,7 @@ struct GUI {
 
     for (i, slot) in slots.enumerated() {
       if let stack = slot.stack {
-        group.add(InventoryItem(itemId: stack.itemId), .bottom(4), .left(20 * i + 4))
+        group.add(GUIInventoryItem(itemId: stack.itemId), .bottom(4), .left(20 * i + 4))
       }
     }
   }

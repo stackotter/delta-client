@@ -67,7 +67,8 @@ struct GUIElementMesh {
       size: SIMD2<Float>(sprite.size),
       uvMin: SIMD2<Float>(sprite.position) / textureSize,
       uvSize: SIMD2<Float>(sprite.size) / textureSize,
-      textureIndex: UInt16(guiTexturePalette.textureIndex(for: sprite.slice))
+      textureIndex: UInt16(guiTexturePalette.textureIndex(for: sprite.slice)),
+      tint: [1, 0, 0]
     )]
 
     let width = sprite.size.x

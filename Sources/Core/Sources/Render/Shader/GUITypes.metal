@@ -22,10 +22,12 @@ struct GUIQuadInstance {
   float2 uvMin;
   float2 uvSize;
   uint16_t textureIndex;
+  float3 tint;
 };
 
 struct FragmentInput {
   float4 position [[position]];
   float2 uv;
   uint16_t textureIndex;
+  float3 tint;
 };

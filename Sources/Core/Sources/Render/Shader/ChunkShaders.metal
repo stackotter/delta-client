@@ -34,13 +34,13 @@ vertex RasterizerData chunkVertexShader(uint vertexId [[vertex_id]], constant Ve
                                         constant Uniforms &chunkUniforms [[buffer(2)]]) {
   Vertex in = vertices[vertexId];
   RasterizerData out;
-  
+
   out.position = float4(in.x, in.y, in.z, 1.0) * chunkUniforms.transformation * worldUniforms.transformation;
   out.uv = float2(in.u, in.v);
   out.textureIndex = in.textureIndex;
   out.isTransparent = in.isTransparent;
   out.tint = float4(in.r, in.g, in.b, 1);
-  
+
   return out;
 }
 
@@ -50,15 +50,15 @@ fragment float4 chunkFragmentShader(RasterizerData in [[stage_in]],
   float4 color;
   color = textureArray.sample(textureSampler, in.uv, in.textureIndex);
   color = color * in.tint;
-  
+
   // discard transparent fragments
   if (in.isTransparent && color.w < 0.33) {
     discard_fragment();
   }
-  
+
   // A bit of branchless programming
   color.w = color.w * !in.isTransparent // If not transparent, take the original alpha
           + in.isTransparent; // If transparent, make alpha 1
-  
+
   return color;
 }

@@ -1,4 +1,4 @@
-struct InventoryItem: GUIElement {
+struct GUIInventoryItem: GUIElement {
   var itemId: Int
 
   func meshes(context: GUIContext) throws -> [GUIElementMesh] {
