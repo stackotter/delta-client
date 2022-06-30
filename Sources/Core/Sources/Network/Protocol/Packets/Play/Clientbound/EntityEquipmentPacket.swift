@@ -16,7 +16,7 @@ public struct EntityEquipmentPacket: ClientboundPacket {
         isLastEquipment = true
       }
       slot = slot & 0x7f
-      let item = try packetReader.readItemStack()
+      let item = try packetReader.readSlot()
       let equipment = Equipment(slot: slot, item: item)
       equipments.append(equipment)
     }

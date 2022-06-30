@@ -41,9 +41,9 @@ public struct PlayerPacketSystem: System {
     }
 
     // Send hotbar slot update
-    if inventory.hotbarSlot != state.previousHotbarSlot {
-      try connection.sendPacket(HeldItemChangeServerboundPacket(slot: Int16(inventory.hotbarSlot)))
-      state.previousHotbarSlot = inventory.hotbarSlot
+    if inventory.selectedHotbarSlot != state.previousHotbarSlot {
+      try connection.sendPacket(HeldItemChangeServerboundPacket(slot: Int16(inventory.selectedHotbarSlot)))
+      state.previousHotbarSlot = inventory.selectedHotbarSlot
     }
 
     // Send sprinting update

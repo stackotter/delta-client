@@ -75,7 +75,7 @@ struct GUI {
       gamemode = player.gamemode.gamemode
       health = player.health.health
       food = player.nutrition.food
-      selectedSlot = player.inventory.hotbarSlot
+      selectedSlot = player.inventory.selectedHotbarSlot
       xpBarProgress = player.experience.experienceBarProgress
     }
 

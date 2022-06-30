@@ -4,7 +4,7 @@ import Foundation
 public protocol HeatRecipe {
   var group: String { get }
   var ingredient: Ingredient { get }
-  var result: ItemStack { get }
+  var result: Slot { get }
 
   var experience: Float { get }
   var cookingTime: Int { get }

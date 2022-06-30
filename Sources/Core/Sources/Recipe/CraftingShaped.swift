@@ -7,5 +7,5 @@ struct CraftingShaped: CraftingRecipe {
   var height: Int
   var ingredients: [Ingredient]
   
-  var result: ItemStack
+  var result: Slot
 }

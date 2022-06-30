@@ -111,27 +111,27 @@ public struct Game {
       case .changePerspective:
         player.camera.cyclePerspective()
       case .slot1:
-        player.inventory.hotbarSlot = 0
+        player.inventory.selectedHotbarSlot = 0
       case .slot2:
-        player.inventory.hotbarSlot = 1
+        player.inventory.selectedHotbarSlot = 1
       case .slot3:
-        player.inventory.hotbarSlot = 2
+        player.inventory.selectedHotbarSlot = 2
       case .slot4:
-        player.inventory.hotbarSlot = 3
+        player.inventory.selectedHotbarSlot = 3
       case .slot5:
-        player.inventory.hotbarSlot = 4
+        player.inventory.selectedHotbarSlot = 4
       case .slot6:
-        player.inventory.hotbarSlot = 5
+        player.inventory.selectedHotbarSlot = 5
       case .slot7:
-        player.inventory.hotbarSlot = 6
+        player.inventory.selectedHotbarSlot = 6
       case .slot8:
-        player.inventory.hotbarSlot = 7
+        player.inventory.selectedHotbarSlot = 7
       case .slot9:
-        player.inventory.hotbarSlot = 8
+        player.inventory.selectedHotbarSlot = 8
       case .nextSlot:
-        player.inventory.hotbarSlot = (player.inventory.hotbarSlot + 1) % 9
+        player.inventory.selectedHotbarSlot = (player.inventory.selectedHotbarSlot + 1) % 9
       case .previousSlot:
-        player.inventory.hotbarSlot = (player.inventory.hotbarSlot + 8) % 9
+        player.inventory.selectedHotbarSlot = (player.inventory.selectedHotbarSlot + 8) % 9
       default:
         break
     }

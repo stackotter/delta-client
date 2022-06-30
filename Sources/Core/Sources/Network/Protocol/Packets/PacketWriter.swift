@@ -71,16 +71,14 @@ public struct PacketWriter {
   // MARK: Complex datatypes
   // IMPLEMENT: Entity Metadata, Angle
 
-  public mutating func writeItemStack(_ itemStack: ItemStack) {
-    writeBool(itemStack.isEmpty)
-    if !itemStack.isEmpty {
-      // TODO: use enum for itemstack
-      if let itemId = itemStack.itemId {
-        let nbt = itemStack.itemNBT ?? NBT.Compound()
-        writeVarInt(Int32(itemId))
-        writeByte(Int8(itemStack.count))
-        writeNBT(nbt)
-      }
+  public mutating func writeSlot(_ slot: Slot) {
+    if let itemStack = slot.stack {
+      writeBool(true)
+      writeVarInt(Int32(itemStack.itemId))
+      writeByte(Int8(itemStack.count))
+      writeNBT(itemStack.nbt)
+    } else {
+      writeBool(false)
     }
   }
 

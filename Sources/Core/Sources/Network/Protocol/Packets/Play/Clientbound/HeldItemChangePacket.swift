@@ -11,7 +11,7 @@ public struct HeldItemChangePacket: ClientboundPacket {
   
   public func handle(for client: Client) throws {
     client.game.accessPlayer { player in
-      player.inventory.hotbarSlot = Int(slot)
+      player.inventory.selectedHotbarSlot = Int(slot)
     }
   }
 }

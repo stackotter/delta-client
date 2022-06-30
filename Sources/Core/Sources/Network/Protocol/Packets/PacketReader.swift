@@ -6,14 +6,14 @@ public struct PacketReader {
   public let packetId: Int
   /// The packet's bytes as a buffer.
   public var buffer: Buffer
-  
+
   /// The number of bytes remaining in the packet's buffer.
   public var remaining: Int {
     return buffer.remaining
   }
-  
+
   // MARK: Init
-  
+
   /// Creates a new packet reader.
   ///
   /// Expects the start of the bytes to be a variable length integer encoding the packet's id.
@@ -23,7 +23,7 @@ public struct PacketReader {
     self.buffer = Buffer(bytes)
     self.packetId = Int(try buffer.readVariableLengthInteger())
   }
-  
+
   /// Creates a new packet reader.
   ///
   /// Expects the start of the buffer to be a variable length integer encoding the packet's id.
@@ -33,9 +33,9 @@ public struct PacketReader {
     self.buffer = buffer
     self.packetId = Int(try self.buffer.readVariableLengthInteger())
   }
-  
+
   // MARK: Public methods
-  
+
   /// Reads a boolean (1 byte).
   /// - Returns: A boolean.
   /// - Throws: A ``BufferError`` if out of bounds.
@@ -44,63 +44,63 @@ public struct PacketReader {
     let bool = byte == 1
     return bool
   }
-  
+
   /// Reads a signed byte.
   /// - Returns: A signed byte.
   /// - Throws: A ``BufferError`` if out of bounds.
   public mutating func readByte() throws -> Int8 {
     return try buffer.readSignedByte()
   }
-  
+
   /// Reads an unsigned byte.
   /// - Returns: An unsigned byte.
   /// - Throws: A ``BufferError`` if out of bounds.
   public mutating func readUnsignedByte() throws -> UInt8 {
     return try buffer.readByte()
   }
-  
+
   /// Reads a signed short (2 bytes).
   /// - Returns: A signed short.
   /// - Throws: A ``BufferError`` if out of bounds.
   public mutating func readShort() throws -> Int16 {
     return try buffer.readSignedShort(endianness: .big)
   }
-  
+
   /// Reads an unsigned short (2 bytes).
   /// - Returns: An unsigned short.
   /// - Throws: A ``BufferError`` if out of bounds.
   public mutating func readUnsignedShort() throws -> UInt16 {
     return try buffer.readShort(endianness: .big)
   }
-  
+
   /// Reads a signed integer (4 bytes).
   /// - Returns: A signed integer.
   /// - Throws: A ``BufferError`` if out of bounds.
   public mutating func readInt() throws -> Int {
     return Int(try buffer.readSignedInteger(endianness: .big))
   }
-  
+
   /// Reads a signed long (8 bytes).
   /// - Returns: A signed long.
   /// - Throws: A ``BufferError`` if out of bounds.
   public mutating func readLong() throws -> Int {
     return Int(try buffer.readSignedLong(endianness: .big))
   }
-  
+
   /// Reads a float (4 bytes).
   /// - Returns: A float.
   /// - Throws: A ``BufferError`` if out of bounds.
   public mutating func readFloat() throws -> Float {
     return try buffer.readFloat(endianness: .big)
   }
-  
+
   /// Reads a double (8 bytes).
   /// - Returns: A double.
   /// - Throws: A ``BufferError`` if out of bounds.
   public mutating func readDouble() throws -> Double {
     return try buffer.readDouble(endianness: .big)
   }
-  
+
   /// Reads a length prefixed string (length must be encoded as a variable length integer).
   /// - Returns: A string.
   /// - Throws: A ``BufferError`` if any reads go out of bounds. ``PacketReaderError/stringTooLong`` if the string is longer than 32767 (Minecraft's maximum string length).
@@ -114,21 +114,21 @@ public struct PacketReader {
     let string = try buffer.readString(length: length)
     return string
   }
-  
+
   /// Reads a variable length integer (4 bytes, encoded as up to 5 bytes).
   /// - Returns: A signed integer.
   /// - Throws: A ``BufferError`` if any reads go out of bounds or the integer is encoded as more than 5 bytes.
   public mutating func readVarInt() throws -> Int {
     return Int(try buffer.readVariableLengthInteger())
   }
-  
+
   /// Reads a variable length long (8 bytes, encoded as up to 10 bytes).
   /// - Returns: A signed long.
   /// - Throws: A ``BufferError`` if any reads go out of bounds or the long is encoded as more than 10 bytes.
   public mutating func readVarLong() throws -> Int {
     return Int(try buffer.readVariableLengthLong())
   }
-  
+
   /// Reads and parses a JSON-encoded chat component.
   /// - Returns: A chat component.
   /// - Throws: A ``BufferError`` if any reads go out of bounds. A ``ChatComponentError`` if the component is invalid.
@@ -145,7 +145,7 @@ public struct PacketReader {
       return ChatComponent(style: .init(), content: .string("<invalid chat message>"), children: [])
     }
   }
-  
+
   /// Reads and parses an identifier (e.g. `minecraft:block/dirt`).
   /// - Returns: An identifier.
   /// - Throws: A ``BufferError`` if any reads go out of bounds. ``PacketReaderError/invalidIdentifier`` if the identifier is invalid.
@@ -158,27 +158,22 @@ public struct PacketReader {
       throw PacketReaderError.invalidIdentifier(string)
     }
   }
-  
-  /// Reads an item stack.
-  /// - Returns: An item stack.
-  /// - Throws: A ``BufferError`` if any reads go out of bounds. ``PacketReaderError/invalidNBT`` if the slot has invalid NBT data.
-  public mutating func readItemStack() throws -> ItemStack {
-    let isPresent = try readBool()
 
-    let itemStack: ItemStack
+  /// Reads an item stack.
+  /// - Returns: An item stack, or `nil` if the item stack is not present (in-game).
+  /// - Throws: A ``BufferError`` if any reads go out of bounds. ``PacketReaderError/invalidNBT`` if the slot has invalid NBT data.
+  public mutating func readSlot() throws -> Slot {
+    let isPresent = try readBool()
     if isPresent {
       let itemId = try readVarInt()
       let itemCount = Int(try readByte())
-
       let nbt = try readNBTCompound()
-      itemStack = ItemStack(itemId: itemId, itemCount: itemCount, nbt: nbt)
+      return Slot(ItemStack(itemId: itemId, itemCount: itemCount, nbt: nbt))
     } else {
-      itemStack = ItemStack()
+      return Slot()
     }
-
-    return itemStack
   }
-  
+
   /// Reads an NBT compound.
   /// - Returns: An NBT compound.
   /// - Throws: A ``BufferError`` if any reads go out of bounds. ``PacketReaderError/invalidNBT`` if the NBT is invalid.
@@ -191,7 +186,7 @@ public struct PacketReader {
       throw PacketReaderError.invalidNBT(error)
     }
   }
-  
+
   /// Reads an angle (1 byte) and returns it as radians.
   /// - Returns: An angle in radians.
   /// - Throws: A ``BufferError`` if any reads go out of bounds.
@@ -199,7 +194,7 @@ public struct PacketReader {
     let angle = try readUnsignedByte()
     return Float(angle) / 128 * .pi
   }
-  
+
   /// Reads a UUID (16 bytes).
   /// - Returns: A UUID.
   /// - Throws: A ``BufferError`` if any reads go out of bounds.
@@ -210,7 +205,7 @@ public struct PacketReader {
     }
     return uuid
   }
-  
+
   /// Reads a byte array.
   /// - Parameter length: The length of byte array to read.
   /// - Returns: A byte array.
@@ -218,7 +213,7 @@ public struct PacketReader {
   public mutating func readByteArray(length: Int) throws -> [UInt8] {
     return try buffer.readBytes(length)
   }
-    
+
   /// Reads a packed block position (8 bytes).
   ///
   /// The x and z coordinates take up 26 bits each and the y coordinate takes up 12 bits.
@@ -226,17 +221,17 @@ public struct PacketReader {
   /// - Throws: A ``BufferError`` if any reads go out of bounds.
   public mutating func readBlockPosition() throws -> BlockPosition {
     let val = try buffer.readLong(endianness: .big)
-    
+
     // Extract the bit patterns (in the order x, then z, then y)
     var x = UInt32(val >> 38) // x is 26 bit
     var z = UInt32((val << 26) >> 38) // z is 26 bit
     var y = UInt32(val & 0xfff) // y is 12 bit
-    
+
     // x and z are 26-bit signed integers, y is a 12-bit signed integer
     let xSignBit = (x & (1 << 25)) >> 25
     let ySignBit = (y & (1 << 11)) >> 11
     let zSignBit = (z & (1 << 25)) >> 25
-    
+
     // Convert to 32 bit signed bit patterns
     if xSignBit == 1 {
       x |= 0b111111 << 26
@@ -247,14 +242,14 @@ public struct PacketReader {
     if zSignBit == 1 {
       z |= 0b111111 << 26
     }
-    
+
     return BlockPosition(
       x: Int(Int32(bitPattern: x)),
       y: Int(Int32(bitPattern: y)),
       z: Int(Int32(bitPattern: z))
     )
   }
-  
+
   /// Reads an entity rotation (2 bytes) and returns it in radians.
   ///
   /// Expects yaw to be before pitch unless `pitchFirst` is `true`. Every packet except one has yaw first, thanks Mojang.
@@ -272,7 +267,7 @@ public struct PacketReader {
     }
     return (pitch: pitch, yaw: yaw)
   }
-  
+
   /// Reads an entity position (24 bytes).
   /// - Returns: An entity position.
   /// - Throws: A ``BufferError`` if any reads go out of bounds.
@@ -282,7 +277,7 @@ public struct PacketReader {
     let z = try readDouble()
     return SIMD3<Double>(x, y, z)
   }
-  
+
   /// Reads an entity velocity (6 bytes).
   /// - Returns: An entity velocity.
   /// - Throws: A ``BufferError`` if any reads go out of bounds.

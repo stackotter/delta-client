@@ -2,12 +2,12 @@ import Foundation
 
 public struct AdvancementsPacket: ClientboundPacket {
   public static let id: Int = 0x57
-  
+
   public var shouldReset: Bool
   public var advancements: [Identifier: Advancement]
   public var advancementsToRemove: [Identifier]
   public var advancementProgresses: [Identifier: AdvancementProgress]
-  
+
   public struct Advancement {
     public var hasParent: Bool
     public var parentId: Identifier?
@@ -16,22 +16,22 @@ public struct AdvancementsPacket: ClientboundPacket {
     public var criteria: [Identifier]
     public var requirements: [[String]]
   }
-  
+
   public struct AdvancementDisplay {
     public var title: ChatComponent
     public var description: ChatComponent
-    public var icon: ItemStack
+    public var icon: Slot
     public var frameType: Int
     public var flags: Int
     public var backgroundTexture: Identifier?
     public var xCoord: Float
     public var yCoord: Float
   }
-  
+
   public struct AdvancementProgress {
     public var criteria: [Identifier: CriterionProgress]
   }
-  
+
   public struct CriterionProgress {
     public var achieved: Bool
     public var dateOfAchieving: Int?
@@ -49,7 +49,7 @@ public struct AdvancementsPacket: ClientboundPacket {
     var advancements: [Identifier: Advancement] = [:]
     for _ in 0..<mappingSize {
       let key = try packetReader.readIdentifier()
-      
+
       // read advancement
       let hasParent = try packetReader.readBool()
       let parentId = hasParent ? try packetReader.readIdentifier() : nil
@@ -58,7 +58,7 @@ public struct AdvancementsPacket: ClientboundPacket {
       if hasDisplay {
         let title = try packetReader.readChat()
         let description = try packetReader.readChat()
-        let icon = try packetReader.readItemStack()
+        let icon = try packetReader.readSlot()
         let frameType = try packetReader.readVarInt()
         let flags = try packetReader.readInt() // 0x1: has background texture, 0x2: show toast, 0x4: hidden
         let backgroundTexture = flags & 0x1 == 0x1 ? try packetReader.readIdentifier() : nil
@@ -69,7 +69,7 @@ public struct AdvancementsPacket: ClientboundPacket {
           flags: flags, backgroundTexture: backgroundTexture, xCoord: xCoord, yCoord: yCoord
         )
       }
-      
+
       let numCriteria = try packetReader.readVarInt()
       var criteria: [Identifier] = []
       for _ in 0..<numCriteria {
@@ -88,7 +88,7 @@ public struct AdvancementsPacket: ClientboundPacket {
         }
         requirements.append(requirement)
       }
-      
+
       let value = Advancement(
         hasParent: hasParent, parentId: parentId, hasDisplay: hasDisplay,
         displayData: displayData, criteria: criteria, requirements: requirements
@@ -113,21 +113,21 @@ public struct AdvancementsPacket: ClientboundPacket {
     var progressMapping: [Identifier: AdvancementProgress] = [:]
     for _ in 0..<progressSize {
       let key = try packetReader.readIdentifier()
-      
+
       // read advancement progress
       let size = try packetReader.readVarInt()
       var criteria: [Identifier: CriterionProgress] = [:]
       for _ in 0..<size {
         let identifier = try packetReader.readIdentifier()
-        
+
         // read criterion progress
         let achieved = try packetReader.readBool()
         let dateOfAchieving = try achieved ? packetReader.readLong() : nil
-        
+
         let progress = CriterionProgress(achieved: achieved, dateOfAchieving: dateOfAchieving)
         criteria[identifier] = progress
       }
-      
+
       let advancementProgress = AdvancementProgress(criteria: criteria)
       progressMapping[key] = advancementProgress
     }

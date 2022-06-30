@@ -2,18 +2,18 @@ import Foundation
 
 public struct TradeListPacket: ClientboundPacket {
   public static let id: Int = 0x27
-  
+
   public var windowId: Int
   public var trades: [Trade]
   public var villagerLevel: Int
   public var experience: Int
   public var isRegularVillager: Bool
   public var canRestock: Bool
-  
+
   public struct Trade {
-    public var firstInputItem: ItemStack
-    public var outputItem: ItemStack
-    public var secondInputItem: ItemStack?
+    public var firstInputItem: Slot
+    public var outputItem: Slot
+    public var secondInputItem: Slot?
     public var tradeDisabled: Bool
     public var numUses: Int // number of uses so far
     public var maxUses: Int // maximum number of uses before disabled
@@ -22,19 +22,19 @@ public struct TradeListPacket: ClientboundPacket {
     public var priceMultiplier: Float
     public var demand: Int
   }
-  
+
   public init(from packetReader: inout PacketReader) throws {
     windowId = try packetReader.readVarInt()
-    
+
     trades = []
     let count = try packetReader.readUnsignedByte()
     for _ in 0..<count {
-      let firstInputItem = try packetReader.readItemStack()
-      let outputItem = try packetReader.readItemStack()
+      let firstInputItem = try packetReader.readSlot()
+      let outputItem = try packetReader.readSlot()
       let hasSecondInputItem = try packetReader.readBool()
-      var secondInputItem: ItemStack?
+      var secondInputItem: Slot?
       if hasSecondInputItem {
-        secondInputItem = try packetReader.readItemStack()
+        secondInputItem = try packetReader.readSlot()
       }
       let tradeDisabled = try packetReader.readBool()
       let numUses = try packetReader.readInt()
@@ -57,7 +57,7 @@ public struct TradeListPacket: ClientboundPacket {
       )
       trades.append(trade)
     }
-    
+
     villagerLevel = try packetReader.readVarInt()
     experience = try packetReader.readVarInt()
     isRegularVillager = try packetReader.readBool()
