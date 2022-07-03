@@ -78,7 +78,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     } catch {
       fatalError("Failed to create depth state: \(error)")
     }
-    
+
     statistics = RenderStatistics(gpuCountersEnabled: false)
 
     super.init()
@@ -125,35 +125,23 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     }
 
     // Create render encoder
-    guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
-      log.error("Failed to create render encoder")
+    guard let parallelRenderEncoder = commandBuffer.makeParallelRenderCommandEncoder(descriptor: renderPassDescriptor) else {
+      log.error("Failed to create parallel render encoder")
       client.eventBus.dispatch(ErrorEvent(
         error: RenderError.failedToCreateRenderEncoder,
         message: "RenderCoordinator failed to create render encoder"
       ))
       return
     }
-    stopwatch.stopMeasurement("Create render encoder")
-
-    // Configure the render encoder
-    renderEncoder.setDepthStencilState(depthState)
-    renderEncoder.setFrontFacing(.counterClockwise)
-    renderEncoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
-
-    switch client.configuration.render.mode {
-      case .normal:
-        renderEncoder.setCullMode(.front)
-      case .wireframe:
-        renderEncoder.setCullMode(.none)
-        renderEncoder.setTriangleFillMode(.lines)
-    }
+    stopwatch.stopMeasurement("Create parallel render encoder")
 
     stopwatch.startMeasurement("Render world")
     // Render world
     do {
       try worldRenderer.render(
         view: view,
-        encoder: renderEncoder,
+        parallelEncoder: parallelRenderEncoder,
+        depthState: depthState,
         commandBuffer: commandBuffer,
         worldToClipUniformsBuffer: uniformsBuffer,
         camera: camera
@@ -170,7 +158,8 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     do {
       try entityRenderer.render(
         view: view,
-        encoder: renderEncoder,
+        parallelEncoder: parallelRenderEncoder,
+        depthState: depthState,
         commandBuffer: commandBuffer,
         worldToClipUniformsBuffer: uniformsBuffer,
         camera: camera
@@ -191,10 +180,10 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       log.warning("Failed to get current drawable")
       return
     }
-    
-    renderEncoder.endEncoding()
+
+    parallelRenderEncoder.endEncoding()
     commandBuffer.present(drawable)
-    
+
     self.statistics.addMeasurement(
       frameTime: frameTime,
       cpuTime: cpuFinishTime - cpuStartTime,
@@ -266,7 +255,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         case .thirdPersonFront:
           pitch = -pitch
           yaw += Float.pi
-          
+
           cameraPosition.z += 3
           cameraPosition = simd_make_float3(SIMD4(cameraPosition, 1) * MatrixUtil.rotationMatrix(x: pitch) * MatrixUtil.rotationMatrix(y: Float.pi + yaw))
           cameraPosition += eyePosition

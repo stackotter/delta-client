@@ -7,7 +7,7 @@ import MetalKit
 public struct EntityRenderer: Renderer {
   /// The color to render hit boxes as. Defaults to 0xe3c28d (light cream colour).
   public var hitBoxColor = RGBColor(hexCode: 0xe3c28d)
-  
+
   /// The render pipeline state for rendering entities. Does not have blending enabled.
   private var renderPipelineState: MTLRenderPipelineState
   /// The buffer containing the uniforms for all rendered entities.
@@ -18,56 +18,60 @@ public struct EntityRenderer: Renderer {
   private var indexBuffer: MTLBuffer
   /// The number of indices in ``indexBuffer``.
   private var indexCount: Int
-  
+
   /// The client that entities will be renderer for.
   private var client: Client
   /// The device that will be used to render.
   private var device: MTLDevice
   /// The command queue used to perform operations outside of the main render loop.
   private var commandQueue: MTLCommandQueue
-  
+
   /// Creates a new entity renderer.
   public init(client: Client, device: MTLDevice, commandQueue: MTLCommandQueue) throws {
     self.client = client
     self.device = device
     self.commandQueue = commandQueue
-    
+
     // Load library
     let library = try MetalUtil.loadDefaultLibrary(device)
     let vertexFunction = try MetalUtil.loadFunction("entityVertexShader", from: library)
     let fragmentFunction = try MetalUtil.loadFunction("entityFragmentShader", from: library)
-    
+
     // Create render pipeline state
     renderPipelineState = try MetalUtil.makeRenderPipelineState(
       device: device,
       label: "dev.stackotter.delta-client.EntityRenderer",
       vertexFunction: vertexFunction,
       fragmentFunction: fragmentFunction,
-      blendingEnabled: false)
-    
+      blendingEnabled: false
+    )
+
     // Create hitbox geometry (hitboxes are rendered using instancing)
     var geometry = Self.createHitBoxGeometry(color: hitBoxColor)
     indexCount = geometry.indices.count
-    
+
     vertexBuffer = try MetalUtil.makeBuffer(
       device,
       bytes: &geometry.vertices,
       length: geometry.vertices.count * MemoryLayout<EntityVertex>.stride,
       options: .storageModeShared,
-      label: "entityHitBoxVertices")
-    
+      label: "entityHitBoxVertices"
+    )
+
     indexBuffer = try MetalUtil.makeBuffer(
       device,
       bytes: &geometry.indices,
       length: geometry.indices.count * MemoryLayout<UInt32>.stride,
       options: .storageModeShared,
-      label: "entityHitBoxIndices")
+      label: "entityHitBoxIndices"
+    )
   }
-  
+
   /// Renders all entity hit boxes using instancing.
   public mutating func render(
     view: MTKView,
-    encoder: MTLRenderCommandEncoder,
+    parallelEncoder: MTLParallelRenderCommandEncoder,
+    depthState: MTLDepthStencilState,
     commandBuffer: MTLCommandBuffer,
     worldToClipUniformsBuffer: MTLBuffer,
     camera: Camera
@@ -76,50 +80,61 @@ public struct EntityRenderer: Renderer {
     client.game.accessPlayer { player in
       isFirstPerson = player.camera.perspective == .firstPerson
     }
-    
+
     // Get all renderable entities
     var entityUniforms: [Uniforms] = []
     client.game.accessNexus { nexus in
       // If the player is in first person view we don't render them
       let entities: Family<Requires2<EntityPosition, EntityHitBox>>
       if isFirstPerson {
-        entities = nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self, excludesAll: ClientPlayerEntity.self)
+        entities = nexus.family(
+          requiresAll: EntityPosition.self,
+          EntityHitBox.self,
+          excludesAll: ClientPlayerEntity.self
+        )
       } else {
         entities = nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self)
       }
-      
+
       let renderDistance = client.configuration.render.renderDistance
       let cameraChunk = camera.entityPosition.chunk
-      
+
       // Create uniforms for each entity
       for (position, hitBox) in entities {
         let aabb = hitBox.aabb(at: position.smoothVector)
         let position = aabb.position
         let size = aabb.size
-        
+
         // Don't render entities that are outside of the render distance
         let chunkPosition = EntityPosition(position).chunk
         if !chunkPosition.isWithinRenderDistance(renderDistance, of: cameraChunk) {
           continue
         }
-        
-        let uniforms = Uniforms(transformation: MatrixUtil.scalingMatrix(SIMD3(size)) * MatrixUtil.translationMatrix(SIMD3(position)))
+
+        let scale: matrix_float4x4 = MatrixUtil.scalingMatrix(SIMD3(size))
+        let translation: matrix_float4x4 = MatrixUtil.translationMatrix(SIMD3(position))
+        let uniforms = Uniforms(transformation: scale * translation)
         entityUniforms.append(uniforms)
       }
     }
-    
+
     guard !entityUniforms.isEmpty else {
       return
     }
-    
-    // Create buffer for instance uniforms. If the current buffer is big enough, use it unless it is more than 64 entities too big.
-    // The maximum size limit is imposed so that the buffer isn't too much bigger than necessary. New buffers are always created with
-    // room for 32 more entities so that a new buffer isn't created each time an entity is added.
+
+    // Create buffer for instance uniforms. If the current buffer is big enough, use it unless it is
+    // more than 64 entities too big. The maximum size limit is imposed so that the buffer isn't too
+    // much bigger than necessary. New buffers are always created with room for 32 more entities so
+    // that a new buffer isn't created each time an entity is added.
     let minimumBufferSize = entityUniforms.count * MemoryLayout<Uniforms>.stride
     let maximumBufferSize = minimumBufferSize + 64 * MemoryLayout<Uniforms>.stride
     var instanceUniformsBuffer: MTLBuffer
-    
-    if let buffer = self.instanceUniformsBuffer, buffer.length >= minimumBufferSize, buffer.length <= maximumBufferSize {
+
+    if
+      let buffer = self.instanceUniformsBuffer,
+      buffer.length >= minimumBufferSize,
+      buffer.length <= maximumBufferSize
+    {
       buffer.contents().copyMemory(from: &entityUniforms, byteCount: minimumBufferSize)
       instanceUniformsBuffer = buffer
     } else {
@@ -128,40 +143,61 @@ public struct EntityRenderer: Renderer {
         device,
         length: minimumBufferSize + MemoryLayout<Uniforms>.stride * 32,
         options: .storageModeShared,
-        label: "entityInstanceUniforms")
+        label: "entityInstanceUniforms"
+      )
       instanceUniformsBuffer.contents().copyMemory(from: &entityUniforms, byteCount: minimumBufferSize)
     }
-    
-    self.instanceUniformsBuffer = instanceUniformsBuffer
-    
-    // Render all the hitboxes using instancing
-    encoder.setRenderPipelineState(renderPipelineState)
-    encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-    encoder.setVertexBuffer(instanceUniformsBuffer, offset: 0, index: 2)
 
+    self.instanceUniformsBuffer = instanceUniformsBuffer
+
+    // Create encoder
+    guard let encoder = parallelEncoder.makeRenderCommandEncoder() else {
+      throw RenderError.failedToCreateRenderEncoder
+    }
+
+    // Setup encoder
+    switch client.configuration.render.mode {
+      case .normal:
+        encoder.setCullMode(.front)
+      case .wireframe:
+        encoder.setCullMode(.none)
+        encoder.setTriangleFillMode(.lines)
+    }
+    encoder.setDepthStencilState(depthState)
+    encoder.setFrontFacing(.counterClockwise)
+    encoder.setRenderPipelineState(renderPipelineState)
+
+    // Render all the hitboxes using instancing
+    encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+    encoder.setVertexBuffer(worldToClipUniformsBuffer, offset: 0, index: 1)
+    encoder.setVertexBuffer(instanceUniformsBuffer, offset: 0, index: 2)
     encoder.drawIndexedPrimitives(
       type: .triangle,
       indexCount: indexCount,
       indexType: .uint32,
       indexBuffer: indexBuffer,
       indexBufferOffset: 0,
-      instanceCount: entityUniforms.count)
-    
+      instanceCount: entityUniforms.count
+    )
+
+    encoder.endEncoding()
+
     // A hack to solve https://bugs.swift.org/browse/SR-15613
-    // If this isn't done, `entityUniforms` gets freed somewhere around the line with `var instanceUniformsBuffer: MTLBuffer` in release builds
+    // If this isn't done, `entityUniforms` gets freed somewhere around the line with `var
+    // instanceUniformsBuffer: MTLBuffer` in release builds
     use(entityUniforms)
   }
-  
+
   /// A hack used to solve https://bugs.swift.org/browse/SR-15613
   @inline(never)
   @_optimize(none)
   private func use(_ thing: Any) {}
-  
+
   /// Creates a coloured and shaded cube to be rendered using instancing as entities' hitboxes.
   private static func createHitBoxGeometry(color: RGBColor) -> (vertices: [EntityVertex], indices: [UInt32]) {
     var vertices: [EntityVertex] = []
     var indices: [UInt32] = []
-    
+
     for direction in Direction.allDirections {
       let faceVertices = CubeGeometry.faceVertices[direction.rawValue]
       for position in faceVertices {
@@ -174,15 +210,16 @@ public struct EntityRenderer: Renderer {
             r: color.x,
             g: color.y,
             b: color.z
-          ))
+          )
+        )
       }
-      
+
       let offset = UInt32(indices.count / 6 * 4)
       for value in CubeGeometry.faceWinding {
         indices.append(value + offset)
       }
     }
-    
+
     return (vertices: vertices, indices: indices)
   }
 }
