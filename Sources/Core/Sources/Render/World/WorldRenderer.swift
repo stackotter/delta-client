@@ -23,6 +23,10 @@ public final class WorldRenderer {
 
   /// Manages the world's meshes.
   private var worldMesh: WorldMesh
+  /// Used to encode render commands in parallel.
+  private let dispatchQueue = DispatchQueue(label: "WorldRenderer.dispatchQueue", attributes: [.concurrent])
+  /// Used to coordinate render command encoding threads.
+  private let dispatchGroup = DispatchGroup()
 
   // MARK: Init
 
@@ -83,30 +87,90 @@ public final class WorldRenderer {
     arrayTexture.update(tick: client.game.tickScheduler.tickNumber, device: device, commandQueue: commandQueue)
     #endif
 
-    // Setup render pass
-    let encoder = try createEncoder(
+    let errorLock = ReadWriteLock()
+    var meshError: Error?
+
+    // Update world mesh and mesh buffers
+    try worldMesh.collectUpdatedMeshes(device: device, commandQueue: commandQueue)
+
+    try worldMesh.accessMeshes { meshes, visibleSections in
+      let meshCount = visibleSections.count
+
+      // Encode render commands across multiple threads to reduce cpu time
+      let threadCount = 3
+      var meshesRemaining = meshCount
+      var index = 0
+      for i in 0..<threadCount {
+        let sliceSize = meshesRemaining / (threadCount - i)
+        guard sliceSize != 0 else {
+          continue
+        }
+
+        meshesRemaining -= sliceSize
+
+        let encoder = try createEncoder(
+          from: parallelEncoder,
+          depthState: depthState,
+          worldUniformsBuffer: worldToClipUniformsBuffer
+        )
+
+        let startIndex = index
+        let endIndex = startIndex + sliceSize
+        dispatchGroup.enter()
+        dispatchQueue.async {
+          print("\(i): \(endIndex - startIndex)")
+          do {
+            for j in startIndex..<endIndex {
+              let position = visibleSections[j]
+              if meshes[position] != nil {
+                // It was done this way to prevent copies
+                // swiftlint:disable force_unwrapping
+                try meshes[position]!.renderTransparentAndOpaque(renderEncoder: encoder)
+                // swiftlint:enable force_unwrapping
+              }
+            }
+
+            encoder.endEncoding()
+          } catch {
+            log.error("Failed to render mesh: \(error)")
+            errorLock.acquireWriteLock()
+            meshError = error
+            errorLock.unlock()
+          }
+
+          self.dispatchGroup.leave()
+        }
+
+        index += sliceSize
+      }
+
+      // Wait for all threads to finish
+      dispatchGroup.wait()
+    }
+
+    if let error = meshError {
+      throw error
+    }
+
+    let translucentEncoder = try createEncoder(
       from: parallelEncoder,
       depthState: depthState,
       worldUniformsBuffer: worldToClipUniformsBuffer
     )
 
-    // Render transparent and opaque geometry
-    try worldMesh.mutateVisibleMeshes { _, mesh in
-      try mesh.renderTransparentAndOpaque(renderEncoder: encoder, device: device, commandQueue: commandQueue)
-    }
-
     // Render translucent geometry
-    try worldMesh.mutateVisibleMeshes(fromBackToFront: true) { _, mesh in
+    try worldMesh.mutateEachVisibleMesh(fromBackToFront: true, acquireLock: false) { _, mesh in
       try mesh.renderTranslucent(
         viewedFrom: camera.position,
         sortTranslucent: true,
-        renderEncoder: encoder,
-        device: device,
-        commandQueue: commandQueue
+        renderEncoder: translucentEncoder,
+        device: self.device,
+        commandQueue: self.commandQueue
       )
     }
 
-    encoder.endEncoding()
+    translucentEncoder.endEncoding()
+
   }
 
   // MARK: Private methods
