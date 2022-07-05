@@ -83,7 +83,7 @@ public struct Game {
     tickScheduler.addSystem(PlayerPositionSystem())
 
     tickScheduler.addSystem(EntitySmoothingSystem())
-    tickScheduler.addSystem(PacketHandlingSystem())
+    tickScheduler.addSystem(EntityPacketHandlingSystem())
     tickScheduler.addSystem(EntityMovementSystem())
 
     if let connection = connection {
@@ -196,10 +196,11 @@ public struct Game {
   /// - Parameters:
   ///   - entityId: The id of the entity with the component.
   ///   - componentType: The type of component to access.
+  ///   - acquireLock: If `false`, no lock is acquired. Only use if you know what you're doing.
   ///   - action: The action to perform on the component if the entity exists and contains that component.
-  public func accessComponent<T: Component>(entityId: Int, _ componentType: T.Type, action: (T) -> Void) {
-    nexusLock.acquireWriteLock()
-    defer { nexusLock.unlock() }
+  public func accessComponent<T: Component>(entityId: Int, _ componentType: T.Type, acquireLock: Bool = true, action: (T) -> Void) {
+    if acquireLock { nexusLock.acquireWriteLock() }
+    defer { if acquireLock { nexusLock.unlock() } }
 
     guard
       let identifier = entityIdToEntityIdentifier[entityId],
@@ -256,12 +257,15 @@ public struct Game {
     action(&player)
   }
 
-  // TODO: rename to queueInboundEntityPacket
-  public mutating func queueTickPacket(_ packet: ClientboundPacket, client: Client) {
+  /// Queues handling of an entity-related packet to occur during the next game tick.
+  /// - Parameters:
+  ///   - packet: The packet to queue.
+  ///   - client: The client to handle the packet for.
+  public mutating func handleDuringTick(_ packet: ClientboundEntityPacket, client: Client) {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
 
-    let packetStore = nexus.single(TickPacketStore.self).component
+    let packetStore = nexus.single(ClientboundEntityPacketStore.self).component
     packetStore.add(packet, client: client)
   }
 

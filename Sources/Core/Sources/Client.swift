@@ -89,8 +89,8 @@ public final class Client: @unchecked Sendable {
   /// The client's packet handler.
   public func handlePacket(_ packet: ClientboundPacket) {
     do {
-      if packet is TickPacketMarker {
-        game.queueTickPacket(packet, client: self)
+      if let entityPacket = packet as? ClientboundEntityPacket {
+        game.handleDuringTick(entityPacket, client: self)
       } else {
         try packet.handle(for: self)
       }

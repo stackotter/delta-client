@@ -1,6 +1,6 @@
 import Foundation
 
-public struct EntityPositionPacket: ClientboundPacket, TickPacketMarker {
+public struct EntityPositionPacket: ClientboundEntityPacket {
   public static let id: Int = 0x28
 
   /// The entity's id.
@@ -22,21 +22,22 @@ public struct EntityPositionPacket: ClientboundPacket, TickPacketMarker {
     onGround = try packetReader.readBool()
   }
 
+  /// Should only be called if a nexus write lock is already acquired.
   public func handle(for client: Client) throws {
     let x = Double(deltaX) / 4096
     let y = Double(deltaY) / 4096
     let z = Double(deltaZ) / 4096
     let relativePosition = SIMD3<Double>(x, y, z)
 
-    client.game.accessComponent(entityId: entityId, EntityPosition.self) { position in
+    client.game.accessComponent(entityId: entityId, EntityPosition.self, acquireLock: false) { position in
       position.move(by: relativePosition)
     }
 
-    client.game.accessComponent(entityId: entityId, EntityOnGround.self) { onGroundComponent in
+    client.game.accessComponent(entityId: entityId, EntityOnGround.self, acquireLock: false) { onGroundComponent in
       onGroundComponent.onGround = onGround
     }
 
-    client.game.accessComponent(entityId: entityId, EntityVelocity.self) { velocity in
+    client.game.accessComponent(entityId: entityId, EntityVelocity.self, acquireLock: false) { velocity in
       velocity.vector = .zero
     }
   }

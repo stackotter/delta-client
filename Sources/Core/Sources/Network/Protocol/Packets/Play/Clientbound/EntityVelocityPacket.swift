@@ -1,6 +1,6 @@
 import Foundation
 
-public struct EntityVelocityPacket: ClientboundPacket, TickPacketMarker {
+public struct EntityVelocityPacket: ClientboundEntityPacket {
   public static let id: Int = 0x46
 
   /// The entity's id.
@@ -13,8 +13,9 @@ public struct EntityVelocityPacket: ClientboundPacket, TickPacketMarker {
     velocity = try packetReader.readEntityVelocity()
   }
 
+  /// Should only be called if a nexus write lock is already acquired.
   public func handle(for client: Client) throws {
-    client.game.accessComponent(entityId: entityId, EntityVelocity.self) { velocityComponent in
+    client.game.accessComponent(entityId: entityId, EntityVelocity.self, acquireLock: false) { velocityComponent in
       velocityComponent.vector = velocity
     }
   }
