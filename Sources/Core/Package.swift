@@ -51,7 +51,8 @@ let package = Package(
       ],
       resources: [
         .process("Render/Shader/")
-      ]
+      ],
+      swiftSettings: [.define("DEBUG_LOCKS")]
     ),
 
     .testTarget(

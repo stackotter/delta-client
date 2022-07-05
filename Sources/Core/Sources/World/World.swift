@@ -240,9 +240,19 @@ public class World {
       data: data
     ))
   }
+
+  // MARK: Biomes
   
-  // MARK: Chunks
+  /// Gets the biome at the specified position.
+  /// - Parameter position: Position to get biome at.
+  /// - Returns: The biome at the requested position, or `nil` if the position is in a non-loaded
+  ///   chunk.
+  public func getBiome(at position: BlockPosition) -> Biome? {
+    return chunk(at: position.chunk)?.biome(at: position.relativeToChunk)
+  }
   
+  // MARK: Chunks
+
   /// Gets the chunk at the specified position. Does not return unlit chunks.
   /// - Parameter chunkPosition: Position of chunk.
   /// - Returns: The requested chunk, or `nil` if the chunk isn't present.

@@ -45,7 +45,8 @@ let package = Package(
         .product(name: "SwordRPC", package: "SwordRPC", condition: .when(platforms: [.macOS])),
         .product(name: "ArgumentParser", package: "swift-argument-parser")
       ],
-      path: "Sources/Client"
+      path: "Sources/Client",
+      swiftSettings: [.define("DEBUG_LOCKS")]
     ),
     
     .target(

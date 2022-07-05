@@ -1,9 +1,12 @@
 import Foundation
 
+// TODO: Ensure that positions used are within the chunk (maybe have a `ChunkRelativeBlockPosition` type?)
+
 /// Represents a 16x256x16 (x y z) chunk of blocks in a world. Completely thread-safe.
 ///
-/// Most of the public methods have an `acquireLock` parameter. To perform manual locking (for optimisation),
-/// you can use ``acquireWriteLock()``, ``acquireReadLock()`` and ``unlock()``, along with `acquireLock: false`.
+/// Most of the public methods have an `acquireLock` parameter. To perform manual locking (for
+/// optimisation), you can use ``acquireWriteLock()``, ``acquireReadLock()`` and ``unlock()``,
+/// along with `acquireLock: false`.
 ///
 /// Sometimes referred to as a chunk column online. It is a column of ``Chunk/Section``s with
 /// some extra information about block entities, biomes, lighting and heightmaps.

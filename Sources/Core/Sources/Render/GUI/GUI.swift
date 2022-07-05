@@ -294,8 +294,15 @@ struct GUI {
     let pitchString = String(format: "%.01f", pitch)
     list.add("Facing: \(heading) (Towards \(heading.isPositive ? "positive" : "negative") \(heading.axis)) (\(yawString) / \(pitchString))")
 
+    // Lighting (at foot level)
+    var lightPosition = blockPosition
+    lightPosition.y += 1
+    let skyLightLevel = client.game.world.getSkyLightLevel(at: lightPosition)
+    let blockLightLevel = client.game.world.getBlockLightLevel(at: lightPosition)
+    list.add("Light: \(skyLightLevel) sky, \(blockLightLevel) block")
+
     // Biome
-    let biome = client.game.world.chunk(at: chunkSectionPosition.chunk)?.biome(at: blockPosition)
+    let biome = client.game.world.getBiome(at: blockPosition)
     list.add("Biome: \(biome?.identifier.description ?? "not loaded")")
 
     // Gamemode

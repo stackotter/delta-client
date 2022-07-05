@@ -43,6 +43,10 @@ public final class TickScheduler {
     self.world = world
     worldLock = ReadWriteLock()
   }
+
+  deinit {
+    cancel()
+  }
   
   // MARK: Public methods
   
