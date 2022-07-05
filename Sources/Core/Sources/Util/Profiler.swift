@@ -93,15 +93,20 @@ public final class Profiler<Label: RawRepresentable & Hashable> where Label.RawV
     measurementOrder = []
   }
 
-  public func printSummary() {
-    var trials = trials
-    if !measurements.isEmpty {
-      trials.append(measurements)
+  public func printSummary(onlyLatestTrial: Bool = false) {
+    let measurements: [Measurement]
+    if onlyLatestTrial {
+      measurements = trials.last ?? []
+    } else {
+      var trials = trials
+      if !self.measurements.isEmpty {
+        trials.append(self.measurements)
+      }
+      measurements = Self.average(trials)
     }
 
-    let averagedMeasurements = Self.average(trials)
     print("=== Start profiler summary ===")
-    printMeasurements(averagedMeasurements)
+    printMeasurements(measurements)
     print("===  End profiler summary  ===")
   }
 

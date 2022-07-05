@@ -8,7 +8,7 @@ import UIKit
 public final class GUIRenderer: Renderer {
   var device: MTLDevice
   var font: Font
-  var scale: Float
+  var scale: Float = 2
   var quadIndexBuffer: MTLBuffer
   var quadVertexBuffer: MTLBuffer
   var uniformsBuffer: MTLBuffer
@@ -48,8 +48,6 @@ public final class GUIRenderer: Renderer {
       fragmentFunction: try MetalUtil.loadFunction("guiFragment", from: library),
       blendingEnabled: false
     )
-
-    scale = 2
 
     gui = try GUI(
       client: client,

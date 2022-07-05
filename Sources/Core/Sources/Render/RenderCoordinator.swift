@@ -46,6 +46,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   /// The number of frames rendered so far.
   private var frameCount = 0
 
+  /// The longest a frame has taken to encode so far.
+  private var longestFrame: Double = 0
+
   // MARK: Init
 
   /// Creates a render coordinator.
@@ -240,9 +243,10 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     renderEncoder.endEncoding()
     commandBuffer.present(drawable)
 
+    let cpuElapsed = cpuFinishTime - cpuStartTime
     statistics.addMeasurement(
       frameTime: frameTime,
-      cpuTime: cpuFinishTime - cpuStartTime,
+      cpuTime: cpuElapsed,
       gpuTime: nil
     )
 
@@ -265,10 +269,11 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     frameCount += 1
     profiler.endTrial()
 
-    // Log profiler results
-    if frameCount % 30 == 0 {
-      profiler.printSummary()
-      profiler.reset()
+    // Log long frames
+    if cpuElapsed > longestFrame, frameCount > 120 {
+      longestFrame = cpuElapsed
+      print("===       LONG FRAME       ===")
+      profiler.printSummary(onlyLatestTrial: true)
     }
   }
 
