@@ -45,8 +45,8 @@ public struct EntityPositionAndRotationPacket: ClientboundPacket, TickPacketMark
       onGroundComponent.onGround = onGround
     }
 
-    client.game.accessComponent(entityId: entityId, EntityVelocity.self) { velocity in
-      if onGround {
+    if onGround {
+      client.game.accessComponent(entityId: entityId, EntityVelocity.self) { velocity in
         velocity.y = 0
       }
     }

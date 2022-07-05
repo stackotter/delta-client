@@ -201,9 +201,14 @@ public struct Game {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
 
-    if let identifier = entityIdToEntityIdentifier[entityId], let component = nexus.entity(from: identifier).get(component: T.self) {
-      action(component)
+    guard
+      let identifier = entityIdToEntityIdentifier[entityId],
+      let component = nexus.entity(from: identifier).get(component: T.self)
+    else {
+      return
     }
+
+    action(component)
   }
 
   /// Removes the entity with the given vanilla id from the game if it exists.
@@ -251,6 +256,7 @@ public struct Game {
     action(&player)
   }
 
+  // TODO: rename to queueInboundEntityPacket
   public mutating func queueTickPacket(_ packet: ClientboundPacket, client: Client) {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
@@ -263,6 +269,7 @@ public struct Game {
 
   /// Updates the game with information received in a ``JoinGamePacket``.
   public mutating func update(packet: JoinGamePacket, client: Client) {
+    // TODO: not threadsafe
     maxPlayers = Int(packet.maxPlayers)
     maxViewDistance = packet.viewDistance
     debugInfoReduced = packet.reducedDebugInfo
