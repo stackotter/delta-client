@@ -14,12 +14,16 @@ struct GUI {
 
   var context: GUIContext
 
+  var profiler: Profiler<RenderingMeasurement>
+
   init(
     client: Client,
     device: MTLDevice,
-    commandQueue: MTLCommandQueue
+    commandQueue: MTLCommandQueue,
+    profiler: Profiler<RenderingMeasurement>
   ) throws {
     self.client = client
+    self.profiler = profiler
 
     root = GUIGroupElement([0, 0])
 
@@ -314,7 +318,14 @@ struct GUI {
   mutating func meshes(
     effectiveDrawableSize: SIMD2<Int>
   ) throws -> [GUIElementMesh] {
+    profiler.push(.updateContent)
     update(effectiveDrawableSize)
-    return try root.meshes(context: context)
+    profiler.pop()
+
+    profiler.push(.createMeshes)
+    let meshes = try root.meshes(context: context)
+    profiler.pop()
+
+    return meshes
   }
 }

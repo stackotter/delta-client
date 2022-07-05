@@ -15,18 +15,22 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
 
   /// The renderer for the current world. Only renders blocks.
   private var worldRenderer: WorldRenderer
+
   /// The renderer for rendering entities.
   private var entityRenderer: EntityRenderer
+
   /// The renderer for rendering the GUI.
   private var guiRenderer: GUIRenderer
 
   /// The camera that is rendered from.
   private var camera: Camera
+
   /// The device used to render.
   private var device: MTLDevice
 
   /// The depth stencil state. It's the same for every renderer so it's just made once here.
   private var depthState: MTLDepthStencilState
+
   /// The command queue.
   private var commandQueue: MTLCommandQueue
 
@@ -35,6 +39,12 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
 
   /// The current frame capture state (`nil` if no capture is in progress).
   private var captureState: CaptureState?
+
+  /// The renderer profiler.
+  private var profiler = Profiler<RenderingMeasurement>("Rendering")
+
+  /// The number of frames rendered so far.
+  private var frameCount = 0
 
   // MARK: Init
 
@@ -63,19 +73,34 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
 
     // Create world renderer
     do {
-      worldRenderer = try WorldRenderer(client: client, device: device, commandQueue: commandQueue)
+      worldRenderer = try WorldRenderer(
+        client: client,
+        device: device,
+        commandQueue: commandQueue,
+        profiler: profiler
+      )
     } catch {
       fatalError("Failed to create world renderer: \(error)")
     }
 
     do {
-      entityRenderer = try EntityRenderer(client: client, device: device, commandQueue: commandQueue)
+      entityRenderer = try EntityRenderer(
+        client: client,
+        device: device,
+        commandQueue: commandQueue,
+        profiler: profiler
+      )
     } catch {
       fatalError("Failed to create entity renderer: \(error)")
     }
 
     do {
-      guiRenderer = try GUIRenderer(client: client, device: device, commandQueue: commandQueue)
+      guiRenderer = try GUIRenderer(
+        client: client,
+        device: device,
+        commandQueue: commandQueue,
+        profiler: profiler
+      )
     } catch {
       fatalError("Failed to create GUI renderer: \(error)")
     }
@@ -99,9 +124,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     let frameTime = time - previousFrameStartTime
     previousFrameStartTime = time
 
-    var stopwatch = Stopwatch(mode: .summary, name: "RenderCoordinator.draw")
-
-    stopwatch.startMeasurement("Get render pass descriptor")
+    profiler.push(.waitForRenderPassDescriptor)
     // Get current render pass descriptor
     guard let renderPassDescriptor = view.currentRenderPassDescriptor else {
       log.error("Failed to get the current render pass descriptor")
@@ -111,17 +134,17 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       ))
       return
     }
-    stopwatch.stopMeasurement("Get render pass descriptor")
+    profiler.pop()
 
     // The CPU start time if vsync was disabled
     let cpuStartTime = CFAbsoluteTimeGetCurrent()
 
-    stopwatch.startMeasurement("Update camera")
+    profiler.push(.updateCamera)
     // Create world to clip uniforms buffer
     let uniformsBuffer = getCameraUniforms(view)
-    stopwatch.stopMeasurement("Update camera")
+    profiler.pop()
 
-    stopwatch.startMeasurement("Create render encoder")
+    profiler.push(.createRenderCommandEncoder)
     // Create command bugger
     guard let commandBuffer = commandQueue.makeCommandBuffer() else {
       log.error("Failed to create command buffer")
@@ -141,7 +164,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       ))
       return
     }
-    stopwatch.stopMeasurement("Create render encoder")
+    profiler.pop()
 
     // Configure the render encoder
     renderEncoder.setDepthStencilState(depthState)
@@ -156,7 +179,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         renderEncoder.setTriangleFillMode(.lines)
     }
 
-    stopwatch.startMeasurement("Render world")
+    profiler.push(.world)
     do {
       try worldRenderer.render(
         view: view,
@@ -170,9 +193,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render world"))
       return
     }
-    stopwatch.stopMeasurement("Render world")
+    profiler.pop()
 
-    stopwatch.startMeasurement("Render entities")
+    profiler.push(.entities)
     do {
       try entityRenderer.render(
         view: view,
@@ -186,9 +209,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render entities"))
       return
     }
-    stopwatch.stopMeasurement("Render entities")
+    profiler.pop()
 
-    stopwatch.startMeasurement("Render GUI")
+    profiler.push(.gui)
     do {
       try guiRenderer.render(
         view: view,
@@ -202,9 +225,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render GUI"))
       return
     }
-    stopwatch.stopMeasurement("Render GUI")
+    profiler.pop()
 
-    stopwatch.startMeasurement("Finish frame")
+    profiler.push(.commitToGPU)
     // Finish measurements for render statistics
     let cpuFinishTime = CFAbsoluteTimeGetCurrent()
 
@@ -227,7 +250,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     guiRenderer.gui.renderStatistics = statistics
 
     commandBuffer.commit()
-    stopwatch.stopMeasurement("Finish frame")
+    profiler.pop()
 
     // Update frame capture state and stop current capture if necessary
     captureState?.framesRemaining -= 1
@@ -237,6 +260,15 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       client.eventBus.dispatch(FinishFrameCaptureEvent(file: captureState.outputFile))
 
       self.captureState = nil
+    }
+
+    frameCount += 1
+    profiler.endTrial()
+
+    // Log profiler results
+    if frameCount % 30 == 0 {
+      profiler.printSummary()
+      profiler.reset()
     }
   }
 

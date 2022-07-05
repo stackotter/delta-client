@@ -41,7 +41,8 @@ let package = Package(
         "FirebladeECS",
         "ZippyJSON",
         .product(name: "Parsing", package: "swift-parsing"),
-        .product(name: "Collections", package: "swift-collections")
+        .product(name: "Collections", package: "swift-collections"),
+        .product(name: "OrderedCollections", package: "swift-collections")
       ],
       path: "Sources",
       exclude: [

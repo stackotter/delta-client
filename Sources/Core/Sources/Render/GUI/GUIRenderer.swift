@@ -14,13 +14,16 @@ public final class GUIRenderer: Renderer {
   var uniformsBuffer: MTLBuffer
   var pipelineState: MTLRenderPipelineState
   var gui: GUI
+  var profiler: Profiler<RenderingMeasurement>
 
   public init(
     client: Client,
     device: MTLDevice,
-    commandQueue: MTLCommandQueue
+    commandQueue: MTLCommandQueue,
+    profiler: Profiler<RenderingMeasurement>
   ) throws {
     self.device = device
+    self.profiler = profiler
 
     // Create array texture
     font = client.resourcePack.vanillaResources.fontPalette.defaultFont
@@ -48,7 +51,12 @@ public final class GUIRenderer: Renderer {
 
     scale = 2
 
-    gui = try GUI(client: client, device: device, commandQueue: commandQueue)
+    gui = try GUI(
+      client: client,
+      device: device,
+      commandQueue: commandQueue,
+      profiler: profiler
+    )
 
     client.eventBus.registerHandler(handleEvent)
   }
@@ -71,6 +79,7 @@ public final class GUIRenderer: Renderer {
     camera: Camera
   ) throws {
     // Construct uniforms
+    profiler.push(.updateUniforms)
     let drawableSize = view.drawableSize
     let drawableWidth = Float(drawableSize.width)
     let drawableHeight = Float(drawableSize.height)
@@ -95,7 +104,14 @@ public final class GUIRenderer: Renderer {
     let transformation = screenSpaceToNormalized
     var uniforms = GUIUniforms(screenSpaceToNormalized: transformation, scale: scale)
     uniformsBuffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<Uniforms>.stride)
+    profiler.pop()
 
+    // Create meshes
+    let meshes = try gui.meshes(
+      effectiveDrawableSize: SIMD2([drawableWidth / scale, drawableHeight / scale])
+    )
+
+    profiler.push(.encode)
     // Set vertex buffers
     encoder.setVertexBuffer(quadVertexBuffer, offset: 0, index: 0)
     encoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
@@ -103,13 +119,9 @@ public final class GUIRenderer: Renderer {
     // Set pipeline
     encoder.setRenderPipelineState(pipelineState)
 
-    // Render meshes
-    let meshes = try gui.meshes(
-      effectiveDrawableSize: SIMD2([drawableWidth / scale, drawableHeight / scale])
-    )
-
     for var mesh in meshes {
       try mesh.render(into: encoder, with: device, quadIndexBuffer: quadIndexBuffer)
     }
+    profiler.pop()
   }
 }
