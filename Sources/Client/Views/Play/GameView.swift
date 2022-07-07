@@ -17,7 +17,7 @@ enum OverlayState {
 
 class Box<T> {
   var value: T
-  
+
   init(_ initialValue: T) {
     self.value = initialValue
   }
@@ -26,45 +26,45 @@ class Box<T> {
 class GameViewModel: ObservableObject {
   @Published var state = StateWrapper<GameState>(initial: .connecting)
   @Published var overlayState = StateWrapper<OverlayState>(initial: .menu)
-  
+
   var client: Client
   var inputDelegate: ClientInputDelegate
   var renderCoordinator: RenderCoordinator
   var downloadedChunksCount = Box(0)
   var serverDescriptor: ServerDescriptor
-  
+
   var cancellables: [AnyCancellable] = []
-  
+
   init(client: Client, inputDelegate: ClientInputDelegate, renderCoordinator: RenderCoordinator, serverDescriptor: ServerDescriptor) {
     self.client = client
     self.inputDelegate = inputDelegate
     self.renderCoordinator = renderCoordinator
     self.serverDescriptor = serverDescriptor
-    
+
     client.eventBus.registerHandler { [weak self] event in
       guard let self = self else { return }
       self.handleClientEvent(event)
     }
-    
+
     watch(state)
     watch(overlayState)
   }
-  
+
   func watch<T: ObservableObject>(_ value: T) {
     self.cancellables.append(value.objectWillChange.sink { [weak self] _ in
       self?.objectWillChange.send()
     })
   }
-  
+
   func closeMenu() {
     inputDelegate.keymap = ConfigManager.default.config.keymap
     inputDelegate.mouseSensitivity = ConfigManager.default.config.mouseSensitivity
-    
+
     withAnimation(nil) {
       inputDelegate.captureCursor()
     }
   }
-  
+
   func joinServer(_ descriptor: ServerDescriptor) {
     // Get the account to use
     guard let account = ConfigManager.default.config.selectedAccount else {
@@ -72,7 +72,7 @@ class GameViewModel: ObservableObject {
       DeltaClientApp.modalError("Please login and select an account before joining a server", safeState: .accounts)
       return
     }
-    
+
     // Refresh the account (if it's an online account) and then join the server
     Task {
       let refreshedAccount: Account
@@ -84,7 +84,7 @@ class GameViewModel: ObservableObject {
         DeltaClientApp.modalError(message, safeState: .serverList)
         return
       }
-      
+
       do {
         try self.client.joinServer(
           describedBy: descriptor,
@@ -96,7 +96,7 @@ class GameViewModel: ObservableObject {
       }
     }
   }
-  
+
   func handleClientEvent(_ event: Event) {
     switch event {
       case let connectionFailedEvent as ConnectionFailedEvent:
@@ -158,10 +158,10 @@ class GameViewModel: ObservableObject {
 
 struct GameView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
-  
+
   @ObservedObject var model: GameViewModel
   @Binding var cursorCaptured: Bool
-  
+
   init(
     serverDescriptor: ServerDescriptor,
     resourcePack: ResourcePack,
@@ -170,31 +170,31 @@ struct GameView: View {
   ) {
     let client = Client(resourcePack: resourcePack)
     client.configuration.render = ConfigManager.default.config.render
-    
+
     // Setup input system
     let inputDelegate = ClientInputDelegate(for: client)
     setDelegate(inputDelegate)
-    
+
     // Create render coordinator
     let renderCoordinator = RenderCoordinator(client)
-    
+
     model = GameViewModel(
       client: client,
       inputDelegate: inputDelegate,
       renderCoordinator: renderCoordinator,
       serverDescriptor: serverDescriptor
     )
-    
+
     _cursorCaptured = inputCaptureEnabled
-    
+
     // Setup plugins
     DeltaClientApp.pluginEnvironment.addEventBus(client.eventBus)
     DeltaClientApp.pluginEnvironment.handleWillJoinServer(server: serverDescriptor, client: client)
-    
+
     // Connect to server
     model.joinServer(serverDescriptor)
   }
-  
+
   var body: some View {
     Group {
       switch model.state.current {
@@ -217,7 +217,7 @@ struct GameView: View {
         case .playing:
           ZStack {
             gameView.opacity(cursorCaptured ? 1 : 0.2)
-            
+
             overlayView
           }
         case .gpuFrameCaptureComplete(let file):
@@ -248,7 +248,7 @@ struct GameView: View {
       model.renderCoordinator = RenderCoordinator(model.client)
     }
   }
-  
+
   var connectingView: some View {
     VStack {
       Text("Establishing connection...")
@@ -257,7 +257,7 @@ struct GameView: View {
         .frame(width: 150)
     }
   }
-  
+
   var loggingInView: some View {
     VStack {
       Text("Logging in...")
@@ -266,7 +266,7 @@ struct GameView: View {
         .frame(width: 150)
     }
   }
-  
+
   var gameView: some View {
     ZStack {
       // Renderer
@@ -278,7 +278,7 @@ struct GameView: View {
               model.overlayState.update(to: .menu)
             }
           })
-          
+
           model.inputDelegate.captureCursor()
         }
 
@@ -287,22 +287,22 @@ struct GameView: View {
       #endif
     }
   }
-  
+
   var playerPositionString: String {
     func string(_ value: Double) -> String {
       String(format: "%.02f", value)
     }
-    
+
     let position = playerPosition
     return "\(string(position.x)) \(string(position.y)) \(string(position.z))"
   }
-  
+
   var playerChunkSectionString: String {
     let section = EntityPosition(playerPosition).chunkSection
-    
+
     return "\(section.sectionX) \(section.sectionY) \(section.sectionZ)"
   }
-  
+
   var playerPosition: SIMD3<Double> {
     var position = SIMD3<Double>(repeating: 0)
     model.client.game.accessPlayer { player in
@@ -318,11 +318,11 @@ struct GameView: View {
     }
     return gamemode
   }
-  
+
   var renderStats: RenderStatistics {
     model.renderCoordinator.statistics
   }
-  
+
   var overlayView: some View {
     VStack {
       // In-game menu overlay
@@ -382,13 +382,13 @@ struct GameView: View {
         if isPressing {
           model.client.press(input)
         } else {
-          model.client.release(input)    
+          model.client.release(input)
         }
-      }  
+      }
     )
   }
   #endif
-  
+
   func disconnect() {
     appState.update(to: .serverList)
   }

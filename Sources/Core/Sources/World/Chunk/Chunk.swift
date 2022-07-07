@@ -12,7 +12,7 @@ import Foundation
 /// some extra information about block entities, biomes, lighting and heightmaps.
 public final class Chunk {
   // MARK: Static properties
-  
+
   /// The width of a chunk in the x direction.
   public static let width = 16
   /// The width of a chunk in the z direction.
@@ -25,21 +25,21 @@ public final class Chunk {
   public static let numBlocks = height * blocksPerLayer
   /// The total number of sections per chunk.
   public static let numSections = 16
-  
+
   // MARK: Public properties
-  
+
   /// Whether the chunk has lighting data or not.
   public var hasLighting: Bool {
     lock.acquireReadLock()
     defer { lock.unlock() }
-    
+
     return lighting.isPopulated
   }
-  
+
   public var nonEmptySectionCount: Int {
     lock.acquireReadLock()
     defer { lock.unlock() }
-    
+
     var count = 0
     for section in sections {
       if !section.isEmpty {
@@ -48,26 +48,26 @@ public final class Chunk {
     }
     return count
   }
-  
+
   // MARK: Private properties
-  
+
   /// Blocks are stored in chunk sections corresponding to 16x16x16 sections of the chunk from lowest to highest.
   private var sections: [Chunk.Section]
   /// Block entities for this chunk (i.e. chests, beds etc.)
   private var blockEntities: [BlockEntity]
-  
+
   /// 3d biome data in 4x4x4 blocks.
   private var biomeIds: [UInt8]
   /// Lighting data that is populated once UpdateLightPacket is receive for this chunk.
   private var lighting = ChunkLighting()
   /// Information about the highest blocks in each column of the chunk.
   private var heightMap: HeightMap
-  
+
   /// Lock for thread-safe reading and writing.
   private var lock = ReadWriteLock()
-  
+
   // MARK: Init
-  
+
   /// Creates a new chunk
   /// - Parameters:
   ///   - sections: An array of 16 chunk sections from lowest to highest.
@@ -82,7 +82,7 @@ public final class Chunk {
     self.lighting = lighting ?? ChunkLighting()
     self.heightMap = heightMap
   }
-  
+
   /// Creates a new chunk from the data contained within a chunk data packet.
   public init(_ packet: ChunkDataPacket) {
     self.heightMap = packet.heightMap
@@ -90,9 +90,9 @@ public final class Chunk {
     self.sections = packet.sections
     self.biomeIds = packet.biomeIds
   }
-  
+
   // MARK: Blocks
-  
+
   /// Get information about a block.
   /// - Parameters:
   ///   - position: A block position relative to the chunk.
@@ -102,7 +102,7 @@ public final class Chunk {
     let stateId = getBlockId(at: position, acquireLock: acquireLock)
     return RegistryStore.shared.blockRegistry.block(withId: stateId) ?? Block.missing
   }
-  
+
   /// Get the block state id of the block at a position.
   /// - Parameters:
   ///   - position: A block position relative to the chunk.
@@ -112,7 +112,7 @@ public final class Chunk {
     let blockIndex = position.blockIndex
     return getBlockId(at: blockIndex, acquireLock: acquireLock)
   }
-  
+
   /// Get the block state id of the block at an index.
   /// - Parameters:
   ///   - index: Can be obtained using ``Position/blockIndex``. Relative to the chunk.
@@ -123,15 +123,15 @@ public final class Chunk {
       log.warning("Invalid block index passed to Chunk.getBlockStateId(at:), index=\(index), returning block id 0 (air)")
       return 0
     }
-    
+
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     let sectionIndex = index / Section.numBlocks
     let sectionBlockIndex = index % Section.numBlocks
     return sections[sectionIndex].getBlockId(at: sectionBlockIndex)
   }
-  
+
   /// Sets the block at the given position to a new value.
   ///
   /// Updates the height map. **Does not update lighting**.
@@ -143,28 +143,28 @@ public final class Chunk {
   public func setBlockId(at position: BlockPosition, to state: Int, acquireLock: Bool = true) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     // TODO: Validate block state
     let blockIndex = position.blockIndex
     let sectionIndex = blockIndex / Section.numBlocks
     let sectionBlockIndex = blockIndex % Section.numBlocks
     sections[sectionIndex].setBlockId(at: sectionBlockIndex, to: state)
-    
+
     heightMap.handleBlockUpdate(at: position, in: self, acquireChunkLock: false)
   }
-  
+
   // MARK: Block entities
-  
+
   /// Gets the chunk's block entities.
   /// - Parameter acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: The chunk's block entities.
   public func getBlockEntities(acquireLock: Bool = true) -> [BlockEntity] {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     return blockEntities
   }
-  
+
   /// Mutates the chunk's block entities with a closure.
   /// - Parameters:
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
@@ -173,12 +173,12 @@ public final class Chunk {
   public func mutateBlockEntities(acquireLock: Bool = true, action: (inout [BlockEntity]) -> Void) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     action(&blockEntities)
   }
-  
+
   // MARK: Biomes
-  
+
   /// Gets the biome of the block at the given position.
   /// - Parameters:
   ///   - position: Position of block in chunk relative coordinates.
@@ -187,11 +187,11 @@ public final class Chunk {
   public func biomeId(at position: BlockPosition, acquireLock: Bool = true) -> Int {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     let index = position.biomeIndex
     return Int(biomeIds[index])
   }
-  
+
   /// Get the biome of the block at the given position.
   /// - Parameters:
   ///   - position: Position of block in chunk relative coordinates.
@@ -201,17 +201,17 @@ public final class Chunk {
     let biomeId = biomeId(at: position, acquireLock: acquireLock)
     return RegistryStore.shared.biomeRegistry.biome(withId: biomeId)
   }
-  
+
   /// Gets the chunk's biomes.
   /// - Parameter acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: The chunk's biomes.
   public func getBiomeIds(acquireLock: Bool = true) -> [UInt8] {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     return biomeIds
   }
-  
+
   /// Mutates the chunk's biomes with a closure.
   /// - Parameters:
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
@@ -220,33 +220,34 @@ public final class Chunk {
   public func mutateBiomeIds(acquireLock: Bool = true, action: (inout [UInt8]) -> Void) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     action(&biomeIds)
   }
-  
+
   // MARK: Sections
-  
+
   /// Updates the chunk with data sent from the server.
   /// - Parameters:
   ///   - packet: Packet containing data to update this chunk with.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   public func update(with packet: ChunkDataPacket, acquireLock: Bool = true) {
+    // TODO: take a lock for the duration of this function
     if acquireLock {
       lock.acquireWriteLock()
     }
-    
+
     blockEntities = packet.blockEntities
     heightMap = packet.heightMap
-    
+
     if acquireLock {
       lock.unlock()
     }
-    
+
     for sectionIndex in packet.presentSections {
       setSection(atIndex: sectionIndex, to: packet.sections[sectionIndex], acquireLock: acquireLock)
     }
   }
-  
+
   /// Replaces a section with a new one.
   /// - Parameters:
   ///   - index: A section index (from 0 to 15 inclusive). Not validated.
@@ -255,21 +256,21 @@ public final class Chunk {
   public func setSection(atIndex index: Int, to section: Section, acquireLock: Bool = true) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     sections[index] = section
   }
-  
+
   /// Gets the chunk's sections.
   /// - Parameter acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: The chunk's sections.
   public func getSections(acquireLock: Bool = true) -> [Section] {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     let sections = sections
     return sections
   }
-  
+
   /// Gets the section with the given y coordinate.
   /// - Parameters:
   ///   - y: The y coordinate of the section to get.
@@ -278,15 +279,15 @@ public final class Chunk {
   public func getSection(at y: Int, acquireLock: Bool = true) -> Section? {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     guard y >= 0 && y < Self.numSections else {
       return nil
     }
-    
+
     let section = sections[y]
     return section
   }
-  
+
   /// Mutates the chunk's sections with a closure.
   /// - Parameters:
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
@@ -295,12 +296,12 @@ public final class Chunk {
   public func mutateSections(acquireLock: Bool = true, action: (inout [Section]) -> Void) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     action(&sections)
   }
-  
+
   // MARK: Lighting
-  
+
   /// Returns the block light level for the given block.
   /// - Parameters:
   ///   - position: Position of block.
@@ -309,10 +310,10 @@ public final class Chunk {
   public func blockLightLevel(at position: BlockPosition, acquireLock: Bool = true) -> Int {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     return lighting.getBlockLightLevel(at: position)
   }
-  
+
   /// Sets the block light level for the given block. Does not propagate the change and does not verify the level is valid.
   /// - Parameters:
   ///   - position: Position of block.
@@ -321,10 +322,10 @@ public final class Chunk {
   public func setBlockLightLevel(at position: BlockPosition, to level: Int, acquireLock: Bool = true) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     lighting.setBlockLightLevel(at: position, to: level)
   }
-  
+
   /// Returns the sky light level for the given block.
   /// - Parameters:
   ///   - position: Position of block.
@@ -333,10 +334,10 @@ public final class Chunk {
   public func skyLightLevel(at position: BlockPosition, acquireLock: Bool = true) -> Int {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     return lighting.getSkyLightLevel(at: position)
   }
-  
+
   /// Sets the sky light level for the given block. Does not propagate the change and does not verify the level is valid.
   /// - Parameters:
   ///   - position: Position of block.
@@ -345,10 +346,10 @@ public final class Chunk {
   public func setSkyLightLevel(at position: BlockPosition, to level: Int, acquireLock: Bool = true) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     lighting.setSkyLightLevel(at: position, to: level)
   }
-  
+
   /// Updates the chunk's lighting with data received from the server.
   /// - Parameters:
   ///   - data: Data received from the server.
@@ -356,20 +357,20 @@ public final class Chunk {
   public func updateLighting(with data: ChunkLightingUpdateData, acquireLock: Bool = true) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     lighting.update(with: data)
   }
-  
+
   /// Gets the chunk's lighting.
   /// - Parameter acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: The chunk's lighting.
   public func getLighting(acquireLock: Bool = true) -> ChunkLighting {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     return lighting
   }
-  
+
   /// Mutates the chunk's lighting with a closure.
   /// - Parameters:
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
@@ -378,12 +379,12 @@ public final class Chunk {
   public func mutateLighting(acquireLock: Bool = true, action: (inout ChunkLighting) -> Void) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     action(&lighting)
   }
-  
+
   // MARK: Height map
-  
+
   /// Gets the height of the highest block that blocks light at the specified x and z coordinates.
   /// - Parameters:
   ///   - x: x coordinate of column.
@@ -394,23 +395,23 @@ public final class Chunk {
     guard x >= 0, x < Self.width, z >= 0, z < Self.depth else {
       return -1
     }
-    
+
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     return heightMap.getHighestLightBlockingBlock(x, z)
   }
-  
+
   /// Gets the chunk's height map.
   /// - Parameter acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: The chunk's height map.
   public func getHeightMap(acquireLock: Bool = true) -> HeightMap {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     return heightMap
   }
-  
+
   /// Mutates the chunk's height map with a closure.
   /// - Parameters:
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
@@ -419,12 +420,12 @@ public final class Chunk {
   public func mutateHeightMap(acquireLock: Bool = true, action: (inout HeightMap) -> Void) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
-    
+
     action(&heightMap)
   }
-  
+
   // MARK: Locking
-  
+
   /// Acquire a lock for manually writing data to the chunk (e.g. writing to the sections directly).
   ///
   /// Do not call any of the public methods of this chunk until you call ``unlock()`` because that
@@ -432,7 +433,7 @@ public final class Chunk {
   public func acquireWriteLock() {
     lock.acquireWriteLock()
   }
-  
+
   /// Acquire a lock for manually reading data from the chunk (e.g. accessing the sections directly).
   ///
   /// Do not call any of the public methods of this chunk until you call ``unlock()`` because that
@@ -440,19 +441,19 @@ public final class Chunk {
   public func acquireReadLock() {
     lock.acquireReadLock()
   }
-  
+
   /// Release the lock after calling ``acquireReadLock()`` or ``acquireWriteLock()``.
   public func unlock() {
     lock.unlock()
   }
-  
+
   // MARK: Static methods
-  
+
   /// - Returns: `true` if the block index is contained within a chunk.
   private static func isValidBlockIndex(_ index: Int) -> Bool {
     return index >= 0 && index < Chunk.numBlocks
   }
-  
+
   /// - Returns: `true` if the block position is contained within the a chunk.
   private static func isValidBlockPosition(_ position: BlockPosition) -> Bool {
     return (

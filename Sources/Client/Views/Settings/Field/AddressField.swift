@@ -11,29 +11,29 @@ struct AddressField: View {
   static private let domainRegex = try! NSRegularExpression(
     pattern: "^[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*$"
   )
-  
+
   let title: String
-  
+
   @State private var string: String
   @Binding private var host: String
   @Binding private var port: UInt16?
-  
+
   @Binding private var isValid: Bool
-  
+
   init(_ title: String, host: Binding<String>, port: Binding<UInt16?>, isValid: Binding<Bool>) {
     self.title = title
     _host = host
     _port = port
-    
+
     if let port = port.wrappedValue {
       _string = State(initialValue: "\(host.wrappedValue):\(port)")
     } else {
       _string = State(initialValue: host.wrappedValue)
     }
-    
+
     _isValid = isValid
   }
-  
+
   private func update(_ newValue: String) {
     let components = newValue.split(separator: ":")
     if components.count == 0 {
@@ -46,7 +46,7 @@ struct AddressField: View {
       log.trace("Invalid ip, empty port: '\(newValue)'")
       isValid = false
     }
-    
+
     // Check host component
     if components.count > 0 {
       let hostString = String(components[0])
@@ -54,7 +54,6 @@ struct AddressField: View {
       let isIp = Self.ipRegex.firstMatch(in: hostString, options: [], range: range) != nil
       let isDomain = Self.domainRegex.firstMatch(in: hostString, options: [], range: range) != nil
       if isIp || isDomain {
-        log.trace("Valid host component")
         host = hostString
         isValid = true
       } else {
@@ -62,12 +61,11 @@ struct AddressField: View {
         isValid = false
       }
     }
-    
+
     // Check port component
     if components.count == 2 {
       let portString = components[1]
       if let port = UInt16(portString) {
-        log.trace("Valid port component")
         self.port = port
         isValid = true
       } else {
@@ -78,7 +76,7 @@ struct AddressField: View {
       port = nil
     }
   }
-  
+
   var body: some View {
     TextField(title, text: $string)
       .onReceive(Just(string), perform: update)

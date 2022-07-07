@@ -7,7 +7,7 @@ import Logging
 /// Includes chunks, lighting and some other metadata.
 public class World {
   // MARK: Public properties
-  
+
   /// The bus the world will emit events to.
   public var eventBus: EventBus {
     get {
@@ -21,16 +21,16 @@ public class World {
       _eventBus = newValue
     }
   }
-  
+
   /// The positions of all loaded chunks.
   public var loadedChunkPositions: [ChunkPosition] {
     terrainLock.acquireReadLock()
     defer { terrainLock.unlock() }
     return [ChunkPosition](chunks.keys)
   }
-  
+
   // MARK: Public metadata properties
-  
+
   /// The name of this world
   public let name: Identifier
   /// The dimension data for this world
@@ -41,16 +41,16 @@ public class World {
   public let isDebug: Bool
   /// Whether this world is superflat or not.
   public let isFlat: Bool
-  
+
   // MARK: Private properties
-  
+
   /// Lock for managing thread-safe read and write of ``age`` and ``timeOfDay``.
   private var timeLock = ReadWriteLock()
   /// The world's age.
   private var age = 0
   /// The time of day.
   private var timeOfDay = 0
-  
+
   /// Lock for managing thread-safe read and write of ``chunks``, ``chunklessLightingData`` and ``unlitChunks``.
   private var terrainLock = ReadWriteLock()
   /// The world's chunks.
@@ -59,17 +59,17 @@ public class World {
   private var chunklessLightingData: [ChunkPosition: ChunkLightingUpdateData] = [:]
   /// Chunks that don't have lighting data yet.
   private var unlitChunks: [ChunkPosition: Chunk] = [:]
-  
+
   /// Used to update world lighting.
   private var lightingEngine = LightingEngine()
-  
+
   /// Used to manage thread safe access of `_eventBus`.
   private var eventBusLock = ReadWriteLock()
   /// Not thread safe. Use `eventBus`.
   private var _eventBus: EventBus
-  
+
   // MARK: Init
-  
+
   /// Create an empty world.
   public init(eventBus: EventBus) {
     _eventBus = eventBus
@@ -79,7 +79,7 @@ public class World {
     isFlat = false
     isDebug = false
   }
-  
+
   /// Create a new `World` from `World.Info`.
   public init(from descriptor: WorldDescriptor, eventBus: EventBus) {
     _eventBus = eventBus
@@ -89,23 +89,23 @@ public class World {
     isFlat = descriptor.isFlat
     isDebug = descriptor.isDebug
   }
-  
+
   // MARK: Time
-  
+
   /// - Returns: The current age of the world in ticks.
   public func getAge() -> Int {
     timeLock.acquireReadLock()
     defer { timeLock.unlock() }
     return age
   }
-  
+
   /// - Returns: The current time of day in ticks.
   public func getTimeOfDay() -> Int {
     timeLock.acquireReadLock()
     defer { timeLock.unlock() }
     return timeOfDay
   }
-  
+
   /// Sets the age of the world in ticks.
   /// - Parameter age: The new value.
   public func setAge(_ age: Int) {
@@ -113,7 +113,7 @@ public class World {
     defer { timeLock.unlock() }
     self.age = age
   }
-  
+
   /// Sets the time of day in ticks.
   /// - Parameter timeOfDay: The new value.
   public func setTimeOfDay(_ timeOfDay: Int) {
@@ -121,9 +121,9 @@ public class World {
     defer { timeLock.unlock() }
     self.timeOfDay = timeOfDay
   }
-  
+
   // MARK: Blocks
-  
+
   /// Sets the block at the specified position to the specified block id.
   ///
   /// This will trigger lighting to be updated.
@@ -131,17 +131,16 @@ public class World {
     if let chunk = chunk(at: position.chunk) {
       chunk.setBlockId(at: position.relativeToChunk, to: state)
       lightingEngine.updateLighting(at: position, in: self)
-      
-      eventBus.dispatch(
-        Event.SetBlock(
-          position: position,
-          newState: state
-        ))
+
+      eventBus.dispatch(Event.SetBlock(
+        position: position,
+        newState: state
+      ))
     } else {
       log.warning("Cannot set block in non-existent chunk, chunkPosition=\(position.chunk)")
     }
   }
-  
+
   /// Get the block id of the block at the specified position.
   /// - Parameters:
   ///   - position: A block position in world coordinates.
@@ -154,7 +153,7 @@ public class World {
       return 0
     }
   }
-  
+
   /// Returns information about the type of block at the specified position.
   /// - Parameters:
   ///   - position: Position of block.
@@ -163,9 +162,9 @@ public class World {
   public func getBlock(at position: BlockPosition, acquireLock: Bool = true) -> Block {
     return RegistryStore.shared.blockRegistry.block(withId: Int(getBlockId(at: position, acquireLock: acquireLock))) ?? Block.missing
   }
-  
+
   // MARK: Lighting
-  
+
   /// Sets the block light level of a block. Does not propagate the change and does not verify the level is valid.
   ///
   /// If `position` is in a chunk that isn't loaded or is above y=255 or below y=0, nothing happens.
@@ -178,7 +177,7 @@ public class World {
       chunk.setBlockLightLevel(at: position.relativeToChunk, to: level)
     }
   }
-  
+
   /// Gets the block light level for the given block.
   ///
   /// - Parameter position: Position of block.
@@ -190,7 +189,7 @@ public class World {
       return LightLevel.defaultBlockLightLevel
     }
   }
-  
+
   /// Sets the sky light level of a block. Does not propagate the change and does not verify the level is valid.
   ///
   /// If `position` is in a chunk that isn't loaded or is above y=255 or below y=0, nothing happens.
@@ -203,7 +202,7 @@ public class World {
       chunk.setSkyLightLevel(at: position.relativeToChunk, to: level)
     }
   }
-  
+
   /// Gets the sky light level for the given block.
   ///
   /// - Parameter position: Position of block.
@@ -215,7 +214,7 @@ public class World {
       return LightLevel.defaultSkyLightLevel
     }
   }
-  
+
   /// Updates a chunk's lighting with lighting data received from the server.
   /// - Parameters:
   ///   - position: Position of chunk to update.
@@ -223,7 +222,7 @@ public class World {
   public func updateChunkLighting(at position: ChunkPosition, with data: ChunkLightingUpdateData) {
     terrainLock.acquireWriteLock()
     defer { terrainLock.unlock() }
-    
+
     if let chunk = chunks[position] {
       chunk.updateLighting(with: data)
     } else if let chunk = unlitChunks[position] {
@@ -234,7 +233,7 @@ public class World {
     } else {
       chunklessLightingData[position] = data
     }
-    
+
     eventBus.dispatch(Event.UpdateChunkLighting(
       position: position,
       data: data
@@ -242,7 +241,7 @@ public class World {
   }
 
   // MARK: Biomes
-  
+
   /// Gets the biome at the specified position.
   /// - Parameter position: Position to get biome at.
   /// - Returns: The biome at the requested position, or `nil` if the position is in a non-loaded
@@ -250,7 +249,7 @@ public class World {
   public func getBiome(at position: BlockPosition) -> Biome? {
     return chunk(at: position.chunk)?.biome(at: position.relativeToChunk)
   }
-  
+
   // MARK: Chunks
 
   /// Gets the chunk at the specified position. Does not return unlit chunks.
@@ -261,7 +260,7 @@ public class World {
     defer { terrainLock.unlock() }
     return chunks[chunkPosition]
   }
-  
+
   /// Adds a chunk to the world.
   /// - Parameters:
   ///   - chunk: Chunk to add.
@@ -269,33 +268,33 @@ public class World {
   public func addChunk(_ chunk: Chunk, at position: ChunkPosition) {
     terrainLock.acquireWriteLock()
     defer { terrainLock.unlock() }
-    
+
     if let lightingData = chunklessLightingData.removeValue(forKey: position) {
       chunk.updateLighting(with: lightingData)
     }
-    
+
     if !chunk.hasLighting {
       unlitChunks[position] = chunk
     } else {
       chunks[position] = chunk
     }
-    
+
     eventBus.dispatch(Event.AddChunk(position: position))
     if chunk.hasLighting {
       eventBus.dispatch(Event.ChunkComplete(position: position))
     }
   }
-  
+
   /// Removes the chunk at the specified position if present.
   /// - Parameter position: Position of chunk to remove.
   public func removeChunk(at position: ChunkPosition) {
     terrainLock.acquireWriteLock()
     defer { terrainLock.unlock() }
-    
+
     chunks.removeValue(forKey: position)
     eventBus.dispatch(Event.RemoveChunk(position: position))
   }
-  
+
   /// Gets the chunks neighbouring the specified chunk with their respective directions.
   ///
   /// Neighbours are any chunk that are next to the current chunk along any of the axes.
@@ -312,7 +311,7 @@ public class World {
     }
     return neighbourChunks
   }
-  
+
   /// Gets all four neighbours of a chunk.
   ///
   /// See ``neighbours(ofChunkAt:)`` for a definition of neighbour.
@@ -324,7 +323,7 @@ public class World {
     let eastPosition = chunkPosition.neighbour(inDirection: .east)
     let southPosition = chunkPosition.neighbour(inDirection: .south)
     let westPosition = chunkPosition.neighbour(inDirection: .west)
-    
+
     guard
       let northNeighbour = chunk(at: northPosition),
       let eastNeighbour = chunk(at: eastPosition),
@@ -333,14 +332,14 @@ public class World {
     else {
       return nil
     }
-    
+
     return ChunkNeighbours(
       north: northNeighbour,
       east: eastNeighbour,
       south: southNeighbour,
       west: westNeighbour)
   }
-  
+
   /// Gets whether a chunk has been fully received.
   ///
   /// To be fully received, a chunk must be present, and must contain lighting data.
@@ -349,7 +348,7 @@ public class World {
   public func isChunkComplete(at position: ChunkPosition) -> Bool {
     return chunk(at: position) != nil
   }
-  
+
   /// Gets whether a chunk hasn't got any lighting.
   /// - Parameter position: The position of the chunk to check.
   /// - Returns: Whether the chunk hasn't got lighting from the server. Returns `false` if the chunk doesn't exist.
@@ -358,16 +357,16 @@ public class World {
     defer { terrainLock.unlock() }
     return unlitChunks[position] != nil
   }
-  
+
   // MARK: Helper
-  
+
   /// Gets whether the a position is in a loaded chunk or not.
   /// - Parameter position: Position to check.
   /// - Returns: `true` if the position is in a loaded chunk.
   public func isPositionLoaded(_ position: BlockPosition) -> Bool {
     return isChunkComplete(at: position.chunk)
   }
-  
+
   /// - Parameter position: Position to validate.
   /// - Returns: whether a block position is below the world height limit and above 0.
   public static func isValidBlockPosition(_ position: BlockPosition) -> Bool {

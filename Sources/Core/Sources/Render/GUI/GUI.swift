@@ -249,6 +249,7 @@ struct GUI {
       heading = player.rotation.heading
       gamemode = player.gamemode.gamemode
     }
+    blockPosition.y += 1
 
     // Slow down updating of render stats to be easier to read
     if CFAbsoluteTimeGetCurrent() - lastFPSUpdate > fpsUpdateInterval {
