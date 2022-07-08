@@ -49,7 +49,7 @@ public final class Profiler<Label: RawRepresentable & Hashable> where Label.RawV
   }
 
   public func pop() {
-    assert(measurementStarts.isEmpty, "pop called without matching push")
+    assert(!measurementStarts.isEmpty, "pop called without matching push")
     guard
       let (label, start) = measurementStarts.popLast(),
       let measurementChildren = children.popLast()
