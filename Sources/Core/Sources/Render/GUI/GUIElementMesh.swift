@@ -15,6 +15,12 @@ struct GUIElementMesh {
   /// The buffer containing ``quads``.
   var buffer: MTLBuffer?
 
+  /// Creates an empty mesh
+  init(size: SIMD2<Int>, arrayTexture: MTLTexture) {
+    self.size = size
+    self.arrayTexture = arrayTexture
+  }
+
   /// Creates a mesh from some text and a font.
   init(
     text: String,
@@ -59,17 +65,10 @@ struct GUIElementMesh {
   ) throws {
     arrayTexture = guiArrayTexture
 
-    let textureSize: SIMD2 = [
-      Float(guiArrayTexture.width),
-      Float(guiArrayTexture.height)
-    ]
-
     quads = [GUIQuadInstance(
-      position: [0, 0],
-      size: SIMD2<Float>(sprite.size),
-      uvMin: SIMD2<Float>(sprite.position) / textureSize,
-      uvSize: SIMD2<Float>(sprite.size) / textureSize,
-      textureIndex: UInt16(guiTexturePalette.textureIndex(for: sprite.slice))
+      for: sprite,
+      guiTexturePalette: guiTexturePalette,
+      guiArrayTexture: guiArrayTexture
     )]
 
     let width = sprite.size.x

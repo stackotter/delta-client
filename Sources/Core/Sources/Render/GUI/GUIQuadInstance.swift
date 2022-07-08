@@ -26,6 +26,26 @@ struct GUIQuadInstance {
     self.tint = tint
   }
 
+  /// Creates a quad instance for the given sprite.
+  init(
+    for sprite: GUISpriteDescriptor,
+    guiTexturePalette: GUITexturePalette,
+    guiArrayTexture: MTLTexture,
+    position: SIMD2<Int> = .zero
+  ) {
+    let textureSize: SIMD2<Float> = [
+      Float(guiArrayTexture.width),
+      Float(guiArrayTexture.height)
+    ]
+
+    self.position = SIMD2<Float>(position)
+    size = SIMD2<Float>(sprite.size)
+    uvMin = SIMD2<Float>(sprite.position) / textureSize
+    uvSize = self.size / textureSize
+    textureIndex = UInt16(guiTexturePalette.textureIndex(for: sprite.slice))
+    tint = [1, 1, 1]
+  }
+
   /// Creates a quad instance for the given character.
   init(
     for character: Character,

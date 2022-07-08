@@ -135,6 +135,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         error: RenderError.failedToGetCurrentRenderPassDescriptor,
         message: "RenderCoordinator failed to get the current render pass descriptor"
       ))
+      // profiler.pop()
       return
     }
     profiler.pop()

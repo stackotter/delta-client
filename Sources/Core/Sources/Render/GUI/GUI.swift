@@ -111,36 +111,6 @@ struct GUI {
     }
   }
 
-  func statBar(
-    value: Int,
-    outline: GUISprite,
-    fullIcon: GUISprite,
-    halfIcon: GUISprite,
-    horizontalConstraint: (Int) -> HorizontalConstraint,
-    alwaysHasOutline: Bool = true
-  ) -> GUIGroupElement {
-    var group = GUIGroupElement([81, 9])
-
-    let fullIconCount = value / 2
-    let hasHalfIcon = value % 2 == 1
-    for i in 0..<10 {
-      // Outline
-      let position = Constraints(.top(0), horizontalConstraint(i * 8))
-      if alwaysHasOutline || i > fullIconCount {
-        group.add(outline, position)
-      }
-
-      // Full and half icons
-      if i < fullIconCount {
-        group.add(fullIcon, position)
-      } else if i == fullIconCount && hasHalfIcon {
-        group.add(halfIcon, position)
-      }
-    }
-
-    return group
-  }
-
   func stats(
     _ group: inout GUIGroupElement,
     gamemode: Gamemode,
@@ -152,12 +122,11 @@ struct GUI {
     if gamemode.hasHealth {
       // Render health
       group.add(
-        statBar(
+        GUIStatBar(
           value: Int(health.rounded()),
-          outline: .heartOutline,
           fullIcon: .fullHeart,
           halfIcon: .halfHeart,
-          horizontalConstraint: HorizontalConstraint.left
+          outlineIcon: .heartOutline
         ),
         .top(0),
         .left(1)
@@ -165,12 +134,12 @@ struct GUI {
 
       // Render hunger
       group.add(
-        statBar(
+        GUIStatBar(
           value: food,
-          outline: .foodOutline,
           fullIcon: .fullFood,
           halfIcon: .halfFood,
-          horizontalConstraint: HorizontalConstraint.right
+          outlineIcon: .foodOutline,
+          reversed: true
         ),
         .top(0),
         .right(1)
