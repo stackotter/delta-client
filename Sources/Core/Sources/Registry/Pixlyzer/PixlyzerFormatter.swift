@@ -175,7 +175,8 @@ public enum PixlyzerFormatter {
     var blocks: [Int: Block] = [:]
     var blockModelRenderDescriptors: [Int: [[BlockModelRenderDescriptor]]] = [:]
     for (identifier, pixlyzerBlock) in pixlyzerBlocks {
-      let identifier = try Identifier(identifier)
+      var identifier = try Identifier(identifier)
+      identifier.name = "block/\(identifier.name)"
       let fluid: Fluid?
       if let flowingFluid = pixlyzerBlock.flowFluid {
         guard let fluidId = pixlyzerFluidIdToFluidId[flowingFluid] else {
@@ -229,7 +230,8 @@ public enum PixlyzerFormatter {
   private static func createItemRegistry(from pixlyzerItems: [String: PixlyzerItem]) throws -> ItemRegistry {
     var items: [Int: Item] = [:]
     for (identifierString, pixlyzerItem) in pixlyzerItems {
-      let identifier = try Identifier(identifierString)
+      var identifier = try Identifier(identifierString)
+      identifier.name = "item/\(identifier.name)"
       let item = Item(from: pixlyzerItem, identifier: identifier)
       items[item.id] = item
     }

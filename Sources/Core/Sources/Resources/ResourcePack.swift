@@ -198,7 +198,12 @@ public struct ResourcePack {
     let itemModelDirectory = directory.appendingPathComponent("models/item")
     if FileManager.default.directoryExists(at: itemModelDirectory) {
       log.debug("Loading item models")
-      resources.itemModelPalette = try ItemModelPalette.load(from: itemModelDirectory)
+      resources.itemModelPalette = try ItemModelPalette.load(
+        from: itemModelDirectory,
+        itemTexturePalette: resources.itemTexturePalette,
+        blockTexturePalette: resources.blockTexturePalette,
+        namespace: namespace
+      )
     }
 
     // Load locales if present

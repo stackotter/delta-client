@@ -5,28 +5,29 @@ import CoreGraphics
 /// A palette containing textures that can be animated. All of the textures must be the same size or
 /// multiples of 2 of eachother. Textures are assumed to be square.
 public struct TexturePalette {
+  /// The palette's textures, indexed by ``identifierToIndex``.
+  public var textures: [Texture]
+
   /// The width of the textures in this palette. The heights will be multiples of this number.
   public var width: Int
 
   /// An index for ``textures``.
   public var identifierToIndex: [Identifier: Int]
-  /// The palette's textures, indexed by ``identifierToIndex``.
-  public var textures: [Texture]
 
   // MARK: Init
 
   /// Creates an empty texture palette.
   public init() {
+    textures = []
     width = 0
     identifierToIndex = [:]
-    textures = []
   }
 
   /// Creates a texture palette containing the given textures which all share the same specified width.
   public init(_ textures: [(Identifier, Texture)], width: Int) {
+    self.textures = []
     self.width = width
     identifierToIndex = [:]
-    self.textures = []
 
     for (index, (identifier, texture)) in textures.enumerated() {
       identifierToIndex[identifier] = index

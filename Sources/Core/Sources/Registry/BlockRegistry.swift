@@ -12,6 +12,8 @@ public struct BlockRegistry {
 
   /// Blocks indexed by block id.
   public var blocks: [Block] = []
+  /// Maps block identifier to id.
+  public var identifierToId: [Identifier: Int] = [:]
   /// Maps block id to an array containing an array for each variant. The array for each variant
   /// contains the models to render.
   public var renderDescriptors: [[[BlockModelRenderDescriptor]]] = []
@@ -59,16 +61,30 @@ public struct BlockRegistry {
       if block.className == "AirBlock" {
         airBlocks.insert(block.id)
       }
+      identifierToId[block.identifier] = block.id
     }
   }
 
   // MARK: Access
 
   /// Get information about the specified block.
-  /// - Parameter blockId: A block id.
-  /// - Returns: Information about a block. `nil` if block doesn't exist.
-  public func block(withId blockId: Int) -> Block? {
-    return blocks[blockId]
+  /// - Parameter id: The block id.
+  /// - Returns: Information about the block. `nil` if the block doesn't exist.
+  public func block(withId id: Int) -> Block? {
+    guard id >= 0, id < blocks.count else {
+      return nil
+    }
+    return blocks[id]
+  }
+
+  /// Get information about the specified block.
+  /// - Parameter identifier: The block identifier.
+  /// - Returns: Information about the block. `nil` if the block doesn't exist.
+  public func block(withIdentifier identifier: Identifier) -> Block? {
+    guard let id = identifierToId[identifier] else {
+      return nil
+    }
+    return blocks[id]
   }
 
   /// Get whether a block is air.

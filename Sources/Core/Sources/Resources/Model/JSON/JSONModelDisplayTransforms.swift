@@ -29,4 +29,26 @@ struct JSONModelDisplayTransforms: Codable {
     case ground
     case fixed
   }
+
+  func merge(withChild child: JSONModelDisplayTransforms) -> JSONModelDisplayTransforms {
+    let thirdPersonRightHand = child.thirdPersonRightHand ?? thirdPersonRightHand
+    let thirdPersonLeftHand = child.thirdPersonLeftHand ?? thirdPersonLeftHand
+    let firstPersonRightHand = child.firstPersonRightHand ?? firstPersonRightHand
+    let firstPersonLeftHand = child.firstPersonLeftHand ?? firstPersonLeftHand
+    let gui = child.gui ?? gui
+    let head = child.head ?? head
+    let ground = child.ground ?? ground
+    let fixed = child.fixed ?? fixed
+
+    return JSONModelDisplayTransforms(
+      thirdPersonRightHand: thirdPersonRightHand,
+      thirdPersonLeftHand: thirdPersonLeftHand,
+      firstPersonRightHand: firstPersonRightHand,
+      firstPersonLeftHand: firstPersonLeftHand,
+      gui: gui,
+      head: head,
+      ground: ground,
+      fixed: fixed
+    )
+  }
 }
