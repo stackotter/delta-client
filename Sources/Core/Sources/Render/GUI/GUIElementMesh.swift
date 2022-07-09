@@ -26,7 +26,8 @@ struct GUIElementMesh {
     text: String,
     font: Font,
     fontArrayTexture: MTLTexture,
-    color: SIMD3<Float> = [1, 1, 1]
+    color: SIMD3<Float> = [1, 1, 1],
+    outlineColor: SIMD3<Float>? = nil
   ) throws {
     guard !text.isEmpty else {
       throw GUIRendererError.emptyText
@@ -50,6 +51,28 @@ struct GUIElementMesh {
       ]))
       quads.append(quad)
       currentX += Int(quad.size.x) + spacing
+    }
+
+    // Create outline
+    if let outlineColor = outlineColor {
+      var outlineQuads: [GUIQuadInstance] = []
+      let outlineTranslations: [SIMD2<Float>] = [
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1]
+      ]
+
+      for translation in outlineTranslations {
+        for var quad in quads {
+          quad.translate(amount: translation)
+          quad.tint = outlineColor
+          outlineQuads.append(quad)
+        }
+      }
+
+      // Outline is rendered before the actual text
+      quads = outlineQuads + quads
     }
 
     let width = currentX - spacing

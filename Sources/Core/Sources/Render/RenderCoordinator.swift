@@ -135,7 +135,6 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         error: RenderError.failedToGetCurrentRenderPassDescriptor,
         message: "RenderCoordinator failed to get the current render pass descriptor"
       ))
-      // profiler.pop()
       return
     }
     profiler.pop()
@@ -149,7 +148,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     profiler.pop()
 
     profiler.push(.createRenderCommandEncoder)
-    // Create command bugger
+    // Create command buffer
     guard let commandBuffer = commandQueue.makeCommandBuffer() else {
       log.error("Failed to create command buffer")
       client.eventBus.dispatch(ErrorEvent(

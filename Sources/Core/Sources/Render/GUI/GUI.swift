@@ -120,7 +120,7 @@ struct GUI {
     xpLevel: Int
   ) {
     if gamemode.hasHealth {
-      // Render health
+      // Health
       group.add(
         GUIStatBar(
           value: Int(health.rounded()),
@@ -132,7 +132,7 @@ struct GUI {
         .left(1)
       )
 
-      // Render hunger
+      // Hunger
       group.add(
         GUIStatBar(
           value: food,
@@ -145,55 +145,9 @@ struct GUI {
         .right(1)
       )
 
-      xpBar(&group, progress: xpBarProgress, level: xpLevel)
-    }
-  }
-
-  func xpBar(_ group: inout GUIGroupElement, progress: Float, level: Int) {
-    group.add(
-      GUISprite.xpBarBackground,
-      .top(10),
-      .center
-    )
-
-    var foreground = GUISprite.xpBarForeground.descriptor
-    foreground.size.x = Int(Float(foreground.size.x) * progress)
-
-    group.add(
-      foreground,
-      .top(10),
-      .left(1)
-    )
-
-    if level > 0 {
-      // Level number outline
+      // XP bar
       group.add(
-        GUIColoredString(String(level), [0, 0, 0]),
-        .top(3),
-        .center
-      )
-
-      group.add(
-        GUIColoredString(String(level), [0, 0, 0]),
-        .top(5),
-        .center
-      )
-
-      group.add(
-        GUIColoredString(String(level), [0, 0, 0]),
-        .top(4),
-        .center(.left(1))
-      )
-
-      group.add(
-        GUIColoredString(String(level), [0, 0, 0]),
-        .top(4),
-        .center(.right(1))
-      )
-
-      // Level number
-      group.add(
-        GUIColoredString(String(level), [126, 252, 31] / 255),
+        GUIXPBar(level: xpLevel, progress: xpBarProgress),
         .top(4),
         .center
       )
