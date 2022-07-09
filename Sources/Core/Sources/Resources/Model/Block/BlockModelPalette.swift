@@ -9,7 +9,7 @@ public struct BlockModelPalette {
   /// Block models indexed by block state id. Each is an array of block model variants.
   public var models: [[BlockModel]] = []
   /// The transforms to use when displaying blocks in different places. Block models specify an index into this array.
-  public var displayTransforms: [BlockModelDisplayTransforms] = []
+  public var displayTransforms: [ModelDisplayTransforms] = []
   /// Contains true for each block that is full and opaque (e.g. dirt, but not slabs). Indexed by block state id.
   public var fullyOpaqueBlocks: [Bool] = []
 
@@ -19,7 +19,7 @@ public struct BlockModelPalette {
   public init() {}
 
   /// Create a populated palette.
-  public init(models: [[BlockModel]], displayTransforms: [BlockModelDisplayTransforms]) {
+  public init(models: [[BlockModel]], displayTransforms: [ModelDisplayTransforms]) {
     self.models = models
     self.displayTransforms = displayTransforms
 

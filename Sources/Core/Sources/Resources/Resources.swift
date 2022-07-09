@@ -9,8 +9,10 @@ extension ResourcePack {
     public var blockTexturePalette = TexturePalette()
     /// The palette holding block models.
     public var blockModelPalette = BlockModelPalette()
-    /// The item texture palette.
+    /// The palette holding item textures.
     public var itemTexturePalette = TexturePalette()
+    /// The palette holding item models.
+    public var itemModelPalette = ItemModelPalette()
     /// The GUI texture palette.
     public var guiTexturePalette = TexturePalette()
     /// The locales.

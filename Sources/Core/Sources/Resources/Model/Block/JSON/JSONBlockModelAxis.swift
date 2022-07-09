@@ -1,11 +1,11 @@
 import Foundation
 
 /// An enum used when decoding Mojang formatted block models.
-public enum JSONBlockModelAxis: String, Codable {
+enum JSONBlockModelAxis: String, Codable {
   case x
   case y
   case z
-  
+
   /// This axis in the normal format.
   var axis: Axis {
     switch self {

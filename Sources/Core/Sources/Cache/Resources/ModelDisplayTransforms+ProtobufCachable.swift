@@ -1,6 +1,6 @@
 import simd
 
-extension BlockModelDisplayTransforms: ProtobufCachable {
+extension ModelDisplayTransforms: ProtobufCachable {
   public init(from message: ProtobufDisplayTransforms) throws {
     thirdPersonRightHand = try matrix_float4x4(from: message.thirdPersonRightHand)
     thirdPersonLeftHand = try matrix_float4x4(from: message.thirdPersonLeftHand)
@@ -11,7 +11,7 @@ extension BlockModelDisplayTransforms: ProtobufCachable {
     ground = try matrix_float4x4(from: message.ground)
     fixed = try matrix_float4x4(from: message.fixed)
   }
-  
+
   public func cached() -> ProtobufDisplayTransforms {
     var message = ProtobufDisplayTransforms()
     message.thirdPersonRightHand = thirdPersonRightHand.data()

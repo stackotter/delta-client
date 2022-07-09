@@ -17,7 +17,7 @@ extension BlockModelPalette: ProtobufCachable {
 
     displayTransforms.reserveCapacity(message.displayTransforms.count)
     for cachedDisplayTransforms in message.displayTransforms {
-      displayTransforms.append(try BlockModelDisplayTransforms(from: cachedDisplayTransforms))
+      displayTransforms.append(try ModelDisplayTransforms(from: cachedDisplayTransforms))
     }
 
     fullyOpaqueBlocks = message.fullyOpaqueBlocks

@@ -1,7 +1,7 @@
 import Foundation
 
 /// A block model element's face as read from a Mojang formatted block model file.
-public struct JSONBlockModelFace: Codable {
+struct JSONBlockModelFace: Codable {
   /// The texture uv coordinates of the face. Should be in the form `[u1, v1, u2, v2]`.
   /// If nil the uv coordinates are calculated from the face's position in the block.
   var uv: [Double]?
@@ -13,7 +13,7 @@ public struct JSONBlockModelFace: Codable {
   var rotation: Int?
   /// The index of the tint to use. I'm not exactly sure how this is used yet.
   var tintIndex: Int?
-  
+
   enum CodingKeys: String, CodingKey {
     case uv
     case texture

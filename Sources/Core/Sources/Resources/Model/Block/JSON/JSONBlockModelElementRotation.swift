@@ -2,7 +2,7 @@ import Foundation
 import simd
 
 /// The rotation of a block model element as read from a Mojang formatted block model file.
-public struct JSONBlockModelElementRotation: Codable {
+struct JSONBlockModelElementRotation: Codable {
   /// The point to rotate around.
   var origin: [Double]
   /// The axis of the rotation.
