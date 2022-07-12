@@ -6,12 +6,17 @@ import ZippyJSON
 
 /// Contains block models loaded from a resource pack.
 public struct BlockModelPalette {
-  /// Block models indexed by block state id. Each is an array of block model variants.
+  /// Block models indexed by block state id. Each is an array of block model variants. Any models
+  /// after the max block state id are extra models such as the ones used in the inventory.
   public var models: [[BlockModel]] = []
-  /// The transforms to use when displaying blocks in different places. Block models specify an index into this array.
+  /// The transforms to use when displaying blocks in different places. Block models specify an
+  /// index into this array.
   public var displayTransforms: [ModelDisplayTransforms] = []
-  /// Contains true for each block that is full and opaque (e.g. dirt, but not slabs). Indexed by block state id.
+  /// Contains true for each block that is full and opaque (e.g. dirt, but not slabs). Indexed by
+  /// block state id.
   public var fullyOpaqueBlocks: [Bool] = []
+  /// Maps model identifier to index.
+  public var identifierToIndex: [Identifier: Int] = [:]
 
   // MARK: Init
 
@@ -19,9 +24,14 @@ public struct BlockModelPalette {
   public init() {}
 
   /// Create a populated palette.
-  public init(models: [[BlockModel]], displayTransforms: [ModelDisplayTransforms]) {
+  public init(
+    models: [[BlockModel]],
+    displayTransforms: [ModelDisplayTransforms],
+    identifierToIndex: [Identifier: Int]
+  ) {
     self.models = models
     self.displayTransforms = displayTransforms
+    self.identifierToIndex = identifierToIndex
 
     fullyOpaqueBlocks.reserveCapacity(models.count)
     for model in models {
@@ -38,15 +48,21 @@ public struct BlockModelPalette {
 
   // MARK: Access
 
-  /// Returns the model to render for the given block state. The position is used
-  /// to determine which variant to use in the cases where there are multiple.
+  /// Returns the model to render for the given model id. The position is used
+  /// to determine which variant to use in the cases where there are multiple. If the model id is
+  /// less than the maximum block state id, then the model returned corresponds to the block state.
+  /// Otherwise it is a model used for a block item's model.
   ///
   /// If `position` is nil the first block model is returned. This is used to skip
   /// random number generation in finding culling faces. We assume that the block
   /// model variants all have the same general shape.
-  public func model(for stateId: Int, at position: BlockPosition?) -> BlockModel? {
+  public func model(for id: Int, at position: BlockPosition?) -> BlockModel? {
+    guard id >= 0, id < models.count else {
+      return nil
+    }
+
     // TODO: correctly select weighted models (not doing that only affects chorus fruit so not a big deal)
-    let variants = models[stateId]
+    let variants = models[id]
     if let position = position {
       let modelCount = variants.count
       if modelCount > 1 {
@@ -91,7 +107,8 @@ public struct BlockModelPalette {
             for: variant,
             from: intermediateBlockModelPalette,
             with: blockTexturePalette,
-            block: block)
+            isOpaque: block.lightMaterial.isOpaque || block.className == "LeavesBlock"
+          )
         } catch {
           log.error("Failed to create block model for state \(blockId): \(error)")
           throw error
@@ -101,9 +118,32 @@ public struct BlockModelPalette {
       blockModels[blockId] = blockModelVariants
     }
 
+    var identifierToIndex: [Identifier: Int] = [:]
+    for (identifier, _) in intermediateBlockModelPalette.identifierToIndex {
+      do {
+        let model = try blockModel(
+          for: [BlockModelRenderDescriptor(
+            model: identifier,
+            xRotationDegrees: 0,
+            yRotationDegrees: 0,
+            uvLock: false
+          )],
+          from: intermediateBlockModelPalette,
+          with: blockTexturePalette,
+          isOpaque: false
+        )
+        identifierToIndex[identifier] = blockModels.count
+        blockModels.append([model])
+      } catch {
+        continue
+      }
+    }
+
     return BlockModelPalette(
       models: blockModels,
-      displayTransforms: intermediateBlockModelPalette.displayTransforms)
+      displayTransforms: intermediateBlockModelPalette.displayTransforms,
+      identifierToIndex: identifierToIndex
+    )
   }
 
   /// Creates the block model for the given pixlyzer block model descriptor.
@@ -111,7 +151,7 @@ public struct BlockModelPalette {
     for partDescriptors: [BlockModelRenderDescriptor],
     from intermediateBlockModelPalette: IntermediateBlockModelPalette,
     with blockTexturePalette: TexturePalette,
-    block: Block
+    isOpaque: Bool
   ) throws -> BlockModel {
     var cullingFaces: Set<Direction> = []
     var cullableFaces: Set<Direction> = []
@@ -130,7 +170,7 @@ public struct BlockModelPalette {
       var rotatedCullingFaces: Set<Direction> = []
       let elements: [BlockModelElement] = try intermediateModel.elements.map { intermediateElement in
         // Identify any faces of the elements that can fill a whole side of a block
-        if block.lightMaterial.isOpaque || block.className == "LeavesBlock" { // TODO: don't hardcode leaves' rendering behaviour
+        if isOpaque { // TODO: don't hardcode leaves' rendering behaviour
           rotatedCullingFaces.formUnion(intermediateElement.getCullingFaces())
         }
 
@@ -138,7 +178,8 @@ public struct BlockModelPalette {
           from: intermediateElement,
           with: blockTexturePalette,
           modelMatrix: modelMatrix,
-          renderDescriptor: renderDescriptor)
+          renderDescriptor: renderDescriptor
+        )
 
         for face in element.faces {
           let texture = blockTexturePalette.textures[face.texture]
@@ -166,7 +207,8 @@ public struct BlockModelPalette {
       return BlockModelPart(
         ambientOcclusion: intermediateModel.ambientOcclusion,
         displayTransformsIndex: intermediateModel.displayTransformsIndex,
-        elements: elements)
+        elements: elements
+      )
     }
 
     return BlockModel(
@@ -174,7 +216,8 @@ public struct BlockModelPalette {
       cullingFaces: cullingFaces,
       cullableFaces: cullableFaces,
       nonCullableFaces: nonCullableFaces,
-      textureType: textureType)
+      textureType: textureType
+    )
   }
 
   /// Converts a flattened block model element to a block model element format ready for rendering.
@@ -188,13 +231,11 @@ public struct BlockModelPalette {
     let faces: [BlockModelFace] = try flatElement.faces.map { flatFace in
       // Get the index of the face's texture
       guard let textureIdentifier = try? Identifier(flatFace.texture) else {
-        log.error("Invalid texture identifier string '\(flatFace.texture)'")
         throw BlockModelPaletteError.invalidTexture(flatFace.texture)
       }
 
       let debugBlock = blockTexturePalette.textureIndex(for: Identifier(name: "block/debug"))
       guard let textureIndex = blockTexturePalette.textureIndex(for: textureIdentifier) ?? debugBlock else {
-        log.error("Failed to get texture for '\(textureIdentifier)' and failed to get debug texture (very sus)")
         throw BlockModelPaletteError.invalidTextureIdentifier(textureIdentifier)
       }
 
@@ -207,7 +248,8 @@ public struct BlockModelPalette {
       let uvs = try uvsForFace(
         flatFace,
         on: flatElement,
-        from: renderDescriptor)
+        from: renderDescriptor
+      )
 
       // The actual direction the face will be facing after rotations are applied.
       let actualDirection = rotate(flatFace.direction, byRotationFrom: renderDescriptor)
@@ -218,13 +260,15 @@ public struct BlockModelPalette {
         uvs: uvs,
         texture: textureIndex,
         cullface: cullface,
-        isTinted: flatFace.isTinted)
+        isTinted: flatFace.isTinted
+      )
     }
 
     return BlockModelElement(
       transformation: flatElement.transformationMatrix * modelMatrix,
       shade: flatElement.shouldShade,
-      faces: faces)
+      faces: faces
+    )
   }
 
   /// Returns the given direction with the rotations in a model descriptor applied to it.
@@ -316,7 +360,8 @@ public struct BlockModelPalette {
       SIMD2<Float>(uvs[2], uvs[1]),
       SIMD2<Float>(uvs[2], uvs[3]),
       SIMD2<Float>(uvs[0], uvs[3]),
-      SIMD2<Float>(uvs[0], uvs[1])]
+      SIMD2<Float>(uvs[0], uvs[1])
+    ]
 
     // Rotate the array of coordinates (samples the same part of the texture just changes the rotation of the sampled region on the face
     let rotation = face.textureRotation

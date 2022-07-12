@@ -63,4 +63,5 @@ message ProtobufBlockModelPalette {
   repeated ProtobufVariants models = 1;
   repeated ProtobufDisplayTransforms display_transforms = 2;
   repeated bool fully_opaque_blocks = 3;
+  map<string, int32> identifier_to_index = 4;
 }

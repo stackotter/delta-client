@@ -21,6 +21,9 @@ extension BlockModelPalette: ProtobufCachable {
     }
 
     fullyOpaqueBlocks = message.fullyOpaqueBlocks
+    for (identifier, index) in message.identifierToIndex {
+      identifierToIndex[try Identifier(identifier)] = Int(index)
+    }
   }
 
   public func cached() -> ProtobufBlockModelPalette {
@@ -45,6 +48,10 @@ extension BlockModelPalette: ProtobufCachable {
     }
 
     message.fullyOpaqueBlocks = fullyOpaqueBlocks
+
+    for (identifier, index) in identifierToIndex {
+      message.identifierToIndex[identifier.description] = Int32(index)
+    }
 
     return message
   }

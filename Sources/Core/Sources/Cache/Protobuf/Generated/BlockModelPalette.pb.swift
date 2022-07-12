@@ -261,6 +261,8 @@ public struct ProtobufBlockModelPalette {
 
   public var fullyOpaqueBlocks: [Bool] = []
 
+  public var identifierToIndex: Dictionary<String,Int32> = [:]
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -605,6 +607,7 @@ extension ProtobufBlockModelPalette: SwiftProtobuf.Message, SwiftProtobuf._Messa
     1: .same(proto: "models"),
     2: .standard(proto: "display_transforms"),
     3: .standard(proto: "fully_opaque_blocks"),
+    4: .standard(proto: "identifier_to_index"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -616,6 +619,7 @@ extension ProtobufBlockModelPalette: SwiftProtobuf.Message, SwiftProtobuf._Messa
       case 1: try { try decoder.decodeRepeatedMessageField(value: &self.models) }()
       case 2: try { try decoder.decodeRepeatedMessageField(value: &self.displayTransforms) }()
       case 3: try { try decoder.decodeRepeatedBoolField(value: &self.fullyOpaqueBlocks) }()
+      case 4: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufInt32>.self, value: &self.identifierToIndex) }()
       default: break
       }
     }
@@ -631,6 +635,9 @@ extension ProtobufBlockModelPalette: SwiftProtobuf.Message, SwiftProtobuf._Messa
     if !self.fullyOpaqueBlocks.isEmpty {
       try visitor.visitPackedBoolField(value: self.fullyOpaqueBlocks, fieldNumber: 3)
     }
+    if !self.identifierToIndex.isEmpty {
+      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufInt32>.self, value: self.identifierToIndex, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -638,6 +645,7 @@ extension ProtobufBlockModelPalette: SwiftProtobuf.Message, SwiftProtobuf._Messa
     if lhs.models != rhs.models {return false}
     if lhs.displayTransforms != rhs.displayTransforms {return false}
     if lhs.fullyOpaqueBlocks != rhs.fullyOpaqueBlocks {return false}
+    if lhs.identifierToIndex != rhs.identifierToIndex {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

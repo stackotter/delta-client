@@ -15,12 +15,14 @@ public struct ItemModelPalette {
   ///   - directory: The directory to load item models from.
   ///   - itemTexturePalette: The palette containing all of the item textures.
   ///   - blockTexturePalette: The palette containing all of the block textures.
+  ///   - blockModelPalette: The palette containing all of the block models.
   ///   - namespace: The namespace these models are within.
   /// - Throws: An error if any item models are missing or invalid.
   public static func load(
     from directory: URL,
     itemTexturePalette: TexturePalette,
     blockTexturePalette: TexturePalette,
+    blockModelPalette: BlockModelPalette,
     namespace: String
   ) throws -> ItemModelPalette {
     let files = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
@@ -59,7 +61,8 @@ public struct ItemModelPalette {
           identifier: identifier,
           jsonModels: jsonModels,
           itemTexturePalette: itemTexturePalette,
-          blockTexturePalette: blockTexturePalette
+          blockTexturePalette: blockTexturePalette,
+          blockModelPalette: blockModelPalette
         )
       } catch {
         log.warning("Failed to load item model \(identifier): \(error)")
@@ -77,7 +80,8 @@ public struct ItemModelPalette {
     identifier: Identifier,
     jsonModels: [Identifier: JSONItemModel],
     itemTexturePalette: TexturePalette,
-    blockTexturePalette: TexturePalette
+    blockTexturePalette: TexturePalette,
+    blockModelPalette: BlockModelPalette
   ) throws -> ItemModel {
     guard let parent = jsonModel.parent else {
       return ItemModel.empty
@@ -113,10 +117,10 @@ public struct ItemModelPalette {
     } else if parent.name == "builtin/entity" {
       return .entity(identifier, transforms: transforms)
     } else if parent.name.hasPrefix("block/") {
-      guard let block = RegistryStore.shared.blockRegistry.block(withIdentifier: parent) else {
+      guard let modelId = blockModelPalette.identifierToIndex[parent] else {
         throw ItemModelPaletteError.missingBlock(parent)
       }
-      return .block(id: block.id)
+      return .blockModel(id: modelId)
     } else {
       guard let parentJSONModel = jsonModels[parent] else {
         throw ItemModelPaletteError.missingParent(parent)
@@ -128,7 +132,8 @@ public struct ItemModelPalette {
         identifier: identifier,
         jsonModels: jsonModels,
         itemTexturePalette: itemTexturePalette,
-        blockTexturePalette: blockTexturePalette
+        blockTexturePalette: blockTexturePalette,
+        blockModelPalette: blockModelPalette
       )
     }
   }

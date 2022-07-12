@@ -160,8 +160,8 @@ public struct ResourcePack {
     var loadedFromCache = false
     if let cacheDirectory = cacheDirectory {
       let modelCacheFile = cacheDirectory.appendingPathComponent("block_models.bin")
-      log.debug("Loading cached block models")
       if FileManager.default.fileExists(atPath: modelCacheFile.path) {
+        log.debug("Loading cached block models")
         do {
           resources.blockModelPalette = try BlockModelPalette(fromFile: modelCacheFile)
           loadedFromCache = true
@@ -202,6 +202,7 @@ public struct ResourcePack {
         from: itemModelDirectory,
         itemTexturePalette: resources.itemTexturePalette,
         blockTexturePalette: resources.blockTexturePalette,
+        blockModelPalette: resources.blockModelPalette,
         namespace: namespace
       )
     }
