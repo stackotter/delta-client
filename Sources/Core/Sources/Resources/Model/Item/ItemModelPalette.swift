@@ -10,6 +10,17 @@ public struct ItemModelPalette {
     self.models = models
   }
 
+  /// Gets the item model for a given item id.
+  /// - Parameter id: The item id.
+  /// - Returns: The item's model if the item exists.
+  public func model(for id: Int) -> ItemModel? {
+    guard id >= 0, id < models.count else {
+      return nil
+    }
+
+    return models[id]
+  }
+
   /// Loads the item models from the item models directory of a resource pack.
   /// - Parameters:
   ///   - directory: The directory to load item models from.

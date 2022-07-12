@@ -4,16 +4,12 @@ import simd
 struct GUI {
   var root: GUIGroupElement
   var client: Client
-
   var showDebugScreen = false
   var renderStatistics = RenderStatistics(gpuCountersEnabled: false)
-
   var fpsUpdateInterval = 0.4
   var lastFPSUpdate: CFAbsoluteTime = 0
   var savedRenderStatistics = RenderStatistics(gpuCountersEnabled: false)
-
   var context: GUIContext
-
   var profiler: Profiler<RenderingMeasurement>
 
   init(
@@ -27,17 +23,24 @@ struct GUI {
 
     root = GUIGroupElement([0, 0])
 
-    let font = client.resourcePack.vanillaResources.fontPalette.defaultFont
+    let resources = client.resourcePack.vanillaResources
+    let font = resources.fontPalette.defaultFont
     let fontArrayTexture = try font.createArrayTexture(device)
 
-    let guiTexturePalette = try GUITexturePalette(client.resourcePack.vanillaResources.guiTexturePalette)
+    let guiTexturePalette = try GUITexturePalette(resources.guiTexturePalette)
     let guiArrayTexture = try guiTexturePalette.palette.createArrayTexture(
       device: device,
       commandQueue: commandQueue
     )
 
-    let itemTexturePalette = client.resourcePack.vanillaResources.itemTexturePalette
+    let itemTexturePalette = resources.itemTexturePalette
     let itemArrayTexture = try itemTexturePalette.createArrayTexture(
+      device: device,
+      commandQueue: commandQueue
+    )
+
+    let blockTexturePalette = resources.blockTexturePalette
+    let blockArrayTexture = try blockTexturePalette.createArrayTexture(
       device: device,
       commandQueue: commandQueue
     )
@@ -48,7 +51,9 @@ struct GUI {
       guiTexturePalette: guiTexturePalette,
       guiArrayTexture: guiArrayTexture,
       itemTexturePalette: itemTexturePalette,
-      itemArrayTexture: itemArrayTexture
+      itemArrayTexture: itemArrayTexture,
+      itemModelPalette: resources.itemModelPalette,
+      blockArrayTexture: blockArrayTexture
     )
   }
 

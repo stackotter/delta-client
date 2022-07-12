@@ -2,20 +2,22 @@ struct GUIInventoryItem: GUIElement {
   var itemId: Int
 
   func meshes(context: GUIContext) throws -> [GUIElementMesh] {
-    guard let item = RegistryStore.shared.itemRegistry.item(withId: itemId) else {
+    guard let model = context.itemModelPalette.model(for: itemId) else {
       throw GUIRendererError.invalidItemId(itemId)
     }
 
-    var identifier = item.identifier
-    identifier.name = "item/\(identifier.name)"
-
-    guard let index = context.itemTexturePalette.textureIndex(for: identifier) else {
-      // TODO: implement proper gui item rendering that uses item models from resource pack
+    guard case let .layered(textures, _) = model else {
+      // TODO: Implement rendering for other types of models
       return []
     }
 
-    return [
-      GUIElementMesh(slice: index, texture: context.itemArrayTexture)
-    ]
+    return textures.map { texture in
+      switch texture {
+        case .block(let index):
+          return GUIElementMesh(slice: index, texture: context.blockArrayTexture)
+        case .item(let index):
+          return GUIElementMesh(slice: index, texture: context.itemArrayTexture)
+      }
+    }
   }
 }
