@@ -14,6 +14,18 @@ sure that the outer function acquires a lock that is at least as permissive as t
 requires. For example, if the inner function normally acquires a write lock, the outer function must
 acquire a write lock too.
 
+## Pay attention to lock levels
+
+Often locks are arranged into levels, `World` has `terrainLock` for accessing chunks from the chunk
+storage, and then `Chunk` has `lock` for accessing its stored information. If some code has a chunk
+lock and wants to acquire a terrain lock, but some other code already has a terrain lock and is
+waiting for a chunk lock, you will get a deadlock. This can be a lot more subtle than a regular
+deadlock. The rule of thumb here is to only get more and more specific locks when locking and avoid
+having a specific lock while getting a general lock. If impossible (or tedious) to obey this rule in
+a certain bit of code, it is also possible to use caution and carefully ensure that one of the
+offending bits of code only takes one lock at a time (as seen in commit
+[17fb74bc36ad5b6619d6a6066ebf47073ff22659](https://github.com/stackotter/delta-client/commit/17fb74bc36ad5b6619d6a6066ebf47073ff22659)).
+
 ## `ClientboundEntityPacket`'s
 
 When implementing the `handle` method of a `ClientboundEntityPacket`, ensure that you do not attempt
