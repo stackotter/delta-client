@@ -221,17 +221,24 @@ public class World {
   ///   - data: Data about the lighting update.
   public func updateChunkLighting(at position: ChunkPosition, with data: ChunkLightingUpdateData) {
     terrainLock.acquireWriteLock()
-    defer { terrainLock.unlock() }
 
+    // Terrain lock is unlocked before acquiring a lock on a complete chunk, because otherwise this
+    // function locks waiting for the chunk lock, and some code that already has a chunk lock (such
+    // as in `ChunkSectionMeshBuilder`) but needs to wait for a terrain lock.
     if let chunk = chunks[position] {
+      terrainLock.unlock()
       chunk.updateLighting(with: data)
     } else if let chunk = unlitChunks[position] {
+      terrainLock.unlock()
       chunk.updateLighting(with: data)
+      terrainLock.acquireWriteLock()
       unlitChunks.removeValue(forKey: position)
       chunks[position] = chunk
       eventBus.dispatch(Event.AddChunk(position: position))
+      terrainLock.unlock()
     } else {
       chunklessLightingData[position] = data
+      terrainLock.unlock()
     }
 
     eventBus.dispatch(Event.UpdateChunkLighting(
