@@ -217,7 +217,7 @@ struct GUI {
     list.add("Block: \(blockPosition.x) \(blockPosition.y) \(blockPosition.z)")
 
     // Chunk section and relative position
-    let relativePosition = blockPosition.relativeToChunk
+    let relativePosition = blockPosition.relativeToChunkSection
     let relativePositionString = "\(relativePosition.x) \(relativePosition.y) \(relativePosition.z)"
     let chunkSectionString = "\(chunkSectionPosition.sectionX) \(chunkSectionPosition.sectionY) \(chunkSectionPosition.sectionZ)"
     list.add("Chunk: \(relativePositionString) in \(chunkSectionString)")
