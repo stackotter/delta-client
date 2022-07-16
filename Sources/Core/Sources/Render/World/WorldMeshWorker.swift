@@ -31,7 +31,7 @@ public class WorldMeshWorker {
   /// Whether the execution loop is currently running or not.
   private var executingThreadsCount = AtomicInt(initialValue: 0)
   /// The maximum number of execution loops allowed to run at once (for performance reasons).
-  private let maxExecutingThreadsCount = 2
+  private let maxExecutingThreadsCount = 1
 
   // MARK: Init
 
