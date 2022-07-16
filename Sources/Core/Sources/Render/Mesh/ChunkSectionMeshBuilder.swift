@@ -206,18 +206,16 @@ public struct ChunkSectionMeshBuilder {
 
     // Add block model to mesh
     var translucentGeometry: [(size: Float, geometry: Geometry)] = []
-    for part in blockModel.parts {
-      addModelPart(
-        part,
-        transformedBy: modelToWorld,
-        transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
-        translucentGeometry: &translucentGeometry,
-        culledFaces: culledFaces,
-        lightLevel: lightLevel,
-        neighbourLightLevels: neighbourLightLevels,
-        tintColor: tintColor?.floatVector ?? SIMD3<Float>(1, 1, 1)
-      )
-    }
+    addBlockModel(
+      blockModel,
+      transformedBy: modelToWorld,
+      transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
+      translucentGeometry: &translucentGeometry,
+      culledFaces: culledFaces,
+      lightLevel: lightLevel,
+      neighbourLightLevels: neighbourLightLevels,
+      tintColor: tintColor?.floatVector ?? SIMD3<Float>(1, 1, 1)
+    )
 
     if !translucentGeometry.isEmpty {
       // Sort the geometry assuming that smaller translucent elements are always inside of bigger
@@ -255,8 +253,8 @@ public struct ChunkSectionMeshBuilder {
   }
 
   /// Adds the given block model to the mesh, positioned by the given model to world matrix.
-  private func addModelPart(
-    _ blockModel: BlockModelPart,
+  private func addBlockModel(
+    _ model: BlockModel,
     transformedBy modelToWorld: matrix_float4x4,
     transparentAndOpaqueGeometry: inout Geometry,
     translucentGeometry: inout [(size: Float, geometry: Geometry)],
@@ -265,163 +263,20 @@ public struct ChunkSectionMeshBuilder {
     neighbourLightLevels: [Direction: LightLevel],
     tintColor: SIMD3<Float>
   ) {
-    for element in blockModel.elements {
-      var elementTranslucentGeometry = Geometry()
-      addElement(
-        element,
-        transformedBy: modelToWorld,
-        transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
-        translucentGeometry: &elementTranslucentGeometry,
-        culledFaces: culledFaces,
-        lightLevel: lightLevel,
-        neighbourLightLevels: neighbourLightLevels,
-        tintColor: tintColor
-      )
-      if !elementTranslucentGeometry.isEmpty {
-        let minimum = simd_make_float3(SIMD4<Float>(0, 0, 0, 1) * element.transformation * modelToWorld)
-        let maximum = simd_make_float3(SIMD4<Float>(1, 1, 1, 1) * element.transformation * modelToWorld)
-        let size = (maximum - minimum).magnitude
-        translucentGeometry.append((size: size, geometry: elementTranslucentGeometry))
-      }
-    }
-  }
+    let builder = BlockMeshBuilder(
+      model: model,
+      modelToWorld: modelToWorld,
+      culledFaces: culledFaces,
+      lightLevel: lightLevel,
+      neighbourLightLevels: neighbourLightLevels,
+      tintColor: tintColor,
+      blockTexturePalette: resources.blockTexturePalette
+    )
 
-  /// Adds the given block model element to the mesh, positioned by the given model to world matrix.
-  private func addElement(
-    _ element: BlockModelElement,
-    transformedBy modelToWorld: matrix_float4x4,
-    transparentAndOpaqueGeometry: inout Geometry,
-    translucentGeometry: inout Geometry,
-    culledFaces: Set<Direction>,
-    lightLevel: LightLevel,
-    neighbourLightLevels: [Direction: LightLevel],
-    tintColor: SIMD3<Float>
-  ) {
-    let vertexToWorld = element.transformation * modelToWorld
-    for face in element.faces {
-      if let cullFace = face.cullface, culledFaces.contains(cullFace) {
-        continue
-      }
-
-      var faceLightLevel = neighbourLightLevels[face.actualDirection] ?? LightLevel()
-      faceLightLevel = LightLevel.max(faceLightLevel, lightLevel)
-      addFace(
-        face,
-        transformedBy: vertexToWorld,
-        transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
-        translucentGeometry: &translucentGeometry,
-        shouldShade: element.shade,
-        lightLevel: faceLightLevel,
-        tintColor: tintColor
-      )
-    }
-  }
-
-  /// Adds a face to some geometry.
-  /// - Parameters:
-  ///   - face: A face to add to the mesh.
-  ///   - transformation: A transformation to apply to each vertex of the face.
-  ///   - transparentAndOpaqueGeometry: The geometry to add the face to if it's not translucent.
-  ///   - translucentGeometry: The geometry to add the face to if it's translucent.
-  ///   - shouldShade: If `false`, the face will not be shaded based on the direction it faces. It'll still be affected by light levels.
-  ///   - lightLevel: The light level to render the face at.
-  ///   - tintColor: The color to tint the face as a float vector where each component has a maximum of 1. Supplying white will leave the face unaffected.
-  private func addFace(
-    _ face: BlockModelFace,
-    transformedBy transformation: matrix_float4x4,
-    transparentAndOpaqueGeometry: inout Geometry,
-    translucentGeometry: inout Geometry,
-    shouldShade: Bool,
-    lightLevel: LightLevel,
-    tintColor: SIMD3<Float>
-  ) {
-    let textureType = resources.blockTexturePalette.textures[face.texture].type
-    if textureType == .translucent {
-      addFace(
-        face,
-        transformedBy: transformation,
-        geometry: &translucentGeometry,
-        textureType: textureType,
-        shouldShade: shouldShade,
-        lightLevel: lightLevel,
-        tintColor: tintColor
-      )
-    } else {
-      addFace(
-        face,
-        transformedBy: transformation,
-        geometry: &transparentAndOpaqueGeometry,
-        textureType: textureType,
-        shouldShade: shouldShade,
-        lightLevel: lightLevel,
-        tintColor: tintColor
-      )
-    }
-  }
-
-  /// Adds a face to a mesh.
-  /// - Parameters:
-  ///   - face: A face to add to the mesh.
-  ///   - transformation: A transformation to apply to each vertex of the face.
-  ///   - geometry: The geometry to add the face to.
-  ///   - shouldShade: If `false`, the face will not be shaded based on the direction it faces. It'll still be affected by light levels.
-  ///   - lightLevel: The light level to render the face at.
-  ///   - tintColor: The color to tint the face as a float vector where each component has a maximum of 1. Supplying white will leave the face unaffected.
-  private func addFace(
-    _ face: BlockModelFace,
-    transformedBy transformation: matrix_float4x4,
-    geometry: inout Geometry,
-    textureType: TextureType,
-    shouldShade: Bool,
-    lightLevel: LightLevel,
-    tintColor: SIMD3<Float>
-  ) {
-    // Add face winding
-    let offset = UInt32(geometry.vertices.count) // The index of the first vertex of face
-    for index in CubeGeometry.faceWinding {
-      geometry.indices.append(index &+ offset)
-    }
-
-    let faceVertexPositions = CubeGeometry.faceVertices[face.direction.rawValue]
-
-    // Calculate shade of face
-    let lightLevel = max(lightLevel.block, lightLevel.sky)
-    let faceDirection = face.actualDirection.rawValue
-    var shade: Float = 1.0
-    if shouldShade {
-      shade = CubeGeometry.shades[faceDirection]
-    }
-    shade *= Float(lightLevel) / 15
-
-    // Calculate the tint color to apply to the face
-    let tint: SIMD3<Float>
-    if face.isTinted {
-      tint = tintColor * shade
-    } else {
-      tint = SIMD3<Float>(repeating: shade)
-    }
-
-    let textureIndex = UInt16(face.texture)
-    let isTransparent = textureType == .transparent
-
-    // Add vertices to mesh
-    for (uvIndex, vertexPosition) in faceVertexPositions.enumerated() {
-      let position = simd_make_float3(SIMD4<Float>(vertexPosition, 1) * transformation)
-      let uv = face.uvs[uvIndex]
-      let vertex = BlockVertex(
-        x: position.x,
-        y: position.y,
-        z: position.z,
-        u: uv.x,
-        v: uv.y,
-        r: tint.x,
-        g: tint.y,
-        b: tint.z,
-        textureIndex: textureIndex,
-        isTransparent: isTransparent
-      )
-      geometry.vertices.append(vertex)
-    }
+    builder.build(
+      into: &transparentAndOpaqueGeometry,
+      translucentGeometry: &translucentGeometry
+    )
   }
 
   // MARK: Fluid rendering (please refactor)
@@ -472,13 +327,15 @@ public struct ChunkSectionMeshBuilder {
       [0.75, 0.25],
       [0.25, 0.25],
       [0.25, 0.75],
-      [0.75, 0.75]]
+      [0.75, 0.75]
+    ]
 
     let stillUVs: [SIMD2<Float>] = [
       [1, 0],
       [0, 0],
       [0, 1],
-      [1, 1]]
+      [1, 1]
+    ]
 
     let neighbouringBlockIds = getNeighbouringBlockIds(neighbours: indexToNeighbours[blockIndex])
     var cullingNeighbours = getCullingNeighbours(

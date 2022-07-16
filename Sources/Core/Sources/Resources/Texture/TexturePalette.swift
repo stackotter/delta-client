@@ -4,7 +4,7 @@ import CoreGraphics
 
 /// A palette containing textures that can be animated. All of the textures must be the same size or
 /// multiples of 2 of eachother. Textures are assumed to be square.
-public struct TexturePalette {
+public final class TexturePalette { // TODO: Currently a class to avoid copies, maybe use a `Box` or `Ref` type instead.
   /// The palette's textures, indexed by ``identifierToIndex``.
   public var textures: [Texture]
 
@@ -53,7 +53,8 @@ public struct TexturePalette {
 
   // MARK: Loading
 
-  /// Loads the texture palette present in the given directory. `type` refers to the part before the slash in the name. Like `block` in `minecraft:block/dirt`.
+  /// Loads the texture palette present in the given directory. `type` refers to the part before the
+  /// slash in the name. Like `block` in `minecraft:block/dirt`.
   public static func load(
     from directory: URL,
     inNamespace namespace: String,
@@ -70,7 +71,8 @@ public struct TexturePalette {
       throw ResourcePackError.failedToEnumerateTextures(error)
     }
 
-    // Textures are loaded in two phases so that we know what the widest texture is before we do work scaling them all to the right widths.
+    // Textures are loaded in two phases so that we know what the widest texture is before we do
+    // work scaling them all to the right widths.
 
     // Load the images
     var maxWidth = 0 // The width of the widest texture in the palette
@@ -186,7 +188,12 @@ public struct TexturePalette {
     return arrayTexture
   }
 
-  public func updateArrayTexture(arrayTexture: MTLTexture, animationState: ArrayTextureAnimationState, updatedTextures: [Int], commandQueue: MTLCommandQueue) {
+  public func updateArrayTexture(
+    arrayTexture: MTLTexture,
+    animationState: ArrayTextureAnimationState,
+    updatedTextures: [Int],
+    commandQueue: MTLCommandQueue
+  ) {
     guard !updatedTextures.isEmpty else {
       return
     }
