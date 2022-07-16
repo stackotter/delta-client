@@ -3,14 +3,10 @@ import MetalKit
 import simd
 import SwiftUI
 
-
-
-// TODO: update chunk section mesh builder documentation
-
 /// Builds renderable meshes from chunk sections.
 ///
 /// Assumes that all relevant chunks have already been locked.
-public struct ChunkSectionMeshBuilder {
+public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
   /// A lookup to quickly convert block index to block position.
   private static let indexToPosition = generateIndexLookup()
   /// A lookup tp quickly get the block indices for blocks' neighbours.
@@ -190,7 +186,7 @@ public struct ChunkSectionMeshBuilder {
       at: positionRelativeToChunkSection,
       inSectionAt: sectionPosition.sectionY
     )
-    let neighbourLightLevels = getNeighbourLightLevels(neighbours: neighbours, visibleFaces: visibleFaces)
+    let neighbourLightLevels = getNeighbouringLightLevels(neighbours: neighbours, visibleFaces: visibleFaces)
 
     // Get tint color
     guard let biome = chunk.biome(at: position.relativeToChunk, acquireLock: false) else {
@@ -206,76 +202,65 @@ public struct ChunkSectionMeshBuilder {
 
     // Add block model to mesh
     var translucentGeometry: [(size: Float, geometry: Geometry)] = []
-    addBlockModel(
-      blockModel,
-      transformedBy: modelToWorld,
-      transparentAndOpaqueGeometry: &transparentAndOpaqueGeometry,
-      translucentGeometry: &translucentGeometry,
-      culledFaces: culledFaces,
-      lightLevel: lightLevel,
-      neighbourLightLevels: neighbourLightLevels,
-      tintColor: tintColor?.floatVector ?? SIMD3<Float>(1, 1, 1)
-    )
-
-    if !translucentGeometry.isEmpty {
-      // Sort the geometry assuming that smaller translucent elements are always inside of bigger
-      // elements in the same block (e.g. honey block, slime block). The geometry is then combined
-      // into a single element to add to the final mesh to reduce sorting calculations while
-      // rendering.
-      translucentGeometry.sort { first, second in
-        return second.size > first.size
-      }
-
-      var vertexCount = 0
-      var indexCount = 0
-      for (_, geometry) in translucentGeometry {
-        vertexCount += geometry.vertices.count
-        indexCount += geometry.indices.count
-      }
-
-      var vertices: [BlockVertex] = []
-      var indices: [UInt32] = []
-      vertices.reserveCapacity(vertexCount)
-      indices.reserveCapacity(indexCount)
-
-      for (_, geometry) in translucentGeometry {
-        let startingIndex = UInt32(vertices.count)
-        vertices.append(contentsOf: geometry.vertices)
-        indices.append(contentsOf: geometry.indices.map { $0 + startingIndex })
-      }
-
-      let geometry = Geometry(vertices: vertices, indices: indices)
-      translucentMesh.add(SortableMeshElement(
-        geometry: geometry,
-        centerPosition: position.floatVector + SIMD3<Float>(0.5, 0.5, 0.5)
-      ))
-    }
-  }
-
-  /// Adds the given block model to the mesh, positioned by the given model to world matrix.
-  private func addBlockModel(
-    _ model: BlockModel,
-    transformedBy modelToWorld: matrix_float4x4,
-    transparentAndOpaqueGeometry: inout Geometry,
-    translucentGeometry: inout [(size: Float, geometry: Geometry)],
-    culledFaces: Set<Direction>,
-    lightLevel: LightLevel,
-    neighbourLightLevels: [Direction: LightLevel],
-    tintColor: SIMD3<Float>
-  ) {
-    let builder = BlockMeshBuilder(
-      model: model,
+    BlockMeshBuilder(
+      model: blockModel,
       modelToWorld: modelToWorld,
       culledFaces: culledFaces,
       lightLevel: lightLevel,
       neighbourLightLevels: neighbourLightLevels,
-      tintColor: tintColor,
+      tintColor: tintColor?.floatVector ?? [1, 1, 1],
       blockTexturePalette: resources.blockTexturePalette
-    )
-
-    builder.build(
+    ).build(
       into: &transparentAndOpaqueGeometry,
       translucentGeometry: &translucentGeometry
+    )
+
+    if !translucentGeometry.isEmpty {
+      translucentMesh.add(Self.mergeTranslucentGeometry(
+        translucentGeometry,
+        position: position
+      ))
+    }
+  }
+
+  /// Sort the geometry assuming that smaller translucent elements are always inside of bigger
+  /// elements in the same block (e.g. honey block, slime block). The geometry is then combined
+  /// into a single element to add to the final mesh to reduce sorting calculations while
+  /// rendering.
+  private static func mergeTranslucentGeometry(
+    _ geometries: [(size: Float, geometry: Geometry)],
+    position: BlockPosition
+  ) -> SortableMeshElement {
+    var geometries = geometries // TODO: This may cause an unnecessary copy
+    geometries.sort { first, second in
+      return second.size > first.size
+    }
+
+    // Counts used to reserve a suitable amount of capacity
+    var vertexCount = 0
+    var indexCount = 0
+    for (_, geometry) in geometries {
+      vertexCount += geometry.vertices.count
+      indexCount += geometry.indices.count
+    }
+
+    var vertices: [BlockVertex] = []
+    var indices: [UInt32] = []
+    vertices.reserveCapacity(vertexCount)
+    indices.reserveCapacity(indexCount)
+
+    for (_, geometry) in geometries {
+      let startingIndex = UInt32(vertices.count)
+      vertices.append(contentsOf: geometry.vertices)
+      indices.append(contentsOf: geometry.indices.map { index in
+        return index + startingIndex
+      })
+    }
+
+    let geometry = Geometry(vertices: vertices, indices: indices)
+    return SortableMeshElement(
+      geometry: geometry,
+      centerPosition: position.floatVector + SIMD3<Float>(0.5, 0.5, 0.5)
     )
   }
 
@@ -316,8 +301,10 @@ public struct ChunkSectionMeshBuilder {
     }
 
     // Lighting
-    let lightLevel = chunk.getLighting(acquireLock: false).getLightLevel(atIndex: blockIndex, inSectionAt: sectionPosition.sectionY)
-    let neighbourLightLevels = getNeighbourLightLevels(
+    let lightLevel = chunk
+      .getLighting(acquireLock: false)
+      .getLightLevel(atIndex: blockIndex, inSectionAt: sectionPosition.sectionY)
+    let neighbourLightLevels = getNeighbouringLightLevels(
       neighbours: indexToNeighbours[blockIndex],
       visibleFaces: [.up, .down, .north, .east, .south, .west]
     )
@@ -611,6 +598,17 @@ public struct ChunkSectionMeshBuilder {
 
   // MARK: Helper
 
+  /// Gets the chunk that contains the given neighbour block.
+  /// - Parameter neighbourBlock: The neighbour block.
+  /// - Returns: The chunk containing the block.
+  func getChunk(for neighbourBlock: BlockNeighbour) -> Chunk {
+    if let direction = neighbourBlock.chunkDirection {
+      return neighbourChunks.neighbour(in: direction)
+    } else {
+      return chunk
+    }
+  }
+
   /// Gets the block id of each block neighbouring a block using the given neighbour indices.
   ///
   /// Blocks in neighbouring chunks are also included. Neighbours in cardinal directions will
@@ -623,62 +621,11 @@ public struct ChunkSectionMeshBuilder {
     neighbouringBlocks.reserveCapacity(6)
 
     for neighbour in neighbours {
-      if let direction = neighbour.chunkDirection {
-        let neighbourChunk = neighbourChunks.neighbour(in: direction)
-        neighbouringBlocks.append((neighbour.direction, neighbourChunk.getBlockId(at: neighbour.index, acquireLock: false)))
-      } else {
-        neighbouringBlocks.append((neighbour.direction, chunk.getBlockId(at: neighbour.index, acquireLock: false)))
-      }
+      let blockId = getChunk(for: neighbour).getBlockId(at: neighbour.index, acquireLock: false)
+      neighbouringBlocks.append((neighbour.direction, blockId))
     }
 
     return neighbouringBlocks
-  }
-
-  /// Returns a map from each direction to a cardinal direction and a chunk relative block index.
-  ///
-  /// The cardinal direction is which chunk a neighbour resides in. If the cardinal direction for
-  /// a neighbour is nil then the neighbour is in the current chunk.
-  /// - Parameter index: A section-relative block index
-  static func getNeighbours(ofBlockAt index: Int, inSection sectionIndex: Int) -> [BlockNeighbour] {
-    let indexInChunk = index &+ sectionIndex &* Chunk.Section.numBlocks
-    var neighbours: [BlockNeighbour] = []
-    neighbours.reserveCapacity(6)
-
-    let indexInLayer = indexInChunk % Chunk.blocksPerLayer
-    if indexInLayer >= Chunk.width {
-      neighbours.append(BlockNeighbour(direction: .north, chunkDirection: nil, index: indexInChunk &- Chunk.width))
-    } else {
-      neighbours.append(BlockNeighbour(direction: .north, chunkDirection: .north, index: indexInChunk + Chunk.blocksPerLayer - Chunk.width))
-    }
-
-    if indexInLayer < Chunk.blocksPerLayer &- Chunk.width {
-      neighbours.append(BlockNeighbour(direction: .south, chunkDirection: nil, index: indexInChunk &+ Chunk.width))
-    } else {
-      neighbours.append(BlockNeighbour(direction: .south, chunkDirection: .south, index: indexInChunk - Chunk.blocksPerLayer + Chunk.width))
-    }
-
-    let indexInRow = indexInChunk % Chunk.width
-    if indexInRow != Chunk.width &- 1 {
-      neighbours.append(BlockNeighbour(direction: .east, chunkDirection: nil, index: indexInChunk &+ 1))
-    } else {
-      neighbours.append(BlockNeighbour(direction: .east, chunkDirection: .east, index: indexInChunk &- 15))
-    }
-
-    if indexInRow != 0 {
-      neighbours.append(BlockNeighbour(direction: .west, chunkDirection: nil, index: indexInChunk &- 1))
-    } else {
-      neighbours.append(BlockNeighbour(direction: .west, chunkDirection: .west, index: indexInChunk &+ 15))
-    }
-
-    if indexInChunk < Chunk.numBlocks &- Chunk.blocksPerLayer {
-      neighbours.append(BlockNeighbour(direction: .up, chunkDirection: nil, index: indexInChunk &+ Chunk.blocksPerLayer))
-
-      if indexInChunk >= Chunk.blocksPerLayer {
-        neighbours.append(BlockNeighbour(direction: .down, chunkDirection: nil, index: indexInChunk &- Chunk.blocksPerLayer))
-      }
-    }
-
-    return neighbours
   }
 
   /// Gets the light levels of the blocks surrounding a block.
@@ -686,49 +633,20 @@ public struct ChunkSectionMeshBuilder {
   ///   - neighbours: The neighbours to get the light levels of.
   ///   - visibleFaces: The set of faces to get the light levels of.
   /// - Returns: A dictionary of face direction to light level for all faces in `visibleFaces`.
-  func getNeighbourLightLevels(neighbours: [BlockNeighbour], visibleFaces: Set<Direction>) -> [Direction: LightLevel] {
+  func getNeighbouringLightLevels(
+    neighbours: [BlockNeighbour],
+    visibleFaces: Set<Direction>
+  ) -> [Direction: LightLevel] {
     var lightLevels = [Direction: LightLevel](minimumCapacity: 6)
     for neighbour in neighbours {
       if visibleFaces.contains(neighbour.direction) {
-        if let chunkDirection = neighbour.chunkDirection {
-          lightLevels[neighbour.direction] = neighbourChunks.neighbour(in: chunkDirection).getLighting(acquireLock: false).getLightLevel(at: neighbour.index)
-        } else {
-          lightLevels[neighbour.direction] = chunk.getLighting(acquireLock: false).getLightLevel(at: neighbour.index)
-        }
+        let lightLevel = getChunk(for: neighbour)
+          .getLighting(acquireLock: false)
+          .getLightLevel(at: neighbour.index)
+        lightLevels[neighbour.direction] = lightLevel
       }
     }
     return lightLevels
-  }
-
-  /// Gets an array of the direction of all blocks neighbouring the block at `position` that have
-  /// full faces facing the block at `position`.
-  /// - Parameters:
-  ///   - position: The position of the block relative to `sectionPosition`.
-  ///   - blockId: The id of the block at the given position.
-  ///   - neighbouringBlocks: The block ids of neighbouring blocks.
-  /// - Returns: The set of directions of neighbours that can possibly cull a face.
-  func getCullingNeighbours(
-    at position: BlockPosition,
-    blockId: Int,
-    neighbouringBlocks: [(Direction, Int)]
-  ) -> Set<Direction> {
-    var cullingNeighbours = Set<Direction>(minimumCapacity: 6)
-    let blockCullsSameKind = RegistryStore.shared.blockRegistry.selfCullingBlocks.contains(blockId)
-
-    for (direction, neighbourBlockId) in neighbouringBlocks where neighbourBlockId != 0 {
-      // We assume that block model variants always have the same culling faces as eachother, so
-      // no position is passed to getModel.
-      guard let blockModel = resources.blockModelPalette.model(for: neighbourBlockId, at: nil) else {
-        log.debug("Skipping neighbour with no block models.")
-        continue
-      }
-
-      if blockModel.cullingFaces.contains(direction.opposite) || (blockCullsSameKind && blockId == neighbourBlockId) {
-        cullingNeighbours.insert(direction)
-      }
-    }
-
-    return cullingNeighbours
   }
 
   /// Gets an array of the direction of all blocks neighbouring the block at `position` that have
@@ -746,6 +664,41 @@ public struct ChunkSectionMeshBuilder {
     let neighbouringBlocks = getNeighbouringBlockIds(neighbours: neighbours)
     return getCullingNeighbours(at: position, blockId: blockId, neighbouringBlocks: neighbouringBlocks)
   }
+
+  /// Gets an array of the direction of all blocks neighbouring the block at `position` that have
+  /// full faces facing the block at `position`.
+  /// - Parameters:
+  ///   - position: The position of the block relative to `sectionPosition`.
+  ///   - blockId: The id of the block at the given position.
+  ///   - neighbouringBlocks: The block ids of neighbouring blocks.
+  /// - Returns: The set of directions of neighbours that can possibly cull a face.
+  func getCullingNeighbours(
+    at position: BlockPosition,
+    blockId: Int,
+    neighbouringBlocks: [(Direction, Int)]
+  ) -> Set<Direction> {
+    // TODO: Skip directions that the block can't be culled from if possible
+    var cullingNeighbours = Set<Direction>(minimumCapacity: 6)
+    let blockCullsSameKind = RegistryStore.shared.blockRegistry.selfCullingBlocks.contains(blockId)
+
+    for (direction, neighbourBlockId) in neighbouringBlocks where neighbourBlockId != 0 {
+      // We assume that block model variants always have the same culling faces as eachother, so
+      // no position is passed to getModel.
+      guard let blockModel = resources.blockModelPalette.model(for: neighbourBlockId, at: nil) else {
+        log.debug("Skipping neighbour with no block models.")
+        continue
+      }
+
+      let culledByOwnKind = blockCullsSameKind && blockId == neighbourBlockId
+      if blockModel.cullingFaces.contains(direction.opposite) || culledByOwnKind {
+        cullingNeighbours.insert(direction)
+      }
+    }
+
+    return cullingNeighbours
+  }
+
+  // MARK: Lookup table generation
 
   /// Generates a lookup table to quickly convert from section block index to block position.
   private static func generateIndexLookup() -> [BlockPosition] {
@@ -765,7 +718,7 @@ public struct ChunkSectionMeshBuilder {
   private static func generateNeighbours(sectionIndex: Int) -> [[BlockNeighbour]] {
     var neighbours: [[BlockNeighbour]] = []
     for i in 0..<Chunk.Section.numBlocks {
-      neighbours.append(getNeighbours(ofBlockAt: i, inSection: sectionIndex))
+      neighbours.append(BlockNeighbour.neighbours(ofBlockAt: i, inSection: sectionIndex))
     }
     return neighbours
   }
