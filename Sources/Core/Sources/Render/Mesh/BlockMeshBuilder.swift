@@ -1,5 +1,6 @@
 import simd
 
+/// Builds the mesh for a single block.
 struct BlockMeshBuilder {
   let model: BlockModel
   let modelToWorld: matrix_float4x4
