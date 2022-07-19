@@ -9,8 +9,6 @@ public final class GUIRenderer: Renderer {
   var device: MTLDevice
   var font: Font
   var scale: Float = 2
-  var quadIndexBuffer: MTLBuffer
-  var quadVertexBuffer: MTLBuffer
   var uniformsBuffer: MTLBuffer
   var pipelineState: MTLRenderPipelineState
   var gui: GUI
@@ -27,10 +25,6 @@ public final class GUIRenderer: Renderer {
 
     // Create array texture
     font = client.resourcePack.vanillaResources.fontPalette.defaultFont
-
-    // Create quad geometry (for instancing)
-    quadIndexBuffer = try GUIQuadGeometry.getIndexBuffer(device: device)
-    quadVertexBuffer = try GUIQuadGeometry.getVertexBuffer(device: device)
 
     // Create uniforms buffer
     uniformsBuffer = try MetalUtil.makeBuffer(
@@ -111,14 +105,13 @@ public final class GUIRenderer: Renderer {
 
     profiler.push(.encode)
     // Set vertex buffers
-    encoder.setVertexBuffer(quadVertexBuffer, offset: 0, index: 0)
-    encoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 1)
+    encoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 0)
 
     // Set pipeline
     encoder.setRenderPipelineState(pipelineState)
 
     for var mesh in meshes {
-      try mesh.render(into: encoder, with: device, quadIndexBuffer: quadIndexBuffer)
+      try mesh.render(into: encoder, with: device)
     }
     profiler.pop()
   }

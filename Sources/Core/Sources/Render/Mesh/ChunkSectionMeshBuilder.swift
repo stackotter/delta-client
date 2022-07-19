@@ -223,9 +223,10 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
     neighbourLightLevels: [Direction: LightLevel],
     tintColor: SIMD3<Float>
   ) {
-    var translucentGeometry: [(size: Float, geometry: Geometry)] = []
+    var translucentGeometry = SortableMeshElement(centerPosition: [0, 0, 0])
     BlockMeshBuilder(
       model: model,
+      position: position,
       modelToWorld: modelToWorld,
       culledFaces: culledFaces,
       lightLevel: lightLevel,
@@ -238,52 +239,8 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
     )
 
     if !translucentGeometry.isEmpty {
-      translucentMesh.add(Self.mergeTranslucentGeometry(
-        translucentGeometry,
-        position: position
-      ))
+      translucentMesh.add(translucentGeometry)
     }
-  }
-
-  /// Sort the geometry assuming that smaller translucent elements are always inside of bigger
-  /// elements in the same block (e.g. honey block, slime block). The geometry is then combined
-  /// into a single element to add to the final mesh to reduce sorting calculations while
-  /// rendering.
-  private static func mergeTranslucentGeometry(
-    _ geometries: [(size: Float, geometry: Geometry)],
-    position: BlockPosition
-  ) -> SortableMeshElement {
-    var geometries = geometries // TODO: This may cause an unnecessary copy
-    geometries.sort { first, second in
-      return second.size > first.size
-    }
-
-    // Counts used to reserve a suitable amount of capacity
-    var vertexCount = 0
-    var indexCount = 0
-    for (_, geometry) in geometries {
-      vertexCount += geometry.vertices.count
-      indexCount += geometry.indices.count
-    }
-
-    var vertices: [BlockVertex] = []
-    var indices: [UInt32] = []
-    vertices.reserveCapacity(vertexCount)
-    indices.reserveCapacity(indexCount)
-
-    for (_, geometry) in geometries {
-      let startingIndex = UInt32(vertices.count)
-      vertices.append(contentsOf: geometry.vertices)
-      indices.append(contentsOf: geometry.indices.map { index in
-        return index + startingIndex
-      })
-    }
-
-    let geometry = Geometry(vertices: vertices, indices: indices)
-    return SortableMeshElement(
-      geometry: geometry,
-      centerPosition: position.floatVector + SIMD3<Float>(0.5, 0.5, 0.5)
-    )
   }
 
   /// Adds a fluid block to the mesh.

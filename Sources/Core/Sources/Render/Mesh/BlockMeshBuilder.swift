@@ -3,6 +3,7 @@ import simd
 /// Builds the mesh for a single block.
 struct BlockMeshBuilder {
   let model: BlockModel
+  let position: BlockPosition
   let modelToWorld: matrix_float4x4
   let culledFaces: Set<Direction> // TODO: Make bitset based replacement for optimisation
   let lightLevel: LightLevel
@@ -12,16 +13,21 @@ struct BlockMeshBuilder {
 
   func build(
     into geometry: inout Geometry,
-    translucentGeometry: inout [(size: Float, geometry: Geometry)]
+    translucentGeometry: inout SortableMeshElement
   ) {
+    var translucentGeometryParts: [(size: Float, geometry: Geometry)] = []
     for part in model.parts {
       buildPart(
         part,
         into: &geometry,
-        translucentGeometry: &translucentGeometry
+        translucentGeometry: &translucentGeometryParts
       )
     }
-  }
+
+    translucentGeometry = Self.mergeTranslucentGeometry(
+      translucentGeometryParts,
+      position: position
+    ) }
 
   func buildPart(
     _ part: BlockModelPart,
@@ -159,5 +165,46 @@ struct BlockMeshBuilder {
       )
       geometry.vertices.append(vertex)
     }
+  }
+
+  /// Sort the geometry assuming that smaller translucent elements are always inside of bigger
+  /// elements in the same block (e.g. honey block, slime block). The geometry is then combined
+  /// into a single element to add to the final mesh to reduce sorting calculations while
+  /// rendering.
+  private static func mergeTranslucentGeometry(
+    _ geometries: [(size: Float, geometry: Geometry)],
+    position: BlockPosition
+  ) -> SortableMeshElement {
+    var geometries = geometries // TODO: This may cause an unnecessary copy
+    geometries.sort { first, second in
+      return second.size > first.size
+    }
+
+    // Counts used to reserve a suitable amount of capacity
+    var vertexCount = 0
+    var indexCount = 0
+    for (_, geometry) in geometries {
+      vertexCount += geometry.vertices.count
+      indexCount += geometry.indices.count
+    }
+
+    var vertices: [BlockVertex] = []
+    var indices: [UInt32] = []
+    vertices.reserveCapacity(vertexCount)
+    indices.reserveCapacity(indexCount)
+
+    for (_, geometry) in geometries {
+      let startingIndex = UInt32(vertices.count)
+      vertices.append(contentsOf: geometry.vertices)
+      indices.append(contentsOf: geometry.indices.map { index in
+        return index + startingIndex
+      })
+    }
+
+    let geometry = Geometry(vertices: vertices, indices: indices)
+    return SortableMeshElement(
+      geometry: geometry,
+      centerPosition: position.floatVector + SIMD3<Float>(0.5, 0.5, 0.5)
+    )
   }
 }

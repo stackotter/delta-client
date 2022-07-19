@@ -9,4 +9,6 @@ struct GUIContext {
   var itemArrayTexture: MTLTexture
   var itemModelPalette: ItemModelPalette
   var blockArrayTexture: MTLTexture
+  var blockModelPalette: BlockModelPalette
+  var blockTexturePalette: TexturePalette
 }

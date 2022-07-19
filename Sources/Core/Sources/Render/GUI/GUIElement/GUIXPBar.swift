@@ -14,17 +14,18 @@ struct GUIXPBar: GUIElement {
         Self.background.descriptor.size.x,
         Self.background.descriptor.size.y
       ],
-      arrayTexture: context.guiArrayTexture
+      arrayTexture: context.guiArrayTexture,
+      vertices: []
     )
     spriteMesh.position = [0, 6]
 
     func add(_ sprite: GUISpriteDescriptor, at position: SIMD2<Int>) {
-      spriteMesh.quads.append(GUIQuadInstance(
+      spriteMesh.vertices.append(contentsOf: GUIQuad(
         for: sprite,
         guiTexturePalette: context.guiTexturePalette,
         guiArrayTexture: context.guiArrayTexture,
         position: position
-      ))
+      ).toVertices())
     }
 
     var foreground = Self.foreground.descriptor

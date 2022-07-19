@@ -46,17 +46,17 @@ vertex RasterizerData chunkVertexShader(uint vertexId [[vertex_id]], constant Ve
 
 fragment float4 chunkFragmentShader(RasterizerData in [[stage_in]],
                                     texture2d_array<float, access::sample> textureArray [[texture(0)]]) {
-  // sample the relevant texture slice
+  // Sample the relevant texture slice
   float4 color;
   color = textureArray.sample(textureSampler, in.uv, in.textureIndex);
-  color = color * in.tint;
 
-  // discard transparent fragments
+  // Discard transparent fragments
   if (in.isTransparent && color.w < 0.33) {
     discard_fragment();
   }
 
   // A bit of branchless programming
+  color = color * in.tint;
   color.w = color.w * !in.isTransparent // If not transparent, take the original alpha
           + in.isTransparent; // If transparent, make alpha 1
 

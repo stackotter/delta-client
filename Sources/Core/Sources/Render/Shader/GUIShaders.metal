@@ -3,47 +3,40 @@
 
 using namespace metal;
 
-vertex FragmentInput guiVertex(constant GUIQuadVertex *vertices [[buffer(0)]],
-                               constant GUIUniforms &uniforms [[buffer(1)]],
+constant const uint vertexIndexLookup[] = {0, 1, 2, 2, 3, 0};
+
+vertex FragmentInput guiVertex(constant GUIUniforms &uniforms [[buffer(0)]],
+                               constant GUIVertex *vertices [[buffer(1)]],
                                constant GUIElementUniforms &elementUniforms [[buffer(2)]],
-                               constant GUIQuadInstance *quads [[buffer(3)]],
                                uint vertexId [[vertex_id]],
                                uint instanceId [[instance_id]]) {
-  GUIQuadVertex in = vertices[vertexId];
+  uint index = vertexIndexLookup[vertexId % 6] + vertexId / 6 * 4;
+  GUIVertex in = vertices[index];
 
-  GUIQuadInstance quad = quads[instanceId];
-  FragmentInput output;
+  FragmentInput out;
 
   float2 position = in.position;
-  position.x *= quad.size.x;
-  position.y *= quad.size.y;
-  position += quad.position;
   position += elementUniforms.position;
   position *= uniforms.scale;
 
   float3 transformed = float3(position, 1) * uniforms.screenSpaceToNormalized;
-  output.position = float4(transformed.xy, 0, transformed.z);
+  out.position = float4(transformed.xy, 0, transformed.z);
 
-  output.uv = in.uv;
-  output.uv.x *= quad.uvSize.x;
-  output.uv.x += quad.uvMin.x;
-  output.uv.y *= quad.uvSize.y;
-  output.uv.y += quad.uvMin.y;
+  out.uv = in.uv;
+  out.tint = in.tint;
+  out.textureIndex = in.textureIndex;
 
-  output.tint = quad.tint;
-
-  output.textureIndex = quad.textureIndex;
-  return output;
+  return out;
 }
 
 constexpr sampler textureSampler (mag_filter::nearest, min_filter::nearest, mip_filter::linear);
 
 fragment float4 guiFragment(FragmentInput in [[stage_in]],
                             texture2d_array<float, access::sample> textureArray [[texture(0)]]) {
-    float4 color = textureArray.sample(textureSampler, in.uv, in.textureIndex);
-    if (color.w == 0) {
-        discard_fragment();
-    }
-    color *= float4(in.tint, 1);
-    return color;
+  float4 color = textureArray.sample(textureSampler, in.uv, in.textureIndex);
+  if (color.w < 0.33) {
+    discard_fragment();
+  }
+  color *= float4(in.tint, 1);
+  return color;
 }

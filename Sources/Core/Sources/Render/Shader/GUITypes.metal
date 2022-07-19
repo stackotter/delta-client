@@ -2,9 +2,11 @@
 
 using namespace metal;
 
-struct GUIQuadVertex {
+struct GUIVertex {
   float2 position;
   float2 uv;
+  float3 tint;
+  uint16_t textureIndex;
 };
 
 struct GUIUniforms {
@@ -14,15 +16,6 @@ struct GUIUniforms {
 
 struct GUIElementUniforms {
   float2 position;
-};
-
-struct GUIQuadInstance {
-  float2 position;
-  float2 size;
-  float2 uvMin;
-  float2 uvSize;
-  uint16_t textureIndex;
-  float3 tint;
 };
 
 struct FragmentInput {

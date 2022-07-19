@@ -12,15 +12,15 @@ struct GUIStatBar: GUIElement {
   var reversed = false
 
   func meshes(context: GUIContext) throws -> [GUIElementMesh] {
-    var mesh = GUIElementMesh(size: [81, 9], arrayTexture: context.guiArrayTexture)
+    var mesh = GUIElementMesh(size: [81, 9], arrayTexture: context.guiArrayTexture, vertices: [])
 
     func add(_ sprite: GUISprite, at x: Int) {
-      mesh.quads.append(GUIQuadInstance(
+      mesh.vertices.append(contentsOf: GUIQuad(
         for: sprite.descriptor,
         guiTexturePalette: context.guiTexturePalette,
         guiArrayTexture: context.guiArrayTexture,
         position: [x, 0]
-      ))
+      ).toVertices())
     }
 
     let fullIconCount = value / 2

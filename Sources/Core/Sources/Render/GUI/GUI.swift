@@ -53,7 +53,9 @@ struct GUI {
       itemTexturePalette: itemTexturePalette,
       itemArrayTexture: itemArrayTexture,
       itemModelPalette: resources.itemModelPalette,
-      blockArrayTexture: blockArrayTexture
+      blockArrayTexture: blockArrayTexture,
+      blockModelPalette: resources.blockModelPalette,
+      blockTexturePalette: resources.blockTexturePalette
     )
   }
 
