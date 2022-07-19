@@ -44,7 +44,7 @@ struct GUIInventoryItem: GUIElement {
         BlockMeshBuilder(
           model: model,
           position: BlockPosition(x: 0, y: 0, z: 0),
-          modelToWorld: transformation * MatrixUtil.scalingMatrix(9.9),
+          modelToWorld: transformation * MatrixUtil.scalingMatrix(9.76),
           culledFaces: [],
           lightLevel: LightLevel(sky: 15, block: 15),
           neighbourLightLevels: [:],
