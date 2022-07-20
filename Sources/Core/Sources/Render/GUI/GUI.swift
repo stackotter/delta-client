@@ -114,6 +114,13 @@ struct GUI {
     for (i, slot) in slots.enumerated() {
       if let stack = slot.stack {
         group.add(GUIInventoryItem(itemId: stack.itemId), .bottom(4), .left(20 * i + 4))
+
+        // Item count
+        if stack.count != 1 {
+          let offset = 20 * (8 - i) + 4
+          group.add(GUIColoredString(String(stack.count), [62, 62, 62] / 255), .bottom(2), .right(offset - 1))
+          group.add(String(stack.count), .bottom(3), .right(offset))
+        }
       }
     }
   }
