@@ -129,6 +129,20 @@ public struct EntityRenderer: Renderer {
       profiler.pop()
     }
 
+    var eyePosition: SIMD3<Float> = .zero
+    var pitch: Float = 0
+    var yaw: Float = 0
+    client.game.accessPlayer { player in
+      eyePosition = SIMD3<Float>(player.position.smoothVector + [0, 1.625, 0])
+      pitch = player.rotation.smoothPitch
+      yaw = player.rotation.smoothYaw
+    }
+    let direction: SIMD3<Float> = [-sin(yaw) * cos(pitch), -sin(pitch), cos(yaw) * cos(pitch)]
+
+    for position in VoxelTraverser(from: eyePosition, in: direction, count: 8) {
+      entityUniforms.append(Uniforms(transformation: MatrixUtil.scalingMatrix(1, 0.1, 1) * MatrixUtil.translationMatrix(position.floatVector)))
+    }
+
     guard !entityUniforms.isEmpty else {
       return
     }
