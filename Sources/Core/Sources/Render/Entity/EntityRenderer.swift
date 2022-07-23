@@ -129,18 +129,27 @@ public struct EntityRenderer: Renderer {
       profiler.pop()
     }
 
-    var eyePosition: SIMD3<Float> = .zero
-    var pitch: Float = 0
-    var yaw: Float = 0
+    // Render targeted block outline
+    var ray: Ray = Ray(origin: .zero, direction: .zero)
     client.game.accessPlayer { player in
-      eyePosition = SIMD3<Float>(player.position.smoothVector + [0, 1.625, 0])
-      pitch = player.rotation.smoothPitch
-      yaw = player.rotation.smoothYaw
+      ray = player.ray
     }
-    let direction: SIMD3<Float> = [-sin(yaw) * cos(pitch), -sin(pitch), cos(yaw) * cos(pitch)]
 
-    for position in VoxelTraverser(from: eyePosition, in: direction, count: 8) {
-      entityUniforms.append(Uniforms(transformation: MatrixUtil.scalingMatrix(1, 0.1, 1) * MatrixUtil.translationMatrix(position.floatVector)))
+    for position in VoxelRay(along: ray, count: 7) {
+      let block = client.game.world.getBlock(at: position)
+      let boundingBox = block.shape.outlineShape.offset(by: position.doubleVector)
+      if let distance = boundingBox.intersectionDistance(with: ray) {
+        guard distance <= 6 else {
+          break
+        }
+
+        for aabb in boundingBox.aabbs {
+          let scale = MatrixUtil.scalingMatrix(SIMD3<Float>(aabb.size + [0.01, 0.01, 0.01]))
+          let translate = MatrixUtil.translationMatrix(SIMD3<Float>(aabb.position - [0.005, 0.005, 0.005]))
+          entityUniforms.append(Uniforms(transformation: scale * translate))
+        }
+        break
+      }
     }
 
     guard !entityUniforms.isEmpty else {
@@ -212,15 +221,14 @@ public struct EntityRenderer: Renderer {
       let faceVertices = CubeGeometry.faceVertices[direction.rawValue]
       for position in faceVertices {
         let color = color.floatVector * CubeGeometry.shades[direction.rawValue]
-        vertices.append(
-          EntityVertex(
-            x: position.x,
-            y: position.y,
-            z: position.z,
-            r: color.x,
-            g: color.y,
-            b: color.z
-          ))
+        vertices.append(EntityVertex(
+          x: position.x,
+          y: position.y,
+          z: position.z,
+          r: color.x,
+          g: color.y,
+          b: color.z
+        ))
       }
 
       let offset = UInt32(indices.count / 6 * 4)

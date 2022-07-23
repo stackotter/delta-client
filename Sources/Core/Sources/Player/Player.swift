@@ -42,6 +42,12 @@ public struct Player {
   /// The component storing the player's inventory.
   public private(set) var inventory: PlayerInventory
 
+  /// A ray starting from the player's eyes and travelling in the direction they are looking.
+  public var ray: Ray {
+    let eyePosition = SIMD3<Float>(position.smoothVector + [0, 1.625, 0])
+    return Ray(from: eyePosition, pitch: rotation.smoothPitch, yaw: rotation.smoothYaw)
+  }
+
   /// Creates a player.
   public init() {
     let playerEntity = RegistryStore.shared.entityRegistry.playerEntityKind

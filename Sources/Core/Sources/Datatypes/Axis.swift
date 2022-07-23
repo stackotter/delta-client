@@ -1,11 +1,11 @@
 import Foundation
 
 /// An axis
-public enum Axis {
+public enum Axis: CaseIterable {
   case x
   case y
   case z
-  
+
   /// The positive direction along this axis in Minecraft's coordinate system.
   public var positiveDirection: Direction {
     switch self {
@@ -17,7 +17,7 @@ public enum Axis {
         return .south
     }
   }
-  
+
   /// The negative direction along this axis in Minecraft's coordinate system.
   public var negativeDirection: Direction {
     switch self {

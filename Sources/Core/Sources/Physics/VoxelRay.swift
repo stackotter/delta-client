@@ -1,16 +1,24 @@
 import simd
 
-struct VoxelTraverser: Sequence, IteratorProtocol {
-  let step: SIMD3<Int>
-  let initialVoxel: SIMD3<Int>
-  let boundaryDistanceStep: SIMD3<Float>
+/// A sequence of voxels along a ray.
+///
+/// Algorithm explanation: https://github.com/sketchpunk/FunWithWebGL2/blob/master/lesson_074_voxel_ray_intersection/test.html
+public struct VoxelRay: Sequence, IteratorProtocol {
+  public var count: Int
 
-  var isFirst = true
-  var nextBoundaryDistance: SIMD3<Float>
-  var previousVoxel: SIMD3<Int>
-  var count: Int
+  private let step: SIMD3<Int>
+  private let initialVoxel: SIMD3<Int>
+  private let boundaryDistanceStep: SIMD3<Float>
 
-  init(from position: SIMD3<Float>, in direction: SIMD3<Float>, count: Int? = nil) {
+  private var isFirst = true
+  private var nextBoundaryDistance: SIMD3<Float>
+  private var previousVoxel: SIMD3<Int>
+
+  public init(along ray: Ray, count: Int? = nil) {
+    self.init(from: ray.origin, direction: ray.direction, count: count)
+  }
+
+  public init(from position: SIMD3<Float>, direction: SIMD3<Float>, count: Int? = nil) {
     step = SIMD3<Int>(simd_sign(direction))
 
     initialVoxel = SIMD3<Int>([
@@ -35,7 +43,7 @@ struct VoxelTraverser: Sequence, IteratorProtocol {
     self.count = count ?? Int.max
   }
 
-  mutating func next() -> BlockPosition? {
+  public mutating func next() -> BlockPosition? {
     if count == 0 {
       return nil
     }
