@@ -130,25 +130,14 @@ public struct EntityRenderer: Renderer {
     }
 
     // Render targeted block outline
-    var ray: Ray = Ray(origin: .zero, direction: .zero)
-    client.game.accessPlayer { player in
-      ray = player.ray
-    }
+    if let targetedBlockPosition = client.game.targetedBlock() {
+      let block = client.game.world.getBlock(at: targetedBlockPosition)
+      let boundingBox = block.shape.outlineShape.offset(by: targetedBlockPosition.doubleVector)
 
-    for position in VoxelRay(along: ray, count: 7) {
-      let block = client.game.world.getBlock(at: position)
-      let boundingBox = block.shape.outlineShape.offset(by: position.doubleVector)
-      if let distance = boundingBox.intersectionDistance(with: ray) {
-        guard distance <= 6 else {
-          break
-        }
-
-        for aabb in boundingBox.aabbs {
-          let scale = MatrixUtil.scalingMatrix(SIMD3<Float>(aabb.size + [0.01, 0.01, 0.01]))
-          let translate = MatrixUtil.translationMatrix(SIMD3<Float>(aabb.position - [0.005, 0.005, 0.005]))
-          entityUniforms.append(Uniforms(transformation: scale * translate))
-        }
-        break
+      for aabb in boundingBox.aabbs {
+        let scale = MatrixUtil.scalingMatrix(SIMD3<Float>(aabb.size + [0.01, 0.01, 0.01]))
+        let translate = MatrixUtil.translationMatrix(SIMD3<Float>(aabb.position - [0.005, 0.005, 0.005]))
+        entityUniforms.append(Uniforms(transformation: scale * translate))
       }
     }
 

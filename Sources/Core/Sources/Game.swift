@@ -250,11 +250,11 @@ public struct Game {
 
   /// Allows thread safe access to the player.
   /// - Parameter action: The action to perform on the player.
-  public mutating func accessPlayer(action: (inout Player) -> Void) {
+  public func accessPlayer(action: (Player) -> Void) {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
 
-    action(&player)
+    action(player)
   }
 
   /// Queues handling of an entity-related packet to occur during the next game tick.
@@ -267,6 +267,31 @@ public struct Game {
 
     let packetStore = nexus.single(ClientboundEntityPacketStore.self).component
     packetStore.add(packet, client: client)
+  }
+
+  // MARK: Player
+
+  /// Gets the position of the block currently targeted by the player.
+  public func targetedBlock() -> BlockPosition? {
+    var ray: Ray = Ray(origin: .zero, direction: .zero)
+    accessPlayer { player in
+      ray = player.ray
+    }
+
+    for position in VoxelRay(along: ray, count: 7) {
+      let block = world.getBlock(at: position)
+      let boundingBox = block.shape.outlineShape.offset(by: position.doubleVector)
+      if let distance = boundingBox.intersectionDistance(with: ray) {
+        // TODO: Don't hardcode reach
+        guard distance <= 6 else {
+          break
+        }
+
+        return position
+      }
+    }
+
+    return nil
   }
 
   // MARK: Lifecycle
