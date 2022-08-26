@@ -13,41 +13,41 @@ public struct Mesh {
   public var indices: [UInt32] = []
   /// The mesh's model to world transformation matrix.
   public var uniforms = Uniforms()
-  
+
   /// A GPU buffer containing the vertices.
   public var vertexBuffer: MTLBuffer?
   /// A GPU buffer containing the vertex windings.
   public var indexBuffer: MTLBuffer?
   /// A GPU buffer containing the model to world transformation matrix.
   public var uniformsBuffer: MTLBuffer?
-  
+
   /// If `false`, ``vertexBuffer`` will be recreated next time ``render(into:with:commandQueue:)`` is called.
   public var vertexBufferIsValid = false
   /// If `false`, ``indexBuffer`` will be recreated next time ``render(into:with:commandQueue:)`` is called.
   public var indexBufferIsValid = false
   /// If `false`, ``uniformsBuffer`` will be recreated next time ``render(into:with:commandQueue:)`` is called.
   public var uniformsBufferIsValid = false
-  
+
   /// `true` if the mesh contains no geometry.
   public var isEmpty: Bool {
     return vertices.isEmpty || indices.isEmpty
   }
-  
+
   /// Create a new empty mesh.
   public init() {}
-  
+
   /// Create a new populated mesh.
   public init(vertices: [BlockVertex], indices: [UInt32], uniforms: Uniforms) {
     self.vertices = vertices
     self.indices = indices
     self.uniforms = uniforms
   }
-  
+
   /// Create a new mesh with geometry.
   public init(_ geometry: Geometry, uniforms: Uniforms) {
     self.init(vertices: geometry.vertices, indices: geometry.indices, uniforms: uniforms)
   }
-  
+
   /// Encodes the draw commands to render this mesh into a render encoder. Creates buffers if necessary.
   /// - Parameters:
   ///   - encoder: Render encode to encode commands into.
@@ -61,10 +61,6 @@ public struct Mesh {
     if isEmpty {
       return
     }
-    
-//    var stopwatch = Stopwatch(mode: .verbose, name: "Mesh.render")
-    
-//    stopwatch.startMeasurement("vertexBuffer")
     // Get buffers. If the buffer is valid and not nil, it is used. If the buffer is invalid and not nil,
     // it is repopulated with the new data (if big enough, otherwise a new buffer is created). If the
     // buffer is nil, a new one is created.
@@ -73,55 +69,49 @@ public struct Mesh {
       containing: vertices,
       reusing: vertexBuffer,
       device: device,
-      commandQueue: commandQueue))
-//    stopwatch.stopMeasurement("vertexBuffer")
-    
-//    stopwatch.startMeasurement("indexBuffer")
+      commandQueue: commandQueue
+    ))
+
     let indexBuffer = try ((indexBufferIsValid ? indexBuffer : nil) ?? Self.createPrivateBuffer(
       labelled: "indexBuffer",
       containing: indices,
       reusing: indexBuffer,
       device: device,
-      commandQueue: commandQueue))
-//    stopwatch.stopMeasurement("indexBuffer")
-    
-//    stopwatch.startMeasurement("uniformsBuffer")
+      commandQueue: commandQueue
+    ))
+
     let uniformsBuffer = try ((uniformsBufferIsValid ? uniformsBuffer : nil) ?? Self.createPrivateBuffer(
       labelled: "uniformsBuffer",
       containing: [uniforms],
       reusing: uniformsBuffer,
       device: device,
-      commandQueue: commandQueue))
-//    stopwatch.stopMeasurement("uniformsBuffer")
-    
-//    stopwatch.startMeasurement("update caches")
-    // Update cached buffers. Unnecessary assignments won't affect performance because `MTLBuffer`s are just descriptors, not the actual data
+      commandQueue: commandQueue
+    ))
+
+    // Update cached buffers. Unnecessary assignments won't affect performance because `MTLBuffer`s
+    // are just descriptors, not the actual data
     self.vertexBuffer = vertexBuffer
     self.indexBuffer = indexBuffer
     self.uniformsBuffer = uniformsBuffer
-//    stopwatch.stopMeasurement("update caches")
-    
+
     // Buffers are now all valid
     vertexBufferIsValid = true
     indexBufferIsValid = true
     uniformsBufferIsValid = true
-    
-//    stopwatch.startMeasurement("setVertexBuffer calls")
+
     // Encode draw call
     encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
     encoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 2)
-//    stopwatch.stopMeasurement("setVertexBuffer calls")
-    
-//    stopwatch.startMeasurement("drawIndexedPrimitives")
+
     encoder.drawIndexedPrimitives(
       type: .triangle,
       indexCount: indices.count,
       indexType: .uint32,
       indexBuffer: indexBuffer,
-      indexBufferOffset: 0)
-//    stopwatch.stopMeasurement("drawIndexedPrimitives")
+      indexBufferOffset: 0
+    )
   }
-  
+
   /// Force buffers to be recreated on next call to ``render(into:for:commandQueue:)``.
   ///
   /// The underlying private buffer may be reused, but it will be repopulated with the new data.
@@ -135,14 +125,14 @@ public struct Mesh {
     indexBufferIsValid = keepIndexBuffer
     uniformsBufferIsValid = keepUniformsBuffer
   }
-  
+
   /// Clears the mesh's geometry and invalidates its buffers.
   public mutating func clearGeometry() {
     vertices = []
     indices = []
     invalidateBuffers(keepUniformsBuffer: true)
   }
-  
+
   /// Creates a buffer on the GPU containing a given array. Reuses the supplied private buffer if it's big enough.
   /// - Returns: A new private buffer.
   private static func createPrivateBuffer<T>(
@@ -157,7 +147,7 @@ public struct Mesh {
     guard let sharedBuffer = device.makeBuffer(bytes: items, length: bufferSize, options: [.storageModeShared]) else {
       throw MeshError.failedToCreateBuffer
     }
-    
+
     // Create a private buffer (only accessible from GPU) or reuse the existing buffer if possible
     let privateBuffer: MTLBuffer
     if let existingBuffer = existingBuffer, existingBuffer.length >= bufferSize {
@@ -171,19 +161,19 @@ public struct Mesh {
       privateBuffer = buffer
     }
     privateBuffer.label = label
-    
+
     guard
       let commandBuffer = commandQueue.makeCommandBuffer(),
       let encoder = commandBuffer.makeBlitCommandEncoder()
     else {
       throw MeshError.failedToCreateBuffer
     }
-    
+
     // Encode and commit a blit operation to copy the contents of the scratch buffer into the private buffer
     encoder.copy(from: sharedBuffer, sourceOffset: 0, to: privateBuffer, destinationOffset: 0, size: bufferSize)
     encoder.endEncoding()
     commandBuffer.commit()
-    
+
     return privateBuffer
   }
 }

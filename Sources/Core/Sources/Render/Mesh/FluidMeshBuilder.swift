@@ -379,6 +379,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
         r: tint.x,
         g: tint.y,
         b: tint.z,
+        a: 1,
         textureIndex: texture,
         isTransparent: false
       )

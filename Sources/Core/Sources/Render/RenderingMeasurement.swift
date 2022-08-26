@@ -7,6 +7,7 @@ public enum RenderingMeasurement: String, Hashable {
   case updateWorldMesh
   case updateAnimatedTextures
   case encodeOpaque
+  case encodeBlockOutline
   case encodeTranslucent
 
   case entities

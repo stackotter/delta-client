@@ -25,6 +25,16 @@ struct CubeGeometry {
     CubeGeometry.generateFaceVertices(facing: .east)
   ]
 
+  /// Indexed by ``Direction/rawValue`` and used to generate ``faceVertices``.
+  static let faceVertexIndices: [[Int]] = [
+    [6, 2, 1, 5],
+    [3, 7, 4, 0],
+    [0, 1, 2, 3],
+    [7, 6, 5, 4],
+    [4, 5, 1, 0],
+    [3, 2, 6, 7]
+  ]
+
   public static let shades: [Float] = [
     0.6, // down
     1.0, // up
@@ -32,16 +42,8 @@ struct CubeGeometry {
     0.7, 0.7  // east, west
   ]
 
-  static func generateFaceVertices(facing: Direction) -> [SIMD3<Float>] {
-    let vertexIndices: [Int]
-    switch facing {
-      case .up: vertexIndices = [3, 7, 4, 0]
-      case .down: vertexIndices = [6, 2, 1, 5]
-      case .east: vertexIndices = [3, 2, 6, 7]
-      case .west: vertexIndices = [4, 5, 1, 0]
-      case .north: vertexIndices = [0, 1, 2, 3]
-      case .south: vertexIndices = [7, 6, 5, 4]
-    }
+  static func generateFaceVertices(facing face: Direction) -> [SIMD3<Float>] {
+    let vertexIndices = faceVertexIndices[face.rawValue]
 
     let vertices = vertexIndices.map { index in
       return cubeVertices[index]

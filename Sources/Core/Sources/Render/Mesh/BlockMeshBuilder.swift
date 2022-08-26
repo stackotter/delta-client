@@ -160,6 +160,7 @@ struct BlockMeshBuilder {
         r: tint.x,
         g: tint.y,
         b: tint.z,
+        a: 1,
         textureIndex: textureIndex,
         isTransparent: isTransparent
       )

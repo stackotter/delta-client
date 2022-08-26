@@ -129,18 +129,6 @@ public struct EntityRenderer: Renderer {
       profiler.pop()
     }
 
-    // Render targeted block outline
-    if let targetedBlockPosition = client.game.targetedBlock() {
-      let block = client.game.world.getBlock(at: targetedBlockPosition)
-      let boundingBox = block.shape.outlineShape.offset(by: targetedBlockPosition.doubleVector)
-
-      for aabb in boundingBox.aabbs {
-        let scale = MatrixUtil.scalingMatrix(SIMD3<Float>(aabb.size + [0.01, 0.01, 0.01]))
-        let translate = MatrixUtil.translationMatrix(SIMD3<Float>(aabb.position - [0.005, 0.005, 0.005]))
-        entityUniforms.append(Uniforms(transformation: scale * translate))
-      }
-    }
-
     guard !entityUniforms.isEmpty else {
       return
     }

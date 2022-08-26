@@ -11,6 +11,7 @@ public struct BlockVertex {
   let r: Float
   let g: Float
   let b: Float
+  let a: Float
   let textureIndex: UInt16
   let isTransparent: Bool
 }

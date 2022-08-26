@@ -26,10 +26,10 @@ vertex RasterizerData entityVertexShader(constant Vertex *vertices [[buffer(0)]]
                                         uint instanceId [[instance_id]]) {
   Vertex in = vertices[vertexId];
   RasterizerData out;
-  
+
   out.position = float4(in.x, in.y, in.z, 1.0) * instanceUniforms[instanceId].transformation * uniforms.transformation;
   out.color = float4(in.r, in.g, in.b, 1);
-  
+
   return out;
 }
 
