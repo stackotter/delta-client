@@ -269,32 +269,50 @@ public final class WorldRenderer: Renderer {
     size: SIMD3<Float>,
     baseIndex: UInt32
   ) -> Geometry {
-    let width: Float = 0.05
-    let halfWidth = width / 2
+    let thickness: Float = 0.05
+    let padding: Float = -thickness + 0.005
     var boxes: [(position: SIMD3<Float>, size: SIMD3<Float>, axis: Axis)] = []
     for side: Direction in [.north, .east, .south, .west] {
       // Create up-right edge between this side and the next
       let adjacentSide = side.rotated(1, clockwiseFacing: .down)
 
-      let scaledSide = side.vector * size.component(along: side.axis)
-      let scaledAdjacentSide = adjacentSide.vector * size.component(along: adjacentSide.axis)
-
-      let position = (scaledSide + scaledAdjacentSide) / 2 + SIMD3(size.x / 2, 0, size.z / 2)
+      var position = side.vector + adjacentSide.vector
+      position *= size / 2 + SIMD3(padding + thickness / 2, 0, padding + thickness / 2)
+      position += SIMD3(size.x - thickness, 0, size.z - thickness) / 2
+      position.y -= padding
       boxes.append((
-        position: position - SIMD3(halfWidth, 0, halfWidth),
-        size: [width, size.component(along: .y), width],
+        position: position,
+        size: [thickness, size.component(along: .y) + padding * 2, thickness],
         axis: .y
       ))
 
       // Create the edges above and below this side
       for direction: Direction in [.up, .down] {
         let edgeDirection = adjacentSide.axis.positiveDirection.vector
-        let offset = (direction == .up ? direction.vector : .zero) * size.component(along: .y)
-        let position = side.vector / 2 + SIMD3(0.5, 0, 0.5) - edgeDirection / 2 + offset
-        let scaledPosition = position * size
+        var edgeSize = size.component(along: adjacentSide.axis) + (padding + thickness) * 2
+        if adjacentSide.axis == .x {
+          edgeSize -= thickness * 2
+        }
+        let edge = abs(adjacentSide.vector * edgeSize)
+
+        var position = position
+        if direction == .up {
+          position.y += size.component(along: adjacentSide.axis) + padding * 2
+        } else {
+          position.y -= thickness
+        }
+        if position.component(along: adjacentSide.axis) > 0 {
+          if adjacentSide.axis == .x {
+            position.x -= size.component(along: .x) + padding * 2
+          } else {
+            position.z -= size.component(along: .z) + padding * 2 + thickness
+          }
+        } else if adjacentSide.axis == .x {
+          position.x += thickness
+        }
         boxes.append((
-          position: scaledPosition - (SIMD3(1, 1, 1) - edgeDirection) * halfWidth,
-          size: (SIMD3(1, 1, 1) - edgeDirection) * width + abs(scaledAdjacentSide),
+          position: position,
+          size: (SIMD3(1, 1, 1) - edgeDirection) * thickness + edge,
           axis: adjacentSide.axis
         ))
       }
