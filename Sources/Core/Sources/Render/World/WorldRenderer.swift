@@ -271,7 +271,7 @@ public final class WorldRenderer: Renderer {
   ) -> Geometry {
     let thickness: Float = 0.05
     let padding: Float = -thickness + 0.005
-    var boxes: [(position: SIMD3<Float>, size: SIMD3<Float>, axis: Axis)] = []
+    var boxes: [(position: SIMD3<Float>, size: SIMD3<Float>, axis: Axis, faces: [Direction])] = []
     for side: Direction in [.north, .east, .south, .west] {
       // Create up-right edge between this side and the next
       let adjacentSide = side.rotated(1, clockwiseFacing: .down)
@@ -283,7 +283,8 @@ public final class WorldRenderer: Renderer {
       boxes.append((
         position: position,
         size: [thickness, size.component(along: .y) + padding * 2, thickness],
-        axis: .y
+        axis: .y,
+        faces: [side, adjacentSide]
       ))
 
       // Create the edges above and below this side
@@ -310,10 +311,15 @@ public final class WorldRenderer: Renderer {
         } else if adjacentSide.axis == .x {
           position.x += thickness
         }
+        var faces = [side, direction]
+        if adjacentSide.axis != .x {
+          faces.append(contentsOf: [adjacentSide, adjacentSide.opposite])
+        }
         boxes.append((
           position: position,
           size: (SIMD3(1, 1, 1) - edgeDirection) * thickness + edge,
-          axis: adjacentSide.axis
+          axis: adjacentSide.axis,
+          faces: faces
         ))
       }
     }
@@ -321,35 +327,31 @@ public final class WorldRenderer: Renderer {
     var blockOutlineVertices: [BlockVertex] = []
     var blockOutlineIndices: [UInt32] = []
 
-    let winding = CubeGeometry.faceVertexIndices.flatMap { faceVertexIndices in
-      return CubeGeometry.faceWinding.map { index in
-        return UInt32(faceVertexIndices[Int(index)])
-      }
-    }
-
     let translation = MatrixUtil.translationMatrix(position)
     for box in boxes {
-      let offset = UInt32(blockOutlineVertices.count) + baseIndex
-      blockOutlineIndices.append(contentsOf: winding.map { index in
-        return index + offset
-      })
+      for face in box.faces {
+        let offset = UInt32(blockOutlineVertices.count) + baseIndex
+        blockOutlineIndices.append(contentsOf: CubeGeometry.faceWinding.map { index in
+          return index + offset
+        })
 
-      let transformation = MatrixUtil.scalingMatrix(box.size) * MatrixUtil.translationMatrix(box.position) * translation
-      for vertex in CubeGeometry.cubeVertices {
-        let vertexPosition = simd_make_float3(SIMD4<Float>(vertex, 1) * transformation)
-        blockOutlineVertices.append(BlockVertex(
-          x: vertexPosition.x,
-          y: vertexPosition.y,
-          z: vertexPosition.z,
-          u: 0,
-          v: 0,
-          r: 0,
-          g: 0,
-          b: 0,
-          a: 0.6,
-          textureIndex: UInt16.max,
-          isTransparent: false
-        ))
+        let transformation = MatrixUtil.scalingMatrix(box.size) * MatrixUtil.translationMatrix(box.position) * translation
+        for vertex in CubeGeometry.faceVertices[face.rawValue] {
+          let vertexPosition = simd_make_float3(SIMD4<Float>(vertex, 1) * transformation)
+          blockOutlineVertices.append(BlockVertex(
+            x: vertexPosition.x,
+            y: vertexPosition.y,
+            z: vertexPosition.z,
+            u: 0,
+            v: 0,
+            r: 0,
+            g: 0,
+            b: 0,
+            a: 0.6,
+            textureIndex: UInt16.max,
+            isTransparent: false
+          ))
+        }
       }
     }
 
