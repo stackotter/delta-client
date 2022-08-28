@@ -269,8 +269,8 @@ public final class WorldRenderer: Renderer {
     size: SIMD3<Float>,
     baseIndex: UInt32
   ) -> Geometry {
-    let thickness: Float = 0.05
-    let padding: Float = -thickness + 0.005
+    let thickness: Float = 0.004
+    let padding: Float = -thickness + 0.001
     var boxes: [(position: SIMD3<Float>, size: SIMD3<Float>, axis: Axis, faces: [Direction])] = []
     for side: Direction in [.north, .east, .south, .west] {
       // Create up-right edge between this side and the next
@@ -298,7 +298,7 @@ public final class WorldRenderer: Renderer {
 
         var position = position
         if direction == .up {
-          position.y += size.component(along: adjacentSide.axis) + padding * 2
+          position.y += size.component(along: .y) + padding * 2
         } else {
           position.y -= thickness
         }
@@ -331,9 +331,13 @@ public final class WorldRenderer: Renderer {
     for box in boxes {
       for face in box.faces {
         let offset = UInt32(blockOutlineVertices.count) + baseIndex
-        blockOutlineIndices.append(contentsOf: CubeGeometry.faceWinding.map { index in
+        let winding = CubeGeometry.faceWinding.map { index in
           return index + offset
-        })
+        }
+
+        // Render both front and back faces
+        blockOutlineIndices.append(contentsOf: winding)
+        blockOutlineIndices.append(contentsOf: winding.reversed())
 
         let transformation = MatrixUtil.scalingMatrix(box.size) * MatrixUtil.translationMatrix(box.position) * translation
         for vertex in CubeGeometry.faceVertices[face.rawValue] {
