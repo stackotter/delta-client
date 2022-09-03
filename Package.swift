@@ -24,13 +24,15 @@ let package = Package(
       targets: ["DeltaClient"]
     ),
 
-    // Importing DynamicShim as a dependency in your own project will in effect just import DeltaCore, DeltaCoreC and PluginAPI but will use dynamic linking
+    // Importing DynamicShim as a dependency in your own project will in effect just import
+    // DeltaCore using dynamic linking
     .library(
       name: "DynamicShim",
       targets: ["DynamicShim"]
     ),
-    
-    // Importing StaticShim as a dependency in your own project will just import DeltaCore, DeltaCoreC and PluginAPI and will use static linking
+
+    // Importing StaticShim as a dependency in your own project will just import DeltaCore
+    // using static linking
     .library(
       name: "StaticShim",
       targets: ["StaticShim"]
@@ -45,10 +47,9 @@ let package = Package(
         .product(name: "SwordRPC", package: "SwordRPC", condition: .when(platforms: [.macOS])),
         .product(name: "ArgumentParser", package: "swift-argument-parser")
       ],
-      path: "Sources/Client",
-      swiftSettings: [.define("DEBUG_LOCKS")]
+      path: "Sources/Client"
     ),
-    
+
     .target(
       name: "DynamicShim",
       dependencies: [
@@ -56,7 +57,7 @@ let package = Package(
       ],
       path: "Sources/Exporters/DynamicShim"
     ),
-    
+
     .target(
       name: "StaticShim",
       dependencies: [
