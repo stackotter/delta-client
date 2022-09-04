@@ -1,3 +1,4 @@
+import Collections
 import Metal
 import simd
 
@@ -82,7 +83,7 @@ struct GUI {
     root.add(GUISprite.crossHair, .center)
   }
 
-  func chat(_ parentGroup: inout GUIGroupElement, _ messages: [ChatMessage]) {
+  func chat(_ parentGroup: inout GUIGroupElement, _ messages: Deque<ChatMessage>) {
     let threshold = CFAbsoluteTimeGetCurrent() - Self.messageHideDelay
     let startIndex: Int? = messages.firstIndex { message in
       return message.timeReceived >= threshold

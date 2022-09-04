@@ -1,7 +1,11 @@
+import Collections
+
 /// Storage for a game's chat.
 public struct Chat {
+  public static let maximumScrollback = 200
+
   /// All messages sent and received.
-  public var messages: [ChatMessage] = [] // TODO: limit size of scrollback buffer
+  public var messages: Deque<ChatMessage> = []
 
   /// Creates an empty chat.
   public init() {}
@@ -9,6 +13,9 @@ public struct Chat {
   /// Add a message to the chat.
   /// - Parameter message: The message to add.
   public mutating func add(_ message: ChatMessage) {
-    self.messages.append(message)
+    messages.append(message)
+    if messages.count > Self.maximumScrollback {
+      messages.removeFirst()
+    }
   }
 }
