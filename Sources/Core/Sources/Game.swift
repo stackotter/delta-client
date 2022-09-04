@@ -136,6 +136,15 @@ public struct Game {
     return _guiState.inner
   }
 
+  /// Mutates the GUI state using a provided action.
+  /// - acquireLock: If `false`, a nexus lock will not be acquired. Use with caution.
+  /// - action: Action to run on GUI state.
+  public func mutateGUIState(acquireLock: Bool = true, action: (inout GUIState) -> Void) {
+    if acquireLock { nexusLock.acquireWriteLock() }
+    defer { if acquireLock { nexusLock.unlock() } }
+    action(&_guiState.inner)
+  }
+
   // MARK: Entity
 
   /// A method for creating entities in a thread-safe manor.

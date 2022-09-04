@@ -67,6 +67,16 @@ struct GUI {
       root.add(debugScreen(), .position(4, 4))
     }
 
+    if let message = state.chat.messages.last {
+      root.add(
+        GUIColoredString(
+          message.content.toText(with: client.resourcePack.getDefaultLocale()),
+          [1, 1, 1]
+        ),
+        Constraints(.bottom(10), .left(10))
+      )
+    }
+
     // Hot bar area (hot bar, health, food, etc.)
     hotbarArea(&root)
 

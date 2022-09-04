@@ -29,7 +29,7 @@ public struct ChatComponent: Decodable, Equatable {
 
   public init(from decoder: Decoder) throws {
     style = try Style(from: decoder)
-    
+
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
     if container.contains(.children) {
