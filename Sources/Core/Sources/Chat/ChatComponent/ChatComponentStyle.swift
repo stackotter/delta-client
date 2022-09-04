@@ -23,7 +23,7 @@ extension ChatComponent {
       case obfuscated
       case color
     }
-  
+
     /// Creates a chat style. Defaults to white text with no decoration.
     public init(
       bold: Bool? = nil,
@@ -40,7 +40,7 @@ extension ChatComponent {
       self.obfuscated = obfuscated
       self.color = color
     }
-    
+
     public init(from decoder: Decoder) throws {
       let container = try decoder.container(keyedBy: CodingKeys.self)
       bold = (try? container.decode(Bool.self, forKey: .bold))

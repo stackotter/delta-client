@@ -12,12 +12,12 @@ struct GUIColoredString: GUIElement {
   }
 
   func meshes(context: GUIContext) throws -> [GUIElementMesh] {
-    return [try GUIElementMesh(
+    return (try? GUIElementMesh(
       text: text,
       font: context.font,
       fontArrayTexture: context.fontArrayTexture,
       color: color,
       outlineColor: outlineColor
-    )]
+    )).map { [$0] } ?? []
   }
 }

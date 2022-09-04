@@ -1,7 +1,13 @@
 import FirebladeECS
 
 public struct PlayerInputSystem: System {
-  public func update(_ nexus: Nexus, _ world: World) {
+  var connection: ServerConnection?
+
+  public init(_ connection: ServerConnection?) {
+    self.connection = connection
+  }
+
+  public func update(_ nexus: Nexus, _ world: World) throws {
     var family = nexus.family(
       requiresAll: EntityRotation.self,
       PlayerInventory.self,
@@ -16,6 +22,12 @@ public struct PlayerInputSystem: System {
 
     let inputState = nexus.single(InputState.self).component
     let guiState = nexus.single(GUIStateStorage.self).component
+
+    if guiState.messageInput != nil {
+      inputState.inputs = []
+      inputState.newlyReleased = []
+      inputState.newlyPressed = []
+    }
 
     // Handle non-movement inputs
     for input in inputState.newlyPressed {
@@ -49,6 +61,18 @@ public struct PlayerInputSystem: System {
         default:
           break
       }
+    }
+
+    if var message = guiState.messageInput {
+      if inputState.newlyPressedCharacters.contains("\r") {
+        try connection?.sendPacket(ChatMessageServerboundPacket(message: message))
+        guiState.messageInput = nil
+      } else {
+        message += inputState.newlyPressedCharacters
+        guiState.messageInput = message
+      }
+    } else if inputState.newlyPressed.contains(.openChat) {
+      guiState.messageInput = ""
     }
 
     // Handle mouse input

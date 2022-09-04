@@ -40,27 +40,30 @@ struct GUIElementMesh {
     color: SIMD3<Float> = [1, 1, 1],
     outlineColor: SIMD3<Float>? = nil
   ) throws {
-    guard !text.isEmpty else {
-      throw GUIRendererError.emptyText
-    }
-
     var currentX = 0
     let currentY = 0
     let spacing = 1
     var quads: [GUIQuad] = []
     for character in text {
-      var quad = try GUIQuad(
+      guard var quad = try? GUIQuad(
         for: character,
         with: font,
         fontArrayTexture: fontArrayTexture,
         tint: color
-      )
+      ) else {
+        continue
+      }
+
       quad.translate(amount: SIMD2([
         currentX,
         currentY
       ]))
       quads.append(quad)
       currentX += Int(quad.size.x) + spacing
+    }
+
+    guard !quads.isEmpty else {
+      throw GUIRendererError.emptyText
     }
 
     // Create outline
@@ -153,6 +156,11 @@ struct GUIElementMesh {
     into encoder: MTLRenderCommandEncoder,
     with device: MTLDevice
   ) throws {
+    // Avoid rendering empty mesh
+    if vertices.isEmpty {
+      return
+    }
+
     let vertexBuffer: MTLBuffer
     let uniformsBuffer: MTLBuffer
     if let vertexBufferTemp = self.vertexBuffer, let uniformsBufferTemp = self.uniformsBuffer {

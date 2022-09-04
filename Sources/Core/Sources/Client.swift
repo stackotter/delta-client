@@ -103,11 +103,13 @@ public final class Client: @unchecked Sendable {
 
   // MARK: Input
 
-  /// Handles a key press.
-  /// - Parameter input: The key to press.
-  public func press(_ input: Input) {
-    game.press(input)
-    eventBus.dispatch(InputEvent.press(input))
+  /// Handles an input press.
+  /// - Parameters:
+  ///   - input: The input associated with the press if any is bound.
+  ///   - characters: The characters associated with the pressed keys.
+  public func press(_ input: Input?, _ characters: [Character] = []) {
+    game.press(input, characters)
+    eventBus.dispatch(InputEvent.press(input, characters))
   }
 
   /// Handles a key release.

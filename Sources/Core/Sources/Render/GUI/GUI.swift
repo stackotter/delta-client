@@ -73,40 +73,55 @@ struct GUI {
       root.add(debugScreen(), .position(4, 4))
     }
 
-    // Chat
-    chat(&root, state.chat.messages)
-
     // Hot bar area (hot bar, health, food, etc.)
     hotbarArea(&root)
 
     // Render crosshair
     root.add(GUISprite.crossHair, .center)
+
+    // Chat
+    chat(&root, state.chat.messages, state.messageInput)
   }
 
-  func chat(_ parentGroup: inout GUIGroupElement, _ messages: Deque<ChatMessage>) {
-    let threshold = CFAbsoluteTimeGetCurrent() - Self.messageHideDelay
-    let startIndex: Int? = messages.firstIndex { message in
-      return message.timeReceived >= threshold
+  func chat(
+    _ parentGroup: inout GUIGroupElement,
+    _ messages: Deque<ChatMessage>,
+    _ messageInput: String?
+  ) {
+    let writingMessage = messageInput != nil
+
+    let startIndex: Int?
+    if writingMessage {
+      startIndex = 0
+    } else {
+      let threshold = CFAbsoluteTimeGetCurrent() - Self.messageHideDelay
+      startIndex = messages.firstIndex { message in
+        return message.timeReceived >= threshold
+      }
     }
+
     if var startIndex = startIndex {
       var chat = GUIList(rowHeight: 9)
 
-      let cappedStartIndex = messages.count - Self.maximumDisplayedMessages
-      if startIndex < cappedStartIndex {
-        startIndex = cappedStartIndex
+      if !writingMessage {
+        let cappedStartIndex = messages.count - Self.maximumDisplayedMessages
+        if startIndex < cappedStartIndex {
+          startIndex = cappedStartIndex
+        }
       }
 
       for message in messages[startIndex...] {
-        chat.add(GUIColoredString(
-          message.content.toText(with: client.resourcePack.getDefaultLocale()),
-          [1, 1, 1]
-        ))
+        chat.add(message.content.toText(with: client.resourcePack.getDefaultLocale()))
       }
 
       parentGroup.add(
         chat,
         Constraints(.bottom(40), .left(3))
       )
+    }
+
+    if let messageInput = messageInput {
+      parentGroup.add(messageInput, Constraints(.bottom(31), .left(3)))
     }
   }
 

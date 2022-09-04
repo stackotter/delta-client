@@ -23,7 +23,8 @@ public struct Keymap: Codable {
     .slot6: .six,
     .slot7: .seven,
     .slot8: .eight,
-    .slot9: .nine
+    .slot9: .nine,
+    .openChat: .t
   ])
 
   /// The user's keybindings.

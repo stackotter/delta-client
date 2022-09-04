@@ -28,9 +28,17 @@ public struct ChatComponent: Decodable, Equatable {
   }
 
   public init(from decoder: Decoder) throws {
+    let container: KeyedDecodingContainer<CodingKeys>
+    do {
+      container = try decoder.container(keyedBy: CodingKeys.self)
+    } catch {
+      let content = try decoder.singleValueContainer().decode(String.self)
+      style = Style()
+      self.content = Content.string(content)
+      children = []
+      return
+    }
     style = try Style(from: decoder)
-
-    let container = try decoder.container(keyedBy: CodingKeys.self)
 
     if container.contains(.children) {
       children = try container.decode([ChatComponent].self, forKey: .children)

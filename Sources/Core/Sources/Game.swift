@@ -77,7 +77,7 @@ public struct Game {
     tickScheduler.addSystem(PlayerFrictionSystem())
     tickScheduler.addSystem(PlayerGravitySystem())
     tickScheduler.addSystem(PlayerSmoothingSystem())
-    tickScheduler.addSystem(PlayerInputSystem())
+    tickScheduler.addSystem(PlayerInputSystem(connection))
     tickScheduler.addSystem(PlayerFlightSystem())
     tickScheduler.addSystem(PlayerAccelerationSystem())
     tickScheduler.addSystem(PlayerJumpSystem())
@@ -102,12 +102,12 @@ public struct Game {
 
   /// Presses an input.
   /// - Parameter input: The input to press.
-  public func press(_ input: Input) { // swiftlint:disable:this cyclomatic_complexity
+  public func press(_ input: Input?, _ characters: [Character]) { // swiftlint:disable:this cyclomatic_complexity
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
 
     // Inputs are handled by the ECS
-    inputState.press(input)
+    inputState.press(input, characters)
   }
 
   /// Releases an input.

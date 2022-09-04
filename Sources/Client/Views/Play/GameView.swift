@@ -140,7 +140,7 @@ class GameViewModel: ObservableObject {
         } else {
           DeltaClientApp.modalError("\(generalError.error)")
         }
-      case .press(.performGPUFrameCapture) as InputEvent:
+      case .press(.performGPUFrameCapture, _) as InputEvent:
         let outputFile = StorageManager.default.getUniqueGPUCaptureFile()
         do {
           try renderCoordinator.captureFrames(count: 10, to: outputFile)
