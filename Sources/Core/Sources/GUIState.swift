@@ -1,3 +1,5 @@
-// public struct GUIState {
-//   public var showDebugScreen: Bool
-// }
+public struct GUIState {
+  public var showDebugScreen = false
+
+  public init() {}
+}

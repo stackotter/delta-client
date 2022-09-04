@@ -49,18 +49,6 @@ public final class GUIRenderer: Renderer {
       commandQueue: commandQueue,
       profiler: profiler
     )
-
-    client.eventBus.registerHandler(handleEvent)
-  }
-
-  // TODO: move to GUI
-  func handleEvent(_ event: Event) {
-    switch event {
-      case .press(.toggleDebugHUD) as InputEvent:
-        gui.showDebugScreen = !gui.showDebugScreen
-      default:
-        break
-    }
   }
 
   public func render(

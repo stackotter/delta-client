@@ -4,16 +4,54 @@ public struct PlayerInputSystem: System {
   public func update(_ nexus: Nexus, _ world: World) {
     var family = nexus.family(
       requiresAll: EntityRotation.self,
+      PlayerInventory.self,
+      EntityCamera.self,
       ClientPlayerEntity.self
     ).makeIterator()
 
-    guard let (rotation, _) = family.next() else {
+    guard let (rotation, inventory, camera, _) = family.next() else {
       log.error("PlayerInputSystem failed to get player to tick")
       return
     }
 
     let inputState = nexus.single(InputState.self).component
+    let guiState = nexus.single(GUIStateStorage.self).component
 
+    // Handle non-movement inputs
+    for input in inputState.newlyPressed {
+      switch input {
+        case .changePerspective:
+          camera.cyclePerspective()
+        case .toggleDebugHUD:
+          guiState.showDebugScreen = !guiState.showDebugScreen
+        case .slot1:
+          inventory.selectedHotbarSlot = 0
+        case .slot2:
+          inventory.selectedHotbarSlot = 1
+        case .slot3:
+          inventory.selectedHotbarSlot = 2
+        case .slot4:
+          inventory.selectedHotbarSlot = 3
+        case .slot5:
+          inventory.selectedHotbarSlot = 4
+        case .slot6:
+          inventory.selectedHotbarSlot = 5
+        case .slot7:
+          inventory.selectedHotbarSlot = 6
+        case .slot8:
+          inventory.selectedHotbarSlot = 7
+        case .slot9:
+          inventory.selectedHotbarSlot = 8
+        case .nextSlot:
+          inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 1) % 9
+        case .previousSlot:
+          inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 8) % 9
+        default:
+          break
+      }
+    }
+
+    // Handle mouse input
     updateRotation(inputState, rotation)
 
     inputState.resetMouseDelta()

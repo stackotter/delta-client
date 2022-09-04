@@ -50,7 +50,9 @@ public struct Game {
   /// The player.
   private var player: Player
   /// The current input state (keyboard and mouse).
-  private let inputState: Single<InputState>
+  private let inputState: InputState
+  /// The current GUI state (f3 screen, inventory, etc).
+  private let _guiState: GUIStateStorage
 
   // MARK: Init
 
@@ -62,7 +64,8 @@ public struct Game {
 
     tickScheduler = TickScheduler(nexus, nexusLock: nexusLock, world)
 
-    inputState = nexus.single(InputState.self)
+    inputState = nexus.single(InputState.self).component
+    _guiState = nexus.single(GUIStateStorage.self).component
 
     player = Player()
     var player = player
@@ -103,38 +106,8 @@ public struct Game {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
 
-    // Movement inputs are handled by the ECS
-    inputState.component.press(input)
-
-    // Handle non-movement inputs
-    switch input {
-      case .changePerspective:
-        player.camera.cyclePerspective()
-      case .slot1:
-        player.inventory.selectedHotbarSlot = 0
-      case .slot2:
-        player.inventory.selectedHotbarSlot = 1
-      case .slot3:
-        player.inventory.selectedHotbarSlot = 2
-      case .slot4:
-        player.inventory.selectedHotbarSlot = 3
-      case .slot5:
-        player.inventory.selectedHotbarSlot = 4
-      case .slot6:
-        player.inventory.selectedHotbarSlot = 5
-      case .slot7:
-        player.inventory.selectedHotbarSlot = 6
-      case .slot8:
-        player.inventory.selectedHotbarSlot = 7
-      case .slot9:
-        player.inventory.selectedHotbarSlot = 8
-      case .nextSlot:
-        player.inventory.selectedHotbarSlot = (player.inventory.selectedHotbarSlot + 1) % 9
-      case .previousSlot:
-        player.inventory.selectedHotbarSlot = (player.inventory.selectedHotbarSlot + 8) % 9
-      default:
-        break
-    }
+    // Inputs are handled by the ECS
+    inputState.press(input)
   }
 
   /// Releases an input.
@@ -142,7 +115,7 @@ public struct Game {
   public func release(_ input: Input) {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
-    inputState.component.release(input)
+    inputState.release(input)
   }
 
   /// Moves the mouse.
@@ -152,7 +125,15 @@ public struct Game {
   public func moveMouse(_ deltaX: Float, _ deltaY: Float) {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
-    inputState.component.moveMouse(deltaX, deltaY)
+    inputState.moveMouse(deltaX, deltaY)
+  }
+
+  /// Gets a copy of the current GUI state.
+  /// - Returns: A copy of the current GUI state.
+  public func guiState() -> GUIState {
+    nexusLock.acquireReadLock()
+    defer { nexusLock.unlock() }
+    return _guiState.inner
   }
 
   // MARK: Entity

@@ -4,7 +4,6 @@ import simd
 struct GUI {
   var root: GUIGroupElement
   var client: Client
-  var showDebugScreen = false
   var renderStatistics = RenderStatistics(gpuCountersEnabled: false)
   var fpsUpdateInterval = 0.4
   var lastFPSUpdate: CFAbsoluteTime = 0
@@ -60,10 +59,11 @@ struct GUI {
   }
 
   mutating func update(_ screenSize: SIMD2<Int>) {
+    let state = client.game.guiState()
     root = GUIGroupElement(screenSize)
 
     // Debug screen
-    if showDebugScreen {
+    if state.showDebugScreen {
       root.add(debugScreen(), .position(4, 4))
     }
 
