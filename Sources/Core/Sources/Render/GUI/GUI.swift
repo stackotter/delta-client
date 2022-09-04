@@ -2,6 +2,11 @@ import Metal
 import simd
 
 struct GUI {
+  /// The number of seconds until messages should be hidden from the regular GUI.
+  static let messageHideDelay: Double = 10
+  /// The maximum number of messages displayed in the regular GUI.
+  static let maximumDisplayedMessages = 10
+
   var root: GUIGroupElement
   var client: Client
   var renderStatistics = RenderStatistics(gpuCountersEnabled: false)
@@ -67,21 +72,41 @@ struct GUI {
       root.add(debugScreen(), .position(4, 4))
     }
 
-    if let message = state.chat.messages.last {
-      root.add(
-        GUIColoredString(
-          message.content.toText(with: client.resourcePack.getDefaultLocale()),
-          [1, 1, 1]
-        ),
-        Constraints(.bottom(10), .left(10))
-      )
-    }
+    // Chat
+    chat(&root, state.chat.messages)
 
     // Hot bar area (hot bar, health, food, etc.)
     hotbarArea(&root)
 
     // Render crosshair
     root.add(GUISprite.crossHair, .center)
+  }
+
+  func chat(_ parentGroup: inout GUIGroupElement, _ messages: [ChatMessage]) {
+    let threshold = CFAbsoluteTimeGetCurrent() - Self.messageHideDelay
+    let startIndex: Int? = messages.firstIndex { message in
+      return message.timeReceived >= threshold
+    }
+    if var startIndex = startIndex {
+      var chat = GUIList(rowHeight: 9)
+
+      let cappedStartIndex = messages.count - Self.maximumDisplayedMessages
+      if startIndex < cappedStartIndex {
+        startIndex = cappedStartIndex
+      }
+
+      for message in messages[startIndex...] {
+        chat.add(GUIColoredString(
+          message.content.toText(with: client.resourcePack.getDefaultLocale()),
+          [1, 1, 1]
+        ))
+      }
+
+      parentGroup.add(
+        chat,
+        Constraints(.bottom(40), .left(3))
+      )
+    }
   }
 
   func hotbarArea(_ parentGroup: inout GUIGroupElement) {
