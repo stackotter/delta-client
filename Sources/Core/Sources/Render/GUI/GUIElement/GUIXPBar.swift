@@ -3,7 +3,7 @@ import simd
 struct GUIXPBar: GUIElement {
   static let background = GUISprite.xpBarBackground
   static let foreground = GUISprite.xpBarForeground
-  static let textColor: SIMD3<Float> = [126, 252, 31] / 255
+  static let textColor: SIMD4<Float> = [126, 252, 31, 255] / 255
 
   var level: Int
   var progress: Float

@@ -7,7 +7,8 @@ struct GUIVertex {
   /// The uv coordinate.
   var uv: SIMD2<Float>
   /// The color to tint the vertex.
-  var tint: SIMD3<Float>
-  /// The index of the texture in the array texture.
+  var tint: SIMD4<Float>
+  /// The index of the texture in the array texture. If equal to ``UInt16/max``, no texture is
+  /// sampled and the fragment color will be equal to the tint.
   var textureIndex: UInt16
 }

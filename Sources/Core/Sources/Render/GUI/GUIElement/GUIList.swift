@@ -1,10 +1,12 @@
 struct GUIList: GUIElement {
   var items: [GUIListItem]
   var rowHeight: Int
+  var renderRowBackground: Bool
 
-  init(rowHeight: Int) {
+  init(rowHeight: Int, renderRowBackground: Bool = false) {
     items = []
     self.rowHeight = rowHeight
+    self.renderRowBackground = renderRowBackground
   }
 
   mutating func add(_ element: GUIElement) {
@@ -23,6 +25,14 @@ struct GUIList: GUIElement {
         case .element(let element):
           var elementMeshes = try element.meshes(context: context)
           elementMeshes.translate(amount: [0, currentY])
+
+          if renderRowBackground {
+            let bgSize: SIMD2<Int> = [elementMeshes.size().x + 1, rowHeight]
+            var bg = GUIRectangle(size: bgSize, color: [0x50, 0x50, 0x50, 0x90] / 255).meshes(context: context)
+            bg.translate(amount: [-1, currentY - 1])
+            meshes.append(contentsOf: bg)
+          }
+
           meshes.append(contentsOf: elementMeshes)
           currentY += rowHeight
         case .spacer(let height):

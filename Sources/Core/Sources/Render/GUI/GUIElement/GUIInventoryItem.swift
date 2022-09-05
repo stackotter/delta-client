@@ -58,7 +58,7 @@ struct GUIInventoryItem: GUIElement {
           vertices.append(GUIVertex(
             position: [vertex.x, vertex.y],
             uv: [vertex.u, vertex.v],
-            tint: [vertex.r, vertex.g, vertex.b],
+            tint: [vertex.r, vertex.g, vertex.b, 1],
             textureIndex: vertex.textureIndex
           ))
         }

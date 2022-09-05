@@ -5,7 +5,7 @@ using namespace metal;
 struct GUIVertex {
   float2 position;
   float2 uv;
-  float3 tint;
+  float4 tint;
   uint16_t textureIndex;
 };
 
@@ -22,5 +22,5 @@ struct FragmentInput {
   float4 position [[position]];
   float2 uv;
   uint16_t textureIndex;
-  float3 tint;
+  float4 tint;
 };

@@ -9,7 +9,7 @@ struct GUIElementMesh {
   /// The vertices making up the element.
   var vertices: [GUIVertex]
   /// The array texture used to render this element.
-  var arrayTexture: MTLTexture
+  var arrayTexture: MTLTexture?
 
   /// The buffer containing ``vertices``.
   var vertexBuffer: MTLBuffer?
@@ -17,7 +17,7 @@ struct GUIElementMesh {
   var uniformsBuffer: MTLBuffer?
 
   /// Creates a mesh from a collection of quads.
-  init(size: SIMD2<Int>, arrayTexture: MTLTexture, quads: [GUIQuad]) {
+  init(size: SIMD2<Int>, arrayTexture: MTLTexture?, quads: [GUIQuad]) {
     self.size = size
     self.arrayTexture = arrayTexture
     vertices = quads.flatMap { quad in
@@ -37,8 +37,8 @@ struct GUIElementMesh {
     text: String,
     font: Font,
     fontArrayTexture: MTLTexture,
-    color: SIMD3<Float> = [1, 1, 1],
-    outlineColor: SIMD3<Float>? = nil
+    color: SIMD4<Float> = [1, 1, 1, 1],
+    outlineColor: SIMD4<Float>? = nil
   ) throws {
     var currentX = 0
     let currentY = 0

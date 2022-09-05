@@ -33,10 +33,15 @@ constexpr sampler textureSampler (mag_filter::nearest, min_filter::nearest, mip_
 
 fragment float4 guiFragment(FragmentInput in [[stage_in]],
                             texture2d_array<float, access::sample> textureArray [[texture(0)]]) {
-  float4 color = textureArray.sample(textureSampler, in.uv, in.textureIndex);
-  if (color.w < 0.33) {
-    discard_fragment();
+  float4 color;
+  if (in.textureIndex == 65535) {
+    color = in.tint;
+  } else {
+    color = textureArray.sample(textureSampler, in.uv, in.textureIndex);
+    if (color.w < 0.33) {
+      discard_fragment();
+    }
+    color *= in.tint;
   }
-  color *= float4(in.tint, 1);
   return color;
 }

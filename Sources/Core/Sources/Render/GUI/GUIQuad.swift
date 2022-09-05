@@ -22,7 +22,7 @@ struct GUIQuad {
   var uvMin: SIMD2<Float>
   var uvSize: SIMD2<Float>
   var textureIndex: UInt16
-  var tint: SIMD3<Float>
+  var tint: SIMD4<Float>
 
   init(
     position: SIMD2<Float>,
@@ -30,7 +30,7 @@ struct GUIQuad {
     uvMin: SIMD2<Float>,
     uvSize: SIMD2<Float>,
     textureIndex: UInt16,
-    tint: SIMD3<Float> = [1, 1, 1]
+    tint: SIMD4<Float> = [1, 1, 1, 1]
   ) {
     self.position = position
     self.size = size
@@ -38,6 +38,20 @@ struct GUIQuad {
     self.uvSize = uvSize
     self.textureIndex = textureIndex
     self.tint = tint
+  }
+
+  /// Creates a quad instance for a solid color rectangle.
+  init(
+    position: SIMD2<Float>,
+    size: SIMD2<Float>,
+    color: SIMD4<Float>
+  ) {
+    self.position = position
+    self.size = size
+    self.tint = color
+    self.uvMin = .zero
+    self.uvSize = .zero
+    self.textureIndex = UInt16.max
   }
 
   /// Creates a quad instance for the given sprite.
@@ -57,7 +71,7 @@ struct GUIQuad {
     uvMin = SIMD2<Float>(sprite.position) / textureSize
     uvSize = self.size / textureSize
     textureIndex = UInt16(guiTexturePalette.textureIndex(for: sprite.slice))
-    tint = [1, 1, 1]
+    tint = [1, 1, 1, 1]
   }
 
   /// Creates a quad instance for the given character.
@@ -65,7 +79,7 @@ struct GUIQuad {
     for character: Character,
     with font: Font,
     fontArrayTexture: MTLTexture,
-    tint: SIMD3<Float> = [1, 1, 1]
+    tint: SIMD4<Float> = [1, 1, 1, 1]
   ) throws {
     guard let descriptor = font.characters[character] else {
       throw GUIRendererError.invalidCharacter(character)

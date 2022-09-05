@@ -40,7 +40,7 @@ public final class GUIRenderer: Renderer {
       label: "GUIRenderer",
       vertexFunction: try MetalUtil.loadFunction("guiVertex", from: library),
       fragmentFunction: try MetalUtil.loadFunction("guiFragment", from: library),
-      blendingEnabled: false
+      blendingEnabled: true
     )
 
     gui = try GUI(

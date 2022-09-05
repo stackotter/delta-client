@@ -70,7 +70,7 @@ struct GUI {
 
     // Debug screen
     if state.showDebugScreen {
-      root.add(debugScreen(), .position(4, 4))
+      root.add(debugScreen(), .position(2, 3))
     }
 
     // Hot bar area (hot bar, health, food, etc.)
@@ -80,13 +80,14 @@ struct GUI {
     root.add(GUISprite.crossHair, .center)
 
     // Chat
-    chat(&root, state.chat.messages, state.messageInput)
+    chat(&root, state.chat.messages, state.messageInput, screenSize)
   }
 
   func chat(
     _ parentGroup: inout GUIGroupElement,
     _ messages: Deque<ChatMessage>,
-    _ messageInput: String?
+    _ messageInput: String?,
+    _ screenSize: SIMD2<Int>
   ) {
     let writingMessage = messageInput != nil
 
@@ -110,18 +111,29 @@ struct GUI {
         }
       }
 
-      for message in messages[startIndex...] {
+      let visibleMessages = messages[startIndex...]
+      for message in visibleMessages {
         chat.add(message.content.toText(with: client.resourcePack.getDefaultLocale()))
       }
 
+      parentGroup.add(GUIRectangle(
+        size: [330, visibleMessages.count * chat.rowHeight],
+        color: [0, 0, 0, 0.5]
+      ), .bottom(40), .left(2))
+
       parentGroup.add(
         chat,
-        Constraints(.bottom(40), .left(3))
+        .bottom(40),
+        .left(3)
       )
     }
 
     if let messageInput = messageInput {
-      parentGroup.add(messageInput, Constraints(.bottom(31), .left(3)))
+      parentGroup.add(GUIRectangle(
+        size: [screenSize.x - 4, 11],
+        color: [0, 0, 0, 0.5]
+      ), .bottom(2), .center)
+      parentGroup.add(messageInput, Constraints(.bottom(3), .left(4)))
     }
   }
 
@@ -169,7 +181,7 @@ struct GUI {
         // Item count
         if stack.count != 1 {
           let offset = 20 * (8 - i) + 4
-          group.add(GUIColoredString(String(stack.count), [62, 62, 62] / 255), .bottom(2), .right(offset - 1))
+          group.add(GUIColoredString(String(stack.count), [62, 62, 62, 255] / 255), .bottom(2), .right(offset - 1))
           group.add(String(stack.count), .bottom(3), .right(offset))
         }
       }
@@ -247,7 +259,7 @@ struct GUI {
     let renderStatistics = savedRenderStatistics
 
     // Version
-    var list = GUIList(rowHeight: 10)
+    var list = GUIList(rowHeight: 9, renderRowBackground: true)
     list.add("Minecraft \(Constants.versionString) (Delta Client)")
 
     // FPS
