@@ -65,10 +65,18 @@ public struct PlayerInputSystem: System {
 
     if var message = guiState.messageInput {
       if inputState.newlyPressedCharacters.contains("\r") {
-        try connection?.sendPacket(ChatMessageServerboundPacket(message: message))
+        if !message.isEmpty {
+          try connection?.sendPacket(ChatMessageServerboundPacket(message: message))
+        }
         guiState.messageInput = nil
-      } else {
-        message += inputState.newlyPressedCharacters
+      } else if message.utf8.count < GUIState.maximumMessageLength {
+        // Ensure that the message doesn't exceed 256 bytes (including if multi-byte characters are entered).
+        for character in inputState.newlyPressedCharacters {
+          guard character.utf8.count + message.utf8.count <= GUIState.maximumMessageLength else {
+            break
+          }
+          message.append(character)
+        }
         guiState.messageInput = message
       }
     } else if inputState.newlyPressed.contains(.openChat) {
