@@ -129,11 +129,10 @@ struct GUI {
     }
 
     if let messageInput = messageInput {
-      parentGroup.add(GUIRectangle(
-        size: [screenSize.x - 4, 11],
-        color: [0, 0, 0, 0.5]
-      ), .bottom(2), .center)
-      parentGroup.add(messageInput, Constraints(.bottom(3), .left(4)))
+      parentGroup.add(GUITextInput(
+        content: messageInput,
+        width: screenSize.x - 4
+      ), .bottom(2), .left(2))
     }
   }
 
