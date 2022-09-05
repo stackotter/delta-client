@@ -77,7 +77,7 @@ public struct Game {
     tickScheduler.addSystem(PlayerFrictionSystem())
     tickScheduler.addSystem(PlayerGravitySystem())
     tickScheduler.addSystem(PlayerSmoothingSystem())
-    tickScheduler.addSystem(PlayerInputSystem(connection))
+    tickScheduler.addSystem(PlayerInputSystem(connection, eventBus))
     tickScheduler.addSystem(PlayerFlightSystem())
     tickScheduler.addSystem(PlayerAccelerationSystem())
     tickScheduler.addSystem(PlayerJumpSystem())
@@ -100,22 +100,25 @@ public struct Game {
 
   // MARK: Input
 
-  /// Presses an input.
-  /// - Parameter input: The input to press.
-  public func press(_ input: Input?, _ characters: [Character]) { // swiftlint:disable:this cyclomatic_complexity
+  /// Handles a key press.
+  /// - Parameters:
+  ///   - key: The pressed key if any.
+  ///   - input: The pressed input if any.
+  ///   - characters: The characters typed by the pressed key.
+  public func press(key: Key?, input: Input?, characters: [Character] = []) { // swiftlint:disable:this cyclomatic_complexity
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
-
-    // Inputs are handled by the ECS
-    inputState.press(input, characters)
+    inputState.press(key: key, input: input, characters: characters)
   }
 
-  /// Releases an input.
-  /// - Parameter input: The input to release.
-  public func release(_ input: Input) {
+  /// Handles a key release.
+  /// - Parameters:
+  ///   - key: The released key if any.
+  ///   - input: The released input if any.
+  public func release(key: Key?, input: Input?) {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
-    inputState.release(input)
+    inputState.release(key: key, input: input)
   }
 
   /// Moves the mouse.

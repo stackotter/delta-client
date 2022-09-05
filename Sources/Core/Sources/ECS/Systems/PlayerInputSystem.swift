@@ -2,9 +2,11 @@ import FirebladeECS
 
 public struct PlayerInputSystem: System {
   var connection: ServerConnection?
+  var eventBus: EventBus
 
-  public init(_ connection: ServerConnection?) {
+  public init(_ connection: ServerConnection?, _ eventBus: EventBus) {
     self.connection = connection
+    self.eventBus = eventBus
   }
 
   public func update(_ nexus: Nexus, _ world: World) throws {
@@ -23,55 +25,73 @@ public struct PlayerInputSystem: System {
     let inputState = nexus.single(InputState.self).component
     let guiState = nexus.single(GUIStateStorage.self).component
 
-    if guiState.messageInput != nil {
-      inputState.inputs = []
-      inputState.newlyReleased = []
-      inputState.newlyPressed = []
-    }
-
     // Handle non-movement inputs
-    for input in inputState.newlyPressed {
-      switch input {
-        case .changePerspective:
-          camera.cyclePerspective()
-        case .toggleDebugHUD:
-          guiState.showDebugScreen = !guiState.showDebugScreen
-        case .slot1:
-          inventory.selectedHotbarSlot = 0
-        case .slot2:
-          inventory.selectedHotbarSlot = 1
-        case .slot3:
-          inventory.selectedHotbarSlot = 2
-        case .slot4:
-          inventory.selectedHotbarSlot = 3
-        case .slot5:
-          inventory.selectedHotbarSlot = 4
-        case .slot6:
-          inventory.selectedHotbarSlot = 5
-        case .slot7:
-          inventory.selectedHotbarSlot = 6
-        case .slot8:
-          inventory.selectedHotbarSlot = 7
-        case .slot9:
-          inventory.selectedHotbarSlot = 8
-        case .nextSlot:
-          inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 1) % 9
-        case .previousSlot:
-          inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 8) % 9
-        default:
-          break
+    var isInputSuppressed: [Bool] = []
+    for event in inputState.newlyPressed {
+      let suppressInput = try handleChat(event, guiState)
+
+      if !suppressInput {
+        switch event.input {
+          case .changePerspective:
+            camera.cyclePerspective()
+          case .toggleDebugHUD:
+            guiState.showDebugScreen = !guiState.showDebugScreen
+          case .slot1:
+            inventory.selectedHotbarSlot = 0
+          case .slot2:
+            inventory.selectedHotbarSlot = 1
+          case .slot3:
+            inventory.selectedHotbarSlot = 2
+          case .slot4:
+            inventory.selectedHotbarSlot = 3
+          case .slot5:
+            inventory.selectedHotbarSlot = 4
+          case .slot6:
+            inventory.selectedHotbarSlot = 5
+          case .slot7:
+            inventory.selectedHotbarSlot = 6
+          case .slot8:
+            inventory.selectedHotbarSlot = 7
+          case .slot9:
+            inventory.selectedHotbarSlot = 8
+          case .nextSlot:
+            inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 1) % 9
+          case .previousSlot:
+            inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 8) % 9
+          default:
+            break
+        }
+
+        if event.key == .escape {
+          eventBus.dispatch(OpenInGameMenuEvent())
+        }
       }
+
+      isInputSuppressed.append(suppressInput)
     }
 
+    // Handle mouse input
+    updateRotation(inputState, rotation)
+
+    inputState.resetMouseDelta()
+    inputState.tick(isInputSuppressed, eventBus)
+  }
+
+  /// - Returns: Whether to suppress the input associated with the event or not. `true` while user is typing.
+  private func handleChat(_ event: KeyPressEvent, _ guiState: GUIStateStorage) throws -> Bool {
     if var message = guiState.messageInput {
-      if inputState.newlyPressedCharacters.contains("\r") {
+      if event.key == .enter {
         if !message.isEmpty {
           try connection?.sendPacket(ChatMessageServerboundPacket(message: message))
         }
         guiState.messageInput = nil
+        return true
+      } else if event.key == .escape {
+        guiState.messageInput = nil
+        return true
       } else if message.utf8.count < GUIState.maximumMessageLength {
         // Ensure that the message doesn't exceed 256 bytes (including if multi-byte characters are entered).
-        for character in inputState.newlyPressedCharacters {
+        for character in event.characters {
           guard character.utf8.count + message.utf8.count <= GUIState.maximumMessageLength else {
             break
           }
@@ -79,15 +99,12 @@ public struct PlayerInputSystem: System {
         }
         guiState.messageInput = message
       }
-    } else if inputState.newlyPressed.contains(.openChat) {
+    } else if event.input == .openChat {
       guiState.messageInput = ""
     }
 
-    // Handle mouse input
-    updateRotation(inputState, rotation)
-
-    inputState.resetMouseDelta()
-    inputState.flushInputs()
+    // Supress inputs while the user is typing
+    return guiState.messageInput != nil
   }
 
   /// Updates the direction which the player is looking.

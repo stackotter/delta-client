@@ -1,4 +1,5 @@
 import SwiftUI
+import DeltaCore
 
 final class InputDelegateWrapper {
   var delegate: InputDelegate?
@@ -115,49 +116,49 @@ struct InputView<Content: View>: View {
             let previousRaw = Int32(model.previousModifierFlags?.rawValue ?? 0)
 
             if raw & NX_DEVICELALTKEYMASK != 0 && previousRaw & NX_DEVICELALTKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.leftOption)
+              delegateWrapper.delegate?.onKeyDown(.leftOption, [])
             } else if raw & NX_DEVICELALTKEYMASK == 0 && previousRaw & NX_DEVICELALTKEYMASK != 0 {
               delegateWrapper.delegate?.onKeyUp(.leftOption)
             }
 
             if raw & NX_DEVICELCMDKEYMASK != 0 && previousRaw & NX_DEVICELCMDKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.leftCommand)
+              delegateWrapper.delegate?.onKeyDown(.leftCommand, [])
             } else if raw & NX_DEVICELCMDKEYMASK == 0 && previousRaw & NX_DEVICELCMDKEYMASK != 0 {
               delegateWrapper.delegate?.onKeyUp(.leftCommand)
             }
 
             if raw & NX_DEVICELCTLKEYMASK != 0 && previousRaw & NX_DEVICELCTLKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.leftControl)
+              delegateWrapper.delegate?.onKeyDown(.leftControl, [])
             } else if raw & NX_DEVICELCTLKEYMASK == 0 && previousRaw & NX_DEVICELCTLKEYMASK != 0 {
               delegateWrapper.delegate?.onKeyUp(.leftControl)
             }
 
             if raw & NX_DEVICELSHIFTKEYMASK != 0 && previousRaw & NX_DEVICELSHIFTKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.leftShift)
+              delegateWrapper.delegate?.onKeyDown(.leftShift, [])
             } else if raw & NX_DEVICELSHIFTKEYMASK == 0 && previousRaw & NX_DEVICELSHIFTKEYMASK != 0 {
               delegateWrapper.delegate?.onKeyUp(.leftShift)
             }
 
             if raw & NX_DEVICERALTKEYMASK != 0 && previousRaw & NX_DEVICERALTKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.rightOption)
+              delegateWrapper.delegate?.onKeyDown(.rightOption, [])
             } else if raw & NX_DEVICERALTKEYMASK == 0 && previousRaw & NX_DEVICERALTKEYMASK != 0 {
               delegateWrapper.delegate?.onKeyUp(.rightOption)
             }
 
             if raw & NX_DEVICERCMDKEYMASK != 0 && previousRaw & NX_DEVICERCMDKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.rightCommand)
+              delegateWrapper.delegate?.onKeyDown(.rightCommand, [])
             } else if raw & NX_DEVICERCMDKEYMASK == 0 && previousRaw & NX_DEVICERCMDKEYMASK != 0 {
               delegateWrapper.delegate?.onKeyUp(.rightCommand)
             }
 
             if raw & NX_DEVICERCTLKEYMASK != 0 && previousRaw & NX_DEVICERCTLKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.rightControl)
+              delegateWrapper.delegate?.onKeyDown(.rightControl, [])
             } else if raw & NX_DEVICERCTLKEYMASK == 0 && previousRaw & NX_DEVICERCTLKEYMASK != 0 {
               delegateWrapper.delegate?.onKeyUp(.rightControl)
             }
 
             if raw & NX_DEVICERSHIFTKEYMASK != 0 && previousRaw & NX_DEVICERSHIFTKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.rightShift)
+              delegateWrapper.delegate?.onKeyDown(.rightShift, [])
             } else if raw & NX_DEVICERSHIFTKEYMASK == 0 && previousRaw & NX_DEVICERSHIFTKEYMASK != 0 {
               delegateWrapper.delegate?.onKeyUp(.rightShift)
             }

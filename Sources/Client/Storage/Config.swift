@@ -18,7 +18,7 @@ public struct Config: Codable {
   public var keymap: Keymap
   /// The in game mouse sensitivity
   public var mouseSensitivity: Float
-  
+
   /// The account the user has currently selected.
   public var selectedAccount: Account? {
     if let id = selectedAccountId {
@@ -27,7 +27,7 @@ public struct Config: Codable {
       return nil
     }
   }
-  
+
   /// Creates the default config.
   public init() {
     clientToken = UUID().uuidString

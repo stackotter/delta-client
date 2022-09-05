@@ -57,7 +57,7 @@ class GameViewModel: ObservableObject {
   }
 
   func closeMenu() {
-    inputDelegate.keymap = ConfigManager.default.config.keymap
+    client.configuration.keymap = ConfigManager.default.config.keymap
     inputDelegate.mouseSensitivity = ConfigManager.default.config.mouseSensitivity
 
     withAnimation(nil) {
@@ -140,13 +140,15 @@ class GameViewModel: ObservableObject {
         } else {
           DeltaClientApp.modalError("\(generalError.error)")
         }
-      case .press(.performGPUFrameCapture, _) as InputEvent:
+      case let event as KeyPressEvent where event.input == .performGPUFrameCapture:
         let outputFile = StorageManager.default.getUniqueGPUCaptureFile()
         do {
           try renderCoordinator.captureFrames(count: 10, to: outputFile)
         } catch {
           DeltaClientApp.modalError("Failed to start frame capture: \(error)", safeState: .serverList)
         }
+      case _ as OpenInGameMenuEvent:
+        inputDelegate.releaseCursor()
       case let event as FinishFrameCaptureEvent:
         inputDelegate.releaseCursor()
         state.update(to: .gpuFrameCaptureComplete(file: event.file))
@@ -170,6 +172,7 @@ struct GameView: View {
   ) {
     let client = Client(resourcePack: resourcePack)
     client.configuration.render = ConfigManager.default.config.render
+    client.configuration.keymap = ConfigManager.default.config.keymap
 
     // Setup input system
     let inputDelegate = ClientInputDelegate(for: client)

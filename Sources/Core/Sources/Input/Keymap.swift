@@ -1,5 +1,4 @@
 import Foundation
-import DeltaCore
 
 /// A keymap stores the user's keybindings.
 public struct Keymap: Codable {
@@ -14,7 +13,6 @@ public struct Keymap: Codable {
     .sprint: .leftControl,
     .toggleDebugHUD: .f3,
     .changePerspective: .f5,
-    .performGPUFrameCapture: .semicolon,
     .slot1: .one,
     .slot2: .two,
     .slot3: .three,

@@ -103,20 +103,32 @@ public final class Client: @unchecked Sendable {
 
   // MARK: Input
 
-  /// Handles an input press.
+  /// Handles a key press.
   /// - Parameters:
-  ///   - input: The input associated with the press if any is bound.
-  ///   - characters: The characters associated with the pressed keys.
-  public func press(_ input: Input?, _ characters: [Character] = []) {
-    game.press(input, characters)
-    eventBus.dispatch(InputEvent.press(input, characters))
+  ///   - key: The pressed key.
+  ///   - characters: The characters typed by pressing the key.
+  public func press(_ key: Key, _ characters: [Character] = []) {
+    let input = configuration.keymap.getInput(for: key)
+    game.press(key: key, input: input, characters: characters)
+  }
+
+  /// Handles an input press.
+  /// - Parameter input: The pressed input.
+  public func press(_ input: Input) {
+    game.press(key: nil, input: input)
   }
 
   /// Handles a key release.
-  /// - Parameter input: The key to release.
+  /// - Parameter key: The released key.
+  public func release(_ key: Key) {
+    let input = configuration.keymap.getInput(for: key)
+    game.release(key: key, input: input)
+  }
+
+  /// Handles an input release.
+  /// - Parameter input: The released input.
   public func release(_ input: Input) {
-    game.release(input)
-    eventBus.dispatch(InputEvent.release(input))
+    game.release(key: nil, input: input)
   }
 
   /// Moves the mouse.

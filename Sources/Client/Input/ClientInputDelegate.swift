@@ -9,7 +9,6 @@ final class ClientInputDelegate: InputDelegate {
   /// ``mouseSensitivity`` is multiplied by this factor before use.
   let sensitivityAdjustmentFactor: Float = 0.004
 
-  var keymap = ConfigManager.default.config.keymap
   var mouseSensitivity = ConfigManager.default.config.mouseSensitivity
 
   var client: Client
@@ -30,21 +29,12 @@ final class ClientInputDelegate: InputDelegate {
 
   func onKeyDown(_ key: Key, _ characters: [Character] = []) {
     pressedKeys.insert(key)
-
-    if key == .escape {
-      releaseCursor()
-    }
-
-    let input = keymap.getInput(for: key)
-    client.press(input, characters)
+    client.press(key, characters)
   }
 
   func onKeyUp(_ key: Key) {
     pressedKeys.remove(key)
-
-    if let input = keymap.getInput(for: key) {
-      client.release(input)
-    }
+    client.release(key)
   }
 
   func onMouseMove(_ deltaX: Float, _ deltaY: Float) {
@@ -60,15 +50,13 @@ final class ClientInputDelegate: InputDelegate {
       input = .previousSlot
     }
 
-    client.press(input, [])
+    client.press(input)
     client.release(input)
   }
 
   func releaseCursor() {
     for key in pressedKeys {
-      if let input = keymap.getInput(for: key) {
-        client.release(input)
-      }
+      client.release(key)
     }
 
     pressedKeys = []

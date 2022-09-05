@@ -1,4 +1,5 @@
 import Foundation
+import DeltaCore
 
 protocol InputDelegate: AnyObject {
   func onKeyDown(_ key: Key, _ characters: [Character])

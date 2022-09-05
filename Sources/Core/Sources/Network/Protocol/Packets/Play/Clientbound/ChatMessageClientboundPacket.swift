@@ -22,6 +22,6 @@ public struct ChatMessageClientboundPacket: ClientboundEntityPacket {
     }
 
     let message = content.toText(with: locale)
-    log.info("Chat message received: \(message)")
+    log.info(message)
   }
 }
