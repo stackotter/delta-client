@@ -1,4 +1,5 @@
 import FirebladeECS
+import AppKit
 
 public struct PlayerInputSystem: System {
   var connection: ServerConnection?
@@ -28,7 +29,7 @@ public struct PlayerInputSystem: System {
     // Handle non-movement inputs
     var isInputSuppressed: [Bool] = []
     for event in inputState.newlyPressed {
-      let suppressInput = try handleChat(event, guiState)
+      let suppressInput = try handleChat(event, inputState, guiState)
 
       if !suppressInput {
         switch event.input {
@@ -78,7 +79,7 @@ public struct PlayerInputSystem: System {
   }
 
   /// - Returns: Whether to suppress the input associated with the event or not. `true` while user is typing.
-  private func handleChat(_ event: KeyPressEvent, _ guiState: GUIStateStorage) throws -> Bool {
+  private func handleChat(_ event: KeyPressEvent, _ inputState: InputState, _ guiState: GUIStateStorage) throws -> Bool {
     if var message = guiState.messageInput {
       if event.key == .enter {
         if !message.isEmpty {
@@ -89,6 +90,16 @@ public struct PlayerInputSystem: System {
       } else if event.key == .escape {
         guiState.messageInput = nil
         return true
+      } else if event.key == .v && !inputState.keys.intersection([.leftCommand, .rightCommand]).isEmpty {
+        if let content = NSPasteboard.general.string(forType: .string) {
+          for character in content {
+            guard character.utf8.count + message.utf8.count <= GUIState.maximumMessageLength else {
+              break
+            }
+            message.append(character)
+          }
+          guiState.messageInput = message
+        }
       } else if message.utf8.count < GUIState.maximumMessageLength {
         // Ensure that the message doesn't exceed 256 bytes (including if multi-byte characters are entered).
         for character in event.characters {
