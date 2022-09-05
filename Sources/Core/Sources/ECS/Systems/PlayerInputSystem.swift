@@ -81,6 +81,7 @@ public struct PlayerInputSystem: System {
   /// - Returns: Whether to suppress the input associated with the event or not. `true` while user is typing.
   private func handleChat(_ event: KeyPressEvent, _ inputState: InputState, _ guiState: GUIStateStorage) throws -> Bool {
     if var message = guiState.messageInput {
+      var newCharacters: [Character] = []
       if event.key == .enter {
         if !message.isEmpty {
           try connection?.sendPacket(ChatMessageServerboundPacket(message: message))
@@ -90,19 +91,18 @@ public struct PlayerInputSystem: System {
       } else if event.key == .escape {
         guiState.messageInput = nil
         return true
-      } else if event.key == .v && !inputState.keys.intersection([.leftCommand, .rightCommand]).isEmpty {
-        if let content = NSPasteboard.general.string(forType: .string) {
-          for character in content {
-            guard character.utf8.count + message.utf8.count <= GUIState.maximumMessageLength else {
-              break
-            }
-            message.append(character)
+      } else {
+        if event.key == .v && !inputState.keys.intersection([.leftCommand, .rightCommand]).isEmpty {
+          // Handle paste keyboard shortcut
+          if let content = NSPasteboard.general.string(forType: .string) {
+            newCharacters = Array(content)
           }
-          guiState.messageInput = message
+        } else if message.utf8.count < GUIState.maximumMessageLength {
+          newCharacters = event.characters
         }
-      } else if message.utf8.count < GUIState.maximumMessageLength {
+
         // Ensure that the message doesn't exceed 256 bytes (including if multi-byte characters are entered).
-        for character in event.characters {
+        for character in newCharacters {
           guard character.utf8.count + message.utf8.count <= GUIState.maximumMessageLength else {
             break
           }
@@ -112,6 +112,8 @@ public struct PlayerInputSystem: System {
       }
     } else if event.input == .openChat {
       guiState.messageInput = ""
+    } else if event.key == .forwardSlash {
+      guiState.messageInput = "/"
     }
 
     // Supress inputs while the user is typing
