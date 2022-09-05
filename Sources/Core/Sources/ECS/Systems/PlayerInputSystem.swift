@@ -91,6 +91,10 @@ public struct PlayerInputSystem: System {
       } else if event.key == .escape {
         guiState.messageInput = nil
         return true
+      } else if event.key == .delete {
+        if !message.isEmpty {
+          guiState.messageInput?.removeLast()
+        }
       } else {
         if event.key == .v && !inputState.keys.intersection([.leftCommand, .rightCommand]).isEmpty {
           // Handle paste keyboard shortcut
