@@ -91,6 +91,11 @@ struct InputView<Content: View>: View {
                 // Pass through quit command
                 return event
               }
+
+              if key == .f && event.modifierFlags.contains(.command) && event.modifierFlags.contains(.control) {
+                // Pass through full screen command
+                return event
+              }
             }
 
             return nil

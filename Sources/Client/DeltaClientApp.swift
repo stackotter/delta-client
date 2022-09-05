@@ -170,6 +170,12 @@ struct DeltaClientApp: App {
         }
         .keyboardShortcut(KeyboardShortcut(KeyEquivalent(","), modifiers: [.command]))
       })
+      CommandGroup(after: .windowSize, addition: {
+        Button("Toggle Full Screen") {
+          NSApp?.windows.first?.toggleFullScreen(nil)
+        }
+        .keyboardShortcut(KeyboardShortcut(KeyEquivalent("f"), modifiers: [.control, .command]))
+      })
     }
   }
   
