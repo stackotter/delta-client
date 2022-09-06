@@ -90,8 +90,8 @@ Not every version will be perfectly supported but I will try and have the most p
     - [ ] Entity animations
     - [ ] Block entities (e.g. chests)
     - [ ] Item entities
-  - [x] GUI
-    - [ ] Chat
+  - [ ] GUI
+    - [x] Chat
     - [x] F3-style stuff
     - [ ] Bossbars
     - [ ] Scoreboard
