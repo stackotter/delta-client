@@ -74,40 +74,6 @@ struct GUIQuad {
     tint = [1, 1, 1, 1]
   }
 
-  /// Creates a quad instance for the given character.
-  init(
-    for character: Character,
-    with font: Font,
-    fontArrayTexture: MTLTexture,
-    tint: SIMD4<Float> = [1, 1, 1, 1]
-  ) throws {
-    guard let descriptor = font.characters[character] else {
-      throw GUIRendererError.invalidCharacter(character)
-    }
-
-    let arrayTextureWidth = Float(fontArrayTexture.width)
-    let arrayTextureHeight = Float(fontArrayTexture.height)
-
-    position = [
-      0,
-      Float(Font.defaultCharacterHeight - descriptor.height - descriptor.verticalOffset)
-    ]
-    size = [
-      Float(descriptor.width),
-      Float(descriptor.height)
-    ]
-    uvMin = [
-      Float(descriptor.x) / arrayTextureWidth,
-      Float(descriptor.y) / arrayTextureHeight
-    ]
-    uvSize = [
-      Float(descriptor.width) / arrayTextureWidth,
-      Float(descriptor.height) / arrayTextureHeight
-    ]
-    textureIndex = UInt16(descriptor.texture)
-    self.tint = tint
-  }
-
   func toVertices() -> [GUIVertex] {
     var vertices: [GUIVertex] = []
     vertices.reserveCapacity(4)

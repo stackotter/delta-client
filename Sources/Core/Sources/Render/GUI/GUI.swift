@@ -7,6 +7,10 @@ struct GUI {
   static let messageHideDelay: Double = 10
   /// The maximum number of messages displayed in the regular GUI.
   static let maximumDisplayedMessages = 10
+  /// The width of the chat history.
+  static let chatHistoryWidth = 330
+  /// The width of indent to use when wrapping chat messages.
+  static let chatWrapIndent = 4
 
   var root: GUIGroupElement
   var client: Client
@@ -91,40 +95,65 @@ struct GUI {
   ) {
     let chatIsOpen = messageInput != nil
 
-    let startIndex: Int?
-    if chatIsOpen {
-      startIndex = 0
-    } else {
-      let threshold = CFAbsoluteTimeGetCurrent() - Self.messageHideDelay
-      startIndex = messages.firstIndex { message in
-        return message.timeReceived >= threshold
+    let font = client.resourcePack.vanillaResources.fontPalette.defaultFont
+    let builder = TextMeshBuilder(font: font)
+    let threshold = CFAbsoluteTimeGetCurrent() - Self.messageHideDelay
+    var chatLines: [(text: String, indent: Bool)] = []
+    for message in messages.reversed() {
+      if !chatIsOpen && message.timeReceived < threshold {
+        break
+      }
+
+      let text = message.content.toText(with: client.resourcePack.getDefaultLocale())
+      let wrappedLines: [String]
+      do {
+        wrappedLines = try builder.wrap(
+          text,
+          maximumWidth: Self.chatHistoryWidth - 2,
+          indent: Self.chatWrapIndent
+        )
+      } catch {
+        wrappedLines = ["Failed to wrap chat message"]
+        log.error("Failed to wrap chat message ''")
+      }
+
+      var done = false
+      for (i, line) in wrappedLines.enumerated().reversed() {
+        if chatLines.count >= Self.maximumDisplayedMessages {
+          done = true
+          break
+        }
+
+        chatLines.append((text: line, indent: i != 0))
+      }
+
+      if done {
+        break
       }
     }
 
-    if var startIndex = startIndex {
+    if !chatLines.isEmpty {
       var chat = GUIList(rowHeight: 9)
 
-      if !chatIsOpen {
-        let cappedStartIndex = messages.count - Self.maximumDisplayedMessages
-        if startIndex < cappedStartIndex {
-          startIndex = cappedStartIndex
+      for (chatLine, indent) in chatLines.reversed() {
+        if indent {
+          var group = GUIGroupElement([Self.chatHistoryWidth - 1, chat.rowHeight])
+          group.add(chatLine, .top(0), .left(Self.chatWrapIndent))
+          chat.add(group)
+        } else {
+          chat.add(chatLine)
         }
       }
 
-      let visibleMessages = messages[startIndex...]
-      for message in visibleMessages {
-        chat.add(message.content.toText(with: client.resourcePack.getDefaultLocale()))
-      }
-
       parentGroup.add(GUIRectangle(
-        size: [330, visibleMessages.count * chat.rowHeight],
+        size: [Self.chatHistoryWidth, chatLines.count * chat.rowHeight],
         color: [0, 0, 0, 0.5]
-      ), .bottom(40), .left(2))
+      ), .bottom(40), .left(0))
 
       parentGroup.add(
         chat,
         .bottom(40),
-        .left(3)
+        .left(2)
       )
     }
 

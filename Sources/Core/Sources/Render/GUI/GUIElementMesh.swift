@@ -32,67 +32,6 @@ struct GUIElementMesh {
     self.vertices = vertices
   }
 
-  /// Creates a mesh from some text and a font.
-  init(
-    text: String,
-    font: Font,
-    fontArrayTexture: MTLTexture,
-    color: SIMD4<Float> = [1, 1, 1, 1],
-    outlineColor: SIMD4<Float>? = nil
-  ) throws {
-    var currentX = 0
-    let currentY = 0
-    let spacing = 1
-    var quads: [GUIQuad] = []
-    for character in text {
-      guard var quad = try? GUIQuad(
-        for: character,
-        with: font,
-        fontArrayTexture: fontArrayTexture,
-        tint: color
-      ) else {
-        continue
-      }
-
-      quad.translate(amount: SIMD2([
-        currentX,
-        currentY
-      ]))
-      quads.append(quad)
-      currentX += Int(quad.size.x) + spacing
-    }
-
-    guard !quads.isEmpty else {
-      throw GUIRendererError.emptyText
-    }
-
-    // Create outline
-    if let outlineColor = outlineColor {
-      var outlineQuads: [GUIQuad] = []
-      let outlineTranslations: [SIMD2<Float>] = [
-        [-1, 0],
-        [1, 0],
-        [0, -1],
-        [0, 1]
-      ]
-
-      for translation in outlineTranslations {
-        for var quad in quads {
-          quad.translate(amount: translation)
-          quad.tint = outlineColor
-          outlineQuads.append(quad)
-        }
-      }
-
-      // Outline is rendered before the actual text
-      quads = outlineQuads + quads
-    }
-
-    let width = currentX - spacing
-    let height = Font.defaultCharacterHeight
-    self.init(size: [width, height], arrayTexture: fontArrayTexture, quads: quads)
-  }
-
   /// Creates a mesh that displays the specified gui sprite.
   init(
     sprite: GUISpriteDescriptor,
