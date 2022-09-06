@@ -9,39 +9,25 @@ enum UpdateViewState {
 }
 
 enum UpdateError: LocalizedError {
-  case failedToGetWorkflowRuns(Error)
-  case failedToGetLatestSuccessfulWorkflowRun(branch: String)
-  case failedToGetWorkflowArtifact
   case failedToGetDownloadURL
   case failedToGetDownloadURLFromGitHubReleases
+  case failedToGetBranches(Error)
   case failedToGetGitHubAPIResponse(Error)
 }
 
 struct UpdateView: View {
   @ObservedObject private var state = StateWrapper<UpdateViewState>(initial: .selectUpdate)
   @ObservedObject private var updater = Updater()
-  
+
   init() {
     updater.loadUnstableBranches()
   }
-  
+
   var body: some View {
     switch state.current {
       case .selectUpdate:
         if !updater.hasErrored {
-          // Gives user a choice of which latest version to update to (stable or unstable)
           VStack {
-            // Stable
-            Spacer()
-            Button("Update to latest stable") {
-              updater.updateType = .stable
-              state.update(to: .performUpdate)
-            }
-            .buttonStyle(PrimaryButtonStyle())
-            
-            Spacer().frame(height: 64)
-            
-            // Unstable
             if !updater.branches.isEmpty {
               Menu {
                 ForEach(updater.branches, id: \.self) { branch in
@@ -52,9 +38,11 @@ struct UpdateView: View {
               } label: {
                 Text("Branch: \(updater.unstableBranch)")
               }
+            } else {
+              Text("Error: no branches found")
             }
-            
-            Button("Update to latest unstable") {
+
+            Button("Update to latest commit") {
               updater.updateType = .unstable
               state.update(to: .performUpdate)
             }
@@ -83,9 +71,9 @@ struct UpdateView: View {
             }
           }
           .font(.title)
-          
+
           ProgressView(value: updater.fractionCompleted, label: { Text(updater.stepDescription) })
-          
+
           Button("Cancel") {
             state.update(to: .selectUpdate)
           }

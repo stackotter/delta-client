@@ -7,20 +7,20 @@ import ZippyJSON
 public final class Updater: ObservableObject {
   /// The type of update this updater will perform.
   public var updateType: UpdateType
-  
+
   public enum UpdateType {
     /// Update from GitHub releases.
     case stable
     /// Update from latest CI build.
     case unstable
   }
-  
+
   private var progress = Progress()
   private var queue: OperationQueue
   private var observations: [NSKeyValueObservation] = []
-  
+
   // MARK: SwiftUI
-  
+
   @Published public var fractionCompleted: Double?
   @Published public var stepDescription = ""
   @Published public var version: String?
@@ -31,22 +31,22 @@ public final class Updater: ObservableObject {
 
   /// The branch used for unstable updates.
   @Published public var unstableBranch = "dev"
-  
+
   // MARK: Init
-  
+
   public convenience init() {
     self.init(.stable)
   }
-  
+
   public init(_ updateType: UpdateType) {
     self.updateType = updateType
     queue = OperationQueue()
     queue.name = "dev.stackotter.delta-client.update"
     queue.maxConcurrentOperationCount = 1
   }
-  
+
   // MARK: Perform update
-  
+
   /// Starts the requested update asynchronously.
   public func startUpdate() {
     reset()
@@ -60,11 +60,11 @@ public final class Updater: ObservableObject {
         DeltaClientApp.modalError("Failed to get download URL", safeState: .serverList)
         return
       }
-      
+
       ThreadUtil.runInMain {
         self.version = downloadVersion
       }
-      
+
       self.updateStep("Downloading DeltaClient.app")
       let task = URLSession.shared.dataTask(with: downloadURL, completionHandler: self.finishUpdate)
       self.observations.append(task.progress.observe(\.fractionCompleted, options: [.old, .new], changeHandler: self.updateFractionCompleted))
@@ -72,13 +72,13 @@ public final class Updater: ObservableObject {
       task.resume()
     }
   }
-  
+
   /// The completion handler for the download task. Unzips the downloaded file and performs the swap and restart.
   private func finishUpdate(_ data: Data?, _ response: URLResponse?, _ error: Error?) {
     let temp = FileManager.default.temporaryDirectory
     let zipFile = temp.appendingPathComponent("DeltaClient.zip")
     let temp2 = temp.appendingPathComponent("DeltaClient-\(UUID().uuidString)")
-    
+
     queue.addOperation {
       if let data = data {
         do {
@@ -88,15 +88,15 @@ public final class Updater: ObservableObject {
         }
       }
     }
-    
+
     queue.addOperation {
       self.updateStep("Unzipping DeltaClient.zip")
       self.progress.completedUnitCount = 0
-      
+
       let queue = self.queue
       do {
         try FileManager.default.unzipItem(at: zipFile, to: temp2, skipCRC32: true, progress: self.progress)
-        
+
         if self.updateType == .unstable {
           // Builds downloaded from workflow runs (through nightly.link) have two layers of zip
           self.updateStep("Unzipping a second layer of zip")
@@ -110,7 +110,7 @@ public final class Updater: ObservableObject {
         }
       }
     }
-    
+
     // Delete the cache to avoid common issues when updating
     queue.addOperation {
       let queue = self.queue
@@ -124,7 +124,7 @@ public final class Updater: ObservableObject {
         }
       }
     }
-    
+
     queue.addOperation {
       self.updateStep("Restarting app in 3")
       sleep(1)
@@ -133,14 +133,14 @@ public final class Updater: ObservableObject {
       self.updateStep("Restarting app in 1")
       sleep(1)
     }
-    
+
     // Create a background task to replace the app and relaunch
     queue.addOperation {
       ThreadUtil.runInMain {
         self.canCancel = false
       }
     }
-    
+
     queue.addOperation {
       let newApp = temp2.appendingPathComponent("DeltaClient.app").path.replacingOccurrences(of: " ", with: "\\ ")
       let currentApp = Bundle.main.bundlePath.replacingOccurrences(of: " ", with: "\\ ")
@@ -157,7 +157,7 @@ public final class Updater: ObservableObject {
       }
     }
   }
-  
+
   /// Cancels the update if `canCancel` is true.
   public func cancel() {
     queue.cancelAllOperations()
@@ -167,9 +167,9 @@ public final class Updater: ObservableObject {
     }
     observations = []
   }
-  
+
   // MARK: Helper
-  
+
   /// - Returns: A download URL and a version string
   public func getDownloadURL(_ type: UpdateType) throws -> (URL, String) {
     switch type {
@@ -179,16 +179,16 @@ public final class Updater: ObservableObject {
         return try Self.getLatestUnstableDownloadURL(branch: unstableBranch)
     }
   }
-  
+
   /// Get the download URL for the latest GitHub release.
   ///
   /// - Returns: A download URL and a version string
   private static func getLatestStableDownloadURL() throws -> (URL, String) {
     let decoder = ZippyJSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
-    
+
     let apiURL = URL(string: "https://api.github.com/repos/stackotter/delta-client/releases")!
-    
+
     let data: Data
     let response: [GitHubReleasesAPIResponse]
     do {
@@ -197,77 +197,48 @@ public final class Updater: ObservableObject {
     } catch {
       throw UpdateError.failedToGetGitHubAPIResponse(error)
     }
-    
+
     guard
       let tagName = response.first?.tagName,
       let downloadUrl = response.first?.assets.first?.browserDownloadUrl
     else {
       throw UpdateError.failedToGetDownloadURLFromGitHubReleases
     }
-    
+
     let url = URL(string: downloadUrl)!
     return (url, tagName)
   }
-  
+
   /// Get the download URL for the artifact uploaded by the latest successful GitHub action run.
   ///
-  /// - Returns: A download URL and a version string
+  /// - Returns: A download URL
   private static func getLatestUnstableDownloadURL(branch: String) throws -> (URL, String) {
-    let decoder = ZippyJSONDecoder()
-    decoder.keyDecodingStrategy = .convertFromSnakeCase
-    
-    let workflowRuns = try getWorkflowRuns()
-    
-    // Get the latest relevant run
-    guard let run = workflowRuns.first(where: {
-      $0.headBranch == branch && $0.conclusion == "success" && $0.name == "Build" && $0.status == "completed"
-    }) else {
-      throw UpdateError.failedToGetLatestSuccessfulWorkflowRun(branch: "main")
-    }
-    
-    // Get the list of artifacts
-    guard
-      let artifactsData = try? Data(contentsOf: run.artifactsUrl),
-      let artifactsResponse = try? decoder.decode(GitHubArtifactsAPIResponse.self, from: artifactsData),
-      let artifact = artifactsResponse.artifacts.first
-    else {
-      throw UpdateError.failedToGetWorkflowArtifact
-    }
-    
-    // nightly.link exposes public download links to artifacts, because for whatever reason,
-    // GitHub requires you to login with a GitHub account to download artifacts
-    let url = URL(string: "https://nightly.link/stackotter/delta-client/suites/\(run.checkSuiteId)/artifacts/\(artifact.id)")!
-    return (url, "commit \(run.headSha)")
+    let branches = try getBranches()
+    let commit = branches.filter { $0.name == branch }.first?.commit.sha.prefix(7) ?? "<unknown>"
+    let url = URL(string: "https://backend.deltaclient.app/download/\(branch)/latest/DeltaClient.app.zip")!
+    return (url, "commit \(commit) (latest)")
   }
-  
-  /// Gets a list of GitHub action runs
-  ///
-  /// - Returns: An array of workflow runs
-  private static func getWorkflowRuns() throws -> [GitHubWorkflowAPIResponse.WorkflowRun] {
-    let decoder = ZippyJSONDecoder()
-    decoder.keyDecodingStrategy = .convertFromSnakeCase
-    
-    // Get a list of all workflow runs
-    let apiURL = URL(string: "https://api.github.com/repos/stackotter/delta-client/actions/workflows/build.yml/runs")!
+
+  private static func getBranches() throws -> [GitHubBranch] {
+    let url = URL(string: "https://api.github.com/repos/stackotter/delta-client/branches")!
     do {
-      let data = try Data(contentsOf: apiURL)
-      let response = try decoder.decode(GitHubWorkflowAPIResponse.self, from: data)
-      return response.workflowRuns
+      let data = try Data(contentsOf: url)
+      let response = try ZippyJSONDecoder().decode([GitHubBranch].self, from: data)
+      return response
     } catch {
-      throw UpdateError.failedToGetWorkflowRuns(error)
+      throw UpdateError.failedToGetBranches(error)
     }
   }
-  
+
   public func loadUnstableBranches() {
     queue.addOperation {
       self.hasErrored = false
       do {
-        let workflowRuns = try Self.getWorkflowRuns()
-        var branches = workflowRuns.map(\.headBranch)
-        
         // Remove duplicates but maintain order
         var seen = Set<String>()
-        branches = branches.filter { seen.insert($0).inserted }
+        let branches = try Self.getBranches()
+          .map(\.name)
+          .filter { seen.insert($0).inserted }
 
         ThreadUtil.runInMain {
           self.branches = branches
@@ -282,7 +253,7 @@ public final class Updater: ObservableObject {
       }
     }
   }
-  
+
   /// Resets the updater back to its initial state
   private func reset() {
     ThreadUtil.runInMain {
@@ -296,13 +267,13 @@ public final class Updater: ObservableObject {
       progress = Progress()
     }
   }
-  
+
   private func updateFractionCompleted(_ progress: Progress, _ change: NSKeyValueObservedChange<Double>) {
     ThreadUtil.runInMain {
       fractionCompleted = change.newValue ?? 0
     }
   }
-  
+
   private func updateStep(_ name: String) {
     ThreadUtil.runInMain {
       stepDescription = name
