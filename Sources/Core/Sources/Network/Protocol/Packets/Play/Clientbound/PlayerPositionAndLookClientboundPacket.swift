@@ -35,6 +35,12 @@ public struct PlayerPositionAndLookClientboundPacket: ClientboundPacket {
     let teleportConfirm = TeleportConfirmPacket(teleportId: teleportId)
     try client.sendPacket(teleportConfirm)
 
+    if !client.hasFinishedDownloadingTerrain {
+      client.hasFinishedDownloadingTerrain = true
+      log.info("Finished downloading terrain")
+      client.eventBus.dispatch(TerrainDownloadCompletionEvent())
+    }
+
     client.game.accessPlayer { player in
       let position = player.position
       let rotation = player.rotation

@@ -114,7 +114,7 @@ struct GUI {
         )
       } catch {
         wrappedLines = ["Failed to wrap chat message"]
-        log.error("Failed to wrap chat message ''")
+        log.error("Failed to wrap chat message '\(text)', err: \(error)")
       }
 
       var done = false

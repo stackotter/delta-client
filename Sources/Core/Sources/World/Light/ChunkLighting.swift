@@ -6,22 +6,22 @@ import simd
 /// It may also include lighting for the chunk sections above and below the world.
 public struct ChunkLighting {
   // MARK: Public properties
-  
+
   /// Sky light levels for each chunk section. Each array is indexed by block index.
   public private(set) var skyLightData: [Int: [UInt8]] = [:]
   /// Block light levels for each chunk section. Each array is indexed by block index.
   public private(set) var blockLightData: [Int: [UInt8]] = [:]
-  
+
   /// Whether this lighting has been populated with initial data or not.
   public private(set) var isPopulated = false
-  
+
   // MARK: Init
-  
+
   /// Creates an empty chunk lighting store. ``isPopulated`` gets set to `false`.
   public init() {
     isPopulated = false
   }
-  
+
   /// Creates a populated chunk lighting store.
   /// - Parameters:
   ///   - skyLightData: Sky lighting data for each chunk section in the chunk (possibly with a section above and below the world too).
@@ -31,31 +31,31 @@ public struct ChunkLighting {
     self.blockLightData = blockLightData
     isPopulated = true
   }
-  
+
   // MARK: Public methods
-  
+
   /// Updates the lighting data with data received from the server.
   /// - Parameter data: The data received from the server.
   public mutating func update(with data: ChunkLightingUpdateData) {
     for index in data.emptySkyLightSections {
       skyLightData.removeValue(forKey: index)
     }
-    
+
     for index in data.emptyBlockLightSections {
       blockLightData.removeValue(forKey: index)
     }
-    
+
     for (index, array) in data.skyLightArrays {
       skyLightData[index] = array
     }
-    
+
     for (index, array) in data.blockLightArrays {
       blockLightData[index] = array
     }
-    
+
     isPopulated = true
   }
-  
+
   /// Gets the light level at the given position. Includes both the block light and sky light level.
   /// - Parameter position: The position to get the light level at.
   /// - Returns: The requested light level. If the position is not loaded, the default light level is returned.
@@ -64,7 +64,7 @@ public struct ChunkLighting {
     let blockLightLevel = getBlockLightLevel(at: position)
     return LightLevel(sky: skyLightLevel, block: blockLightLevel)
   }
-  
+
   /// Gets the light level at the given position. Includes both the block light and sky light level.
   /// - Parameters:
   ///   - position: The position to get the light level at (relative to the specified section).
@@ -77,7 +77,7 @@ public struct ChunkLighting {
     let blockLightLevel = getBlockLightLevel(at: position)
     return LightLevel(sky: skyLightLevel, block: blockLightLevel)
   }
-  
+
   /// Gets the light level at the given position. Includes both the block light and sky light level.
   /// - Parameters:
   ///   - index: The index of the block to get the light level for in the specified section.
@@ -88,7 +88,7 @@ public struct ChunkLighting {
     let blockLightLevel = getBlockLightLevel(atIndex: index, inSectionAt: sectionIndex)
     return LightLevel(sky: skyLightLevel, block: blockLightLevel)
   }
-  
+
   /// Gets the light level at the given block index. Includes both the block light and sky light level.
   /// - Parameter index: The index of the block to get the light level for in the specified section.
   /// - Returns: The requested light level. If the position is not loaded, the default light level is returned.
@@ -97,7 +97,7 @@ public struct ChunkLighting {
     let blockLightLevel = getBlockLightLevel(atIndex: index)
     return LightLevel(sky: skyLightLevel, block: blockLightLevel)
   }
-  
+
   /// Gets the sky light level at the given position.
   /// - Parameter position: The position to get the light level at.
   /// - Returns: The requested light level. If the position is not loaded, ``LightLevel/defaultSkyLightLevel`` is returned.
@@ -108,7 +108,7 @@ public struct ChunkLighting {
     let blockIndex = position.relativeToChunkSection.blockIndex
     return getSkyLightLevel(atIndex: blockIndex, inSectionAt: position.sectionIndex)
   }
-  
+
   /// Gets the sky light level at the given position.
   /// - Parameter index: The index of the block to get the sky light level for in the specified section.
   /// - Returns: The requested light level. If the position is not loaded, ``LightLevel/defaultSkyLightLevel`` is returned.
@@ -120,7 +120,7 @@ public struct ChunkLighting {
     let sectionIndex = blockIndex / Chunk.Section.numBlocks
     return getSkyLightLevel(atIndex: sectionRelativeBlockIndex, inSectionAt: sectionIndex)
   }
-  
+
   /// Gets the sky light level at the given position.
   /// - Parameters:
   ///   - index: The index of the block to get the sky light level for in the specified section.
@@ -133,7 +133,7 @@ public struct ChunkLighting {
       return LightLevel.defaultSkyLightLevel
     }
   }
-  
+
   /// Gets the block light level at the given position.
   /// - Parameter position: The position to get the light level at.
   /// - Returns: The requested light level. If the position is not loaded, ``LightLevel/defaultBlockLightLevel`` is returned.
@@ -144,7 +144,7 @@ public struct ChunkLighting {
     let blockIndex = position.relativeToChunkSection.blockIndex
     return getBlockLightLevel(atIndex: blockIndex, inSectionAt: position.sectionIndex)
   }
-  
+
   /// Gets the block light level at the given position.
   /// - Parameter index: The index of the block to get the block light level for in the specified section.
   /// - Returns: The requested light level. If the position is not loaded, ``LightLevel/defaultBlockLightLevel`` is returned.
@@ -156,7 +156,7 @@ public struct ChunkLighting {
     let sectionIndex = blockIndex / Chunk.Section.numBlocks
     return getBlockLightLevel(atIndex: sectionRelativeBlockIndex, inSectionAt: sectionIndex)
   }
-  
+
   /// Gets the block light level at the given position.
   /// - Parameters:
   ///   - index: The index of the block to get the block light level for in the specified section.
@@ -169,9 +169,9 @@ public struct ChunkLighting {
       return LightLevel.defaultBlockLightLevel
     }
   }
-  
+
   // TODO: Properly light sections when creating new ones
-  
+
   /// Sets the block light level at the given position.
   /// - Parameters:
   ///   - position: The position to set the block light level for.
@@ -180,9 +180,9 @@ public struct ChunkLighting {
     guard Self.isValidPosition(position) else {
       return
     }
-    
-    let newLevel = MathUtil.clamp(newLevel, LightLevel.maximumLightLevel, 0)
-    
+
+    let newLevel = MathUtil.clamp(newLevel, 0, LightLevel.maximumLightLevel)
+
     let sectionIndex = position.sectionIndex
     let blockIndex = position.relativeToChunkSection.blockIndex
     if blockLightData[sectionIndex] != nil {
@@ -196,7 +196,7 @@ public struct ChunkLighting {
       blockLightData[sectionIndex] = blockLighting
     }
   }
-  
+
   /// Sets the sky light level at the given position.
   /// - Parameters:
   ///   - position: The position to set the sky light level for.
@@ -205,9 +205,9 @@ public struct ChunkLighting {
     guard Self.isValidPosition(position) else {
       return
     }
-    
-    let newLevel = MathUtil.clamp(newLevel, LightLevel.maximumLightLevel, 0)
-    
+
+    let newLevel = MathUtil.clamp(newLevel, 0, LightLevel.maximumLightLevel)
+
     let sectionIndex = position.sectionIndex
     let blockIndex = position.relativeToChunkSection.blockIndex
     if skyLightData[sectionIndex] != nil {
@@ -216,14 +216,15 @@ public struct ChunkLighting {
       skyLightData[sectionIndex]![blockIndex] = UInt8(newLevel)
       // swiftlint:enable force_unwrapping
     } else {
-      var skyLighting: [UInt8] = [UInt8](repeating: UInt8(LightLevel.defaultSkyLightLevel), count: Chunk.Section.numBlocks)
+      // TODO: properly light empty sections when creating lighting data for them
+      var skyLighting: [UInt8] = [UInt8](repeating: UInt8(LightLevel.maximumLightLevel), count: Chunk.Section.numBlocks)
       skyLighting[blockIndex] = UInt8(newLevel)
       skyLightData[sectionIndex] = skyLighting
     }
   }
-  
+
   // MARK: Private methods
-  
+
   /// Checks whether a position is within the chunk (including 1 block above and below).
   /// - Parameter position: The position to check.
   /// - Returns: Whether the position is valid or not.

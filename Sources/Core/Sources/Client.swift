@@ -33,6 +33,8 @@ public final class Client: @unchecked Sendable {
   public var connection: ServerConnection?
   /// An event bus shared with ``game``.
   public var eventBus = EventBus()
+  /// Whether the client has finished downloading terrain yet.
+  public var hasFinishedDownloadingTerrain = false
 
   // MARK: Init
 
@@ -64,6 +66,7 @@ public final class Client: @unchecked Sendable {
       self.handlePacket(packet)
     }
     game = Game(eventBus: eventBus, connection: connection)
+    hasFinishedDownloadingTerrain = false
     try connection.login(username: account.username)
     self.connection = connection
   }

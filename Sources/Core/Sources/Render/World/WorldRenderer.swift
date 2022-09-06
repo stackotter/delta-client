@@ -216,7 +216,7 @@ public final class WorldRenderer: Renderer {
 
   private func handle(_ event: Event) {
     switch event {
-      case let event as World.Event.ChunkComplete:
+      case let event as World.Event.AddChunk:
         worldMesh.addChunk(at: event.position)
 
       case let event as World.Event.RemoveChunk:

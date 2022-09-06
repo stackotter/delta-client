@@ -157,12 +157,12 @@ public struct LightingEngine {
     setLightLevel: (_ position: BlockPosition, _ level: Int) -> Void
   ) {
     while let entry = increaseQueue.popFirst() {
-      if entry.flags.contains(.writeLevel) {
+      if entry.flags.contains(.recheckLevels) {
+        if getLightLevel(entry.position) != entry.lightLevel {
+          continue
+        }
+      } else if entry.flags.contains(.writeLevel) {
         setLightLevel(entry.position, entry.lightLevel)
-      }
-
-      if entry.flags.contains(.recheckLevels) && getLightLevel(entry.position) != entry.lightLevel {
-        continue
       }
 
       for direction in Direction.allDirections where !entry.skipDirections.contains(direction) {

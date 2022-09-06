@@ -231,9 +231,11 @@ public class World {
     } else if let chunk = unlitChunks[position] {
       terrainLock.unlock()
       chunk.updateLighting(with: data)
+
       terrainLock.acquireWriteLock()
       unlitChunks.removeValue(forKey: position)
       chunks[position] = chunk
+
       eventBus.dispatch(Event.AddChunk(position: position))
       terrainLock.unlock()
     } else {
@@ -286,9 +288,8 @@ public class World {
       chunks[position] = chunk
     }
 
-    eventBus.dispatch(Event.AddChunk(position: position))
     if chunk.hasLighting {
-      eventBus.dispatch(Event.ChunkComplete(position: position))
+      eventBus.dispatch(Event.AddChunk(position: position))
     }
   }
 
@@ -344,7 +345,8 @@ public class World {
       north: northNeighbour,
       east: eastNeighbour,
       south: southNeighbour,
-      west: westNeighbour)
+      west: westNeighbour
+    )
   }
 
   /// Gets whether a chunk has been fully received.
@@ -371,7 +373,7 @@ public class World {
   /// - Parameter position: Position to check.
   /// - Returns: `true` if the position is in a loaded chunk.
   public func isPositionLoaded(_ position: BlockPosition) -> Bool {
-    return isChunkComplete(at: position.chunk)
+    return isChunkComplete(at: position.chunk) && Self.isValidBlockPosition(position)
   }
 
   /// - Parameter position: Position to validate.

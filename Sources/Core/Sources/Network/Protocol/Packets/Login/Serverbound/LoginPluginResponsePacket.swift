@@ -1,6 +1,6 @@
 import Foundation
 
-public struct LoginPluginResponse: ServerboundPacket {
+public struct LoginPluginResponsePacket: ServerboundPacket {
   public static let id: Int = 0x02
   
   public var messageId: Int

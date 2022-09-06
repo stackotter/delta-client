@@ -14,9 +14,6 @@ public struct SpawnPositionPacket: ClientboundPacket {
       player.playerAttributes.spawnPosition = location
     }
     
-    log.info("Finished downloading terrain")
-    client.eventBus.dispatch(TerrainDownloadCompletionEvent())
-    
     // notify server that we are ready to finish login
     let clientStatus = ClientStatusPacket(action: .performRespawn)
     try client.sendPacket(clientStatus)

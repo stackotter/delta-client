@@ -61,7 +61,7 @@ public struct WorldMesh {
     // Adding this chunk may have made some of the chunks that require it preparable so here we check if any of
     // those can now by prepared. `chunksRequiredToPrepare` includes the chunk itself as well.
     for position in Self.chunksRequiredToPrepare(chunkAt: position) {
-      if canPrepareChunk(at: position) && !visibilityGraph.containsChunk(at: position) {
+      if !visibilityGraph.containsChunk(at: position) && canPrepareChunk(at: position) {
         if let chunk = world.chunk(at: position) {
           visibilityGraph.addChunk(chunk, at: position)
 
@@ -106,6 +106,10 @@ public struct WorldMesh {
       return
     }
 
+    guard visibilityGraph.containsChunk(at: position) else {
+      return
+    }
+
     visibilityGraph.updateChunk(chunk, at: position)
 
     for (y, section) in chunk.getSections().enumerated() {
@@ -124,6 +128,10 @@ public struct WorldMesh {
 
     guard let chunk = world.chunk(at: position.chunk) else {
       log.warning("Chunk section update received for non-existent chunk section \(position)")
+      return
+    }
+
+    guard visibilityGraph.containsChunk(at: position.chunk) else {
       return
     }
 
@@ -242,7 +250,8 @@ public struct WorldMesh {
       position.neighbour(inDirection: .south),
       position.neighbour(inDirection: .south).neighbour(inDirection: .west),
       position.neighbour(inDirection: .west),
-      position.neighbour(inDirection: .north).neighbour(inDirection: .west)]
+      position.neighbour(inDirection: .north).neighbour(inDirection: .west)
+    ]
   }
 
   // MARK: Private methods
@@ -268,7 +277,8 @@ public struct WorldMesh {
     meshWorker.createMeshAsync(
       at: position,
       in: chunk,
-      neighbours: neighbours)
+      neighbours: neighbours
+    )
   }
 
   /// Checks whether a chunk section should be prepared when it next becomes visible.

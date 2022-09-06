@@ -84,6 +84,9 @@ public struct ChatComponent: Decodable, Equatable {
     for child in children {
       output += child.toText(with: locale)
     }
-    return output
+
+    // Remove legacy formatted text style codes
+    let legacy = LegacyFormattedText(output)
+    return legacy.toString()
   }
 }

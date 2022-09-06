@@ -12,4 +12,12 @@ public struct WindowConfirmationClientboundPacket: ClientboundPacket {
     actionNumber = try packetReader.readShort()
     accepted = try packetReader.readBool()
   }
+
+  public func handle(for client: Client) throws {
+    try client.sendPacket(WindowConfirmationServerboundPacket(
+      windowId: windowId,
+      actionNumber: actionNumber,
+      accepted: true
+    ))
+  }
 }

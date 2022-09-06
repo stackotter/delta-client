@@ -22,11 +22,17 @@ struct TextMeshBuilder {
   func wrap(_ text: String, maximumWidth: Int, indent: Int) throws -> [String] {
     assert(indent < maximumWidth, "indent must be smaller than maximumWidth")
 
+    if text == "" {
+      return [""]
+    }
+
     var wrapIndex: String.Index? = nil
     var latestSpace: String.Index? = nil
     var width = 0
     for i in text.indices {
       let character = text[i]
+      // TODO: Figure out how to load the rest of the characters (such as stars) from the font to
+      // fix chat rendering on Hypixel
       let descriptor = try descriptor(for: character)
       assert(
         descriptor.width < maximumWidth,
