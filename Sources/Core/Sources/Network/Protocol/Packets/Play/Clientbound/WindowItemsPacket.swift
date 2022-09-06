@@ -23,7 +23,10 @@ public struct WindowItemsPacket: ClientboundPacket {
     }
 
     guard slots.count == PlayerInventory.slotCount else {
-      throw ClientboundPacketError.invalidInventorySlotCount(slots.count)
+      log.warning("Invalid player inventory slot count: \(slots.count)")
+      // Silently ignore for now because Hypixel sends packets that violate this
+      // TODO: Don't ignore invalid slot counts
+      return
     }
 
     client.game.accessPlayer { player in
