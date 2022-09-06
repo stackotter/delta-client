@@ -89,10 +89,10 @@ struct GUI {
     _ messageInput: String?,
     _ screenSize: SIMD2<Int>
   ) {
-    let writingMessage = messageInput != nil
+    let chatIsOpen = messageInput != nil
 
     let startIndex: Int?
-    if writingMessage {
+    if chatIsOpen {
       startIndex = 0
     } else {
       let threshold = CFAbsoluteTimeGetCurrent() - Self.messageHideDelay
@@ -104,7 +104,7 @@ struct GUI {
     if var startIndex = startIndex {
       var chat = GUIList(rowHeight: 9)
 
-      if !writingMessage {
+      if !chatIsOpen {
         let cappedStartIndex = messages.count - Self.maximumDisplayedMessages
         if startIndex < cappedStartIndex {
           startIndex = cappedStartIndex

@@ -14,4 +14,8 @@ public final class GUIStateStorage: SingleComponent {
       inner[keyPath: member] = newValue
     }
   }
+
+  subscript<T>(dynamicMember member: KeyPath<GUIState, T>) -> T {
+    inner[keyPath: member]
+  }
 }

@@ -72,7 +72,7 @@ public struct PlayerInputSystem: System {
     }
 
     // Handle mouse input
-    if guiState.messageInput == nil {
+    if !guiState.isChatOpen {
       updateRotation(inputState, rotation)
     }
 
@@ -123,7 +123,7 @@ public struct PlayerInputSystem: System {
     }
 
     // Supress inputs while the user is typing
-    return guiState.messageInput != nil
+    return guiState.isChatOpen
   }
 
   /// Updates the direction which the player is looking.

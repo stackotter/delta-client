@@ -6,5 +6,9 @@ public struct GUIState {
   public var chat = Chat()
   public var messageInput: String?
 
+  public var isChatOpen: Bool {
+    return messageInput != nil
+  }
+
   public init() {}
 }
