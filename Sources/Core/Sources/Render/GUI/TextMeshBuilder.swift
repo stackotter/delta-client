@@ -23,6 +23,7 @@ struct TextMeshBuilder {
     assert(indent < maximumWidth, "indent must be smaller than maximumWidth")
 
     var wrapIndex: String.Index? = nil
+    var latestSpace: String.Index? = nil
     var width = 0
     for i in text.indices {
       let character = text[i]
@@ -37,8 +38,16 @@ struct TextMeshBuilder {
         width += 1 // character spacing
       }
 
+      if character == " " {
+        latestSpace = i
+      }
+
       if width > maximumWidth {
-        wrapIndex = i
+        if let spaceIndex = latestSpace {
+          wrapIndex = spaceIndex
+        } else {
+          wrapIndex = i
+        }
         break
       }
     }
@@ -47,7 +56,14 @@ struct TextMeshBuilder {
     if let wrapIndex = wrapIndex {
       lines = [String(text[text.startIndex..<wrapIndex])]
 
-      let nonWrappedText = text[wrapIndex...]
+      var startIndex = wrapIndex
+      while text[startIndex] == " " {
+        startIndex = text.index(after: startIndex)
+        if startIndex == text.endIndex {
+          return lines // NOTE: early return
+        }
+      }
+      let nonWrappedText = text[startIndex...]
       lines.append(contentsOf: try wrap(
         String(nonWrappedText),
         maximumWidth: maximumWidth - indent,
