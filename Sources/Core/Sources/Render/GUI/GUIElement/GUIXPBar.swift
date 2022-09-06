@@ -39,7 +39,7 @@ struct GUIXPBar: GUIElement {
       textMeshes = try GUIColoredString(
         String(level),
         Self.textColor,
-        outlineColor: .zero
+        outlineColor: [0, 0, 0, 1]
       ).meshes(context: context)
 
       for (i, var mesh) in textMeshes.enumerated() {

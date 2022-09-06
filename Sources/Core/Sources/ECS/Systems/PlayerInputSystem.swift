@@ -72,7 +72,9 @@ public struct PlayerInputSystem: System {
     }
 
     // Handle mouse input
-    updateRotation(inputState, rotation)
+    if guiState.messageInput == nil {
+      updateRotation(inputState, rotation)
+    }
 
     inputState.resetMouseDelta()
     inputState.tick(isInputSuppressed, eventBus)
