@@ -13,6 +13,7 @@ public final class GUIRenderer: Renderer {
   var pipelineState: MTLRenderPipelineState
   var gui: GUI
   var profiler: Profiler<RenderingMeasurement>
+  var previousUniforms: GUIUniforms?
 
   public init(
     client: Client,
@@ -61,34 +62,21 @@ public final class GUIRenderer: Renderer {
     // Construct uniforms
     profiler.push(.updateUniforms)
     let drawableSize = view.drawableSize
-    let drawableWidth = Float(drawableSize.width)
-    let drawableHeight = Float(drawableSize.height)
-    let width = drawableWidth
-    let height = drawableHeight
-    let screenSpaceToNormalized = matrix_float3x3([
-      [2 / width, 0, -1],
-      [0, -2 / height, 1],
-      [0, 0, 1]
-    ])
+    let width = Float(drawableSize.width)
+    let height = Float(drawableSize.height)
+    let scale = Self.adjustScale(scale)
 
     // Adjust scale per screen scale factor
-    #if os(macOS)
-    let screenScaleFactor = Float(NSApp.windows.first?.screen?.backingScaleFactor ?? 1)
-    #elseif os(iOS)
-    let screenScaleFactor = Float(UIScreen.main.scale)
-    #else
-    #error("Unsupported platform, unknown screen scale factor")
-    #endif
-    let scale = screenScaleFactor * scale
-
-    let transformation = screenSpaceToNormalized
-    var uniforms = GUIUniforms(screenSpaceToNormalized: transformation, scale: scale)
-    uniformsBuffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<Uniforms>.stride)
+    var uniforms = createUniforms(width, height, scale)
+    if uniforms != previousUniforms {
+      uniformsBuffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<Uniforms>.stride)
+      previousUniforms = uniforms
+    }
     profiler.pop()
 
     // Create meshes
     let meshes = try gui.meshes(
-      effectiveDrawableSize: SIMD2([drawableWidth / scale, drawableHeight / scale])
+      effectiveDrawableSize: SIMD2([width / scale, height / scale])
     )
 
     profiler.push(.encode)
@@ -102,5 +90,26 @@ public final class GUIRenderer: Renderer {
       try mesh.render(into: encoder, with: device)
     }
     profiler.pop()
+  }
+
+  static func adjustScale(_ scale: Float) -> Float {
+    // Adjust scale per screen scale factor
+    #if os(macOS)
+    let screenScaleFactor = Float(NSApp.windows.first?.screen?.backingScaleFactor ?? 1)
+    #elseif os(iOS)
+    let screenScaleFactor = Float(UIScreen.main.scale)
+    #else
+    #error("Unsupported platform, unknown screen scale factor")
+    #endif
+    return screenScaleFactor * scale
+  }
+
+  func createUniforms(_ width: Float, _ height: Float, _ scale: Float) -> GUIUniforms {
+    let transformation = matrix_float3x3([
+      [2 / width, 0, -1],
+      [0, -2 / height, 1],
+      [0, 0, 1]
+    ])
+    return GUIUniforms(screenSpaceToNormalized: transformation, scale: scale)
   }
 }
