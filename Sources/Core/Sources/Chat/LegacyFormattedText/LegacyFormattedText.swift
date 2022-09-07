@@ -76,7 +76,7 @@ public struct LegacyFormattedText {
           currentStyle = style
       }
 
-      guard !part.isEmpty else {
+      guard !content.isEmpty else {
         continue
       }
 
