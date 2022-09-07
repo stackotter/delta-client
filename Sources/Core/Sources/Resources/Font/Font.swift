@@ -19,6 +19,9 @@ public struct Font {
 
   /// The characters present in this font and the descriptors used to render them.
   public var characters: [Character: CharacterDescriptor]
+  /// The ascii characters present in this font, indexed by ascii value. Used to avoid dictionary as
+  /// much as possible in performance critical rendering code.
+  public var asciiCharacters: [CharacterDescriptor?]
   /// The atlas texture that make up the font.
   public var textures: [Texture]
 
@@ -26,6 +29,15 @@ public struct Font {
   public init(characters: [Character: CharacterDescriptor] = [:], textures: [Texture] = []) {
     self.characters = characters
     self.textures = textures
+
+    asciiCharacters = []
+    for i in 0..<128 {
+      // This is safe because all ascii values are valid unicode scalars
+      // swiftlint:disable force_unwrapping
+      let character = Character(Unicode.Scalar(i)!)
+      // swiftlint:enable force_unwrapping
+      asciiCharacters.append(characters[character])
+    }
   }
 
   /// Loads a font from a font manifest and texture directory.
@@ -68,6 +80,14 @@ public struct Font {
     }
 
     return Font(characters: characters, textures: textures)
+  }
+
+  public func descriptor(for character: Character) -> CharacterDescriptor? {
+    if let asciiValue = character.asciiValue {
+      return asciiCharacters[Int(asciiValue)]
+    } else {
+      return characters[character]
+    }
   }
 
   /// Creates an array texture containing the font's atlases.

@@ -11,7 +11,7 @@ struct TextMeshBuilder {
   }
 
   func descriptor(for character: Character) throws -> CharacterDescriptor {
-    guard let descriptor = font.characters[character] else {
+    guard let descriptor = font.descriptor(for: character) else {
       throw TextMeshBuilderError.invalidCharacter(character)
     }
     return descriptor
@@ -98,6 +98,7 @@ struct TextMeshBuilder {
     let currentY = 0
     let spacing = 1
     var quads: [GUIQuad] = []
+    quads.reserveCapacity(text.count)
     for character in text {
       let descriptor = try descriptor(for: character)
 
@@ -106,10 +107,10 @@ struct TextMeshBuilder {
         fontArrayTexture: fontArrayTexture,
         color: color
       )
-      quad.translate(amount: SIMD2([
-        currentX,
-        currentY
-      ]))
+      quad.translate(amount: SIMD2(
+        Float(currentX),
+        Float(currentY)
+      ))
       quads.append(quad)
 
       currentX += Int(quad.size.x) + spacing
@@ -155,22 +156,22 @@ struct TextMeshBuilder {
     let arrayTextureWidth = Float(fontArrayTexture.width)
     let arrayTextureHeight = Float(fontArrayTexture.height)
 
-    let position: SIMD2<Float> = [
+    let position = SIMD2<Float>(
       0,
       Float(Font.defaultCharacterHeight - character.height - character.verticalOffset)
-    ]
-    let size: SIMD2<Float> = [
+    )
+    let size = SIMD2<Float>(
       Float(character.width),
       Float(character.height)
-    ]
-    let uvMin: SIMD2<Float> = [
+    )
+    let uvMin = SIMD2<Float>(
       Float(character.x) / arrayTextureWidth,
       Float(character.y) / arrayTextureHeight
-    ]
-    let uvSize: SIMD2<Float> = [
-      Float(character.width) / arrayTextureWidth,
-      Float(character.height) / arrayTextureHeight
-    ]
+    )
+    let uvSize = SIMD2<Float>(
+      size.x / arrayTextureWidth,
+      size.y / arrayTextureHeight
+    )
 
     return GUIQuad(
       position: position,

@@ -96,3 +96,5 @@ commitToGPU                 0.06338ms
 ===  End profiler summary  ===
 ```
 Figure 3: *after*
+
+

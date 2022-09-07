@@ -3,18 +3,11 @@ import simd
 
 /// A convenient way to construct the vertices for a GUI quad.
 struct GUIQuad {
-  static var vertexPositions: [SIMD2<Float>] = [
-    [0, 0],
-    [1, 0],
-    [1, 1],
-    [0, 1]
-  ]
-
-  static var uvs: [SIMD2<Float>] = [
-    [0, 0],
-    [1, 0],
-    [1, 1],
-    [0, 1]
+  static var vertices: [(position: SIMD2<Float>, uv: SIMD2<Float>)] = [
+    (position: [0, 0], uv: [0, 0]),
+    (position: [1, 0], uv: [1, 0]),
+    (position: [1, 1], uv: [1, 1]),
+    (position: [0, 1], uv: [0, 1])
   ]
 
   var position: SIMD2<Float>
@@ -75,17 +68,22 @@ struct GUIQuad {
   }
 
   func toVertices() -> [GUIVertex] {
-    var vertices: [GUIVertex] = []
-    vertices.reserveCapacity(4)
-    for (position, uv) in zip(Self.vertexPositions, Self.uvs) {
-      vertices.append(GUIVertex(
-        position: position * size + self.position,
-        uv: uv * uvSize + uvMin,
-        tint: tint,
-        textureIndex: textureIndex
-      ))
+    // Basically just creating an array containing four vertices but fancilly because this is
+    // performance critical (for the GUI renderer).
+    return Array(unsafeUninitializedCapacity: 4) { buffer, count in
+      var i = 0
+      for (position, uv) in Self.vertices {
+        buffer[i] = GUIVertex(
+          position: position * size + self.position,
+          uv: uv * uvSize + uvMin,
+          tint: tint,
+          textureIndex: textureIndex
+        )
+        i += 1
+      }
+
+      count = 4
     }
-    return vertices
   }
 
   /// Translates the quad by the given amount.

@@ -2,9 +2,8 @@ import simd
 
 extension Array where Element == GUIElementMesh {
   mutating func translate(amount: SIMD2<Int>) {
-    for (i, var mesh) in self.enumerated() {
-      mesh.position &+= amount
-      self[i] = mesh
+    for i in 0..<count {
+      self[i].position &+= amount
     }
   }
 

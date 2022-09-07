@@ -26,12 +26,30 @@ struct GUIElementMesh {
     return vertices.count * MemoryLayout<GUIVertex>.stride
   }
 
+
   /// Creates a mesh from a collection of quads.
   init(size: SIMD2<Int>, arrayTexture: MTLTexture?, quads: [GUIQuad]) {
     self.size = size
     self.arrayTexture = arrayTexture
-    vertices = quads.flatMap { quad in
-      return quad.toVertices()
+
+    // Basically just a fancy flat map (it's measurably faster than using flatmap in this case and
+    // this is performance critical, otherwise I would never use this code)
+    let vertexCount = quads.count * 4
+    vertices = Array(unsafeUninitializedCapacity: vertexCount) { buffer, count in
+      for i in 0..<quads.count {
+        let quadVertices = quads[i].toVertices()
+        let base = i * 4
+        quadVertices.withUnsafeBufferPointer { quadBuffer in
+          // You're welcome for the beautiful alignment, if only base were a one letter variable, it
+          // could be even nicer...
+          buffer[  base  ] = quadBuffer[0]
+          buffer[base + 1] = quadBuffer[1]
+          buffer[base + 2] = quadBuffer[2]
+          buffer[base + 3] = quadBuffer[3]
+        }
+      }
+
+      count = vertexCount
     }
   }
 

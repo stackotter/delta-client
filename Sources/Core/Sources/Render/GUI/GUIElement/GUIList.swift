@@ -30,7 +30,10 @@ struct GUIList: GUIElement {
 
           if renderRowBackground {
             let bgSize: SIMD2<Int> = [elementMeshes.size().x + 1, rowHeight]
-            var bg = GUIRectangle(size: bgSize, color: [0x50, 0x50, 0x50, 0x90] / 255).meshes(context: context)
+            var bg = GUIRectangle(
+              size: bgSize,
+              color: [0x50, 0x50, 0x50, 0x90] / 255
+            ).meshes(context: context)
             bg.translate(amount: [-1, currentY - 1])
             bgMeshes.append(contentsOf: bg)
           }
