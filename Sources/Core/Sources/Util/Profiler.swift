@@ -87,10 +87,12 @@ public final class Profiler<Label: RawRepresentable & Hashable> where Label.RawV
     measurements = []
   }
 
-  public func reset() {
+  public func clear() {
+    children = []
     measurementStarts = []
     measurements = []
     measurementOrder = []
+    trials = []
   }
 
   public func printSummary(onlyLatestTrial: Bool = false) {

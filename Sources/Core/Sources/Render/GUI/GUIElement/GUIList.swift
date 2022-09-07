@@ -18,8 +18,10 @@ struct GUIList: GUIElement {
   }
 
   func meshes(context: GUIContext) throws -> [GUIElementMesh] {
+    var bgMeshes: [GUIElementMesh] = []
     var meshes: [GUIElementMesh] = []
     var currentY = 0
+
     for item in items {
       switch item {
         case .element(let element):
@@ -30,7 +32,7 @@ struct GUIList: GUIElement {
             let bgSize: SIMD2<Int> = [elementMeshes.size().x + 1, rowHeight]
             var bg = GUIRectangle(size: bgSize, color: [0x50, 0x50, 0x50, 0x90] / 255).meshes(context: context)
             bg.translate(amount: [-1, currentY - 1])
-            meshes.append(contentsOf: bg)
+            bgMeshes.append(contentsOf: bg)
           }
 
           meshes.append(contentsOf: elementMeshes)
@@ -39,6 +41,7 @@ struct GUIList: GUIElement {
           currentY += height
       }
     }
-    return meshes
+
+    return bgMeshes + meshes
   }
 }

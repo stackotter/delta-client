@@ -269,12 +269,11 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     frameCount += 1
     profiler.endTrial()
 
-    // Log long frames
-    // if cpuElapsed > longestFrame, frameCount > 120 {
-    //   longestFrame = cpuElapsed
-    //   print("===       LONG FRAME       ===")
-    //   profiler.printSummary(onlyLatestTrial: true)
-    // }
+    if frameCount % 60 == 0 {
+      longestFrame = cpuElapsed
+      profiler.printSummary()
+      profiler.clear()
+    }
   }
 
   /// Captures the specified number of frames into a GPU trace file.

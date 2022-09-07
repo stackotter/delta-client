@@ -35,24 +35,28 @@ struct GUI {
     let resources = client.resourcePack.vanillaResources
     let font = resources.fontPalette.defaultFont
     let fontArrayTexture = try font.createArrayTexture(device)
+    fontArrayTexture.label = "fontArrayTexture"
 
     let guiTexturePalette = try GUITexturePalette(resources.guiTexturePalette)
     let guiArrayTexture = try guiTexturePalette.palette.createArrayTexture(
       device: device,
       commandQueue: commandQueue
     )
+    guiArrayTexture.label = "guiArrayTexture"
 
     let itemTexturePalette = resources.itemTexturePalette
     let itemArrayTexture = try itemTexturePalette.createArrayTexture(
       device: device,
       commandQueue: commandQueue
     )
+    itemArrayTexture.label = "itemArrayTexture"
 
     let blockTexturePalette = resources.blockTexturePalette
     let blockArrayTexture = try blockTexturePalette.createArrayTexture(
       device: device,
       commandQueue: commandQueue
     )
+    blockArrayTexture.label = "blockArrayTexture"
 
     context = GUIContext(
       font: font,
@@ -72,16 +76,16 @@ struct GUI {
     let state = client.game.guiState()
     root = GUIGroupElement(screenSize)
 
-    // Debug screen
-    if state.showDebugScreen {
-      root.add(debugScreen(), .position(2, 3))
-    }
-
     // Hot bar area (hot bar, health, food, etc.)
     hotbarArea(&root)
 
     // Render crosshair
     root.add(GUISprite.crossHair, .center)
+
+    // Debug screen
+    if state.showDebugScreen {
+      root.add(debugScreen(), .position(2, 3))
+    }
 
     // Chat
     chat(&root, state.chat.messages, state.messageInput, screenSize)

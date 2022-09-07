@@ -44,7 +44,7 @@ struct TextMeshBuilder {
         width += 1 // character spacing
       }
 
-      // TODO: wrap on other characters such as '-'
+      // TODO: wrap on other characters such as '-' as well
       if character == " " {
         latestSpace = i
       }

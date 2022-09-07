@@ -11,6 +11,7 @@ enum GUIRendererError: LocalizedError {
   case invalidItemId(Int)
   case missingItemTexture(Int)
   case failedToCreateTextMeshBuffer
+  case textureMissingLabel
 
   var errorDescription: String? {
     switch self {
@@ -32,6 +33,8 @@ enum GUIRendererError: LocalizedError {
         return "Missing texture for item with id \(id)"
       case .failedToCreateTextMeshBuffer:
         return "Failed to create text mesh buffer"
+      case .textureMissingLabel:
+        return "Failed to combine GUI meshes because texture was missing label"
     }
   }
 }

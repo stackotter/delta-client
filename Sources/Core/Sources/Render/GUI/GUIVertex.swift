@@ -1,7 +1,7 @@
 import simd
 
 /// A vertex in the GUI.
-struct GUIVertex {
+struct GUIVertex: Equatable {
   /// The position.
   var position: SIMD2<Float>
   /// The uv coordinate.

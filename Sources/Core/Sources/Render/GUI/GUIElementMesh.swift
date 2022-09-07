@@ -2,6 +2,11 @@ import MetalKit
 
 /// A generic texture-backed GUI element.
 struct GUIElementMesh {
+  /// The amount of extra room to allocate when creating a vertex buffer to avoid needing to create
+  /// a new one too soon. Currently set to leave enough room for 20 extra quads. This measurably
+  /// cuts down the number of new vertex buffers created.
+  private static let vertexBufferHeadroom = 80 * MemoryLayout<GUIVertex>.stride
+
   /// The element's position.
   var position: SIMD2<Int> = .zero
   /// The unscaled size.
@@ -15,6 +20,11 @@ struct GUIElementMesh {
   var vertexBuffer: MTLBuffer?
   /// The mesh's uniforms.
   var uniformsBuffer: MTLBuffer?
+
+  /// The minimum size that the vertex buffer must be.
+  var requiredVertexBufferSize: Int {
+    return vertices.count * MemoryLayout<GUIVertex>.stride
+  }
 
   /// Creates a mesh from a collection of quads.
   init(size: SIMD2<Int>, arrayTexture: MTLTexture?, quads: [GUIQuad]) {
@@ -67,28 +77,6 @@ struct GUIElementMesh {
     )
   }
 
-  static func createBuffers(
-    vertices: inout [GUIVertex],
-    uniforms: inout GUIElementUniforms,
-    device: MTLDevice
-  ) throws -> (vertexBuffer: MTLBuffer, uniformsBuffer: MTLBuffer) {
-    let vertexBuffer = try MetalUtil.makeBuffer(
-      device,
-      bytes: &vertices,
-      length: MemoryLayout<GUIVertex>.stride * vertices.count,
-      options: []
-    )
-
-    let uniformsBuffer = try MetalUtil.makeBuffer(
-      device,
-      bytes: &uniforms,
-      length: MemoryLayout<GUIElementUniforms>.stride,
-      options: []
-    )
-
-    return (vertexBuffer: vertexBuffer, uniformsBuffer: uniformsBuffer)
-  }
-
   /// Renders the mesh. Expects ``GUIUniforms`` to be bound at vertex buffer index 1. Also expects
   /// pipeline state to be set to ``GUIRenderer/pipelineState``.
   mutating func render(
@@ -101,18 +89,39 @@ struct GUIElementMesh {
     }
 
     let vertexBuffer: MTLBuffer
-    let uniformsBuffer: MTLBuffer
-    if let vertexBufferTemp = self.vertexBuffer, let uniformsBufferTemp = self.uniformsBuffer {
+    if let vertexBufferTemp = self.vertexBuffer {
       vertexBuffer = vertexBufferTemp
+    } else {
+      vertexBuffer = try MetalUtil.makeBuffer(
+        device,
+        length: requiredVertexBufferSize + Self.vertexBufferHeadroom,
+        options: []
+      )
+      self.vertexBuffer = vertexBuffer
+    }
+
+    let uniformsBuffer: MTLBuffer
+    var uniforms = GUIElementUniforms(position: SIMD2(position))
+    if let uniformsBufferTemp = self.uniformsBuffer {
       uniformsBuffer = uniformsBufferTemp
     } else {
-      var uniforms = GUIElementUniforms(position: SIMD2(position))
-      (vertexBuffer, uniformsBuffer) = try Self.createBuffers(
-        vertices: &vertices,
-        uniforms: &uniforms,
-        device: device
+      uniformsBuffer = try MetalUtil.makeBuffer(
+        device,
+        length: MemoryLayout<GUIElementUniforms>.stride,
+        options: []
       )
+      self.uniformsBuffer = uniformsBuffer
     }
+
+    // Assume that the buffers are outdated
+    vertexBuffer.contents().copyMemory(
+      from: &vertices,
+      byteCount: requiredVertexBufferSize
+    )
+    uniformsBuffer.contents().copyMemory(
+      from: &uniforms,
+      byteCount: MemoryLayout<GUIElementUniforms>.stride
+    )
 
     encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 1)
     encoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 2)

@@ -15,6 +15,8 @@ public final class GUIRenderer: Renderer {
   var profiler: Profiler<RenderingMeasurement>
   var previousUniforms: GUIUniforms?
 
+  var cache: [GUIElementMesh] = []
+
   public init(
     client: Client,
     device: MTLDevice,
@@ -68,7 +70,7 @@ public final class GUIRenderer: Renderer {
 
     // Adjust scale per screen scale factor
     var uniforms = createUniforms(width, height, scale)
-    if uniforms != previousUniforms {
+    if uniforms != previousUniforms || true {
       uniformsBuffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<Uniforms>.stride)
       previousUniforms = uniforms
     }
@@ -86,10 +88,116 @@ public final class GUIRenderer: Renderer {
     // Set pipeline
     encoder.setRenderPipelineState(pipelineState)
 
-    for var mesh in meshes {
-      try mesh.render(into: encoder, with: device)
+    let optimizedMeshes = try Self.optimizeMeshes(meshes)
+
+    for (i, var mesh) in optimizedMeshes.enumerated() {
+      if i < cache.count {
+        let previousMesh = cache[i]
+        if (previousMesh.vertexBuffer?.length ?? 0) >= mesh.requiredVertexBufferSize {
+          mesh.vertexBuffer = previousMesh.vertexBuffer
+          mesh.uniformsBuffer = previousMesh.uniformsBuffer
+        } else {
+          mesh.uniformsBuffer = previousMesh.uniformsBuffer
+        }
+
+        try mesh.render(into: encoder, with: device)
+        cache[i] = mesh
+      } else {
+        try mesh.render(into: encoder, with: device)
+        cache.append(mesh)
+      }
     }
     profiler.pop()
+  }
+
+  static func optimizeMeshes(_ meshes: [GUIElementMesh]) throws -> [GUIElementMesh] {
+    var textureToIndex: [String: Int] = [:]
+    var boxes: [[(position: SIMD2<Int>, size: SIMD2<Int>)]] = []
+    var combinedMeshes: [GUIElementMesh] = []
+
+    for mesh in meshes {
+      var texture = "textureless"
+      if let arrayTexture = mesh.arrayTexture {
+        guard let label = arrayTexture.label else {
+          throw GUIRendererError.textureMissingLabel
+        }
+        texture = label
+      }
+
+      // If the mesh's texture's current layer is below a layer that this mesh overlaps with, then
+      // force a new layer to be created
+      let box = (position: mesh.position, size: mesh.size)
+      if let index = textureToIndex[texture] {
+        let higherLayers = textureToIndex.values.filter { $0 > index }
+        var done = false
+        for layer in higherLayers {
+          if doIntersect(mesh, combinedMeshes[layer]) {
+            for otherBox in boxes[layer] {
+              if doIntersect(box, otherBox) {
+                textureToIndex[texture] = nil
+                done = true
+                break
+              }
+            }
+            if done {
+              break
+            }
+          }
+        }
+      }
+
+      if let index = textureToIndex[texture] {
+        combine(&combinedMeshes[index], mesh)
+        boxes[index].append(box)
+      } else {
+        textureToIndex[texture] = combinedMeshes.count
+        combinedMeshes.append(mesh)
+        boxes.append([box])
+      }
+    }
+
+    return combinedMeshes
+  }
+
+  static func doIntersect(_ mesh: GUIElementMesh, _ other: GUIElementMesh) -> Bool {
+    doIntersect((position: mesh.position, size: mesh.size), (position: other.position, size: other.size))
+  }
+
+  static func doIntersect(
+    _ box: (position: SIMD2<Int>, size: SIMD2<Int>),
+    _ other: (position: SIMD2<Int>, size: SIMD2<Int>)
+  ) -> Bool {
+    let pos1 = box.position
+    let size1 = box.size
+    let pos2 = other.position
+    let size2 = other.size
+
+    let overlapsX = abs((pos1.x + size1.x/2) - (pos2.x + size2.x/2)) * 2 < (size1.x + size2.x)
+    let overlapsY = abs((pos1.y + size1.y/2) - (pos2.y + size2.y/2)) * 2 < (size1.y + size2.y)
+    return overlapsX && overlapsY
+  }
+
+  static func combine(_ mesh: inout GUIElementMesh, _ other: GUIElementMesh) {
+    var other = other
+    normalizeMeshPosition(&mesh)
+    normalizeMeshPosition(&other)
+    mesh.vertices.append(contentsOf: other.vertices)
+    mesh.size = simd_max(mesh.size, other.size)
+  }
+
+  /// Moves the mesh's vertices so that its position can be the origin.
+  static func normalizeMeshPosition(_ mesh: inout GUIElementMesh) {
+    if mesh.position == .zero {
+      return
+    }
+
+    let position = SIMD2<Float>(mesh.position)
+    for i in 0..<mesh.vertices.count {
+      mesh.vertices[i].position += position
+    }
+
+    mesh.position = .zero
+    mesh.size &+= SIMD2(position)
   }
 
   static func adjustScale(_ scale: Float) -> Float {
