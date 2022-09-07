@@ -73,7 +73,7 @@ public final class GUIRenderer: Renderer {
 
     // Adjust scale per screen scale factor
     #if os(macOS)
-    let screenScaleFactor = Float(NSScreen.main?.backingScaleFactor ?? 1)
+    let screenScaleFactor = Float(NSApp.windows.first?.screen?.backingScaleFactor ?? 1)
     #elseif os(iOS)
     let screenScaleFactor = Float(UIScreen.main.scale)
     #else
