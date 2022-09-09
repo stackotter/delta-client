@@ -68,7 +68,7 @@ struct GUIInventoryItem: GUIElement {
         var mesh = GUIElementMesh(
           size: [16, 16],
           arrayTexture: context.blockArrayTexture,
-          vertices: vertices
+          vertices: .flatArray(vertices)
         )
         mesh.position = [8, 8]
         return [mesh]

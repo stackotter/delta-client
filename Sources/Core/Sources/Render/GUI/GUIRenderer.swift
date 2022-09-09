@@ -192,8 +192,8 @@ public final class GUIRenderer: Renderer {
     }
 
     let position = SIMD2<Float>(mesh.position)
-    for i in 0..<mesh.vertices.count {
-      mesh.vertices[i].position += position
+    mesh.vertices.mutateEach { vertex in
+      vertex.position += position
     }
 
     mesh.position = .zero

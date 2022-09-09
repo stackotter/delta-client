@@ -3,12 +3,13 @@ import simd
 
 /// A convenient way to construct the vertices for a GUI quad.
 struct GUIQuad {
-  static var vertices: [(position: SIMD2<Float>, uv: SIMD2<Float>)] = [
+  static let vertices: [(position: SIMD2<Float>, uv: SIMD2<Float>)] = [
     (position: [0, 0], uv: [0, 0]),
     (position: [1, 0], uv: [1, 0]),
     (position: [1, 1], uv: [1, 1]),
     (position: [0, 1], uv: [0, 1])
   ]
+  private static let verticesBuffer = vertices.withUnsafeBufferPointer { $0 }
 
   var position: SIMD2<Float>
   var size: SIMD2<Float>
@@ -67,23 +68,49 @@ struct GUIQuad {
     tint = [1, 1, 1, 1]
   }
 
+  /// Gets the vertices of the quad as an array.
   func toVertices() -> [GUIVertex] {
-    // Basically just creating an array containing four vertices but fancilly because this is
-    // performance critical (for the GUI renderer).
+    // Basically just creating an array containing four vertices but fancilly to make it faster (I'm
+    // only doing it this way because it measurably speeds up some other parts of the code).
     return Array(unsafeUninitializedCapacity: 4) { buffer, count in
-      var i = 0
-      for (position, uv) in Self.vertices {
-        buffer[i] = GUIVertex(
-          position: position * size + self.position,
-          uv: uv * uvSize + uvMin,
-          tint: tint,
-          textureIndex: textureIndex
-        )
-        i += 1
-      }
+      let tuple = toVertexTuple()
+      buffer[0] = tuple.0
+      buffer[1] = tuple.1
+      buffer[2] = tuple.2
+      buffer[3] = tuple.3
 
       count = 4
     }
+  }
+
+  /// An alternative to ``toVertices()`` that can be used in performance critical situations.
+  func toVertexTuple() -> (GUIVertex, GUIVertex, GUIVertex, GUIVertex) { // swiftlint:disable:this large_tuple
+    (
+      GUIVertex(
+        position: Self.verticesBuffer[0].position * size + position,
+        uv: Self.verticesBuffer[0].uv * uvSize + uvMin,
+        tint: tint,
+        textureIndex: textureIndex
+      ),
+      GUIVertex(
+        position: Self.verticesBuffer[1].position * size + position,
+        uv: Self.verticesBuffer[1].uv * uvSize + uvMin,
+        tint: tint,
+        textureIndex: textureIndex
+      ),
+      GUIVertex(
+        position: Self.verticesBuffer[2].position * size + position,
+        uv: Self.verticesBuffer[2].uv * uvSize + uvMin,
+        tint: tint,
+        textureIndex: textureIndex
+      ),
+      GUIVertex(
+        position: Self.verticesBuffer[3].position * size + position,
+        uv: Self.verticesBuffer[3].uv * uvSize + uvMin,
+        tint: tint,
+        textureIndex: textureIndex
+      )
+    )
   }
 
   /// Translates the quad by the given amount.

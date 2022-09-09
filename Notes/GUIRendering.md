@@ -97,4 +97,26 @@ commitToGPU                 0.06338ms
 ```
 Figure 3: *after*
 
+### Micro optimization time
 
+At the moment I can't spot any other obvious causes for slow down so I just opened up Instruments
+and started optimizing slow codepaths. By using some unsafe pointers, smarter algorithms and tuples
+instead of arrays when size is fixed I managed to get quite a big improvement. I think this
+performance is finally getting pretty reasonable. Total CPU time for GUI rendering is now 2.5x lower
+than before I started optimizing.
+
+```
+=== Start profiler summary ===
+waitForRenderPassDescriptor 14.55348ms
+updateCamera                0.01872ms
+createRenderCommandEncoder  0.07736ms
+world                       0.66486ms
+entities                    0.03725ms
+gui                         1.35770ms
+  updateUniforms 0.03743ms
+  updateContent  0.43399ms
+  createMeshes   0.51876ms
+  encode         0.34344ms
+commitToGPU                 0.05536ms
+===  End profiler summary  ===
+```

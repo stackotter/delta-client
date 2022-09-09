@@ -11,8 +11,9 @@ struct GUIElementMesh {
   var position: SIMD2<Int> = .zero
   /// The unscaled size.
   var size: SIMD2<Int>
-  /// The vertices making up the element.
-  var vertices: [GUIVertex]
+  /// The vertices making up the element grouped by quad as an optimisation for converting arrays of
+  /// quads to meshes.
+  var vertices: GUIVertexStorage
   /// The array texture used to render this element.
   var arrayTexture: MTLTexture?
 
@@ -26,35 +27,27 @@ struct GUIElementMesh {
     return vertices.count * MemoryLayout<GUIVertex>.stride
   }
 
-
   /// Creates a mesh from a collection of quads.
   init(size: SIMD2<Int>, arrayTexture: MTLTexture?, quads: [GUIQuad]) {
     self.size = size
     self.arrayTexture = arrayTexture
 
-    // Basically just a fancy flat map (it's measurably faster than using flatmap in this case and
+    // Basically just a fancy Array.map (it's measurably faster than using flatmap in this case and
     // this is performance critical, otherwise I would never use this code)
-    let vertexCount = quads.count * 4
-    vertices = Array(unsafeUninitializedCapacity: vertexCount) { buffer, count in
-      for i in 0..<quads.count {
-        let quadVertices = quads[i].toVertices()
-        let base = i * 4
-        quadVertices.withUnsafeBufferPointer { quadBuffer in
-          // You're welcome for the beautiful alignment, if only base were a one letter variable, it
-          // could be even nicer...
-          buffer[  base  ] = quadBuffer[0]
-          buffer[base + 1] = quadBuffer[1]
-          buffer[base + 2] = quadBuffer[2]
-          buffer[base + 3] = quadBuffer[3]
+    let quadCount = quads.count
+    vertices = .tuples(Array(unsafeUninitializedCapacity: quadCount) { buffer, count in
+      quads.withUnsafeBufferPointer { quadsPointer in
+        for i in 0..<quads.count {
+          buffer[i] = quadsPointer[i].toVertexTuple()
         }
       }
 
-      count = vertexCount
-    }
+      count = quadCount
+    })
   }
 
   /// Creates a mesh from a collection of vertices.
-  init(size: SIMD2<Int>, arrayTexture: MTLTexture, vertices: [GUIVertex]) {
+  init(size: SIMD2<Int>, arrayTexture: MTLTexture, vertices: GUIVertexStorage) {
     self.size = size
     self.arrayTexture = arrayTexture
     self.vertices = vertices
@@ -101,8 +94,10 @@ struct GUIElementMesh {
     into encoder: MTLRenderCommandEncoder,
     with device: MTLDevice
   ) throws {
+    let vertexCount = vertices.count
+
     // Avoid rendering empty mesh
-    if vertices.isEmpty {
+    if vertexCount == 0 {
       return
     }
 
@@ -132,10 +127,13 @@ struct GUIElementMesh {
     }
 
     // Assume that the buffers are outdated
-    vertexBuffer.contents().copyMemory(
-      from: &vertices,
-      byteCount: requiredVertexBufferSize
-    )
+    vertices.withUnsafeMutableRawPointer { pointer in
+      vertexBuffer.contents().copyMemory(
+        from: pointer,
+        byteCount: vertexCount * MemoryLayout<GUIVertex>.stride
+      )
+    }
+
     uniformsBuffer.contents().copyMemory(
       from: &uniforms,
       byteCount: MemoryLayout<GUIElementUniforms>.stride
@@ -144,6 +142,6 @@ struct GUIElementMesh {
     encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 1)
     encoder.setVertexBuffer(uniformsBuffer, offset: 0, index: 2)
     encoder.setFragmentTexture(arrayTexture, index: 0)
-    encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: vertices.count / 4 * 6)
+    encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: vertexCount / 4 * 6)
   }
 }
