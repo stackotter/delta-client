@@ -183,10 +183,15 @@ public final class Chunk {
   /// - Parameters:
   ///   - position: Position of block in chunk relative coordinates.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
-  /// - Returns: Data about the biome.
-  public func biomeId(at position: BlockPosition, acquireLock: Bool = true) -> Int {
+  /// - Returns: The id of the biome or `nil` if above or below the chunk.
+  public func biomeId(at position: BlockPosition, acquireLock: Bool = true) -> Int? {
     if acquireLock { lock.acquireReadLock() }
     defer { if acquireLock { lock.unlock() } }
+
+    let position = position.relativeToChunk
+    guard Self.isValidBlockPosition(position) else {
+      return nil
+    }
 
     let index = position.biomeIndex
     return Int(biomeIds[index])
@@ -198,7 +203,10 @@ public final class Chunk {
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
   /// - Returns: Data about the biome.
   public func biome(at position: BlockPosition, acquireLock: Bool = true) -> Biome? {
-    let biomeId = biomeId(at: position, acquireLock: acquireLock)
+    guard let biomeId = biomeId(at: position, acquireLock: acquireLock) else {
+      return nil
+    }
+
     return RegistryStore.shared.biomeRegistry.biome(withId: biomeId)
   }
 

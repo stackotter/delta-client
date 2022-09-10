@@ -249,6 +249,7 @@ struct GameView: View {
     .onDisappear {
       model.client.disconnect()
       model.renderCoordinator = RenderCoordinator(model.client)
+      model.inputDelegate.releaseCursor()
     }
   }
 
