@@ -8,30 +8,30 @@ import Network
 /// will be called for each received packet.
 public final class SocketLayer {
   // MARK: Public properties
-  
+
   /// Called for each packet received.
   public var packetHandler: ((Buffer) -> Void)?
-  
+
   // MARK: Private properties
-  
+
   /// The queue for receiving packets on.
   private var ioQueue: DispatchQueue
   /// The event bus to dispatch network errors on.
   private var eventBus: EventBus
-  
+
   /// A queue of packets waiting for the connection to start to be sent.
   private var packetQueue: [Buffer] = []
-  
+
   /// The host being connected to.
   private var host: String
   /// The port being connected to.
   private var port: UInt16
-  
+
   /// The socket connection to the server.
   private var connection: NWConnection
   /// The connection state of the socket.
   private var state: State = .idle
-  
+
   /// A socket connection state.
   private enum State {
     case idle
@@ -39,9 +39,9 @@ public final class SocketLayer {
     case connected
     case disconnected
   }
-  
+
   // MARK: Init
-  
+
   /// Creates a new socket layer for connecting to the given server.
   /// - Parameters:
   ///   - host: The host to connect to.
@@ -55,13 +55,13 @@ public final class SocketLayer {
     self.host = host
     self.port = port
     self.eventBus = eventBus
-    
+
     guard let nwPort = NWEndpoint.Port(rawValue: port) else {
       fatalError("Failed to create port from int: \(port). This really shouldn't happen.")
     }
-    
+
     ioQueue = DispatchQueue(label: "NetworkStack.ioThread")
-    
+
     // Decrease the TCP timeout from the default
     let options = NWProtocolTCP.Options()
     options.connectionTimeout = 10
@@ -69,32 +69,32 @@ public final class SocketLayer {
       host: NWEndpoint.Host(host),
       port: nwPort,
       using: NWParameters(tls: nil, tcp: options))
-    
+
     self.connection.stateUpdateHandler = { [weak self] newState in
       guard let self = self else { return }
       self.stateUpdateHandler(newState: newState)
     }
   }
-  
+
   deinit {
     disconnect()
   }
-  
+
   // MARK: Public methods
-  
+
   /// Connect to the server.
   public func connect() {
     state = .connecting
     packetQueue = []
     connection.start(queue: ioQueue)
   }
-  
+
   /// Disconnect from the server.
   public func disconnect() {
     state = .disconnected
     connection.cancel()
   }
-  
+
   /// Starts the packet receiving loop.
   public func receive() {
     connection.receive(minimumIncompleteLength: 0, maximumLength: 4096, completion: { [weak self] (data, _, _, error) in
@@ -106,14 +106,14 @@ public final class SocketLayer {
         let bytes = [UInt8](data)
         let buffer = Buffer(bytes)
         self.packetHandler?(buffer)
-        
+
         if self.state != .disconnected {
           self.receive()
         }
       }
     })
   }
-  
+
   /// Sends the given buffer to the connected server.
   ///
   /// If the connection is in a disconnected state, the packet is ignored. If the connection is
@@ -130,9 +130,9 @@ public final class SocketLayer {
         break
     }
   }
-  
+
   // MARK: Private methods
-  
+
   /// Handles a socket connection state update.
   /// - Parameter newState: The socket's new state.
   private func stateUpdateHandler(newState: NWConnection.State) {
@@ -148,20 +148,20 @@ public final class SocketLayer {
       case .failed(let error):
         state = .disconnected
         handleNWError(error)
-        eventBus.dispatch(ConnectionFailedEvent(networkError: error))
       case .cancelled:
         state = .disconnected
       default:
         break
     }
   }
-  
+
   /// Handles a network error.
   /// - Parameter error: The error to handle.
   private func handleNWError(_ error: NWError) {
     if state != .disconnected {
       disconnect()
       eventBus.dispatch(ConnectionFailedEvent(networkError: error))
+      // TODO: Use the as human readable messages for NWError in ConnectionFailedEvent
       if error == NWError.posix(.ECONNREFUSED) {
         log.error("Connection refused: '\(self.host):\(self.port)'")
       } else if error == NWError.dns(-65554) {
