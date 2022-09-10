@@ -1,3 +1,5 @@
+import Foundation
+
 /// The value of an entity attribute.
 public struct EntityAttributeValue {
   /// The value before applying ``modifiers``.
@@ -34,5 +36,32 @@ public struct EntityAttributeValue {
   public init(baseValue: Double, modifiers: [EntityAttributeModifier] = []) {
     self.baseValue = baseValue
     self.modifiers = modifiers
+  }
+
+  /// Gets whether this value has a given modifier.
+  /// - Parameter uuid: The uuid of the modifier to check for.
+  /// - Returns: `true` if the value has a modifier with the given uuid.
+  public func hasModifier(_ uuid: UUID) -> Bool {
+    for modifier in modifiers where modifier.uuid == uuid {
+      return true
+    }
+    return false
+  }
+
+  /// Applies a modifier to the value.
+  /// - Parameter modifier: The modifier to apply.
+  public mutating func apply(_ modifier: EntityAttributeModifier) {
+    if hasModifier(modifier.uuid) {
+      remove(modifier.uuid)
+    }
+    modifiers.append(modifier)
+  }
+
+  /// Removes a modifier from the value if it exists.
+  /// - Parameter uuid: The uuid of the modifier to remove.
+  public mutating func remove(_ uuid: UUID) {
+    modifiers = modifiers.filter { modifier in
+      return modifier.uuid != uuid
+    }
   }
 }

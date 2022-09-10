@@ -41,6 +41,8 @@ public struct Player {
   public private(set) var gamemode: PlayerGamemode
   /// The component storing the player's inventory.
   public private(set) var inventory: PlayerInventory
+  /// The component storing the state of collisions from the latest tick.
+  public private(set) var collisionState: PlayerCollisionState
 
   /// A ray starting from the player's eyes and travelling in the direction they are looking.
   public var ray: Ray {
@@ -70,6 +72,7 @@ public struct Player {
     camera = EntityCamera()
     gamemode = PlayerGamemode()
     inventory = PlayerInventory()
+    collisionState = PlayerCollisionState()
   }
 
   /// Adds the player to a game.
@@ -98,6 +101,7 @@ public struct Player {
       camera
       gamemode
       inventory
+      collisionState
     }
   }
 }

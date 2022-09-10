@@ -1,9 +1,16 @@
+import Foundation
 import FirebladeECS
 import simd
 
 public struct PlayerAccelerationSystem: System {
   static let sneakMultiplier: Double = 0.3
   static let sprintingFoodLevel = 6
+
+  static let sprintingModifier = EntityAttributeModifier(
+    uuid: UUID(uuidString: "662A6B8D-DA3E-4C1C-8813-96EA6097278D")!,
+    amount: 0.3,
+    operation: .addPercent
+  )
 
   public func update(_ nexus: Nexus, _ world: World) {
     var family = nexus.family(
@@ -17,10 +24,24 @@ public struct PlayerAccelerationSystem: System {
       EntitySneaking.self,
       PlayerAttributes.self,
       EntityAttributes.self,
+      PlayerCollisionState.self,
       ClientPlayerEntity.self
     ).makeIterator()
 
-    guard let (nutrition, flying, onGround, rotation, position, acceleration, sprinting, sneaking, playerAttributes, entityAttributes, _) = family.next() else {
+    guard let (
+      nutrition,
+      flying,
+      onGround,
+      rotation,
+      position,
+      acceleration,
+      sprinting,
+      sneaking,
+      playerAttributes,
+      entityAttributes,
+      collisionState,
+      _
+    ) = family.next() else {
       log.error("PlayerAccelerationSystem failed to get player to tick")
       return
     }
@@ -46,7 +67,23 @@ public struct PlayerAccelerationSystem: System {
       sneaking.isSneaking = false
     }
 
-    sprinting.isSprinting = impulse.z >= 0.8 && (nutrition.food > Self.sprintingFoodLevel || playerAttributes.canFly) && inputs.contains(.sprint)
+    let canSprint = (nutrition.food > Self.sprintingFoodLevel || playerAttributes.canFly)
+    if !sprinting.isSprinting && impulse.z >= 0.8 && canSprint && inputs.contains(.sprint) {
+      sprinting.isSprinting = true
+    }
+
+    if sprinting.isSprinting {
+      if !inputs.contains(.moveForward) || collisionState.collidingHorizontally {
+        sprinting.isSprinting = false
+      }
+    }
+
+    let hasModifier = entityAttributes[.movementSpeed].hasModifier(Self.sprintingModifier.uuid)
+    if sprinting.isSprinting == true && !hasModifier {
+      entityAttributes[.movementSpeed].apply(Self.sprintingModifier)
+    } else if sprinting.isSprinting == false && hasModifier {
+      entityAttributes[.movementSpeed].remove(Self.sprintingModifier.uuid)
+    }
 
     if impulse.magnitude < 0.0000001 {
       impulse = .zero
@@ -92,9 +129,6 @@ public struct PlayerAccelerationSystem: System {
       let slipperiness = block.material.slipperiness
 
       speed = movementSpeed * 0.216 / (slipperiness * slipperiness * slipperiness)
-      if isSprinting {
-        speed *= 1.3
-      }
     } else {
       speed = 0.02
       if isSprinting {
