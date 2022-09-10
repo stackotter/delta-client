@@ -22,6 +22,8 @@ public struct Keymap: Codable {
     .slot7: .seven,
     .slot8: .eight,
     .slot9: .nine,
+    .nextSlot: .scrollUp,
+    .previousSlot: .scrollDown,
     .openChat: .t
   ])
 

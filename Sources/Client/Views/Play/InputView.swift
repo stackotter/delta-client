@@ -26,8 +26,10 @@ struct InputView<Content: View>: View {
   @State private var enabled = false
 
   private var model = InputViewModel()
+  private var passthroughMouseClicks: Bool
 
-  init(@ViewBuilder _ content: @escaping (_ enabled: Binding<Bool>, _ setDelegate: (InputDelegate) -> Void) -> Content) {
+  init(passthroughMouseClicks: Bool = false, @ViewBuilder _ content: @escaping (_ enabled: Binding<Bool>, _ setDelegate: (InputDelegate) -> Void) -> Content) {
+    self.passthroughMouseClicks = passthroughMouseClicks
     self.content = content
   }
 
@@ -76,7 +78,46 @@ struct InputView<Content: View>: View {
             let deltaY = Float(event.scrollingDeltaY)
             delegateWrapper.delegate?.onScroll(deltaY)
 
-            return event
+            let key: Key
+            if deltaY > 0 {
+              key = .scrollUp
+            } else {
+              key = .scrollDown
+            }
+            delegateWrapper.delegate?.onKeyDown(key)
+            delegateWrapper.delegate?.onKeyUp(key)
+
+            return nil
+          })
+
+          NSEvent.addLocalMonitorForEvents(matching: [.rightMouseDown, .leftMouseDown], handler: { event in
+            if !enabled {
+              return event
+            }
+
+            if event.associatedEventsMask.contains(.leftMouseDown) {
+              delegateWrapper.delegate?.onKeyDown(.leftMouseButton)
+            }
+            if event.associatedEventsMask.contains(.rightMouseDown) {
+              delegateWrapper.delegate?.onKeyDown(.rightMouseButton)
+            }
+
+            return passthroughMouseClicks ? event : nil
+          })
+
+          NSEvent.addLocalMonitorForEvents(matching: [.rightMouseUp, .leftMouseUp], handler: { event in
+            if !enabled {
+              return event
+            }
+
+            if event.associatedEventsMask.contains(.leftMouseUp) {
+              delegateWrapper.delegate?.onKeyUp(.leftMouseButton)
+            }
+            if event.associatedEventsMask.contains(.rightMouseUp) {
+              delegateWrapper.delegate?.onKeyUp(.rightMouseButton)
+            }
+
+            return passthroughMouseClicks ? event : nil
           })
 
           NSEvent.addLocalMonitorForEvents(matching: [.keyDown], handler: { event in

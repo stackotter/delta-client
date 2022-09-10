@@ -42,18 +42,6 @@ final class ClientInputDelegate: InputDelegate {
     client.moveMouse(sensitivity * deltaX, sensitivity * deltaY)
   }
 
-  func onScroll(_ deltaY: Float) {
-    let input: Input
-    if deltaY > 0 {
-      input = .nextSlot
-    } else {
-      input = .previousSlot
-    }
-
-    client.press(input)
-    client.release(input)
-  }
-
   func releaseCursor() {
     for key in pressedKeys {
       client.release(key)

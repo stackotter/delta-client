@@ -10,7 +10,7 @@ public enum Key: String, Hashable, Codable {
   case leftCommand = "Left command"
   case rightCommand = "Right command"
   case function = "Function"
-  
+
   case a = "A"
   case b = "B"
   case c = "C"
@@ -37,7 +37,7 @@ public enum Key: String, Hashable, Codable {
   case x = "X"
   case y = "Y"
   case z = "Z"
-  
+
   case zero = "0"
   case one = "1"
   case two = "2"
@@ -48,7 +48,7 @@ public enum Key: String, Hashable, Codable {
   case seven = "7"
   case eight = "8"
   case nine = "9"
-  
+
   case numberPad0 = "NP0"
   case numberPad1 = "NP1"
   case numberPad2 = "NP2"
@@ -59,7 +59,7 @@ public enum Key: String, Hashable, Codable {
   case numberPad7 = "NP7"
   case numberPad8 = "NP8"
   case numberPad9 = "NP9"
-  
+
   case numberPadDec = "NumPad Dec"
   case numberPadPlus = "NumPad +"
   case numberPadMinus = "NumPad -"
@@ -68,27 +68,27 @@ public enum Key: String, Hashable, Codable {
   case numberPadForwardSlash = "NumPad /"
   case numberPadClear = "NumPad Clear"
   case numberPadEnter = "NumPad Enter"
-  
+
   case dash = "-"
   case equals = "="
   case backSlash = "\\"
   case forwardSlash = "/"
   case openSquareBracket = "["
   case closeSquareBracket = "]"
-  
+
   case comma = ","
   case period = "."
   case backTick = "`"
   case semicolon = ";"
   case singleQuote = "'"
-  
+
   case tab = "Tab"
   case insert = "Ins"
   case enter = "Enter"
   case space = "Space"
   case delete = "Delete"
   case escape = "Escape"
-  
+
   case f1 = "F1"
   case f2 = "F2"
   case f3 = "F3"
@@ -110,17 +110,24 @@ public enum Key: String, Hashable, Codable {
   case f19 = "F19"
   case f20 = "F20"
   case fDel = "FDel"
-  
+
   case home = "Home"
   case end = "End"
   case pageUp = "Page up"
   case pageDown = "Page down"
-  
+
   case upArrow = "Up arrow"
   case downArrow = "Down arrow"
   case leftArrow = "Left arrow"
   case rightArrow = "Right arrow"
-  
+
+  // Mouse buttons
+
+  case leftMouseButton = "Left click"
+  case rightMouseButton = "Right click"
+  case scrollUp = "Scroll up"
+  case scrollDown = "Scroll down"
+
   public init?(keyCode: UInt16) {
     if let key = Self.keyCodeToKey[keyCode] {
       self = key
@@ -128,7 +135,7 @@ public enum Key: String, Hashable, Codable {
       return nil
     }
   }
-  
+
   private static let keyCodeToKey: [UInt16: Key] = [
     0x00: .a,
     0x01: .s,
