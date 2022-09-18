@@ -74,11 +74,11 @@ public class WorldMeshWorker {
 
   /// Starts an asynchronous loop that executes all jobs on the queue until there are none left.
   private func startExecutionLoop() {
-    if executingThreadsCount.value >= maxExecutingThreadsCount {
+    if executingThreadsCount.load(ordering: .relaxed) >= maxExecutingThreadsCount {
       return
     }
 
-    _ = executingThreadsCount.incrementAndGet()
+    _ = executingThreadsCount.wrappingIncrement(ordering: .relaxed)
 
     executionQueue.async {
       while true {
@@ -86,7 +86,7 @@ public class WorldMeshWorker {
 
         // If no job was executed, the job queue is empty and this execution loop can stop
         if !jobWasExecuted {
-          if self.executingThreadsCount.decrementAndGet() < 0 {
+          if self.executingThreadsCount.wrappingDecrementThenLoad(ordering: .relaxed) < 0 {
             log.warning("Error in WorldMeshWorker thread management, number of executing threads is below 0")
           }
           return

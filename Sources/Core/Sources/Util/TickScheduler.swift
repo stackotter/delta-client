@@ -65,7 +65,7 @@ public final class TickScheduler {
   
   /// Cancels the scheduler at the start of the next tick.
   public func cancel() {
-    shouldCancel.value = true
+    shouldCancel.store(true, ordering: .relaxed)
   }
   
   /// Should only be called once on a given tick scheduler.
@@ -77,7 +77,7 @@ public final class TickScheduler {
         self.mostRecentTick = CFAbsoluteTimeGetCurrent()
         let nanosecondsPerTick = UInt64(1 / self.ticksPerSecond * Double(NSEC_PER_SEC))
         var when = mach_absolute_time()
-        while !self.shouldCancel.value {
+        while !self.shouldCancel.load(ordering: .relaxed) {
           when += self.nanosToAbs(nanosecondsPerTick)
           mach_wait_until(when)
           self.mostRecentTick = CFAbsoluteTimeGetCurrent()
