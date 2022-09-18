@@ -10,6 +10,6 @@ public struct CustomJSONDecoder {
     #else
     let decoder = JSONDecoder()
     #endif
-    return decoder.decode(type, from: data)
+    return try decoder.decode(type, from: data)
   }
 }
