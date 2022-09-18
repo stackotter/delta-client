@@ -1,5 +1,5 @@
 import Foundation
-import Concurrency
+import Atomics
 import Metal
 
 /// A multi-threaded worker that creates and updates the world's meshes. Completely threadsafe.
@@ -29,7 +29,7 @@ public class WorldMeshWorker {
   /// Serial dispatch queue for executing jobs on.
   private var executionQueue = DispatchQueue(label: "dev.stackotter.delta-client.WorldMeshWorker", attributes: [.concurrent])
   /// Whether the execution loop is currently running or not.
-  private var executingThreadsCount = AtomicInt(initialValue: 0)
+  private var executingThreadsCount = ManagedAtomic<Int>(0)
   /// The maximum number of execution loops allowed to run at once (for performance reasons).
   private let maxExecutingThreadsCount = 1 // TODO: Scale max threads and executionQueue qos with size of job queue
 

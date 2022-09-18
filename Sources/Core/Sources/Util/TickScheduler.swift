@@ -1,4 +1,4 @@
-import Concurrency
+import Atomics
 import Foundation
 import Darwin
 import FirebladeECS
@@ -27,7 +27,7 @@ public final class TickScheduler {
   /// The systems to run each tick. In execution order.
   public var systems: [System] = []
   /// If `true`, the tick loop will be stopped at the start of the next tick.
-  private var shouldCancel: AtomicBool = AtomicBool(initialValue: false)
+  private var shouldCancel = ManagedAtomic<Bool>(false)
   /// Time base information used in time calculations.
   private var timebaseInfo = mach_timebase_info_data_t()
   
