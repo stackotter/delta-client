@@ -237,7 +237,7 @@ public struct ResourcePack {
     let mcMeta: ResourcePack.PackMCMeta
     do {
       let data = try Data(contentsOf: mcMetaFile)
-      mcMeta = try ZippyJSONDecoder().decode(ResourcePack.PackMCMeta.self, from: data)
+      mcMeta = try CustomJSONDecoder().decode(ResourcePack.PackMCMeta.self, from: data)
     } catch {
       throw ResourcePackError.failedToReadMCMeta(error)
     }
@@ -348,7 +348,7 @@ public struct ResourcePack {
     let versionsManifest: VersionsManifest
     do {
       let data = try Data(contentsOf: versionsManifestURL)
-      versionsManifest = try ZippyJSONDecoder().decode(VersionsManifest.self, from: data)
+      versionsManifest = try CustomJSONDecoder().decode(VersionsManifest.self, from: data)
     } catch {
       throw ResourcePackError.versionsManifestFailure(error)
     }
@@ -368,7 +368,7 @@ public struct ResourcePack {
     let versionManifest: VersionManifest
     do {
       let data = try Data(contentsOf: versionURL)
-      versionManifest = try ZippyJSONDecoder().decode(VersionManifest.self, from: data)
+      versionManifest = try CustomJSONDecoder().decode(VersionManifest.self, from: data)
     } catch {
       throw ResourcePackError.versionManifestFailure(error)
     }

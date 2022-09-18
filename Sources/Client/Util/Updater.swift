@@ -184,7 +184,7 @@ public final class Updater: ObservableObject {
   ///
   /// - Returns: A download URL and a version string
   private static func getLatestStableDownloadURL() throws -> (URL, String) {
-    let decoder = ZippyJSONDecoder()
+    let decoder = CustomJSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
 
     let apiURL = URL(string: "https://api.github.com/repos/stackotter/delta-client/releases")!
@@ -223,7 +223,7 @@ public final class Updater: ObservableObject {
     let url = URL(string: "https://api.github.com/repos/stackotter/delta-client/branches")!
     do {
       let data = try Data(contentsOf: url)
-      let response = try ZippyJSONDecoder().decode([GitHubBranch].self, from: data)
+      let response = try CustomJSONDecoder().decode([GitHubBranch].self, from: data)
       return response
     } catch {
       throw UpdateError.failedToGetBranches(error)

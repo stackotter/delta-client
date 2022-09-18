@@ -39,7 +39,7 @@ let package = Package(
         "SwiftProtobuf",
         "Concurrency",
         "FirebladeECS",
-        "ZippyJSON",
+        .product(name: "ZippyJSON", package: "ZippyJSON", condition: .when(platforms: [.macOS, .iOS, .tvOS])),
         .product(name: "Parsing", package: "swift-parsing"),
         .product(name: "Collections", package: "swift-collections"),
         .product(name: "OrderedCollections", package: "swift-collections")
