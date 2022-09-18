@@ -5,10 +5,14 @@ import ZippyJSON
 
 public struct CustomJSONDecoder {
   #if !os(Linux)
-  public var keyDecodingStrategy: ZippyJSONDecoder.KeyDecodingStrategy
+  public var keyDecodingStrategy: ZippyJSONDecoder.KeyDecodingStrategy = ZippyJSONDecoder.KeyDecodingStrategy.convertFromSnakeCase
   #else
-  public var keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy
+  public var keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = JSONDecoder.KeyDecodingStrategy.convertFromSnakeCase
   #endif
+
+  public init() {
+    // Empty initialiser because we do not want the keyDecodingStrategy to be an initialiser parameter
+  }
 
   public func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
     #if !os(Linux)

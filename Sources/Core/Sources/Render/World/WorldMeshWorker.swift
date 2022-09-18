@@ -78,7 +78,7 @@ public class WorldMeshWorker {
       return
     }
 
-    _ = executingThreadsCount.wrappingIncrement(ordering: .relaxed)
+    executingThreadsCount.wrappingIncrement(ordering: .relaxed)
 
     executionQueue.async {
       while true {
