@@ -5,9 +5,9 @@ import ZippyJSON
 
 public struct CustomJSONDecoder {
   #if !os(Linux)
-  public var keyDecodingStrategy: ZippyJSONDecoder.KeyDecodingStrategy = ZippyJSONDecoder.KeyDecodingStrategy.convertFromSnakeCase
+  public var keyDecodingStrategy: ZippyJSONDecoder.KeyDecodingStrategy = ZippyJSONDecoder.KeyDecodingStrategy.useDefaultKeys
   #else
-  public var keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = JSONDecoder.KeyDecodingStrategy.convertFromSnakeCase
+  public var keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = JSONDecoder.KeyDecodingStrategy.useDefaultKeys
   #endif
 
   public init() {
