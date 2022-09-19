@@ -184,7 +184,7 @@ public final class Updater: ObservableObject {
   ///
   /// - Returns: A download URL and a version string
   private static func getLatestStableDownloadURL() throws -> (URL, String) {
-    let decoder = CustomJSONDecoder()
+    var decoder = CustomJSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
 
     let apiURL = URL(string: "https://api.github.com/repos/stackotter/delta-client/releases")!
