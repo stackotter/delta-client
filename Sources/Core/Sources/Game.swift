@@ -19,7 +19,7 @@ public struct Game {
   /// The names of all worlds in this game
   public var worldNames: [Identifier] = []
   /// A structure holding information about all of the dimensions (sent by server).
-  public var dimensions = NBT.Compound() // TODO: create actual dimension struct
+  public var dimensions = [Dimension.overworld]
   /// Registry containing all recipes in this game (sent by server).
   public var recipeRegistry = RecipeRegistry()
 
@@ -289,30 +289,6 @@ public struct Game {
 
   // MARK: Lifecycle
 
-  /// Updates the game with information received in a ``JoinGamePacket``.
-  public mutating func update(packet: JoinGamePacket, client: Client) {
-    // TODO: not threadsafe
-    maxPlayers = Int(packet.maxPlayers)
-    maxViewDistance = packet.viewDistance
-    debugInfoReduced = packet.reducedDebugInfo
-    respawnScreenEnabled = packet.enableRespawnScreen
-    isHardcore = packet.isHardcore
-
-    var playerEntityId: Int?
-    accessPlayer { player in
-      player.playerAttributes.previousGamemode = packet.previousGamemode
-      player.gamemode.gamemode = packet.gamemode
-      player.playerAttributes.isHardcore = packet.isHardcore
-      playerEntityId = player.entityId.id
-    }
-
-    if let playerEntityId = playerEntityId {
-      updateEntityId(playerEntityId, to: packet.playerEntityId)
-    }
-
-    changeWorld(to: World(from: packet, eventBus: client.eventBus))
-  }
-
   /// Sets the game's event bus. This is a method in case the game ever needs to listen to the event
   /// bus, this way means that the listener can be added again.
   public mutating func setEventBus(_ eventBus: EventBus) {
@@ -324,6 +300,7 @@ public struct Game {
   /// - Parameter world: The new world.
   public mutating func changeWorld(to newWorld: World) {
     // TODO: Make this threadsafe
+    print(newWorld.dimension)
     self.world = newWorld
     tickScheduler.setWorld(to: newWorld)
   }

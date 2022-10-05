@@ -9,6 +9,7 @@ public enum ClientboundPacketError: LocalizedError {
   case invalidInventorySlotCount(Int)
   case invalidInventorySlotIndex(Int, window: Int)
   case invalidChangeGameStateReason(UInt8)
+  case invalidDimension(Identifier)
 }
 
 public protocol ClientboundPacket {
