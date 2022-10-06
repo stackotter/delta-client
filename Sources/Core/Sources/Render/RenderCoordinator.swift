@@ -16,9 +16,6 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   /// The renderer for the current world. Only renders blocks.
   private var worldRenderer: WorldRenderer
 
-  /// The renderer for rendering entities.
-  private var entityRenderer: EntityRenderer
-
   /// The renderer for rendering the GUI.
   private var guiRenderer: GUIRenderer
 
@@ -84,17 +81,6 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       )
     } catch {
       fatalError("Failed to create world renderer: \(error)")
-    }
-
-    do {
-      entityRenderer = try EntityRenderer(
-        client: client,
-        device: device,
-        commandQueue: commandQueue,
-        profiler: profiler
-      )
-    } catch {
-      fatalError("Failed to create entity renderer: \(error)")
     }
 
     do {
@@ -194,22 +180,6 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     } catch {
       log.error("Failed to render world: \(error)")
       client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render world"))
-      return
-    }
-    profiler.pop()
-
-    profiler.push(.entities)
-    do {
-      try entityRenderer.render(
-        view: view,
-        encoder: renderEncoder,
-        commandBuffer: commandBuffer,
-        worldToClipUniformsBuffer: uniformsBuffer,
-        camera: camera
-      )
-    } catch {
-      log.error("Failed to render entities: \(error)")
-      client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render entities"))
       return
     }
     profiler.pop()

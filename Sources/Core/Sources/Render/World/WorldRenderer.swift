@@ -5,6 +5,9 @@ import simd
 /// A renderer that renders a `World`
 public final class WorldRenderer: Renderer {
   // MARK: Private properties
+    
+  /// Internal renderer for rendering entities.
+  private var entityRenderer: EntityRenderer
 
   /// Render pipeline used for rendering world geometry.
   private var renderPipelineState: MTLRenderPipelineState
@@ -69,6 +72,14 @@ public final class WorldRenderer: Renderer {
       vertexFunction: vertexFunction,
       fragmentFunction: fragmentFunction,
       blendingEnabled: true
+    )
+    
+    // Create entity renderer
+    entityRenderer = try EntityRenderer(
+      client: client,
+      device: device,
+      commandQueue: commandQueue,
+      profiler: profiler
     )
 
     // Create world mesh
@@ -197,6 +208,23 @@ public final class WorldRenderer: Renderer {
       }
     }
     profiler.pop()
+    
+    // Render entities geometry.
+    // Entities are rendered before translucent geometry for correct alpha blending behaviour.
+    profiler.push(.entities)
+    try entityRenderer.render(
+      view: view,
+      encoder: encoder,
+      commandBuffer: commandBuffer,
+      worldToClipUniformsBuffer: worldToClipUniformsBuffer,
+      camera: camera
+    )
+    profiler.pop()
+    
+    // Setup render pass for encoding translucent geometry after entity rendering pass
+    encoder.setRenderPipelineState(renderPipelineState)
+    encoder.setFragmentTexture(arrayTexture.texture, index: 0)
+    encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 3) // Instance uniforms
 
     // Render translucent geometry
     profiler.push(.encodeTranslucent)
