@@ -9,7 +9,7 @@ var dependencies: [Package.Dependency] = [
   .package(name: "NioDNS", url: "https://github.com/OpenKitten/NioDNS", from: "1.0.2"),
   .package(name: "SwiftProtobuf", url: "https://github.com/apple/swift-protobuf.git", from: "1.6.0"),
   .package(name: "swift-collections", url: "https://github.com/apple/swift-collections.git", from: "0.0.7"),
-  .package(name: "Concurrency", url: "https://github.com/uber/swift-concurrency.git", from: "0.7.1"),
+  .package(name: "swift-atomics", url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
   .package(name: "FirebladeECS", url: "https://github.com/stackotter/ecs.git", .branch("master")),
   .package(name: "ZippyJSON", url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
   .package(url: "https://github.com/pointfreeco/swift-parsing", .exact("0.8.0"))
@@ -37,9 +37,9 @@ let package = Package(
         "IDZSwiftCommonCrypto",
         "NioDNS",
         "SwiftProtobuf",
-        "Concurrency",
         "FirebladeECS",
-        "ZippyJSON",
+        .product(name: "Atomics", package: "swift-atomics"),
+        .product(name: "ZippyJSON", package: "ZippyJSON", condition: .when(platforms: [.macOS, .iOS, .tvOS])),
         .product(name: "Parsing", package: "swift-parsing"),
         .product(name: "Collections", package: "swift-collections"),
         .product(name: "OrderedCollections", package: "swift-collections")

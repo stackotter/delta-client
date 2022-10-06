@@ -1,4 +1,4 @@
-import Concurrency
+import Atomics
 import Foundation
 import Darwin
 import FirebladeECS
@@ -27,7 +27,7 @@ public final class TickScheduler {
   /// The systems to run each tick. In execution order.
   public var systems: [System] = []
   /// If `true`, the tick loop will be stopped at the start of the next tick.
-  private var shouldCancel: AtomicBool = AtomicBool(initialValue: false)
+  private var shouldCancel = ManagedAtomic<Bool>(false)
   /// Time base information used in time calculations.
   private var timebaseInfo = mach_timebase_info_data_t()
   
@@ -65,7 +65,7 @@ public final class TickScheduler {
   
   /// Cancels the scheduler at the start of the next tick.
   public func cancel() {
-    shouldCancel.value = true
+    shouldCancel.store(true, ordering: .relaxed)
   }
   
   /// Should only be called once on a given tick scheduler.
@@ -77,7 +77,7 @@ public final class TickScheduler {
         self.mostRecentTick = CFAbsoluteTimeGetCurrent()
         let nanosecondsPerTick = UInt64(1 / self.ticksPerSecond * Double(NSEC_PER_SEC))
         var when = mach_absolute_time()
-        while !self.shouldCancel.value {
+        while !self.shouldCancel.load(ordering: .relaxed) {
           when += self.nanosToAbs(nanosecondsPerTick)
           mach_wait_until(when)
           self.mostRecentTick = CFAbsoluteTimeGetCurrent()
