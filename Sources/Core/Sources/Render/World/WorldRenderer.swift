@@ -38,9 +38,10 @@ public final class WorldRenderer: Renderer {
   /// A buffer containing indices for a block outline.
   private let blockOutlineIndexBuffer: MTLBuffer
   
+  /// Determines whether block outline rendering should be performed
   private var renderBlockOutline: Bool {
     let playerGamemode = client.game.currentGamemode()
-    guard let playerGamemode else {
+    guard let playerGamemode = playerGamemode else {
       return false
     }
     
