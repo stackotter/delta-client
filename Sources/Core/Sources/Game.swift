@@ -267,6 +267,7 @@ public struct Game {
   /// Gets the position of the block currently targeted by the player.
   public func targetedBlock() -> BlockPosition? {
     var ray: Ray = Ray(origin: .zero, direction: .zero)
+    
     accessPlayer { player in
       ray = player.ray
     }
@@ -285,6 +286,16 @@ public struct Game {
     }
 
     return nil
+  }
+  
+  /// Gets current gamemode of the player
+  public func currentGamemode() -> Gamemode? {
+    var gamemode: Gamemode? = nil
+    accessPlayer { player in
+      gamemode = player.gamemode.gamemode
+    }
+    
+    return gamemode
   }
 
   // MARK: Lifecycle
