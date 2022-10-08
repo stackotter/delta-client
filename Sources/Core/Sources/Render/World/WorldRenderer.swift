@@ -37,16 +37,6 @@ public final class WorldRenderer: Renderer {
   private let blockOutlineVertexBuffer: MTLBuffer
   /// A buffer containing indices for a block outline.
   private let blockOutlineIndexBuffer: MTLBuffer
-  
-  /// Determines whether block outline rendering should be performed
-  private var renderBlockOutline: Bool {
-    let playerGamemode = client.game.currentGamemode()
-    guard let playerGamemode = playerGamemode else {
-      return false
-    }
-    
-    return playerGamemode != .spectator
-  }
 
   // MARK: Init
 
@@ -176,7 +166,7 @@ public final class WorldRenderer: Renderer {
     }
     profiler.pop()
 
-    if renderBlockOutline {
+    if client.game.currentGamemode() != .spectator {
       // Render selected block outline
       profiler.push(.encodeBlockOutline)
       if let targetedBlockPosition = client.game.targetedBlock() {
