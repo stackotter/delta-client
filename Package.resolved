@@ -105,8 +105,8 @@
         "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
           "branch": null,
-          "revision": "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
-          "version": "1.4.2"
+          "revision": "6fe203dc33195667ce1759bf0182975e4653ba1c",
+          "version": "1.4.4"
         }
       },
       {
@@ -141,8 +141,8 @@
         "repositoryURL": "https://github.com/apple/swift-protobuf.git",
         "state": {
           "branch": null,
-          "revision": "e1499bc69b9040b29184f7f2996f7bab467c1639",
-          "version": "1.19.0"
+          "revision": "88c7d15e1242fdb6ecbafbc7926426a19be1e98a",
+          "version": "1.20.2"
         }
       },
       {
@@ -195,8 +195,8 @@
         "repositoryURL": "https://github.com/weichsel/ZIPFoundation.git",
         "state": {
           "branch": null,
-          "revision": "1b662e2e7a091710ad8a963263939984e2ebf527",
-          "version": "0.9.14"
+          "revision": "f6a22e7da26314b38bf9befce34ae8e4b2543090",
+          "version": "0.9.15"
         }
       },
       {
@@ -204,8 +204,8 @@
         "repositoryURL": "https://github.com/michaeleisel/ZippyJSON",
         "state": {
           "branch": null,
-          "revision": "1ab389998592d038a60a3ca71aa7554d0e84ab4a",
-          "version": "1.2.4"
+          "revision": "31b991dfec66a4489b49142e7e5c0060e434f0ec",
+          "version": "1.2.5"
         }
       },
       {
