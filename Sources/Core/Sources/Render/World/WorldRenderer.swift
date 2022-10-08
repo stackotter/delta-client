@@ -37,6 +37,15 @@ public final class WorldRenderer: Renderer {
   private let blockOutlineVertexBuffer: MTLBuffer
   /// A buffer containing indices for a block outline.
   private let blockOutlineIndexBuffer: MTLBuffer
+  
+  private var renderBlockOutline: Bool {
+    let playerGamemode = client.game.currentGamemode()
+    guard let playerGamemode else {
+      return false
+    }
+    
+    return playerGamemode != .spectator
+  }
 
   // MARK: Init
 
@@ -166,50 +175,51 @@ public final class WorldRenderer: Renderer {
     }
     profiler.pop()
 
-    // Render selected block outline
-    profiler.push(.encodeBlockOutline)
-    if let targetedBlockPosition = client.game.targetedBlock() {
-      var indices: [UInt32] = []
-      var vertices: [BlockVertex] = []
-      let block = client.game.world.getBlock(at: targetedBlockPosition)
-      let boundingBox = block.shape.outlineShape.offset(by: targetedBlockPosition.doubleVector)
+    if renderBlockOutline {
+      // Render selected block outline
+      profiler.push(.encodeBlockOutline)
+      if let targetedBlockPosition = client.game.targetedBlock() {
+        var indices: [UInt32] = []
+        var vertices: [BlockVertex] = []
+        let block = client.game.world.getBlock(at: targetedBlockPosition)
+        let boundingBox = block.shape.outlineShape.offset(by: targetedBlockPosition.doubleVector)
 
-      for aabb in boundingBox.aabbs {
-        let geometry = Self.generateOutlineGeometry(
-          position: SIMD3(aabb.position),
-          size: SIMD3(aabb.size),
-          baseIndex: UInt32(indices.count)
-        )
-        indices.append(contentsOf: geometry.indices)
-        vertices.append(contentsOf: geometry.vertices)
+        for aabb in boundingBox.aabbs {
+          let geometry = Self.generateOutlineGeometry(
+            position: SIMD3(aabb.position),
+            size: SIMD3(aabb.size),
+            baseIndex: UInt32(indices.count)
+          )
+          indices.append(contentsOf: geometry.indices)
+          vertices.append(contentsOf: geometry.vertices)
+        }
+
+        if !boundingBox.aabbs.isEmpty {
+          blockOutlineVertexBuffer.contents().copyMemory(
+            from: &vertices,
+            byteCount: MemoryLayout<BlockVertex>.stride * vertices.count
+          )
+          blockOutlineIndexBuffer.contents().copyMemory(
+            from: &indices,
+            byteCount: MemoryLayout<UInt32>.stride * indices.count
+          )
+
+          encoder.setVertexBuffer(blockOutlineVertexBuffer, offset: 0, index: 0)
+          encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 2)
+
+          encoder.drawIndexedPrimitives(
+            type: .triangle,
+            indexCount: indices.count,
+            indexType: .uint32,
+            indexBuffer: blockOutlineIndexBuffer,
+            indexBufferOffset: 0,
+            instanceCount: 1
+          )
+        }
       }
-
-      if !boundingBox.aabbs.isEmpty {
-        blockOutlineVertexBuffer.contents().copyMemory(
-          from: &vertices,
-          byteCount: MemoryLayout<BlockVertex>.stride * vertices.count
-        )
-        blockOutlineIndexBuffer.contents().copyMemory(
-          from: &indices,
-          byteCount: MemoryLayout<UInt32>.stride * indices.count
-        )
-
-        encoder.setVertexBuffer(blockOutlineVertexBuffer, offset: 0, index: 0)
-        encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 2)
-
-        encoder.drawIndexedPrimitives(
-          type: .triangle,
-          indexCount: indices.count,
-          indexType: .uint32,
-          indexBuffer: blockOutlineIndexBuffer,
-          indexBufferOffset: 0,
-          instanceCount: 1
-        )
-      }
+      profiler.pop()
     }
-    profiler.pop()
     
-    // Render entities geometry.
     // Entities are rendered before translucent geometry for correct alpha blending behaviour.
     profiler.push(.entities)
     try entityRenderer.render(

@@ -267,16 +267,9 @@ public struct Game {
   /// Gets the position of the block currently targeted by the player.
   public func targetedBlock() -> BlockPosition? {
     var ray: Ray = Ray(origin: .zero, direction: .zero)
-    var targetable: Bool = true
     
     accessPlayer { player in
       ray = player.ray
-      targetable = player.gamemode.gamemode != .spectator
-    }
-    
-    /// Make sure current gamemode allows targeting blocks. If not (Spectator), perform early exit.
-    guard targetable else {
-      return nil
     }
 
     for position in VoxelRay(along: ray, count: 7) {
@@ -293,6 +286,16 @@ public struct Game {
     }
 
     return nil
+  }
+  
+  /// Gets current gamemode of the player
+  public func currentGamemode() -> Gamemode? {
+    var gamemode: Gamemode? = nil
+    accessPlayer { player in
+      gamemode = player.gamemode.gamemode
+    }
+    
+    return gamemode
   }
 
   // MARK: Lifecycle
