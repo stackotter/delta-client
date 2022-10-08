@@ -7,13 +7,16 @@ struct VideoSettingsView: View {
   
   @State var renderDistance: Float = 0
   @State var fov: Float = 0
+  @State var upscaleFactor: Float = 0
   @State var renderMode: RenderMode = .normal
   
   var config: RenderConfiguration {
     return RenderConfiguration(
       fovY: Float(fov.rounded()),
       renderDistance: Int(renderDistance),
-      mode: renderMode)
+      mode: renderMode,
+      upscaleFactor: Int(upscaleFactor)
+    )
   }
   
   /// - Parameter client: If present, config updates are sent to this client.
@@ -85,6 +88,20 @@ struct VideoSettingsView: View {
           .pickerStyle(DefaultPickerStyle())
         #endif
           .frame(width: 220)
+      }
+      
+      if #available(macOS 13, *) {
+        HStack {
+          Text("MetalFX Upscaling: " + (upscaleFactor > 0 ? "\n\(Int(upscaleFactor))x" : "Disabled"))
+          Spacer()
+          Slider(
+            value: $upscaleFactor.onChange(onValueChanged),
+            in: 0...4,
+            step: 2,
+            onEditingChanged: onEditingChanged
+          )
+            .frame(width: 220)
+        }
       }
     }
     .frame(width: 400)

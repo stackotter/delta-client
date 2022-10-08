@@ -36,6 +36,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
 
   /// The current frame capture state (`nil` if no capture is in progress).
   private var captureState: CaptureState?
+  
+  /// The current state of user's hardware. Indicates device feature support.
+  private var hardwareState: HardwareState
 
   /// The renderer profiler.
   private var profiler = Profiler<RenderingMeasurement>("Rendering")
@@ -63,6 +66,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     self.client = client
     self.device = device
     self.commandQueue = commandQueue
+    self.hardwareState = HardwareState(for: device)
 
     // Setup camera
     do {
