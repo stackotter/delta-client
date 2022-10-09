@@ -10,6 +10,8 @@ struct LightMap {
   var ambientLight: Double
   var baseLevels: [Double]
   var lastFlickerUpdateTick: Int?
+  var previousTime: Int?
+  var hasChanged = true
 
   init(ambientLight: Double) {
     baseLevels = Self.generateBaseLevels(ambientLight)
@@ -24,11 +26,24 @@ struct LightMap {
   }
 
   mutating func update(time: Int, tick: Int, ambientLight: Double) {
+    guard time != previousTime || tick != lastFlickerUpdateTick || ambientLight != self.ambientLight else {
+      return
+    }
+
+    hasChanged = true
+    previousTime = time
+
+    // Update base levels if ambient light has changed
     if ambientLight != self.ambientLight {
       baseLevels = Self.generateBaseLevels(ambientLight)
       self.ambientLight = ambientLight
     }
 
+    // Update block brightness
+    updateBlockFlicker(tick)
+    let blockBrightness = blockFlicker + 1.5
+
+    // Update sky brightness
     // TODO: When lightning is occurring, hardcode brightness to 1
     // TODO: implement night vision and water effects
     let sunBrightness = Self.getSunBrightness(at: time)
@@ -39,9 +54,7 @@ struct LightMap {
     let b = 1.0
     let skyColor = SIMD3<Double>(r, g, b)
 
-    updateBlockFlicker(tick)
-    let blockBrightness = blockFlicker + 1.5
-
+    // Update light map
     for skyLightLevel in 0..<LightLevel.levelCount {
       for blockLightLevel in 0..<LightLevel.levelCount {
         let sky = baseLevels[skyLightLevel] * skyBrightness
@@ -82,39 +95,40 @@ struct LightMap {
     } else {
       updateCount = 1
     }
-    lastFlickerUpdateTick = tick
+
+    guard updateCount != 0 else {
+      return
+    }
 
     var rng = Random()
     for _ in 0..<updateCount {
       blockFlicker += (rng.nextDouble() - rng.nextDouble()) * rng.nextDouble() * rng.nextDouble() * 0.1
       blockFlicker *= 0.9
     }
+
+    lastFlickerUpdateTick = tick
   }
 
-  mutating func getBuffer(_ device: MTLDevice) throws -> MTLBuffer {
-    return try MetalUtil.makeBuffer(
-      device,
-      bytes: &pixels,
-      length: LightLevel.levelCount * LightLevel.levelCount * MemoryLayout<SIMD3<UInt8>>.stride,
-      options: .storageModeShared,
-      label: "lightMap"
-    )
-  }
-
-  mutating func getTexture(_ device: MTLDevice) -> MTLTexture? {
-    var bgraPixels: [SIMD4<UInt8>] = []
-    for pixel in pixels {
-      bgraPixels.append([pixel.z, pixel.y, pixel.x, 255])
+  mutating func getBuffer(_ device: MTLDevice, reusing previousBuffer: MTLBuffer? = nil) throws -> MTLBuffer {
+    defer {
+      hasChanged = false
     }
 
-    let descriptor = MTLTextureDescriptor()
-    descriptor.width = 16
-    descriptor.height = 16
-    descriptor.pixelFormat = .bgra8Unorm
-    let texture = device.makeTexture(descriptor: descriptor)
-    texture?.replace(region: MTLRegionMake2D(0, 0, 16, 16), mipmapLevel: 0, withBytes: &bgraPixels, bytesPerRow: 16 * 4)
-    texture?.label = "lightMapTexture"
-    return texture
+    let byteCount = LightLevel.levelCount * LightLevel.levelCount * MemoryLayout<SIMD3<UInt8>>.stride
+    if let previousBuffer = previousBuffer {
+      if hasChanged {
+        previousBuffer.contents().copyMemory(from: &pixels, byteCount: byteCount)
+      }
+      return previousBuffer
+    } else {
+      return try MetalUtil.makeBuffer(
+        device,
+        bytes: &pixels,
+        length: byteCount,
+        options: .storageModeShared,
+        label: "lightMap"
+      )
+    }
   }
 
   static func index(_ skyLightLevel: Int, _ blockLightLevel: Int) -> Int {
