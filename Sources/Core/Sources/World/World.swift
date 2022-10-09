@@ -110,7 +110,12 @@ public class World {
   public func getTimeOfDay() -> Int {
     timeLock.acquireReadLock()
     defer { timeLock.unlock() }
-    return timeOfDay
+
+    if let time = dimension.fixedTime {
+      return time
+    } else {
+      return timeOfDay
+    }
   }
 
   /// Sets the age of the world in ticks.

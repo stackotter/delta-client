@@ -17,6 +17,8 @@ public final class WorldRenderer: Renderer {
   private var commandQueue: MTLCommandQueue
   /// The array texture containing all of the block textures.
   private var arrayTexture: AnimatedArrayTexture
+  /// The light map texture used to calculate rendered brightness.
+  private var lightMap: LightMap
 
   /// The client to render for.
   private var client: Client
@@ -61,6 +63,9 @@ public final class WorldRenderer: Renderer {
       device: device,
       commandQueue: commandQueue
     )
+
+    // Create light map
+    lightMap = LightMap(ambientLight: Double(client.game.world.dimension.ambientLight))
 
     // Create pipeline
     renderPipelineState = try MetalUtil.makeRenderPipelineState(
@@ -139,10 +144,21 @@ public final class WorldRenderer: Renderer {
     #endif
     profiler.pop()
 
+    // Get light map buffer
+    lightMap.update(
+      time: client.game.world.getTimeOfDay(),
+      tick: client.game.tickScheduler.tickNumber,
+      ambientLight: Double(client.game.world.dimension.ambientLight)
+    )
+    let lightMapBuffer = try lightMap.getBuffer(device)
+    let lightMapTexture = lightMap.getTexture(device)
+
     // Setup render pass
     encoder.setRenderPipelineState(renderPipelineState)
     encoder.setFragmentTexture(arrayTexture.texture, index: 0)
     encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 3) // Instance uniforms
+    encoder.setFragmentBuffer(lightMapBuffer, offset: 0, index: 0)
+    encoder.setFragmentTexture(lightMapTexture, index: 1)
 
     // Render transparent and opaque geometry
     profiler.push(.encodeOpaque)
@@ -352,6 +368,8 @@ public final class WorldRenderer: Renderer {
             g: 0,
             b: 0,
             a: 0.6,
+            skyLightLevel: UInt8(LightLevel.maximumLightLevel),
+            blockLightLevel: 0,
             textureIndex: UInt16.max,
             isTransparent: false
           ))
