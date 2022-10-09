@@ -7,7 +7,7 @@ public struct Dimension {
   public var logicalHeight: Int
   public var isNatural: Bool
   public var hasCeiling: Bool
-  public var hasSkylight: Bool
+  public var hasSkyLight: Bool
   public var shrunk: Bool
   public var ultrawarm: Bool
   public var hasRaids: Bool
@@ -23,7 +23,7 @@ public struct Dimension {
     logicalHeight: 256,
     isNatural: true,
     hasCeiling: false,
-    hasSkylight: true,
+    hasSkyLight: true,
     shrunk: false,
     ultrawarm: false,
     hasRaids: true,
@@ -32,7 +32,22 @@ public struct Dimension {
     piglinSafe: false
   )
 
-  public init(identifier: Identifier, ambientLight: Float, infiniburn: Identifier? = nil, fixedTime: Int? = nil, logicalHeight: Int, isNatural: Bool, hasCeiling: Bool, hasSkylight: Bool, shrunk: Bool, ultrawarm: Bool, hasRaids: Bool, respawnAnchorWorks: Bool, bedWorks: Bool, piglinSafe: Bool) {
+  public init(
+    identifier: Identifier,
+    ambientLight: Float,
+    infiniburn: Identifier? = nil,
+    fixedTime: Int? = nil,
+    logicalHeight: Int,
+    isNatural: Bool,
+    hasCeiling: Bool,
+    hasSkyLight: Bool,
+    shrunk: Bool,
+    ultrawarm: Bool,
+    hasRaids: Bool,
+    respawnAnchorWorks: Bool,
+    bedWorks: Bool,
+    piglinSafe: Bool
+  ) {
     self.identifier = identifier
     self.ambientLight = ambientLight
     self.infiniburn = infiniburn
@@ -40,7 +55,7 @@ public struct Dimension {
     self.logicalHeight = logicalHeight
     self.isNatural = isNatural
     self.hasCeiling = hasCeiling
-    self.hasSkylight = hasSkylight
+    self.hasSkyLight = hasSkyLight
     self.shrunk = shrunk
     self.ultrawarm = ultrawarm
     self.hasRaids = hasRaids
@@ -63,8 +78,8 @@ public struct Dimension {
     self.isNatural = isNatural == 1
     let hasCeiling: UInt8 = try compound.get("has_ceiling")
     self.hasCeiling = hasCeiling == 1
-    let hasSkylight: UInt8 = try compound.get("has_skylight")
-    self.hasSkylight = hasSkylight == 1
+    let hasSkyLight: UInt8 = try compound.get("has_skylight")
+    self.hasSkyLight = hasSkyLight == 1
     let shrunk: UInt8 = try compound.get("shrunk")
     self.shrunk = shrunk == 1
     let ultrawarm: UInt8 = try compound.get("ultrawarm")

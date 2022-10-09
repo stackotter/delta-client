@@ -163,7 +163,8 @@ public final class WorldRenderer: Renderer {
     lightMap.update(
       time: client.game.world.getTimeOfDay(),
       tick: client.game.tickScheduler.tickNumber,
-      ambientLight: Double(client.game.world.dimension.ambientLight)
+      ambientLight: Double(client.game.world.dimension.ambientLight),
+      dimensionHasSkyLight: client.game.world.dimension.hasSkyLight
     )
     lightMapBuffer = try lightMap.getBuffer(device, reusing: lightMapBuffer)
     profiler.pop()

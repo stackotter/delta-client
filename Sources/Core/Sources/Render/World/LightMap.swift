@@ -25,7 +25,7 @@ struct LightMap {
     }
   }
 
-  mutating func update(time: Int, tick: Int, ambientLight: Double) {
+  mutating func update(time: Int, tick: Int, ambientLight: Double, dimensionHasSkyLight: Bool) {
     guard time != previousTime || tick != lastFlickerUpdateTick || ambientLight != self.ambientLight else {
       return
     }
@@ -65,11 +65,15 @@ struct LightMap {
           block * (block * block * 0.6 + 0.4)
         )
 
-        // TODO: implement branch for dimensions with no sky lighting (apparently The End)
         var pixel = blockColor
 
-        pixel += skyColor * sky
-        pixel = MathUtil.lerp(from: pixel, to: SIMD3<Double>(repeating: 0.75), progress: 0.04)
+        if dimensionHasSkyLight {
+          pixel += skyColor * sky
+          pixel = MathUtil.lerp(from: pixel, to: SIMD3<Double>(repeating: 0.75), progress: 0.04)
+        } else {
+          pixel = MathUtil.lerp(from: pixel, to: [0.99, 1.12, 1.0], progress: 0.25)
+        }
+
         pixel = clamp(pixel, min: 0.0, max: 1.0)
 
         var copy = pixel
@@ -153,9 +157,11 @@ struct LightMap {
   }
 
   static func getSunBrightness(at time: Int) -> Double {
-    // TODO: Implement the effect of rain and thunder of sun brightness
+    // TODO: Implement the effect of rain and thunder on sun brightness
     let angle = getSunAngle(at: time)
-    var brightness = 1 - (cos(angle * .pi * 2) * 2 + 0.2)
+    // Vanilla doesn't subtract `pi` before taking the cosine, but if we don't it doesn't work
+    // correctly which is a bit odd (and sus).
+    var brightness = 1 - (cos(angle * .pi * 2 - .pi) * 2 + 0.2)
     brightness = MathUtil.clamp(brightness, 0, 1)
     brightness = 1 - brightness
     return brightness * 0.8 + 0.2
