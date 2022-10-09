@@ -13,6 +13,25 @@ enum UpdateError: LocalizedError {
   case failedToGetDownloadURLFromGitHubReleases
   case failedToGetBranches(Error)
   case failedToGetGitHubAPIResponse(Error)
+  
+  var errorDescription: String? {
+    switch self {
+      case .failedToGetDownloadURL:
+        return "Failed to get download URL."
+      case .failedToGetDownloadURLFromGitHubReleases:
+        return "Failed to get download URL from GitHub Releases."
+      case .failedToGetBranches(let error):
+        return """
+        Failed to get branches.
+        Reason: \(error.localizedDescription).
+        """
+      case .failedToGetGitHubAPIResponse(let error):
+        return """
+        Failed to get GitHub API response.
+        Reason: \(error.localizedDescription).
+        """
+    }
+  }
 }
 
 struct UpdateView: View {

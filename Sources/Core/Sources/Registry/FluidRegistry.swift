@@ -1,11 +1,5 @@
 import Foundation
 
-/// An error to do with fluids.
-public enum FluidError: LocalizedError {
-  /// Failed to load fluid data from pixlyzer.
-  case failedToLoadPixlyzerFluids(Error)
-}
-
 /// Holds information about fluids.
 public struct FluidRegistry: Codable {
   /// All fluids. Indexed by fluid id.

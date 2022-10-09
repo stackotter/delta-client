@@ -5,9 +5,28 @@ public enum NBTError: LocalizedError {
   case invalidListType
   case invalidTagType
   case rootTagNotCompound
-  case failedToGetList(String)
-  case failedToGetTag(String)
+  case failedToGetList(_ key: String)
+  case failedToGetTag(_ key: String)
   case failedToOpenURL
+  
+  public var errorDescription: String? {
+    switch self {
+      case .emptyList:
+        return "Empty list."
+      case .invalidListType:
+        return "Invalid list type."
+      case .invalidTagType:
+        return "Invalid tag type."
+      case .rootTagNotCompound:
+        return "Root tag not compound."
+      case .failedToGetList(let key):
+        return "Failed to get list for key: \(key)."
+      case .failedToGetTag(let key):
+        return "Failed to get tag for key: \(key)."
+      case .failedToOpenURL:
+        return "Failed to open URL."
+    }
+  }
 }
 
 // all tags are assumed to be big endian and signed unless otherwise specified

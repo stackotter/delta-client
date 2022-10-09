@@ -43,6 +43,13 @@ public class PluginEnvironment: ObservableObject {
     public var bundle: String 
     /// The underlying error that caused this error to be thrown if any.
     public var underlyingError: Error
+    public var errorDescription: String? {
+      """
+      \(String(describing: Self.self)).
+      Reason: \(underlyingError.localizedDescription)
+      Bundle: \(bundle)
+      """
+    }
   }
 
   // MARK: Init

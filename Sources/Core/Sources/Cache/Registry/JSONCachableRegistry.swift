@@ -18,6 +18,23 @@ public enum JSONCachableRegistryError: LocalizedError {
   case failedToLoadFromCache(JSONCachableRegistry.Type, Error)
   /// Failed to cache a registry to a JSON cache file.
   case failedToCache(JSONCachableRegistry.Type, Error)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .failedToLoadFromCache(let type, let error):
+        return """
+        Failed to load from cache.
+        Type: \(String(describing: type))
+        Reason: \(error.localizedDescription)
+        """
+      case .failedToCache(let type, let error):
+        return """
+        Failed to cache.
+        Type: \(String(describing: type))
+        Reason: \(error.localizedDescription)
+        """
+    }
+  }
 }
 
 public extension JSONCachableRegistry {

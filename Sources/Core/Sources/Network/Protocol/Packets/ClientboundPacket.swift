@@ -5,10 +5,38 @@ public enum ClientboundPacketError: LocalizedError {
   case invalidGamemode
   case invalidServerId
   case invalidJSONString
-  case disconnect(reason: String)
   case invalidInventorySlotCount(Int)
-  case invalidInventorySlotIndex(Int, window: Int)
-  case invalidChangeGameStateReason(UInt8)
+  case invalidInventorySlotIndex(Int, windowId: Int)
+  case invalidChangeGameStateReasonRawValue(ChangeGameStatePacket.Reason.RawValue)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .invalidDifficulty:
+        return "Invalid difficulty."
+      case .invalidGamemode:
+        return "Invalid gamemode."
+      case .invalidServerId:
+        return "Invalid server Id."
+      case .invalidJSONString:
+        return "Invalid JSON string."
+      case .invalidInventorySlotCount(let slotCount):
+        return """
+        Invalid inventory slot count.
+        Slot count: \(slotCount)
+        """
+      case .invalidInventorySlotIndex(let slotIndex, let windowId):
+        return """
+        Invalid inventory slot index.
+        Slot index: \(slotIndex)
+        Window Id: \(windowId)
+        """
+      case .invalidChangeGameStateReasonRawValue(let rawValue):
+        return """
+        Invalid change game state reason.
+        Raw value: \(rawValue)
+        """
+    }
+  }
 }
 
 public protocol ClientboundPacket {

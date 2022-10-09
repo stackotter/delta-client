@@ -3,6 +3,13 @@ import Metal
 
 public enum MeshError: LocalizedError {
   case failedToCreateBuffer
+  
+  public var errorDescription: String? {
+    switch self {
+      case .failedToCreateBuffer:
+        return "Failed to create buffer."
+    }
+  }
 }
 
 /// Holds and renders geometry data.

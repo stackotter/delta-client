@@ -24,7 +24,7 @@ public struct SetSlotPacket: ClientboundPacket {
 
     // Check for out-of-bounds
     guard slot >= 0 && slot < PlayerInventory.slotCount else {
-      throw ClientboundPacketError.invalidInventorySlotIndex(slot, window: windowId)
+      throw ClientboundPacketError.invalidInventorySlotIndex(slot, windowId: windowId)
     }
 
     // If window id is 0, only hotbar slots can be sent (and should be animated)

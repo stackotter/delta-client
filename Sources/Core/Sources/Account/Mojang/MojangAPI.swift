@@ -3,7 +3,16 @@ import ZippyJSON
 
 public enum MojangAPIError: LocalizedError {
   case failedToDeserializeResponse(String)
-  case requestFailed(Error?)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .failedToDeserializeResponse(let string):
+        return """
+        Failed to deserialize response.
+        Data: \(string)
+        """
+    }
+  }
 }
 
 /// Used to interface with Mojang's authentication API.

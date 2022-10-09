@@ -3,11 +3,23 @@ import MetalKit
 
 /// An error related to fonts from resource packs.
 enum FontError: LocalizedError {
-  case invalidTextureIdentifier(String)
   case failedToGetArrayTextureWidth
   case failedToGetArrayTextureHeight
   case failedToCreateArrayTexture
   case emptyFont
+  
+  var errorDescription: String? {
+    switch self {
+      case .failedToGetArrayTextureWidth:
+        return "Failed to get array texture width."
+      case .failedToGetArrayTextureHeight:
+        return "Failed to get array texture height."
+      case .failedToCreateArrayTexture:
+        return "Failed to create array texture."
+      case .emptyFont:
+        return "Empty font."
+    }
+  }
 }
 
 /// A font from a resource pack that can be used when rendering text.
