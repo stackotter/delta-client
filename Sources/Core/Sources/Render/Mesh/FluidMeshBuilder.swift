@@ -109,9 +109,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
 
     // Iterate through all visible faces
     for direction in Direction.allDirections where !cullingNeighbours.contains(direction) {
-      let lightLevel = LightLevel.max(lightLevel, neighbouringLightLevels[direction] ?? LightLevel())
-      var shade = CubeGeometry.shades[direction.rawValue]
-      shade *= Float(max(lightLevel.block, lightLevel.sky)) / 15
+      let shade = CubeGeometry.shades[direction.rawValue]
       let tint = tint * shade
 
       var geometry = Geometry()
@@ -380,6 +378,8 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
         g: tint.y,
         b: tint.z,
         a: 1,
+        skyLightLevel: UInt8(lightLevel.sky),
+        blockLightLevel: UInt8(lightLevel.block),
         textureIndex: texture,
         isTransparent: false
       )
