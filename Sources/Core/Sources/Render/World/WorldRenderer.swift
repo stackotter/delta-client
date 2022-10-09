@@ -37,6 +37,9 @@ public final class WorldRenderer: Renderer {
   /// A buffer containing indices for a block outline.
   private let blockOutlineIndexBuffer: MTLBuffer
 
+  /// A buffer containing the light map (updated each frame).
+  private var lightMapBuffer: MTLBuffer?
+
   // MARK: Init
 
   /// Creates a new world renderer.
@@ -150,15 +153,13 @@ public final class WorldRenderer: Renderer {
       tick: client.game.tickScheduler.tickNumber,
       ambientLight: Double(client.game.world.dimension.ambientLight)
     )
-    let lightMapBuffer = try lightMap.getBuffer(device)
-    let lightMapTexture = lightMap.getTexture(device)
+    lightMapBuffer = try lightMap.getBuffer(device, reusing: lightMapBuffer)
 
     // Setup render pass
     encoder.setRenderPipelineState(renderPipelineState)
     encoder.setFragmentTexture(arrayTexture.texture, index: 0)
     encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 3) // Instance uniforms
     encoder.setFragmentBuffer(lightMapBuffer, offset: 0, index: 0)
-    encoder.setFragmentTexture(lightMapTexture, index: 1)
 
     // Render transparent and opaque geometry
     profiler.push(.encodeOpaque)
