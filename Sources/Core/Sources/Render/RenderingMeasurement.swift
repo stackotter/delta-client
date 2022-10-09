@@ -19,6 +19,10 @@ public enum RenderingMeasurement: String, Hashable {
   case updateUniforms
   case updateContent
   case createMeshes
+  
+  case screen
+  case updateRenderTarget
+  case encodeUpscale
 
   case encode
 

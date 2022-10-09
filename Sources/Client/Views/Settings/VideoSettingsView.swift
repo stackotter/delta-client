@@ -103,6 +103,20 @@ struct VideoSettingsView: View {
             .frame(width: 220)
         }
       }
+      else {
+        HStack {
+          Text("MetalFX Upscaling: \nUnsupported")
+          Spacer()
+          Slider(
+            value: $upscaleFactor.onChange(onValueChanged),
+            in: 0...4,
+            step: 2,
+            onEditingChanged: onEditingChanged
+          )
+            .disabled(true)
+            .frame(width: 220)
+        }
+      }
     }
     .frame(width: 400)
     .navigationTitle("Video")

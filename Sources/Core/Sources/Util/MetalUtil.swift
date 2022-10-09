@@ -166,4 +166,26 @@ public enum MetalUtil {
     
     return depthState
   }
+  
+  /// Creates a custom render pass descriptor with default clear / store actions.
+  /// - Parameter device: Device to create the descriptor with.
+  /// - Returns: A render pass descriptor with custom render targets.
+  public static func createRenderPassDescriptor(
+    _ device: MTLDevice,
+    targetRenderTexture: MTLTexture,
+    targetDepthTexture: MTLTexture,
+    clearColour: MTLClearColor = MTLClearColor(red: 1, green: 1, blue: 1, alpha: 1)
+  ) -> MTLRenderPassDescriptor {
+    let renderPassDescriptor = MTLRenderPassDescriptor()
+    renderPassDescriptor.colorAttachments[0].texture = targetRenderTexture
+    renderPassDescriptor.colorAttachments[0].clearColor = clearColour
+    renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadAction.clear
+    renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreAction.store
+    
+    renderPassDescriptor.depthAttachment.texture = targetDepthTexture
+    renderPassDescriptor.depthAttachment.loadAction = MTLLoadAction.clear
+    renderPassDescriptor.depthAttachment.storeAction = MTLStoreAction.store
+    
+    return renderPassDescriptor
+  }
 }
