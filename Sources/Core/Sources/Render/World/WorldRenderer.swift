@@ -159,12 +159,14 @@ public final class WorldRenderer: Renderer {
     profiler.pop()
 
     // Get light map buffer
+    profiler.push(.updateLightMap)
     lightMap.update(
       time: client.game.world.getTimeOfDay(),
       tick: client.game.tickScheduler.tickNumber,
       ambientLight: Double(client.game.world.dimension.ambientLight)
     )
     lightMapBuffer = try lightMap.getBuffer(device, reusing: lightMapBuffer)
+    profiler.pop()
 
     // Setup render pass
     encoder.setRenderPipelineState(renderPipelineState)
