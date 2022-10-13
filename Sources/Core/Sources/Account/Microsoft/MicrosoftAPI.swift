@@ -345,7 +345,7 @@ public enum MicrosoftAPI {
       do {
         error = try decodeResponse(data)
       } catch {
-        throw MicrosoftAPIError.failedToDeserializeResponse(error, String(data: data, encoding: .utf8) ?? "")
+        throw MicrosoftAPIError.failedToDeserializeResponse(error, String(decoding: data, as: UTF8.self))
       }
       
       throw MicrosoftAPIError.xstsAuthenticationFailed(error)
@@ -400,7 +400,7 @@ public enum MicrosoftAPI {
     do {
       return try CustomJSONDecoder().decode(Response.self, from: data)
     } catch {
-      throw MicrosoftAPIError.failedToDeserializeResponse(error, String(data: data, encoding: .utf8) ?? "")
+      throw MicrosoftAPIError.failedToDeserializeResponse(error, String(decoding: data, as: UTF8.self))
     }
   }
 }

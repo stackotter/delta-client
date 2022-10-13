@@ -42,7 +42,7 @@ public enum MojangAPI {
     let (_, data) = try await RequestUtil.performJSONRequest(url: authenticationURL, body: payload, method: .post)
     
     guard let response = try? CustomJSONDecoder().decode(MojangAuthenticationResponse.self, from: data) else {
-      throw MojangAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
+      throw MojangAPIError.failedToDeserializeResponse(String(decoding: data, as: UTF8.self))
     }
     
     let accessToken = MinecraftAccessToken(
@@ -92,7 +92,7 @@ public enum MojangAPI {
     let (_, data) = try await RequestUtil.performJSONRequest(url: refreshURL, body: payload, method: .post)
     
     guard let response = try? CustomJSONDecoder().decode(MojangRefreshTokenResponse.self, from: data) else {
-      throw MojangAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
+      throw MojangAPIError.failedToDeserializeResponse(String(decoding: data, as: UTF8.self))
     }
     
     var refreshedAccount = account
