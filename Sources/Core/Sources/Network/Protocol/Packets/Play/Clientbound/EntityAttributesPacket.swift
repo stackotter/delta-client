@@ -1,7 +1,7 @@
 import Foundation
 
 public enum EntityAttributesPacketError: LocalizedError {
-  case invalidModifierOperationRawValue(UInt8)
+  case invalidModifierOperationRawValue(EntityAttributeModifier.Operation.RawValue)
   case invalidAttributeKey(String)
   
   public var errorDescription: String? {
