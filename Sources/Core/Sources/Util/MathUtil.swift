@@ -44,6 +44,15 @@ public enum MathUtil {
     let progress = MathUtil.clamp(progress, 0, 1)
     return initial + progress * (target - initial)
   }
+
+  // Linearly interpolates the individual components of two vectors.
+  public static func lerp<T: FloatingPoint>(from initial: SIMD3<T>, to target: SIMD3<T>, progress: T) -> SIMD3<T> {
+    return SIMD3(
+      lerp(from: initial.x, to: target.x, progress: progress),
+      lerp(from: initial.y, to: target.y, progress: progress),
+      lerp(from: initial.z, to: target.z, progress: progress)
+    )
+  }
   
   /// Linearly interpolates between two angles (in radians).
   /// - Parameters:

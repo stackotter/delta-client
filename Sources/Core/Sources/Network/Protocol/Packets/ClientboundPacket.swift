@@ -8,6 +8,7 @@ public enum ClientboundPacketError: LocalizedError {
   case invalidInventorySlotCount(Int)
   case invalidInventorySlotIndex(Int, windowId: Int)
   case invalidChangeGameStateReasonRawValue(ChangeGameStatePacket.Reason.RawValue)
+  case invalidDimension(Identifier)
   
   public var errorDescription: String? {
     switch self {
@@ -34,6 +35,11 @@ public enum ClientboundPacketError: LocalizedError {
         return """
         Invalid change game state reason.
         Raw value: \(rawValue)
+        """
+      case .invalidDimension(let identifier):
+        return """
+        Invalid dimension.
+        Identifier: \(identifier)
         """
     }
   }

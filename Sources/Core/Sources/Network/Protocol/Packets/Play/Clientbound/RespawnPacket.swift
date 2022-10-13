@@ -20,10 +20,10 @@ public enum RespawnPacketError: LocalizedError {
   }
 }
 
-public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
+public struct RespawnPacket: ClientboundPacket {
   public static let id: Int = 0x3a
   
-  public var dimension: Identifier
+  public var currentDimensionIdentifier: Identifier
   public var worldName: Identifier
   public var hashedSeed: Int
   public var gamemode: Gamemode
@@ -33,7 +33,7 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
   public var copyMetadata: Bool
 
   public init(from packetReader: inout PacketReader) throws {
-    dimension = try packetReader.readIdentifier()
+    currentDimensionIdentifier = try packetReader.readIdentifier()
     worldName = try packetReader.readIdentifier()
     hashedSeed = try packetReader.readLong()
     
@@ -62,9 +62,26 @@ public struct RespawnPacket: ClientboundPacket, WorldDescriptor {
   }
   
   public func handle(for client: Client) throws {
+    guard let currentDimension = client.game.dimensions.first(where: { dimension in
+      return dimension.identifier == currentDimensionIdentifier
+    }) else {
+      throw ClientboundPacketError.invalidDimension(currentDimensionIdentifier)
+    }
+
+    let world = World(
+      name: worldName,
+      dimension: currentDimension,
+      hashedSeed: hashedSeed,
+      isFlat: isFlat,
+      isDebug: isDebug,
+      eventBus: client.eventBus
+    )
+  
+    // TODO: implement copyMetadata
+
     // TODO: check if the discussion at https://wiki.vg/Protocol#Respawn about respawning to the same dimension applies or if it's just a java edition bug
-    client.game.changeWorld(to: World(from: self, eventBus: client.eventBus))
-    
+    client.game.changeWorld(to: world)
+
     client.game.accessPlayer { player in
       player.gamemode.gamemode = gamemode
       player.playerAttributes.previousGamemode = previousGamemode

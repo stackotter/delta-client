@@ -8,6 +8,8 @@ public struct LightLevel {
   public static var defaultBlockLightLevel = 0
   /// The maximum light level.
   public static var maximumLightLevel = 15
+  /// The number of light levels.
+  public static var levelCount = maximumLightLevel + 1
   
   /// The sky light level.
   public var sky: Int
