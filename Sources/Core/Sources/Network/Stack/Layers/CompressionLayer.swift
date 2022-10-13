@@ -5,6 +5,17 @@ import Compression
 public enum CompressionLayerError: LocalizedError {
   /// A compressed packet was under the required length for compressed packets.
   case compressedPacketIsUnderThreshold(length: Int, threshold: Int)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .compressedPacketIsUnderThreshold(let length, let threshold):
+        return """
+        A compressed packet was under the required length for compressed packets.
+        Length: \(length)
+        Threshold: \(threshold)
+        """
+    }
+  }
 }
 
 /// Handles the compression and decompression of packets (outbound and inbound respectively).

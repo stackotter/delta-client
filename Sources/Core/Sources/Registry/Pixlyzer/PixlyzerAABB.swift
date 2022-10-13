@@ -11,7 +11,7 @@ public struct PixlyzerAABB: Decodable {
         return SIMD3<Double>(repeating: value)
       case let .multiple(values):
         guard values.count == 3 else {
-          throw PixlyzerError.invalidAABBVertex(values)
+          throw PixlyzerError.invalidAABBVertexLength(values.count)
         }
         return SIMD3<Double>(values)
     }

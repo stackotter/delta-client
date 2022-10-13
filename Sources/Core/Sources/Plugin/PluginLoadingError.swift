@@ -13,14 +13,17 @@ public enum PluginLoadingError: LocalizedError {
   
   public var errorDescription: String? {
     switch self {
-    case let .failedToOpenDylib(reason):
-      return "Failed to open the plugin's dynamic library: \(reason ?? "(no reason provided)")"
-    case .missingBuilderFunction:
-      return "Builder function not found (the plugin may be incorrectly built or corrupted)"
-    case .alreadyLoaded:
-      return "A plugin with the same identifier is already loaded"
-    case let .invalidManifest(error):
-      return "The plugin's manifest file is invalid: \(error.localizedDescription)"
+      case .failedToOpenDylib(let reason):
+        return "Failed to open the plugin's dynamic library: \(reason ?? "(no reason provided)")"
+      case .missingBuilderFunction:
+        return "Builder function not found (the plugin may be incorrectly built or corrupted)"
+      case .alreadyLoaded:
+        return "A plugin with the same identifier is already loaded"
+      case .invalidManifest(let error):
+        return """
+        The plugin's manifest file is invalid.
+        Reason: \(error.localizedDescription)
+        """
     }
   }
 }

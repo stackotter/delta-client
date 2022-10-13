@@ -1,8 +1,23 @@
 import Foundation
 
 public enum RespawnPacketError: LocalizedError {
-  case invalidRawGamemode(Int8)
-  case invalidRawPreviousGamemode(Int8)
+  case invalidGamemodeRawValue(Int8)
+  case invalidPreviousGamemodeRawValue(Int8)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .invalidGamemodeRawValue(let rawValue):
+        return """
+        Invalid gamemode raw value.
+        Raw value: \(rawValue)
+        """
+      case .invalidPreviousGamemodeRawValue(let rawValue):
+        return """
+        Invalid previous gamemode raw value.
+        Raw value: \(rawValue)
+        """
+    }
+  }
 }
 
 public struct RespawnPacket: ClientboundPacket {
@@ -26,7 +41,7 @@ public struct RespawnPacket: ClientboundPacket {
     let rawPreviousGamemode = try packetReader.readByte()
     
     guard let gamemode = Gamemode(rawValue: rawGamemode) else {
-      throw RespawnPacketError.invalidRawGamemode(rawGamemode)
+      throw RespawnPacketError.invalidGamemodeRawValue(rawGamemode)
     }
     
     self.gamemode = gamemode
@@ -35,7 +50,7 @@ public struct RespawnPacket: ClientboundPacket {
       previousGamemode = nil
     } else {
       guard let previousGamemode = Gamemode(rawValue: rawPreviousGamemode) else {
-        throw RespawnPacketError.invalidRawPreviousGamemode(rawPreviousGamemode)
+        throw RespawnPacketError.invalidPreviousGamemodeRawValue(rawPreviousGamemode)
       }
       
       self.previousGamemode = previousGamemode

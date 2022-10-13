@@ -1,8 +1,20 @@
 import Foundation
 
 public enum EntityAttributesPacketError: LocalizedError {
-  case invalidModifierOperation(UInt8)
+  case invalidModifierOperationRawValue(UInt8)
   case invalidAttributeKey(String)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .invalidModifierOperationRawValue(let rawValue):
+        return """
+        Invalid modifier operation.
+        Raw value: \(rawValue)
+        """
+      case .invalidAttributeKey(let attributeKey):
+        return "Invalid attribute key: \(attributeKey)"
+    }
+  }
 }
 
 public struct EntityAttributesPacket: ClientboundPacket {
@@ -31,7 +43,7 @@ public struct EntityAttributesPacket: ClientboundPacket {
         let amount = try packetReader.readDouble()
         let rawOperation = try packetReader.readUnsignedByte()
         guard let operation = EntityAttributeModifier.Operation(rawValue: rawOperation) else {
-          throw EntityAttributesPacketError.invalidModifierOperation(rawOperation)
+          throw EntityAttributesPacketError.invalidModifierOperationRawValue(rawOperation)
         }
         let modifier = EntityAttributeModifier(uuid: uuid, amount: amount, operation: operation)
         modifiers.append(modifier)

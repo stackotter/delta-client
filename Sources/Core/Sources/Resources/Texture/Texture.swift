@@ -30,6 +30,47 @@ public enum TextureError: LocalizedError {
   case failedToLoadTextureAnimation(Error)
   /// The target width for the texture is not a power of two.
   case targetWidthNotPowerOfTwo(targetWidth: Int)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .invalidDimensions(let width, let height):
+        return """
+        The texture's height must be a multiple of the width.
+        Width: \(width)
+        Height: \(height)
+        """
+      case .widthNotPowerOfTwo(let width):
+        return """
+        Texture dimensions must be powers of two.
+        Width: \(width)
+        """
+      case .failedToCreateImageProvider:
+        return "Failed to create an image provider to read the texture from the given file."
+      case .failedToReadTextureImage:
+        return "Failed to read the texture from the given file."
+      case .failedToGetTextureBytes(let error):
+        return """
+        Failed to get the raw bytes of the texture.
+        Reason: \(error.localizedDescription)
+        """
+      case .failedToCreateContext:
+        return "Failed to create a `CGContext` for the given texture."
+      case .failedToGetContextBytes:
+        return "Failed to get the bytes of the `CGContext` created to format the texture."
+      case .invalidFrameMetadata:
+        return "The animation mcmeta file for the texture contains invalid frame metadata."
+      case .failedToLoadTextureAnimation(let error):
+        return """
+        The animation data for an animated texture was invalid or missing.
+        Reason: \(error.localizedDescription)
+        """
+      case .targetWidthNotPowerOfTwo(let targetWidth):
+        return """
+        The target width for the texture is not a power of two.
+        Target width: \(targetWidth)
+        """
+    }
+  }
 }
 
 /// A texture and its metadata.

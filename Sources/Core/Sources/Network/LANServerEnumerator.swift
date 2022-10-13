@@ -8,6 +8,21 @@ enum LANServerEnumeratorError: LocalizedError {
   case failedToCreateMulticastGroup(Error)
   /// Failed to connect to the multicast group that LAN servers broadcast on.
   case connectionFailed(NWError)
+  
+  var errorDescription: String? {
+    switch self {
+      case .failedToCreateMulticastGroup(let error):
+        return """
+        Failed to create the multicast group descriptor for the group that LAN servers broadcast on.
+        Reason: \(error.localizedDescription)
+        """
+      case .connectionFailed(let nwError):
+        return """
+        Failed to connect to the multicast group that LAN servers broadcast on.
+        Reason: \(nwError.localizedDescription)
+        """
+    }
+  }
 }
 
 /// Used to discover LAN servers (servers on the same network as the client).

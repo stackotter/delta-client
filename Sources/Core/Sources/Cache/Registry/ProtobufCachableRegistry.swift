@@ -12,6 +12,21 @@ public enum ProtobufCachableRegistryError: LocalizedError {
   case failedToLoadFromCache(Error)
   /// Failed to cache a registry to a Protobuf cache file.
   case failedToCache(Error)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .failedToLoadFromCache(let error):
+        return """
+        Failed to load a registry from a Protobuf cache file.
+        Reason: \(error.localizedDescription)
+        """
+      case .failedToCache(let error):
+        return """
+        Failed to cache a registry to a Protobuf cache file.
+        Reason: \(error.localizedDescription)
+        """
+    }
+  }
 }
 
 public extension ProtobufCachableRegistry {

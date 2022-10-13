@@ -3,17 +3,36 @@ import ZippyJSON
 
 public enum PixlyzerError: LocalizedError {
   /// The block with the specified id is missing.
-  case missingBlock(Int)
+  case missingBlockId(Int)
   /// An AABB's vertex is of invalid length.
-  case invalidAABBVertex([Double])
+  case invalidAABBVertexLength(Int)
   /// The entity registry does not contain the player entity.
   case entityRegistryMissingPlayer
-  /// The string could not be converted to data using UTF8.
+  /// The block name could not be converted to data using UTF8.
   case invalidUTF8BlockName(String)
-  /// Either lava or water is missing from the pixlyzer fluid registry.
-  case missingExpectedFluids
   /// Failed to get the water fluid from the fluid registry.
   case failedToGetWaterFluid
+  
+  public var errorDescription: String? {
+    switch self {
+      case .missingBlockId(let id):
+        return "The block with id: \(id) is missing."
+      case .invalidAABBVertexLength(let length):
+        return """
+        An AABB's vertex is of invalid length.
+        length: \(length)
+        """
+      case .entityRegistryMissingPlayer:
+        return "The entity registry does not contain the player entity."
+      case .invalidUTF8BlockName(let blockName):
+        return """
+        The block name could not be converted to data using UTF8.
+        Block name: \(blockName)
+        """
+      case .failedToGetWaterFluid:
+        return "Failed to get the water fluid from the fluid registry."
+    }
+  }
 }
 
 /// A utility for downloading and reformatting data from the Pixlyzer data repository.
@@ -217,7 +236,7 @@ public enum PixlyzerFormatter {
     var renderDescriptors: [[[BlockModelRenderDescriptor]]] = []
     for i in 0..<blocks.count {
       guard let block = blocks[i] else {
-        throw PixlyzerError.missingBlock(i)
+        throw PixlyzerError.missingBlockId(i)
       }
 
       blockArray.append(block)

@@ -1,9 +1,29 @@
 import Foundation
 
 public enum DeclareRecipesPacketError: LocalizedError {
-  case unknownRecipeType(String)
-  case unknownHeatRecipeType(String)
-  case unknownSpecialRecipeType(String)
+  case unknownRecipeType(_ typeDescription: String)
+  case unknownHeatRecipeType(_ typeDescription: String)
+  case unknownSpecialRecipeType(_ typeDescription: String)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .unknownRecipeType(let typeDescription):
+        return """
+        Unknown recipe type.
+        Type Description: \(typeDescription)
+        """
+      case .unknownHeatRecipeType(let typeDescription):
+        return """
+        Unknown heat recipe type.
+        Type Description: \(typeDescription)
+        """
+      case .unknownSpecialRecipeType(let typeDescription):
+        return """
+        Unknown special recipe type.
+        Type Description: \(typeDescription)
+        """
+    }
+  }
 }
 
 public struct DeclareRecipesPacket: ClientboundPacket {

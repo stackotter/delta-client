@@ -5,6 +5,17 @@ enum CryptoError: LocalizedError {
   case failedToGenerateSharedSecret
   case invalidDERCertificate
   case failedToEncryptRSA
+  
+  var errorDescription: String? {
+    switch self {
+      case .failedToGenerateSharedSecret:
+        return "Failed to generate shared secret."
+      case .invalidDERCertificate:
+        return "Invalid DER certificate."
+      case .failedToEncryptRSA:
+        return "Failed to encrypt RSA."
+    }
+  }
 }
 
 struct CryptoUtil {

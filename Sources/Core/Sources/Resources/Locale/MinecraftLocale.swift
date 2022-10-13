@@ -2,6 +2,13 @@ import Foundation
 
 public enum MinecraftLocaleError: LocalizedError {
   case unableToParseLocale
+  
+  public var errorDescription: String? {
+    switch self {
+      case .unableToParseLocale:
+        return "Unable to parse locale."
+    }
+  }
 }
 
 public struct MinecraftLocale {

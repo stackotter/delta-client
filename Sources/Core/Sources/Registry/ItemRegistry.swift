@@ -1,7 +1,14 @@
 import Foundation
 
 public enum ItemRegistryError: LocalizedError {
-  case missingItem(id: Int)
+  case missingItemId(Int)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .missingItemId(let id):
+        return "Missing item id: \(id)"
+    }
+  }
 }
 
 /// Holds information about items.
@@ -20,7 +27,7 @@ public struct ItemRegistry: Codable {
     let maximumId = items.count - 1
     for id in 0..<maximumId {
       guard let item = items[id] else {
-        throw ItemRegistryError.missingItem(id: id)
+        throw ItemRegistryError.missingItemId(id)
       }
       self.items.append(item)
 

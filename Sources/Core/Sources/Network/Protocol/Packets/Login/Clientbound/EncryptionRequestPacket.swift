@@ -2,7 +2,13 @@ import Foundation
 
 public enum EncryptionRequestPacketError: LocalizedError {
   case incorrectAccountType
-  case noAccount
+  
+  public var errorDescription: String? {
+    switch self {
+      case .incorrectAccountType:
+        return "Incorrect account type."
+    }
+  }
 }
 
 public struct EncryptionRequestPacket: ClientboundPacket, Sendable {

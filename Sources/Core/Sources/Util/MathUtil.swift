@@ -2,7 +2,14 @@ import Foundation
 import simd
 
 public enum MathError: LocalizedError {
-  case invalidVector
+  case invalidVectorLength(_ length: Int)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .invalidVectorLength(let elementsCount):
+        return "Invalid 3D vector. 3D vector should have exactly 3 elements, but got \(elementsCount) instead."
+    }
+  }
 }
 
 /// Some utility functions to do with maths.
@@ -75,7 +82,7 @@ public enum MathUtil {
   /// Converts an array of doubles to a 3d vector. Throws if the array doesn't have exactly 3 elements.
   public static func vectorFloat3(from doubleArray: [Double]) throws -> SIMD3<Float> {
     guard doubleArray.count == 3 else {
-      throw MathError.invalidVector
+      throw MathError.invalidVectorLength(doubleArray.count)
     }
     
     return SIMD3<Float>(doubleArray.map { Float($0) })
