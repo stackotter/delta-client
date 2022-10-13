@@ -22,7 +22,7 @@ enum BlockModelPaletteError: LocalizedError {
   /// A matrix was stored with an invalid number of bytes in the Protobuf cache. Expected to be 64.
   case invalidMatrixDataLength(Int)
   /// Invalid computed tint type in cached protobuf message.
-  case invalidComputedTintTypeRawValue(Int)
+  case invalidComputedTintTypeRawValue(ProtobufBlockComputedTintType.RawValue)
   /// Invalid block tint in cached protobuf message.
   case invalidBlockTint
   /// Invalid block offset in cached protobuf message.

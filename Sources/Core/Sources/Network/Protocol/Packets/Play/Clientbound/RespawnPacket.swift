@@ -1,8 +1,8 @@
 import Foundation
 
 public enum RespawnPacketError: LocalizedError {
-  case invalidGamemodeRawValue(Int8)
-  case invalidPreviousGamemodeRawValue(Int8)
+  case invalidGamemodeRawValue(Gamemode.RawValue)
+  case invalidPreviousGamemodeRawValue(Gamemode.RawValue)
   
   public var errorDescription: String? {
     switch self {
