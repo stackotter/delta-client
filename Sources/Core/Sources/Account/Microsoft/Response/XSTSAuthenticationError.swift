@@ -1,10 +1,10 @@
 import Foundation
 
 public struct XSTSAuthenticationError: Codable {
-  public var identity: String
-  public var code: Int
-  public var message: String
-  public var redirect: String
+  public let identity: String
+  public let code: Int
+  public let message: String
+  public let redirect: String
   
   enum CodingKeys: String, CodingKey {
     case identity = "Identity"
