@@ -51,6 +51,8 @@ public enum RenderError: LocalizedError {
   
   public var errorDescription: String? {
     switch self {
+      case .failedToUpdateRenderTargetSize:
+        return "Failed to update render target texture size."
       case .failedToCreateTextureArray:
         return "Failed to create a metal texture array."
       case .failedToGetBundle:
