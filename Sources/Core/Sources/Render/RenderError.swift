@@ -45,4 +45,6 @@ public enum RenderError: LocalizedError {
   case gpuTraceNotSupported
   /// Failed to start GPU frame capture.
   case failedToStartCapture(Error)
+  /// Failed to update render target textures
+  case failedToUpdateRenderTargetSize
 }

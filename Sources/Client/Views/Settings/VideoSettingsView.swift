@@ -90,7 +90,8 @@ struct VideoSettingsView: View {
           .frame(width: 220)
       }
       
-      if #available(macOS 13, *) {
+      // TODO: Implement MetalFX upscaling. Deliberately disabled at the moment.
+      if false {
         HStack {
           Text("MetalFX Upscaling: " + (upscaleFactor > 0 ? "\n\(Int(upscaleFactor))x" : "Disabled"))
           Spacer()

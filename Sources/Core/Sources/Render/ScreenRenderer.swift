@@ -5,7 +5,7 @@ import MetalKit
   import MetalFX
 #endif
 
-/// The renderer for the GUI (chat, f3, scoreboard etc.).
+/// The renderer managing offscreen rendering and displaying final result in view.
 public final class ScreenRenderer: Renderer {
   
   // MARK: - Internal
@@ -15,18 +15,29 @@ public final class ScreenRenderer: Renderer {
   // MARK: - Private properties
   /// The device used to render.
   private var device: MTLDevice
+  
+  /// Flag indicating hardware support for Metal 3 feature set.
   private var supportsMetal3: Bool = false
-  private var upscalingFactor: Int = -1
+  
+  /// Renderer's own pipeline state (for drawing on-screen)
   private var pipelineState: MTLRenderPipelineState
+  
+  /// Offscreen render pass used to command rendering into renderer's internal textures
   private var offscreenRenderPass: MTLRenderPassDescriptor!
+  
+  /// Renderer's profiler
   private var profiler: Profiler<RenderingMeasurement>
   
+  /// Render target texture into which offscreen rendering is performed
   private var renderTargetTexture: MTLTexture!
+  
+  /// Render target depth texture
   private var renderTargetDepthTexture: MTLTexture!
   
+  /// Client for which rendering is performed
   private var client: Client
   
-  /// Spatial scaler from MetalFX used in spatial upscaling of render target
+  /// Spatial scaler from MetalFX
   @available(macOS 13, *)
   private var spatialScaler: MTLFXSpatialScaler? {
     get {
@@ -63,12 +74,12 @@ public final class ScreenRenderer: Renderer {
     )
   }
   
-  // MARK: - Public properties
+  // MARK: - Public
   public var renderDescriptor: MTLRenderPassDescriptor {
     return offscreenRenderPass
   }
   
-  public var renderOutputTexture: MTLTexture {
+  public var renderOutputTexture: MTLTexture? {
     get {
       return renderTargetTexture
     }
@@ -77,7 +88,7 @@ public final class ScreenRenderer: Renderer {
     }
   }
   
-  public var renderDepthTexture: MTLTexture {
+  public var renderDepthTexture: MTLTexture? {
     get {
       return renderTargetDepthTexture
     }
@@ -86,34 +97,44 @@ public final class ScreenRenderer: Renderer {
     }
   }
   
-  public func updateRenderData(for view: MTKView) {
+  public func updateRenderTarget(for view: MTKView) throws {
     let drawableSize = view.drawableSize
     let width = Int(drawableSize.width)
     let height = Int(drawableSize.height)
     
-    if client.configuration.render.upscaleFactor != upscalingFactor ||
-        renderOutputTexture.width != width ||
-        renderOutputTexture.height != height {
-      
-      let nativeRenderTextureDescriptor = MTLTextureDescriptor()
-      nativeRenderTextureDescriptor.usage = [.shaderRead, .shaderWrite, .renderTarget]
-      nativeRenderTextureDescriptor.width = width
-      nativeRenderTextureDescriptor.height = height
-      nativeRenderTextureDescriptor.pixelFormat = view.colorPixelFormat
-      
-      renderOutputTexture = device.makeTexture(descriptor: nativeRenderTextureDescriptor)!
-      
-      nativeRenderTextureDescriptor.pixelFormat = .depth32Float
-      renderDepthTexture = device.makeTexture(descriptor: nativeRenderTextureDescriptor)!
-      
-      offscreenRenderPass = MetalUtil.createRenderPassDescriptor(
-        device,
-        targetRenderTexture: renderOutputTexture,
-        targetDepthTexture: renderDepthTexture,
-        clearColour: MTLClearColorMake(0.65, 0.8, 1, 1)
-      )
-      
+    if let texture = renderOutputTexture {
+      if texture.width == width && texture.height == height {
+        // No updates necessary, early exit
+        return
+      }
     }
+    
+    let nativeRenderTextureDescriptor = MTLTextureDescriptor()
+    nativeRenderTextureDescriptor.usage = [.shaderRead, .shaderWrite, .renderTarget]
+    nativeRenderTextureDescriptor.width = width
+    nativeRenderTextureDescriptor.height = height
+    nativeRenderTextureDescriptor.pixelFormat = view.colorPixelFormat
+    guard let colourTexture = device.makeTexture(descriptor: nativeRenderTextureDescriptor) else {
+      throw RenderError.failedToUpdateRenderTargetSize
+    }
+    
+    // Update pixel format for depth texture. Match other texture parameters with colour attachment (above).
+    nativeRenderTextureDescriptor.pixelFormat = .depth32Float
+    renderDepthTexture = device.makeTexture(descriptor: nativeRenderTextureDescriptor)!
+    guard let depthTexture = device.makeTexture(descriptor: nativeRenderTextureDescriptor) else {
+      throw RenderError.failedToUpdateRenderTargetSize
+    }
+    
+    renderOutputTexture = colourTexture
+    renderDepthTexture = depthTexture
+    
+    // Update render pass descriptor. Set clear colour to sky colour
+    offscreenRenderPass = MetalUtil.createRenderPassDescriptor(
+      device,
+      targetRenderTexture: renderOutputTexture!,
+      targetDepthTexture: renderDepthTexture!,
+      clearColour: MTLClearColorMake(0.65, 0.8, 1, 1)
+    )
   }
   
   public func render(
@@ -123,16 +144,15 @@ public final class ScreenRenderer: Renderer {
     worldToClipUniformsBuffer: MTLBuffer,
     camera: Camera
   ) throws {
-    let drawableSize = view.drawableSize
-    let width = Int(drawableSize.width)
-    let height = Int(drawableSize.height)
-    
-    
     profiler.push(.encode)
-    
-    // Set pipeline
+    // Set pipeline for rendering on-screen
     encoder.setRenderPipelineState(pipelineState)
+    
+    // Use texture from offscreen rendering as fragment shader source to draw contents on-screen
     encoder.setFragmentTexture(self.renderOutputTexture, index: 0)
+    
+    // Draw primitives.
+    // A quad with total of 6 vertices (2 overlapping triangles) is drawn to present rendering results on-screen.
     encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
     profiler.pop()
   }

@@ -127,12 +127,18 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     previousFrameStartTime = time
     
     profiler.push(.updateRenderTarget)
-    screenRenderer.updateRenderData(for: view)
+    do {
+      try screenRenderer.updateRenderTarget(for: view)
+    } catch {
+      log.error("Failed to update render target: \(error)")
+      client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to update render target"))
+      return
+    }
+    
     profiler.pop()
     
-    profiler.push(.waitForRenderPassDescriptor)
-    // Get current render pass descriptor
-    
+    profiler.push(.waitForOffscreenRenderPassDescriptor)
+    // Fetch offscreen render pass descriptor from ScreenRenderer
     let renderPassDescriptor = screenRenderer.renderDescriptor
     profiler.pop()
 
@@ -244,7 +250,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
        return
      }
     
-    profiler.push(.screen)
+    profiler.push(.onscreen)
     do {
       try screenRenderer.render(
         view: view,
@@ -254,8 +260,8 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         camera: camera
       )
     } catch {
-      log.error("Failed to render GUI: \(error)")
-      client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render GUI"))
+      log.error("Failed to perform on-screen rendering: \(error)")
+      client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to perform on-screen rendering pass."))
       return
     }
     profiler.pop()
