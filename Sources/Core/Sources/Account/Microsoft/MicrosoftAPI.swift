@@ -17,6 +17,70 @@ public enum MicrosoftAPIError: LocalizedError {
   case failedToGetAttachedLicenses(Error)
   case accountDoesntOwnMinecraft
   case failedToGetMinecraftAccount(Error)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .invalidRedirectURL:
+        return "Invalid redirect URL."
+      case .noUserHashInResponse:
+        return "No user hash in response."
+      case .failedToSerializeRequest:
+        return "Failed to serialize request."
+      case .failedToDeserializeResponse(let error, let string):
+        return """
+        Failed to deserialize response.
+        Reason: \(error.localizedDescription)
+        Data: \(string)
+        """
+      case .xstsAuthenticationFailed(let xSTSAuthenticationError):
+        return """
+        XSTS authentication failed.
+        Code: \(xSTSAuthenticationError.code)
+        Identity: \(xSTSAuthenticationError.identity)
+        Message: \(xSTSAuthenticationError.message)
+        Redirect: \(xSTSAuthenticationError.redirect)
+        """
+      case .expiredAccessToken:
+        return "Expired access token."
+      case .failedToGetOAuthCodeFromURL(let url):
+        return """
+        Failed to get OAuth code from URL.
+        URL: \(url.absoluteString)
+        """
+      case .failedToGetMicrosoftAccessToken(let error):
+        return """
+        Failed to get microsoft access token.
+        Reason: \(error.localizedDescription)
+        """
+      case .failedToGetXboxLiveToken(let error):
+        return """
+        Failed to get Xbox Live token.
+        Reason: \(error.localizedDescription)
+        """
+      case .failedToGetXSTSToken(let error):
+        return """
+        Failed to get XSTS token.
+        Reason: \(error.localizedDescription)
+        """
+      case .failedToGetMinecraftAccessToken(let error):
+        return """
+        Failed to get Minecraft access token.
+        Reason: \(error.localizedDescription)
+        """
+      case .failedToGetAttachedLicenses(let error):
+        return """
+        Failed to get attached licenses.
+        Reason: \(error.localizedDescription)
+        """
+      case .accountDoesntOwnMinecraft:
+        return "Account doesnt own Minecraft."
+      case .failedToGetMinecraftAccount(let error):
+        return """
+        Failed to get Minecraft account.
+        Reason: \(error.localizedDescription)
+        """
+    }
+  }
 }
 
 public enum MicrosoftAPI {
@@ -281,7 +345,7 @@ public enum MicrosoftAPI {
       do {
         error = try decodeResponse(data)
       } catch {
-        throw MicrosoftAPIError.failedToDeserializeResponse(error, String(data: data, encoding: .utf8) ?? "")
+        throw MicrosoftAPIError.failedToDeserializeResponse(error, String(decoding: data, as: UTF8.self))
       }
       
       throw MicrosoftAPIError.xstsAuthenticationFailed(error)
@@ -336,7 +400,7 @@ public enum MicrosoftAPI {
     do {
       return try CustomJSONDecoder().decode(Response.self, from: data)
     } catch {
-      throw MicrosoftAPIError.failedToDeserializeResponse(error, String(data: data, encoding: .utf8) ?? "")
+      throw MicrosoftAPIError.failedToDeserializeResponse(error, String(decoding: data, as: UTF8.self))
     }
   }
 }

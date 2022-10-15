@@ -2,14 +2,29 @@ import Foundation
 
 /// An error to do with biome loading most likely.
 public enum BiomeError: LocalizedError {
-  /// Failed to load biome data from pixlyzer data.
-  case failedToLoadPixlyzerBiomes(Error)
   /// Failed to load the foliage color map from the resource pack.
   case failedToLoadFoliageColorMap(Error)
   /// Failed to load the grass color map from the resource pack.
   case failedToLoadGrassColorMap(Error)
   /// Biome colormaps from resourcepacks ('grass.png' and 'foliage.png') must be 256x256.
   case colorMapNot256By256Pixels
+  
+  public var errorDescription: String? {
+    switch self {
+      case .failedToLoadFoliageColorMap(let error):
+        return """
+        Failed to load the foliage color map from the resource pack.
+        Reason: \(error.localizedDescription)
+        """
+      case .failedToLoadGrassColorMap(let error):
+        return """
+        Failed to load the grass color map from the resource pack.
+        Reason: \(error.localizedDescription)
+        """
+      case .colorMapNot256By256Pixels:
+        return "Biome colormaps from resourcepacks ('grass.png' and 'foliage.png') must be 256x256."
+    }
+  }
 }
 
 /// Holds information about biomes.

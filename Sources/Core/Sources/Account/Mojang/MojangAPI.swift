@@ -3,7 +3,16 @@ import ZippyJSON
 
 public enum MojangAPIError: LocalizedError {
   case failedToDeserializeResponse(String)
-  case requestFailed(Error?)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .failedToDeserializeResponse(let string):
+        return """
+        Failed to deserialize response.
+        Data: \(string)
+        """
+    }
+  }
 }
 
 /// Used to interface with Mojang's authentication API.
@@ -33,7 +42,7 @@ public enum MojangAPI {
     let (_, data) = try await RequestUtil.performJSONRequest(url: authenticationURL, body: payload, method: .post)
     
     guard let response = try? CustomJSONDecoder().decode(MojangAuthenticationResponse.self, from: data) else {
-      throw MojangAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
+      throw MojangAPIError.failedToDeserializeResponse(String(decoding: data, as: UTF8.self))
     }
     
     let accessToken = MinecraftAccessToken(
@@ -83,7 +92,7 @@ public enum MojangAPI {
     let (_, data) = try await RequestUtil.performJSONRequest(url: refreshURL, body: payload, method: .post)
     
     guard let response = try? CustomJSONDecoder().decode(MojangRefreshTokenResponse.self, from: data) else {
-      throw MojangAPIError.failedToDeserializeResponse(String(data: data, encoding: .utf8) ?? "")
+      throw MojangAPIError.failedToDeserializeResponse(String(decoding: data, as: UTF8.self))
     }
     
     var refreshedAccount = account

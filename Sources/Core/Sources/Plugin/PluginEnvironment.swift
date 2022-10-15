@@ -40,9 +40,17 @@ public class PluginEnvironment: ObservableObject {
   /// An error related to a particular plugin.
   public struct PluginError: LocalizedError {
     /// The bundle of the plugin that the error occurred for.
-    public var bundle: String 
+    public let bundle: String
     /// The underlying error that caused this error to be thrown if any.
-    public var underlyingError: Error
+    public let underlyingError: Error
+    
+    public var errorDescription: String? {
+      """
+      \(String(describing: Self.self)).
+      Reason: \(underlyingError.localizedDescription)
+      Bundle: \(bundle)
+      """
+    }
   }
 
   // MARK: Init

@@ -31,13 +31,13 @@ public class World {
 
   // MARK: Public metadata properties
 
-  /// The name of this world
+  /// The name of this world.
   public let name: Identifier
-  /// The dimension data for this world
-  public let dimension: Identifier
-  /// The hashed seed of this world
+  /// The world's dimension.
+  public let dimension: Dimension
+  /// The hashed seed of this world.
   public let hashedSeed: Int
-  /// Whether this world is a debug world or not
+  /// Whether this world is a debug world or not.
   public let isDebug: Bool
   /// Whether this world is superflat or not.
   public let isFlat: Bool
@@ -74,20 +74,27 @@ public class World {
   public init(eventBus: EventBus) {
     _eventBus = eventBus
     name = Identifier(name: "world")
-    dimension = Identifier(name: "overworld")
+    dimension = Dimension.overworld
     hashedSeed = 0
     isFlat = false
     isDebug = false
   }
 
-  /// Create a new `World` from `World.Info`.
-  public init(from descriptor: WorldDescriptor, eventBus: EventBus) {
+  /// Create a new world with the given properties.
+  public init(
+    name: Identifier,
+    dimension: Dimension,
+    hashedSeed: Int,
+    isFlat: Bool,
+    isDebug: Bool,
+    eventBus: EventBus
+  ) {
     _eventBus = eventBus
-    name = descriptor.worldName
-    dimension = descriptor.dimension
-    hashedSeed = descriptor.hashedSeed
-    isFlat = descriptor.isFlat
-    isDebug = descriptor.isDebug
+    self.name = name
+    self.dimension = dimension
+    self.hashedSeed = hashedSeed
+    self.isFlat = isFlat
+    self.isDebug = isDebug
   }
 
   // MARK: Time
@@ -103,7 +110,12 @@ public class World {
   public func getTimeOfDay() -> Int {
     timeLock.acquireReadLock()
     defer { timeLock.unlock() }
-    return timeOfDay
+
+    if let time = dimension.fixedTime {
+      return time
+    } else {
+      return timeOfDay
+    }
   }
 
   /// Sets the age of the world in ticks.

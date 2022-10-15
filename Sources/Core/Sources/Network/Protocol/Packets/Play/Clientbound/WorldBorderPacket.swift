@@ -1,7 +1,14 @@
 import Foundation
 
 public enum WorldBorderPacketError: LocalizedError {
-  case invalidActionId
+  case invalidActionId(Int)
+  
+  public var errorDescription: String? {
+    switch self {
+      case .invalidActionId(let id):
+        return "Invalid action Id: \(id)"
+    }
+  }
 }
 
 public struct WorldBorderPacket: ClientboundPacket {
@@ -71,7 +78,7 @@ public struct WorldBorderPacket: ClientboundPacket {
         let warningBlocks = try packetReader.readVarInt()
         action = .setWarningBlocks(warningBlocks: warningBlocks)
       default:
-        throw WorldBorderPacketError.invalidActionId
+        throw WorldBorderPacketError.invalidActionId(actionId)
     }
   }
 }

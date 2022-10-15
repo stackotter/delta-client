@@ -24,7 +24,7 @@ public struct ChangeGameStatePacket: ClientboundPacket {
   public init(from packetReader: inout PacketReader) throws {
     let byte = try packetReader.readUnsignedByte()
     guard let reason = Reason(rawValue: byte) else {
-      throw ClientboundPacketError.invalidChangeGameStateReason(byte)
+      throw ClientboundPacketError.invalidChangeGameStateReasonRawValue(byte)
     }
     self.reason = reason
     value = try packetReader.readFloat()

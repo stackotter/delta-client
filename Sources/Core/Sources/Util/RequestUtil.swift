@@ -6,7 +6,21 @@ enum RequestError: LocalizedError {
   /// The response was not of type HTTP.
   case invalidURLResponse
   /// The status code of the response was not greater than or equal to 400.
-  case unsuccessfulRequest(Int)
+  case unsuccessfulRequest(_ statusCode: Int)
+  
+  var errorDescription: String? {
+    switch self {
+      case .failedToConvertBodyToData:
+        return "The request's body could not be converted to data."
+      case .invalidURLResponse:
+        return "The response was not of type HTTP."
+      case .unsuccessfulRequest(let statusCode):
+        return """
+        The status code of the response was not greater than or equal to 400.
+        Response status code: \(statusCode).
+        """
+    }
+  }
 }
 
 enum RequestUtil {

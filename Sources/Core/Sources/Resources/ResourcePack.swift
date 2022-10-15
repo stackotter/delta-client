@@ -31,6 +31,60 @@ enum ResourcePackError: LocalizedError {
   case versionManifestFailure(Error)
   /// Failed to decode the versions manifest.
   case versionsManifestFailure(Error)
+  
+  var errorDescription: String? {
+    switch self {
+      case .noSuchDirectory:
+        return "The specified resource pack directory does not exist."
+      case .failedToReadMCMeta(let error):
+        return """
+        The resource pack's `pack.mcmeta` is invalid.
+        Reason: \(error.localizedDescription)
+        """
+      case .failedToEnumerateTextures(let error):
+        return """
+        Failed to list the contents of a texture directory.
+        Reason: \(error.localizedDescription)
+        """
+      case .failedToEnumerateNamespaces:
+        return "Failed to figure out what namespaces are included in this resource pack."
+      case .failedToLoadTexture(let identifier, let error):
+        return """
+        Failed to convert an image into a texture with identifier: `\(identifier.description)`.
+        Reason: \(error.localizedDescription)
+        """
+      case .failedToReadTextureImage(let url):
+        return """
+        Failed to read the image for the given texture from a file.
+        File URL: \(url.absoluteString)
+        """
+      case .failedToCreateImageProvider(let url):
+        return """
+        Failed to create a `CGDataProvider` for the given image file.
+        File URL: \(url.absoluteString)
+        """
+      case .clientJarDownloadFailure:
+        return "Failed to download the specified client jar."
+      case .clientJarExtractionFailure:
+        return " Failed to extract assets from a client jar."
+      case .assetCopyFailure:
+        return "Failed to copy the vanilla assets from the extracted client jar."
+      case .failedToCreatePackMCMetaData:
+        return "Failed to create a dummy pack.mcmeta for the downloaded vanilla assets."
+      case .noURLForVersion(let version):
+        return "No client jar is available to download for version: \(version)."
+      case .versionManifestFailure(let error):
+        return """
+        Failed to decode a version manifest.
+        Reason: \(error.localizedDescription)
+        """
+      case .versionsManifestFailure(let error):
+        return """
+        Failed to decode the versions manifest.
+        Reason: \(error.localizedDescription)
+        """
+    }
+  }
 }
 
 /// A resource pack.

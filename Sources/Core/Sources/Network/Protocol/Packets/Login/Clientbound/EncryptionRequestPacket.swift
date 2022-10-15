@@ -2,7 +2,13 @@ import Foundation
 
 public enum EncryptionRequestPacketError: LocalizedError {
   case incorrectAccountType
-  case noAccount
+  
+  public var errorDescription: String? {
+    switch self {
+      case .incorrectAccountType:
+        return "Incorrect account type."
+    }
+  }
 }
 
 public struct EncryptionRequestPacket: ClientboundPacket, Sendable {
@@ -73,8 +79,8 @@ public struct EncryptionRequestPacket: ClientboundPacket, Sendable {
             try client.sendPacket(encryptionResponse)
             
             // Wait for packet to send then enable encryption
-            client.connection?.networkStack.outboundThread.sync {
-              client.connection?.enableEncryption(sharedSecret: sharedSecret)
+            try client.connection?.networkStack.outboundThread.sync {
+              try client.connection?.enableEncryption(sharedSecret: sharedSecret)
             }
           } catch {
             log.error("Failed to enable encryption: \(error)")

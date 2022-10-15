@@ -128,13 +128,8 @@ struct BlockMeshBuilder {
     let faceVertexPositions = CubeGeometry.faceVertices[face.direction.rawValue]
 
     // Calculate shade of face
-    let faceLightLevel = max(faceLightLevel.block, faceLightLevel.sky)
     let faceDirection = face.actualDirection.rawValue
-    var shade: Float = 1.0
-    if shouldShade {
-      shade = CubeGeometry.shades[faceDirection]
-    }
-    shade *= Float(faceLightLevel) / 15
+    let shade = shouldShade ? CubeGeometry.shades[faceDirection] : 1
 
     // Calculate the tint color to apply to the face
     let tint: SIMD3<Float>
@@ -161,6 +156,8 @@ struct BlockMeshBuilder {
         g: tint.y,
         b: tint.z,
         a: 1,
+        skyLightLevel: UInt8(faceLightLevel.sky),
+        blockLightLevel: UInt8(faceLightLevel.block),
         textureIndex: textureIndex,
         isTransparent: isTransparent
       )

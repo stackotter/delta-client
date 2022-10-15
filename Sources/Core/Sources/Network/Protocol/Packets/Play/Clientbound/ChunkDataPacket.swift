@@ -1,9 +1,5 @@
 import Foundation
 
-public enum ChunkDataError: LocalizedError {
-  case incompleteHeightMap(length: Int)
-}
-
 public struct ChunkDataPacket: ClientboundPacket {
   public static let id: Int = 0x21
   

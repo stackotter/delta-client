@@ -188,7 +188,8 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
 
     // Get tint color
     guard let biome = chunk.biome(at: position.relativeToChunk, acquireLock: false) else {
-      log.warning("Block at \(position) has invalid biome with id \(chunk.biomeId(at: position, acquireLock: false))")
+      let biomeId = chunk.biomeId(at: position, acquireLock: false).map(String.init) ?? "unknown"
+      log.warning("Block at \(position) has invalid biome with id \(biomeId)")
       return
     }
 

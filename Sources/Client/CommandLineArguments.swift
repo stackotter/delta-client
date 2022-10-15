@@ -5,7 +5,7 @@ import Logging
 /// An error thrown while parsing ``CommandLineArguments``.
 enum CommandLineArgumentsError: LocalizedError {
   case invalidLogLevel(String)
-
+  
   var errorDescription: String? {
     switch self {
       case .invalidLogLevel(let level):

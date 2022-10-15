@@ -14,7 +14,7 @@ extension Block.ComputedTintType: ProtobufCachableEnum {
       case .shearingDoublePlant:
         self = .shearingDoublePlantTint
       case .UNRECOGNIZED(let int):
-        throw BlockModelPaletteError.invalidComputedTintType(int)
+        throw BlockModelPaletteError.invalidComputedTintTypeRawValue(int)
     }
   }
   
