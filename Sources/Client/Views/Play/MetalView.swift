@@ -28,7 +28,7 @@ struct MetalView {
     mtkView.framebufferOnly = true
     mtkView.clearColor = MTLClearColorMake(0.65, 0.8, 1, 1) // Sky colour
     mtkView.drawableSize = mtkView.frame.size
-    mtkView.depthStencilPixelFormat = .invalid // No depth stencil for view
+    mtkView.depthStencilPixelFormat = .depth32Float // No depth stencil for view
     
     // Accept input
     mtkView.becomeFirstResponder()
