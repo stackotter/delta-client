@@ -1,23 +1,11 @@
 import Foundation
 import MetalKit
 
-#if canImport(MetalFX)
-  import MetalFX
-#endif
-
 /// The renderer managing offscreen rendering and displaying final result in view.
 public final class ScreenRenderer: Renderer {
-  
-  // MARK: - Internal
-  /// Internal variable holding spatial scaler, it's availability depends on OS version and hardware support
-  private var _spatialScaler: Any?
-  
   // MARK: - Private properties
   /// The device used to render.
   private var device: MTLDevice
-  
-  /// Flag indicating hardware support for Metal 3 feature set.
-  private var supportsMetal3: Bool = false
   
   /// Renderer's own pipeline state (for drawing on-screen)
   private var pipelineState: MTLRenderPipelineState
@@ -37,17 +25,6 @@ public final class ScreenRenderer: Renderer {
   /// Client for which rendering is performed
   private var client: Client
   
-  /// Spatial scaler from MetalFX
-  @available(macOS 13, *)
-  private var spatialScaler: MTLFXSpatialScaler? {
-    get {
-      return _spatialScaler as? MTLFXSpatialScaler
-    }
-    set {
-      _spatialScaler = newValue
-    }
-  }
-  
   // MARK: - Init
   public init(
     client: Client,
@@ -57,11 +34,6 @@ public final class ScreenRenderer: Renderer {
     self.device = device
     self.client = client
     self.profiler = profiler
-    
-    // Check hardware capabilities for advanced features.
-    if #available(macOS 13, iOS 16, *) {
-      self.supportsMetal3 = self.device.supportsFamily(.metal3)
-    }
     
     // Create pipeline state
     let library = try MetalUtil.loadDefaultLibrary(device)
