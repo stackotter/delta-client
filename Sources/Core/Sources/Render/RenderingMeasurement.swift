@@ -1,6 +1,5 @@
 public enum RenderingMeasurement: String, Hashable {
   case waitForRenderPassDescriptor
-  case waitForOffscreenRenderPassDescriptor
   case updateCamera
   case createRenderCommandEncoder
 
@@ -22,7 +21,7 @@ public enum RenderingMeasurement: String, Hashable {
   case updateContent
   case createMeshes
   
-  case onscreen
+  case renderOnScreen
   case updateRenderTarget
   case encodeUpscale
 

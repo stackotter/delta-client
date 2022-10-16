@@ -10,17 +10,17 @@ public final class ScreenRenderer: Renderer {
   /// Renderer's own pipeline state (for drawing on-screen)
   private var pipelineState: MTLRenderPipelineState
   
-  /// Offscreen render pass used to command rendering into renderer's internal textures
-  private var offscreenRenderPass: MTLRenderPassDescriptor!
+  /// Offscreen render pass descriptor used to perform rendering into renderer's internal textures
+  private var offScreenRenderPassDescriptor: MTLRenderPassDescriptor!
   
   /// Renderer's profiler
   private var profiler: Profiler<RenderingMeasurement>
   
   /// Render target texture into which offscreen rendering is performed
-  private var renderTargetTexture: MTLTexture!
+  private var renderTargetTexture: MTLTexture?
   
   /// Render target depth texture
-  private var renderTargetDepthTexture: MTLTexture!
+  private var renderTargetDepthTexture: MTLTexture?
   
   /// Client for which rendering is performed
   private var client: Client
@@ -48,25 +48,7 @@ public final class ScreenRenderer: Renderer {
   
   // MARK: - Public
   public var renderDescriptor: MTLRenderPassDescriptor {
-    return offscreenRenderPass
-  }
-  
-  public var renderOutputTexture: MTLTexture? {
-    get {
-      return renderTargetTexture
-    }
-    set {
-      renderTargetTexture = newValue
-    }
-  }
-  
-  public var renderDepthTexture: MTLTexture? {
-    get {
-      return renderTargetDepthTexture
-    }
-    set {
-      renderTargetDepthTexture = newValue
-    }
+    return offScreenRenderPassDescriptor
   }
   
   public func updateRenderTarget(for view: MTKView) throws {
@@ -74,7 +56,7 @@ public final class ScreenRenderer: Renderer {
     let width = Int(drawableSize.width)
     let height = Int(drawableSize.height)
     
-    if let texture = renderOutputTexture {
+    if let texture = renderTargetTexture {
       if texture.width == width && texture.height == height {
         // No updates necessary, early exit
         return
@@ -92,20 +74,20 @@ public final class ScreenRenderer: Renderer {
     
     // Update pixel format for depth texture. Match other texture parameters with colour attachment (above).
     nativeRenderTextureDescriptor.pixelFormat = .depth32Float
-    renderDepthTexture = device.makeTexture(descriptor: nativeRenderTextureDescriptor)!
     guard let depthTexture = device.makeTexture(descriptor: nativeRenderTextureDescriptor) else {
       throw RenderError.failedToUpdateRenderTargetSize
     }
     
-    renderOutputTexture = colourTexture
-    renderDepthTexture = depthTexture
+    // Update internal colour and depth textures
+    self.renderTargetTexture = colourTexture
+    self.renderTargetDepthTexture = depthTexture
     
     // Update render pass descriptor. Set clear colour to sky colour
-    offscreenRenderPass = MetalUtil.createRenderPassDescriptor(
+    offScreenRenderPassDescriptor = MetalUtil.createRenderPassDescriptor(
       device,
-      targetRenderTexture: renderOutputTexture!,
-      targetDepthTexture: renderDepthTexture!,
-      clearColour: MTLClearColorMake(0.65, 0.8, 1, 1)
+      targetRenderTexture: renderTargetTexture!,
+      targetDepthTexture: renderTargetDepthTexture!,
+      clearColour: MTLClearColorMake(0.65, 0.8, 1, 1) // Sky colour
     )
   }
   
@@ -121,9 +103,8 @@ public final class ScreenRenderer: Renderer {
     encoder.setRenderPipelineState(pipelineState)
     
     // Use texture from offscreen rendering as fragment shader source to draw contents on-screen
-    encoder.setFragmentTexture(self.renderOutputTexture, index: 0)
+    encoder.setFragmentTexture(self.renderTargetTexture, index: 0)
     
-    // Draw primitives.
     // A quad with total of 6 vertices (2 overlapping triangles) is drawn to present rendering results on-screen.
     encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
     profiler.pop()

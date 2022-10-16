@@ -47,7 +47,6 @@ public enum RenderError: LocalizedError {
   case failedToStartCapture(Error)
   /// Failed to update render target textures
   case failedToUpdateRenderTargetSize
-
   
   public var errorDescription: String? {
     switch self {

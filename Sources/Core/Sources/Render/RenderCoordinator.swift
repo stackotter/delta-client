@@ -137,10 +137,8 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     
     profiler.pop()
     
-    profiler.push(.waitForOffscreenRenderPassDescriptor)
     // Fetch offscreen render pass descriptor from ScreenRenderer
     let renderPassDescriptor = screenRenderer.renderDescriptor
-    profiler.pop()
 
     // The CPU start time if vsync was disabled
     let cpuStartTime = CFAbsoluteTimeGetCurrent()
@@ -242,15 +240,15 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     profiler.pop()
     
     guard let quadRenderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
-       log.error("Failed to create quad render encoder")
-       client.eventBus.dispatch(ErrorEvent(
-         error: RenderError.failedToCreateRenderEncoder,
-         message: "RenderCoordinator failed to create render encoder"
-       ))
-       return
-     }
+      log.error("Failed to create quad render encoder")
+      client.eventBus.dispatch(ErrorEvent(
+        error: RenderError.failedToCreateRenderEncoder,
+        message: "RenderCoordinator failed to create render encoder"
+      ))
+      return
+    }
     
-    profiler.push(.onscreen)
+    profiler.push(.renderOnScreen)
     do {
       try screenRenderer.render(
         view: view,
