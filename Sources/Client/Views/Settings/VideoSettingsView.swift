@@ -7,15 +7,13 @@ struct VideoSettingsView: View {
   
   @State var renderDistance: Float = 0
   @State var fov: Float = 0
-  @State var upscaleFactor: Float = 0
   @State var renderMode: RenderMode = .normal
   
   var config: RenderConfiguration {
     return RenderConfiguration(
       fovY: Float(fov.rounded()),
       renderDistance: Int(renderDistance),
-      mode: renderMode,
-      upscaleFactor: Int(upscaleFactor)
+      mode: renderMode
     )
   }
   
@@ -88,35 +86,6 @@ struct VideoSettingsView: View {
           .pickerStyle(DefaultPickerStyle())
         #endif
           .frame(width: 220)
-      }
-      
-      // TODO: Implement MetalFX upscaling. Deliberately disabled at the moment.
-      if false {
-        HStack {
-          Text("MetalFX Upscaling: " + (upscaleFactor > 0 ? "\n\(Int(upscaleFactor))x" : "Disabled"))
-          Spacer()
-          Slider(
-            value: $upscaleFactor.onChange(onValueChanged),
-            in: 0...4,
-            step: 2,
-            onEditingChanged: onEditingChanged
-          )
-            .frame(width: 220)
-        }
-      }
-      else {
-        HStack {
-          Text("MetalFX Upscaling: \nUnsupported")
-          Spacer()
-          Slider(
-            value: $upscaleFactor.onChange(onValueChanged),
-            in: 0...4,
-            step: 2,
-            onEditingChanged: onEditingChanged
-          )
-            .disabled(true)
-            .frame(width: 220)
-        }
       }
     }
     .frame(width: 400)

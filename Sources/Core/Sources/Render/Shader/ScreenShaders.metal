@@ -15,14 +15,12 @@ struct QuadVertex {
   float2 uv;
 };
 
-
 fragment float4 screenFragmentFunction(QuadVertex v [[stage_in]],
                                        texture2d<float> outputImage [[texture(0)]]) {
   constexpr sampler smplr(coord::normalized);
   float4 cellColour = outputImage.sample(smplr, v.uv);
   return cellColour;
 };
-
 
 vertex QuadVertex screenVertexFunction(uint id [[vertex_id]]) {
   auto quadVertex = quadVertices[id];
