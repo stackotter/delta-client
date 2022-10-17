@@ -18,6 +18,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
 
   /// The renderer for rendering the GUI.
   private var guiRenderer: GUIRenderer
+  
+  /// The renderer for rendering on screen. Can perform upscaling.
+  private var screenRenderer: ScreenRenderer
 
   /// The camera that is rendered from.
   private var camera: Camera
@@ -93,6 +96,16 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     } catch {
       fatalError("Failed to create GUI renderer: \(error)")
     }
+    
+    do {
+      screenRenderer = try ScreenRenderer(
+        client: client,
+        device: device,
+        profiler: profiler
+      )
+    } catch {
+      fatalError("Failed to create Screen renderer: \(error)")
+    }
 
     // Create depth stencil state
     do {
@@ -112,18 +125,20 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     let time = CFAbsoluteTimeGetCurrent()
     let frameTime = time - previousFrameStartTime
     previousFrameStartTime = time
-
-    profiler.push(.waitForRenderPassDescriptor)
-    // Get current render pass descriptor
-    guard let renderPassDescriptor = view.currentRenderPassDescriptor else {
-      log.error("Failed to get the current render pass descriptor")
-      client.eventBus.dispatch(ErrorEvent(
-        error: RenderError.failedToGetCurrentRenderPassDescriptor,
-        message: "RenderCoordinator failed to get the current render pass descriptor"
-      ))
+    
+    profiler.push(.updateRenderTarget)
+    do {
+      try screenRenderer.updateRenderTarget(for: view)
+    } catch {
+      log.error("Failed to update render target: \(error)")
+      client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to update render target"))
       return
     }
+    
     profiler.pop()
+    
+    // Fetch offscreen render pass descriptor from ScreenRenderer
+    let renderPassDescriptor = screenRenderer.renderDescriptor
 
     // The CPU start time if vsync was disabled
     let cpuStartTime = CFAbsoluteTimeGetCurrent()
@@ -211,6 +226,45 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     }
 
     renderEncoder.endEncoding()
+    
+    profiler.push(.waitForRenderPassDescriptor)
+    // Get current render pass descriptor
+    guard let renderPassDescriptor = view.currentRenderPassDescriptor else {
+      log.error("Failed to get the current render pass descriptor")
+      client.eventBus.dispatch(ErrorEvent(
+        error: RenderError.failedToGetCurrentRenderPassDescriptor,
+        message: "RenderCoordinator failed to get the current render pass descriptor"
+      ))
+      return
+    }
+    profiler.pop()
+    
+    guard let quadRenderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
+      log.error("Failed to create quad render encoder")
+      client.eventBus.dispatch(ErrorEvent(
+        error: RenderError.failedToCreateRenderEncoder,
+        message: "RenderCoordinator failed to create render encoder"
+      ))
+      return
+    }
+    
+    profiler.push(.renderOnScreen)
+    do {
+      try screenRenderer.render(
+        view: view,
+        encoder: quadRenderEncoder,
+        commandBuffer: commandBuffer,
+        worldToClipUniformsBuffer: uniformsBuffer,
+        camera: camera
+      )
+    } catch {
+      log.error("Failed to perform on-screen rendering: \(error)")
+      client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to perform on-screen rendering pass."))
+      return
+    }
+    profiler.pop()
+    
+    quadRenderEncoder.endEncoding()
     commandBuffer.present(drawable)
 
     let cpuElapsed = cpuFinishTime - cpuStartTime

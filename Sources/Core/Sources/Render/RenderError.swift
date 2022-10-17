@@ -45,9 +45,13 @@ public enum RenderError: LocalizedError {
   case gpuTraceNotSupported
   /// Failed to start GPU frame capture.
   case failedToStartCapture(Error)
+  /// Failed to update render target textures
+  case failedToUpdateRenderTargetSize
   
   public var errorDescription: String? {
     switch self {
+      case .failedToUpdateRenderTargetSize:
+        return "Failed to update render target texture size."
       case .failedToCreateTextureArray:
         return "Failed to create a metal texture array."
       case .failedToGetBundle:

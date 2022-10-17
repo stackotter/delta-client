@@ -13,7 +13,8 @@ struct VideoSettingsView: View {
     return RenderConfiguration(
       fovY: Float(fov.rounded()),
       renderDistance: Int(renderDistance),
-      mode: renderMode)
+      mode: renderMode
+    )
   }
   
   /// - Parameter client: If present, config updates are sent to this client.
