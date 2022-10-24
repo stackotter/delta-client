@@ -222,14 +222,15 @@ public final class Updater: ObservableObject {
     let newFullCommit = try CustomJSONDecoder().decode(GitHubFullCommit.self, from: newCommitData)
     let newDate = newFullCommit.commit.committer.date
 
-    let currentVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-    let currentCommit = currentVersionString[currentVersionString.range(of: "commit: ")!.upperBound...]
-    let currentCommitData = try Data(contentsOf: URL(string: "https://api.github.com/repos/stackotter/delta-client/commits/\(currentCommit)")!)
-    let currentFullCommit = try CustomJSONDecoder().decode(GitHubFullCommit.self, from: currentCommitData)
-    let currentDate = currentFullCommit.commit.committer.date
-
-    if (newDate <= currentDate) {
-      throw UpdateError.currentVersionIsNewerThanLatestCommit
+    if let currentVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
+      let currentCommit = currentVersionString[currentVersionString.range(of: "commit: ")!.upperBound...]
+      let currentCommitData = try Data(contentsOf: URL(string: "https://api.github.com/repos/stackotter/delta-client/commits/\(currentCommit)")!)
+      let currentFullCommit = try CustomJSONDecoder().decode(GitHubFullCommit.self, from: currentCommitData)
+      let currentDate = currentFullCommit.commit.committer.date
+      
+      if (newDate <= currentDate) {
+        throw UpdateError.currentVersionIsNewerThanLatestCommit
+      }
     }
 
     return (url, "commit \(sha) (latest)")
