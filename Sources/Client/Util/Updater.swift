@@ -57,7 +57,7 @@ public final class Updater: ObservableObject {
       do {
         (downloadURL, downloadVersion) = try self.getDownloadURL(self.updateType)
       } catch {
-        DeltaClientApp.modalError("Failed to get download URL", safeState: .serverList)
+        DeltaClientApp.modalError("Failed to get download URL: \(error.localizedDescription)", safeState: .serverList)
         return
       }
 
@@ -222,7 +222,9 @@ public final class Updater: ObservableObject {
     let newFullCommit = try CustomJSONDecoder().decode(GitHubFullCommit.self, from: newCommitData)
     let newDate = newFullCommit.commit.committer.date
 
-    let currentCommitData = try Data(contentsOf: URL(string: "https://api.github.com/repos/stackotter/delta-client/commits/\(String(describing: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString")))")!)
+    let currentVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+    let currentCommit = currentVersionString[currentVersionString.range(of: "commit: ")!.upperBound...]
+    let currentCommitData = try Data(contentsOf: URL(string: "https://api.github.com/repos/stackotter/delta-client/commits/\(currentCommit)")!)
     let currentFullCommit = try CustomJSONDecoder().decode(GitHubFullCommit.self, from: currentCommitData)
     let currentDate = currentFullCommit.commit.committer.date
 

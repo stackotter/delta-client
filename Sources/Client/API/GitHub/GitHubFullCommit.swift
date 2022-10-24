@@ -3,7 +3,7 @@ import Foundation
 struct GitHubFullCommit: Decodable {
   struct Commit: Decodable {
     struct Committer: Decodable {
-      var date: Date
+      var date: String
     }
     var committer: Committer
   }
