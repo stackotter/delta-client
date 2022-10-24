@@ -228,7 +228,7 @@ public final class Updater: ObservableObject {
     let currentFullCommit = try CustomJSONDecoder().decode(GitHubFullCommit.self, from: currentCommitData)
     let currentDate = currentFullCommit.commit.committer.date
 
-    if (newDate < currentDate) {
+    if (newDate <= currentDate) {
       throw UpdateError.currentVersionIsNewerThanLatestCommit
     }
 
