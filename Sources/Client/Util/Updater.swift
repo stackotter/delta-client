@@ -215,14 +215,14 @@ public final class Updater: ObservableObject {
   private static func getLatestUnstableDownloadURL(branch: String) throws -> (URL, String) {
     let branches = try getBranches()
     let commit = branches.filter { $0.name == branch }.first?.commit
-    let sha = commit!.sha.prefix(7) ?? "<unknown>"
+    let sha = commit?.sha.prefix(7) ?? "<unknown>"
     let url = URL(string: "https://backend.deltaclient.app/download/\(branch)/latest/DeltaClient.app.zip")!
     
     let newCommitData = try Data(contentsOf: URL(string: commit!.url)!)
     let newFullCommit = try CustomJSONDecoder().decode(GitHubFullCommit.self, from: newCommitData)
     let newDate = newFullCommit.commit.committer.date
 
-    let currentCommitData = try Data(contentsOf: URL(string: "https://api.github.com/repos/stackotter/delta-client/commits/\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String)")!)
+    let currentCommitData = try Data(contentsOf: URL(string: "https://api.github.com/repos/stackotter/delta-client/commits/\(String(describing: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString")))")!)
     let currentFullCommit = try CustomJSONDecoder().decode(GitHubFullCommit.self, from: currentCommitData)
     let currentDate = currentFullCommit.commit.committer.date
 
