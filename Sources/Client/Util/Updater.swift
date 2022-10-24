@@ -30,7 +30,7 @@ public final class Updater: ObservableObject {
   @Published public var error: Error?
 
   /// The branch used for unstable updates.
-  @Published public var unstableBranch = "dev"
+  @Published public var unstableBranch = "main"
 
   // MARK: Init
 
@@ -214,9 +214,23 @@ public final class Updater: ObservableObject {
   /// - Returns: A download URL
   private static func getLatestUnstableDownloadURL(branch: String) throws -> (URL, String) {
     let branches = try getBranches()
-    let commit = branches.filter { $0.name == branch }.first?.commit.sha.prefix(7) ?? "<unknown>"
+    let commit = branches.filter { $0.name == branch }.first?.commit
+    let sha = commit!.sha.prefix(7) ?? "<unknown>"
     let url = URL(string: "https://backend.deltaclient.app/download/\(branch)/latest/DeltaClient.app.zip")!
-    return (url, "commit \(commit) (latest)")
+    
+    let newCommitData = try Data(contentsOf: URL(string: commit!.url)!)
+    let newFullCommit = try CustomJSONDecoder().decode(GitHubFullCommit.self, from: newCommitData)
+    let newDate = newFullCommit.commit.committer.date
+
+    let currentCommitData = try Data(contentsOf: URL(string: "https://api.github.com/repos/stackotter/delta-client/commits/\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String)")!)
+    let currentFullCommit = try CustomJSONDecoder().decode(GitHubFullCommit.self, from: currentCommitData)
+    let currentDate = currentFullCommit.commit.committer.date
+
+    if (newDate < currentDate) {
+      throw UpdateError.currentVersionIsNewerThanLatestCommit
+    }
+
+    return (url, "commit \(sha) (latest)")
   }
 
   private static func getBranches() throws -> [GitHubBranch] {
