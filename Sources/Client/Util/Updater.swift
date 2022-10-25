@@ -30,7 +30,7 @@ public final class Updater: ObservableObject {
   @Published public var error: Error?
 
   /// The branch used for unstable updates.
-  @Published public var unstableBranch = "dev"
+  @Published public var unstableBranch = "main"
 
   // MARK: Init
 
@@ -214,17 +214,22 @@ public final class Updater: ObservableObject {
   /// - Returns: A download URL
   private static func getLatestUnstableDownloadURL(branch: String) throws -> (URL, String) {
     let branches = try getBranches()
-    let commit = branches.filter { $0.name == branch }.first?.commit.sha.prefix(7) ?? "<unknown>"
+    guard let commit = (branches.filter { $0.name == branch }.first?.commit) else {
+      throw UpdateError.failedToGetDownloadURL
+    }
+    let hash = commit.sha.prefix(7)
 
     if let currentVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
-      let currentCommit = currentVersionString[currentVersionString.range(of: "commit: ")!.upperBound...]
-      if currentCommit == commit {
-        throw UpdateError.alreadyUpToDate(currentCommit)
+      if let range = currentVersionString.range(of: "commit: ") {
+        let currentCommit = currentVersionString[range.upperBound...]
+        if currentCommit == commit.sha {
+          throw UpdateError.alreadyUpToDate(currentCommit)
+        }
       }
     }
 
     let url = URL(string: "https://backend.deltaclient.app/download/\(branch)/latest/DeltaClient.app.zip")!
-    return (url, "commit \(commit) (latest)")
+    return (url, "commit \(hash) (latest)")
   }
 
   private static func getBranches() throws -> [GitHubBranch] {
