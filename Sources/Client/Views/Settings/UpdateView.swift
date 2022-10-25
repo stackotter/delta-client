@@ -11,6 +11,7 @@ enum UpdateViewState {
 enum UpdateError: LocalizedError {
   case failedToGetDownloadURL
   case failedToGetDownloadURLFromGitHubReleases
+  case alreadyUpToDate(String.SubSequence)
   case failedToGetBranches(Error)
   case failedToGetGitHubAPIResponse(Error)
   
@@ -20,6 +21,8 @@ enum UpdateError: LocalizedError {
         return "Failed to get download URL."
       case .failedToGetDownloadURLFromGitHubReleases:
         return "Failed to get download URL from GitHub Releases."
+      case .alreadyUpToDate(let commit):
+        return "You are already up to date (commit \(commit))"
       case .failedToGetBranches(let error):
         return """
         Failed to get branches.

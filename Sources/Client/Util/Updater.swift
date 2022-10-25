@@ -57,7 +57,7 @@ public final class Updater: ObservableObject {
       do {
         (downloadURL, downloadVersion) = try self.getDownloadURL(self.updateType)
       } catch {
-        DeltaClientApp.modalError("Failed to get download URL", safeState: .serverList)
+        DeltaClientApp.modalError("Failed to get download URL: \(error.localizedDescription)", safeState: .serverList)
         return
       }
 
@@ -215,6 +215,14 @@ public final class Updater: ObservableObject {
   private static func getLatestUnstableDownloadURL(branch: String) throws -> (URL, String) {
     let branches = try getBranches()
     let commit = branches.filter { $0.name == branch }.first?.commit.sha.prefix(7) ?? "<unknown>"
+
+    if let currentVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
+      let currentCommit = currentVersionString[currentVersionString.range(of: "commit: ")!.upperBound...]
+      if currentCommit == commit {
+        throw UpdateError.alreadyUpToDate(currentCommit)
+      }
+    }
+
     let url = URL(string: "https://backend.deltaclient.app/download/\(branch)/latest/DeltaClient.app.zip")!
     return (url, "commit \(commit) (latest)")
   }
