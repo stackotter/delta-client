@@ -212,7 +212,7 @@ public final class Updater: ObservableObject {
   /// Get the download URL for the artifact uploaded by the latest successful GitHub action run.
   ///
   /// - Returns: A download URL
-  private static func getLatestUnstableDownloadURL(branch: String) throws -> (URL, String) {
+  static func getLatestUnstableDownloadURL(branch: String) throws -> (URL, String) {
     let branches = try getBranches()
     guard let commit = (branches.filter { $0.name == branch }.first?.commit) else {
       throw UpdateError.failedToGetDownloadURL
