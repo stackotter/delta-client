@@ -92,7 +92,7 @@ struct ServerListView: View {
         }
         
         if (updateAvailable) {
-          Button("Update", action: update)
+          Button("Update", action: update).padding(.top, 5)
         }
       }
       .listStyle(SidebarListStyle())
