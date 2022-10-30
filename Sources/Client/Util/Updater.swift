@@ -268,31 +268,22 @@ public final class Updater: ObservableObject {
   }
   
   /// Check if a commit (by its SHA) exists on a given branch.
-  ///
   /// - Returns: If the commit exists on the branch
-  private static func doesCommitExistOnBranch(commit: String, branch: String) -> Bool {
+  private static func getBranchComparisonStatus(commit: String, branch: String) -> GitHubComparison.Status? {
     let url = URL(string: "https://api.github.com/repos/stackotter/delta-client/compare/\(branch)...\(commit)")!
     if let data = try? Data(contentsOf: url) {
-      let status = try? CustomJSONDecoder().decode(GitHubComparison.self, from: data).status
-      if status == "behind" || status == "identical" {
-        return true
-      }
+      return try? CustomJSONDecoder().decode(GitHubComparison.self, from: data).status
     }
-    return false
+    return nil
   }
   
   /// If the current version is on the main branch, check if a newer commit is available.
-  ///
   /// - Returns: Whether or not an "unstable" update is available from the main branch.
   static func isUpdateAvailable() -> Bool {
     if let currentVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
       if let range = currentVersionString.range(of: "commit: ") {
-        // Check if this current version is from the main branch
-        if doesCommitExistOnBranch(commit: String(currentVersionString[range.upperBound...]), branch: "main") {
-          guard let _ = try? getLatestUnstableDownloadURL(branch: "main") else {
-            // getLatestUnstableDownloadURL will throw if the current version is already the latest commit on the main branch
-            return false
-          }
+        // Check if this current version is from the main branch and behind the HEAD
+        if getBranchComparisonStatus(commit: String(currentVersionString[range.upperBound...]), branch: "main") == .behind {
           return true
         }
       }
