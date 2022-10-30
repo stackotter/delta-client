@@ -7,6 +7,7 @@ struct ServerListView: View {
   @State var pingers: [Pinger]
   
   var lanServerEnumerator: LANServerEnumerator?
+  var updateAvailable: Bool = false
   
   init() {
     // Create server pingers
@@ -34,6 +35,8 @@ struct ServerListView: View {
     // Start pinging and enumerating
     refresh()
     lanServerEnumerator?.start()
+    
+    updateAvailable = Updater.isUpdateAvailable()
   }
   
   /// Ping all servers again and clear discovered LAN servers.
@@ -43,6 +46,11 @@ struct ServerListView: View {
     }
     
     lanServerEnumerator?.clear()
+  }
+  
+  // Navigate to update settings view
+  func update() {
+    appState.update(to: .settings(.update))
   }
   
   var body: some View {
@@ -81,6 +89,10 @@ struct ServerListView: View {
           IconButton("personalhotspot") {
             appState.update(to: .directConnect)
           }
+        }
+        
+        if (updateAvailable) {
+          Button("Update", action: update).padding(.top, 5)
         }
       }
       .listStyle(SidebarListStyle())
