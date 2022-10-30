@@ -36,12 +36,7 @@ struct ServerListView: View {
     refresh()
     lanServerEnumerator?.start()
     
-    do {
-      _ = try Updater.getLatestUnstableDownloadURL(branch: "main")
-      updateAvailable = true
-    } catch {
-      // getLatestUnstableDownloadURL will throw UpdateError.alreadyUpToDate if an update is not available
-    }
+    updateAvailable = Updater.isUpdateAvailable()
   }
   
   /// Ping all servers again and clear discovered LAN servers.

@@ -212,7 +212,7 @@ public final class Updater: ObservableObject {
   /// Get the download URL for the artifact uploaded by the latest successful GitHub action run.
   ///
   /// - Returns: A download URL
-  static func getLatestUnstableDownloadURL(branch: String) throws -> (URL, String) {
+  private static func getLatestUnstableDownloadURL(branch: String) throws -> (URL, String) {
     let branches = try getBranches()
     guard let commit = (branches.filter { $0.name == branch }.first?.commit) else {
       throw UpdateError.failedToGetDownloadURL
@@ -265,6 +265,39 @@ public final class Updater: ObservableObject {
         }
       }
     }
+  }
+  
+  /// Check if a commit (by its SHA) exists on a given branch.
+  ///
+  /// - Returns: If the commit exists on the branch
+  private static func doesCommitExistOnBranch(commit: String, branch: String) -> Bool {
+    let url = URL(string: "https://api.github.com/repos/stackotter/delta-client/compare/\(branch)...\(commit)")!
+    if let data = try? Data(contentsOf: url) {
+      let status = try? CustomJSONDecoder().decode(GitHubComparison.self, from: data).status
+      if status == "behind" || status == "identical" {
+        return true
+      }
+    }
+    return false
+  }
+  
+  /// If the current version is on the main branch, check if a newer commit is available.
+  ///
+  /// - Returns: Whether or not an "unstable" update is available from the main branch.
+  static func isUpdateAvailable() -> Bool {
+    if let currentVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
+      if let range = currentVersionString.range(of: "commit: ") {
+        // Check if this current version is from the main branch
+        if doesCommitExistOnBranch(commit: String(currentVersionString[range.upperBound...]), branch: "main") {
+          guard let _ = try? getLatestUnstableDownloadURL(branch: "main") else {
+            // getLatestUnstableDownloadURL will throw if the current version is already the latest commit on the main branch
+            return false
+          }
+          return true
+        }
+      }
+    }
+    return false
   }
 
   /// Resets the updater back to its initial state
