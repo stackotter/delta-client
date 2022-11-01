@@ -7,8 +7,7 @@ var dependencies: [Package.Dependency] = [
   // In short, the dependencies for DeltaCore can be found in Sources/Core/Package.swift
   .package(name: "DeltaCore", path: "Sources/Core"),
   .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
-  .package(url: "https://github.com/stackotter/SwordRPC", .revision("3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed")),
-  .package(url: "https://github.com/stackotter/fireblade-math.git", branch: "matrix2x2")
+  .package(url: "https://github.com/stackotter/SwordRPC", .revision("3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed"))
 ]
 
 #if swift(>=5.6)
@@ -46,8 +45,7 @@ let package = Package(
       dependencies: [
         "DynamicShim",
         .product(name: "SwordRPC", package: "SwordRPC", condition: .when(platforms: [.macOS])),
-        .product(name: "ArgumentParser", package: "swift-argument-parser"),
-        .product(name: "FirebladeMath", package: "fireblade-math")
+        .product(name: "ArgumentParser", package: "swift-argument-parser")
       ],
       path: "Sources/Client"
     ),

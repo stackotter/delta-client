@@ -1,7 +1,6 @@
 import SwiftUI
 import DeltaCore
 import Combine
-import FirebladeMath
 
 enum GameState {
   case connecting

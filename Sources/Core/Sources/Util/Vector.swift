@@ -1,3 +1,5 @@
+@_exported import FirebladeMath
+
 public typealias Vec = SIMD
 
 public typealias Vec2 = SIMD2
