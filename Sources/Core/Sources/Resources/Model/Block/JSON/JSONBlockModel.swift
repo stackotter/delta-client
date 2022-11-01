@@ -1,5 +1,4 @@
 import Foundation
-import ZippyJSON
 
 /// The structure of a block model as read from a resource pack.
 struct JSONBlockModel: Codable {

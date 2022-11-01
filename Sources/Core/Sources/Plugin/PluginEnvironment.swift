@@ -1,6 +1,5 @@
 import Foundation
 import OrderedCollections
-import ZippyJSON
 
 /// Storage and manager for all currently loaded plugins.
 public class PluginEnvironment: ObservableObject {

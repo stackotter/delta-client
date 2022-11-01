@@ -1,5 +1,4 @@
 import Foundation
-import ZippyJSON
 
 public enum MicrosoftAPIError: LocalizedError {
   case invalidRedirectURL

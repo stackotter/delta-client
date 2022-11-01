@@ -1,5 +1,4 @@
 import Foundation
-import ZippyJSON
 
 public enum PixlyzerError: LocalizedError {
   /// The block with the specified id is missing.

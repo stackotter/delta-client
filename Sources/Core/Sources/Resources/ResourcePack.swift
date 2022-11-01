@@ -1,6 +1,5 @@
 import Foundation
 import ZIPFoundation
-import ZippyJSON
 
 enum ResourcePackError: LocalizedError {
   /// The specified resource pack directory does not exist.

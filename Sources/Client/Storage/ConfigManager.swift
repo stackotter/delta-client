@@ -1,6 +1,5 @@
 import Foundation
 import DeltaCore
-import ZippyJSON
 
 /// Manages the config stored in a config file.
 public final class ConfigManager {

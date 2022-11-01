@@ -1,5 +1,4 @@
 import Foundation
-import ZippyJSON
 
 public enum MojangAPIError: LocalizedError {
   case failedToDeserializeResponse(String)

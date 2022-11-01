@@ -1,6 +1,5 @@
 import Foundation
 import simd
-import ZippyJSON
 
 // TODO: For plugin API make the block model palette api safe and easy to use (for adding/editing models)
 

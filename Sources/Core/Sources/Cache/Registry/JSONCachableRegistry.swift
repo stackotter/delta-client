@@ -1,5 +1,4 @@
 import Foundation
-import ZippyJSON
 
 /// Allows `Codable` registries to automatically be cached using JSON.
 ///
