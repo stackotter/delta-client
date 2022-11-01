@@ -1,3 +1,5 @@
+import FirebladeMath
+
 extension BlockModelFace: ProtobufCachable {
   public init(from message: ProtobufBlockModelFace) throws {
     direction = try Direction(from: message.direction)
@@ -5,10 +7,10 @@ extension BlockModelFace: ProtobufCachable {
 
     let cachedUVs = message.uvs
     uvs = [
-      SIMD2(cachedUVs[0], cachedUVs[1]),
-      SIMD2(cachedUVs[2], cachedUVs[3]),
-      SIMD2(cachedUVs[4], cachedUVs[5]),
-      SIMD2(cachedUVs[6], cachedUVs[7])
+      Vec2f(cachedUVs[0], cachedUVs[1]),
+      Vec2f(cachedUVs[2], cachedUVs[3]),
+      Vec2f(cachedUVs[4], cachedUVs[5]),
+      Vec2f(cachedUVs[6], cachedUVs[7])
     ]
 
     texture = Int(message.texture)

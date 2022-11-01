@@ -1,4 +1,4 @@
-import simd
+import FirebladeMath
 
 struct Constraints {
   var vertical: VerticalConstraint
@@ -15,7 +15,7 @@ struct Constraints {
     return Constraints(.top(y), .left(x))
   }
 
-  func solve(innerSize: SIMD2<Int>, outerSize: SIMD2<Int>) -> SIMD2<Int> {
+  func solve(innerSize: Vec2i, outerSize: Vec2i) -> Vec2i {
     let x: Int
     switch horizontal {
       case .left(let distance):

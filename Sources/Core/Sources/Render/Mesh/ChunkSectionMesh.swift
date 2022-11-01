@@ -1,5 +1,6 @@
 import Foundation
 import MetalKit
+import FirebladeMath
 
 /// A renderable mesh of a chunk section.
 public struct ChunkSectionMesh {
@@ -48,7 +49,7 @@ public struct ChunkSectionMesh {
   ///   - device: The device to use.
   ///   - commandQueue: The command queue to use for creating buffers.
   public mutating func renderTranslucent(
-    viewedFrom position: SIMD3<Float>,
+    viewedFrom position: Vec3f,
     sortTranslucent: Bool,
     renderEncoder: MTLRenderCommandEncoder,
     device: MTLDevice,

@@ -1,5 +1,6 @@
 import Foundation
 import MetalKit
+import FirebladeMath
 
 /// A mesh that can be sorted after the initial preparation.
 ///
@@ -7,15 +8,15 @@ import MetalKit
 public struct SortableMesh {
   /// Distinct mesh elements that should be rendered in order of distance.
   public var elements: [SortableMeshElement] = []
-  
+
   /// The mesh may be empty even if this is false if all of the elements contain no geometry.
   public var isEmpty: Bool {
     return elements.isEmpty
   }
-  
+
   /// The mesh that is updated each time this mesh is sorted.
   public var underlyingMesh: Mesh
-  
+
   /// Creates a new sortable mesh.
   /// - Parameters:
   ///   - elements: Distinct mesh elements that should be rendered in order of distance.
@@ -25,21 +26,21 @@ public struct SortableMesh {
     underlyingMesh = Mesh()
     underlyingMesh.uniforms = uniforms
   }
-  
+
   /// Removes all elements from the mesh.
   public mutating func clear() {
     elements = []
     underlyingMesh.clearGeometry()
     underlyingMesh.invalidateBuffers(keepUniformsBuffer: true)
   }
-  
+
   /// Add an element to the mesh. Updates the element's id.
   public mutating func add(_ element: SortableMeshElement) {
     var element = element
     element.id = elements.count
     elements.append(element)
   }
-  
+
   /// Encode the render commands for this mesh.
   /// - Parameters:
   ///   - position: The position to sort from.
@@ -48,7 +49,7 @@ public struct SortableMesh {
   ///   - device: The device to use.
   ///   - commandQueue: The command queue to use when creating buffers.
   public mutating func render(
-    viewedFrom position: SIMD3<Float>,
+    viewedFrom position: Vec3f,
     sort: Bool,
     encoder: MTLRenderCommandEncoder,
     device: MTLDevice,
@@ -57,7 +58,7 @@ public struct SortableMesh {
     if underlyingMesh.isEmpty && elements.isEmpty {
       return
     }
-    
+
     if sort || underlyingMesh.isEmpty {
       // TODO: reuse vertices from mesh and just recreate winding
       // Sort elements by distance in descending order.
@@ -66,10 +67,10 @@ public struct SortableMesh {
         let squaredDistance2 = distance_squared(position, $1.centerPosition)
         return squaredDistance1 > squaredDistance2
       })
-      
+
       if underlyingMesh.isEmpty || newElements != elements {
         elements = newElements
-        
+
         underlyingMesh.clearGeometry()
         for element in elements {
           let windingOffset = UInt32(underlyingMesh.vertices.count)
@@ -80,12 +81,12 @@ public struct SortableMesh {
         }
       }
     }
-    
+
     // Could be reached if all elements contain no geometry
     if underlyingMesh.isEmpty {
       return
     }
-    
+
     try underlyingMesh.render(into: encoder, with: device, commandQueue: commandQueue)
   }
 }

@@ -1,13 +1,14 @@
-import simd
+import FirebladeMath
 
-extension SIMD3: ProtobufCachable where Scalar == Float {
+extension Vec3f: ProtobufCachable {
   public init(from message: ProtobufVec3f) {
     self.init(
       x: message.x,
       y: message.y,
-      z: message.z)
+      z: message.z
+    )
   }
-  
+
   public func cached() -> ProtobufVec3f {
     var message = ProtobufVec3f()
     message.x = x

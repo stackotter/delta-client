@@ -1,9 +1,9 @@
-import simd
+import FirebladeMath
 
 /// Builds the fluid mesh for a block.
 struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in vanilla
   /// The UVs for the top of a fluid when flowing.
-  static let flowingUVs: [SIMD2<Float>] = [
+  static let flowingUVs: [Vec2f] = [
     [0.75, 0.25],
     [0.25, 0.25],
     [0.25, 0.75],
@@ -11,7 +11,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
   ]
 
   /// The UVs for the top of a fluid when still.
-  static let stillUVs: [SIMD2<Float>] = [
+  static let stillUVs: [Vec2f] = [
     [1, 0],
     [0, 0],
     [0, 1],
@@ -56,7 +56,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
       }
     }
 
-    var tint = SIMD3<Float>(1, 1, 1)
+    var tint = Vec3f(1, 1, 1)
     if block.fluidState?.fluid.identifier.name == "water" {
       guard let tintColor = chunk.biome(
         at: position.relativeToChunk,
@@ -98,14 +98,14 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
 
   func build(
     into translucentMesh: inout SortableMesh,
-    topCornerPositions: [SIMD3<Float>],
+    topCornerPositions: [Vec3f],
     heights: [Float],
     flowingTexture: UInt16,
     stillTexture: UInt16,
     isFlowing: Bool,
-    tint: SIMD3<Float>
+    tint: Vec3f
   ) {
-    let basePosition = position.relativeToChunkSection.floatVector + SIMD3<Float>(0.5, 0, 0.5)
+    let basePosition = position.relativeToChunkSection.floatVector + Vec3f(0.5, 0, 0.5)
 
     // Iterate through all visible faces
     for direction in Direction.allDirections where !cullingNeighbours.contains(direction) {
@@ -148,7 +148,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
 
       translucentMesh.add(SortableMeshElement(
         geometry: geometry,
-        centerPosition: position.floatVector + SIMD3<Float>(0.5, 0.5, 0.5)
+        centerPosition: position.floatVector + Vec3f(0.5, 0.5, 0.5)
       ))
     }
   }
@@ -157,13 +157,13 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
     into geometry: inout Geometry,
     isFlowing: Bool,
     heights: [Float],
-    topCornerPositions: [SIMD3<Float>],
-    tint: SIMD3<Float>,
+    topCornerPositions: [Vec3f],
+    tint: Vec3f,
     stillTexture: UInt16,
     flowingTexture: UInt16
   ) {
-    var positions: [SIMD3<Float>]
-    let uvs: [SIMD2<Float>]
+    var positions: [Vec3f]
+    let uvs: [Vec2f]
     let texture: UInt16
     if isFlowing {
       texture = flowingTexture
@@ -189,10 +189,10 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
     _ direction: Direction,
     into geometry: inout Geometry,
     heights: [Float],
-    topCornerPositions: [SIMD3<Float>],
-    basePosition: SIMD3<Float>,
+    topCornerPositions: [Vec3f],
+    basePosition: Vec3f,
     flowingTexture: UInt16,
-    tint: SIMD3<Float>
+    tint: Vec3f
   ) {
     // The lookup will never be nil because directionToCorners contains values for north, east, south and west
     // swiftlint:disable force_unwrapping
@@ -213,13 +213,13 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
 
   private func buildBottomFace(
     into geometry: inout Geometry,
-    basePosition: SIMD3<Float>,
-    topCornerPositions: [SIMD3<Float>],
+    basePosition: Vec3f,
+    topCornerPositions: [Vec3f],
     stillTexture: UInt16,
-    tint: SIMD3<Float>
+    tint: Vec3f
   ) {
-    let uvs = [SIMD2<Float>](Self.stillUVs.reversed())
-    var positions: [SIMD3<Float>] = []
+    let uvs = [Vec2f](Self.stillUVs.reversed())
+    var positions: [Vec3f] = []
     positions.reserveCapacity(4)
     for i in 0..<4 {
       var position = topCornerPositions[(i - 1) & 0x3] // & 0x3 is mod 4
@@ -231,9 +231,9 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
   }
 
   /// Convert corner heights to corner positions relative to the current chunk section.
-  private func calculatePositions(_ heights: [Float]) -> [SIMD3<Float>] {
-    let basePosition = position.relativeToChunkSection.floatVector + SIMD3<Float>(0.5, 0, 0.5)
-    var positions: [SIMD3<Float>] = []
+  private func calculatePositions(_ heights: [Float]) -> [Vec3f] {
+    let basePosition = position.relativeToChunkSection.floatVector + Vec3f(0.5, 0, 0.5)
+    var positions: [Vec3f] = []
     for (index, height) in heights.enumerated() {
       let directions = Self.cornerToDirections[index]
       var position = basePosition
@@ -344,13 +344,13 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
     return (count: lowestCornersCount, index: lowestCornerIndex)
   }
 
-  private func generateFlowingTopFaceUVs(lowestCornersCount: Int) -> [SIMD2<Float>] {
+  private func generateFlowingTopFaceUVs(lowestCornersCount: Int) -> [Vec2f] {
     var uvs = Self.flowingUVs
 
     // Rotate UVs 45 degrees if flowing diagonally
     if lowestCornersCount == 1 || lowestCornersCount == 3 {
       let uvRotation = MatrixUtil.rotationMatrix2d(lowestCornersCount == 1 ? Float.pi / 4 : 3 * Float.pi / 4)
-      let center = SIMD2<Float>(repeating: 0.5)
+      let center = Vec2f(repeating: 0.5)
       for (index, uv) in uvs.enumerated() {
         uvs[index] = (uv - center) * uvRotation + center
       }
@@ -362,10 +362,10 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
   private func addVertices<Positions: Collection>(
     to geometry: inout Geometry,
     at positions: Positions,
-    uvs: [SIMD2<Float>],
+    uvs: [Vec2f],
     texture: UInt16,
-    tint: SIMD3<Float>
-  ) where Positions.Element == SIMD3<Float> {
+    tint: Vec3f
+  ) where Positions.Element == Vec3f {
     var index = 0
     for position in positions {
       let vertex = BlockVertex(

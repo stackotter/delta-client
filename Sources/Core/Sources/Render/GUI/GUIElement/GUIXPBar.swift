@@ -1,9 +1,9 @@
-import simd
+import FirebladeMath
 
 struct GUIXPBar: GUIElement {
   static let background = GUISprite.xpBarBackground
   static let foreground = GUISprite.xpBarForeground
-  static let textColor: SIMD4<Float> = [126, 252, 31, 255] / 255
+  static let textColor: Vec4f = [126, 252, 31, 255] / 255
 
   var level: Int
   var progress: Float
@@ -19,7 +19,7 @@ struct GUIXPBar: GUIElement {
     )
     spriteMesh.position = [0, 6]
 
-    func add(_ sprite: GUISpriteDescriptor, at position: SIMD2<Int>) {
+    func add(_ sprite: GUISpriteDescriptor, at position: Vec2i) {
       spriteMesh.vertices.append(contentsOf: .tuples([GUIQuad(
         for: sprite,
         guiTexturePalette: context.guiTexturePalette,

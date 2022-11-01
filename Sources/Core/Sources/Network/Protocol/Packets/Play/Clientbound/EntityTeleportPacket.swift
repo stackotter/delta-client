@@ -1,4 +1,5 @@
 import Foundation
+import FirebladeMath
 
 public struct EntityTeleportPacket: ClientboundEntityPacket {
   public static let id: Int = 0x56
@@ -6,7 +7,7 @@ public struct EntityTeleportPacket: ClientboundEntityPacket {
   /// The entity's id.
   public var entityId: Int
   /// The entity's new position.
-  public var position: SIMD3<Double>
+  public var position: Vec3d
   /// The entity's new pitch.
   public var pitch: Float
   /// The entity's new yaw.
@@ -37,7 +38,7 @@ public struct EntityTeleportPacket: ClientboundEntityPacket {
     }
 
     client.game.accessComponent(entityId: entityId, EntityVelocity.self, acquireLock: false) { velocity in
-      velocity.vector = SIMD3<Double>.zero
+      velocity.vector = Vec3d.zero
     }
   }
 }

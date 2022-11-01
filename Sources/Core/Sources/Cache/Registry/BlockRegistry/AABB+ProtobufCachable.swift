@@ -1,13 +1,15 @@
+import FirebladeMath
+
 extension AxisAlignedBoundingBox: ProtobufCachable {
   public init(from message: ProtobufAABB) {
-    position = SIMD3<Double>(SIMD3<Float>(from: message.position))
-    size = SIMD3<Double>(SIMD3<Float>(from: message.size))
+    position = Vec3d(Vec3f(from: message.position))
+    size = Vec3d(Vec3f(from: message.size))
   }
-  
+
   public func cached() -> ProtobufAABB {
     var message = ProtobufAABB()
-    message.position = SIMD3<Float>(position).cached()
-    message.size = SIMD3<Float>(size).cached()
+    message.position = Vec3f(position).cached()
+    message.size = Vec3f(size).cached()
     return message
   }
 }

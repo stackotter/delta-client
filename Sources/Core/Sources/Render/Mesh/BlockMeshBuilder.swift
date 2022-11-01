@@ -1,14 +1,14 @@
-import simd
+import FirebladeMath
 
 /// Builds the mesh for a single block.
 struct BlockMeshBuilder {
   let model: BlockModel
   let position: BlockPosition
-  let modelToWorld: matrix_float4x4
+  let modelToWorld: Mat4x4f
   let culledFaces: Set<Direction> // TODO: Make bitset based replacement for optimisation
   let lightLevel: LightLevel
   let neighbourLightLevels: [Direction: LightLevel] // TODO: Convert to array for faster access
-  let tintColor: SIMD3<Float>
+  let tintColor: Vec3f
   let blockTexturePalette: TexturePalette // TODO: Remove when texture type is baked into block models
 
   func build(
@@ -45,8 +45,8 @@ struct BlockMeshBuilder {
       if !elementTranslucentGeometry.isEmpty {
         // Calculate a size used for sorting nested translucent elements (required for blocks such
         // as honey blocks and slime blocks).
-        let minimum = simd_make_float3(SIMD4<Float>(0, 0, 0, 1) * element.transformation * modelToWorld)
-        let maximum = simd_make_float3(SIMD4<Float>(1, 1, 1, 1) * element.transformation * modelToWorld)
+        let minimum = (Vec4f(0, 0, 0, 1) * element.transformation * modelToWorld).xyz
+        let maximum = (Vec4f(1, 1, 1, 1) * element.transformation * modelToWorld).xyz
         let size = (maximum - minimum).magnitude
         translucentGeometry.append((size: size, geometry: elementTranslucentGeometry))
       }
@@ -82,7 +82,7 @@ struct BlockMeshBuilder {
 
   func buildFace(
     _ face: BlockModelFace,
-    transformedBy vertexToWorld: matrix_float4x4,
+    transformedBy vertexToWorld: Mat4x4f,
     into geometry: inout Geometry,
     translucentGeometry: inout Geometry,
     faceLightLevel: LightLevel,
@@ -113,7 +113,7 @@ struct BlockMeshBuilder {
 
   func buildFace(
     _ face: BlockModelFace,
-    transformedBy vertexToWorld: matrix_float4x4,
+    transformedBy vertexToWorld: Mat4x4f,
     into geometry: inout Geometry,
     faceLightLevel: LightLevel,
     shouldShade: Bool,
@@ -132,11 +132,11 @@ struct BlockMeshBuilder {
     let shade = shouldShade ? CubeGeometry.shades[faceDirection] : 1
 
     // Calculate the tint color to apply to the face
-    let tint: SIMD3<Float>
+    let tint: Vec3f
     if face.isTinted {
       tint = tintColor * shade
     } else {
-      tint = SIMD3<Float>(repeating: shade)
+      tint = Vec3f(repeating: shade)
     }
 
     let textureIndex = UInt16(face.texture)
@@ -144,7 +144,7 @@ struct BlockMeshBuilder {
 
     // Add vertices to mesh
     for (uvIndex, vertexPosition) in faceVertexPositions.enumerated() {
-      let position = simd_make_float3(SIMD4<Float>(vertexPosition, 1) * vertexToWorld)
+      let position = (Vec4f(vertexPosition, 1) * vertexToWorld).xyz
       let uv = face.uvs[uvIndex]
       let vertex = BlockVertex(
         x: position.x,
@@ -202,7 +202,7 @@ struct BlockMeshBuilder {
     let geometry = Geometry(vertices: vertices, indices: indices)
     return SortableMeshElement(
       geometry: geometry,
-      centerPosition: position.floatVector + SIMD3<Float>(0.5, 0.5, 0.5)
+      centerPosition: position.floatVector + Vec3f(0.5, 0.5, 0.5)
     )
   }
 }

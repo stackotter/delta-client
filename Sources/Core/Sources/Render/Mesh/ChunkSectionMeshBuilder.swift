@@ -1,7 +1,7 @@
 import Foundation
 import MetalKit
-import simd
-import SwiftUI
+import SwiftUI // TODO: why???
+import FirebladeMath
 
 /// Builds renderable meshes from chunk sections.
 ///
@@ -54,7 +54,7 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
   /// - Returns: A mesh. `nil` if the mesh would be empty.
   public func build(reusing existingMesh: ChunkSectionMesh? = nil) -> ChunkSectionMesh? {
     // Create uniforms
-    let position = SIMD3<Float>(
+    let position = Vec3f(
       Float(sectionPosition.sectionX) * 16,
       Float(sectionPosition.sectionY) * 16,
       Float(sectionPosition.sectionZ) * 16
@@ -218,11 +218,11 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
     to transparentAndOpaqueGeometry: inout Geometry,
     translucentMesh: inout SortableMesh,
     position: BlockPosition,
-    modelToWorld: matrix_float4x4,
+    modelToWorld: Mat4x4f,
     culledFaces: Set<Direction>,
     lightLevel: LightLevel,
     neighbourLightLevels: [Direction: LightLevel],
-    tintColor: SIMD3<Float>
+    tintColor: Vec3f
   ) {
     var translucentGeometry = SortableMeshElement(centerPosition: [0, 0, 0])
     BlockMeshBuilder(

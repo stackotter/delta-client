@@ -1,11 +1,11 @@
 import Foundation
 import MetalKit
-import simd
+import FirebladeMath
 
 /// A renderer that renders a `World`
 public final class WorldRenderer: Renderer {
   // MARK: Private properties
-    
+
   /// Internal renderer for rendering entities.
   private var entityRenderer: EntityRenderer
 
@@ -81,7 +81,7 @@ public final class WorldRenderer: Renderer {
       fragmentFunction: fragmentFunction,
       blendingEnabled: true
     )
-    
+
     // Create entity renderer
     entityRenderer = try EntityRenderer(
       client: client,
@@ -197,8 +197,8 @@ public final class WorldRenderer: Renderer {
 
         for aabb in boundingBox.aabbs {
           let geometry = Self.generateOutlineGeometry(
-            position: SIMD3(aabb.position),
-            size: SIMD3(aabb.size),
+            position: Vec3f(aabb.position),
+            size: Vec3f(aabb.size),
             baseIndex: UInt32(indices.count)
           )
           indices.append(contentsOf: geometry.indices)
@@ -230,7 +230,7 @@ public final class WorldRenderer: Renderer {
       }
       profiler.pop()
     }
-    
+
     // Entities are rendered before translucent geometry for correct alpha blending behaviour.
     profiler.push(.entities)
     try entityRenderer.render(
@@ -241,7 +241,7 @@ public final class WorldRenderer: Renderer {
       camera: camera
     )
     profiler.pop()
-    
+
     // Setup render pass for encoding translucent geometry after entity rendering pass
     encoder.setRenderPipelineState(renderPipelineState)
     encoder.setFragmentTexture(arrayTexture.texture, index: 0)
@@ -314,20 +314,20 @@ public final class WorldRenderer: Renderer {
   }
 
   private static func generateOutlineGeometry(
-    position: SIMD3<Float>,
-    size: SIMD3<Float>,
+    position: Vec3f,
+    size: Vec3f,
     baseIndex: UInt32
   ) -> Geometry {
     let thickness: Float = 0.004
     let padding: Float = -thickness + 0.001
-    var boxes: [(position: SIMD3<Float>, size: SIMD3<Float>, axis: Axis, faces: [Direction])] = []
+    var boxes: [(position: Vec3f, size: Vec3f, axis: Axis, faces: [Direction])] = []
     for side: Direction in [.north, .east, .south, .west] {
       // Create up-right edge between this side and the next
       let adjacentSide = side.rotated(1, clockwiseFacing: .down)
 
       var position = side.vector + adjacentSide.vector
-      position *= size / 2 + SIMD3(padding + thickness / 2, 0, padding + thickness / 2)
-      position += SIMD3(size.x - thickness, 0, size.z - thickness) / 2
+      position *= size / 2 + Vec3f(padding + thickness / 2, 0, padding + thickness / 2)
+      position += Vec3f(size.x - thickness, 0, size.z - thickness) / 2
       position.y -= padding
       boxes.append((
         position: position,
@@ -366,7 +366,7 @@ public final class WorldRenderer: Renderer {
         }
         boxes.append((
           position: position,
-          size: (SIMD3(1, 1, 1) - edgeDirection) * thickness + edge,
+          size: (Vec3f(1, 1, 1) - edgeDirection) * thickness + edge,
           axis: adjacentSide.axis,
           faces: faces
         ))
@@ -390,7 +390,7 @@ public final class WorldRenderer: Renderer {
 
         let transformation = MatrixUtil.scalingMatrix(box.size) * MatrixUtil.translationMatrix(box.position) * translation
         for vertex in CubeGeometry.faceVertices[face.rawValue] {
-          let vertexPosition = simd_make_float3(SIMD4<Float>(vertex, 1) * transformation)
+          let vertexPosition = (Vec4f(vertex, 1) * transformation).xyz
           blockOutlineVertices.append(BlockVertex(
             x: vertexPosition.x,
             y: vertexPosition.y,

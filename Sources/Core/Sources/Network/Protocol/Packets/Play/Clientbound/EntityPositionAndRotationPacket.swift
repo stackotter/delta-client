@@ -1,4 +1,5 @@
 import Foundation
+import FirebladeMath
 
 public struct EntityPositionAndRotationPacket: ClientboundEntityPacket {
   public static let id: Int = 0x29
@@ -34,7 +35,7 @@ public struct EntityPositionAndRotationPacket: ClientboundEntityPacket {
     let z = Double(deltaZ) / 4096
 
     client.game.accessComponent(entityId: entityId, EntityPosition.self, acquireLock: false) { position in
-      position.move(by: SIMD3<Double>(x, y, z))
+      position.move(by: Vec3d(x, y, z))
     }
 
     client.game.accessComponent(entityId: entityId, EntityRotation.self, acquireLock: false) { rotation in

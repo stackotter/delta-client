@@ -1,5 +1,5 @@
 import Foundation
-import simd
+import FirebladeMath
 
 /// A direction enum where the raw value is the same as in some of the Minecraft packets.
 public enum Direction: Int {
@@ -9,7 +9,7 @@ public enum Direction: Int {
   case south = 3
   case west = 4
   case east = 5
-  
+
   /// The array of all directions. Matches the order of ``DirectionSet/directions``.
   public static let allDirections: [Direction] = [
     .north,
@@ -17,15 +17,17 @@ public enum Direction: Int {
     .east,
     .west,
     .up,
-    .down]
-  
+    .down
+  ]
+
   /// All directions excluding up and down.
   public static let sides: [Direction] = [
     .north,
     .east,
     .south,
-    .west]
-  
+    .west
+  ]
+
   /// Returns the directions on the xz plane that are perpendicular to a direction.
   public var perpendicularXZ: [Direction] {
     switch self {
@@ -37,7 +39,7 @@ public enum Direction: Int {
         return [.north, .east, .south, .west]
     }
   }
-  
+
   /// The axis this direction lies on.
   public var axis: Axis {
     switch self {
@@ -49,7 +51,7 @@ public enum Direction: Int {
         return .z
     }
   }
-  
+
   /// Whether the direction is a positive direction in Minecraft's coordinate system or not.
   public var isPositive: Bool {
     switch self {
@@ -59,7 +61,7 @@ public enum Direction: Int {
         return false
     }
   }
-  
+
   /// The direction pointing the opposite direction to this one.
   public var opposite: Direction {
     switch self {
@@ -77,7 +79,7 @@ public enum Direction: Int {
         return .east
     }
   }
-  
+
   /// Creates a direction from a string such as `"down"`.
   public init?(string: String) {
     switch string {
@@ -97,35 +99,35 @@ public enum Direction: Int {
         return nil
     }
   }
-  
+
   /// A normalized vector representing this direction.
-  public var vector: SIMD3<Float> {
-    SIMD3(intVector)
+  public var vector: Vec3f {
+    Vec3f(intVector)
   }
-  
+
   /// A normalized vector representing this direction.
-  public var doubleVector: SIMD3<Double> {
-    SIMD3(intVector)
+  public var doubleVector: Vec3d {
+    Vec3d(intVector)
   }
-  
+
   /// A normalized vector representing this direction.
-  public var intVector: SIMD3<Int> {
+  public var intVector: Vec3i {
     switch self {
       case .down:
-        return SIMD3<Int>(0, -1, 0)
+        return Vec3i(0, -1, 0)
       case .up:
-        return SIMD3<Int>(0, 1, 0)
+        return Vec3i(0, 1, 0)
       case .north:
-        return SIMD3<Int>(0, 0, -1)
+        return Vec3i(0, 0, -1)
       case .south:
-        return SIMD3<Int>(0, 0, 1)
+        return Vec3i(0, 0, 1)
       case .west:
-        return SIMD3<Int>(-1, 0, 0)
+        return Vec3i(-1, 0, 0)
       case .east:
-        return SIMD3<Int>(1, 0, 0)
+        return Vec3i(1, 0, 0)
     }
   }
-  
+
   /// Returns the direction `n` 90 degree clockwise rotations around the axis while facing `referenceDirection`.
   public func rotated(_ n: Int, clockwiseFacing referenceDirection: Direction) -> Direction {
     // The three 'loops' of directions around the three axes. The directions are listed clockwise when looking in the negative direction along the axis.

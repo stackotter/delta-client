@@ -1,12 +1,12 @@
 import Foundation
-import simd
+import FirebladeMath
 
 /// Flattened mojang block model element format.
 struct IntermediateBlockModelElement {
   /// The minimum vertex of the element. For a dirt block this would be (0, 0, 0).
-  var from: SIMD3<Float>
+  var from: Vec3f
   /// The maximum vertex of the element. For a dirt block this would be (1, 1, 1).
-  var to: SIMD3<Float>
+  var to: Vec3f
   /// The rotation matrix for this block model.
   var rotation: IntermediateBlockModelElementRotation?
   /// Whether to render shadows or not.
@@ -23,8 +23,8 @@ struct IntermediateBlockModelElement {
     let to = try MathUtil.vectorFloat3(from: mojangElement.to) / blockSize
 
     // I don't trust mojang so this makes sure from and to are actually the minimum and maximum vertices of the element
-    self.from = min(from, to)
-    self.to = max(from, to)
+    self.from = MathUtil.min(from, to)
+    self.to = MathUtil.max(from, to)
 
     if let mojangRotation = mojangElement.rotation {
       rotation = try IntermediateBlockModelElementRotation(from: mojangRotation)
@@ -53,7 +53,7 @@ struct IntermediateBlockModelElement {
   }
 
   /// The transformation matrix to apply to a 1x1x1 cube to get this element.
-  var transformationMatrix: matrix_float4x4 {
+  var transformationMatrix: Mat4x4f {
     let scale = to - from
     var matrix = MatrixUtil.scalingMatrix(scale)
     matrix *= MatrixUtil.translationMatrix(from)
@@ -76,7 +76,7 @@ struct IntermediateBlockModelElement {
     var cullFaces: Set<Direction> = []
 
     // Checking north, down and west faces (negative directions)
-    if from == SIMD3<Float>(repeating: 0) {
+    if from == Vec3f(repeating: 0) {
       if to.x == 1 && to.y == 1 {
         cullFaces.insert(.north)
       }
@@ -89,7 +89,7 @@ struct IntermediateBlockModelElement {
     }
 
     // Checking south, up and east faces (positive directions)
-    if to == SIMD3<Float>(repeating: 1) {
+    if to == Vec3f(repeating: 1) {
       if from.x == 0 && from.y == 0 {
         cullFaces.insert(.south)
       }

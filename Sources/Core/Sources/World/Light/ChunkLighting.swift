@@ -1,5 +1,4 @@
 import Foundation
-import simd
 
 /// A store for chunk lighting data. Not thread-safe.
 ///

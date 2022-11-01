@@ -1,5 +1,4 @@
 import Foundation
-import simd
 
 /// A descriptor describing transformations to apply to a model from a resource pack. When rendering it for a specific block state.
 public struct PixlyzerBlockModelDescriptor: Decodable {
@@ -11,7 +10,7 @@ public struct PixlyzerBlockModelDescriptor: Decodable {
   var yRotation: Int?
   /// Whether to rotate the textures with the model or not.
   var uvLock: Bool?
-  
+
   enum CodingKeys: String, CodingKey {
     case model
     case xRotation = "x"

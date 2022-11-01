@@ -1,4 +1,4 @@
-import simd
+import FirebladeMath
 
 /// A sequence of voxels along a ray.
 ///
@@ -6,38 +6,38 @@ import simd
 public struct VoxelRay: Sequence, IteratorProtocol {
   public var count: Int
 
-  private let step: SIMD3<Int>
-  private let initialVoxel: SIMD3<Int>
-  private let boundaryDistanceStep: SIMD3<Float>
+  private let step: Vec3i
+  private let initialVoxel: Vec3i
+  private let boundaryDistanceStep: Vec3f
 
   private var isFirst = true
-  private var nextBoundaryDistance: SIMD3<Float>
-  private var previousVoxel: SIMD3<Int>
+  private var nextBoundaryDistance: Vec3f
+  private var previousVoxel: Vec3i
 
   public init(along ray: Ray, count: Int? = nil) {
     self.init(from: ray.origin, direction: ray.direction, count: count)
   }
 
-  public init(from position: SIMD3<Float>, direction: SIMD3<Float>, count: Int? = nil) {
-    step = SIMD3<Int>(simd_sign(direction))
+  public init(from position: Vec3f, direction: Vec3f, count: Int? = nil) {
+    step = Vec3i(MathUtil.sign(direction))
 
-    initialVoxel = SIMD3<Int>([
-      position.x.rounded(.down),
-      position.y.rounded(.down),
-      position.z.rounded(.down)
-    ])
+    initialVoxel = Vec3i(
+      Int(position.x.rounded(.down)),
+      Int(position.y.rounded(.down)),
+      Int(position.z.rounded(.down))
+    )
 
-    nextBoundaryDistance = [
+    nextBoundaryDistance = Vec3f(
       (position.x.rounded(.down) + (step.x == -1 ? 0 : 1) - position.x) / direction.x,
       (position.y.rounded(.down) + (step.y == -1 ? 0 : 1) - position.y) / direction.y,
       (position.z.rounded(.down) + (step.z == -1 ? 0 : 1) - position.z) / direction.z
-    ]
+    )
 
-    boundaryDistanceStep = [
+    boundaryDistanceStep = Vec3f(
       Float(step.x) / direction.x,
       Float(step.y) / direction.y,
       Float(step.z) / direction.z
-    ]
+    )
 
     previousVoxel = initialVoxel
     self.count = count ?? Int.max
@@ -50,14 +50,14 @@ public struct VoxelRay: Sequence, IteratorProtocol {
 
     count -= 1
 
-    var voxel: SIMD3<Int>
+    var voxel: Vec3i
     if isFirst {
       isFirst = false
       voxel = initialVoxel
     } else {
       voxel = previousVoxel
 
-      let minBoundaryDistance = abs(nextBoundaryDistance).min()
+      let minBoundaryDistance: Float = MathUtil.abs(nextBoundaryDistance).min()
       if abs(nextBoundaryDistance.x) == minBoundaryDistance {
         nextBoundaryDistance.x += boundaryDistanceStep.x
         voxel.x += step.x

@@ -1,5 +1,4 @@
 import Foundation
-import simd
 import Logging
 
 /// Represents a Minecraft world. Completely thread-safe.

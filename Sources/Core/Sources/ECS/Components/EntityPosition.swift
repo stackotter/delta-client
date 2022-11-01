@@ -1,6 +1,6 @@
 import Foundation
-import simd
 import FirebladeECS
+import FirebladeMath
 
 /// A component storing an entity's position relative to the world.
 ///
@@ -9,17 +9,17 @@ public class EntityPosition: Component {
   // MARK: Public properties
 
   /// The underlying vector.
-  public var vector: SIMD3<Double>
+  public var vector: Vec3d
 
   /// The previous position.
-  public var previousVector: SIMD3<Double>
+  public var previousVector: Vec3d
 
   /// The amount of time taken (in seconds) for ``smoothVector`` to transition from one position to the next.
   public var smoothingAmount: Double
 
   /// A vector that smoothly interpolates from the previous position (set by calling ``save()``)
   /// to the next position in an amount of time described by ``smoothingAmount``.
-  public var smoothVector: SIMD3<Double> {
+  public var smoothVector: Vec3d {
     let delta = CFAbsoluteTimeGetCurrent() - lastUpdated
     let tickProgress = MathUtil.clamp(delta / smoothingAmount, 0, 1)
     return tickProgress * (vector - previousVector) + previousVector
@@ -80,7 +80,7 @@ public class EntityPosition: Component {
   /// - Parameters:
   ///   - vector: A vector representing the position.
   ///   - smoothingAmount: The amount of time (in seconds) for ``smoothVector`` to transition from one position to the next. Defaults to one 15th of a second.
-  public init(_ vector: SIMD3<Double>, smoothingAmount: Double = 1/15) {
+  public init(_ vector: Vec3d, smoothingAmount: Double = 1/15) {
     self.vector = vector
     previousVector = vector
     lastUpdated = CFAbsoluteTimeGetCurrent()
@@ -94,7 +94,7 @@ public class EntityPosition: Component {
   ///   - z: z coordinate.
   ///   - smoothingAmount: The amount of time (in seconds) for ``smoothVector`` to transition from one position to the next. Defaults to one 15th of a second.
   public convenience init(_ x: Double, _ y: Double, _ z: Double, smoothingAmount: Double = 1/15) {
-    self.init(SIMD3<Double>(x, y, z), smoothingAmount: smoothingAmount)
+    self.init(Vec3d(x, y, z), smoothingAmount: smoothingAmount)
   }
 
   // MARK: Updating
@@ -105,12 +105,12 @@ public class EntityPosition: Component {
   }
 
   /// Moves the position to a new position.
-  public func move(to position: SIMD3<Double>) {
+  public func move(to position: Vec3d) {
     vector = position
   }
 
   /// Offsets the position by a specified amount.
-  public func move(by offset: SIMD3<Double>) {
+  public func move(by offset: Vec3d) {
     vector += offset
   }
 

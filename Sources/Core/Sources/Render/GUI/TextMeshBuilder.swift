@@ -1,5 +1,5 @@
 import Metal
-import simd
+import FirebladeMath
 
 struct TextMeshBuilder {
   var font: Font
@@ -87,8 +87,8 @@ struct TextMeshBuilder {
   func build(
     _ text: String,
     fontArrayTexture: MTLTexture,
-    color: SIMD4<Float> = [1, 1, 1, 1],
-    outlineColor: SIMD4<Float>? = nil
+    color: Vec4f = [1, 1, 1, 1],
+    outlineColor: Vec4f? = nil
   ) throws -> GUIElementMesh? {
     if text.isEmpty {
       return nil
@@ -107,7 +107,7 @@ struct TextMeshBuilder {
         fontArrayTexture: fontArrayTexture,
         color: color
       )
-      quad.translate(amount: SIMD2(
+      quad.translate(amount: Vec2f(
         Float(currentX),
         Float(currentY)
       ))
@@ -123,7 +123,7 @@ struct TextMeshBuilder {
     // Create outline
     if let outlineColor = outlineColor {
       var outlineQuads: [GUIQuad] = []
-      let outlineTranslations: [SIMD2<Float>] = [
+      let outlineTranslations: [Vec2f] = [
         [-1, 0],
         [1, 0],
         [0, -1],
@@ -151,24 +151,24 @@ struct TextMeshBuilder {
   private static func build(
     _ character: CharacterDescriptor,
     fontArrayTexture: MTLTexture,
-    color: SIMD4<Float>
+    color: Vec4f
   ) throws -> GUIQuad {
     let arrayTextureWidth = Float(fontArrayTexture.width)
     let arrayTextureHeight = Float(fontArrayTexture.height)
 
-    let position = SIMD2<Float>(
+    let position = Vec2f(
       0,
       Float(Font.defaultCharacterHeight - character.height - character.verticalOffset)
     )
-    let size = SIMD2<Float>(
+    let size = Vec2f(
       Float(character.width),
       Float(character.height)
     )
-    let uvMin = SIMD2<Float>(
+    let uvMin = Vec2f(
       Float(character.x) / arrayTextureWidth,
       Float(character.y) / arrayTextureHeight
     )
-    let uvSize = SIMD2<Float>(
+    let uvSize = Vec2f(
       size.x / arrayTextureWidth,
       size.y / arrayTextureHeight
     )

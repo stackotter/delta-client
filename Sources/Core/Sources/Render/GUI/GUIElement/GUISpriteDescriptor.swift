@@ -1,13 +1,13 @@
-import simd
+import FirebladeMath
 
 /// Describes how to render a specific sprite from a ``GUITexturePalette``.
 struct GUISpriteDescriptor: GUIElement {
   /// The slice containing the sprite.
   var slice: GUITextureSlice
   /// The position of the sprite in the texture. Origin is at the top left.
-  var position: SIMD2<Int>
+  var position: Vec2i
   /// The size of the sprite.
-  var size: SIMD2<Int>
+  var size: Vec2i
 
   /// Creates the descriptor for the specified icon. Icons start 16 pixels from the left of the
   /// texture and are arranged as a grid of 9x9 icons.

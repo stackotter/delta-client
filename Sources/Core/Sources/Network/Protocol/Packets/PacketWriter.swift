@@ -1,5 +1,5 @@
 import Foundation
-import simd
+import FirebladeMath
 
 // TODO: document packet writer
 public struct PacketWriter {
@@ -99,7 +99,7 @@ public struct PacketWriter {
     buffer.writeLong(val, endianness: .big)
   }
 
-  public mutating func writeEntityPosition(_ position: SIMD3<Double>) {
+  public mutating func writeEntityPosition(_ position: Vec3d) {
     writeDouble(position.x)
     writeDouble(position.y)
     writeDouble(position.z)

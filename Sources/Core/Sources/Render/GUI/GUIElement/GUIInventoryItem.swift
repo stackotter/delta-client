@@ -1,5 +1,5 @@
-import simd
 import Foundation
+import FirebladeMath
 
 struct GUIInventoryItem: GUIElement {
   var itemId: Int
@@ -27,7 +27,7 @@ struct GUIInventoryItem: GUIElement {
 
         // Get the block's transformation assuming that each block model part has the same
         // associated gui transformation (I don't see why this wouldn't always be true).
-        var transformation: matrix_float4x4
+        var transformation: Mat4x4f
         if let transformsIndex = model.parts.first?.displayTransformsIndex {
           transformation = context.blockModelPalette.displayTransforms[transformsIndex].gui
         } else {

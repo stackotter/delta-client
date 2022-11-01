@@ -1,6 +1,6 @@
 import Foundation
 import FirebladeECS
-import Metal
+import FirebladeMath
 import MetalKit
 
 /// Renders all entities in the world the client is currently connected to.
@@ -121,8 +121,8 @@ public struct EntityRenderer: Renderer {
           continue
         }
 
-        let scale: matrix_float4x4 = MatrixUtil.scalingMatrix(SIMD3(size))
-        let translation: matrix_float4x4 = MatrixUtil.translationMatrix(SIMD3(position))
+        let scale: Mat4x4f = MatrixUtil.scalingMatrix(Vec3f(size))
+        let translation: Mat4x4f = MatrixUtil.translationMatrix(Vec3f(position))
         let uniforms = Uniforms(transformation: scale * translation)
         entityUniforms.append(uniforms)
       }

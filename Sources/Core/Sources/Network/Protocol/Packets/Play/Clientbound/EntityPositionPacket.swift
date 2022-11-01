@@ -1,4 +1,5 @@
 import Foundation
+import FirebladeMath
 
 public struct EntityPositionPacket: ClientboundEntityPacket {
   public static let id: Int = 0x28
@@ -27,7 +28,7 @@ public struct EntityPositionPacket: ClientboundEntityPacket {
     let x = Double(deltaX) / 4096
     let y = Double(deltaY) / 4096
     let z = Double(deltaZ) / 4096
-    let relativePosition = SIMD3<Double>(x, y, z)
+    let relativePosition = Vec3d(x, y, z)
 
     client.game.accessComponent(entityId: entityId, EntityPosition.self, acquireLock: false) { position in
       position.move(by: relativePosition)

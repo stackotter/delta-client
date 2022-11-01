@@ -1,5 +1,4 @@
 import Foundation
-import simd
 
 /// The rotation of a block model element as read from a Mojang formatted block model file.
 struct JSONBlockModelElementRotation: Codable {

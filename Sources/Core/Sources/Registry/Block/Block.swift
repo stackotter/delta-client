@@ -1,5 +1,5 @@
 import Foundation
-import simd
+import FirebladeMath
 
 /// Information about a specific block state.
 public struct Block: Codable {
@@ -59,7 +59,7 @@ public struct Block: Codable {
   }
 
   /// Returns the offset to apply to the given block at the given position when rendering.
-  public func getModelOffset(at position: BlockPosition) -> SIMD3<Float> {
+  public func getModelOffset(at position: BlockPosition) -> Vec3f {
     if let offset = offset {
       let seed = Self.getPositionRandom(BlockPosition(x: position.x, y: 0, z: position.z))
       let y: Float
@@ -69,12 +69,12 @@ public struct Block: Codable {
         case .xz:
           y = 0
       }
-      return SIMD3<Float>(
+      return Vec3f(
         x: Float(seed & 15) / 30 - 0.25,
         y: y,
         z: Float((seed >> 8) & 15) / 30 - 0.25)
     } else {
-      return SIMD3<Float>()
+      return Vec3f()
     }
   }
 

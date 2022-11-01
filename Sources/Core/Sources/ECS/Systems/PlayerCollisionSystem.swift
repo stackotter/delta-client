@@ -1,5 +1,5 @@
 import FirebladeECS
-import simd
+import FirebladeMath
 
 // TODO: Implement pushoutofblocks method (see decompiled vanilla sources)
 public struct PlayerCollisionSystem: System {
@@ -44,11 +44,11 @@ public struct PlayerCollisionSystem: System {
   ///   - hitbox: The player's hitbox.
   /// - Returns: The adjusted velocity, the magnitude will be between 0 and the magnitude of the original velocity.
   private static func getAdjustedVelocity(
-    _ position: SIMD3<Double>,
-    _ velocity: SIMD3<Double>,
+    _ position: Vec3d,
+    _ velocity: Vec3d,
     _ aabb: AxisAlignedBoundingBox,
     _ world: World
-  ) -> SIMD3<Double> {
+  ) -> Vec3d {
     let collisionVolume = getCollisionVolume(position, velocity, aabb, world)
 
     var adjustedVelocity = velocity
@@ -126,14 +126,14 @@ public struct PlayerCollisionSystem: System {
   /// after adding the current velocity (pre-collisions). It then creates a compound bounding box
   /// containing all blocks within that volume.
   private static func getCollisionVolume(
-    _ position: SIMD3<Double>,
-    _ velocity: SIMD3<Double>,
+    _ position: Vec3d,
+    _ velocity: Vec3d,
     _ aabb: AxisAlignedBoundingBox,
     _ world: World
   ) -> CompoundBoundingBox {
     let nextAABB = aabb.offset(by: velocity)
-    let minimum = min(aabb.minimum, nextAABB.minimum)
-    let maximum = max(aabb.maximum, nextAABB.maximum)
+    let minimum = MathUtil.min(aabb.minimum, nextAABB.minimum)
+    let maximum = MathUtil.max(aabb.maximum, nextAABB.maximum)
 
     // Extend the AABB down one block to account for blocks such as fences
     let bigAABB = AxisAlignedBoundingBox(minimum: minimum, maximum: maximum).extend(.down, amount: 1)

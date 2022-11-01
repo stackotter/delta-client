@@ -1,5 +1,4 @@
 import Foundation
-import simd
 
 /// The vertex format used by the chunk block shader.
 public struct BlockVertex {

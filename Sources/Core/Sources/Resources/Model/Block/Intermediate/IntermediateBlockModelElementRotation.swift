@@ -1,10 +1,10 @@
 import Foundation
-import simd
+import FirebladeMath
 
 /// A neatened format for `JSONBlockModelElementRotation`.
 struct IntermediateBlockModelElementRotation {
   /// The point to rotate around.
-  var origin: SIMD3<Float>
+  var origin: Vec3f
   /// The axis of the rotation.
   var axis: Axis
   /// The angle of the rotation in radians.
@@ -34,16 +34,17 @@ struct IntermediateBlockModelElementRotation {
   }
 
   /// Returns a transformation matrix representing this rotation.
-  var matrix: matrix_float4x4 {
+  var matrix: Mat4x4f {
     var matrix = MatrixUtil.translationMatrix(-origin)
 
     matrix *= MatrixUtil.rotationMatrix(radians, around: axis)
     if rescale {
-      let scale = 1/cos(radians)
+      let scale = 1 / Foundation.cos(radians)
       matrix *= MatrixUtil.scalingMatrix(
         axis == .x ? 1 : scale,
         axis == .y ? 1 : scale,
-        axis == .z ? 1 : scale)
+        axis == .z ? 1 : scale
+      )
     }
 
     matrix *= MatrixUtil.translationMatrix(origin)

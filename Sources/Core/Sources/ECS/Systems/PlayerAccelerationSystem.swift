@@ -1,6 +1,6 @@
 import Foundation
 import FirebladeECS
-import simd
+import FirebladeMath
 
 public struct PlayerAccelerationSystem: System {
   static let sneakMultiplier: Double = 0.3
@@ -54,7 +54,7 @@ public struct PlayerAccelerationSystem: System {
     let leftImpulse: Double = inputs.contains(.strafeLeft) ? 1 : 0
     let rightImpulse: Double = inputs.contains(.strafeRight) ? 1 : 0
 
-    var impulse = SIMD3<Double>(
+    var impulse = Vec3d(
       leftImpulse - rightImpulse,
       0,
       forwardsImpulse - backwardsImpulse
@@ -105,13 +105,13 @@ public struct PlayerAccelerationSystem: System {
     impulse *= speed
 
     let rotationMatrix = MatrixUtil.rotationMatrix(y: Double(rotation.yaw))
-    impulse = simd_make_double3(SIMD4<Double>(impulse, 1) * rotationMatrix)
+    impulse = (Vec4d(impulse, 1) * rotationMatrix).xyz
 
     acceleration.vector = impulse
   }
 
   private static func calculatePlayerSpeed(
-    _ position: SIMD3<Double>,
+    _ position: Vec3d,
     _ world: World,
     _ movementSpeed: Double,
     _ isSprinting: Bool,
@@ -121,9 +121,9 @@ public struct PlayerAccelerationSystem: System {
     if onGround {
       // TODO: make get block below function once there is a Position protocol (and make vectors conform to it)
       let blockPosition = BlockPosition(
-        x: Int(floor(position.x)),
-        y: Int(floor(position.y - 0.5)),
-        z: Int(floor(position.z))
+        x: Int(Foundation.floor(position.x)),
+        y: Int(Foundation.floor(position.y - 0.5)),
+        z: Int(Foundation.floor(position.z))
       )
       let block = world.getBlock(at: blockPosition)
       let slipperiness = block.material.slipperiness

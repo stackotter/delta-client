@@ -1,6 +1,6 @@
-import Collections
 import Metal
-import simd
+import Collections
+import FirebladeMath
 
 struct GUI {
   /// The number of seconds until messages should be hidden from the regular GUI.
@@ -72,7 +72,7 @@ struct GUI {
     )
   }
 
-  mutating func update(_ screenSize: SIMD2<Int>) {
+  mutating func update(_ screenSize: Vec2i) {
     let state = client.game.guiState()
     root = GUIGroupElement(screenSize)
 
@@ -95,7 +95,7 @@ struct GUI {
     _ parentGroup: inout GUIGroupElement,
     _ messages: Deque<ChatMessage>,
     _ messageInput: String?,
-    _ screenSize: SIMD2<Int>
+    _ screenSize: Vec2i
   ) {
     let chatIsOpen = messageInput != nil
 
@@ -267,7 +267,7 @@ struct GUI {
     // Fetch relevant player properties
     var blockPosition = BlockPosition(x: 0, y: 0, z: 0)
     var chunkSectionPosition = ChunkSectionPosition(sectionX: 0, sectionY: 0, sectionZ: 0)
-    var position: SIMD3<Double> = .zero
+    var position: Vec3d = .zero
     var pitch: Float = 0
     var yaw: Float = 0
     var heading: Direction = .north
@@ -349,7 +349,7 @@ struct GUI {
   }
 
   mutating func meshes(
-    effectiveDrawableSize: SIMD2<Int>
+    effectiveDrawableSize: Vec2i
   ) throws -> [GUIElementMesh] {
     profiler.push(.updateContent)
     update(effectiveDrawableSize)

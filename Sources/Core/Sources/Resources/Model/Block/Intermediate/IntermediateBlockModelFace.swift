@@ -1,5 +1,4 @@
 import Foundation
-import simd
 
 /// Flattened mojang block model face format.
 struct IntermediateBlockModelFace {

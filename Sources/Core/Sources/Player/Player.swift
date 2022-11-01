@@ -1,5 +1,6 @@
-import FirebladeECS
 import Foundation
+import FirebladeECS
+import FirebladeMath
 
 /// Allows easy access to the player's components.
 ///
@@ -46,7 +47,7 @@ public struct Player {
 
   /// A ray starting from the player's eyes and travelling in the direction they are looking.
   public var ray: Ray {
-    let eyePosition = SIMD3<Float>(position.smoothVector + [0, 1.625, 0])
+    let eyePosition = Vec3f(position.smoothVector + [0, 1.625, 0])
     return Ray(from: eyePosition, pitch: rotation.smoothPitch, yaw: rotation.smoothYaw)
   }
 

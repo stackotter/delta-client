@@ -1,22 +1,22 @@
 import Foundation
-import simd
+import FirebladeMath
 
 /// An axis aligned bounding box used for efficient collisions and visibility checks.
 public struct AxisAlignedBoundingBox: Codable {
   // MARK: Public properties
 
   /// The position of the minimum vertex of the bounding box.
-  public var position: SIMD3<Double>
+  public var position: Vec3d
   /// The size of the bounding box.
-  public var size: SIMD3<Double>
+  public var size: Vec3d
 
   /// The minimum vertex of the bounding box.
-  public var minimum: SIMD3<Double> {
+  public var minimum: Vec3d {
     position
   }
 
   /// The maximum vertex of the bounding box.
-  public var maximum: SIMD3<Double> {
+  public var maximum: Vec3d {
     position + size
   }
 
@@ -49,36 +49,36 @@ public struct AxisAlignedBoundingBox: Codable {
   /// - Parameters:
   ///   - position: The position of the bounding box.
   ///   - size: The size of the bounding box. Must be positive. The absolute value is taken just in case.
-  public init(position: SIMD3<Double>, size: SIMD3<Double>) {
+  public init(position: Vec3d, size: Vec3d) {
     self.position = position
-    self.size = abs(size)
+    self.size = MathUtil.abs(size)
   }
 
   /// Create a new axis aligned bounding box with given minimum and maximum vertices.
   /// - Parameters:
   ///   - minimum: The minimum vertex.
   ///   - maximum: The maximum vertex.
-  public init(minimum: SIMD3<Double>, maximum: SIMD3<Double>) {
+  public init(minimum: Vec3d, maximum: Vec3d) {
     position = minimum
-    size = abs(maximum - minimum)
+    size = MathUtil.abs(maximum - minimum)
   }
 
   // MARK: Public methods
 
   /// Get an array containing all 8 of this bounding box's vertices.
   /// - Returns: This bounding box's vertices.
-  public func getVertices() -> [SIMD3<Double>] {
+  public func getVertices() -> [Vec3d] {
     let minimum = minimum
     let maximum = maximum
 
     let bfl = minimum
-    let bfr = SIMD3(maximum.x, minimum.y, minimum.z)
-    let tfl = SIMD3(minimum.x, maximum.y, minimum.z)
-    let tfr = SIMD3(maximum.x, maximum.y, minimum.z)
+    let bfr = Vec3d(maximum.x, minimum.y, minimum.z)
+    let tfl = Vec3d(minimum.x, maximum.y, minimum.z)
+    let tfr = Vec3d(maximum.x, maximum.y, minimum.z)
 
-    let bbl = SIMD3(minimum.x, minimum.y, maximum.z)
-    let bbr = SIMD3(maximum.x, minimum.y, maximum.z)
-    let tbl = SIMD3(minimum.x, maximum.y, maximum.z)
+    let bbl = Vec3d(minimum.x, minimum.y, maximum.z)
+    let bbr = Vec3d(maximum.x, minimum.y, maximum.z)
+    let tbl = Vec3d(minimum.x, maximum.y, maximum.z)
     let tbr = maximum
 
     return [bfl, bfr, tfl, tfr, bbl, bbr, tbl, tbr]
@@ -86,25 +86,25 @@ public struct AxisAlignedBoundingBox: Codable {
 
   /// Get an array containing all 8 of this bounding box's vertices in homogenous form.
   /// - Returns: This bounding box's vertices in homogenous form.
-  public func getHomogenousVertices() -> [SIMD4<Double>] {
+  public func getHomogenousVertices() -> [Vec4d] {
     let minimum = minimum
     let maximum = maximum
 
-    let bfl = SIMD4(minimum, 1)
-    let bfr = SIMD4(maximum.x, minimum.y, minimum.z, 1)
-    let tfl = SIMD4(minimum.x, maximum.y, minimum.z, 1)
-    let tfr = SIMD4(maximum.x, maximum.y, minimum.z, 1)
+    let bfl = Vec4d(minimum, 1)
+    let bfr = Vec4d(maximum.x, minimum.y, minimum.z, 1)
+    let tfl = Vec4d(minimum.x, maximum.y, minimum.z, 1)
+    let tfr = Vec4d(maximum.x, maximum.y, minimum.z, 1)
 
-    let bbl = SIMD4(minimum.x, minimum.y, maximum.z, 1)
-    let bbr = SIMD4(maximum.x, minimum.y, maximum.z, 1)
-    let tbl = SIMD4(minimum.x, maximum.y, maximum.z, 1)
-    let tbr = SIMD4(maximum, 1)
+    let bbl = Vec4d(minimum.x, minimum.y, maximum.z, 1)
+    let bbr = Vec4d(maximum.x, minimum.y, maximum.z, 1)
+    let tbl = Vec4d(minimum.x, maximum.y, maximum.z, 1)
+    let tbr = Vec4d(maximum, 1)
 
     return [bfl, bfr, tfl, tfr, bbl, bbr, tbl, tbr]
   }
 
   /// Moves the bounding box by the given amount.
-  public func offset(by vector: SIMD3<Double>) -> AxisAlignedBoundingBox {
+  public func offset(by vector: Vec3d) -> AxisAlignedBoundingBox {
     var aabb = self
     aabb.position += vector
     return aabb
@@ -122,7 +122,7 @@ public struct AxisAlignedBoundingBox: Codable {
   /// Extends the bounding box by the given amount in the given direction.
   public func extend(_ direction: Direction, amount: Double) -> AxisAlignedBoundingBox {
     var aabb = self
-    aabb.size += abs(direction.doubleVector * amount)
+    aabb.size += MathUtil.abs(direction.doubleVector * amount)
     if !direction.isPositive {
       aabb.position += direction.doubleVector * amount
     }
@@ -133,13 +133,13 @@ public struct AxisAlignedBoundingBox: Codable {
   /// - Parameter amount: The amount to grow by.
   /// - Returns: The new bounding box.
   public func grow(by amount: Double) -> AxisAlignedBoundingBox {
-    return grow(by: SIMD3(repeating: amount))
+    return grow(by: Vec3d(repeating: amount))
   }
 
   /// Grows by the given amount in each direction.
   /// - Parameter vector: The amount to grow by on each axis. The bounding box will grow by the given amount in both directions along the axis.
   /// - Returns: The new bounding box.
-  public func grow(by vector: SIMD3<Double>) -> AxisAlignedBoundingBox {
+  public func grow(by vector: Vec3d) -> AxisAlignedBoundingBox {
     var aabb = self
     aabb.position -= vector
     aabb.size += 2 * vector
@@ -156,7 +156,7 @@ public struct AxisAlignedBoundingBox: Codable {
   /// Shrinks by the given amount in each direction.
   /// - Parameter vector: The amount to shrink by on each axis. The bounding box will shrink by the given amount in both directions along the axis.
   /// - Returns: The new bounding box.
-  public func shrink(by vector: SIMD3<Double>) -> AxisAlignedBoundingBox {
+  public func shrink(by vector: Vec3d) -> AxisAlignedBoundingBox {
     return grow(by: -vector)
   }
 
@@ -191,8 +191,8 @@ public struct AxisAlignedBoundingBox: Codable {
     // As outlined in that post, this algorithm can be optimized if required
 
     let inverseDirection = 1 / ray.direction
-    let minimum = SIMD3<Float>(minimum)
-    let maximum = SIMD3<Float>(maximum)
+    let minimum = Vec3f(minimum)
+    let maximum = Vec3f(maximum)
 
     let tx1 = (minimum.x - ray.origin.x) * inverseDirection.x
     let tx2 = (maximum.x - ray.origin.x) * inverseDirection.x

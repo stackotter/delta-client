@@ -1,4 +1,5 @@
 import MetalKit
+import FirebladeMath
 
 #if os(iOS)
 import UIKit
@@ -78,7 +79,7 @@ public final class GUIRenderer: Renderer {
 
     // Create meshes
     let meshes = try gui.meshes(
-      effectiveDrawableSize: SIMD2([width / scale, height / scale])
+      effectiveDrawableSize: Vec2i(Int(width / scale), Int(height / scale))
     )
 
     profiler.push(.encode)
@@ -112,7 +113,7 @@ public final class GUIRenderer: Renderer {
 
   static func optimizeMeshes(_ meshes: [GUIElementMesh]) throws -> [GUIElementMesh] {
     var textureToIndex: [String: Int] = [:]
-    var boxes: [[(position: SIMD2<Int>, size: SIMD2<Int>)]] = []
+    var boxes: [[(position: Vec2i, size: Vec2i)]] = []
     var combinedMeshes: [GUIElementMesh] = []
 
     for mesh in meshes {
@@ -164,8 +165,8 @@ public final class GUIRenderer: Renderer {
   }
 
   static func doIntersect(
-    _ box: (position: SIMD2<Int>, size: SIMD2<Int>),
-    _ other: (position: SIMD2<Int>, size: SIMD2<Int>)
+    _ box: (position: Vec2i, size: Vec2i),
+    _ other: (position: Vec2i, size: Vec2i)
   ) -> Bool {
     let pos1 = box.position
     let size1 = box.size
@@ -182,7 +183,10 @@ public final class GUIRenderer: Renderer {
     normalizeMeshPosition(&mesh)
     normalizeMeshPosition(&other)
     mesh.vertices.append(contentsOf: other.vertices)
-    mesh.size = simd_max(mesh.size, other.size)
+    mesh.size = Vec2i(
+      max(mesh.size.x, other.size.x),
+      max(mesh.size.y, other.size.y)
+    )
   }
 
   /// Moves the mesh's vertices so that its position can be the origin.
@@ -191,13 +195,13 @@ public final class GUIRenderer: Renderer {
       return
     }
 
-    let position = SIMD2<Float>(mesh.position)
+    let position = Vec2f(mesh.position)
     mesh.vertices.mutateEach { vertex in
       vertex.position += position
     }
 
     mesh.position = .zero
-    mesh.size &+= SIMD2(position)
+    mesh.size &+= Vec2i(position)
   }
 
   static func adjustScale(_ scale: Float) -> Float {
@@ -213,7 +217,7 @@ public final class GUIRenderer: Renderer {
   }
 
   func createUniforms(_ width: Float, _ height: Float, _ scale: Float) -> GUIUniforms {
-    let transformation = matrix_float3x3([
+    let transformation = Mat3x3f([
       [2 / width, 0, -1],
       [0, -2 / height, 1],
       [0, 0, 1]

@@ -1,5 +1,3 @@
-import simd
-
 /// Holds all the meshes for a world. Completely threadsafe.
 public struct WorldMesh {
   // MARK: Private properties

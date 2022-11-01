@@ -1,4 +1,5 @@
 import Foundation
+import FirebladeMath
 
 public struct EntityVelocityPacket: ClientboundEntityPacket {
   public static let id: Int = 0x46
@@ -6,7 +7,7 @@ public struct EntityVelocityPacket: ClientboundEntityPacket {
   /// The entity's id.
   public var entityId: Int
   /// The entity's new velocity.
-  public var velocity: SIMD3<Double>
+  public var velocity: Vec3d
 
   public init(from packetReader: inout PacketReader) throws {
     entityId = try packetReader.readVarInt()

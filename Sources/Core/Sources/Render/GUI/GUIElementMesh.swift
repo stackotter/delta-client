@@ -1,4 +1,5 @@
 import MetalKit
+import FirebladeMath
 
 /// A generic texture-backed GUI element.
 struct GUIElementMesh {
@@ -8,9 +9,9 @@ struct GUIElementMesh {
   private static let vertexBufferHeadroom = 80 * MemoryLayout<GUIVertex>.stride
 
   /// The element's position.
-  var position: SIMD2<Int> = .zero
+  var position: Vec2i = .zero
   /// The unscaled size.
-  var size: SIMD2<Int>
+  var size: Vec2i
   /// The vertices making up the element grouped by quad as an optimisation for converting arrays of
   /// quads to meshes.
   var vertices: GUIVertexStorage
@@ -28,7 +29,7 @@ struct GUIElementMesh {
   }
 
   /// Creates a mesh from a collection of quads.
-  init(size: SIMD2<Int>, arrayTexture: MTLTexture?, quads: [GUIQuad]) {
+  init(size: Vec2i, arrayTexture: MTLTexture?, quads: [GUIQuad]) {
     self.size = size
     self.arrayTexture = arrayTexture
 
@@ -47,7 +48,7 @@ struct GUIElementMesh {
   }
 
   /// Creates a mesh from a collection of vertices.
-  init(size: SIMD2<Int>, arrayTexture: MTLTexture, vertices: GUIVertexStorage) {
+  init(size: Vec2i, arrayTexture: MTLTexture, vertices: GUIVertexStorage) {
     self.size = size
     self.arrayTexture = arrayTexture
     self.vertices = vertices
@@ -114,7 +115,7 @@ struct GUIElementMesh {
     }
 
     let uniformsBuffer: MTLBuffer
-    var uniforms = GUIElementUniforms(position: SIMD2(position))
+    var uniforms = GUIElementUniforms(position: Vec2i(position))
     if let uniformsBufferTemp = self.uniformsBuffer {
       uniformsBuffer = uniformsBufferTemp
     } else {

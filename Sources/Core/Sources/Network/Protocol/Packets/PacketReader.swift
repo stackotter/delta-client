@@ -1,4 +1,5 @@
 import Foundation
+import FirebladeMath
 
 /// A wrapper around ``Buffer`` that is specialized for reading Minecraft packets.
 public struct PacketReader {
@@ -271,20 +272,20 @@ public struct PacketReader {
   /// Reads an entity position (24 bytes).
   /// - Returns: An entity position.
   /// - Throws: A ``BufferError`` if any reads go out of bounds.
-  public mutating func readEntityPosition() throws -> SIMD3<Double> {
+  public mutating func readEntityPosition() throws -> Vec3d {
     let x = try readDouble()
     let y = try readDouble()
     let z = try readDouble()
-    return SIMD3<Double>(x, y, z)
+    return Vec3d(x, y, z)
   }
 
   /// Reads an entity velocity (6 bytes).
   /// - Returns: An entity velocity.
   /// - Throws: A ``BufferError`` if any reads go out of bounds.
-  public mutating func readEntityVelocity() throws -> SIMD3<Double> {
+  public mutating func readEntityVelocity() throws -> Vec3d {
     let x = try Double(readShort()) / 8000
     let y = try Double(readShort()) / 8000
     let z = try Double(readShort()) / 8000
-    return SIMD3<Double>(x, y, z)
+    return Vec3d(x, y, z)
   }
 }

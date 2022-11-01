@@ -1,3 +1,5 @@
+import FirebladeMath
+
 /// A collision shape made up of any number of axis aligned bounding boxes.
 public struct CompoundBoundingBox: Codable {
   /// The shape's AABBs.
@@ -58,7 +60,7 @@ public struct CompoundBoundingBox: Codable {
   /// Offsets the shape by a specified amount.
   /// - Parameter vector: The amount to offset the shape by.
   /// - Returns: The offset shape.
-  public func offset(by vector: SIMD3<Double>) -> CompoundBoundingBox {
+  public func offset(by vector: Vec3d) -> CompoundBoundingBox {
     var aabbs = aabbs
     for (i, aabb) in aabbs.enumerated() {
       aabbs[i] = aabb.offset(by: vector)

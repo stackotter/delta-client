@@ -1,5 +1,5 @@
 import FirebladeECS
-import simd
+import FirebladeMath
 
 /// The game's input state.
 public final class InputState: SingleComponent {
@@ -18,7 +18,7 @@ public final class InputState: SingleComponent {
   public private(set) var inputs: Set<Input> = []
 
   /// The mouse delta since the last call to ``resetMouseDelta()``.
-  public private(set) var mouseDelta: SIMD2<Float> = SIMD2(0, 0)
+  public private(set) var mouseDelta: Vec2f = Vec2f(0, 0)
 
   // MARK: Init
 
@@ -55,12 +55,12 @@ public final class InputState: SingleComponent {
   ///   - deltaX: The change in mouse x.
   ///   - deltaY: The change in mouse y.
   public func moveMouse(_ deltaX: Float, _ deltaY: Float) {
-    mouseDelta += SIMD2(deltaX, deltaY)
+    mouseDelta += Vec2f(deltaX, deltaY)
   }
 
   /// Resets the mouse delta to 0.
   public func resetMouseDelta() {
-    mouseDelta = SIMD2(0, 0)
+    mouseDelta = Vec2f(0, 0)
   }
 
   /// Ticks the input state by flushing ``newlyPressed`` into ``keys`` and ``inputs``, and clearing

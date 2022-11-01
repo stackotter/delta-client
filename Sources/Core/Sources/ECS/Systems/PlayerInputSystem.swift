@@ -1,5 +1,8 @@
 import FirebladeECS
-import AppKit
+
+#if os(macOS)
+import AppKit // Used to access clipboard
+#endif
 
 public struct PlayerInputSystem: System {
   var connection: ServerConnection?
@@ -98,6 +101,7 @@ public struct PlayerInputSystem: System {
           guiState.messageInput?.removeLast()
         }
       } else {
+        #if os(macOS)
         if event.key == .v && !inputState.keys.intersection([.leftCommand, .rightCommand]).isEmpty {
           // Handle paste keyboard shortcut
           if let content = NSPasteboard.general.string(forType: .string) {
@@ -106,6 +110,11 @@ public struct PlayerInputSystem: System {
         } else if message.utf8.count < GUIState.maximumMessageLength {
           newCharacters = event.characters
         }
+        #else
+        if message.utf8.count < GUIState.maximumMessageLength {
+          newCharacters = event.characters
+        }
+        #endif
 
         // Ensure that the message doesn't exceed 256 bytes (including if multi-byte characters are entered).
         for character in newCharacters {

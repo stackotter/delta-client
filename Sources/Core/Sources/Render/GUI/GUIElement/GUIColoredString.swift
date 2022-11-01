@@ -1,11 +1,11 @@
-import simd
+import FirebladeMath
 
 struct GUIColoredString: GUIElement {
   var text: String
-  var color: SIMD4<Float>
-  var outlineColor: SIMD4<Float>?
+  var color: Vec4f
+  var outlineColor: Vec4f?
 
-  init(_ text: String, _ color: SIMD4<Float>, outlineColor: SIMD4<Float>? = nil) {
+  init(_ text: String, _ color: Vec4f, outlineColor: Vec4f? = nil) {
     self.text = text
     self.color = color
     self.outlineColor = outlineColor

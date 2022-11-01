@@ -1,17 +1,21 @@
 import Foundation
-import simd
+import FirebladeMath
 
 public struct Ray {
-  public var origin: SIMD3<Float>
-  public var direction: SIMD3<Float>
+  public var origin: Vec3f
+  public var direction: Vec3f
 
-  init(origin: SIMD3<Float>, direction: SIMD3<Float>) {
+  init(origin: Vec3f, direction: Vec3f) {
     self.origin = origin
     self.direction = direction
   }
 
-  init(from origin: SIMD3<Float>, pitch: Float, yaw: Float) {
+  init(from origin: Vec3f, pitch: Float, yaw: Float) {
     self.origin = origin
-    direction = [-sin(yaw) * cos(pitch), -sin(pitch), cos(yaw) * cos(pitch)]
+    direction = Vec3f(
+      -Foundation.sin(yaw) * Foundation.cos(pitch),
+      -Foundation.sin(pitch),
+      Foundation.cos(yaw) * Foundation.cos(pitch)
+    )
   }
 }

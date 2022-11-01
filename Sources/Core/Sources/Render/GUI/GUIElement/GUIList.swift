@@ -1,3 +1,5 @@
+import FirebladeMath
+
 struct GUIList: GUIElement {
   var items: [GUIListItem]
   var rowHeight: Int
@@ -29,7 +31,7 @@ struct GUIList: GUIElement {
           elementMeshes.translate(amount: [0, currentY])
 
           if renderRowBackground {
-            let bgSize: SIMD2<Int> = [elementMeshes.size().x + 1, rowHeight]
+            let bgSize: Vec2i = [elementMeshes.size().x + 1, rowHeight]
             var bg = GUIRectangle(
               size: bgSize,
               color: [0x50, 0x50, 0x50, 0x90] / 255

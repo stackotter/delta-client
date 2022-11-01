@@ -36,8 +36,8 @@ public struct PlayerJumpSystem: System {
     // Add a bit of extra acceleration if the player is sprinting (this makes sprint jumping faster than sprinting)
     if sprinting.isSprinting {
       let yaw = Double(rotation.yaw)
-      velocity.x -= sin(yaw) * 0.2
-      velocity.z += cos(yaw) * 0.2
+      velocity.x -= Foundation.sin(yaw) * 0.2
+      velocity.z += Foundation.cos(yaw) * 0.2
     }
   }
 }

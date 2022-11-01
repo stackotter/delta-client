@@ -1,10 +1,10 @@
-import simd
+import FirebladeMath
 
 struct GUIGroupElement: GUIElement {
-  var size: SIMD2<Int>
+  var size: Vec2i
   var children: [(GUIElement, Constraints)]
 
-  init(_ size: SIMD2<Int>) {
+  init(_ size: Vec2i) {
     self.size = size
     children = []
   }
@@ -26,7 +26,7 @@ struct GUIGroupElement: GUIElement {
     for (element, constraints) in children {
       var elementMeshes = try element.meshes(context: context)
 
-      let elementSize: SIMD2<Int>
+      let elementSize: Vec2i
       if let group = element as? GUIGroupElement {
         elementSize = group.size
       } else {

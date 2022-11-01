@@ -1,13 +1,13 @@
-import simd
+import FirebladeMath
 
 extension Array where Element == GUIElementMesh {
-  mutating func translate(amount: SIMD2<Int>) {
+  mutating func translate(amount: Vec2i) {
     for i in 0..<count {
       self[i].position &+= amount
     }
   }
 
-  func size() -> SIMD2<Int> {
+  func size() -> Vec2i {
     var iterator = makeIterator()
     guard let first = iterator.next() else {
       return [0, 0]

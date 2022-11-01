@@ -8,7 +8,7 @@ enum LANServerEnumeratorError: LocalizedError {
   case failedToCreateMulticastGroup(Error)
   /// Failed to connect to the multicast group that LAN servers broadcast on.
   case connectionFailed(NWError)
-  
+
   var errorDescription: String? {
     switch self {
       case .failedToCreateMulticastGroup(let error):
@@ -35,38 +35,38 @@ enum LANServerEnumeratorError: LocalizedError {
 /// Make sure to call ``stop()`` before trying to create another enumerator.
 public class LANServerEnumerator: ObservableObject {
   // MARK: Static properties
-  
+
   /// Used to prevent DoS attacks. 50 LAN servers at a time is definitely enough, in most cases there will be at most 2 or 3.
   public static let maximumServerCount = 50
-  
+
   // MARK: Public properties
-  
+
   /// Pingers for all currently identified LAN servers.
   @Published public var pingers: [Pinger] = []
   /// Whether the enumerator has errored or not.
   @Published public var hasErrored = false
   /// All currently identified servers.
   public var servers: [ServerDescriptor] = []
-  
+
   // MARK: Private properties
-  
+
   /// Multicast connection group for receiving packets.
   private let group: NWConnectionGroup
   /// Whether the enumerator is listening already or not.
   private var isListening = false
-  
+
   /// Used to notify about errors.
   private let eventBus: EventBus
   /// Dispatch queue used for networking.
   private let queue = DispatchQueue(label: "dev.stackotter.delta-client.LANServerEnumerator")
-  
+
   // MARK: Init
-  
+
   /// Creates a new LAN server enumerator.
   /// - Parameter eventBus: Event bus to dispatch errors to.
   public init(eventBus: EventBus) throws {
     self.eventBus = eventBus
-    
+
     // Create multicast group
     let multicast: NWMulticastGroup
     do {
@@ -76,24 +76,24 @@ public class LANServerEnumerator: ObservableObject {
     } catch {
       throw LANServerEnumeratorError.failedToCreateMulticastGroup(error)
     }
-    
+
     group = NWConnectionGroup(with: multicast, using: .udp)
-    
+
     // Handle packets
     group.setReceiveHandler(maximumMessageSize: 16384, rejectOversizedMessages: true) { [weak self] message, content, isComplete in
       guard let self = self else {
         return
       }
-      
+
       self.handlePacket(message: message, content: content, isComplete: isComplete)
     }
-    
+
     // Handle state updates
     group.stateUpdateHandler = { [weak self] newState in
       guard let self = self else {
         return
       }
-      
+
       switch newState {
         case .failed(let error):
           ThreadUtil.runInMain {
@@ -111,9 +111,9 @@ public class LANServerEnumerator: ObservableObject {
       }
     }
   }
-  
+
   // MARK: Public methods
-  
+
   /// Starts listening for LAN servers announcing themselves.
   public func start() {
     if !isListening {
@@ -123,7 +123,7 @@ public class LANServerEnumerator: ObservableObject {
       log.warning("Attempted to start LANServerEnumerator twice")
     }
   }
-  
+
   /// Stops scanning for new LAN servers and closes the multicast socket. Any pings that are in progress will still be completed.
   public func stop() {
     if isListening {
@@ -132,7 +132,7 @@ public class LANServerEnumerator: ObservableObject {
       log.warning("Attempted to stop LANServerEnumerator while it wasn't started")
     }
   }
-  
+
   /// Clears all currently discovered servers.
   public func clear() {
     servers = []
@@ -140,9 +140,9 @@ public class LANServerEnumerator: ObservableObject {
       pingers = []
     }
   }
-  
+
   // MARK: Private methods
-  
+
   /// Parses LAN server multicast messages.
   ///
   /// They are expected to be of the form: `[MOTD]message of the day[/MOTD][AD]port[/AD]`.
@@ -153,7 +153,7 @@ public class LANServerEnumerator: ObservableObject {
     guard servers.count < Self.maximumServerCount else {
       return
     }
-    
+
     // Extract motd and port
     guard
       let content = content,
@@ -163,25 +163,25 @@ public class LANServerEnumerator: ObservableObject {
     else {
       return
     }
-    
+
     let hostString = String(describing: host)
     let server = ServerDescriptor(name: motd, host: hostString, port: port)
     if servers.contains(server) {
       return
     }
-    
+
     // Ping the server
     let pinger = Pinger(server)
     try? pinger.ping()
     servers.append(server)
-    
+
     ThreadUtil.runInMain {
       pingers.append(pinger)
     }
-    
+
     log.trace("Received LAN server multicast packet: motd=`\(motd)`, address=`\(hostString):\(port)`")
   }
-  
+
   /// Parses a message of the form `"[MOTD]motd[/MOTD][AD]port[/AD]"`.
   /// - Parameter message: The message to parse.
   /// - Returns: The motd and port.
@@ -197,7 +197,7 @@ public class LANServerEnumerator: ObservableObject {
           ":"
           UInt16.parser()
         }.map { $0.1 }
-        
+
         // Otherwise it's just a port
         UInt16.parser()
       }
@@ -205,7 +205,7 @@ public class LANServerEnumerator: ObservableObject {
     }.map { tuple -> (String, UInt16) in
       (String(tuple.0), tuple.1)
     }
-    
+
     do {
       return try packetParser.parse(message)
     } catch {

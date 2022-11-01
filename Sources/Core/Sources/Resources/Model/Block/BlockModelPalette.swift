@@ -1,5 +1,5 @@
 import Foundation
-import simd
+import FirebladeMath
 
 // TODO: For plugin API make the block model palette api safe and easy to use (for adding/editing models)
 
@@ -223,7 +223,7 @@ public struct BlockModelPalette {
   private static func blockModelElement(
     from flatElement: IntermediateBlockModelElement,
     with blockTexturePalette: TexturePalette,
-    modelMatrix: matrix_float4x4,
+    modelMatrix: Mat4x4f,
     renderDescriptor: BlockModelRenderDescriptor
   ) throws -> BlockModelElement {
     // Convert the faces to the correct format
@@ -293,7 +293,7 @@ public struct BlockModelPalette {
     _ face: IntermediateBlockModelFace,
     on element: IntermediateBlockModelElement,
     from renderDescriptor: BlockModelRenderDescriptor
-  ) throws -> [SIMD2<Float>] {
+  ) throws -> [Vec2f] {
     let direction = face.direction
     let minimumPoint = element.from
     let maximumPoint = element.to
@@ -356,10 +356,10 @@ public struct BlockModelPalette {
 
     // The uv coordinates for each corner of the face starting at top left going clockwise
     var coordinates = [
-      SIMD2<Float>(uvs[2], uvs[1]),
-      SIMD2<Float>(uvs[2], uvs[3]),
-      SIMD2<Float>(uvs[0], uvs[3]),
-      SIMD2<Float>(uvs[0], uvs[1])
+      Vec2f(uvs[2], uvs[1]),
+      Vec2f(uvs[2], uvs[3]),
+      Vec2f(uvs[0], uvs[3]),
+      Vec2f(uvs[0], uvs[1])
     ]
 
     // Rotate the array of coordinates (samples the same part of the texture just changes the rotation of the sampled region on the face
@@ -398,28 +398,28 @@ public struct BlockModelPalette {
   /// Rotates each of the texture coordinates by the specified amount around the center of the texture (clockwise).
   /// The angle should be a positive multiple of 90 degrees. Used for UV locking (works different to texture rotation).
   private static func rotateTextureCoordinates(
-    _ coordinates: [SIMD2<Float>],
+    _ coordinates: [Vec2f],
     by degrees: Int
-  ) -> [SIMD2<Float>] {
+  ) -> [Vec2f] {
     // Check if any rotation is required
     let angle = MathUtil.mod(degrees, 360)
     if angle == 0 {
       return coordinates
     }
 
-    let center = SIMD2<Float>(0.5, 0.5)
+    let center = Vec2f(0.5, 0.5)
     // The rotation rounded to nearest 90 degrees
     let rotation = angle - angle % 90
-    let rotatedCoordinates: [SIMD2<Float>] = coordinates.map { point in
+    let rotatedCoordinates: [Vec2f] = coordinates.map { point in
       let centerRelativePoint = point - center
-      let rotatedPoint: SIMD2<Float>
+      let rotatedPoint: Vec2f
       switch rotation {
         case 90:
-          rotatedPoint = SIMD2<Float>(centerRelativePoint.y, -centerRelativePoint.x)
+          rotatedPoint = Vec2f(centerRelativePoint.y, -centerRelativePoint.x)
         case 180:
           rotatedPoint = -centerRelativePoint
         case 270:
-          rotatedPoint = SIMD2<Float>(-centerRelativePoint.y, centerRelativePoint.x)
+          rotatedPoint = Vec2f(-centerRelativePoint.y, centerRelativePoint.x)
         default:
           rotatedPoint = centerRelativePoint
       }

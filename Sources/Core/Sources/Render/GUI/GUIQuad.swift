@@ -1,9 +1,9 @@
 import Metal
-import simd
+import FirebladeMath
 
 /// A convenient way to construct the vertices for a GUI quad.
 struct GUIQuad {
-  static let vertices: [(position: SIMD2<Float>, uv: SIMD2<Float>)] = [
+  static let vertices: [(position: Vec2f, uv: Vec2f)] = [
     (position: [0, 0], uv: [0, 0]),
     (position: [1, 0], uv: [1, 0]),
     (position: [1, 1], uv: [1, 1]),
@@ -11,20 +11,20 @@ struct GUIQuad {
   ]
   private static let verticesBuffer = vertices.withUnsafeBufferPointer { $0 }
 
-  var position: SIMD2<Float>
-  var size: SIMD2<Float>
-  var uvMin: SIMD2<Float>
-  var uvSize: SIMD2<Float>
+  var position: Vec2f
+  var size: Vec2f
+  var uvMin: Vec2f
+  var uvSize: Vec2f
   var textureIndex: UInt16
-  var tint: SIMD4<Float>
+  var tint: Vec4f
 
   init(
-    position: SIMD2<Float>,
-    size: SIMD2<Float>,
-    uvMin: SIMD2<Float>,
-    uvSize: SIMD2<Float>,
+    position: Vec2f,
+    size: Vec2f,
+    uvMin: Vec2f,
+    uvSize: Vec2f,
     textureIndex: UInt16,
-    tint: SIMD4<Float> = [1, 1, 1, 1]
+    tint: Vec4f = [1, 1, 1, 1]
   ) {
     self.position = position
     self.size = size
@@ -36,9 +36,9 @@ struct GUIQuad {
 
   /// Creates a quad instance for a solid color rectangle.
   init(
-    position: SIMD2<Float>,
-    size: SIMD2<Float>,
-    color: SIMD4<Float>
+    position: Vec2f,
+    size: Vec2f,
+    color: Vec4f
   ) {
     self.position = position
     self.size = size
@@ -53,16 +53,16 @@ struct GUIQuad {
     for sprite: GUISpriteDescriptor,
     guiTexturePalette: GUITexturePalette,
     guiArrayTexture: MTLTexture,
-    position: SIMD2<Int> = .zero
+    position: Vec2i = .zero
   ) {
-    let textureSize: SIMD2<Float> = [
+    let textureSize: Vec2f = [
       Float(guiArrayTexture.width),
       Float(guiArrayTexture.height)
     ]
 
-    self.position = SIMD2<Float>(position)
-    size = SIMD2<Float>(sprite.size)
-    uvMin = SIMD2<Float>(sprite.position) / textureSize
+    self.position = Vec2f(position)
+    size = Vec2f(sprite.size)
+    uvMin = Vec2f(sprite.position) / textureSize
     uvSize = self.size / textureSize
     textureIndex = UInt16(guiTexturePalette.textureIndex(for: sprite.slice))
     tint = [1, 1, 1, 1]
@@ -115,7 +115,7 @@ struct GUIQuad {
 
   /// Translates the quad by the given amount.
   /// - Parameter amount: The amount of pixels to translate by along each axis.
-  mutating func translate(amount: SIMD2<Float>) {
+  mutating func translate(amount: Vec2f) {
     self.position += amount
   }
 }

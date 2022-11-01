@@ -1,5 +1,4 @@
 import Foundation
-import simd
 
 /// This format just simplifies processing of the mojang block models into DeltaClient block models and serves as an temporary intermediate format.
 /// It flattens the complex dependency tree of block models so that all relevant information is in each block model. This prevents repetitive parent lookups.

@@ -1,5 +1,5 @@
 import Foundation
-import simd
+import FirebladeMath
 
 /// Transformation that can be applied to a model, as read from JSON files in resource packs.
 /// Translation is applied before rotation.
@@ -12,12 +12,12 @@ struct JSONModelTransform: Codable {
   var scale: [Double]?
 
   /// Returns a transformation matrix representing this transform.
-  func toMatrix() throws -> matrix_float4x4 {
+  func toMatrix() throws -> Mat4x4f {
     var matrix = MatrixUtil.identity
 
     if let translation = self.translation {
       var translationVector = try MathUtil.vectorFloat3(from: translation)
-      translationVector = clamp(translationVector, min: -80, max: 80)
+      translationVector = MathUtil.clamp(translationVector, min: -80, max: 80)
       matrix *= MatrixUtil.translationMatrix(translationVector)
     }
 
@@ -29,7 +29,7 @@ struct JSONModelTransform: Codable {
 
     if let scale = self.scale {
       var scaleVector = try MathUtil.vectorFloat3(from: scale)
-      scaleVector = clamp(scaleVector, min: -Float.greatestFiniteMagnitude, max: 4)
+      scaleVector = MathUtil.clamp(scaleVector, min: -Float.greatestFiniteMagnitude, max: 4)
       matrix *= MatrixUtil.scalingMatrix(scaleVector)
     }
 

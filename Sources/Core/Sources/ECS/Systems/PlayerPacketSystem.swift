@@ -1,4 +1,5 @@
 import FirebladeECS
+import FirebladeMath
 
 /// Sends update packets to the server depending on which client and player properties have changed.
 /// Mostly sends movement packets.
@@ -12,7 +13,7 @@ public struct PlayerPacketSystem: System {
     var wasSprinting = false
     var wasSneaking = false
     var ticksUntilForcedPositionUpdate = 20
-    var lastPositionSent = SIMD3<Double>.zero
+    var lastPositionSent = Vec3d.zero
   }
 
   public init(_ connection: ServerConnection) {

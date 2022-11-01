@@ -1,7 +1,9 @@
+import FirebladeMath
+
 /// A solid colored rectangle.
 struct GUIRectangle: GUIElement {
-  var size: SIMD2<Int>
-  var color: SIMD4<Float>
+  var size: Vec2i
+  var color: Vec4f
 
   func meshes(context: GUIContext) -> [GUIElementMesh] {
     return [GUIElementMesh(
@@ -9,7 +11,7 @@ struct GUIRectangle: GUIElement {
       arrayTexture: nil,
       quads: [GUIQuad(
         position: .zero,
-        size: SIMD2(size),
+        size: Vec2f(size),
         color: color
       )]
     )]

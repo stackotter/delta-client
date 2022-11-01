@@ -1,5 +1,4 @@
 import Foundation
-import simd
 
 extension BlockModelPalette: ProtobufCachable {
   public init(from message: ProtobufBlockModelPalette) throws {

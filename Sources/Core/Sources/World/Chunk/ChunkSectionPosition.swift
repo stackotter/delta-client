@@ -1,5 +1,5 @@
 import Foundation
-import simd
+import FirebladeMath
 
 /// The position of a chunk section.
 public struct ChunkSectionPosition {
@@ -9,39 +9,40 @@ public struct ChunkSectionPosition {
   public var sectionY: Int
   /// The world z of the section divided by 16 and rounded down.
   public var sectionZ: Int
-  
+
   /// The position of the chunk this section is in.
   public var chunk: ChunkPosition {
     return ChunkPosition(chunkX: sectionX, chunkZ: sectionZ)
   }
-  
+
   /// The axis aligned bounding box for this chunk section.
   public var axisAlignedBoundingBox: AxisAlignedBoundingBox {
     AxisAlignedBoundingBox(
-      position: SIMD3(
+      position: Vec3d(
         Double(sectionX * Chunk.Section.width),
         Double(sectionY * Chunk.Section.height),
         Double(sectionZ * Chunk.Section.depth)
       ),
-      size: SIMD3(
+      size: Vec3d(
         Double(Chunk.Section.width),
         Double(Chunk.Section.height),
         Double(Chunk.Section.depth)
-      ))
+      )
+    )
   }
-  
+
   /// Checks that the section's Y value is valid.
   public var isValid: Bool {
     return sectionY >= 0 && sectionY < Chunk.numSections
   }
-  
+
   /// Create a new chunk section position.
   public init(sectionX: Int, sectionY: Int, sectionZ: Int) {
     self.sectionX = sectionX
     self.sectionY = sectionY
     self.sectionZ = sectionZ
   }
-  
+
   /// Create a new `ChunkSectionPosition` in the chunk at `chunkPosition` located at `sectionY`.
   ///
   /// `sectionY` is not the world Y of the `Chunk.Section`. It is the world Y divided
@@ -54,7 +55,7 @@ public struct ChunkSectionPosition {
     self.sectionY = sectionY
     sectionZ = chunkPosition.chunkZ
   }
-  
+
   /// Gets the position of the section that neighbours this section in the specified direction.
   /// - Parameter direction: Direction to find neighbour in.
   /// - Returns: The position of the neighbour.
@@ -74,10 +75,10 @@ public struct ChunkSectionPosition {
       case .down:
         position.sectionY -= 1
     }
-    
+
     return position
   }
-  
+
   /// Gets the position of the section that neighbours this section in the specified direction if it's valid.
   ///
   /// Returns `nil` if the neighbour position isn't valid (see ``isValid``).

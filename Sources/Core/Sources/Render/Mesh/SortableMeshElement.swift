@@ -1,4 +1,5 @@
 import Foundation
+import FirebladeMath
 
 /// An element of a ``SortableMesh``.
 public struct SortableMeshElement {
@@ -9,7 +10,7 @@ public struct SortableMeshElement {
   /// The vertex windings.
   public var indices: [UInt32] = []
   /// The position of the center of the mesh.
-  public var centerPosition: SIMD3<Float>
+  public var centerPosition: Vec3f
 
   /// Whether the element contains any geometry or not.
   public var isEmpty: Bool {
@@ -21,7 +22,7 @@ public struct SortableMeshElement {
     id: Int = 0,
     vertices: [BlockVertex] = [],
     indices: [UInt32] = [],
-    centerPosition: SIMD3<Float> = [0, 0, 0]
+    centerPosition: Vec3f = [0, 0, 0]
   ) {
     self.id = id
     self.vertices = vertices
@@ -33,7 +34,7 @@ public struct SortableMeshElement {
   /// - Parameters:
   ///   - geometry: The element's geometry
   ///   - centerPosition: The position of the center of the element.
-  public init(id: Int = 0, geometry: Geometry, centerPosition: SIMD3<Float>) {
+  public init(id: Int = 0, geometry: Geometry, centerPosition: Vec3f) {
     self.init(
       id: id,
       vertices: geometry.vertices,

@@ -1,22 +1,22 @@
 import Foundation
-import simd
+import FirebladeMath
 
 struct CubeGeometry {
   static let faceWinding: [UInt32] = [0, 1, 2, 2, 3, 0]
 
-  static let cubeVertices: [SIMD3<Float>] = [
-    SIMD3<Float>([0, 1, 0]),
-    SIMD3<Float>([0, 0, 0]),
-    SIMD3<Float>([1, 0, 0]),
-    SIMD3<Float>([1, 1, 0]),
-    SIMD3<Float>([0, 1, 1]),
-    SIMD3<Float>([0, 0, 1]),
-    SIMD3<Float>([1, 0, 1]),
-    SIMD3<Float>([1, 1, 1])
+  static let cubeVertices: [Vec3f] = [
+    Vec3f([0, 1, 0]),
+    Vec3f([0, 0, 0]),
+    Vec3f([1, 0, 0]),
+    Vec3f([1, 1, 0]),
+    Vec3f([0, 1, 1]),
+    Vec3f([0, 0, 1]),
+    Vec3f([1, 0, 1]),
+    Vec3f([1, 1, 1])
   ]
 
   /// Indexed by ``Direction/rawValue``.
-  static let faceVertices: [[SIMD3<Float>]] = [
+  static let faceVertices: [[Vec3f]] = [
     CubeGeometry.generateFaceVertices(facing: .down),
     CubeGeometry.generateFaceVertices(facing: .up),
     CubeGeometry.generateFaceVertices(facing: .north),
@@ -42,7 +42,7 @@ struct CubeGeometry {
     0.7, 0.7  // east, west
   ]
 
-  static func generateFaceVertices(facing face: Direction) -> [SIMD3<Float>] {
+  static func generateFaceVertices(facing face: Direction) -> [Vec3f] {
     let vertexIndices = faceVertexIndices[face.rawValue]
 
     let vertices = vertexIndices.map { index in

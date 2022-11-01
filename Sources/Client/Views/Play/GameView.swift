@@ -1,6 +1,7 @@
 import SwiftUI
 import DeltaCore
 import Combine
+import FirebladeMath
 
 enum GameState {
   case connecting
@@ -106,7 +107,7 @@ class GameViewModel: ObservableObject {
         state.update(to: .loggingIn)
       case _ as JoinWorldEvent:
         // Approximation of the number of chunks the server will send (used in progress indicator)
-        let totalChunksToReceieve = Int(pow(Double(client.game.maxViewDistance * 2 + 3), 2))
+        let totalChunksToReceieve = Int(Foundation.pow(Double(client.game.maxViewDistance * 2 + 3), 2))
         state.update(to: .downloadingChunks(numberReceived: 0, total: totalChunksToReceieve))
       case _ as World.Event.AddChunk:
         ThreadUtil.runInMain {
@@ -274,33 +275,32 @@ struct GameView: View {
   var gameView: some View {
     ZStack {
       // Renderer
-        if #available(macOS 13, iOS 16, *) {
-            MetalView(renderCoordinator: model.renderCoordinator)
-              .onAppear {
-                model.inputDelegate.bind($cursorCaptured.onChange { newValue in
-                  // When showing overlay make sure menu is the first view
-                  if newValue == false {
-                    model.overlayState.update(to: .menu)
-                  }
-                })
+      if #available(macOS 13, iOS 16, *) {
+          MetalView(renderCoordinator: model.renderCoordinator)
+            .onAppear {
+              model.inputDelegate.bind($cursorCaptured.onChange { newValue in
+                // When showing overlay make sure menu is the first view
+                if newValue == false {
+                  model.overlayState.update(to: .menu)
+                }
+              })
 
-                model.inputDelegate.captureCursor()
-              }
-        }
-        else {
-            MetalViewClass(renderCoordinator: model.renderCoordinator)
-              .onAppear {
-                model.inputDelegate.bind($cursorCaptured.onChange { newValue in
-                  // When showing overlay make sure menu is the first view
-                  if newValue == false {
-                    model.overlayState.update(to: .menu)
-                  }
-                })
+              model.inputDelegate.captureCursor()
+            }
+      }
+      else {
+          MetalViewClass(renderCoordinator: model.renderCoordinator)
+            .onAppear {
+              model.inputDelegate.bind($cursorCaptured.onChange { newValue in
+                // When showing overlay make sure menu is the first view
+                if newValue == false {
+                  model.overlayState.update(to: .menu)
+                }
+              })
 
-                model.inputDelegate.captureCursor()
-              }
-        }
-      
+              model.inputDelegate.captureCursor()
+            }
+      }
 
       #if os(iOS)
       movementControls
@@ -323,8 +323,8 @@ struct GameView: View {
     return "\(section.sectionX) \(section.sectionY) \(section.sectionZ)"
   }
 
-  var playerPosition: SIMD3<Double> {
-    var position = SIMD3<Double>(repeating: 0)
+  var playerPosition: Vec3d {
+    var position = Vec3d(repeating: 0)
     model.client.game.accessPlayer { player in
       position = player.position.smoothVector
     }

@@ -1,6 +1,6 @@
-import simd
+import FirebladeMath
 
-extension SIMD3 {
+extension Vec3 {
   /// Returns the requested component of the vector.
   /// - Parameter axis: The axis of the component.
   /// - Returns: The value of the requested component.
@@ -13,12 +13,7 @@ extension SIMD3 {
   }
 }
 
-extension SIMD where Scalar: BinaryFloatingPoint {
-  /// The magnitude of the vector.
-  var magnitude: Scalar {
-    sqrt(magnitudeSquared)
-  }
-
+extension Vec where Scalar: BinaryFloatingPoint {
   /// The squared magnitude of the vector (use when you're using magnitude purely for comparison because it's faster).
   var magnitudeSquared: Scalar {
     var magnitudeSquared: Scalar = 0
@@ -27,5 +22,19 @@ extension SIMD where Scalar: BinaryFloatingPoint {
       magnitudeSquared += component * component
     }
     return magnitudeSquared
+  }
+}
+
+extension Vec where Scalar == Float {
+  /// The magnitude of the vector.
+  var magnitude: Float {
+    sqrt(magnitudeSquared)
+  }
+}
+
+extension Vec where Scalar == Double {
+  /// The magnitude of the vector.
+  var magnitude: Double {
+    sqrt(magnitudeSquared)
   }
 }

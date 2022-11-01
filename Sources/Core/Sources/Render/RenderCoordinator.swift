@@ -1,4 +1,5 @@
 import Foundation
+import FirebladeMath
 import MetalKit
 
 /// Coordinates the rendering of the game (e.g. blocks and entities).
@@ -18,7 +19,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
 
   /// The renderer for rendering the GUI.
   private var guiRenderer: GUIRenderer
-  
+
   /// The renderer for rendering on screen. Can perform upscaling.
   private var screenRenderer: ScreenRenderer
 
@@ -96,7 +97,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     } catch {
       fatalError("Failed to create GUI renderer: \(error)")
     }
-    
+
     do {
       screenRenderer = try ScreenRenderer(
         client: client,
@@ -125,7 +126,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     let time = CFAbsoluteTimeGetCurrent()
     let frameTime = time - previousFrameStartTime
     previousFrameStartTime = time
-    
+
     profiler.push(.updateRenderTarget)
     do {
       try screenRenderer.updateRenderTarget(for: view)
@@ -134,9 +135,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to update render target"))
       return
     }
-    
+
     profiler.pop()
-    
+
     // Fetch offscreen render pass descriptor from ScreenRenderer
     let renderPassDescriptor = screenRenderer.renderDescriptor
 
@@ -226,7 +227,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     }
 
     renderEncoder.endEncoding()
-    
+
     profiler.push(.waitForRenderPassDescriptor)
     // Get current render pass descriptor
     guard let renderPassDescriptor = view.currentRenderPassDescriptor else {
@@ -238,7 +239,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       return
     }
     profiler.pop()
-    
+
     guard let quadRenderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
       log.error("Failed to create quad render encoder")
       client.eventBus.dispatch(ErrorEvent(
@@ -247,7 +248,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       ))
       return
     }
-    
+
     profiler.push(.renderOnScreen)
     do {
       try screenRenderer.render(
@@ -263,7 +264,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       return
     }
     profiler.pop()
-    
+
     quadRenderEncoder.endEncoding()
     commandBuffer.present(drawable)
 
@@ -335,10 +336,10 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     camera.setFovY(MathUtil.radians(from: client.configuration.render.fovY))
 
     client.game.accessPlayer { player in
-      var eyePosition = SIMD3<Float>(player.position.smoothVector)
+      var eyePosition = Vec3f(player.position.smoothVector)
       eyePosition.y += 1.625 // TODO: don't hardcode this, use the player's eye height
 
-      var cameraPosition = SIMD3<Float>(repeating: 0)
+      var cameraPosition = Vec3f(repeating: 0)
 
       var pitch = player.rotation.smoothPitch
       var yaw = player.rotation.smoothYaw
@@ -346,14 +347,14 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       switch player.camera.perspective {
         case .thirdPersonRear:
           cameraPosition.z += 3
-          cameraPosition = simd_make_float3(SIMD4(cameraPosition, 1) * MatrixUtil.rotationMatrix(x: pitch) * MatrixUtil.rotationMatrix(y: Float.pi + yaw))
+          cameraPosition = (Vec4f(cameraPosition, 1) * MatrixUtil.rotationMatrix(x: pitch) * MatrixUtil.rotationMatrix(y: Float.pi + yaw)).xyz
           cameraPosition += eyePosition
         case .thirdPersonFront:
           pitch = -pitch
           yaw += Float.pi
 
           cameraPosition.z += 3
-          cameraPosition = simd_make_float3(SIMD4(cameraPosition, 1) * MatrixUtil.rotationMatrix(x: pitch) * MatrixUtil.rotationMatrix(y: Float.pi + yaw))
+          cameraPosition = (Vec4f(cameraPosition, 1) * MatrixUtil.rotationMatrix(x: pitch) * MatrixUtil.rotationMatrix(y: Float.pi + yaw)).xyz
           cameraPosition += eyePosition
         case .firstPerson:
           cameraPosition = eyePosition

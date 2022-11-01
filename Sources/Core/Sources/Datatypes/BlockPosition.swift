@@ -1,24 +1,24 @@
 import Foundation
-import simd
+import FirebladeMath
 
 /// A block position.
 public struct BlockPosition {
   // MARK: Public properties
-  
+
   /// The x component.
   public var x: Int
   /// The y component.
   public var y: Int
   /// The z component.
   public var z: Int
-  
+
   /// The position of the ``Chunk`` this position is in
   public var chunk: ChunkPosition {
     let chunkX = x >> 4 // divides by 16 and rounds down
     let chunkZ = z >> 4
     return ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
   }
-  
+
   /// The position of the ``Chunk/Section`` this position is in
   public var chunkSection: ChunkSectionPosition {
     let sectionX = x >> 4 // divides by 16 and rounds down
@@ -26,14 +26,14 @@ public struct BlockPosition {
     let sectionZ = z >> 4
     return ChunkSectionPosition(sectionX: sectionX, sectionY: sectionY, sectionZ: sectionZ)
   }
-  
+
   /// This position relative to the ``Chunk`` it's in
   public var relativeToChunk: BlockPosition {
     let relativeX = x &- chunk.chunkX &* Chunk.Section.width
     let relativeZ = z &- chunk.chunkZ &* Chunk.Section.depth
     return BlockPosition(x: relativeX, y: y, z: relativeZ)
   }
-  
+
   /// This position relative to the ``Chunk/Section`` it's in
   public var relativeToChunkSection: BlockPosition {
     let relativeX = x &- chunk.chunkX &* Chunk.Section.width
@@ -41,33 +41,33 @@ public struct BlockPosition {
     let relativeY = y &- sectionIndex &* Chunk.Section.height
     return BlockPosition(x: relativeX, y: relativeY, z: relativeZ)
   }
-  
+
   /// This position as a vector of floats.
-  public var floatVector: SIMD3<Float> {
-    return SIMD3<Float>(
+  public var floatVector: Vec3f {
+    return Vec3f(
       Float(x),
       Float(y),
       Float(z))
   }
-  
+
   /// This position as a vector of doubles.
-  public var doubleVector: SIMD3<Double> {
-    return SIMD3<Double>(
+  public var doubleVector: Vec3d {
+    return Vec3d(
       Double(x),
       Double(y),
       Double(z))
   }
-  
+
   /// This position as a vector of ints.
-  public var intVector: SIMD3<Int> {
-    return SIMD3<Int>(x, y, z)
+  public var intVector: Vec3i {
+    return Vec3i(x, y, z)
   }
-  
+
   /// The positions neighbouring this position.
   public var neighbours: [BlockPosition] {
     Direction.allDirections.map { self + $0.intVector }
   }
-  
+
   /// The block index of the position.
   ///
   /// Block indices are in order of increasing x-coordinate, in rows of increasing
@@ -76,7 +76,7 @@ public struct BlockPosition {
   public var blockIndex: Int {
     return (y &* Chunk.depth &+ z) &* Chunk.width &+ x
   }
-  
+
   /// The biomes index of the position.
   ///
   /// Biome indices are in order of increasing x-coordinate, in rows of increasing
@@ -86,14 +86,14 @@ public struct BlockPosition {
   public var biomeIndex: Int {
     return (y / 4 &* Chunk.depth / 4 &+ z / 4) &* Chunk.width / 4 &+ x / 4
   }
-  
+
   /// The section Y of the section this position is in
   public var sectionIndex: Int {
     return y / Chunk.Section.height
   }
-  
+
   // MARK: Init
-  
+
   /// Create a new block position.
   ///
   /// Coordinates are not validated.
@@ -106,12 +106,12 @@ public struct BlockPosition {
     self.y = y
     self.z = z
   }
-  
+
   // MARK: Public methods
-  
+
   /// Component-wise addition of two block positions.
-  public static func + (lhs: BlockPosition, rhs: SIMD3<Int>) -> BlockPosition {
-    return BlockPosition(x: lhs.x &+ Int(rhs.x), y: lhs.y &+ Int(rhs.y), z: lhs.z &+ Int(rhs.z))
+  public static func + (lhs: BlockPosition, rhs: Vec3i) -> BlockPosition {
+    return BlockPosition(x: lhs.x &+ rhs.x, y: lhs.y &+ rhs.y, z: lhs.z &+ rhs.z)
   }
 }
 

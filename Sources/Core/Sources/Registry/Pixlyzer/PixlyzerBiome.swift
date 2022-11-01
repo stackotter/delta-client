@@ -1,5 +1,4 @@
 import Foundation
-import simd
 
 public struct PixlyzerBiome: Codable {
   public var id: Int
