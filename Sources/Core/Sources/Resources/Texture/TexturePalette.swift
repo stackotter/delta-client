@@ -148,7 +148,7 @@ public final class TexturePalette { // TODO: Currently a class to avoid copies, 
     #error("Unsupported platform, can't determine storageMode for texture")
     #endif
 
-    textureDescriptor.mipmapLevelCount = 1 + Int(log2(Double(width)).rounded(.down))
+    textureDescriptor.mipmapLevelCount = 1 + Int(Foundation.log2(Double(width)).rounded(.down))
 
     guard let arrayTexture = device.makeTexture(descriptor: textureDescriptor) else {
       throw RenderError.failedToCreateTextureArray

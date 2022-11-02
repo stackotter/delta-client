@@ -13,7 +13,8 @@ var dependencies: [Package.Dependency] = [
   .package(name: "ZippyJSON", url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
   .package(url: "https://github.com/pointfreeco/swift-parsing", .exact("0.8.0")),
   .package(url: "https://github.com/stackotter/swift-openssl", from: "4.0.4"),
-  .package(url: "https://github.com/stackotter/fireblade-math.git", branch: "matrix2x2")
+  .package(url: "https://github.com/stackotter/fireblade-math.git", branch: "matrix2x2"),
+  .package(url: "https://github.com/stackotter/FlyingFox", branch: "main")
 ]
 
 #if swift(>=5.6)
@@ -44,7 +45,8 @@ let package = Package(
         .product(name: "Collections", package: "swift-collections"),
         .product(name: "OrderedCollections", package: "swift-collections"),
         .product(name: "OpenSSL", package: "swift-openssl"),
-        .product(name: "FirebladeMath", package: "fireblade-math")
+        .product(name: "FirebladeMath", package: "fireblade-math"),
+        .product(name: "FlyingSocks", package: "FlyingFox")
       ],
       path: "Sources",
       exclude: [

@@ -1,7 +1,6 @@
 import Foundation
-import Network
 import NioDNS
-import NIO
+import NIO // TODO: remove reliance on NIO
 
 public enum ServerConnectionError: Error {
   case invalidPacketId(Int)

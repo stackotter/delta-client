@@ -3,23 +3,23 @@ import DeltaCore
 
 struct ServerListView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
-  
+
   @State var pingers: [Pinger]
-  
+
   var lanServerEnumerator: LANServerEnumerator?
   var updateAvailable: Bool = false
-  
+
   init() {
     // Create server pingers
     let servers = ConfigManager.default.config.servers
     _pingers = State(initialValue: servers.map { server in
       Pinger(server)
     })
-    
+
     // Attempt to create LAN server enumerator
     let eventBus = EventBus()
     do {
-      lanServerEnumerator = try LANServerEnumerator(eventBus: eventBus)
+      lanServerEnumerator = LANServerEnumerator(eventBus: eventBus)
       eventBus.registerHandler { event in
         switch event {
           case let event as ErrorEvent:
@@ -28,31 +28,31 @@ struct ServerListView: View {
             break
         }
       }
+
+      // Start pinging and enumerating
+      refresh()
+      try lanServerEnumerator?.start()
     } catch {
       log.warning("Failed to start LAN server enumerator: \(error)")
     }
-    
-    // Start pinging and enumerating
-    refresh()
-    lanServerEnumerator?.start()
-    
+
     updateAvailable = Updater.isUpdateAvailable()
   }
-  
+
   /// Ping all servers again and clear discovered LAN servers.
   func refresh() {
     for pinger in pingers {
       try? pinger.ping()
     }
-    
+
     lanServerEnumerator?.clear()
   }
-  
+
   // Navigate to update settings view
   func update() {
     appState.update(to: .settings(.update))
   }
-  
+
   var body: some View {
     NavigationView {
       List {
@@ -65,32 +65,32 @@ struct ServerListView: View {
         } else {
           Text("no servers").italic()
         }
-        
+
         Divider()
-        
+
         if let lanServerEnumerator = lanServerEnumerator {
           LANServerList(lanServerEnumerator: lanServerEnumerator)
         } else {
           Text("LAN scan failed").italic()
         }
-        
+
         HStack {
           // Edit
           IconButton("square.and.pencil") {
             appState.update(to: .editServerList)
           }
-          
+
           // Refresh servers
           IconButton("arrow.clockwise") {
             refresh()
           }
-          
+
           // Direct connect
           IconButton("personalhotspot") {
             appState.update(to: .directConnect)
           }
         }
-        
+
         if (updateAvailable) {
           Button("Update", action: update).padding(.top, 5)
         }

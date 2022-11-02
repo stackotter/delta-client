@@ -1,25 +1,25 @@
 import Foundation
-import Network
 import Parsing
+import FlyingSocks
 
 /// An error that occured during LAN server enumeration.
 enum LANServerEnumeratorError: LocalizedError {
-  /// Failed to create the multicast group descriptor for the group that LAN servers broadcast on.
-  case failedToCreateMulticastGroup(Error)
-  /// Failed to connect to the multicast group that LAN servers broadcast on.
-  case connectionFailed(NWError)
+  /// Failed to create multicast receiving socket.
+  case failedToCreateMulticastSocket(Error)
+  /// Failed to read from multicast socket.
+  case failedToReadFromSocket(Error)
 
   var errorDescription: String? {
     switch self {
-      case .failedToCreateMulticastGroup(let error):
+      case .failedToCreateMulticastSocket(let error):
         return """
-        Failed to create the multicast group descriptor for the group that LAN servers broadcast on.
+        Failed to create multicast receiving socket for LAN server enumerator
         Reason: \(error.localizedDescription)
         """
-      case .connectionFailed(let nwError):
+      case .failedToReadFromSocket(let error):
         return """
-        Failed to connect to the multicast group that LAN servers broadcast on.
-        Reason: \(nwError.localizedDescription)
+        Failed to read from multicast socket for LAN server enumerator
+        Reason: \(error.localizedDescription)
         """
     }
   }
@@ -50,8 +50,8 @@ public class LANServerEnumerator: ObservableObject {
 
   // MARK: Private properties
 
-  /// Multicast connection group for receiving packets.
-  private let group: NWConnectionGroup
+  /// Multicast socket for receiving packets.
+  private var socket: Socket?
   /// Whether the enumerator is listening already or not.
   private var isListening = false
 
@@ -63,61 +63,74 @@ public class LANServerEnumerator: ObservableObject {
   // MARK: Init
 
   /// Creates a new LAN server enumerator.
+  ///
+  /// To start enumeration call `start`.
   /// - Parameter eventBus: Event bus to dispatch errors to.
-  public init(eventBus: EventBus) throws {
+  public init(eventBus: EventBus) {
     self.eventBus = eventBus
+  }
 
-    // Create multicast group
-    let multicast: NWMulticastGroup
+  /// Creates a new multicast socket for this instance to use for receiving broadcasts from servers
+  /// on the local network..
+  public func createSocket() throws {
     do {
-      multicast = try NWMulticastGroup(
-        for: [.hostPort(host: "224.0.2.60", port: 4445)],
-        disableUnicast: false)
+      let address = try sockaddr_in.inet(ip4: "0.0.0.0", port: 4445)
+      let socket = try Socket(domain: Int32(address.makeStorage().ss_family), type: SOCK_DGRAM)
+
+      try socket.setValue(true, for: .localAddressReuse)
+      try socket.bind(to: address)
+
+      try socket.setValue(
+        MembershipRequest(
+          groupAddress: Socket.makeInAddr(fromIP4: "224.0.2.60"),
+          localAddress: Socket.makeInAddr(fromIP4: "0.0.0.0")
+        ),
+        for: .addMembership
+      )
+
+      self.socket = socket
     } catch {
-      throw LANServerEnumeratorError.failedToCreateMulticastGroup(error)
+      throw LANServerEnumeratorError.failedToCreateMulticastSocket(error)
     }
+  }
 
-    group = NWConnectionGroup(with: multicast, using: .udp)
-
-    // Handle packets
-    group.setReceiveHandler(maximumMessageSize: 16384, rejectOversizedMessages: true) { [weak self] message, content, isComplete in
-      guard let self = self else {
+  /// An async read loop that receives and parses messages from servers on the local network.
+  ///
+  /// It is implemented recursively to prevent the method from creating a reference cycle
+  /// (by dropping self temporarily each iteration).
+  public func asyncSocketReadLoop() {
+    queue.async { [weak self] in
+      guard let self = self, let socket = self.socket else {
         return
       }
 
-      self.handlePacket(message: message, content: content, isComplete: isComplete)
-    }
-
-    // Handle state updates
-    group.stateUpdateHandler = { [weak self] newState in
-      guard let self = self else {
+      do {
+        let (content, sender) = try socket.recvFrom(atMost: 16384)
+        self.handlePacket(sender: sender, content: content)
+      } catch {
+        ThreadUtil.runInMain {
+          self.hasErrored = true
+        }
+        self.eventBus.dispatch(
+          ErrorEvent(
+            error: LANServerEnumeratorError.failedToReadFromSocket(error),
+            message: "LAN server enumeration failed"
+          )
+        )
         return
       }
 
-      switch newState {
-        case .failed(let error):
-          ThreadUtil.runInMain {
-            self.hasErrored = true
-          }
-          self.eventBus.dispatch(
-            ErrorEvent(
-              error: LANServerEnumeratorError.connectionFailed(error),
-              message: "LAN server enumeration failed"
-            ))
-        case .cancelled:
-          self.isListening = false
-        default:
-          break
-      }
+      self.asyncSocketReadLoop()
     }
   }
 
   // MARK: Public methods
 
   /// Starts listening for LAN servers announcing themselves.
-  public func start() {
-    if !isListening {
-      group.start(queue: queue)
+  public func start() throws {
+    if socket == nil {
+      try createSocket()
+      asyncSocketReadLoop()
       isListening = true
     } else {
       log.warning("Attempted to start LANServerEnumerator twice")
@@ -127,7 +140,7 @@ public class LANServerEnumerator: ObservableObject {
   /// Stops scanning for new LAN servers and closes the multicast socket. Any pings that are in progress will still be completed.
   public func stop() {
     if isListening {
-      group.cancel()
+      socket = nil
     } else {
       log.warning("Attempted to stop LANServerEnumerator while it wasn't started")
     }
@@ -148,7 +161,7 @@ public class LANServerEnumerator: ObservableObject {
   /// They are expected to be of the form: `[MOTD]message of the day[/MOTD][AD]port[/AD]`.
   /// Apparently sometimes the entire address is included in the `AD` section so that is
   /// handled too.
-  private func handlePacket(message: NWConnectionGroup.Message, content: Data?, isComplete: Bool) {
+  private func handlePacket(sender: sockaddr_storage, content: [UInt8]) {
     // Cap the maximum number of LAN servers that can be discovered
     guard servers.count < Self.maximumServerCount else {
       return
@@ -156,15 +169,15 @@ public class LANServerEnumerator: ObservableObject {
 
     // Extract motd and port
     guard
-      let content = content,
-      let messageContent = String(data: content, encoding: .utf8),
-      case let .hostPort(host: host, port: _) = message.remoteEndpoint,
-      let (motd, port) = parseMessage(messageContent)
+      let senderAddress = try? sockaddr_in.make(from: sender),
+      let hostString = String(cString: inet_ntoa(senderAddress.sin_addr), encoding: .utf8),
+      let content = String(bytes: content, encoding: .utf8),
+      let (motd, port) = parseMessage(content)
     else {
+      log.error("Failed to parse LAN server broadcast message")
       return
     }
 
-    let hostString = String(describing: host)
     let server = ServerDescriptor(name: motd, host: hostString, port: port)
     if servers.contains(server) {
       return
