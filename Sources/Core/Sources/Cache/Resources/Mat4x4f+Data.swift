@@ -16,7 +16,7 @@ extension Mat4x4f {
       throw BlockModelPaletteError.invalidMatrixDataLength(data.count)
     }
 
-    let vectors = data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
+    let vectors: (Mat4x4f.Vector, Mat4x4f.Vector, Mat4x4f.Vector, Mat4x4f.Vector) = data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
       let pointer = pointer.assumingMemoryBound(to: Mat4x4f.Vector.self)
       return (
         pointer[0],
