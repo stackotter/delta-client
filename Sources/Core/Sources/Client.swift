@@ -57,7 +57,7 @@ public final class Client: @unchecked Sendable {
     self.account = account
 
     // Create a connection to the server
-    let connection = ServerConnection(
+    let connection = try ServerConnection(
       descriptor: descriptor,
       eventBus: eventBus
     )

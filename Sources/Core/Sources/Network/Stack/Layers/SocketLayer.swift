@@ -5,6 +5,7 @@ import FlyingSocks
 public enum SocketLayerError: LocalizedError {
   case failedToCreateSocket(Error)
   case alreadyConnected
+  case noValidDNSRecords(String)
 
   public var errorDescription: String? {
     switch self {
@@ -15,6 +16,8 @@ public enum SocketLayerError: LocalizedError {
         """
       case .alreadyConnected:
         return "An attempt to connect was made while already connected."
+      case .noValidDNSRecords(let hostname):
+        return "No valid DNS records for hostname '\(hostname)'."
     }
   }
 }
@@ -25,20 +28,16 @@ public enum SocketLayerError: LocalizedError {
 /// ``receive()`` can be called to start the receive loop. ``packetHandler``
 /// will be called for each received packet.
 public final class SocketLayer {
-  // MARK: Public properties
-
   /// Called for each packet received.
   public var packetHandler: ((Buffer) -> Void)?
-
-  // MARK: Private properties
 
   /// The queue for receiving packets on.
   private var ioQueue: DispatchQueue
   /// The event bus to dispatch network errors on.
   private var eventBus: EventBus
 
-  /// The host being connected to.
-  private var host: String
+  /// The IP address being connected to.
+  private var ipAddress: String
   /// The port being connected to.
   private var port: UInt16
 
@@ -58,19 +57,17 @@ public final class SocketLayer {
     case disconnected
   }
 
-  // MARK: Init
-
   /// Creates a new socket layer for connecting to the given server.
   /// - Parameters:
-  ///   - host: The host to connect to.
+  ///   - ipAddress: The ip address to connect to.
   ///   - port: The port to connect to.
   ///   - eventBus: The event bus to dispatch errors to.
   public init(
-    _ host: String,
+    _ ipAddress: String,
     _ port: UInt16,
     eventBus: EventBus
   ) {
-    self.host = host
+    self.ipAddress = ipAddress
     self.port = port
     self.eventBus = eventBus
 
@@ -81,8 +78,6 @@ public final class SocketLayer {
     disconnect()
   }
 
-  // MARK: Public methods
-
   /// Creates the layer's socket connection synchronously.
   ///
   /// Once connected it sends all packets that were waiting to be sent until connected (stored in
@@ -90,7 +85,10 @@ public final class SocketLayer {
   private func createSocket() throws {
     do {
       // https://github.com/stackotter/delta-client/issues/151
-      let address = try sockaddr_in.inet(ip4: host, port: port)
+      let address = try sockaddr_in.inet(
+        ip4: ipAddress,
+        port: port
+      )
       let socket = try Socket(domain: Int32(address.makeStorage().ss_family), type: SOCK_STREAM)
 
       let timeout = TimeValue(seconds: 10)
@@ -138,7 +136,7 @@ public final class SocketLayer {
     }
   }
 
-  /// Connect to the server.
+  /// Connects to the server.
   public func connect() throws {
     packetQueue = []
     state = .connecting

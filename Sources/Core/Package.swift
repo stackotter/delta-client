@@ -5,7 +5,6 @@ import PackageDescription
 var dependencies: [Package.Dependency] = [
   .package(name: "ZIPFoundation", url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.0"),
   .package(name: "DeltaLogger", url: "https://github.com/stackotter/delta-logger", .branch("main")),
-  .package(name: "NioDNS", url: "https://github.com/OpenKitten/NioDNS", from: "1.0.2"),
   .package(name: "SwiftProtobuf", url: "https://github.com/apple/swift-protobuf.git", from: "1.6.0"),
   .package(name: "swift-collections", url: "https://github.com/apple/swift-collections.git", from: "0.0.7"),
   .package(name: "swift-atomics", url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
@@ -14,7 +13,8 @@ var dependencies: [Package.Dependency] = [
   .package(url: "https://github.com/pointfreeco/swift-parsing", .exact("0.8.0")),
   .package(url: "https://github.com/stackotter/swift-openssl", from: "4.0.4"),
   .package(url: "https://github.com/stackotter/fireblade-math.git", branch: "matrix2x2"),
-  .package(url: "https://github.com/stackotter/FlyingFox", branch: "main")
+  .package(url: "https://github.com/stackotter/FlyingFox", branch: "main"),
+  .package(url: "https://github.com/seznam/swift-resolver", from: "0.3.0")
 ]
 
 #if swift(>=5.6)
@@ -36,7 +36,6 @@ let package = Package(
       dependencies: [
         "DeltaLogger",
         "ZIPFoundation",
-        "NioDNS",
         "SwiftProtobuf",
         "FirebladeECS",
         .product(name: "Atomics", package: "swift-atomics"),
@@ -46,7 +45,8 @@ let package = Package(
         .product(name: "OrderedCollections", package: "swift-collections"),
         .product(name: "OpenSSL", package: "swift-openssl"),
         .product(name: "FirebladeMath", package: "fireblade-math"),
-        .product(name: "FlyingSocks", package: "FlyingFox")
+        .product(name: "FlyingSocks", package: "FlyingFox"),
+        .product(name: "Resolver", package: "swift-resolver")
       ],
       path: "Sources",
       exclude: [

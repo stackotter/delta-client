@@ -51,13 +51,20 @@ public class Pinger: ObservableObject {
     isConnecting = true
     // DNS resolution sometimes takes a while so we do that in parallel
     queue.async {
-      let connection = ServerConnection(descriptor: self.descriptor)
-      connection.setPacketHandler(self.handlePacket)
-      connection.eventBus.registerHandler(self.handleNetworkEvent)
-      self.connection = connection
-      self.isConnecting = false
-      if self.shouldPing {
-        try? self.ping()
+      do {
+        let connection = try ServerConnection(descriptor: self.descriptor)
+        connection.setPacketHandler(self.handlePacket)
+        connection.eventBus.registerHandler(self.handleNetworkEvent)
+        self.connection = connection
+        self.isConnecting = false
+        if self.shouldPing {
+          try? self.ping()
+        }
+      } catch {
+        log.trace("Failed to create server connection")
+        ThreadUtil.runInMain {
+          self.response = Result.failure(.connectionFailed(error))
+        }
       }
     }
   }

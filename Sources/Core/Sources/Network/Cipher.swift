@@ -69,7 +69,6 @@ public class Cipher {
         pointer = pointer.advanced(by: 1)
       }
     }
-    print(output)
     return output
   }
 }

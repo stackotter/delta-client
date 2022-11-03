@@ -8,13 +8,13 @@ public struct StatusResponse: Decodable {
     public var name: String
     /// The protocol version. For example 758.
     public var protocolVersion: Int
-    
+
     public enum CodingKeys: String, CodingKey {
       case name
       case protocolVersion = "protocol"
     }
   }
-  
+
   /// Information about the online players.
   public struct PlayerList: Decodable {
     /// The maximum number of online players allowed.
@@ -23,7 +23,7 @@ public struct StatusResponse: Decodable {
     public var online: Int
     /// A sample of the online players (does not necessarily contain all online players).
     public var sample: [OnlinePlayer]?
-    
+
     /// Information about an online player.
     public struct OnlinePlayer: Decodable {
       /// The player's username.
@@ -32,16 +32,16 @@ public struct StatusResponse: Decodable {
       public var id: String
     }
   }
-  
+
   /// The server's description.
   public struct Description: Decodable {
     /// The description styled as legacy text.
     public var text: String
-    
+
     public enum CodingKeys: String, CodingKey {
       case text
     }
-    
+
     public init(from decoder: Decoder) throws {
       if let container = try? decoder.container(keyedBy: CodingKeys.self) {
         text = try container.decode(String.self, forKey: .text)
@@ -52,7 +52,7 @@ public struct StatusResponse: Decodable {
       }
     }
   }
-  
+
   /// The server's version
   public var version: Version
   /// Information about the online players.

@@ -20,6 +20,15 @@
         }
       },
       {
+        "package": "DNS",
+        "repositoryURL": "https://github.com/Bouke/DNS.git",
+        "state": {
+          "branch": null,
+          "revision": "78bbd1589890a90b202d11d5f9e1297050cf0eb2",
+          "version": "1.2.0"
+        }
+      },
+      {
         "package": "FirebladeECS",
         "repositoryURL": "https://github.com/stackotter/ecs.git",
         "state": {
@@ -53,15 +62,6 @@
           "branch": null,
           "revision": "f53a087117f71abb9086f90aedf1f51dc83c88aa",
           "version": "0.1.5"
-        }
-      },
-      {
-        "package": "NioDNS",
-        "repositoryURL": "https://github.com/OpenKitten/NioDNS",
-        "state": {
-          "branch": null,
-          "revision": "3f4705538ab10004c28c2b3767345ea27607a9d2",
-          "version": "1.0.2"
         }
       },
       {
@@ -119,24 +119,6 @@
         }
       },
       {
-        "package": "swift-nio",
-        "repositoryURL": "https://github.com/apple/swift-nio.git",
-        "state": {
-          "branch": null,
-          "revision": "546610d52b19be3e19935e0880bb06b9c03f5cef",
-          "version": "1.14.4"
-        }
-      },
-      {
-        "package": "swift-nio-zlib-support",
-        "repositoryURL": "https://github.com/apple/swift-nio-zlib-support.git",
-        "state": {
-          "branch": null,
-          "revision": "37760e9a52030bb9011972c5213c3350fa9d41fd",
-          "version": "1.0.0"
-        }
-      },
-      {
         "package": "swift-openssl",
         "repositoryURL": "https://github.com/stackotter/swift-openssl",
         "state": {
@@ -161,6 +143,24 @@
           "branch": null,
           "revision": "88c7d15e1242fdb6ecbafbc7926426a19be1e98a",
           "version": "1.20.2"
+        }
+      },
+      {
+        "package": "Resolver",
+        "repositoryURL": "https://github.com/seznam/swift-resolver",
+        "state": {
+          "branch": null,
+          "revision": "cfb7d326bc4c89a48439303d758b375a8faae784",
+          "version": "0.3.0"
+        }
+      },
+      {
+        "package": "UniSocket",
+        "repositoryURL": "https://github.com/seznam/swift-unisocket",
+        "state": {
+          "branch": null,
+          "revision": "1785e432fb8497265a38712cdb9584c429ca3f96",
+          "version": "0.14.0"
         }
       },
       {

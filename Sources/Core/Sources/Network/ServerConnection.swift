@@ -1,13 +1,27 @@
 import Foundation
-import NioDNS
-import NIO // TODO: remove reliance on NIO
+import Resolver
 
-public enum ServerConnectionError: Error {
+public enum ServerConnectionError: LocalizedError {
   case invalidPacketId(Int)
+  case failedToResolveHostname(hostname: String, Error?)
+
+  public var errorDescription: String? {
+    switch self {
+      case .invalidPacketId(let id):
+        return "Invalid packet id 0x\(String(id, radix: 16))."
+      case .failedToResolveHostname(let hostname, let error):
+        return """
+        Failed to resolve hostname.
+        Hostname: \(hostname)
+        Reason: \(error?.localizedDescription ?? "unknown")
+        """
+    }
+  }
 }
 
 public class ServerConnection {
   public private(set) var host: String
+  public private(set) var ipAddress: String
   public private(set) var port: UInt16
 
   public var networkStack: NetworkStack
@@ -30,15 +44,16 @@ public class ServerConnection {
   // MARK: Init
 
   /// Create a new connection to the specified server.
-  public init(descriptor: ServerDescriptor, eventBus: EventBus? = nil) {
-    let address = Self.resolve(descriptor)
+  public init(descriptor: ServerDescriptor, eventBus: EventBus? = nil) throws {
+    let (ipAddress, port) = try ServerConnection.resolve(descriptor)
 
-    host = address.host
-    port = address.port
+    host = descriptor.host
+    self.ipAddress = host
+    self.port = port
 
     self.eventBus = eventBus ?? EventBus()
     packetRegistry = PacketRegistry.create_1_16_1()
-    networkStack = NetworkStack(host, port, eventBus: self.eventBus)
+    networkStack = NetworkStack(ipAddress, port, eventBus: self.eventBus)
   }
 
   // MARK: Lifecycle
@@ -58,42 +73,6 @@ public class ServerConnection {
   /// Sets the state of the server connection.
   public func setState(_ newState: State) {
     state = newState
-  }
-
-  // MARK: DNS
-
-  /// Converts a server descriptor to a socket address.
-  ///
-  /// If port is specified it just returns the host and port from the descriptor. Otherwise
-  /// it checks for SRV records. And if nothing else, returns the default port `25565`.
-  public static func resolve(_ descriptor: ServerDescriptor) -> (host: String, port: UInt16) {
-    // If the port is specified we do nothing
-    if let port = descriptor.port {
-      return (descriptor.host, port)
-    }
-
-    // First we check for SRV records
-    do {
-      let loop = MultiThreadedEventLoopGroup(numberOfThreads: 1)
-      let client = try NioDNS.connect(on: loop).wait()
-
-      let records = try client.getSRVRecords(from: "_minecraft._tcp.\(descriptor.host)").wait()
-      for record in records {
-        // Create a hostname from the bytes we're given. Iterators FTW
-        let srvHostname = record.resource.domainName.map({
-          $0.label.map({
-            String(Character(UnicodeScalar($0)))
-          }).joined()
-        }).dropLast().joined(separator: ".")
-
-        return (srvHostname, record.resource.port)
-      }
-    } catch {
-      log.error("Failed to resolve SRV record")
-    }
-
-    // Return the default port
-    return (descriptor.host, 25565)
   }
 
   // MARK: NetworkStack configuration
@@ -142,6 +121,55 @@ public class ServerConnection {
         self.eventBus.dispatch(PacketDecodingErrorEvent(packetId: packetReader.packetId, error: "\(error)"))
         log.warning("Failed to decode packet with id \(String(packetReader.packetId, radix: 16)): \(error)")
       }
+    }
+  }
+
+  /// Resolves a server descriptor into an IP and a port.
+  public static func resolve(_ server: ServerDescriptor) throws -> (String, UInt16) {
+    do {
+      // We only care about IPv4
+      var isIp: Bool
+      let parts = server.host.split(separator: ".")
+      if parts.count != 4 {
+        isIp = false
+      } else {
+        isIp = true
+        for part in parts {
+          if UInt(part) == nil || part.count > 3 {
+            isIp = false
+            break
+          }
+        }
+      }
+
+      // If `host` is an ip already, no need to perform DNS lookups
+      if isIp {
+        return (server.host, server.port ?? 25565)
+      } else {
+	      let resolver = Resolver()
+
+        // Check for SRV records if no port is specified
+        if server.port == nil {
+          do {
+            let records = try resolver.discover("_minecraft._tcp.\(server.host)")
+            if let record = records.first {
+              return (record.address, record.port.map(UInt16.init) ?? server.port ?? 25565)
+            }
+          } catch {
+            log.warning("Failed to check for SRV records of '\(server.host)'")
+          }
+        }
+
+        // Check for regular records
+	      let records = try resolver.resolve(server.host)
+        if let record = records.first {
+          return (record.address, server.port ?? 25565)
+        }
+
+        throw ServerConnectionError.failedToResolveHostname(hostname: server.host, nil)
+      }
+    } catch {
+      throw ServerConnectionError.failedToResolveHostname(hostname: server.host, error)
     }
   }
 

@@ -26,8 +26,8 @@ public final class NetworkStack {
 
   // MARK: Private properties
 
-  /// The host being connected to.
-  private var host: String
+  /// The IP address being connected to.
+  private var ipAddress: String
   /// The port being connected to.
   private var port: UInt16
   /// The event bus that network errors are dispatched to.
@@ -36,8 +36,8 @@ public final class NetworkStack {
   // MARK: Init
 
   /// Creates a new network stack for connecting to the given server.
-  public init(_ host: String, _ port: UInt16, eventBus: EventBus) {
-    self.host = host
+  public init(_ ipAddress: String, _ port: UInt16, eventBus: EventBus) {
+    self.ipAddress = ipAddress
     self.port = port
     self.eventBus = eventBus
 
@@ -46,7 +46,7 @@ public final class NetworkStack {
     outboundThread = DispatchQueue(label: "NetworkStack.outboundThread")
 
     // Create layers
-    socketLayer = SocketLayer(host, port, eventBus: eventBus)
+    socketLayer = SocketLayer(ipAddress, port, eventBus: eventBus)
     encryptionLayer = EncryptionLayer()
     compressionLayer = CompressionLayer()
     packetLayer = PacketLayer()
@@ -90,7 +90,7 @@ public final class NetworkStack {
   /// Connect to the server.
   public func connect() throws {
     let handler = socketLayer.packetHandler
-    socketLayer = SocketLayer(host, port, eventBus: eventBus)
+    socketLayer = SocketLayer(ipAddress, port, eventBus: eventBus)
     socketLayer.packetHandler = handler
 
     compressionLayer = CompressionLayer()

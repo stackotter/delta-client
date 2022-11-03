@@ -70,6 +70,10 @@ public class LANServerEnumerator: ObservableObject {
     self.eventBus = eventBus
   }
 
+  deinit {
+    try? socket?.close()
+  }
+
   /// Creates a new multicast socket for this instance to use for receiving broadcasts from servers
   /// on the local network..
   public func createSocket() throws {
@@ -140,6 +144,7 @@ public class LANServerEnumerator: ObservableObject {
   /// Stops scanning for new LAN servers and closes the multicast socket. Any pings that are in progress will still be completed.
   public func stop() {
     if isListening {
+      try? socket?.close()
       socket = nil
     } else {
       log.warning("Attempted to stop LANServerEnumerator while it wasn't started")
