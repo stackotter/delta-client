@@ -2,25 +2,25 @@ import Foundation
 
 public class Pinger: ObservableObject {
   @Published public var response: Result<StatusResponse, PingError>?
-  
+
   public var connection: ServerConnection?
   public let descriptor: ServerDescriptor
-  
+
   public var shouldPing = false
   public var isConnecting = false
-  
+
   private let queue: DispatchQueue
-  
+
   // MARK: Init
-  
+
   public init(_ descriptor: ServerDescriptor) {
     self.descriptor = descriptor
     queue = DispatchQueue(label: "dev.stackotter.delta-client.pinger-\(descriptor.name)")
     connect()
   }
-  
+
   // MARK: Interface
-  
+
   private func handleNetworkEvent(_ event: Event) {
     switch event {
       case let event as ConnectionFailedEvent:
@@ -31,7 +31,7 @@ public class Pinger: ObservableObject {
         break
     }
   }
-  
+
   public func ping() throws {
     if let connection = connection {
       ThreadUtil.runInMain {
@@ -46,7 +46,7 @@ public class Pinger: ObservableObject {
       shouldPing = true
     }
   }
-  
+
   private func connect() {
     isConnecting = true
     // DNS resolution sometimes takes a while so we do that in parallel
@@ -61,14 +61,14 @@ public class Pinger: ObservableObject {
       }
     }
   }
-  
+
   public func closeConnection() {
     connection?.close()
     connection = nil
   }
-  
+
   // MARK: Networking
-  
+
   private func handlePacket(_ packet: ClientboundPacket) {
     do {
       try packet.handle(for: self)

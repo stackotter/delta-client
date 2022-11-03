@@ -2,7 +2,7 @@ import Foundation
 
 public enum MojangAPIError: LocalizedError {
   case failedToDeserializeResponse(String)
-  
+
   public var errorDescription: String? {
     switch self {
       case .failedToDeserializeResponse(let string):
@@ -21,7 +21,7 @@ public enum MojangAPI {
   private static let joinServerURL = URL(string: "https://sessionserver.mojang.com/session/minecraft/join")!
   private static let refreshURL = URL(string: "https://authserver.mojang.com/refresh")!
   // swiftlint:enable force_unwrapping
-  
+
   /// Log into a Mojang account using an email and password.
   /// - Parameters:
   ///   - email: User's email.
@@ -37,26 +37,26 @@ public enum MojangAPI {
       password: password,
       clientToken: clientToken,
       requestUser: true)
-    
+
     let (_, data) = try await RequestUtil.performJSONRequest(url: authenticationURL, body: payload, method: .post)
-    
+
     guard let response = try? CustomJSONDecoder().decode(MojangAuthenticationResponse.self, from: data) else {
       throw MojangAPIError.failedToDeserializeResponse(String(decoding: data, as: UTF8.self))
     }
-    
+
     let accessToken = MinecraftAccessToken(
       token: response.accessToken,
       expiry: nil)
-    
+
     let selectedProfile = response.selectedProfile
     let account = MojangAccount(
       id: selectedProfile.id,
       username: response.selectedProfile.name,
       accessToken: accessToken)
-    
+
     return Account.mojang(account)
   }
-  
+
   /// Contacts the Mojang auth servers as part of the join game handshake.
   /// - Parameters:
   ///   - accessToken: User's access token.
@@ -71,10 +71,10 @@ public enum MojangAPI {
       accessToken: accessToken,
       selectedProfile: selectedProfile,
       serverId: serverHash)
-    
+
     _ = try await RequestUtil.performJSONRequest(url: joinServerURL, body: payload, method: .post)
   }
-  
+
   /// Refreshes the access token of a Mojang account.
   /// - Parameters:
   ///   - account: The account to refresh.
@@ -87,16 +87,16 @@ public enum MojangAPI {
     let payload = MojangRefreshTokenRequest(
       accessToken: accessToken,
       clientToken: clientToken)
-    
+
     let (_, data) = try await RequestUtil.performJSONRequest(url: refreshURL, body: payload, method: .post)
-    
+
     guard let response = try? CustomJSONDecoder().decode(MojangRefreshTokenResponse.self, from: data) else {
       throw MojangAPIError.failedToDeserializeResponse(String(decoding: data, as: UTF8.self))
     }
-    
+
     var refreshedAccount = account
     refreshedAccount.accessToken = MinecraftAccessToken(token: response.accessToken, expiry: nil)
-    
+
     return refreshedAccount
   }
 }

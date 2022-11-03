@@ -1,8 +1,7 @@
 import Foundation
-import Network
 
 public enum PingError: LocalizedError {
-  case connectionFailed(NWError)
+  case connectionFailed(Error)
 
   public var errorDescription: String? {
     switch self {

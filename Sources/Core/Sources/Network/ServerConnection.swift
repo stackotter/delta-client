@@ -50,9 +50,9 @@ public class ServerConnection {
   }
 
   /// Restarts the connection to the server. Initiates the connection if not currently connected.
-  private func restart() {
+  private func restart() throws {
     state = .connecting
-    networkStack.reconnect()
+    try networkStack.reconnect()
   }
 
   /// Sets the state of the server connection.
@@ -156,7 +156,7 @@ public class ServerConnection {
   /// Sends a login request to the server. Throws if the packet fails to send.
   /// - Parameter username: The username to login with.
   public func login(username: String) throws {
-    restart()
+    try restart()
 
     try handshake(nextState: .login)
     let loginStart = LoginStartPacket(username: username)
@@ -165,7 +165,7 @@ public class ServerConnection {
 
   /// Sends a status request or 'ping'.
   public func ping() throws {
-    restart()
+    try restart()
 
     try handshake(nextState: .status)
     let statusRequest = StatusRequestPacket()

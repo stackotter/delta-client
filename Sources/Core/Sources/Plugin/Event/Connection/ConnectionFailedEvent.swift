@@ -1,10 +1,9 @@
 import Foundation
-import Network
 
 public struct ConnectionFailedEvent: Event {
-  public var networkError: NWError
+  public var networkError: Error
 
-  public init(networkError: NWError) {
+  public init(networkError: Error) {
     self.networkError = networkError
   }
 }

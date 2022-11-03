@@ -83,12 +83,12 @@ public final class NetworkStack {
     buffer = compressionLayer.processOutbound(buffer)
     buffer = packetLayer.processOutbound(buffer)
     buffer = try encryptionLayer.processOutbound(buffer)
-    socketLayer.send(buffer)
+    try socketLayer.send(buffer)
     log.trace("Packet sent, id=0x\(String(format: "%02x", type(of: packet).id))")
   }
 
   /// Connect to the server.
-  public func connect() {
+  public func connect() throws {
     let handler = socketLayer.packetHandler
     socketLayer = SocketLayer(host, port, eventBus: eventBus)
     socketLayer.packetHandler = handler
@@ -97,7 +97,7 @@ public final class NetworkStack {
     encryptionLayer = EncryptionLayer()
     packetLayer = PacketLayer()
 
-    socketLayer.connect()
+    try socketLayer.connect()
   }
 
   /// Disconnect from the server.
@@ -106,8 +106,8 @@ public final class NetworkStack {
   }
 
   /// Reconnect to the server.
-  public func reconnect() {
+  public func reconnect() throws {
     disconnect()
-    connect()
+    try connect()
   }
 }

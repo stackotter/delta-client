@@ -1,5 +1,23 @@
 import Foundation
-import Network
+import FlyingSocks
+
+/// An error thrown by ``SocketLayer``.
+public enum SocketLayerError: LocalizedError {
+  case failedToCreateSocket(Error)
+  case alreadyConnected
+
+  public var errorDescription: String? {
+    switch self {
+      case .failedToCreateSocket(let error):
+        return """
+        Failed to create socket.
+        Reason: \(error.localizedDescription)
+        """
+      case .alreadyConnected:
+        return "An attempt to connect was made while already connected."
+    }
+  }
+}
 
 /// The network layer that handles a socket connection to a server.
 ///
@@ -19,16 +37,16 @@ public final class SocketLayer {
   /// The event bus to dispatch network errors on.
   private var eventBus: EventBus
 
-  /// A queue of packets waiting for the connection to start to be sent.
-  private var packetQueue: [Buffer] = []
-
   /// The host being connected to.
   private var host: String
   /// The port being connected to.
   private var port: UInt16
 
+  /// A queue of packets waiting to be sent.
+  private var packetQueue: [Buffer] = []
+
   /// The socket connection to the server.
-  private var connection: NWConnection
+  private var socket: Socket?
   /// The connection state of the socket.
   private var state: State = .idle
 
@@ -56,24 +74,7 @@ public final class SocketLayer {
     self.port = port
     self.eventBus = eventBus
 
-    guard let nwPort = NWEndpoint.Port(rawValue: port) else {
-      fatalError("Failed to create port from int: \(port). This really shouldn't happen.")
-    }
-
     ioQueue = DispatchQueue(label: "NetworkStack.ioThread")
-
-    // Decrease the TCP timeout from the default
-    let options = NWProtocolTCP.Options()
-    options.connectionTimeout = 10
-    self.connection = NWConnection(
-      host: NWEndpoint.Host(host),
-      port: nwPort,
-      using: NWParameters(tls: nil, tcp: options))
-
-    self.connection.stateUpdateHandler = { [weak self] newState in
-      guard let self = self else { return }
-      self.stateUpdateHandler(newState: newState)
-    }
   }
 
   deinit {
@@ -82,36 +83,90 @@ public final class SocketLayer {
 
   // MARK: Public methods
 
+  /// Creates the layer's socket connection synchronously.
+  ///
+  /// Once connected it sends all packets that were waiting to be sent until connected (stored in
+  /// ``packetQueue``).
+  private func createSocket() throws {
+    do {
+      // https://github.com/stackotter/delta-client/issues/151
+      let address = try sockaddr_in.inet(ip4: host, port: port)
+      let socket = try Socket(domain: Int32(address.makeStorage().ss_family), type: SOCK_STREAM)
+
+      let timeout = TimeValue(seconds: 10)
+      try socket.setValue(timeout, for: .sendTimeout)
+      try socket.setValue(timeout, for: .receiveTimeout)
+      try socket.connect(to: address)
+
+      self.socket = socket
+      state = .connected
+
+      // Send any packets that were waiting for a connection
+      for packet in packetQueue {
+        try send(packet)
+      }
+      packetQueue = []
+    } catch {
+      throw SocketLayerError.failedToCreateSocket(error)
+    }
+  }
+
+  /// Starts an asynchronous loop that receives and handles packets until disconnected or an error
+  /// occurs. Implemented recursively to avoid creating reference cycles.
+  private func asyncSocketReadLoop() {
+    ioQueue.async { [weak self] in
+      guard let self = self, let socket = self.socket else {
+        return
+      }
+
+      do {
+        let bytes = try socket.read(atMost: 4096)
+        let buffer = Buffer(bytes)
+        self.packetHandler?(buffer)
+
+        if self.state != .disconnected {
+          self.asyncSocketReadLoop()
+        }
+      } catch {
+        if self.state == .disconnected {
+          return
+        }
+
+        self.disconnect()
+        self.eventBus.dispatch(ConnectionFailedEvent(networkError: error))
+      }
+    }
+  }
+
   /// Connect to the server.
-  public func connect() {
-    state = .connecting
+  public func connect() throws {
     packetQueue = []
-    connection.start(queue: ioQueue)
+    state = .connecting
+
+    if socket == nil {
+      ioQueue.async {
+        do {
+          try self.createSocket()
+          self.asyncSocketReadLoop()
+        } catch {
+          self.disconnect()
+          self.eventBus.dispatch(ConnectionFailedEvent(networkError: error))
+        }
+      }
+    } else {
+      throw SocketLayerError.alreadyConnected
+    }
   }
 
   /// Disconnect from the server.
   public func disconnect() {
     state = .disconnected
-    connection.cancel()
-  }
-
-  /// Starts the packet receiving loop.
-  public func receive() {
-    connection.receive(minimumIncompleteLength: 0, maximumLength: 4096, completion: { [weak self] (data, _, _, error) in
-      guard let self = self else { return }
-      if let error = error {
-        self.handleNWError(error)
-        return
-      } else if let data = data {
-        let bytes = [UInt8](data)
-        let buffer = Buffer(bytes)
-        self.packetHandler?(buffer)
-
-        if self.state != .disconnected {
-          self.receive()
-        }
-      }
-    })
+    do {
+      try socket?.close()
+    } catch {
+      log.warning("Failed to close socket gracefully")
+    }
+    socket = nil
   }
 
   /// Sends the given buffer to the connected server.
@@ -119,54 +174,13 @@ public final class SocketLayer {
   /// If the connection is in a disconnected state, the packet is ignored. If the connection is
   /// idle or connecting, the packet is stored to be sent once a connection is established.
   /// - Parameter buffer: The buffer to send.
-  public func send(_ buffer: Buffer) {
-    switch state {
-      case .connected:
-        let bytes = buffer.bytes
-        connection.send(content: Data(bytes), completion: .idempotent)
-      case .idle, .connecting:
-        packetQueue.append(buffer)
-      case .disconnected:
-        break
+  public func send(_ buffer: Buffer) throws {
+    guard state == .connected, let socket = socket else {
+      packetQueue.append(buffer)
+      return
     }
-  }
 
-  // MARK: Private methods
-
-  /// Handles a socket connection state update.
-  /// - Parameter newState: The socket's new state.
-  private func stateUpdateHandler(newState: NWConnection.State) {
-    switch newState {
-      case .ready:
-        state = .connected
-        receive()
-        for packet in packetQueue {
-          send(packet)
-        }
-      case .waiting(let error):
-        handleNWError(error)
-      case .failed(let error):
-        state = .disconnected
-        handleNWError(error)
-      case .cancelled:
-        state = .disconnected
-      default:
-        break
-    }
-  }
-
-  /// Handles a network error.
-  /// - Parameter error: The error to handle.
-  private func handleNWError(_ error: NWError) {
-    if state != .disconnected {
-      disconnect()
-      eventBus.dispatch(ConnectionFailedEvent(networkError: error))
-      // TODO: Use the as human readable messages for NWError in ConnectionFailedEvent
-      if error == NWError.posix(.ECONNREFUSED) {
-        log.error("Connection refused: '\(self.host):\(self.port)'")
-      } else if error == NWError.dns(-65554) {
-        log.error("DNS failed for server at '\(self.host):\(self.port)'")
-      }
-    }
+    let bytes = buffer.bytes
+    _ = try socket.write(Data(bytes))
   }
 }
