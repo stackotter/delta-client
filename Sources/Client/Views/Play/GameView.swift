@@ -1,5 +1,6 @@
 import SwiftUI
 import DeltaCore
+import DeltaRenderer
 import Combine
 
 enum GameState {

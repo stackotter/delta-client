@@ -53,7 +53,7 @@ let package = Package(
     .target(
       name: "DynamicShim",
       dependencies: [
-        .product(name: "DeltaCore", package: "DeltaCore")
+        .product(name: "DeltaCore", package: "DeltaCore"),
       ],
       path: "Sources/Exporters/DynamicShim"
     ),
@@ -61,7 +61,7 @@ let package = Package(
     .target(
       name: "StaticShim",
       dependencies: [
-        .product(name: "StaticDeltaCore", package: "DeltaCore")
+        .product(name: "StaticDeltaCore", package: "DeltaCore"),
       ],
       path: "Sources/Exporters/StaticShim"
     )

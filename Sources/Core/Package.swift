@@ -26,8 +26,8 @@ let package = Package(
   name: "DeltaCore",
   platforms: [.macOS(.v11)],
   products: [
-    .library(name: "DeltaCore", type: .dynamic, targets: ["DeltaCore"]),
-    .library(name: "StaticDeltaCore", type: .static, targets: ["DeltaCore"])
+    .library(name: "DeltaCore", type: .dynamic, targets: ["DeltaCore", "DeltaRenderer"]),
+    .library(name: "StaticDeltaCore", type: .static, targets: ["DeltaCore", "DeltaRenderer"]),
   ],
   dependencies: dependencies,
   targets: [
@@ -53,9 +53,17 @@ let package = Package(
         "Cache/Protobuf/BlockModelPalette.proto",
         "Cache/Protobuf/BlockRegistry.proto",
         "Cache/Protobuf/Compile.sh"
+      ]
+    ),
+
+    .target(
+      name: "DeltaRenderer",
+      dependencies: [
+        "DeltaCore"
       ],
+      path: "Renderer",
       resources: [
-        .process("Render/Shader/")
+        .process("Shader/")
       ]
     ),
 

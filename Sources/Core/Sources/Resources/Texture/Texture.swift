@@ -29,7 +29,7 @@ public enum TextureError: LocalizedError {
   case failedToLoadTextureAnimation(Error)
   /// The target width for the texture is not a power of two.
   case targetWidthNotPowerOfTwo(targetWidth: Int)
-  
+
   public var errorDescription: String? {
     switch self {
       case .invalidDimensions(let width, let height):
