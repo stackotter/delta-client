@@ -1,5 +1,6 @@
 import Foundation
 
+/// An error thrown by ``Socket`` or a related type.
 public enum SocketError: LocalizedError {
   case actionFailed(String)
   case blocked

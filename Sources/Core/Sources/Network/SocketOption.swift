@@ -3,52 +3,105 @@ import WinSDK.WinSock2
 #endif
 import Foundation
 
+/// A socket option that is settable.
 public protocol SettableSocketOption {
+  /// The Swift type of the value.
   associatedtype Value
+  /// The C type of the value.
   associatedtype SocketValue
 
+  /// The 'name' of the option (in C).
   var name: Int32 { get }
-  func getLevel() -> Int32
+  /// The 'level' of the option (in C).
+  var level: Int32 { get }
+
+  /// Converts a Swift value to a C value.
   func makeSocketValue(from value: Value) -> SocketValue
 }
 
+/// A socket option that is gettable.
 public protocol GettableSocketOption {
+  /// The Swift type of the value.
   associatedtype Value
+  /// The C type of the value.
   associatedtype SocketValue
 
+  /// The 'name' of the option (in C).
   var name: Int32 { get }
-  func getLevel() -> Int32
+  /// The 'level' of the option (in C).
+  var level: Int32 { get }
+
+  /// Converts a C value to a Swift value.
   func makeValue(from socketValue: SocketValue) -> Value
 }
 
+/// A socket option that is both settable and gettable.
 public protocol SocketOption: SettableSocketOption, GettableSocketOption {
+  /// The Swift type of the value.
   associatedtype Value
+  /// The C type of the value.
   associatedtype SocketValue
 
+  /// The 'name' of the option (in C).
   var name: Int32 { get }
-  func getLevel() -> Int32
+  /// The 'level' of the option (in C).
+  var level: Int32 { get }
+
+  /// Converts a Swift value to a C value.
   func makeValue(from socketValue: SocketValue) -> Value
+  /// Converts a C value to a Swift value.
   func makeSocketValue(from value: Value) -> SocketValue
 }
 
 extension SettableSocketOption {
-  public func getLevel() -> Int32 {
-    SOL_SOCKET
+  public var level: Int32 {
+    return SOL_SOCKET
   }
 }
 
 extension GettableSocketOption {
-  public func getLevel() -> Int32 {
-    SOL_SOCKET
+  public var level: Int32 {
+    return SOL_SOCKET
   }
 }
 
 extension SocketOption {
-  public func getLevel() -> Int32 {
-    SOL_SOCKET
+  public var level: Int32 {
+    return SOL_SOCKET
   }
 }
 
+// MARK: Value types
+
+/// The value of a membership request socket option.
+public struct MembershipRequest {
+  var groupAddress: in_addr
+  var localAddress: in_addr
+
+  /// Creates a new membership request.
+  public init(groupAddress: String, localAddress: String) throws {
+    self.groupAddress = try Socket.makeInAddr(fromIP4: groupAddress)
+    self.localAddress = try Socket.makeInAddr(fromIP4: localAddress)
+  }
+}
+
+/// The value of a time socket option (e.g. timeouts).
+public struct TimeValue {
+  /// The number of seconds.
+  public var seconds: Int
+  /// The number of micro seconds (used to add precision).
+  public var microSeconds: Int
+
+  /// Creates a new time value.
+  public init(seconds: Int = 0, microSeconds: Int = 0) {
+    self.seconds = seconds
+    self.microSeconds = microSeconds
+  }
+}
+
+// MARK: Option types
+
+/// A boolean socket option (e.g. allow local address reuse).
 public struct BoolSocketOption: SocketOption {
   public var name: Int32
 
@@ -65,29 +118,7 @@ public struct BoolSocketOption: SocketOption {
   }
 }
 
-public struct MembershipRequest {
-  var groupAddress: in_addr
-  var localAddress: in_addr
-
-  public init(groupAddress: String, localAddress: String) throws {
-    self.groupAddress = try Socket.makeInAddr(fromIP4: groupAddress)
-    self.localAddress = try Socket.makeInAddr(fromIP4: localAddress)
-  }
-}
-
-public struct TimeValue {
-  public var seconds: Int
-  public var microSeconds: Int
-
-  public init(seconds: Int = 0, microSeconds: Int = 0) {
-    self.seconds = seconds
-    self.microSeconds = microSeconds
-  }
-}
-
-public typealias Int32SocketOption = SimpleSocketOption<Int32>
-public typealias TimeSocketOption = SimpleSocketOption<TimeValue>
-
+/// A membership request socket option.
 public struct MembershipRequestSocketOption: SettableSocketOption {
   public var name: Int32
 
@@ -95,7 +126,7 @@ public struct MembershipRequestSocketOption: SettableSocketOption {
     self.name = name
   }
 
-  public func getLevel() -> Int32 {
+  public var level: Int32 {
     IPPROTO_IP
   }
 
@@ -104,6 +135,7 @@ public struct MembershipRequestSocketOption: SettableSocketOption {
   }
 }
 
+/// A generic type for creating simple socket options where the Swift and C types of the value are the same.
 public struct SimpleSocketOption<T>: SocketOption {
   public var name: Int32
 
@@ -120,37 +152,51 @@ public struct SimpleSocketOption<T>: SocketOption {
   }
 }
 
-public extension SocketOption where Self == BoolSocketOption {
+/// An integer socket option.
+public typealias Int32SocketOption = SimpleSocketOption<Int32>
+/// A time socket option (e.g. a timeout).
+public typealias TimeSocketOption = SimpleSocketOption<TimeValue>
+
+// MARK: Common options
+
+public extension BoolSocketOption {
+  /// Whether local address reuse is allowed or not.
   static var localAddressReuse: Self {
     BoolSocketOption(name: SO_REUSEADDR)
   }
 }
 
-public extension SettableSocketOption where Self == MembershipRequestSocketOption {
+public extension MembershipRequestSocketOption {
+  /// A request to add the socket to a multicast group.
   static var addMembership: Self {
     MembershipRequestSocketOption(name: IP_ADD_MEMBERSHIP)
   }
 
+  /// A request to remove the socket from a multicast group.
   static var dropMembership: Self {
     MembershipRequestSocketOption(name: IP_DROP_MEMBERSHIP)
   }
 }
 
-public extension SocketOption where Self == Int32SocketOption {
+public extension Int32SocketOption {
+  /// The size of the send buffer.
   static var sendBufferSize: Self {
     Int32SocketOption(name: SO_SNDBUF)
   }
 
+  /// The size of the receive buffer.
   static var receiveBufferSize: Self {
     Int32SocketOption(name: SO_RCVBUF)
   }
 }
 
-public extension SocketOption where Self == TimeSocketOption {
+public extension TimeSocketOption {
+  /// The timeout for receiving data.
   static var receiveTimeout: Self {
     TimeSocketOption(name: SO_RCVTIMEO)
   }
 
+  /// The timeout for sending data.
   static var sendTimeout: Self {
     TimeSocketOption(name: SO_SNDTIMEO)
   }

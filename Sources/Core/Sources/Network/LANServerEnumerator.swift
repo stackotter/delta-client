@@ -86,7 +86,7 @@ public class LANServerEnumerator: ObservableObject {
           groupAddress: "224.0.2.60",
           localAddress: "0.0.0.0"
         ),
-        for: .addMembership
+        for: MembershipRequestSocketOption.addMembership
       )
 
       self.socket = socket
