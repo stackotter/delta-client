@@ -13,7 +13,6 @@ var dependencies: [Package.Dependency] = [
   .package(url: "https://github.com/pointfreeco/swift-parsing", .exact("0.8.0")),
   .package(url: "https://github.com/stackotter/swift-openssl", from: "4.0.4"),
   .package(url: "https://github.com/stackotter/fireblade-math.git", branch: "matrix2x2"),
-  .package(url: "https://github.com/stackotter/FlyingFox", branch: "main"),
   .package(url: "https://github.com/seznam/swift-resolver", from: "0.3.0")
 ]
 
@@ -45,7 +44,6 @@ let package = Package(
         .product(name: "OrderedCollections", package: "swift-collections"),
         .product(name: "OpenSSL", package: "swift-openssl"),
         .product(name: "FirebladeMath", package: "fireblade-math"),
-        .product(name: "FlyingSocks", package: "FlyingFox"),
         .product(name: "Resolver", package: "swift-resolver")
       ],
       path: "Sources",

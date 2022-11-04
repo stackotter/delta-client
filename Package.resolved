@@ -47,15 +47,6 @@
         }
       },
       {
-        "package": "FlyingFox",
-        "repositoryURL": "https://github.com/stackotter/FlyingFox",
-        "state": {
-          "branch": "main",
-          "revision": "0ecb90ef7034183477fa78b9f1e76707843177a7",
-          "version": null
-        }
-      },
-      {
         "package": "JJLISO8601DateFormatter",
         "repositoryURL": "https://github.com/michaeleisel/JJLISO8601DateFormatter",
         "state": {

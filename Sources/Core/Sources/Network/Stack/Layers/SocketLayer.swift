@@ -1,5 +1,4 @@
 import Foundation
-import FlyingSocks
 
 /// An error thrown by ``SocketLayer``.
 public enum SocketLayerError: LocalizedError {
@@ -84,17 +83,16 @@ public final class SocketLayer {
   /// ``packetQueue``).
   private func createSocket() throws {
     do {
-      // https://github.com/stackotter/delta-client/issues/151
-      let address = try sockaddr_in.inet(
-        ip4: ipAddress,
-        port: port
-      )
-      let socket = try Socket(domain: Int32(address.makeStorage().ss_family), type: SOCK_STREAM)
+      let socket = try Socket(.ip4, .tcp)
 
       let timeout = TimeValue(seconds: 10)
-      try socket.setValue(timeout, for: .sendTimeout)
-      try socket.setValue(timeout, for: .receiveTimeout)
-      try socket.connect(to: address)
+      try socket.setValue(timeout, for: TimeSocketOption.sendTimeout)
+      try socket.setValue(timeout, for: TimeSocketOption.receiveTimeout)
+
+      try socket.connect(to: Socket.Address.ip4(
+        ipAddress,
+        port
+      ))
 
       self.socket = socket
       state = .connected

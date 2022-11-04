@@ -1,6 +1,5 @@
 import Foundation
 import Parsing
-import FlyingSocks
 
 /// An error that occured during LAN server enumeration.
 enum LANServerEnumeratorError: LocalizedError {
@@ -78,16 +77,14 @@ public class LANServerEnumerator: ObservableObject {
   /// on the local network..
   public func createSocket() throws {
     do {
-      let address = try sockaddr_in.inet(ip4: "0.0.0.0", port: 4445)
-      let socket = try Socket(domain: Int32(address.makeStorage().ss_family), type: SOCK_DGRAM)
-
-      try socket.setValue(true, for: .localAddressReuse)
-      try socket.bind(to: address)
+      let socket = try Socket(.ip6, .udp)
+      try socket.setValue(true, for: BoolSocketOption.localAddressReuse)
+      try socket.bind(to: Socket.Address.ip4("0.0.0.0", 4445))
 
       try socket.setValue(
-        MembershipRequest(
-          groupAddress: Socket.makeInAddr(fromIP4: "224.0.2.60"),
-          localAddress: Socket.makeInAddr(fromIP4: "0.0.0.0")
+        try MembershipRequest(
+          groupAddress: "224.0.2.60",
+          localAddress: "0.0.0.0"
         ),
         for: .addMembership
       )
@@ -166,7 +163,7 @@ public class LANServerEnumerator: ObservableObject {
   /// They are expected to be of the form: `[MOTD]message of the day[/MOTD][AD]port[/AD]`.
   /// Apparently sometimes the entire address is included in the `AD` section so that is
   /// handled too.
-  private func handlePacket(sender: sockaddr_storage, content: [UInt8]) {
+  private func handlePacket(sender: Socket.Address, content: [UInt8]) {
     // Cap the maximum number of LAN servers that can be discovered
     guard servers.count < Self.maximumServerCount else {
       return
@@ -174,16 +171,15 @@ public class LANServerEnumerator: ObservableObject {
 
     // Extract motd and port
     guard
-      let senderAddress = try? sockaddr_in.make(from: sender),
-      let hostString = String(cString: inet_ntoa(senderAddress.sin_addr), encoding: .utf8),
       let content = String(bytes: content, encoding: .utf8),
+      case let .ip4(host, _) = sender,
       let (motd, port) = parseMessage(content)
     else {
       log.error("Failed to parse LAN server broadcast message")
       return
     }
 
-    let server = ServerDescriptor(name: motd, host: hostString, port: port)
+    let server = ServerDescriptor(name: motd, host: host, port: port)
     if servers.contains(server) {
       return
     }
@@ -197,7 +193,7 @@ public class LANServerEnumerator: ObservableObject {
       pingers.append(pinger)
     }
 
-    log.trace("Received LAN server multicast packet: motd=`\(motd)`, address=`\(hostString):\(port)`")
+    log.trace("Received LAN server multicast packet: motd=`\(motd)`, address=`\(host):\(port)`")
   }
 
   /// Parses a message of the form `"[MOTD]motd[/MOTD][AD]port[/AD]"`.
