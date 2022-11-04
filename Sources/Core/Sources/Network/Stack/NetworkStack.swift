@@ -80,7 +80,7 @@ public final class NetworkStack {
   /// Sends a packet. Throws if the packet failed to be encrypted.
   public func sendPacket(_ packet: ServerboundPacket) throws {
     var buffer = packet.toBuffer()
-    buffer = compressionLayer.processOutbound(buffer)
+    buffer = try compressionLayer.processOutbound(buffer)
     buffer = packetLayer.processOutbound(buffer)
     buffer = try encryptionLayer.processOutbound(buffer)
     try socketLayer.send(buffer)

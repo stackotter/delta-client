@@ -119,6 +119,15 @@
         }
       },
       {
+        "package": "swift-package-zlib",
+        "repositoryURL": "https://github.com/fourplusone/swift-package-zlib",
+        "state": {
+          "branch": null,
+          "revision": "03ecd41814d8929362f7439529f9682536a8de13",
+          "version": "1.2.11"
+        }
+      },
+      {
         "package": "swift-parsing",
         "repositoryURL": "https://github.com/pointfreeco/swift-parsing",
         "state": {
