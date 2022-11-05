@@ -20,8 +20,11 @@ struct MicrosoftLoginView: View {
           Text(errorMessage)
             .foregroundColor(.red)
         }
-        
-        WebView(request: URLRequest(url: MicrosoftAPI.getAuthorizationURL()), urlChangeHandler: processURLChange)
+        if #available(macOS 13, iOS 16, *) {
+          WebView(request: URLRequest(url: MicrosoftAPI.getAuthorizationURL()), urlChangeHandler: processURLChange)
+        } else {
+          WebViewClass(request: URLRequest(url: MicrosoftAPI.getAuthorizationURL()), urlChangeHandler: processURLChange)
+        }
       case .authenticating:
         Text("Authenticating...")
     }
