@@ -276,30 +276,30 @@ struct GameView: View {
     ZStack {
       // Renderer
       if #available(macOS 13, iOS 16, *) {
-          MetalView(renderCoordinator: model.renderCoordinator)
-            .onAppear {
-              model.inputDelegate.bind($cursorCaptured.onChange { newValue in
-                // When showing overlay make sure menu is the first view
-                if newValue == false {
-                  model.overlayState.update(to: .menu)
-                }
-              })
+        MetalView(renderCoordinator: model.renderCoordinator)
+          .onAppear {
+            model.inputDelegate.bind($cursorCaptured.onChange { newValue in
+              // When showing overlay make sure menu is the first view
+              if newValue == false {
+                model.overlayState.update(to: .menu)
+              }
+            })
 
-              model.inputDelegate.captureCursor()
-            }
+            model.inputDelegate.captureCursor()
+          }
       }
       else {
-          MetalViewClass(renderCoordinator: model.renderCoordinator)
-            .onAppear {
-              model.inputDelegate.bind($cursorCaptured.onChange { newValue in
-                // When showing overlay make sure menu is the first view
-                if newValue == false {
-                  model.overlayState.update(to: .menu)
-                }
-              })
+        MetalViewClass(renderCoordinator: model.renderCoordinator)
+          .onAppear {
+            model.inputDelegate.bind($cursorCaptured.onChange { newValue in
+              // When showing overlay make sure menu is the first view
+              if newValue == false {
+                model.overlayState.update(to: .menu)
+              }
+            })
 
-              model.inputDelegate.captureCursor()
-            }
+            model.inputDelegate.captureCursor()
+          }
       }
 
       #if os(iOS)

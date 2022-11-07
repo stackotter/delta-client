@@ -1,4 +1,5 @@
 import Metal
+import DeltaCore
 
 /// An array texture that supports animated textures.
 public struct AnimatedArrayTexture {
