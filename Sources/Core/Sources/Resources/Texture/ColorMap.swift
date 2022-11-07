@@ -23,11 +23,12 @@ public struct ColorMap {
 
     for y in 0..<height {
       for x in 0..<width {
-        let pixel = texture.getPixel(atX: x, y: y)
+        let pixel = texture[x, y]
         colors.append(RGBColor(
-          r: Int(pixel.r),
-          g: Int(pixel.g),
-          b: Int(pixel.b)))
+          r: Int(pixel.red),
+          g: Int(pixel.green),
+          b: Int(pixel.blue)
+        ))
       }
     }
   }

@@ -14,7 +14,8 @@ var dependencies: [Package.Dependency] = [
   .package(url: "https://github.com/stackotter/swift-openssl", from: "4.0.4"),
   .package(url: "https://github.com/stackotter/fireblade-math.git", branch: "matrix2x2"),
   .package(url: "https://github.com/seznam/swift-resolver", from: "0.3.0"),
-  .package(url: "https://github.com/fourplusone/swift-package-zlib", from: "1.2.11")
+  .package(url: "https://github.com/fourplusone/swift-package-zlib", from: "1.2.11"),
+  .package(url: "https://github.com/koher/swift-image.git", from: "0.7.1")
 ]
 
 #if swift(>=5.6)
@@ -46,7 +47,8 @@ let package = Package(
         .product(name: "OpenSSL", package: "swift-openssl"),
         .product(name: "FirebladeMath", package: "fireblade-math"),
         .product(name: "Resolver", package: "swift-resolver"),
-        .product(name: "Z", package: "swift-package-zlib")
+        .product(name: "Z", package: "swift-package-zlib"),
+        .product(name: "SwiftImage", package: "swift-image")
       ],
       path: "Sources",
       exclude: [

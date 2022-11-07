@@ -34,17 +34,19 @@ extension TexturePalette {
     let animationState = animationState ?? ArrayTextureAnimationState(for: self)
     for (index, texture) in textures.enumerated() {
       let offset = animationState.frame(forTextureAt: index) * bytesPerFrame
-      arrayTexture.replace(
-        region: MTLRegion(
-          origin: MTLOrigin(x: 0, y: 0, z: 0),
-          size: MTLSize(width: width, height: width, depth: 1)
-        ),
-        mipmapLevel: 0,
-        slice: index,
-        withBytes: texture.bytes.withUnsafeBytes({ $0.baseAddress!.advanced(by: offset) }),
-        bytesPerRow: bytesPerRow,
-        bytesPerImage: bytesPerFrame
-      )
+      texture.image.withUnsafeBytes { pointer in
+        arrayTexture.replace(
+          region: MTLRegion(
+            origin: MTLOrigin(x: 0, y: 0, z: 0),
+            size: MTLSize(width: width, height: width, depth: 1)
+          ),
+          mipmapLevel: 0,
+          slice: index,
+          withBytes: pointer.baseAddress!.advanced(by: offset),
+          bytesPerRow: bytesPerRow,
+          bytesPerImage: bytesPerFrame
+        )
+      }
     }
 
     if let commandBuffer = commandQueue.makeCommandBuffer() {
@@ -79,17 +81,19 @@ extension TexturePalette {
     for index in updatedTextures {
       let texture = textures[index]
       let offset = animationState.frame(forTextureAt: index) * bytesPerFrame
-      arrayTexture.replace(
-        region: MTLRegion(
-          origin: MTLOrigin(x: 0, y: 0, z: 0),
-          size: MTLSize(width: width, height: width, depth: 1)
-        ),
-        mipmapLevel: 0,
-        slice: index,
-        withBytes: texture.bytes.withUnsafeBytes({ $0.baseAddress!.advanced(by: offset) }),
-        bytesPerRow: bytesPerRow,
-        bytesPerImage: bytesPerFrame
-      )
+      texture.image.withUnsafeBytes { pointer in
+        arrayTexture.replace(
+          region: MTLRegion(
+            origin: MTLOrigin(x: 0, y: 0, z: 0),
+            size: MTLSize(width: width, height: width, depth: 1)
+          ),
+          mipmapLevel: 0,
+          slice: index,
+          withBytes: pointer.baseAddress!.advanced(by: offset),
+          bytesPerRow: bytesPerRow,
+          bytesPerImage: bytesPerFrame
+        )
+      }
     }
 
     // TODO: only regenerate necessary mipmaps

@@ -148,8 +148,12 @@ public struct Font {
     var minY = Self.defaultCharacterHeight
     for x in 0..<Self.defaultCharacterWidth {
       for y in 0..<Self.defaultCharacterHeight {
-        let pixel = texture.getPixel(atX: x + xIndex * Self.defaultCharacterWidth, y: y + yIndex * Self.defaultCharacterHeight)
-        if pixel.a != 0 {
+        let pixel = texture[
+          x + xIndex * Self.defaultCharacterWidth,
+          y + yIndex * Self.defaultCharacterHeight
+        ]
+
+        if pixel.alpha != 0 {
           if x < minX {
             minX = x
           }
@@ -165,12 +169,14 @@ public struct Font {
         }
       }
     }
+
     if maxX < minX || maxY < minY {
       maxX = 0
       minX = 0
       maxY = 0
       minY = 0
     }
+
     var width = maxX - minX + 1
     let height = maxY - minY + 1
 

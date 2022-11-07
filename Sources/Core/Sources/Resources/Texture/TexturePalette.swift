@@ -1,5 +1,5 @@
 import Foundation
-import CoreGraphics
+import SwiftImage
 
 /// A palette containing textures that can be animated. All of the textures must be the same size or
 /// multiples of 2 of eachother. Textures are assumed to be square.
@@ -75,12 +75,14 @@ public final class TexturePalette { // TODO: Currently a class to avoid copies, 
 
     // Load the images
     var maxWidth = 0 // The width of the widest texture in the palette
-    var images: [(Identifier, CGImage)] = []
+    var images: [(Identifier, Image<RGBA<UInt8>>)] = []
     for file in files where file.pathExtension == "png" {
       let name = file.deletingPathExtension().lastPathComponent
       let identifier = Identifier(namespace: namespace, name: "\(type)/\(name)")
 
-      let image = try CGImage(pngFile: file)
+      guard let image = Image<RGBA<UInt8>>(contentsOfFile: file.path) else {
+        throw ResourcePackError.failedToReadTextureImage(file)
+      }
 
       if image.width > maxWidth {
         maxWidth = image.width

@@ -46,25 +46,27 @@ extension Font {
 
     // Populate texture
     let bytesPerPixel = 4
-    for (index, var texture) in textures.enumerated() {
+    for (index, texture) in textures.enumerated() {
       let bytesPerRow = bytesPerPixel * texture.width
       let byteCount = bytesPerRow * texture.height
 
-      arrayTexture.replace(
-        region: MTLRegion(
-          origin: MTLOrigin(x: 0, y: 0, z: 0),
-          size: MTLSize(
-            width: texture.width,
-            height: texture.height,
-            depth: 1
-          )
-        ),
-        mipmapLevel: 0,
-        slice: index,
-        withBytes: &texture.bytes,
-        bytesPerRow: bytesPerRow,
-        bytesPerImage: byteCount
-      )
+      texture.image.withUnsafeBytes { pointer in
+        arrayTexture.replace(
+          region: MTLRegion(
+            origin: MTLOrigin(x: 0, y: 0, z: 0),
+            size: MTLSize(
+              width: texture.width,
+              height: texture.height,
+              depth: 1
+            )
+          ),
+          mipmapLevel: 0,
+          slice: index,
+          withBytes: pointer.baseAddress!,
+          bytesPerRow: bytesPerRow,
+          bytesPerImage: byteCount
+        )
+      }
     }
 
     return arrayTexture

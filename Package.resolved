@@ -92,6 +92,15 @@
         }
       },
       {
+        "package": "SwiftImage",
+        "repositoryURL": "https://github.com/koher/swift-image.git",
+        "state": {
+          "branch": null,
+          "revision": "c61b8cf4613a7fc80d1c2a84231cef2909e837a1",
+          "version": "0.7.1"
+        }
+      },
+      {
         "package": "SwiftLintPlugin",
         "repositoryURL": "https://github.com/stackotter/swift-lint-plugin",
         "state": {
