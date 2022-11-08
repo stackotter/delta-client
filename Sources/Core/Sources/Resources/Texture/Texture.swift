@@ -175,10 +175,6 @@ public struct Texture {
       }
 
     self.type = type ?? Self.typeOfTexture(self.image)
-
-    if self.type == .translucent {
-      unpremultiply()
-    }
   }
 
   /// Accesses the pixel at the given coordinates in the image and crashes if the coordinates are
@@ -273,12 +269,12 @@ public struct Texture {
         return pixel
       }
 
-      let alpha = Float(pixel.alpha)
+      let alpha = Float(pixel.alpha) / 255
       return BGRA<UInt8>(
         blue: UInt8(Float(pixel.blue) / alpha),
         green: UInt8(Float(pixel.green) / alpha),
         red: UInt8(Float(pixel.red) / alpha),
-        alpha: UInt8(Float(pixel.alpha) / 255)
+        alpha: pixel.alpha
       )
     }
   }
