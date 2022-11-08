@@ -116,7 +116,7 @@ struct GUIElementMesh {
     }
 
     let uniformsBuffer: MTLBuffer
-    var uniforms = GUIElementUniforms(position: Vec2i(position))
+    var uniforms = GUIElementUniforms(position: Vec2f(position))
     if let uniformsBufferTemp = self.uniformsBuffer {
       uniformsBuffer = uniformsBufferTemp
     } else {
