@@ -12,7 +12,7 @@ public enum EncryptionLayerError: LocalizedError {
   case failedToUpdateCipher
   /// Failed to create uninitialized buffer as output buffer.
   case failedToCreateUninitializedBuffer
-  
+
   public var errorDescription: String? {
     switch self {
       case .failedToDecryptPacket(let error):

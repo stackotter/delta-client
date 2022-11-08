@@ -1,11 +1,15 @@
 import Foundation
-import CryptoKit
+import OpenSSL
 
 enum CryptoError: LocalizedError {
   case failedToGenerateSharedSecret
   case invalidDERCertificate
   case failedToEncryptRSA
-  
+  case failedToInitializeSHA1
+  case failedToUpdateSHA1
+  case failedToFinalizeSHA1
+  case failedToParseDERPublicKey
+
   var errorDescription: String? {
     switch self {
       case .failedToGenerateSharedSecret:
@@ -14,35 +18,55 @@ enum CryptoError: LocalizedError {
         return "Invalid DER certificate."
       case .failedToEncryptRSA:
         return "Failed to encrypt RSA."
+      case .failedToInitializeSHA1:
+        return "Failed to initialize SHA1."
+      case .failedToUpdateSHA1:
+        return "Failed to update SHA1 hash."
+      case .failedToFinalizeSHA1:
+        return "Failed to finalize SHA1 hash."
+      case .failedToParseDERPublicKey:
+        return "Failed to parse DER-encoded RSA public key."
     }
   }
 }
 
+// TODO: Implement tests for CryptoUtil, it should be very testable
+
 struct CryptoUtil {
   static func generateSharedSecret(_ length: Int) throws -> [UInt8] {
     var bytes = [UInt8](repeating: 0, count: length)
-    let status = SecRandomCopyBytes(kSecRandomDefault, length, &bytes)
-    if status != errSecSuccess {
+    let status = RAND_bytes(&bytes, Int32(length))
+    if status != 1 {
       throw CryptoError.failedToGenerateSharedSecret
     }
     return bytes
   }
-  
-  static func sha1MojangDigest(_ contents: [Data]) -> String {
-    var sha1 = Insecure.SHA1()
+
+  static func sha1MojangDigest(_ contents: [Data]) throws -> String {
+    var ctx = SHA_CTX()
+    if SHA1_Init(&ctx) != 1 {
+      throw CryptoError.failedToInitializeSHA1
+    }
+
     for data in contents {
-      sha1.update(data: data)
+      if data.withUnsafeBytes({ pointer in
+        return SHA1_Update(&ctx, pointer.baseAddress, contents.count)
+      }) != 1 {
+        throw CryptoError.failedToUpdateSHA1
+      }
     }
-    let digest = sha1.finalize()
-    
-    // do some weird stuff to convert to a signed hex string without doing biginteger stuff
+
+    var digest = [UInt8](repeating: 0, count: Int(SHA_DIGEST_LENGTH))
+    if SHA1_Final(&digest, &ctx) != 1 {
+      throw CryptoError.failedToFinalizeSHA1
+    }
+
+    // Do some weird stuff to convert to a signed hex string without doing biginteger stuff
     var isNegative = false
-    digest.withUnsafeBytes {
-      let firstByte = $0.load(as: UInt8.self)
-      let firstBit = (firstByte & 0x80) >> 7
-      isNegative = firstBit == 1
-    }
-    
+
+    let firstBit = (digest[0] & 0x80) >> 7
+    isNegative = firstBit == 1
+
     let hexStrings: [String] = digest.enumerated().map { index, inByte in
       var byte = inByte
       if isNegative {
@@ -57,35 +81,27 @@ struct CryptoUtil {
     string += hexStrings.joined()
     return string
   }
-  
-  static func publicKeyRSA(derData: Data) throws -> SecKey {
-    let attributes: [CFString: Any] = [
-      kSecAttrKeyClass: kSecAttrKeyClassPublic,
-      kSecAttrKeyType: kSecAttrKeyTypeRSA,
-      kSecAttrKeySizeInBits: 1024
-    ]
 
-    #if os(macOS)
-    let optionalKey = SecKeyCreateFromData(attributes as CFDictionary, derData as NSData, nil)
-    #elseif os(iOS)
-    let optionalKey = SecKeyCreateWithData(derData as CFData, attributes as CFDictionary, nil)
-    #else
-    #error("Unsupported platform, neither SecKeyCreateFromData or SecKeyCreateWithData available")
-    #endif
-
-    guard let key = optionalKey else {
-      throw CryptoError.invalidDERCertificate
+  static func rsaCipher(fromPublicKey publicKeyDERData: Data) throws -> RSA {
+    guard let keyPointer: UnsafeMutablePointer<RSA> = publicKeyDERData.withUnsafeBytes({ (pointer: UnsafeRawBufferPointer) in
+      return pointer.baseAddress?.withMemoryRebound(to: UInt8.self, capacity: 1) { pointer in
+        var pointer: UnsafePointer<UInt8>? = pointer
+        return d2i_RSAPublicKey(nil, &pointer, publicKeyDERData.count)
+      }
+    }) else {
+      throw CryptoError.failedToParseDERPublicKey
     }
-    return key
+
+    return keyPointer.pointee
   }
-  
+
   static func encryptRSA(data: Data, publicKeyDERData: Data) throws -> Data {
-    let key = try publicKeyRSA(derData: publicKeyDERData)
-    
-    var error: Unmanaged<CFError>?
-    guard let encrypted = SecKeyCreateEncryptedData(key, .rsaEncryptionPKCS1, data as CFData, &error) else {
+    var rsa = try rsaCipher(fromPublicKey: publicKeyDERData)
+    var inBytes = [UInt8](data)
+    var outBytes = [UInt8](repeating: 0, count: data.count)
+    if RSA_public_encrypt(Int32(data.count), &inBytes, &outBytes, &rsa, RSA_PKCS1_PADDING) != 1 {
       throw CryptoError.failedToEncryptRSA
     }
-    return encrypted as Data
+    return Data(bytes: outBytes, count: outBytes.count)
   }
 }
