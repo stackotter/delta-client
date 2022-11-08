@@ -21,11 +21,16 @@ extension Image where Pixel == SwiftImage.RGBA<UInt8> {
 
     var pngPixels = image.unpack(as: PNG.RGBA<UInt8>.self)
     let pixelCount = pngPixels.count
-    let pixels = Swift.withUnsafeBytes(of: &pngPixels) { pointer in
-      return Array(UnsafeBufferPointer(
-        start: pointer.baseAddress!.assumingMemoryBound(to: SwiftImage.RGBA<UInt8>.self),
-        count: pixelCount
-      ))
+    let pixels = Array(unsafeUninitializedCapacity: pngPixels.count) { buffer, count in
+      for (i, pixel) in pngPixels.enumerated() {
+        buffer[i] = SwiftImage.RGBA<UInt8>(
+          red: pixel.r,
+          green: pixel.g,
+          blue: pixel.b,
+          alpha: pixel.a
+        )
+      }
+      count = pngPixels.count
     }
     self.init(width: image.size.x, height: image.size.y, pixels: pixels)
   }
