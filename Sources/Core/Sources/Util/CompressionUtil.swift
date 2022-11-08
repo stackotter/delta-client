@@ -31,7 +31,7 @@ struct CompressionUtil {
 
     var length = UInt(decompressedLength)
     let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: decompressedLength)
-    let err = zlib.uncompress(
+    let err = Z.uncompress(
       buffer,
       &length,
       &compressedBytes,
@@ -55,7 +55,7 @@ struct CompressionUtil {
     var uncompressed = bytes // mutable copy
     let compressed = UnsafeMutablePointer<UInt8>.allocate(capacity: uncompressed.count)
     var compressedLength = UInt(uncompressed.count)
-    let err = zlib.compress(
+    let err = Z.compress(
       compressed,
       &compressedLength,
       &uncompressed,

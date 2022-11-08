@@ -1,6 +1,7 @@
 import Atomics
 import Foundation
 import FirebladeECS
+import CoreFoundation
 
 #if canImport(Darwin)
 import Darwin
@@ -81,13 +82,13 @@ public final class TickScheduler {
   /// Should only be called once on a given tick scheduler.
   public func startTickLoop() {
     Thread.detachNewThread {
+      self.mostRecentTick = CFAbsoluteTimeGetCurrent()
+      let nanosecondsPerTick = UInt64(1 / self.ticksPerSecond * 1_000_000_000)
+
+      #if canImport(Darwin)
       autoreleasepool {
         self.configureThread()
 
-        self.mostRecentTick = CFAbsoluteTimeGetCurrent()
-        let nanosecondsPerTick = UInt64(1 / self.ticksPerSecond * Double(NSEC_PER_SEC))
-
-        #if canImport(Darwin)
         var when = mach_absolute_time()
         self.tick()
         while !self.shouldCancel.load(ordering: .relaxed) {
@@ -96,22 +97,37 @@ public final class TickScheduler {
           self.mostRecentTick = CFAbsoluteTimeGetCurrent()
           self.tick()
         }
-        #elseif canImport(Glibc)
-        let delay = timespec(tv_sec: 0, tv_nsec: nanosecondsPerTick)
-        var nextTick = timespec()
-        clock_gettime(CLOCK_MONOTONIC, &nextTick)
-        self.tick()
-        while !self.shouldCancel.load(ordering: .relaxed) {
-          nextTick = timespec_add_safe(nextTick, delay)
-          var time = timespec()
-          clock_gettime(CLOCK_MONOTONIC, &time)
-          let sleepTime = timespec_sub(nextTick, time)
-          nanosleep(sleepTime, nil)
-          self.mostRecentTick = CFAbsoluteTimeGetCurrent()
-          self.tick()
-        }
-        #endif
       }
+
+      #elseif canImport(Glibc)
+      let delay = timespec(tv_sec: 0, tv_nsec: Int(nanosecondsPerTick))
+      var nextTick = timespec()
+      clock_gettime(CLOCK_MONOTONIC, &nextTick)
+      self.tick()
+      while !self.shouldCancel.load(ordering: .relaxed) {
+        // Basically just `nextTick += delay`
+        nextTick.tv_sec += delay.tv_sec
+        nextTick.tv_nsec += delay.tv_nsec
+        nextTick.tv_sec += nextTick.tv_nsec / 1_000_000_000
+        nextTick.tv_nsec = nextTick.tv_nsec % 1_000_000_000
+
+        var time = timespec()
+        clock_gettime(CLOCK_MONOTONIC, &time)
+
+        // Basically just `let sleepTime = nextTick - time`
+        var sleepTime = timespec()
+        sleepTime.tv_sec = time.tv_sec - nextTick.tv_sec
+        sleepTime.tv_nsec = time.tv_nsec - nextTick.tv_nsec
+        if sleepTime.tv_nsec < 0 {
+          sleepTime.tv_nsec += 1_000_000_000
+          sleepTime.tv_sec -= 1
+        }
+
+        nanosleep(&sleepTime, nil)
+        self.mostRecentTick = CFAbsoluteTimeGetCurrent()
+        self.tick()
+      }
+      #endif
     }
   }
 
@@ -138,8 +154,10 @@ public final class TickScheduler {
     tickNumber += 1
   }
 
+  #if canImport(Darwin)
   /// Configures the thread's time constraint policy.
   private func configureThread() {
+    // TODO: Implement for Linux
     mach_timebase_info(&timebaseInfo)
     let clockToAbs = Double(timebaseInfo.denom) / Double(timebaseInfo.numer) * Double(NSEC_PER_SEC)
 
@@ -171,6 +189,7 @@ public final class TickScheduler {
 
     // TODO: properly handle error
   }
+  #endif
 
   #if canImport(Darwin)
   /// Converts nanoseconds to mach absolute time.

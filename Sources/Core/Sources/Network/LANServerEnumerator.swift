@@ -1,6 +1,10 @@
 import Foundation
 import Parsing
 
+#if !canImport(Combine)
+import OpenCombine
+#endif
+
 /// An error that occured during LAN server enumeration.
 enum LANServerEnumeratorError: LocalizedError {
   /// Failed to create multicast receiving socket.

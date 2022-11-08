@@ -1,11 +1,15 @@
 import Foundation
 import OrderedCollections
 
+#if !canImport(Combine)
+import OpenCombine
+#endif
+
 /// Storage and manager for all currently loaded plugins.
 public class PluginEnvironment: ObservableObject {
   /// Used to typecast the builder function in plugin dylibs.
   private typealias BuilderFunction = @convention(c) () -> UnsafeMutableRawPointer
-  
+
   /// The plugins that are currently loaded (keyed by plugin identifier).
   @Published public var plugins: OrderedDictionary<String, LoadedPlugin> = [:]
   /// Plugins that are unloaded.
@@ -42,7 +46,7 @@ public class PluginEnvironment: ObservableObject {
     public let bundle: String
     /// The underlying error that caused this error to be thrown if any.
     public let underlyingError: Error
-    
+
     public var errorDescription: String? {
       """
       \(String(describing: Self.self)).
@@ -53,19 +57,19 @@ public class PluginEnvironment: ObservableObject {
   }
 
   // MARK: Init
-  
+
   /// Creates an empty plugin environment.
   public init() {}
-  
+
   // MARK: Access
-  
+
   /// Returns the specified plugin if it's loaded.
   public func plugin(_ identifier: String) -> Plugin? {
     return plugins[identifier]?.plugin
   }
-  
+
   // MARK: Loading
-  
+
   /// Loads all plugins contained within the specified directory.
   ///
   /// Plugins must be in the top level of the directory and must have the `.deltaplugin` file extension.
@@ -96,20 +100,20 @@ public class PluginEnvironment: ObservableObject {
       }
     }
   }
-  
+
   /// Loads a plugin from its bundle.
   /// - Parameter pluginBundle: The plugin's bundle directory.
   /// - Parameter manifest: The plugin's manifest. If not provided, the manifest is loaded from the bundle.
   public func loadPlugin(from pluginBundle: URL, _ manifest: PluginManifest? = nil) throws {
     let manifest = try manifest ?? loadPluginManifest(pluginBundle)
-    
+
     log.info("Loading plugin '\(manifest.identifier)' ('\(pluginBundle.lastPathComponent)')")
-    
+
     // Check that the plugin isn't already loaded
     guard plugins[manifest.identifier] == nil else {
       throw PluginLoadingError.alreadyLoaded
     }
-    
+
     // Open the plugin's dylib
     guard let pluginLibrary = dlopen(pluginBundle.appendingPathComponent("libPlugin.dylib").path, RTLD_NOW|RTLD_LOCAL) else {
       if let error = dlerror() {
@@ -118,28 +122,28 @@ public class PluginEnvironment: ObservableObject {
         throw PluginLoadingError.failedToOpenDylib(nil)
       }
     }
-    
+
     // Make sure the dylib gets closed when it's not required anymore
     defer {
       dlclose(pluginLibrary)
     }
-    
+
     // Get the plugin's builder function
     guard let pluginBuilderSymbol = dlsym(pluginLibrary, "buildPlugin") else {
       throw PluginLoadingError.missingBuilderFunction
     }
-    
+
     let buildBuilder: BuilderFunction = unsafeBitCast(pluginBuilderSymbol, to: BuilderFunction.self)
     let builder = Unmanaged<PluginBuilder>.fromOpaque(buildBuilder()).takeRetainedValue()
     let plugin = builder.build()
-    
+
     ThreadUtil.runInMain {
       plugins[manifest.identifier] = LoadedPlugin(plugin: plugin, bundle: pluginBundle, manifest: manifest)
       unloadedPlugins.removeValue(forKey: manifest.identifier)
     }
     plugin.finishLoading()
   }
-  
+
   /// Loads a plugin's manifest from its bundle.
   /// - Parameter pluginBundle: The plugin's bundle directory.
   public func loadPluginManifest(_ pluginBundle: URL) throws -> PluginManifest {
@@ -150,17 +154,17 @@ public class PluginEnvironment: ObservableObject {
       throw PluginLoadingError.invalidManifest(error)
     }
   }
-  
+
   /// Reloads all currently loaded plugins.
   /// - Parameter directory: A directory to check for new plugins in (any plugins that are currently unloaded will be skipped).
   public func reloadAll(_ directory: URL? = nil) {
     ThreadUtil.runInMain {
       errors = []
     }
-    
+
     let plugins = self.plugins
     unloadAll(keepRegistered: false)
-    
+
     for (_, plugin) in plugins {
       do {
         try loadPlugin(from: plugin.bundle)
@@ -168,14 +172,14 @@ public class PluginEnvironment: ObservableObject {
         errors.append(PluginError(bundle: plugin.bundle.lastPathComponent, underlyingError: error))
       }
     }
-    
+
     if let directory = directory {
       try? loadPlugins(from: directory)
     }
   }
-  
+
   // MARK: Unloading
-  
+
   /// Unloads all loaded plugins.
   /// - Parameter keepRegistered: If `true`, the client will remember the plugins and keep them in ``unloadedPlugins``.
   ///                             This keeps the plugins unloaded across sessions.
@@ -185,7 +189,7 @@ public class PluginEnvironment: ObservableObject {
       unloadPlugin(identifier, keepRegistered: keepRegistered)
     }
   }
-  
+
   /// Unloads the specified plugin if it's loaded. Does nothing if the plugin does not exist.
   /// - Parameter identifier: The identifier of the plugin to unload.
   /// - Parameter keepRegistered: If `true`, the client will remember the plugin and keep it in ``unloadedPlugins``.
@@ -202,9 +206,9 @@ public class PluginEnvironment: ObservableObject {
       }
     }
   }
-  
+
   // MARK: Event handling
-  
+
   /// Called when the client is about to join a server.
   /// - Parameters:
   ///   - server: The server that the client will connect to.
@@ -214,7 +218,7 @@ public class PluginEnvironment: ObservableObject {
       plugin.plugin.willJoinServer(server, client: client)
     }
   }
-  
+
   /// Sets up the environment to relay all events from an event bus to all loaded plugins.
   /// - Parameter eventBus: The event bus to listen to.
   public func addEventBus(_ eventBus: EventBus) {
@@ -223,7 +227,7 @@ public class PluginEnvironment: ObservableObject {
       self.handle(event: event)
     }
   }
-  
+
   /// Notifies all loaded plugins of an event.
   /// - Parameter event: The event to notify all loaded plugins of.
   public func handle(event: Event) {

@@ -1,4 +1,5 @@
 import Foundation
+import CoreFoundation
 import OrderedCollections
 
 /// A simple stack-based profiler with type safe measurement labels if required.

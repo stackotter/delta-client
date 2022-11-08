@@ -56,6 +56,15 @@
         }
       },
       {
+        "package": "OpenCombine",
+        "repositoryURL": "https://github.com/OpenCombine/OpenCombine.git",
+        "state": {
+          "branch": null,
+          "revision": "9cf67e363738dbab61b47fb5eaed78d3db31e5ee",
+          "version": "0.13.0"
+        }
+      },
+      {
         "package": "SourceKitten",
         "repositoryURL": "https://github.com/jpsim/SourceKitten.git",
         "state": {
@@ -143,6 +152,15 @@
           "branch": null,
           "revision": "1d3aa2f359388b67c16000556830645382cd5c4f",
           "version": "0.8.0"
+        }
+      },
+      {
+        "package": "swift-png",
+        "repositoryURL": "https://github.com/kelvin13/swift-png",
+        "state": {
+          "branch": null,
+          "revision": "075dfb248ae327822635370e9d4f94a5d3fe93b2",
+          "version": "4.0.2"
         }
       },
       {

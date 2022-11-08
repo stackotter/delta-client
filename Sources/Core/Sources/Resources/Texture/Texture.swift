@@ -105,10 +105,7 @@ public struct Texture {
     scaledToWidth targetWidth: Int? = nil,
     checkDimensions: Bool = false
   ) throws {
-    guard let image = Image<RGBA<UInt8>>(contentsOfFile: pngFile.path) else {
-      throw ResourcePackError.failedToReadTextureImage(pngFile)
-    }
-
+    let image = try Image<RGBA<UInt8>>(fromPNGFile: pngFile)
     try self.init(
       image: image,
       type: type,

@@ -1,4 +1,5 @@
 import Foundation
+import CoreFoundation
 
 /// A chat message.
 public struct ChatMessage {

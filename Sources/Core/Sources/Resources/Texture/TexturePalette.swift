@@ -80,10 +80,7 @@ public final class TexturePalette { // TODO: Currently a class to avoid copies, 
       let name = file.deletingPathExtension().lastPathComponent
       let identifier = Identifier(namespace: namespace, name: "\(type)/\(name)")
 
-      guard let image = Image<RGBA<UInt8>>(contentsOfFile: file.path) else {
-        throw ResourcePackError.failedToReadTextureImage(file)
-      }
-
+      let image = try Image<RGBA<UInt8>>(fromPNGFile: file)
       if image.width > maxWidth {
         maxWidth = image.width
       }

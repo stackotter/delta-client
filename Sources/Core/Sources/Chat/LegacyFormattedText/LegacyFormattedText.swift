@@ -91,6 +91,7 @@ public struct LegacyFormattedText {
     return tokens.map(\.string).joined()
   }
 
+  #if canImport(Darwin)
   /// Creates an attributed string representing the formatted text.
   /// - Parameter fontSize: The size of font to use.
   /// - Returns: The formatted string.
@@ -134,4 +135,5 @@ public struct LegacyFormattedText {
 
     return output
   }
+  #endif
 }

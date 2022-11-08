@@ -1,5 +1,7 @@
 enum ColorUtil {}
 
+// TODO: Move ColorUtil to Client target (instead of Core) because it's not cross-platform
+
 #if os(macOS)
 import AppKit
 
@@ -11,13 +13,13 @@ extension NSColor {
   ///   - alpha: the color alpha
   convenience init?(hexString: String, alpha: CGFloat = 1) {
     var chars = Array(hexString.hasPrefix("#") ? hexString.dropFirst() : hexString[...])
-    
+
     switch chars.count {
       case 3: chars = chars.flatMap { [$0, $0] }
       case 6: break
       default: return nil
     }
-    
+
     guard
       let red = Int(String(chars[0..<2]), radix: 16),
       let green = Int(String(chars[2..<4]), radix: 16),
@@ -25,7 +27,7 @@ extension NSColor {
     else {
       return nil
     }
-    
+
     self.init(
       red: CGFloat(red) / 255,
       green: CGFloat(green) / 255,
@@ -51,13 +53,13 @@ extension UIColor {
   ///   - alpha: the color alpha
   convenience init?(hexString: String, alpha: CGFloat = 1) {
     var chars = Array(hexString.hasPrefix("#") ? hexString.dropFirst() : hexString[...])
-    
+
     switch chars.count {
       case 3: chars = chars.flatMap { [$0, $0] }
       case 6: break
       default: return nil
     }
-    
+
     guard
       let red = Int(String(chars[0..<2]), radix: 16),
       let green = Int(String(chars[2..<4]), radix: 16),
@@ -65,7 +67,7 @@ extension UIColor {
     else {
       return nil
     }
-    
+
     self.init(
       red: CGFloat(red) / 255,
       green: CGFloat(green) / 255,
@@ -80,6 +82,4 @@ extension ColorUtil {
     return UIColor(hexString: hexString)
   }
 }
-#else
-#error("Unsupported platform, neither NSColor or UIColor available")
 #endif

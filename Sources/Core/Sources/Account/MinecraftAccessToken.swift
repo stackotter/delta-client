@@ -1,4 +1,5 @@
 import Foundation
+import CoreFoundation
 
 /// An access token attached to an online account. Used for connecting to online-mode servers.
 public struct MinecraftAccessToken: Codable {
@@ -6,16 +7,16 @@ public struct MinecraftAccessToken: Codable {
   public var token: String
   /// The time that the token will expire at in system absolute time. If `nil`, the token won't expire.
   public var expiry: Int?
-  
+
   /// Whether the access token has expired of not. The access token is valid for 10 more seconds after this changes to `true`.
   public var hasExpired: Bool {
     guard let expiry = expiry else {
       return false
     }
-    
+
     return Int(CFAbsoluteTimeGetCurrent()) > expiry - 10
   }
-  
+
   /// Creates a new access token with the given properties.
   /// - Parameters:
   ///   - token: The access token.
@@ -24,7 +25,7 @@ public struct MinecraftAccessToken: Codable {
     self.token = token
     self.expiry = expiry
   }
-  
+
   /// Creates a new access token with the given properties.
   /// - Parameters:
   ///   - token: The access token.

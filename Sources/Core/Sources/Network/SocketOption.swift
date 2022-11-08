@@ -127,7 +127,7 @@ public struct MembershipRequestSocketOption: SettableSocketOption {
   }
 
   public var level: Int32 {
-    IPPROTO_IP
+    Int32(IPPROTO_IP)
   }
 
   public func makeSocketValue(from value: MembershipRequest) -> MembershipRequest {

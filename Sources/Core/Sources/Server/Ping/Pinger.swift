@@ -1,5 +1,9 @@
 import Foundation
 
+#if !canImport(Combine)
+import OpenCombine
+#endif
+
 public class Pinger: ObservableObject {
   @Published public var response: Result<StatusResponse, PingError>?
 

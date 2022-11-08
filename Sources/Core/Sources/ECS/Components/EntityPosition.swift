@@ -1,4 +1,5 @@
 import Foundation
+import CoreFoundation
 import FirebladeECS
 import FirebladeMath
 

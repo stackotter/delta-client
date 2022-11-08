@@ -1,30 +1,31 @@
 import FirebladeECS
 import Foundation
+import CoreFoundation
 
 /// A component storing an entity's rotation in radians.
 public class EntityRotation: Component {
   /// The amount of time taken (in seconds) for ``smoothVector`` to transition from one position to the next.
   public var smoothingAmount: Float
-  
+
   /// Pitch in radians.
   public var pitch: Float
-  
+
   /// Yaw in radians.
   public var yaw: Float
-  
+
   /// The previous pitch.
   public var previousPitch: Float
-  
+
   /// The previous yaw.
   public var previousYaw: Float
-  
+
   /// The smoothly interpolated pitch.
   public var smoothPitch: Float {
     let delta = Float(CFAbsoluteTimeGetCurrent() - lastUpdated)
     let progress = MathUtil.clamp(delta / smoothingAmount, 0, 1)
     return MathUtil.lerpAngle(from: previousPitch, to: pitch, progress: progress)
   }
-  
+
   /// The smoothly interpolated yaw.
   public var smoothYaw: Float {
     let delta = Float(CFAbsoluteTimeGetCurrent() - lastUpdated)
@@ -37,14 +38,14 @@ public class EntityRotation: Component {
     let index = Int((yaw / (.pi / 2)).rounded()) % 4
     return [.south, .west, .north, .east][index]
   }
-  
+
   // MARK: Private properties
-  
+
   /// The time that the rotation was last updated. Used for smoothing. Set by ``save()``.
   private var lastUpdated: CFAbsoluteTime
-  
+
   // MARK: Init
-  
+
   /// Creates an entity's rotation.
   /// - Parameters:
   ///   - pitch: The pitch in radians. -pi/2 is straight up, 0 is straight ahead, and pi/2 is straight down.
@@ -59,9 +60,9 @@ public class EntityRotation: Component {
     self.smoothingAmount = smoothingAmount
     lastUpdated = CFAbsoluteTimeGetCurrent()
   }
-  
+
   // MARK: Public methods
-  
+
   /// Saves the current pitch and yaw as the values to smooth from.
   public func save() {
     previousPitch = pitch

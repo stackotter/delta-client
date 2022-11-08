@@ -1,4 +1,5 @@
 import Foundation
+import CoreFoundation
 
 /// An access token used for refreshing Minecraft access tokens attached to Microsoft accounts.
 public struct MicrosoftAccessToken: Codable {
@@ -8,12 +9,12 @@ public struct MicrosoftAccessToken: Codable {
   public var expiry: Int
   /// The token used to acquire a new access token when it expires.
   public var refreshToken: String
-  
+
   /// Whether the access token has expired or not. Includes a leeway of 10 seconds.
   public var hasExpired: Bool {
     return Int(CFAbsoluteTimeGetCurrent()) > expiry - 10
   }
-  
+
   /// Creates a new access token with the given properties.
   /// - Parameters:
   ///   - token: The access token.
@@ -24,7 +25,7 @@ public struct MicrosoftAccessToken: Codable {
     self.expiry = expiry
     self.refreshToken = refreshToken
   }
-  
+
   /// Creates a new access token with the given properties.
   /// - Parameters:
   ///   - token: The access token.

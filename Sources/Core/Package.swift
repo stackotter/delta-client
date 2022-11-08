@@ -15,7 +15,9 @@ var dependencies: [Package.Dependency] = [
   .package(url: "https://github.com/stackotter/fireblade-math.git", branch: "matrix2x2"),
   .package(url: "https://github.com/seznam/swift-resolver", from: "0.3.0"),
   .package(url: "https://github.com/fourplusone/swift-package-zlib", from: "1.2.11"),
-  .package(url: "https://github.com/koher/swift-image.git", from: "0.7.1")
+  .package(url: "https://github.com/koher/swift-image.git", from: "0.7.1"),
+  .package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.13.0"),
+  .package(url: "https://github.com/kelvin13/swift-png", from: "4.0.2")
 ]
 
 #if swift(>=5.6)
@@ -39,6 +41,7 @@ let package = Package(
         "ZIPFoundation",
         "SwiftProtobuf",
         "FirebladeECS",
+        .product(name: "OpenCombine", package: "OpenCombine", condition: .when(platforms: [.linux])),
         .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "ZippyJSON", package: "ZippyJSON", condition: .when(platforms: [.macOS, .iOS, .tvOS])),
         .product(name: "Parsing", package: "swift-parsing"),
@@ -48,7 +51,8 @@ let package = Package(
         .product(name: "FirebladeMath", package: "fireblade-math"),
         .product(name: "Resolver", package: "swift-resolver"),
         .product(name: "Z", package: "swift-package-zlib"),
-        .product(name: "SwiftImage", package: "swift-image")
+        .product(name: "SwiftImage", package: "swift-image"),
+        .product(name: "PNG", package: "swift-png")
       ],
       path: "Sources",
       exclude: [

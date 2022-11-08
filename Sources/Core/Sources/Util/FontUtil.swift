@@ -1,5 +1,7 @@
 public enum FontUtil {}
 
+// TODO: Move to Delta Client because it's not cross-platform
+
 #if os(macOS)
 import AppKit
 
@@ -8,11 +10,11 @@ extension NSFont {
     let descriptor = fontDescriptor.withSymbolicTraits(traits)
     return NSFont(descriptor: descriptor, size: pointSize)
   }
-  
+
   public func italics() -> NSFont? {
     return withTraits(.italic)
   }
-  
+
   public func bold() -> NSFont? {
     return withTraits(.bold)
   }
@@ -37,11 +39,11 @@ extension UIFont {
     }
     return UIFont(descriptor: descriptor, size: pointSize)
   }
-  
+
   public func italics() -> UIFont? {
     return withTraits(.traitItalic)
   }
-  
+
   public func bold() -> UIFont? {
     return withTraits(.traitBold)
   }
@@ -60,6 +62,4 @@ extension FontUtil {
     return 14
   }
 }
-#else
-#error("Unsupported platform, neither NSFont or UIFont available")
 #endif
