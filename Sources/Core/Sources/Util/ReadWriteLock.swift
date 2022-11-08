@@ -1,4 +1,10 @@
+#if canImport(Darwin)
 import Darwin
+#elseif canImport(Glibc)
+import Glibc
+#else
+#error("Unsupported platform for ReadWriteLock")
+#endif
 
 /// A wrapper around the rwlock C api (`pthread_rwlock_t`).
 ///
