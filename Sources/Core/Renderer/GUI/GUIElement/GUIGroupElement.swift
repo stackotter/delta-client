@@ -32,9 +32,10 @@ struct GUIGroupElement: GUIElement {
       } else {
         elementSize = elementMeshes.size()
       }
-      for (i, var mesh) in elementMeshes.enumerated() {
-        mesh.position &+= constraints.solve(innerSize: elementSize, outerSize: size)
-        elementMeshes[i] = mesh
+
+      let offset = constraints.solve(innerSize: elementSize, outerSize: size)
+      for i in 0..<elementMeshes.count {
+        elementMeshes[i].position &+= offset
       }
 
       meshes.append(contentsOf: elementMeshes)
