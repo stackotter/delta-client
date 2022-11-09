@@ -20,7 +20,7 @@ extension Image where Pixel == SwiftImage.RGBA<UInt8> {
     }
 
     let pngPixels = image.unpack(as: PNG.RGBA<UInt8>.self)
-    let pixels = Array(unsafeUninitializedCapacity: pngPixels.count) { buffer, count in
+    let pixels = Array<SwiftImage.RGBA<UInt8>>(unsafeUninitializedCapacity: pngPixels.count) { buffer, count in
       for (i, pixel) in pngPixels.enumerated() {
         buffer[i] = SwiftImage.RGBA<UInt8>(
           red: pixel.r,
