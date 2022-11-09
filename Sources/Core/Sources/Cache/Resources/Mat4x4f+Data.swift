@@ -17,7 +17,7 @@ extension Mat4x4f {
     }
 
     let vectors: (Mat4x4f.Vector, Mat4x4f.Vector, Mat4x4f.Vector, Mat4x4f.Vector) = data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
-      let pointer = pointer.assumingMemoryBound(to: Mat4x4f.Vector.self)
+      let pointer = pointer.bindMemory(to: Mat4x4f.Vector.self)
       return (
         pointer[0],
         pointer[1],
