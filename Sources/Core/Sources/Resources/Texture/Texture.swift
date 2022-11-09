@@ -157,22 +157,30 @@ public struct Texture {
     let width = scaleFactor * image.width
     let height = scaleFactor * image.height
 
-    // let bitmapInfo = CGImageAlphaInfo.premultipliedFirst.rawValue | CGImageByteOrderInfo.order32Little.rawValue
+    let resized = image.resizedTo(
+      width: width,
+      height: height,
+      interpolatedBy: .nearestNeighbor
+    )
 
-    self.image = image
-      .resizedTo(
-        width: width,
-        height: height,
-        interpolatedBy: .nearestNeighbor
-      )
-      .map { pixel in
-        return BGRA<UInt8>(
-          blue: pixel.blue,
-          green: pixel.green,
-          red: pixel.red,
-          alpha: pixel.alpha
-        )
+    // BGRA is more efficient for Apple GPUs apparently so we convert all textures to that
+    let pixelCount = width * height
+    let pixels = [BGRA<UInt8>](unsafeUninitializedCapacity: pixelCount) { buffer, count in
+      resized.withUnsafeBufferPointer { pixels in
+        for i in 0..<pixelCount {
+          let pixel = pixels[i]
+          buffer[i] = BGRA<UInt8>(
+            blue: pixel.blue,
+            green: pixel.green,
+            red: pixel.red,
+            alpha: pixel.alpha
+          )
+        }
       }
+      count = pixelCount
+    }
+
+    self.image = Image(width: resized.width, height: resized.height, pixels: pixels)
 
     self.type = type ?? Self.typeOfTexture(self.image)
   }
@@ -204,49 +212,58 @@ public struct Texture {
   /// Fixes the colour values of transparent pixels to vaguely represent the colours of the pixels around them to help with mipmapping.
   /// This function is probably really slow, I haven't checked yet. Nope, it doesn't seem to be too slow.
   public mutating func fixTransparentPixels() {
-    for x in 0..<image.width {
-      // For each transparent pixel copy the color values from above
-      for y in 0..<image.height {
-        var pixel = image[x, y]
-        if pixel.alpha == 0 && y != 0 {
-          pixel = image[x, y - 1]
-          pixel.alpha = 0
-          image[x, y] = pixel
-        }
-      }
+    let width = image.width
+    let height = image.height
 
-      // Do the same but the other way
-      for y in 1...height {
-        let y = height - y
-        var pixel = image[x, y]
-        if pixel.alpha == 0 && y != height - 1 {
-          pixel = image[x, y + 1]
-          pixel.alpha = 0
-          image[x, y] = pixel
-        }
-      }
+    func index(_ x: Int, _ y: Int) -> Int {
+      return x + y * width
     }
 
-    // Do the whole thing again but horizontally
-    for y in 0..<height {
-      // For each transparent pixel copy the color values from the left
+    image.withUnsafeMutableBufferPointer { pixels in
       for x in 0..<width {
-        var pixel = image[x, y]
-        if pixel.alpha == 0 && x != 0 {
-          pixel = image[x - 1, y]
-          pixel.alpha = 0
-          image[x, y] = pixel
+        // For each transparent pixel copy the color values from above
+        for y in 0..<height {
+          var pixel = pixels[index(x, y)]
+          if pixel.alpha == 0 && y != 0 {
+            pixel = pixels[index(x, y - 1)]
+            pixel.alpha = 0
+            pixels[index(x, y)] = pixel
+          }
+        }
+
+        // Do the same but the other way
+        for y in 1...height {
+          let y = height - y
+          var pixel = pixels[index(x, y)]
+          if pixel.alpha == 0 && y != height - 1 {
+            pixel = pixels[index(x, y + 1)]
+            pixel.alpha = 0
+            pixels[index(x, y)] = pixel
+          }
         }
       }
 
-      // Do the same but the other way
-      for x in 1...width {
-        let x = width - x
-        var pixel = image[x, y]
-        if pixel.alpha == 0 && x != width - 1 {
-          pixel = image[x + 1, y]
-          pixel.alpha = 0
-          image[x, y] = pixel
+      // Do the whole thing again but horizontally
+      for y in 0..<height {
+        // For each transparent pixel copy the color values from the left
+        for x in 0..<width {
+          var pixel = pixels[index(x, y)]
+          if pixel.alpha == 0 && x != 0 {
+            pixel = pixels[index(x - 1, y)]
+            pixel.alpha = 0
+            pixels[index(x, y)] = pixel
+          }
+        }
+
+        // Do the same but the other way
+        for x in 1...width {
+          let x = width - x
+          var pixel = pixels[index(x, y)]
+          if pixel.alpha == 0 && x != width - 1 {
+            pixel = pixels[index(x + 1, y)]
+            pixel.alpha = 0
+            pixels[index(x, y)] = pixel
+          }
         }
       }
     }
@@ -255,27 +272,11 @@ public struct Texture {
   /// Sets the alpha components of the texutre to a specified value. Alpha value is bound to a range (0...255 inclusive).
   public mutating func setAlpha(_ alpha: UInt8) {
     let clampedAlpha = min(max(alpha, 0), 255)
-    image = image.map { pixel in
-      var pixel = pixel
-      pixel.alpha = clampedAlpha
-      return pixel
-    }
-  }
-
-  /// Divides the rgb components by the alpha component to unpremultiply the alpha.
-  public mutating func unpremultiply() {
-    image = image.map { pixel in
-      if pixel.alpha == 0 {
-        return pixel
+    let pixelCount = image.width * image.height
+    image.withUnsafeMutableBufferPointer { pixels in
+      for i in 0..<pixelCount {
+        pixels[i].alpha = clampedAlpha
       }
-
-      let alpha = Float(pixel.alpha) / 255
-      return BGRA<UInt8>(
-        blue: UInt8(Float(pixel.blue) / alpha),
-        green: UInt8(Float(pixel.green) / alpha),
-        red: UInt8(Float(pixel.red) / alpha),
-        alpha: pixel.alpha
-      )
     }
   }
 
@@ -285,16 +286,20 @@ public struct Texture {
   ) -> TextureType {
     var type = TextureType.opaque
 
-    outer: for x in 0..<image.width {
-      for y in 0..<image.height {
-        let alpha = image[x, y].alpha
+    let width = image.width
+    let height = image.height
+    image.withUnsafeBufferPointer { pixels in
+      outer: for x in 0..<width {
+        for y in 0..<height {
+          let alpha = pixels[x + y * width].alpha
 
-        if alpha == 0 {
-          type = .transparent
-          // We don't break here because it can still be overidden by translucent
-        } else if alpha < 255 {
-          type = .translucent
-          break outer
+          if alpha == 0 {
+            type = .transparent
+            // We don't break here because it can still be overidden by translucent
+          } else if alpha < 255 {
+            type = .translucent
+            break outer
+          }
         }
       }
     }

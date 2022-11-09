@@ -15,7 +15,7 @@ var dependencies: [Package.Dependency] = [
   .package(url: "https://github.com/stackotter/fireblade-math.git", branch: "matrix2x2"),
   .package(url: "https://github.com/seznam/swift-resolver", from: "0.3.0"),
   .package(url: "https://github.com/fourplusone/swift-package-zlib", from: "1.2.11"),
-  .package(url: "https://github.com/koher/swift-image.git", from: "0.7.1"),
+  .package(url: "https://github.com/stackotter/swift-image.git", branch: "master"),
   .package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.13.0"),
   .package(url: "https://github.com/kelvin13/swift-png", from: "4.0.2")
 ]
