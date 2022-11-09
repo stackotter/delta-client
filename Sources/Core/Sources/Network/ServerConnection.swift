@@ -155,9 +155,7 @@ public class ServerConnection {
             if let record = records.first {
               return (record.address, record.port.map(UInt16.init) ?? server.port ?? 25565)
             }
-          } catch {
-            log.warning("Failed to check for SRV records of '\(server.host)'")
-          }
+          } catch {}
         }
 
         // Check for regular records
