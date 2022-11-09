@@ -27,8 +27,10 @@ struct MicrosoftLoginView: View {
         case .login(let response):
           Text(response.message)
           Link("Open in browser", destination: response.verificationURI)
+            .padding(10)
           Button("Copy code") {
             #if os(macOS)
+            NSPasteboard.general.clearContents()
             NSPasteboard.general.setString(response.userCode, forType: .string)
             #elseif os(iOS)
             UIPasteboard.general.string = response.userCode
@@ -38,6 +40,7 @@ struct MicrosoftLoginView: View {
           }
           .buttonStyle(PrimaryButtonStyle())
           .frame(width: 200)
+          .padding(.bottom, 10)
 
           Spacer().frame(height: 16)
 
