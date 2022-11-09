@@ -84,10 +84,8 @@ struct CryptoUtil {
 
   static func rsaCipher(fromPublicKey publicKeyDERData: Data) throws -> RSA {
     guard let keyPointer: UnsafeMutablePointer<RSA> = publicKeyDERData.withUnsafeBytes({ (pointer: UnsafeRawBufferPointer) in
-      let rsa: UnsafeMutablePointer<RSA>? = pointer.baseAddress?.withMemoryRebound(to: UInt8.self, capacity: 1) { pointer in
-        var pointer: UnsafePointer<UInt8>? = pointer
-        return d2i_RSAPublicKey(nil, &pointer, publicKeyDERData.count)
-      }
+      var dataPointer = pointer.bindMemory(to: UInt8.self).baseAddress
+      let rsa: UnsafeMutablePointer<RSA>? = d2i_RSAPublicKey(nil, &dataPointer, publicKeyDERData.count)
       return rsa
     }) else {
       throw CryptoError.failedToParseDERPublicKey
