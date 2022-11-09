@@ -81,9 +81,9 @@ public class LANServerEnumerator: ObservableObject {
   /// on the local network..
   public func createSocket() throws {
     do {
-      let socket = try Socket(.ip6, .udp)
+      let socket = try Socket(.ip4, .udp)
       try socket.setValue(true, for: BoolSocketOption.localAddressReuse)
-      try socket.bind(to: Socket.Address.ip4("0.0.0.0", 4445))
+      try socket.bind(to: Socket.Address.ip4("224.0.2.60", 4445))
 
       try socket.setValue(
         try MembershipRequest(
