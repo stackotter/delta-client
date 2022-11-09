@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-macos:
     runs-on: macOS-11
     steps:
       - name: Checkout
@@ -33,3 +33,16 @@ jobs:
         with:
           name: DeltaClient
           path: ./DeltaClient.zip
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Swift
+        uses: fwal/setup-swift@2040b795e5c453c3a05fcb8316496afc8a74f192
+        with:
+          swift-version: 5.6
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: |
+          cd Sources/Core
+          swift build

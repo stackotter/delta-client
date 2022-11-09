@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  test-macos:
     runs-on: macOS-11
     steps:
       - name: Checkout
@@ -15,6 +15,19 @@ jobs:
         run: sudo xcode-select -switch /Applications/Xcode_13.2.app
       - name: Version
         run: swift --version
+      - name: Test
+        run: |
+          cd Sources/Core
+          swift test
+  test-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Swift
+        uses: fwal/setup-swift@2040b795e5c453c3a05fcb8316496afc8a74f192
+        with:
+          swift-version: 5.6
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Test
         run: |
           cd Sources/Core
