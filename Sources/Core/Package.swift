@@ -19,7 +19,8 @@ var dependencies: [Package.Dependency] = [
   .package(url: "https://github.com/fourplusone/swift-package-zlib", from: "1.2.11"),
   .package(url: "https://github.com/stackotter/swift-image.git", branch: "master"),
   .package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.13.0"),
-  .package(url: "https://github.com/kelvin13/swift-png", from: "4.0.2")
+  .package(url: "https://github.com/kelvin13/swift-png", from: "4.0.2"),
+  .package(url: "https://github.com/stackotter/ASN1Parser", branch: "main")
 ]
 
 #if swift(>=5.6)
@@ -43,6 +44,7 @@ var targets: [Target] = [
       "ZIPFoundation",
       "SwiftProtobuf",
       "FirebladeECS",
+      "ASN1Parser",
       .product(name: "OpenCombine", package: "OpenCombine", condition: .when(platforms: [.linux])),
       .product(name: "Atomics", package: "swift-atomics"),
       .product(name: "ZippyJSON", package: "ZippyJSON", condition: .when(platforms: [.macOS, .iOS, .tvOS])),

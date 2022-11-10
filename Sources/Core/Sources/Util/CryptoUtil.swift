@@ -1,19 +1,22 @@
 import Foundation
 import OpenSSL
+import ASN1Parser
+import BigInt
 
 enum CryptoError: LocalizedError {
-  case failedToGenerateSharedSecret
+  case failedToGenerateRandomBytes
   case invalidDERCertificate
   case failedToEncryptRSA
   case failedToInitializeSHA1
   case failedToUpdateSHA1
   case failedToFinalizeSHA1
-  case failedToParseDERPublicKey
+  case failedToParseDERPublicKey(Error)
+  case plaintextTooLong
 
   var errorDescription: String? {
     switch self {
-      case .failedToGenerateSharedSecret:
-        return "Failed to generate shared secret."
+      case .failedToGenerateRandomBytes:
+        return "Failed to generate random bytes."
       case .invalidDERCertificate:
         return "Invalid DER certificate."
       case .failedToEncryptRSA:
@@ -24,8 +27,13 @@ enum CryptoError: LocalizedError {
         return "Failed to update SHA1 hash."
       case .failedToFinalizeSHA1:
         return "Failed to finalize SHA1 hash."
-      case .failedToParseDERPublicKey:
-        return "Failed to parse DER-encoded RSA public key."
+      case .failedToParseDERPublicKey(let error):
+        return """
+        Failed to parse DER-encoded RSA public key.
+        Reason: \(error)
+        """
+      case .plaintextTooLong:
+        return "The plaintext provided for RSA encryption was too long."
     }
   }
 }
@@ -33,11 +41,11 @@ enum CryptoError: LocalizedError {
 // TODO: Implement tests for CryptoUtil, it should be very testable
 
 struct CryptoUtil {
-  static func generateSharedSecret(_ length: Int) throws -> [UInt8] {
+  static func generateRandomBytes(_ length: Int) throws -> [UInt8] {
     var bytes = [UInt8](repeating: 0, count: length)
     let status = RAND_bytes(&bytes, Int32(length))
     if status != 1 {
-      throw CryptoError.failedToGenerateSharedSecret
+      throw CryptoError.failedToGenerateRandomBytes
     }
     return bytes
   }
@@ -50,7 +58,7 @@ struct CryptoUtil {
 
     for data in contents {
       if data.withUnsafeBytes({ pointer in
-        return SHA1_Update(&ctx, pointer.baseAddress, contents.count)
+        return SHA1_Update(&ctx, pointer.baseAddress, data.count)
       }) != 1 {
         throw CryptoError.failedToUpdateSHA1
       }
@@ -82,25 +90,54 @@ struct CryptoUtil {
     return string
   }
 
-  static func rsaCipher(fromPublicKey publicKeyDERData: Data) throws -> RSA {
-    guard let keyPointer: UnsafeMutablePointer<RSA> = publicKeyDERData.withUnsafeBytes({ (pointer: UnsafeRawBufferPointer) in
-      var dataPointer = pointer.bindMemory(to: UInt8.self).baseAddress
-      let rsa: UnsafeMutablePointer<RSA>? = d2i_RSAPublicKey(nil, &dataPointer, publicKeyDERData.count)
-      return rsa
-    }) else {
-      throw CryptoError.failedToParseDERPublicKey
+  static func generateRSAPadding(_ length: Int) throws -> [UInt8] {
+    // TODO: Make a faster version of this maybe (currently it's technically non-deterministic)
+    var output: [UInt8] = []
+    while output.count < length {
+      output.append(contentsOf: try generateRandomBytes(length - output.count))
+      output = output.filter { $0 != 0 }
     }
-
-    return keyPointer.pointee
+    return output
   }
 
+  /// Implements the padded encryption operation outlined by the
+  /// [PKCS1 RFC document](https://datatracker.ietf.org/doc/html/rfc3447#section-7.2.1).
   static func encryptRSA(data: Data, publicKeyDERData: Data) throws -> Data {
-    var rsa = try rsaCipher(fromPublicKey: publicKeyDERData)
-    var inBytes = [UInt8](data)
-    var outBytes = [UInt8](repeating: 0, count: data.count)
-    if RSA_public_encrypt(Int32(data.count), &inBytes, &outBytes, &rsa, RSA_PKCS1_PADDING) != 1 {
-      throw CryptoError.failedToEncryptRSA
+    let modulus: BigInt
+    let exponent: BigInt
+    do {
+      let der = try DERParser.parse(der: publicKeyDERData)
+      let bitString = try der.asSequence[1].asBitString
+      let sequence = try DERParser.parse(der: Data(bitString.bytes)).asSequence
+
+      modulus = try sequence[0].asInt.value // n
+      exponent = try sequence[1].asInt.value // e
+    } catch {
+      throw CryptoError.failedToParseDERPublicKey(error)
     }
-    return Data(bytes: outBytes, count: outBytes.count)
+
+    // I've implemented RSA (with PKCS1 padding) myself because OpenSSL hates me (it's mutual)
+    let modulusLength = modulus.serialize().count - 1 // k
+    guard data.count <= modulusLength - 11 else {
+      throw CryptoError.plaintextTooLong
+    }
+
+    let plaintext = [UInt8](data)
+    let paddingLength = modulusLength - plaintext.count - 3
+    let padding = try generateRSAPadding(paddingLength)
+    let paddedPlaintextBytes = [0, 2] + padding + [0] + plaintext
+    let paddedPlaintext = BigInt(Data(paddedPlaintextBytes))
+
+    let ciphertext = paddedPlaintext.power(exponent, modulus: modulus)
+    var ciphertextBytes = [UInt8](ciphertext.serialize())
+    if ciphertextBytes[0] == 0 {
+      ciphertextBytes.removeFirst()
+    }
+    if ciphertextBytes.count < modulusLength {
+      let cipherPadding = [UInt8](repeating: 0, count: modulusLength - ciphertextBytes.count)
+      ciphertextBytes = cipherPadding + ciphertextBytes
+    }
+
+    return Data(ciphertextBytes)
   }
 }

@@ -30,7 +30,7 @@ public struct EncryptionRequestPacket: ClientboundPacket, Sendable {
 
   public func handle(for client: Client) throws {
     client.eventBus.dispatch(LoginStartEvent())
-    let sharedSecret = try CryptoUtil.generateSharedSecret(16)
+    let sharedSecret = try CryptoUtil.generateRandomBytes(16)
 
     guard let serverIdData = serverId.data(using: .ascii) else {
       throw ClientboundPacketError.invalidServerId
@@ -54,7 +54,8 @@ public struct EncryptionRequestPacket: ClientboundPacket, Sendable {
           try await MojangAPI.join(
             accessToken: accessToken.token,
             selectedProfile: selectedProfile,
-            serverHash: serverHash)
+            serverHash: serverHash
+          )
         } catch {
           log.error("Join request for online server failed: \(error)")
           client.eventBus.dispatch(PacketHandlingErrorEvent(packetId: Self.id, error: "Join request for online server failed: \(error)"))
