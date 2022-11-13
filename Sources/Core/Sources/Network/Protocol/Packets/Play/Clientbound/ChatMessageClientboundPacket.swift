@@ -16,12 +16,14 @@ public struct ChatMessageClientboundPacket: ClientboundEntityPacket {
   public func handle(for client: Client) throws {
     let locale = client.resourcePack.getDefaultLocale()
 
+    let message = ChatMessage(content: content, sender: sender)
     client.game.mutateGUIState(acquireLock: false) { guiState in
-      let message = ChatMessage(content: content, sender: sender)
       guiState.chat.add(message)
     }
 
-    let message = content.toText(with: locale)
-    log.info(message)
+    client.eventBus.dispatch(ChatMessageReceivedEvent(message))
+
+    let text = content.toText(with: locale)
+    log.info(text)
   }
 }

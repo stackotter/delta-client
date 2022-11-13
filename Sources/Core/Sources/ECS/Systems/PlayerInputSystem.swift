@@ -89,7 +89,7 @@ public struct PlayerInputSystem: System {
       var newCharacters: [Character] = []
       if event.key == .enter {
         if !message.isEmpty {
-          try connection?.sendPacket(ChatMessageServerboundPacket(message: message))
+          try connection?.sendPacket(ChatMessageServerboundPacket(message))
         }
         guiState.messageInput = nil
         return true
