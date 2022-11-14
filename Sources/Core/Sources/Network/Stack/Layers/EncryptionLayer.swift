@@ -6,12 +6,10 @@ public enum EncryptionLayerError: LocalizedError {
   case failedToDecryptPacket(Error)
   /// Failed to encrypt a packet.
   case failedToEncryptPacket(Error)
-  /// Failed to create cipher.
+
   case failedToInitializeCipher
-  /// Failed to update cipher for encryption of decryption.
-  case failedToUpdateCipher
-  /// Failed to create uninitialized buffer as output buffer.
   case failedToCreateUninitializedBuffer
+  case failedToUpdateCipher
 
   public var errorDescription: String? {
     switch self {
@@ -25,12 +23,8 @@ public enum EncryptionLayerError: LocalizedError {
         Failed to encrypt a packet.
         Reason: \(error.localizedDescription)
         """
-      case .failedToInitializeCipher:
-        return "Failed to create cipher."
-      case .failedToUpdateCipher:
-        return "Failed to update cipher for encryption of decryption."
-      case .failedToCreateUninitializedBuffer:
-        return "Failed to create uninitialized buffer as output buffer."
+      default:
+        return ""
     }
   }
 }

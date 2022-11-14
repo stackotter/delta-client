@@ -29,6 +29,15 @@
         }
       },
       {
+        "package": "CryptoSwift",
+        "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift",
+        "state": {
+          "branch": null,
+          "revision": "19b3c3ceed117c5cc883517c4e658548315ba70b",
+          "version": "1.6.0"
+        }
+      },
+      {
         "package": "DeltaLogger",
         "repositoryURL": "https://github.com/stackotter/delta-logger",
         "state": {
@@ -152,15 +161,6 @@
           "branch": null,
           "revision": "6fe203dc33195667ce1759bf0182975e4653ba1c",
           "version": "1.4.4"
-        }
-      },
-      {
-        "package": "swift-openssl",
-        "repositoryURL": "https://github.com/stackotter/swift-openssl",
-        "state": {
-          "branch": null,
-          "revision": "a69c033b96c81766ed4a5d369278242fe1c4d019",
-          "version": "4.0.4"
         }
       },
       {

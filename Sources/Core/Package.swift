@@ -13,14 +13,14 @@ var dependencies: [Package.Dependency] = [
   .package(name: "FirebladeECS", url: "https://github.com/stackotter/ecs.git", .branch("master")),
   .package(name: "ZippyJSON", url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
   .package(url: "https://github.com/pointfreeco/swift-parsing", .exact("0.8.0")),
-  .package(url: "https://github.com/stackotter/swift-openssl", from: "4.0.4"),
   .package(url: "https://github.com/stackotter/fireblade-math.git", branch: "matrix2x2"),
   .package(url: "https://github.com/seznam/swift-resolver", from: "0.3.0"),
   .package(url: "https://github.com/fourplusone/swift-package-zlib", from: "1.2.11"),
   .package(url: "https://github.com/stackotter/swift-image.git", branch: "master"),
   .package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.13.0"),
   .package(url: "https://github.com/kelvin13/swift-png", from: "4.0.2"),
-  .package(url: "https://github.com/stackotter/ASN1Parser", branch: "main")
+  .package(url: "https://github.com/stackotter/ASN1Parser", branch: "main"),
+  .package(url: "https://github.com/krzyzanowskim/CryptoSwift", from: "1.6.0")
 ]
 
 #if swift(>=5.6)
@@ -45,13 +45,13 @@ var targets: [Target] = [
       "SwiftProtobuf",
       "FirebladeECS",
       "ASN1Parser",
+      "CryptoSwift",
       .product(name: "OpenCombine", package: "OpenCombine", condition: .when(platforms: [.linux])),
       .product(name: "Atomics", package: "swift-atomics"),
       .product(name: "ZippyJSON", package: "ZippyJSON", condition: .when(platforms: [.macOS, .iOS, .tvOS])),
       .product(name: "Parsing", package: "swift-parsing"),
       .product(name: "Collections", package: "swift-collections"),
       .product(name: "OrderedCollections", package: "swift-collections"),
-      .product(name: "OpenSSL", package: "swift-openssl"),
       .product(name: "FirebladeMath", package: "fireblade-math"),
       .product(name: "Resolver", package: "swift-resolver"),
       .product(name: "Z", package: "swift-package-zlib"),
