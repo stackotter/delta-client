@@ -35,14 +35,14 @@ struct DeltaClientApp: App {
         if !directoryExists(at: assetsDirectory) {
           loading("Downloading assets")
           try ResourcePack.downloadVanillaAssets(forVersion: Constants.versionString, to: assetsDirectory) { progress, message in
-            loading("Downloading assets (\(progress * 100)%): \(message)")
+            loading(message)
           }
         }
 
         // Load registries
         loading("Loading registries")
         try RegistryStore.populateShared(registryDirectory) { progress, message in
-          loading("Loading registries (\(progress * 100)%): \(message)")
+          loading(message)
         }
 
         // Load resource pack and cache it if necessary
@@ -62,19 +62,15 @@ struct DeltaClientApp: App {
           }
         }
 
-        DispatchQueue.main.sync {
-          self.state.state = .selectServer(resourcePack)
-        }
+        self.state.state = .selectServer(resourcePack)
       } catch {
-        loading("Failed to load: \(error.localizedDescription)")
+        loading("Failed to load: \(error.localizedDescription) (\(error))")
       }
     }
   }
 
   func loading(_ message: String) {
-    DispatchQueue.main.sync {
-      self.state.state = .loading(message: message)
-    }
+    self.state.state = .loading(message: message)
   }
 
   func directoryExists(at url: URL) -> Bool {

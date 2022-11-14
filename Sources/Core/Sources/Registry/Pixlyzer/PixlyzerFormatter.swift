@@ -262,7 +262,7 @@ public enum PixlyzerFormatter {
     convertSnakeCase: Bool,
     useZippyJSON: Bool = true
   ) throws -> T {
-    let contents = try Data(contentsOf: url)
+    let contents = try RequestUtil.data(contentsOf: url)
 
     if useZippyJSON {
       var decoder = CustomJSONDecoder()

@@ -351,7 +351,7 @@ public struct ResourcePack {
     let temporaryDirectory = FileManager.default.temporaryDirectory
     let clientJarTempFile = temporaryDirectory.appendingPathComponent("client.jar")
     do {
-      let data = try Data(contentsOf: clientJarURL)
+      let data = try RequestUtil.data(contentsOf: clientJarURL)
       try data.write(to: clientJarTempFile)
     } catch {
       log.error("Failed to download client jar: \(error)")
@@ -400,7 +400,7 @@ public struct ResourcePack {
 
     let versionsManifest: VersionsManifest
     do {
-      let data = try Data(contentsOf: versionsManifestURL)
+      let data = try RequestUtil.data(contentsOf: versionsManifestURL)
       versionsManifest = try CustomJSONDecoder().decode(VersionsManifest.self, from: data)
     } catch {
       throw ResourcePackError.versionsManifestFailure(error)
@@ -420,7 +420,7 @@ public struct ResourcePack {
 
     let versionManifest: VersionManifest
     do {
-      let data = try Data(contentsOf: versionURL)
+      let data = try RequestUtil.data(contentsOf: versionURL)
       versionManifest = try CustomJSONDecoder().decode(VersionManifest.self, from: data)
     } catch {
       throw ResourcePackError.versionManifestFailure(error)

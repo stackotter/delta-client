@@ -1,4 +1,5 @@
 import Foundation
+import Dispatch
 
 #if os(Linux)
 import FoundationNetworking
@@ -11,6 +12,8 @@ enum RequestError: LocalizedError {
   case invalidURLResponse
   /// The status code of the response was not greater than or equal to 400.
   case unsuccessfulRequest(_ statusCode: Int)
+  /// The stupid URLSession API didn't return data and did't return an error.
+  case unknownError
 
   var errorDescription: String? {
     switch self {
@@ -23,6 +26,8 @@ enum RequestError: LocalizedError {
         The status code of the response was not greater than or equal to 400.
         Response status code: \(statusCode).
         """
+      case .unknownError:
+        return "Unknown request error."
     }
   }
 }
@@ -92,6 +97,30 @@ enum RequestUtil {
         continuation.resume(returning: (httpResponse, data))
       }
       task.resume()
+    }
+  }
+
+  /// Replicates `Data.init(contentsOf:)` except it works correctly on Linux (the Data initializer
+  /// seems to fail somwhat randomly). Only works for internet URLs.
+  static func data(contentsOf url: URL) throws -> Data {
+    let box: Box<Result<Data, Error>?> = Box(nil)
+    let semaphore = DispatchSemaphore(value: 0)
+    let task = URLSession.shared.dataTask(with: url) { data, _, error in
+      if let data = data {
+        box.value = .success(data)
+      } else if let error = error {
+        box.value = .failure(error)
+      }
+      semaphore.signal()
+    }
+    task.resume()
+
+    semaphore.wait()
+
+    if let result = box.value {
+      return try result.get()
+    } else {
+      throw RequestError.unknownError
     }
   }
 

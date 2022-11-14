@@ -7,10 +7,6 @@ public enum EncryptionLayerError: LocalizedError {
   /// Failed to encrypt a packet.
   case failedToEncryptPacket(Error)
 
-  case failedToInitializeCipher
-  case failedToCreateUninitializedBuffer
-  case failedToUpdateCipher
-
   public var errorDescription: String? {
     switch self {
       case .failedToDecryptPacket(let error):
@@ -23,8 +19,6 @@ public enum EncryptionLayerError: LocalizedError {
         Failed to encrypt a packet.
         Reason: \(error.localizedDescription)
         """
-      default:
-        return ""
     }
   }
 }
