@@ -3,6 +3,7 @@ import Dispatch
 
 #if os(Linux)
 import FoundationNetworking
+import SwiftyRequest
 #endif
 
 enum RequestError: LocalizedError {
@@ -12,7 +13,7 @@ enum RequestError: LocalizedError {
   case invalidURLResponse
   /// The status code of the response was not greater than or equal to 400.
   case unsuccessfulRequest(_ statusCode: Int)
-  /// The stupid URLSession API didn't return data and did't return an error.
+  /// Something has gone horribly wrong.
   case unknownError
 
   var errorDescription: String? {
@@ -27,7 +28,7 @@ enum RequestError: LocalizedError {
         Response status code: \(statusCode).
         """
       case .unknownError:
-        return "Unknown request error."
+        return "Something has gone horribly wrong."
     }
   }
 }
@@ -103,17 +104,15 @@ enum RequestUtil {
   /// Replicates `Data.init(contentsOf:)` except it works correctly on Linux (the Data initializer
   /// seems to fail somwhat randomly). Only works for internet URLs.
   static func data(contentsOf url: URL) throws -> Data {
+    #if os(Linux)
     let box: Box<Result<Data, Error>?> = Box(nil)
     let semaphore = DispatchSemaphore(value: 0)
-    let task = URLSession.shared.dataTask(with: url) { data, _, error in
-      if let data = data {
-        box.value = .success(data)
-      } else if let error = error {
-        box.value = .failure(error)
-      }
+
+    let request = RestRequest(method: .get, url: url.absoluteString)
+    request.responseData { result in
+      box.value = result.map(\.body).mapError { $0 }
       semaphore.signal()
     }
-    task.resume()
 
     semaphore.wait()
 
@@ -122,6 +121,9 @@ enum RequestUtil {
     } else {
       throw RequestError.unknownError
     }
+    #else
+    return try Data(contentsOf: url)
+    #endif
   }
 
   static func urlEncode(_ string: String) -> String {
