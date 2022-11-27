@@ -107,9 +107,11 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
     tint: Vec3f
   ) {
     let basePosition = position.relativeToChunkSection.floatVector + Vec3f(0.5, 0, 0.5)
+    var cullingFluid = cullingNeighbours
+    if neighbouringBlocks[.up]?.fluidId != fluid.id { cullingFluid.remove(.up) }
 
     // Iterate through all visible faces
-    for direction in Direction.allDirections where !cullingNeighbours.contains(direction) {
+    for direction in Direction.allDirections where !cullingFluid.contains(direction) {
       let shade = CubeGeometry.shades[direction.rawValue]
       let tint = tint * shade
 
