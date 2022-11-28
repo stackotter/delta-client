@@ -107,6 +107,11 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
     tint: Vec3f
   ) {
     let basePosition = position.relativeToChunkSection.floatVector + Vec3f(0.5, 0, 0.5)
+    // Make cullingNeighbours multable and prevent top face culling when covered by non-liquids
+    var cullingNeighbours = cullingNeighbours
+    if neighbouringBlocks[.up]?.fluidId != fluid.id {
+      cullingNeighbours.remove(.up)
+    }
 
     // Iterate through all visible faces
     for direction in Direction.allDirections where !cullingNeighbours.contains(direction) {
