@@ -200,7 +200,7 @@ struct GameView: View {
   }
 
   var body: some View {
-    Group {
+    VStack {
       switch model.state.current {
         case .connecting:
           connectingView
