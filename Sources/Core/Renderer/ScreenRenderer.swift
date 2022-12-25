@@ -75,6 +75,9 @@ public final class ScreenRenderer: Renderer {
 
     // Update pixel format for depth texture. Match other texture parameters with colour attachment (above).
     nativeRenderTextureDescriptor.pixelFormat = .depth32Float
+    if device.hasUnifiedMemory {
+      nativeRenderTextureDescriptor.storageMode = .private
+    }
     guard let depthTexture = device.makeTexture(descriptor: nativeRenderTextureDescriptor) else {
       throw RenderError.failedToUpdateRenderTargetSize
     }
