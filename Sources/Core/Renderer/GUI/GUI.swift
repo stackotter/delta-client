@@ -309,7 +309,7 @@ struct GUI {
     list.add("\(fpsString) fps\(theoreticalFPSString) (\(cpuTimeString)ms cpu\(gpuTimeString))")
 
     // Dimension
-    list.add("Dimension: \(client.game.world.dimension)")
+    list.add("Dimension: \(client.game.world.dimension.identifier)")
     list.add(spacer: 6)
 
     // Position
