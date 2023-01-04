@@ -140,9 +140,12 @@ public struct PlayerInputSystem: System {
   ///   - inputState: The current input state.
   ///   - rotation: The player's rotation component.
   private func updateRotation(_ inputState: InputState, _ rotation: EntityRotation) {
+    let thumbstickSensitivity: Float = 0.2
+    let stick = inputState.rightThumbstick * thumbstickSensitivity
+
     let mouseDelta = inputState.mouseDelta
-    var yaw = rotation.yaw + mouseDelta.x
-    var pitch = rotation.pitch + mouseDelta.y
+    var yaw = rotation.yaw + mouseDelta.x + stick.x
+    var pitch = rotation.pitch + mouseDelta.y - stick.y
 
     // Clamp pitch between -90 and 90
     pitch = MathUtil.clamp(pitch, -.pi / 2, .pi / 2)

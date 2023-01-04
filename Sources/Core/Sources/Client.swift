@@ -141,4 +141,20 @@ public final class Client: @unchecked Sendable {
   public func moveMouse(_ deltaX: Float, _ deltaY: Float) {
     game.moveMouse(deltaX, deltaY)
   }
+
+  /// Moves the left thumbstick.
+  /// - Parameters:
+  ///   - x: The x position.
+  ///   - y: The y position.
+  public func moveLeftThumbstick(_ x: Float, _ y: Float) {
+    game.moveLeftThumbstick(x, y)
+  }
+
+  /// Moves the right thumbstick.
+  /// - Parameters:
+  ///   - x: The x position.
+  ///   - y: The y position.
+  public func moveRightThumbstick(_ x: Float, _ y: Float) {
+    game.moveRightThumbstick(x, y)
+  }
 }

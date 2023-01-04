@@ -19,6 +19,10 @@ public final class InputState: SingleComponent {
 
   /// The mouse delta since the last call to ``resetMouseDelta()``.
   public private(set) var mouseDelta: Vec2f = Vec2f(0, 0)
+  /// The position of the left thumbstick.
+  public private(set) var leftThumbstick: Vec2f = Vec2f(0, 0)
+  /// The position of the right thumbstick.
+  public private(set) var rightThumbstick: Vec2f = Vec2f(0, 0)
 
   // MARK: Init
 
@@ -56,6 +60,22 @@ public final class InputState: SingleComponent {
   ///   - deltaY: The change in mouse y.
   public func moveMouse(_ deltaX: Float, _ deltaY: Float) {
     mouseDelta += Vec2f(deltaX, deltaY)
+  }
+
+  /// Updates the current position of the left thumbstick.
+  /// - Parameters:
+  ///   - x: The x position.
+  ///   - y: The y position.
+  public func moveLeftThumbstick(_ x: Float, _ y: Float) {
+    leftThumbstick = [x, y]
+  }
+
+  /// Updates the current position of the right thumbstick.
+  /// - Parameters:
+  ///   - x: The x position.
+  ///   - y: The y position.
+  public func moveRightThumbstick(_ x: Float, _ y: Float) {
+    rightThumbstick = [x, y]
   }
 
   /// Resets the mouse delta to 0.

@@ -131,6 +131,26 @@ public struct Game {
     inputState.moveMouse(deltaX, deltaY)
   }
 
+  /// Moves the left thumbstick.
+  /// - Parameters:
+  ///   - x: The x positon.
+  ///   - y: The y position.
+  public func moveLeftThumbstick(_ x: Float, _ y: Float) {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+    inputState.moveLeftThumbstick(x, y)
+  }
+
+  /// Moves the right thumbstick.
+  /// - Parameters:
+  ///   - x: The x positon.
+  ///   - y: The y position.
+  public func moveRightThumbstick(_ x: Float, _ y: Float) {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+    inputState.moveRightThumbstick(x, y)
+  }
+
   /// Gets a copy of the current GUI state.
   /// - Returns: A copy of the current GUI state.
   public func guiState() -> GUIState {

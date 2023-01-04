@@ -47,7 +47,7 @@ public struct PlayerAccelerationSystem: System {
     }
 
     let inputState = nexus.single(InputState.self).component
-    let inputs = inputState.inputs
+    let inputs = Self.addControllerMovement(inputState.inputs, inputState.leftThumbstick)
 
     let forwardsImpulse: Double = inputs.contains(.moveForward) ? 1 : 0
     let backwardsImpulse: Double = inputs.contains(.moveBackward) ? 1 : 0
@@ -108,6 +108,37 @@ public struct PlayerAccelerationSystem: System {
     impulse = (Vec4d(impulse, 1) * rotationMatrix).xyz
 
     acceleration.vector = impulse
+  }
+
+  private static func addControllerMovement(
+    _ inputs: Set<Input>,
+    _ thumbstick: Vec2f
+  ) -> Set<Input> {
+    let x = thumbstick.x
+    let y = thumbstick.y
+
+    guard x != 0 || y != 0 else {
+      return inputs
+    }
+
+    var inputs = inputs
+
+    let angle = FirebladeMath.atan2(y, x)
+    let sector = Int((angle / (.pi / 4)).rounded())
+    if sector >= 1 && sector <= 3 {
+      inputs.insert(.moveForward)
+    }
+    if sector >= -3 && sector <= -1 {
+      inputs.insert(.moveBackward)
+    }
+    if sector == -4 || sector == -3 || sector == 3 || sector == 4 {
+      inputs.insert(.strafeLeft)
+    }
+    if sector >= -1 && sector <= 1 {
+      inputs.insert(.strafeRight)
+    }
+
+    return inputs
   }
 
   private static func calculatePlayerSpeed(
