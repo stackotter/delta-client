@@ -243,7 +243,7 @@ public struct Socket: Sendable, Hashable {
   static func makeInAddr(fromIP4 address: String) throws -> in_addr {
     var addr = in_addr()
     guard address.withCString({ Socket.inet_pton(AF_INET, $0, &addr) }) == 1 else {
-      throw SocketError.actionFailed("convert ipv4 address to in_addr (pton)")
+      throw SocketError.actionFailed("convert ipv4 address to in_addr (pton, address: '\(address)')")
     }
     return addr
   }
