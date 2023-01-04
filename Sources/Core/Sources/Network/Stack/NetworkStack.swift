@@ -82,9 +82,11 @@ public final class NetworkStack {
     var buffer = packet.toBuffer()
     buffer = try compressionLayer.processOutbound(buffer)
     buffer = packetLayer.processOutbound(buffer)
-    buffer = try encryptionLayer.processOutbound(buffer)
-    try socketLayer.send(buffer)
-    log.trace("Packet sent, id=0x\(String(format: "%02x", type(of: packet).id))")
+    try outboundThread.sync {
+      buffer = try encryptionLayer.processOutbound(buffer)
+      try socketLayer.send(buffer)
+      log.trace("Packet sent, id=0x\(String(format: "%02x", type(of: packet).id))")
+    }
   }
 
   /// Connect to the server.

@@ -77,7 +77,7 @@ public class ServerConnection {
 
   // MARK: NetworkStack configuration
 
-  /// Sets the threshold required to compress a packet.
+  /// Sets the threshold required to compress a packet. Be careful, this isn't threadsafe.
   public func setCompression(threshold: Int) {
     networkStack.compressionLayer.compressionThreshold = threshold
   }
