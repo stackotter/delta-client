@@ -34,6 +34,20 @@ extension GUIVertexStorage {
     }
   }
 
+  @discardableResult
+  mutating func withUnsafeMutableVertexBufferPointer<Return>(_ action: (UnsafeMutableBufferPointer<GUIVertex>) -> Return) -> Return {
+    switch self {
+      case .tuples(var tuples):
+        return tuples.withUnsafeMutableBufferPointer { pointer in
+          return pointer.withMemoryRebound(to: GUIVertex.self) { buffer in
+            return action(buffer)
+          }
+        }
+      case .flatArray(var array):
+        return action(UnsafeMutableBufferPointer(start: &array, count: array.count))
+    }
+  }
+
   mutating func mutateEach(_ action: (inout GUIVertex) -> Void) {
     switch self {
       case .tuples(var tuples):

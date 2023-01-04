@@ -129,9 +129,9 @@ struct GUIElementMesh {
     }
 
     // Assume that the buffers are outdated
-    vertices.withUnsafeMutableRawPointer { pointer in
+    vertices.withUnsafeMutableVertexBufferPointer { buffer in
       vertexBuffer.contents().copyMemory(
-        from: pointer,
+        from: buffer.baseAddress!,
         byteCount: vertexCount * MemoryLayout<GUIVertex>.stride
       )
     }
