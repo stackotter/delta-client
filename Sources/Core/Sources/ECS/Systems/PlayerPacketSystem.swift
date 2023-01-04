@@ -12,6 +12,7 @@ public struct PlayerPacketSystem: System {
     var previousHotbarSlot = -1
     var wasSprinting = false
     var wasSneaking = false
+    var wasFlying = false
     var ticksUntilForcedPositionUpdate = 20
     var lastPositionSent = Vec3d.zero
   }
@@ -33,10 +34,11 @@ public struct PlayerPacketSystem: System {
       EntityPosition.self,
       EntityRotation.self,
       EntityOnGround.self,
+      EntityFlying.self,
       ClientPlayerEntity.self
     ).makeIterator()
 
-    guard let (inventory, entityId, sprinting, sneaking, position, rotation, onGround, _) = family.next() else {
+    guard let (inventory, entityId, sprinting, sneaking, position, rotation, onGround, flying, _) = family.next() else {
       log.error("PlayerPacketSystem failed to get player to tick")
       return
     }
@@ -95,6 +97,11 @@ public struct PlayerPacketSystem: System {
       try connection.sendPacket(PlayerMovementPacket(onGround: onGround.onGround))
     } else {
       positionUpdateSent = false
+    }
+
+    if flying.isFlying != state.wasFlying {
+      state.wasFlying = flying.isFlying
+      try connection.sendPacket(PlayerAbilitiesServerboundPacket(flags: flying.isFlying ? [.flying] : []))
     }
 
     if positionUpdateSent {
