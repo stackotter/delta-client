@@ -33,8 +33,9 @@ public struct ChangeGameStatePacket: ClientboundPacket {
   public func handle(for client: Client) throws {
     switch reason {
       case .changeGamemode:
-        guard let gamemode = Gamemode(rawValue: Int8(value)) else {
-          throw ClientboundPacketError.invalidGamemode
+        let rawValue = Int8(value)
+        guard let gamemode = Gamemode(rawValue: rawValue) else {
+          throw ClientboundPacketError.invalidGamemode(rawValue: rawValue)
         }
 
         client.game.accessPlayer { player in

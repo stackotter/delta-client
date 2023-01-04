@@ -25,7 +25,7 @@ public struct JoinGamePacket: ClientboundPacket {
     let gamemodeInt = Int8(try packetReader.readUnsignedByte())
     isHardcore = gamemodeInt & 0x8 == 0x8
     guard let gamemode = Gamemode(rawValue: gamemodeInt) else {
-      throw ClientboundPacketError.invalidGamemode
+      throw ClientboundPacketError.invalidGamemode(rawValue: gamemodeInt)
     }
     self.gamemode = gamemode
     let previousGamemodeInt = try packetReader.readByte()

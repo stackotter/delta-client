@@ -2,20 +2,23 @@ import Foundation
 
 public enum ClientboundPacketError: LocalizedError {
   case invalidDifficulty
-  case invalidGamemode
+  case invalidGamemode(rawValue: Int8)
   case invalidServerId
   case invalidJSONString
   case invalidInventorySlotCount(Int)
   case invalidInventorySlotIndex(Int, windowId: Int)
   case invalidChangeGameStateReasonRawValue(ChangeGameStatePacket.Reason.RawValue)
   case invalidDimension(Identifier)
-  
+
   public var errorDescription: String? {
     switch self {
       case .invalidDifficulty:
         return "Invalid difficulty."
-      case .invalidGamemode:
-        return "Invalid gamemode."
+      case .invalidGamemode(let rawValue):
+        return """
+        Invalid gamemode.
+        Raw value: \(rawValue)
+        """
       case .invalidServerId:
         return "Invalid server Id."
       case .invalidJSONString:

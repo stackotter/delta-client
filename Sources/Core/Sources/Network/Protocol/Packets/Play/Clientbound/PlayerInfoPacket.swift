@@ -2,17 +2,17 @@ import Foundation
 
 public struct PlayerInfoPacket: ClientboundPacket {
   public static let id: Int = 0x33
-  
+
   public var playerActions: [(uuid: UUID, action: PlayerInfoAction)]
-  
+
   public enum PlayerInfoAction {
     case addPlayer(playerInfo: PlayerInfo)
-    case updateGamemode(gamemode: Gamemode)
+    case updateGamemode(gamemode: Gamemode?)
     case updateLatency(ping: Int)
     case updateDisplayName(displayName: ChatComponent?)
     case removePlayer
   }
-  
+
   public init(from packetReader: inout PacketReader) throws {
     let actionId = try packetReader.readVarInt()
     let numPlayers = try packetReader.readVarInt()
@@ -42,12 +42,12 @@ public struct PlayerInfoPacket: ClientboundPacket {
       playerActions.append((uuid: uuid, action: playerAction))
     }
   }
-  
+
   public func handle(for client: Client) throws {
     for playerAction in playerActions {
       let uuid = playerAction.uuid
       let action = playerAction.action
-      
+
       switch action {
         case let .addPlayer(playerInfo: playerInfo):
           client.game.tabList.addPlayer(playerInfo)
@@ -63,13 +63,19 @@ public struct PlayerInfoPacket: ClientboundPacket {
     }
   }
 
-  private static func readGamemode(from packetReader: inout PacketReader) throws -> Gamemode {
-    guard let gamemode = Gamemode(rawValue: Int8(try packetReader.readVarInt())) else {
-      throw ClientboundPacketError.invalidGamemode
-    }    
+  private static func readGamemode(from packetReader: inout PacketReader) throws -> Gamemode? {
+    let rawValue = Int8(try packetReader.readVarInt())
+    guard rawValue != -1 else {
+      return nil
+    }
+
+    guard let gamemode = Gamemode(rawValue: rawValue) else {
+      throw ClientboundPacketError.invalidGamemode(rawValue: rawValue)
+    }
+
     return gamemode
   }
-           
+
   private static func readDisplayName(from packetReader: inout PacketReader) throws -> ChatComponent? {
     var displayName: ChatComponent?
     if try packetReader.readBool() {
