@@ -297,7 +297,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
 
     if frameCount % 60 == 0 {
       longestFrame = cpuElapsed
-      profiler.printSummary()
+      // profiler.printSummary()
       profiler.clear()
     }
   }

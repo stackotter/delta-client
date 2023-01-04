@@ -75,6 +75,8 @@ public struct RespawnPacket: ClientboundPacket {
 
     // TODO: check if the discussion at https://wiki.vg/Protocol#Respawn about respawning to the same dimension applies or if it's just a java edition bug
     client.game.changeWorld(to: world)
+    client.hasFinishedDownloadingTerrain = false
+    client.game.eventBus.dispatch(JoinWorldEvent())
 
     client.game.accessPlayer { player in
       player.gamemode.gamemode = gamemode

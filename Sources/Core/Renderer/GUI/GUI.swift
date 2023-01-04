@@ -204,6 +204,7 @@ struct GUI {
   }
 
   func hotbar(_ group: inout GUIGroupElement, selectedSlot: Int, slots: [Slot]) {
+    print("Hotbar")
     group.add(GUISprite.hotbar, .bottom(1), .center)
     group.add(GUISprite.selectedHotbarSlot, .bottom(0), .left(20 * selectedSlot))
 

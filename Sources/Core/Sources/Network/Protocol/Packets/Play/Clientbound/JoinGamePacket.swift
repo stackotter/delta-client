@@ -1,5 +1,6 @@
 import Foundation
 
+// TODO: Rename to JoinWorldPacket? That would make more sense to me
 public struct JoinGamePacket: ClientboundPacket {
   public static let id: Int = 0x25
 
@@ -76,7 +77,7 @@ public struct JoinGamePacket: ClientboundPacket {
     client.game.respawnScreenEnabled = enableRespawnScreen
     client.game.isHardcore = isHardcore
     client.game.dimensions = dimensions
-  
+
     var oldPlayerEntityId: Int?
     client.game.accessPlayer { player in
       player.playerAttributes.previousGamemode = previousGamemode
@@ -94,6 +95,7 @@ public struct JoinGamePacket: ClientboundPacket {
     // TODO: the event below should be dispatched from game instead of here. Event dispatching should
     //       be done in a way that makes it clear what will and what won't emit an event.
     client.eventBus.dispatch(JoinWorldEvent())
+    client.hasFinishedDownloadingTerrain = false
 
     try client.connection?.sendPacket(ClientSettingsPacket(client.configuration))
 
