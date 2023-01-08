@@ -29,6 +29,9 @@ final class ClientInputDelegate: InputDelegate {
     // Function to run intially to lookout for any MFI or Remote Controllers in the area
     NotificationCenter.default.addObserver(self, selector: #selector(connectControllers), name: NSNotification.Name.GCControllerDidConnect, object: nil)
     NotificationCenter.default.addObserver(self, selector: #selector(disconnectControllers), name: NSNotification.Name.GCControllerDidDisconnect, object: nil)
+
+    // Check for controllers that might already be connected.
+    connectControllers()
   }
 
   @objc func disconnectControllers() {
@@ -37,7 +40,6 @@ final class ClientInputDelegate: InputDelegate {
   }
 
   @objc func connectControllers() {
-    print("controller: \(GCController.controllers())")
     for controller in GCController.controllers() {
       if let pad = controller.extendedGamepad {
         pad.valueChangedHandler = { [weak self] pad, element in
