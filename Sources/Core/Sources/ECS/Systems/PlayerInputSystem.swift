@@ -78,7 +78,7 @@ public final class PlayerInputSystem: System {
             }
 
             if event.input == .place && gamemode.gamemode != .spectator {
-              guard let (position, cursor, face, distance) = game.targetedBlock() else {
+              guard let (position, cursor, face, distance) = game.targetedBlock(acquireLock: false) else {
                 break
               }
 
@@ -92,7 +92,7 @@ public final class PlayerInputSystem: System {
                 insideBlock: distance < 0
               ))
             } else if event.input == .destroy && attributes.canInstantBreak {
-              guard let (position, _, face, _) = game.targetedBlock() else {
+              guard let (position, _, face, _) = game.targetedBlock(acquireLock: false) else {
                 break
               }
 

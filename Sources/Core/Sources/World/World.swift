@@ -152,6 +152,34 @@ public class World {
     }
   }
 
+  /// Sets the blocks at the specified positions to the specified block ids.
+  ///
+  /// Using this method is preferred over just using setBlockId within a for loop because it
+  /// processes lighting updates in batch which is much more efficient.
+  /// - Parameters:
+  ///   - chunk: The position of the chunk that all of the updates are in.
+  ///   - updates: The positions and new states of affected blocks.
+  public func processMultiBlockChange(
+    at chunkPosition: ChunkPosition,
+    _ updates: [(position: BlockPosition, state: Int)]
+  ) {
+    if let chunk = chunk(at: chunkPosition) {
+      for (position, state) in updates {
+        chunk.setBlockId(at: position.relativeToChunk, to: state)
+      }
+      lightingEngine.updateLighting(at: updates.map(\.position), in: self)
+
+      for (position, state) in updates {
+        eventBus.dispatch(Event.SetBlock(
+          position: position,
+          newState: state
+        ))
+      }
+    } else {
+      log.warning("Cannot handle multi-block change in non-existent chunk, chunkPosition=\(chunkPosition)")
+    }
+  }
+
   /// Get the block id of the block at the specified position.
   /// - Parameters:
   ///   - position: A block position in world coordinates.

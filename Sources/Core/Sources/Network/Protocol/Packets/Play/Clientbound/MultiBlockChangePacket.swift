@@ -41,20 +41,18 @@ public struct MultiBlockChangePacket: ClientboundPacket {
   }
 
   public func handle(for client: Client) throws {
-    for record in records {
-      var absolutePosition = BlockPosition(
-        x: Int(record.x),
-        y: Int(record.y),
-        z: Int(record.z)
-      )
-      absolutePosition.x += chunkPosition.chunkX * Chunk.width
-      absolutePosition.z += chunkPosition.chunkZ * Chunk.depth
-
-      // TODO: Group multiblock changes
-      client.game.world.setBlockId(
-        at: absolutePosition,
-        to: record.blockId
+    print("Multi block change")
+    let updates = records.map { record in
+      return (
+        position: BlockPosition(
+          x: Int(record.x) + chunkPosition.chunkX * Chunk.width,
+          y: Int(record.y),
+          z: Int(record.z) + chunkPosition.chunkZ * Chunk.depth
+        ),
+        state: record.blockId
       )
     }
+
+    client.game.world.processMultiBlockChange(at: chunkPosition, updates)
   }
 }
