@@ -77,9 +77,6 @@ public struct PlayerInputSystem: System {
               }
 
               let block = world.getBlock(at: position)
-              guard block.className == "DoorBlock", block.identifier != Identifier(name: "iron_door") else {
-                break
-              }
 
               try connection?.sendPacket(PlayerBlockPlacementPacket(
                 hand: .mainHand,
