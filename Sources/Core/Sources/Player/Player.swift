@@ -78,7 +78,7 @@ public struct Player {
 
   /// Adds the player to a game.
   /// - Parameter nexus: The game to create the player's entity in.
-  public mutating func add(to game: inout Game) {
+  public mutating func add(to game: Game) {
     game.createEntity(id: -1) {
       LivingEntity() // Mark it as a living entity
       PlayerEntity() // Mark it as a player

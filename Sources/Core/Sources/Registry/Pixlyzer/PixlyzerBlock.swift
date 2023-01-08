@@ -16,7 +16,7 @@ public struct PixlyzerBlock: Decodable {
   public var offsetType: Block.Offset?
   public var tint: Block.ComputedTintType?
   public var states: [Int: PixlyzerBlockState]
-  
+
   enum CodingKeys: String, CodingKey {
     case id
     case explosionResistance = "explosion_resistance"
@@ -56,7 +56,7 @@ extension Block {
     } else {
       fluidState = nil
     }
-    
+
     let tint: Tint?
     if let computedTint = pixlyzerBlock.tint {
       tint = .computed(computedTint)
@@ -65,7 +65,7 @@ extension Block {
     } else {
       tint = nil
     }
-    
+
     let material = Block.PhysicalMaterial(
       explosionResistance: pixlyzerBlock.explosionResistance,
       slipperiness: pixlyzerBlock.friction ?? 0.6,
@@ -73,13 +73,13 @@ extension Block {
       jumpVelocityMultiplier: pixlyzerBlock.jumpVelocityMultiplier ?? 1,
       requiresTool: pixlyzerState.requiresTool,
       hardness: pixlyzerState.hardness)
-    
+
     let lightMaterial = Block.LightMaterial(
       isTranslucent: pixlyzerState.translucent ?? false,
       opacity: pixlyzerState.lightBlock ?? 1,
       luminance: pixlyzerState.luminance ?? 0,
       isConditionallyTransparent: pixlyzerState.hasSidedTransparency ?? false)
-    
+
     let soundMaterial = Block.SoundMaterial(
       volume: pixlyzerState.soundVolume,
       pitch: pixlyzerState.soundPitch,
@@ -88,17 +88,17 @@ extension Block {
       placeSound: pixlyzerState.placeSound,
       hitSound: pixlyzerState.hitSound,
       fallSound: pixlyzerState.fallSound)
-    
+
     var collisionShape = CompoundBoundingBox()
     if let collisionShapeId = pixlyzerState.collisionShape {
       collisionShape.addAABBs(shapes[collisionShapeId])
     }
-    
+
     var outlineShape = CompoundBoundingBox()
     if let outlineShapeId = pixlyzerState.outlineShape {
       outlineShape.addAABBs(shapes[outlineShapeId])
     }
-    
+
     let shape = Block.Shape(
       isDynamic: pixlyzerBlock.hasDynamicShape ?? false,
       isLarge: pixlyzerState.largeCollisionShape ?? false,
@@ -106,7 +106,7 @@ extension Block {
       outlineShape: outlineShape,
       occlusionShape: pixlyzerState.occlusionShape?.items,
       isSturdy: pixlyzerState.isSturdy?.items)
-    
+
     self.init(
       id: stateId,
       vanillaParentBlockId: pixlyzerBlock.id,

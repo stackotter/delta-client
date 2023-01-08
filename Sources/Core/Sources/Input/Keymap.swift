@@ -4,6 +4,8 @@ import Foundation
 public struct Keymap: Codable {
   /// The client's default key bindings.
   public static var `default` = Keymap(bindings: [
+    .attack: .leftMouseButton,
+    .place: .rightMouseButton,
     .moveForward: .w,
     .moveBackward: .s,
     .strafeLeft: .a,

@@ -11,12 +11,12 @@ import Glibc
 #error("Unsupported platform for TickScheduler")
 #endif
 
-/// A highly accurate timer used to implement the ticking mechanism.
-public final class TickScheduler {
+/// A highly accurate timer used to implement the ticking mechanism. Completely threadsafe.
+public final class TickScheduler: @unchecked Sendable {
   // MARK: Public properties
 
   /// The number of ticks to perform per second.
-  public var ticksPerSecond: Double = 20
+  public let ticksPerSecond: Double
   /// Incremented each tick.
   public private(set) var tickNumber = 0
   /// The time that the most recent tick began, in unix epoch seconds.
@@ -33,7 +33,7 @@ public final class TickScheduler {
   /// The lock to acquire before accessing ``world``.
   private var worldLock: ReadWriteLock
   /// The systems to run each tick. In execution order.
-  public var systems: [System] = []
+  private var systems: [System] = []
   /// If `true`, the tick loop will be stopped at the start of the next tick.
   private var shouldCancel = ManagedAtomic<Bool>(false)
 
@@ -48,10 +48,11 @@ public final class TickScheduler {
   /// - Parameters:
   ///   - nexus: The nexus to run updates on.
   ///   - nexusLock: The lock to acquire for each tick to keep the nexus threadsafe.
-  public init(_ nexus: Nexus, nexusLock: ReadWriteLock, _ world: World) {
+  public init(_ nexus: Nexus, nexusLock: ReadWriteLock, _ world: World, ticksPerSecond: Double = 20) {
     self.nexus = nexus
     self.nexusLock = nexusLock
     self.world = world
+    self.ticksPerSecond = ticksPerSecond
     worldLock = ReadWriteLock()
   }
 
@@ -71,6 +72,9 @@ public final class TickScheduler {
 
   /// Adds a system to the tick loop. Systems are run in the order they are added.
   public func addSystem(_ system: System) {
+    // Acquiring the nexus lock ensures that a tick is not currently in progress
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
     systems.append(system)
   }
 
@@ -135,6 +139,8 @@ public final class TickScheduler {
 
   /// Run all of the systems.
   private func tick() {
+    // The nexus lock must be held for the duration of the tick because it is used elsewhere as a
+    // lock to prevent thread safety issue related to modifying dependencies of the tick method.
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
 

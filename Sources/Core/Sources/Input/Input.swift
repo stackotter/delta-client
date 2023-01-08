@@ -2,6 +2,9 @@ import Foundation
 
 /// A player input. On a laptop or desktop, this represents a key press.
 public enum Input: Codable, CaseIterable {
+  case attack
+  case place
+
   case moveForward
   case moveBackward
   case strafeLeft
@@ -27,6 +30,10 @@ public enum Input: Codable, CaseIterable {
 
   public var humanReadableLabel: String {
     switch self {
+      case .attack:
+        return "Attack/mine"
+      case .place:
+        return "Use item/place block"
       case .moveForward:
         return "Move forward"
       case .moveBackward:

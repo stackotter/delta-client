@@ -13,7 +13,7 @@ extension Block {
     public var requiresTool: Bool
     /// How hard the block is to break.
     public var hardness: Double
-    
+
     public init(
       explosionResistance: Double,
       slipperiness: Double,
@@ -29,7 +29,7 @@ extension Block {
       self.requiresTool = requiresTool
       self.hardness = hardness
     }
-    
+
     /// Used for missing blocks.
     public static var `default` = PhysicalMaterial.init(
       explosionResistance: 0,

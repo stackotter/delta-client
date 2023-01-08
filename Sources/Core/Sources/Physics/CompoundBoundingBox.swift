@@ -50,11 +50,13 @@ public struct CompoundBoundingBox: Codable {
   /// Gets the distance at which a given ray intersects with this shape from the ray's origin.
   /// - Parameter ray: The ray to get the intersection distance of.
   /// - Returns: The intersection distance.
-  public func intersectionDistance(with ray: Ray) -> Float? {
-    let distances = aabbs.compactMap { aabb in
-      return aabb.intersectionDistance(with: ray)
+  public func intersectionDistanceAndFace(with ray: Ray) -> (distance: Float, face: Direction)? {
+    let intersections = aabbs.compactMap { aabb in
+      return aabb.intersectionDistanceAndFace(with: ray)
     }
-    return distances.min()
+    return intersections.min { a, b in
+      return a.distance < b.distance
+    }
   }
 
   /// Offsets the shape by a specified amount.

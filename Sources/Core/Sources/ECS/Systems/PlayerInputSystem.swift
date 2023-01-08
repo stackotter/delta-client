@@ -6,10 +6,12 @@ import AppKit // Used to access clipboard
 
 public struct PlayerInputSystem: System {
   var connection: ServerConnection?
+  var game: Game
   var eventBus: EventBus
 
-  public init(_ connection: ServerConnection?, _ eventBus: EventBus) {
+  public init(_ connection: ServerConnection?, _ game: Game, _ eventBus: EventBus) {
     self.connection = connection
+    self.game = game
     self.eventBus = eventBus
   }
 
@@ -62,6 +64,33 @@ public struct PlayerInputSystem: System {
             inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 1) % 9
           case .previousSlot:
             inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 8) % 9
+          case .attack, .place:
+            if inventory.hotbar[inventory.selectedHotbarSlot].stack != nil {
+              try connection?.sendPacket(UseItemPacket(hand: .mainHand))
+            } else {
+              try connection?.sendPacket(AnimationServerboundPacket(hand: .mainHand))
+            }
+
+            if event.input == .place {
+              guard let (position, cursor, face, distance) = game.targetedBlock() else {
+                break
+              }
+
+              let block = world.getBlock(at: position)
+              guard block.className == "DoorBlock", block.identifier != Identifier(name: "iron_door") else {
+                break
+              }
+
+              try connection?.sendPacket(PlayerBlockPlacementPacket(
+                hand: .mainHand,
+                location: position,
+                face: face,
+                cursorPositionX: cursor.x,
+                cursorPositionY: cursor.y,
+                cursorPositionZ: cursor.z,
+                insideBlock: distance < 0
+              ))
+            }
           default:
             break
         }

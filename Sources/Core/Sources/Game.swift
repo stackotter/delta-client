@@ -2,13 +2,13 @@ import Foundation
 import FirebladeECS
 
 /// Stores all of the game data such as entities, chunks and chat messages.
-public struct Game {
+public final class Game: @unchecked Sendable {
   // MARK: Public properties
 
   /// The scheduler that runs the game's systems every 20th of a second.
-  public var tickScheduler: TickScheduler
+  public private(set) var tickScheduler: TickScheduler
   /// The event bus for emitting events.
-  public var eventBus: EventBus
+  public private(set) var eventBus: EventBus
   /// Maps Vanilla entity Ids to identifiers of entities in the ``Nexus``.
   private var entityIdToEntityIdentifier: [Int: EntityIdentifier] = [:]
 
@@ -69,7 +69,7 @@ public struct Game {
 
     player = Player()
     var player = player
-    player.add(to: &self)
+    player.add(to: self)
     self.player = player
 
     // The order of the systems may seem weird, but it has to be this way so that the physics
@@ -77,7 +77,7 @@ public struct Game {
     tickScheduler.addSystem(PlayerFrictionSystem())
     tickScheduler.addSystem(PlayerGravitySystem())
     tickScheduler.addSystem(PlayerSmoothingSystem())
-    tickScheduler.addSystem(PlayerInputSystem(connection, eventBus))
+    tickScheduler.addSystem(PlayerInputSystem(connection, self, eventBus))
     tickScheduler.addSystem(PlayerFlightSystem())
     tickScheduler.addSystem(PlayerAccelerationSystem())
     tickScheduler.addSystem(PlayerJumpSystem())
@@ -94,7 +94,6 @@ public struct Game {
     }
 
     // Start tick loop
-    tickScheduler.ticksPerSecond = 20
     tickScheduler.startTickLoop()
   }
 
@@ -179,7 +178,7 @@ public struct Game {
   ///   - id: The id to create the entity with.
   ///   - builder: The builder that creates the components for the entity.
   ///   - action: An action to perform on the entity once it's created.
-  public mutating func createEntity(
+  public func createEntity(
     id: Int,
     @ComponentsBuilder using builder: () -> [Component],
     action: ((Entity) -> Void)? = nil
@@ -240,7 +239,7 @@ public struct Game {
   /// - Parameters:
   ///   - id: The current id of the entity.
   ///   - newId: The new id for the entity.
-  public mutating func updateEntityId(_ id: Int, to newId: Int) {
+  public func updateEntityId(_ id: Int, to newId: Int) {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
 
@@ -262,10 +261,12 @@ public struct Game {
   }
 
   /// Allows thread safe access to the player.
-  /// - Parameter action: The action to perform on the player.
-  public func accessPlayer(action: (Player) -> Void) {
-    nexusLock.acquireWriteLock()
-    defer { nexusLock.unlock() }
+  /// - Parameters:
+  ///   - acquireLock: If `false`, no lock is acquired. Only use if you know what you're doing.
+  ///   - action: The action to perform on the player.
+  public func accessPlayer(acquireLock: Bool = true, action: (Player) -> Void) {
+    if acquireLock { nexusLock.acquireWriteLock() }
+    defer { if acquireLock { nexusLock.unlock() } }
 
     action(player)
   }
@@ -274,7 +275,7 @@ public struct Game {
   /// - Parameters:
   ///   - packet: The packet to queue.
   ///   - client: The client to handle the packet for.
-  public mutating func handleDuringTick(_ packet: ClientboundEntityPacket, client: Client) {
+  public func handleDuringTick(_ packet: ClientboundEntityPacket, client: Client) {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
 
@@ -285,23 +286,33 @@ public struct Game {
   // MARK: Player
 
   /// Gets the position of the block currently targeted by the player.
-  public func targetedBlock() -> BlockPosition? {
-    var ray: Ray = Ray(origin: .zero, direction: .zero)
+  /// - Parameters:
+  ///   - acquireLock: If `false`, no locks are acquired. Only use if you know what you're doing.
+  public func targetedBlock(acquireLock: Bool = true) -> (block: BlockPosition, cursor: Vec3f, face: Direction, distance: Float)? {
+    if acquireLock {
+      nexusLock.acquireWriteLock()
+    }
 
-    accessPlayer { player in
-      ray = player.ray
+    let ray = player.ray
+
+    if acquireLock {
+      nexusLock.unlock()
     }
 
     for position in VoxelRay(along: ray, count: 7) {
-      let block = world.getBlock(at: position)
+      let block = world.getBlock(at: position, acquireLock: acquireLock)
       let boundingBox = block.shape.outlineShape.offset(by: position.doubleVector)
-      if let distance = boundingBox.intersectionDistance(with: ray) {
-        // TODO: Don't hardcode reach
+      if let (distance, face) = boundingBox.intersectionDistanceAndFace(with: ray) {
+        // TODO: Don't hardcode reach here
         guard distance <= 6 else {
           break
         }
 
-        return position
+        var cursor = ray.direction * distance + ray.origin
+        cursor.x = cursor.x.truncatingRemainder(dividingBy: 1)
+        cursor.y = cursor.y.truncatingRemainder(dividingBy: 1)
+        cursor.z = cursor.z.truncatingRemainder(dividingBy: 1)
+        return (position, cursor, face, distance)
       }
     }
 
@@ -322,14 +333,14 @@ public struct Game {
 
   /// Sets the game's event bus. This is a method in case the game ever needs to listen to the event
   /// bus, this way means that the listener can be added again.
-  public mutating func setEventBus(_ eventBus: EventBus) {
+  public func setEventBus(_ eventBus: EventBus) {
     self.eventBus = eventBus
     self.world.eventBus = eventBus
   }
 
   /// Changes to a new world.
   /// - Parameter world: The new world.
-  public mutating func changeWorld(to newWorld: World) {
+  public func changeWorld(to newWorld: World) {
     // TODO: Make this threadsafe
     self.world = newWorld
     tickScheduler.setWorld(to: newWorld)

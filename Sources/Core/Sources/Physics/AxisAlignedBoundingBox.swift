@@ -180,15 +180,17 @@ public struct AxisAlignedBoundingBox: Codable {
   /// - Parameter ray: The ray to check for intersection with.
   /// - Returns: `true` if the ray intersects with the AABB.
   public func intersects(with ray: Ray) -> Bool {
-    return intersectionDistance(with: ray) != nil
+    return intersectionDistanceAndFace(with: ray) != nil
   }
 
   /// Checks whether the AABB overlaps with a given ray.
   /// - Parameter ray: The ray to check for intersection with.
   /// - Returns: `true` if the ray intersects the AABB.
-  public func intersectionDistance(with ray: Ray) -> Float? {
+  public func intersectionDistanceAndFace(with ray: Ray) -> (distance: Float, face: Direction)? {
     // Algorithm explanation: https://tavianator.com/2011/ray_box.html
     // As outlined in that post, this algorithm can be optimized if required
+
+    var entryAxis: Axis? = nil
 
     let inverseDirection = 1 / ray.direction
     let minimum = Vec3f(minimum)
@@ -200,18 +202,44 @@ public struct AxisAlignedBoundingBox: Codable {
     var tmin = min(tx1, tx2)
     var tmax = max(tx1, tx2)
 
+    if !tmin.isNaN {
+      entryAxis = .x
+    }
+
+    var prevtmin = tmin
     let ty1 = (minimum.y - ray.origin.y) * inverseDirection.y
     let ty2 = (maximum.y - ray.origin.y) * inverseDirection.y
 
     tmin = max(tmin, min(ty1, ty2))
     tmax = min(tmax, max(ty1, ty2))
 
+    if tmin != prevtmin {
+      entryAxis = .y
+    }
+
+    prevtmin = tmin
     let tz1 = (minimum.z - ray.origin.z) * inverseDirection.z
     let tz2 = (maximum.z - ray.origin.z) * inverseDirection.z
 
     tmin = max(tmin, min(tz1, tz2))
     tmax = min(tmax, max(tz1, tz2))
 
-    return tmax >= tmin ? tmin : nil
+    if tmin != prevtmin {
+      entryAxis = .z
+    }
+
+    guard let axis = entryAxis, tmax >= tmin else {
+      return nil
+    }
+
+    // The entry face is opposite to the direction the player is looking along the entry axis
+    let face: Direction
+    if ray.direction.component(along: axis) > 0 {
+      face = axis.negativeDirection
+    } else {
+      face = axis.positiveDirection
+    }
+
+    return (tmin, face)
   }
 }
