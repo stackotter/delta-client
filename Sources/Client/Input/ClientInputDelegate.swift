@@ -61,19 +61,24 @@ final class ClientInputDelegate: InputDelegate {
               pad.rightThumbstick.xAxis.value,
               pad.rightThumbstick.yAxis.value
             )
-          } else if element == pad.leftTrigger && pad.leftTrigger.isPressed {
+          } else if element == pad.leftTrigger {
+            // Extra checks are required because triggers are analog which causes many more updates
+            // than just one when pressed and one when released.
             if pad.leftTrigger.isPressed && !self.leftTriggerIsPressed {
               self.client.press(.place)
               self.leftTriggerIsPressed = true
-            } else if self.leftTriggerIsPressed {
+            } else if !pad.leftTrigger.isPressed && self.leftTriggerIsPressed {
               self.client.release(.place)
               self.leftTriggerIsPressed = false
             }
-          } else if element == pad.rightTrigger && pad.rightTrigger.isPressed {
+          } else if element == pad.rightTrigger {
+            // Extra checks are required because triggers are analog which causes many more updates
+            // than just one when pressed and one when released.
             if pad.rightTrigger.isPressed && !self.rightTriggerIsPressed {
               self.client.press(.destroy)
+              print("pressed right trigger")
               self.rightTriggerIsPressed = true
-            } else if self.rightTriggerIsPressed {
+            } else if !pad.rightTrigger.isPressed && self.rightTriggerIsPressed {
               self.client.release(.destroy)
               self.rightTriggerIsPressed = false
             }
