@@ -4,9 +4,9 @@ import FirebladeECS
 import AppKit // Used to access clipboard
 #endif
 
-public struct PlayerInputSystem: System {
+public final class PlayerInputSystem: System {
   var connection: ServerConnection?
-  var game: Game
+  weak var game: Game?
   var eventBus: EventBus
 
   public init(_ connection: ServerConnection?, _ game: Game, _ eventBus: EventBus) {
@@ -16,6 +16,10 @@ public struct PlayerInputSystem: System {
   }
 
   public func update(_ nexus: Nexus, _ world: World) throws {
+    guard let game = game else {
+      return
+    }
+
     var family = nexus.family(
       requiresAll: EntityRotation.self,
       PlayerInventory.self,
@@ -66,7 +70,7 @@ public struct PlayerInputSystem: System {
             inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 1) % 9
           case .previousSlot:
             inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 8) % 9
-          case .attack, .place:
+          case .place, .destroy:
             if inventory.hotbar[inventory.selectedHotbarSlot].stack != nil {
               try connection?.sendPacket(UseItemPacket(hand: .mainHand))
             } else {
@@ -78,8 +82,6 @@ public struct PlayerInputSystem: System {
                 break
               }
 
-              let block = world.getBlock(at: position)
-
               try connection?.sendPacket(PlayerBlockPlacementPacket(
                 hand: .mainHand,
                 location: position,
@@ -89,7 +91,7 @@ public struct PlayerInputSystem: System {
                 cursorPositionZ: cursor.z,
                 insideBlock: distance < 0
               ))
-            } else if event.input == .attack && attributes.canInstantBreak {
+            } else if event.input == .destroy && attributes.canInstantBreak {
               guard let (position, _, face, _) = game.targetedBlock() else {
                 break
               }

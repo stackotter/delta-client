@@ -17,6 +17,9 @@ final class ClientInputDelegate: InputDelegate {
   @Binding var cursorCaptured: Bool
   var pressedKeys: Set<Key> = []
 
+  var leftTriggerIsPressed = false
+  var rightTriggerIsPressed = false
+
   init(for client: Client) {
     self.client = client
 
@@ -37,10 +40,7 @@ final class ClientInputDelegate: InputDelegate {
     print("controller: \(GCController.controllers())")
     for controller in GCController.controllers() {
       if let pad = controller.extendedGamepad {
-        print("found controller with pad")
         pad.valueChangedHandler = { [weak self] pad, element in
-          print("event")
-          print(element)
           guard let self = self else { return }
 
           if element == pad.buttonA {
@@ -50,17 +50,43 @@ final class ClientInputDelegate: InputDelegate {
               self.client.release(.jump)
             }
           } else if element == pad.leftThumbstick {
-            print("move left")
             self.client.moveLeftThumbstick(
               pad.leftThumbstick.xAxis.value,
               pad.leftThumbstick.yAxis.value
             )
           } else if element == pad.rightThumbstick {
-            print("move right")
             self.client.moveRightThumbstick(
               pad.rightThumbstick.xAxis.value,
               pad.rightThumbstick.yAxis.value
             )
+          } else if element == pad.leftTrigger && pad.leftTrigger.isPressed {
+            if pad.leftTrigger.isPressed && !self.leftTriggerIsPressed {
+              self.client.press(.place)
+              self.leftTriggerIsPressed = true
+            } else if self.leftTriggerIsPressed {
+              self.client.release(.place)
+              self.leftTriggerIsPressed = false
+            }
+          } else if element == pad.rightTrigger && pad.rightTrigger.isPressed {
+            if pad.rightTrigger.isPressed && !self.rightTriggerIsPressed {
+              self.client.press(.destroy)
+              self.rightTriggerIsPressed = true
+            } else if self.rightTriggerIsPressed {
+              self.client.release(.destroy)
+              self.rightTriggerIsPressed = false
+            }
+          } else if element == pad.leftShoulder && pad.leftShoulder.isPressed {
+            if pad.leftShoulder.isPressed {
+              self.client.press(.previousSlot)
+            } else {
+              self.client.release(.previousSlot)
+            }
+          } else if element == pad.rightShoulder {
+            if pad.rightShoulder.isPressed {
+              self.client.press(.nextSlot)
+            } else {
+              self.client.release(.nextSlot)
+            }
           }
         }
       }
