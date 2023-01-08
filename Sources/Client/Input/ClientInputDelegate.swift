@@ -76,7 +76,6 @@ final class ClientInputDelegate: InputDelegate {
             // than just one when pressed and one when released.
             if pad.rightTrigger.isPressed && !self.rightTriggerIsPressed {
               self.client.press(.destroy)
-              print("pressed right trigger")
               self.rightTriggerIsPressed = true
             } else if !pad.rightTrigger.isPressed && self.rightTriggerIsPressed {
               self.client.release(.destroy)
@@ -93,6 +92,33 @@ final class ClientInputDelegate: InputDelegate {
               self.client.press(.nextSlot)
             } else {
               self.client.release(.nextSlot)
+            }
+          } else if element == pad.leftThumbstickButton {
+            if pad.leftThumbstickButton?.isPressed == true {
+              self.client.press(.sprint)
+            } else {
+              self.client.release(.sprint)
+            }
+          } else if element == pad.buttonB {
+            if pad.buttonB.isPressed {
+              self.client.press(.sneak)
+            } else {
+              self.client.release(.sneak)
+            }
+          } else if element == pad.dpad {
+            // TODO: This approach doesn't work if a dpad button is pressed while another one is
+            // already pressed because the one that's already pressed will get triggered a second
+            // time. May need to debounce
+            if pad.dpad.up.isPressed {
+              self.client.press(.changePerspective)
+            } else {
+              self.client.release(.changePerspective)
+            }
+
+            if pad.dpad.right.isPressed {
+              self.client.press(.openChat)
+            } else {
+              self.client.release(.openChat)
             }
           }
         }
