@@ -20,10 +20,12 @@ public struct PlayerInputSystem: System {
       requiresAll: EntityRotation.self,
       PlayerInventory.self,
       EntityCamera.self,
+      PlayerGamemode.self,
+      PlayerAttributes.self,
       ClientPlayerEntity.self
     ).makeIterator()
 
-    guard let (rotation, inventory, camera, _) = family.next() else {
+    guard let (rotation, inventory, camera, gamemode, attributes, _) = family.next() else {
       log.error("PlayerInputSystem failed to get player to tick")
       return
     }
@@ -71,7 +73,7 @@ public struct PlayerInputSystem: System {
               try connection?.sendPacket(AnimationServerboundPacket(hand: .mainHand))
             }
 
-            if event.input == .place {
+            if event.input == .place && gamemode.gamemode != .spectator {
               guard let (position, cursor, face, distance) = game.targetedBlock() else {
                 break
               }
@@ -86,6 +88,16 @@ public struct PlayerInputSystem: System {
                 cursorPositionY: cursor.y,
                 cursorPositionZ: cursor.z,
                 insideBlock: distance < 0
+              ))
+            } else if event.input == .attack && attributes.canInstantBreak {
+              guard let (position, _, face, _) = game.targetedBlock() else {
+                break
+              }
+
+              try connection?.sendPacket(PlayerDiggingPacket(
+                status: .startedDigging,
+                location: position,
+                face: face
               ))
             }
           default:

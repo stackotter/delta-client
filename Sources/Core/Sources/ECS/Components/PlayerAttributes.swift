@@ -18,7 +18,7 @@ public class PlayerAttributes: Component {
   public var isHardcore: Bool
   /// The player's previous gamemode. Likely used in vanilla by the F3+F4 gamemode switcher.
   public var previousGamemode: Gamemode?
-  
+
   /// Creates the player's attributes.
   /// - Parameters:
   ///   - spawnPosition: Defaults to (0, 0, 0).
