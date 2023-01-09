@@ -1,10 +1,10 @@
 import Foundation
 
-public struct MultiBlockChangePacket: ClientboundPacket {
+public struct MultiBlockUpdatePacket: ClientboundPacket {
   public static let id: Int = 0x0f
 
   /// A block change in a multi-block change.
-  public struct BlockChangeRecord {
+  public struct BlockUpdateRecord {
     /// X coordinate of the block change relative to the chunk.
     public var x: UInt8
     /// Y coordinate of the block change relative to the chunk.
@@ -19,7 +19,7 @@ public struct MultiBlockChangePacket: ClientboundPacket {
   /// The position of the chunk the multi-block change occured in.
   public var chunkPosition: ChunkPosition
   /// The block changes.
-  public var records: [BlockChangeRecord]
+  public var records: [BlockUpdateRecord]
 
   public init(from packetReader: inout PacketReader) throws {
     let chunkX = try packetReader.readInt()
@@ -35,24 +35,23 @@ public struct MultiBlockChangePacket: ClientboundPacket {
       let z = value & 0x0f
       let y = try packetReader.readUnsignedByte()
       let blockId = try packetReader.readVarInt()
-      let record = BlockChangeRecord(x: x, y: y, z: z, blockId: blockId)
+      let record = BlockUpdateRecord(x: x, y: y, z: z, blockId: blockId)
       records.append(record)
     }
   }
 
   public func handle(for client: Client) throws {
-    print("Multi block change")
     let updates = records.map { record in
-      return (
+      return World.Event.SingleBlockUpdate(
         position: BlockPosition(
           x: Int(record.x) + chunkPosition.chunkX * Chunk.width,
           y: Int(record.y),
           z: Int(record.z) + chunkPosition.chunkZ * Chunk.depth
         ),
-        state: record.blockId
+        newState: record.blockId
       )
     }
 
-    client.game.world.processMultiBlockChange(at: chunkPosition, updates)
+    client.game.world.processMultiBlockUpdate(updates, inChunkAt: chunkPosition)
   }
 }

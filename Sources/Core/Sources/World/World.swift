@@ -143,7 +143,7 @@ public class World {
       chunk.setBlockId(at: position.relativeToChunk, to: state)
       lightingEngine.updateLighting(at: position, in: self)
 
-      eventBus.dispatch(Event.SetBlock(
+      eventBus.dispatch(Event.SingleBlockUpdate(
         position: position,
         newState: state
       ))
@@ -157,27 +157,36 @@ public class World {
   /// Using this method is preferred over just using setBlockId within a for loop because it
   /// processes lighting updates in batch which is much more efficient.
   /// - Parameters:
-  ///   - chunk: The position of the chunk that all of the updates are in.
   ///   - updates: The positions and new states of affected blocks.
-  public func processMultiBlockChange(
-    at chunkPosition: ChunkPosition,
-    _ updates: [(position: BlockPosition, state: Int)]
+  ///   - chunkPosition: If all updates occur within a single chunk provide this parameter for more
+  ///     efficient batching.
+  public func processMultiBlockUpdate(
+    _ updates: [Event.SingleBlockUpdate],
+    inChunkAt chunkPosition: ChunkPosition? = nil
   ) {
-    if let chunk = chunk(at: chunkPosition) {
-      for (position, state) in updates {
-        chunk.setBlockId(at: position.relativeToChunk, to: state)
-      }
-      lightingEngine.updateLighting(at: updates.map(\.position), in: self)
-
-      for (position, state) in updates {
-        eventBus.dispatch(Event.SetBlock(
-          position: position,
-          newState: state
-        ))
+    if let chunkPosition = chunkPosition {
+      if let chunk = chunk(at: chunkPosition) {
+        for update in updates {
+          chunk.setBlockId(at: update.position.relativeToChunk, to: update.newState)
+        }
+        lightingEngine.updateLighting(at: updates.map(\.position), in: self)
+      } else {
+        log.warning("Cannot handle multi-block change in non-existent chunk, chunkPosition=\(chunkPosition)")
+        return
       }
     } else {
-      log.warning("Cannot handle multi-block change in non-existent chunk, chunkPosition=\(chunkPosition)")
+      for update in updates {
+        if let chunk = chunk(at: update.position.chunk) {
+          chunk.setBlockId(at: update.position.relativeToChunk, to: update.newState)
+        } else {
+          log.warning("Cannot handle multi-block change in non-existent chunk, chunkPosition=\(update.position.chunk)")
+          return
+        }
+      }
+      lightingEngine.updateLighting(at: updates.map(\.position), in: self)
     }
+
+    eventBus.dispatch(Event.MultiBlockUpdate(updates: updates))
   }
 
   /// Get the block id of the block at the specified position.

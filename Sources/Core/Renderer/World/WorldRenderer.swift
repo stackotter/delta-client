@@ -285,8 +285,18 @@ public final class WorldRenderer: Renderer {
           worldMesh.updateSection(at: position)
         }
 
-      case let event as World.Event.SetBlock:
+      case let event as World.Event.SingleBlockUpdate:
         let affectedSections = worldMesh.sectionsAffectedBySectionUpdate(at: event.position.chunkSection)
+
+        for position in affectedSections {
+          worldMesh.updateSection(at: position)
+        }
+
+      case let event as World.Event.MultiBlockUpdate:
+        var affectedSections: Set<ChunkSectionPosition> = []
+        for update in event.updates {
+          affectedSections.formUnion(worldMesh.sectionsAffectedBySectionUpdate(at: update.position.chunkSection))
+        }
 
         for position in affectedSections {
           worldMesh.updateSection(at: position)

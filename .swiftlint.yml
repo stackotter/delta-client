@@ -19,7 +19,7 @@ line_length: 160
 type_body_length: 300
 function_parameter_count: 8
 file_length: 500
-function_body_length: 50 
+function_body_length: 50
 cyclomatic_complexity:
   error: 40 # TODO: reset once more occurrences are fixed
 

@@ -51,7 +51,7 @@ public struct PacketRegistry {
       BossBarPacket.self,
       ServerDifficultyPacket.self,
       ChatMessageClientboundPacket.self,
-      MultiBlockChangePacket.self,
+      MultiBlockUpdatePacket.self,
       TabCompleteClientboundPacket.self,
       DeclareCommandsPacket.self,
       WindowConfirmationClientboundPacket.self,
