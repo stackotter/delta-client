@@ -47,6 +47,15 @@
         }
       },
       {
+        "package": "SourceKitten",
+        "repositoryURL": "https://github.com/jpsim/SourceKitten.git",
+        "state": {
+          "branch": null,
+          "revision": "817dfa6f2e09b0476f3a6c9dbc035991f02f0241",
+          "version": "0.32.0"
+        }
+      },
+      {
         "package": "swift-argument-parser",
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
@@ -71,6 +80,15 @@
           "branch": null,
           "revision": "9d8719c8bebdc79740b6969c912ac706eb721d7a",
           "version": "0.0.7"
+        }
+      },
+      {
+        "package": "SwiftLintPlugin",
+        "repositoryURL": "https://github.com/stackotter/swift-lint-plugin",
+        "state": {
+          "branch": null,
+          "revision": "f887b764032df4862fc56d831ca1ed0e2e8cdf86",
+          "version": "0.1.1"
         }
       },
       {
@@ -128,12 +146,48 @@
         }
       },
       {
+        "package": "SwiftLint",
+        "repositoryURL": "https://github.com/stackotter/SwiftLint",
+        "state": {
+          "branch": null,
+          "revision": "b4a54f32df66008d30f0229446831cb823576c42",
+          "version": "0.46.2"
+        }
+      },
+      {
+        "package": "SwiftyTextTable",
+        "repositoryURL": "https://github.com/scottrhoyt/SwiftyTextTable.git",
+        "state": {
+          "branch": null,
+          "revision": "c6df6cf533d120716bff38f8ff9885e1ce2a4ac3",
+          "version": "0.9.0"
+        }
+      },
+      {
         "package": "SwordRPC",
         "repositoryURL": "https://github.com/stackotter/SwordRPC",
         "state": {
           "branch": null,
           "revision": "3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed",
           "version": null
+        }
+      },
+      {
+        "package": "SWXMLHash",
+        "repositoryURL": "https://github.com/drmohundro/SWXMLHash.git",
+        "state": {
+          "branch": null,
+          "revision": "6469881a3f30417c5bb02404ea4b69207f297592",
+          "version": "6.0.0"
+        }
+      },
+      {
+        "package": "Yams",
+        "repositoryURL": "https://github.com/jpsim/Yams.git",
+        "state": {
+          "branch": null,
+          "revision": "9ff1cc9327586db4e0c8f46f064b6a82ec1566fa",
+          "version": "4.0.6"
         }
       },
       {
