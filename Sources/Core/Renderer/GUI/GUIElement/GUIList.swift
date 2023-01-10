@@ -4,13 +4,18 @@ struct GUIList: GUIElement {
   var items: [GUIListItem]
   var rowHeight: Int
   var renderRowBackground: Bool
-  var rightAlign: Bool
+  var alignment: Alignment
+  
+  enum Alignment {
+    case left
+    case right
+  }
 
-  init(rowHeight: Int, renderRowBackground: Bool = false, rightAlign: Bool = false) {
+  init(rowHeight: Int, renderRowBackground: Bool = false, alignment: Alignment = .left) {
     items = []
     self.rowHeight = rowHeight
     self.renderRowBackground = renderRowBackground
-    self.rightAlign = rightAlign
+    self.alignment = alignment
   }
 
   mutating func add(_ element: GUIElement) {
@@ -45,10 +50,10 @@ struct GUIList: GUIElement {
     for (item, var elementMeshes) in processedItems {
       switch item {
         case .element:
-          switch rightAlign {
-            case false:
+          switch alignment {
+            case .left:
               elementMeshes.translate(amount: [0, currentY])
-            case true:
+            case .right:
               elementMeshes.translate(amount: [maxWidth - elementMeshes.size().x, currentY])
           }
 
@@ -58,10 +63,10 @@ struct GUIList: GUIElement {
               size: bgSize,
               color: [0x50, 0x50, 0x50, 0x90] / 255
             ).meshes(context: context)
-            switch rightAlign {
-              case false:
+            switch alignment {
+              case .left:
                 bg.translate(amount: [-1, currentY - 1])
-              case true:
+              case .right:
                 bg.translate(amount: [maxWidth - elementMeshes.size().x - 1, currentY - 1])
             }
             

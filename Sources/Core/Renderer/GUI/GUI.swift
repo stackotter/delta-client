@@ -3,7 +3,6 @@ import Collections
 import FirebladeMath
 import DeltaCore
 import SwiftCPUDetect
-import SwiftSystemValues
 
 struct GUI {
   /// The number of seconds until messages should be hidden from the regular GUI.
@@ -22,6 +21,11 @@ struct GUI {
   var savedRenderStatistics = RenderStatistics(gpuCountersEnabled: false)
   var context: GUIContext
   var profiler: Profiler<RenderingMeasurement>
+  // system info for debug menu
+  static let cpuName = HWInfo.CPU.name()
+  static let cpuArch = CpuArchitecture.current()?.rawValue
+  static let totalMem = (HWInfo.ramAmount() ?? 0) / (1024 * 1024 * 1024)
+  static let gpuInfo = GPUDetection.mainMetalGPU()?.infoString()
 
   init(
     client: Client,
@@ -88,9 +92,7 @@ struct GUI {
     }
 
     // Show inventory
-    if state.showInventory {
-      break
-    }
+    // if state.showInventory {}
 
     // Chat
     chat(&root, state.chat.messages, state.messageInput, screenSize)
@@ -352,16 +354,11 @@ struct GUI {
     // Gamemode
     leftList.add("Gamemode: \(gamemode.string)")
 
-    var rightList = GUIList(rowHeight: 9, renderRowBackground: true, rightAlign: true)
+    var rightList = GUIList(rowHeight: 9, renderRowBackground: true, alignment: .right)
 
-    var cpuName = HWInfo.CPU.name()
-    var cpuArch = CpuArchitecture.current()?.rawValue
-    var totalMem = (HWInfo.ramAmmount() ?? 0) / (1024 * 1024 * 1024)
-    var gpuInfo = GPUDetection.mainMetalGPU()?.infoString()
-
-    rightList.add("CPU: \(cpuName ?? "unknown") (\(cpuArch ?? "n/a"))")
-    rightList.add("Total mem: \(totalMem)GB")
-    rightList.add("GPU: \(gpuInfo ?? "unknown")")
+    rightList.add("CPU: \(Self.cpuName ?? "unknown") (\(Self.cpuArch ?? "n/a"))")
+    rightList.add("Total mem: \(Self.totalMem)GB")
+    rightList.add("GPU: \(Self.gpuInfo ?? "unknown")")
 
     root.add(leftList, .position(2, 3))
     root.add(rightList, .top(3), .right(2))
