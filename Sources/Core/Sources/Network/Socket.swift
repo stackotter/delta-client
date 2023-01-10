@@ -347,9 +347,7 @@ public struct Socket: Sendable, Hashable {
     var value = value
     return withUnsafePointer(to: &value) { pointer in
       return pointer.withMemoryRebound(to: B.self, capacity: 1) { pointer in
-        let val = pointer.pointee
-        var x = val
-        return val
+        return pointer.pointee
       }
     }
   }
