@@ -288,7 +288,7 @@ public final class Game: @unchecked Sendable {
   /// Gets the position of the block currently targeted by the player.
   /// - Parameters:
   ///   - acquireLock: If `false`, no locks are acquired. Only use if you know what you're doing.
-  public func targetedBlock(acquireLock: Bool = true) -> (block: BlockPosition, cursor: Vec3f, face: Direction, distance: Float)? {
+  public func targetedBlock(acquireLock: Bool = true) -> (block: BlockPosition, cursor: Vec3f, face: Direction, distance: Float)? { // swiftlint:disable:this large_tuple
     if acquireLock {
       nexusLock.acquireWriteLock()
     }
