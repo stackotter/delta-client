@@ -93,9 +93,9 @@ public struct PacketWriter {
   }
 
   public mutating func writePosition(_ position: BlockPosition) {
-    var val: UInt64 = (UInt64(position.x) & 0x3FFFFFF) << 38
-    val |= (UInt64(position.z) & 0x3FFFFFF) << 12
-    val |= UInt64(position.y) & 0xFFF
+    var val: UInt64 = (UInt64(bitPattern: Int64(position.x)) & 0x3FFFFFF) << 38
+    val |= (UInt64(bitPattern: Int64(position.z)) & 0x3FFFFFF) << 12
+    val |= UInt64(bitPattern: Int64(position.y)) & 0xFFF
     buffer.writeLong(val, endianness: .big)
   }
 
