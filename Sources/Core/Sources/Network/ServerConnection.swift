@@ -153,6 +153,7 @@ public class ServerConnection {
           do {
             let records = try resolver.discover("_minecraft._tcp.\(server.host)")
             if let record = records.first {
+              print("srv", record)
               return (record.address, record.port.map(UInt16.init) ?? server.port ?? 25565)
             }
           } catch {}
@@ -161,6 +162,7 @@ public class ServerConnection {
         // Check for regular records
 	      let records = try resolver.resolve(server.host)
         if let record = records.first {
+          print("reg", record)
           return (record.address, server.port ?? 25565)
         }
 
