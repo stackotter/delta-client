@@ -5,7 +5,7 @@ struct GUIList: GUIElement {
   var rowHeight: Int
   var renderRowBackground: Bool
   var alignment: Alignment
-  
+
   enum Alignment {
     case left
     case right
@@ -29,51 +29,54 @@ struct GUIList: GUIElement {
   func meshes(context: GUIContext) throws -> [GUIElementMesh] {
     var bgMeshes: [GUIElementMesh] = []
     var meshes: [GUIElementMesh] = []
-    var processedItems: [(GUIListItem, [GUIElementMesh])] = []
+    var processedItems: [(item: GUIListItem, meshes: [GUIElementMesh], size: Vec2i)] = []
     var maxWidth = 0
     var currentY = 0
 
-    // block to find longest row of elements 
+    // Find the widest element while caching meshes to prevent generating them twice
     for item in items {
       switch item {
         case .element(let element):
           let elementMeshes = try element.meshes(context: context)
-          processedItems.append((item, elementMeshes))
-          if elementMeshes.size().x > maxWidth {
-            maxWidth = elementMeshes.size().x
+          let size = elementMeshes.size()
+          if size.x > maxWidth {
+            maxWidth = size.x
           }
+
+          processedItems.append((item: item, meshes: elementMeshes, size: size))
         case .spacer:
-          processedItems.append((item, []))
+          processedItems.append((item: item, meshes: [], size: [0, 0]))
       }
     }
 
-    for (item, var elementMeshes) in processedItems {
+    for (i, (item, _, size)) in processedItems.enumerated() {
       switch item {
         case .element:
           switch alignment {
             case .left:
-              elementMeshes.translate(amount: [0, currentY])
+              processedItems[i].meshes.translate(amount: [0, currentY])
             case .right:
-              elementMeshes.translate(amount: [maxWidth - elementMeshes.size().x, currentY])
+              processedItems[i].meshes.translate(amount: [maxWidth - size.x, currentY])
           }
 
           if renderRowBackground {
-            let bgSize: Vec2i = [elementMeshes.size().x + 2, rowHeight]
+            let bgSize: Vec2i = [size.x + 2, rowHeight]
             var bg = GUIRectangle(
               size: bgSize,
               color: [0x50, 0x50, 0x50, 0x90] / 255
             ).meshes(context: context)
+
             switch alignment {
               case .left:
                 bg.translate(amount: [-1, currentY - 1])
               case .right:
-                bg.translate(amount: [maxWidth - elementMeshes.size().x - 1, currentY - 1])
+                bg.translate(amount: [maxWidth - size.x - 1, currentY - 1])
             }
-            
+
             bgMeshes.append(contentsOf: bg)
           }
 
-          meshes.append(contentsOf: elementMeshes)
+          meshes.append(contentsOf: processedItems[i].meshes)
           currentY += rowHeight
         case .spacer(let height):
           currentY += height

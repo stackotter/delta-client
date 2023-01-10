@@ -14,6 +14,15 @@ struct GUI {
   /// The width of indent to use when wrapping chat messages.
   static let chatWrapIndent = 4
 
+  /// The system's CPU display name.
+  static let cpuName = HWInfo.CPU.name()
+  /// The system's CPU architecture.
+  static let cpuArch = CpuArchitecture.current()?.rawValue
+  /// The system's total memory.
+  static let totalMem = (HWInfo.ramAmount() ?? 0) / (1024 * 1024 * 1024)
+  /// A string containing information about the system's default GPU.
+  static let gpuInfo = GPUDetection.mainMetalGPU()?.infoString()
+
   var client: Client
   var renderStatistics = RenderStatistics(gpuCountersEnabled: false)
   var fpsUpdateInterval = 0.4
@@ -21,11 +30,6 @@ struct GUI {
   var savedRenderStatistics = RenderStatistics(gpuCountersEnabled: false)
   var context: GUIContext
   var profiler: Profiler<RenderingMeasurement>
-  // system info for debug menu
-  static let cpuName = HWInfo.CPU.name()
-  static let cpuArch = CpuArchitecture.current()?.rawValue
-  static let totalMem = (HWInfo.ramAmount() ?? 0) / (1024 * 1024 * 1024)
-  static let gpuInfo = GPUDetection.mainMetalGPU()?.infoString()
 
   init(
     client: Client,
@@ -90,9 +94,6 @@ struct GUI {
     if state.showDebugScreen {
       debugScreen(&root)
     }
-
-    // Show inventory
-    // if state.showInventory {}
 
     // Chat
     chat(&root, state.chat.messages, state.messageInput, screenSize)
@@ -354,8 +355,8 @@ struct GUI {
     // Gamemode
     leftList.add("Gamemode: \(gamemode.string)")
 
+    // System information
     var rightList = GUIList(rowHeight: 9, renderRowBackground: true, alignment: .right)
-
     rightList.add("CPU: \(Self.cpuName ?? "unknown") (\(Self.cpuArch ?? "n/a"))")
     rightList.add("Total mem: \(Self.totalMem)GB")
     rightList.add("GPU: \(Self.gpuInfo ?? "unknown")")
