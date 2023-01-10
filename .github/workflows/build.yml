@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macOS-11
+    runs-on: macOS-12
     steps:
       - name: Checkout
         uses: actions/checkout@v2
