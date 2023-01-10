@@ -265,6 +265,7 @@ public final class WorldRenderer: Renderer {
   // MARK: Private methods
 
   private func handle(_ event: Event) {
+    // TODO: Optimize this the section updating algorithms to minimise unnecessary updates
     switch event {
       case let event as World.Event.AddChunk:
         worldMesh.addChunk(at: event.position)
@@ -280,27 +281,18 @@ public final class WorldRenderer: Renderer {
           let affected = worldMesh.sectionsAffectedBySectionUpdate(at: position, onlyLighting: true)
           affectedSections.formUnion(affected)
         }
-
-        for position in affectedSections {
-          worldMesh.updateSection(at: position)
-        }
+        worldMesh.updateSections(at: Array(affectedSections))
 
       case let event as World.Event.SingleBlockUpdate:
         let affectedSections = worldMesh.sectionsAffectedBySectionUpdate(at: event.position.chunkSection)
-
-        for position in affectedSections {
-          worldMesh.updateSection(at: position)
-        }
+        worldMesh.updateSections(at: Array(affectedSections))
 
       case let event as World.Event.MultiBlockUpdate:
         var affectedSections: Set<ChunkSectionPosition> = []
         for update in event.updates {
           affectedSections.formUnion(worldMesh.sectionsAffectedBySectionUpdate(at: update.position.chunkSection))
         }
-
-        for position in affectedSections {
-          worldMesh.updateSection(at: position)
-        }
+        worldMesh.updateSections(at: Array(affectedSections))
 
       case let event as World.Event.UpdateChunk:
         var affectedSections: Set<ChunkSectionPosition> = []
@@ -309,14 +301,10 @@ public final class WorldRenderer: Renderer {
           let position = ChunkSectionPosition(event.position, sectionY: sectionY)
           affectedSections.formUnion(worldMesh.sectionsAffectedBySectionUpdate(at: position))
         }
-
-        for position in affectedSections {
-          worldMesh.updateSection(at: position)
-        }
+        worldMesh.updateSections(at: Array(affectedSections))
 
       case _ as JoinWorldEvent:
         // TODO: this has the possibility to cause crashes
-        log.debug("Created new world mesh")
         worldMesh = WorldMesh(client.game.world, resources: resources)
 
       default:

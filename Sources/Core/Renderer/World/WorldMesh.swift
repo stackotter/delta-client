@@ -120,14 +120,36 @@ public struct WorldMesh {
     }
   }
 
-  /// Schedules a chunk section to have its mesh updated next time it is visible.
-  /// - Parameter position: The position of the chunk section to update.
+  /// Schedules a chunk section to have its mesh updated next time it is visible. Doesn't lock the
+  /// world mesh lock. May still lock the visibility graph et al.
+  /// - Parameters:
+  ///   - position: The position of the chunk section to update.
   public mutating func updateSection(at position: ChunkSectionPosition) {
     lock.acquireWriteLock()
     defer { lock.unlock() }
 
+    locklessUpdateSection(at: position)
+  }
+
+  /// Same as ``updateSection`` but for an array of positions. The benefit of this method when
+  /// applicable is that it doesn't acquire intermediate locks like a for loop containing
+  /// `updateSection` would.
+  /// - Parameters:
+  ///   - positions: The positions of the chunk sections to update.
+  public mutating func updateSections(at positions: [ChunkSectionPosition]) {
+    lock.acquireWriteLock()
+    defer { lock.unlock() }
+
+    for position in positions {
+      locklessUpdateSection(at: position)
+    }
+  }
+
+  /// The private implementation of ``updateSection`` that doesn't acquire ``lock``.
+  private mutating func locklessUpdateSection(at position: ChunkSectionPosition) {
     guard let chunk = world.chunk(at: position.chunk) else {
-      log.warning("Chunk section update received for non-existent chunk section \(position)")
+      // It is expected for this to happen because the method for determining which sections to
+      // update is conservative and will queue sections even if they're not getting rendered.
       return
     }
 
