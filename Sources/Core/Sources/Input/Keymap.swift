@@ -14,6 +14,7 @@ public struct Keymap: Codable {
     .sneak: .leftShift,
     .sprint: .leftControl,
     .toggleDebugHUD: .f3,
+    .toggleInventory: .e,
     .changePerspective: .f5,
     .slot1: .one,
     .slot2: .two,

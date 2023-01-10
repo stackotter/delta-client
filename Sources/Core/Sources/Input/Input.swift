@@ -13,6 +13,7 @@ public enum Input: Codable, CaseIterable {
   case sneak
   case sprint
   case toggleDebugHUD
+  case toggleInventory
   case changePerspective
   case performGPUFrameCapture
   case slot1
@@ -50,6 +51,8 @@ public enum Input: Codable, CaseIterable {
         return "Sprint"
       case .toggleDebugHUD:
         return "Toggle debug HUD"
+      case .toggleInventory:
+        return "Toggle Inventory"
       case .changePerspective:
         return "Change Perspective"
       case .performGPUFrameCapture:

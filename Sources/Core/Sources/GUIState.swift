@@ -3,6 +3,7 @@ public struct GUIState {
   public static let maximumMessageLength = 252
 
   public var showDebugScreen = false
+  public var showInventory = false
   public var chat = Chat()
   public var messageInput: String?
 

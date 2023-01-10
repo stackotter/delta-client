@@ -87,6 +87,11 @@ struct GUI {
       debugScreen(&root)
     }
 
+    // Show inventory
+    if state.showInventory {
+      break
+    }
+
     // Chat
     chat(&root, state.chat.messages, state.messageInput, screenSize)
 

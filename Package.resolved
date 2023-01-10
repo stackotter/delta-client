@@ -2,12 +2,57 @@
   "object": {
     "pins": [
       {
+        "package": "ASN1Parser",
+        "repositoryURL": "https://github.com/stackotter/ASN1Parser",
+        "state": {
+          "branch": "main",
+          "revision": "f92a5b26f5c92d38ae858a5a77048e9af82331a3",
+          "version": null
+        }
+      },
+      {
+        "package": "async-http-client",
+        "repositoryURL": "https://github.com/swift-server/async-http-client.git",
+        "state": {
+          "branch": null,
+          "revision": "037b70291941fe43de668066eb6fb802c5e181d2",
+          "version": "1.1.1"
+        }
+      },
+      {
+        "package": "BigInt",
+        "repositoryURL": "https://github.com/attaswift/BigInt.git",
+        "state": {
+          "branch": null,
+          "revision": "0ed110f7555c34ff468e72e1686e59721f2b0da6",
+          "version": "5.3.0"
+        }
+      },
+      {
         "package": "Socket",
         "repositoryURL": "https://github.com/stackotter/BlueSocket.git",
         "state": {
           "branch": "master",
           "revision": "31e92ab743a9ffc2a4a6e7e2f1043f5fe1d97e80",
           "version": null
+        }
+      },
+      {
+        "package": "CircuitBreaker",
+        "repositoryURL": "https://github.com/Kitura/CircuitBreaker.git",
+        "state": {
+          "branch": null,
+          "revision": "bd4255762e48cc3748a448d197f1297a4ba705f7",
+          "version": "5.1.0"
+        }
+      },
+      {
+        "package": "CryptoSwift",
+        "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift",
+        "state": {
+          "branch": null,
+          "revision": "19b3c3ceed117c5cc883517c4e658548315ba70b",
+          "version": "1.6.0"
         }
       },
       {
@@ -20,11 +65,29 @@
         }
       },
       {
+        "package": "DNS",
+        "repositoryURL": "https://github.com/Bouke/DNS.git",
+        "state": {
+          "branch": null,
+          "revision": "78bbd1589890a90b202d11d5f9e1297050cf0eb2",
+          "version": "1.2.0"
+        }
+      },
+      {
         "package": "FirebladeECS",
         "repositoryURL": "https://github.com/stackotter/ecs.git",
         "state": {
           "branch": "master",
           "revision": "c7660bcd24e31ef2fc3457f56a2bf4a58c3ad6ee",
+          "version": null
+        }
+      },
+      {
+        "package": "FirebladeMath",
+        "repositoryURL": "https://github.com/stackotter/fireblade-math.git",
+        "state": {
+          "branch": "matrix2x2",
+          "revision": "750239647673b07457bea80b39438a6db52198f1",
           "version": null
         }
       },
@@ -38,21 +101,21 @@
         }
       },
       {
-        "package": "NioDNS",
-        "repositoryURL": "https://github.com/OpenKitten/NioDNS",
+        "package": "LoggerAPI",
+        "repositoryURL": "https://github.com/Kitura/LoggerAPI.git",
         "state": {
           "branch": null,
-          "revision": "3f4705538ab10004c28c2b3767345ea27607a9d2",
-          "version": "1.0.2"
+          "revision": "e82d34eab3f0b05391082b11ea07d3b70d2f65bb",
+          "version": "1.9.200"
         }
       },
       {
-        "package": "SourceKitten",
-        "repositoryURL": "https://github.com/jpsim/SourceKitten.git",
+        "package": "OpenCombine",
+        "repositoryURL": "https://github.com/OpenCombine/OpenCombine.git",
         "state": {
           "branch": null,
-          "revision": "817dfa6f2e09b0476f3a6c9dbc035991f02f0241",
-          "version": "0.32.0"
+          "revision": "9cf67e363738dbab61b47fb5eaed78d3db31e5ee",
+          "version": "0.13.0"
         }
       },
       {
@@ -83,12 +146,21 @@
         }
       },
       {
-        "package": "SwiftLintPlugin",
-        "repositoryURL": "https://github.com/stackotter/swift-lint-plugin",
+        "package": "swift-cross-ui",
+        "repositoryURL": "https://github.com/stackotter/swift-cross-ui",
         "state": {
-          "branch": null,
-          "revision": "f887b764032df4862fc56d831ca1ed0e2e8cdf86",
-          "version": "0.1.1"
+          "branch": "main",
+          "revision": "fd84efff90b16a513d6c688b8ae2231593bfd2ac",
+          "version": null
+        }
+      },
+      {
+        "package": "SwiftImage",
+        "repositoryURL": "https://github.com/stackotter/swift-image.git",
+        "state": {
+          "branch": "master",
+          "revision": "7160e2d8799f8b182498ab699aa695cb66cf4ea6",
+          "version": null
         }
       },
       {
@@ -105,26 +177,35 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "546610d52b19be3e19935e0880bb06b9c03f5cef",
-          "version": "1.14.4"
+          "revision": "b4e0a274f7f34210e97e2f2c50ab02a10b549250",
+          "version": "2.41.1"
         }
       },
       {
-        "package": "swift-nio-zlib-support",
-        "repositoryURL": "https://github.com/apple/swift-nio-zlib-support.git",
+        "package": "swift-nio-extras",
+        "repositoryURL": "https://github.com/apple/swift-nio-extras.git",
         "state": {
           "branch": null,
-          "revision": "37760e9a52030bb9011972c5213c3350fa9d41fd",
-          "version": "1.0.0"
+          "revision": "6c84d247754ad77487a6f0694273b89b83efd056",
+          "version": "1.14.0"
         }
       },
       {
-        "package": "swift-openssl",
-        "repositoryURL": "https://github.com/stackotter/swift-openssl",
+        "package": "swift-nio-ssl",
+        "repositoryURL": "https://github.com/apple/swift-nio-ssl.git",
         "state": {
           "branch": null,
-          "revision": "a69c033b96c81766ed4a5d369278242fe1c4d019",
-          "version": "4.0.4"
+          "revision": "ba7c0d7f82affc518147ea61d240330bf7f7ea9b",
+          "version": "2.22.1"
+        }
+      },
+      {
+        "package": "swift-package-zlib",
+        "repositoryURL": "https://github.com/fourplusone/swift-package-zlib",
+        "state": {
+          "branch": null,
+          "revision": "03ecd41814d8929362f7439529f9682536a8de13",
+          "version": "1.2.11"
         }
       },
       {
@@ -137,6 +218,15 @@
         }
       },
       {
+        "package": "swift-png",
+        "repositoryURL": "https://github.com/kelvin13/swift-png",
+        "state": {
+          "branch": null,
+          "revision": "075dfb248ae327822635370e9d4f94a5d3fe93b2",
+          "version": "4.0.2"
+        }
+      },
+      {
         "package": "SwiftProtobuf",
         "repositoryURL": "https://github.com/apple/swift-protobuf.git",
         "state": {
@@ -146,21 +236,57 @@
         }
       },
       {
-        "package": "SwiftLint",
-        "repositoryURL": "https://github.com/stackotter/SwiftLint",
+        "package": "Resolver",
+        "repositoryURL": "https://github.com/seznam/swift-resolver",
         "state": {
           "branch": null,
-          "revision": "b4a54f32df66008d30f0229446831cb823576c42",
-          "version": "0.46.2"
+          "revision": "cfb7d326bc4c89a48439303d758b375a8faae784",
+          "version": "0.3.0"
         }
       },
       {
-        "package": "SwiftyTextTable",
-        "repositoryURL": "https://github.com/scottrhoyt/SwiftyTextTable.git",
+        "package": "UniSocket",
+        "repositoryURL": "https://github.com/seznam/swift-unisocket",
         "state": {
           "branch": null,
-          "revision": "c6df6cf533d120716bff38f8ff9885e1ce2a4ac3",
-          "version": "0.9.0"
+          "revision": "1785e432fb8497265a38712cdb9584c429ca3f96",
+          "version": "0.14.0"
+        }
+      },
+      {
+        "package": "SwiftCPUDetect",
+        "repositoryURL": "https://github.com/JWhitmore1/SwiftCPUDetect",
+        "state": {
+          "branch": "main",
+          "revision": "50367f5c32c9c330cbb4230204f60a39099a9ccc",
+          "version": null
+        }
+      },
+      {
+        "package": "SwiftGtk",
+        "repositoryURL": "https://github.com/stackotter/SwiftGtk",
+        "state": {
+          "branch": "main",
+          "revision": "f5ea8c81356e4d1a6706f9725c08d252b4e4df9b",
+          "version": null
+        }
+      },
+      {
+        "package": "SwiftPackagesBase",
+        "repositoryURL": "https://github.com/ITzTravelInTime/SwiftPackagesBase",
+        "state": {
+          "branch": null,
+          "revision": "79477622b5dbacc3722d485c5060c46a90740016",
+          "version": "0.0.23"
+        }
+      },
+      {
+        "package": "SwiftyRequest",
+        "repositoryURL": "https://github.com/Kitura/SwiftyRequest.git",
+        "state": {
+          "branch": null,
+          "revision": "2c543777a5088bed811503a68551a4b4eceac198",
+          "version": "3.2.200"
         }
       },
       {
@@ -170,24 +296,6 @@
           "branch": null,
           "revision": "3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed",
           "version": null
-        }
-      },
-      {
-        "package": "SWXMLHash",
-        "repositoryURL": "https://github.com/drmohundro/SWXMLHash.git",
-        "state": {
-          "branch": null,
-          "revision": "6469881a3f30417c5bb02404ea4b69207f297592",
-          "version": "6.0.0"
-        }
-      },
-      {
-        "package": "Yams",
-        "repositoryURL": "https://github.com/jpsim/Yams.git",
-        "state": {
-          "branch": null,
-          "revision": "9ff1cc9327586db4e0c8f46f064b6a82ec1566fa",
-          "version": "4.0.6"
         }
       },
       {
