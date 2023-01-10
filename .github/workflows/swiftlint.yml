@@ -15,8 +15,8 @@ jobs:
         run: |
           URL="https://github.com/realm/SwiftLint/releases/download/0.50.3/swiftlint_linux.zip"
           curl -LO "$URL"
-          unzip portable_swiftlint -d ./swiftlint
-          rm -rf portable_swiftlint.zip
+          unzip swiftlint_linux -d ./swiftlint
+          rm -rf swiftlint_linux.zip
           echo "Linting with swiftlint $(./swiftlint/swiftlint version)"
           ./swiftlint/swiftlint lint --reporter github-actions-logging
         shell: bash
