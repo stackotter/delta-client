@@ -48,6 +48,8 @@ public final class PlayerInputSystem: System {
             camera.cyclePerspective()
           case .toggleDebugHUD:
             guiState.showDebugScreen = !guiState.showDebugScreen
+          case .toggleInventory:
+            guiState.showInventory = !guiState.showInventory
           case .slot1:
             inventory.selectedHotbarSlot = 0
           case .slot2:

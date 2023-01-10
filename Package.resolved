@@ -96,8 +96,8 @@
         "repositoryURL": "https://github.com/michaeleisel/JJLISO8601DateFormatter",
         "state": {
           "branch": null,
-          "revision": "f53a087117f71abb9086f90aedf1f51dc83c88aa",
-          "version": "0.1.5"
+          "revision": "de422afd9a47b72703c30a81423c478337191390",
+          "version": "0.1.6"
         }
       },
       {
@@ -132,8 +132,8 @@
         "repositoryURL": "https://github.com/apple/swift-atomics.git",
         "state": {
           "branch": null,
-          "revision": "919eb1d83e02121cdb434c7bfc1f0c66ef17febe",
-          "version": "1.0.2"
+          "revision": "ff3d2212b6b093db7f177d0855adbc4ef9c5f036",
+          "version": "1.0.3"
         }
       },
       {
@@ -150,7 +150,7 @@
         "repositoryURL": "https://github.com/stackotter/swift-cross-ui",
         "state": {
           "branch": "main",
-          "revision": "e5f04835830b0abce685396c5c7824f864be7538",
+          "revision": "fd84efff90b16a513d6c688b8ae2231593bfd2ac",
           "version": null
         }
       },
@@ -254,12 +254,30 @@
         }
       },
       {
+        "package": "SwiftCPUDetect",
+        "repositoryURL": "https://github.com/JWhitmore1/SwiftCPUDetect",
+        "state": {
+          "branch": "main",
+          "revision": "3f5f89cfbfebab4296a51f031078af4968fe8345",
+          "version": null
+        }
+      },
+      {
         "package": "SwiftGtk",
         "repositoryURL": "https://github.com/stackotter/SwiftGtk",
         "state": {
           "branch": "main",
-          "revision": "14bb2929e75020dbcc1301fd10c33b755339afaf",
+          "revision": "f5ea8c81356e4d1a6706f9725c08d252b4e4df9b",
           "version": null
+        }
+      },
+      {
+        "package": "SwiftPackagesBase",
+        "repositoryURL": "https://github.com/ITzTravelInTime/SwiftPackagesBase",
+        "state": {
+          "branch": null,
+          "revision": "79477622b5dbacc3722d485c5060c46a90740016",
+          "version": "0.0.23"
         }
       },
       {
@@ -285,8 +303,8 @@
         "repositoryURL": "https://github.com/weichsel/ZIPFoundation.git",
         "state": {
           "branch": null,
-          "revision": "f6a22e7da26314b38bf9befce34ae8e4b2543090",
-          "version": "0.9.15"
+          "revision": "43ec568034b3731101dbf7670765d671c30f54f3",
+          "version": "0.9.16"
         }
       },
       {
@@ -294,8 +312,8 @@
         "repositoryURL": "https://github.com/michaeleisel/ZippyJSON",
         "state": {
           "branch": null,
-          "revision": "404aaee29c06edc3bf2077344972bc16fa66a1db",
-          "version": "1.2.6"
+          "revision": "c4ab804780b64979f19268619dfa563b6be58f7d",
+          "version": "1.2.10"
         }
       },
       {
@@ -303,8 +321,8 @@
         "repositoryURL": "https://github.com/michaeleisel/ZippyJSONCFamily",
         "state": {
           "branch": null,
-          "revision": "c55123b23f0faa898b22bf1b967e72a2df51fdb4",
-          "version": "1.2.4"
+          "revision": "8abdd7a5e943afe68e7b03fdaa63b21c042a3893",
+          "version": "1.2.9"
         }
       }
     ]

@@ -2,6 +2,7 @@ import Metal
 import Collections
 import FirebladeMath
 import DeltaCore
+import SwiftCPUDetect
 
 struct GUI {
   /// The number of seconds until messages should be hidden from the regular GUI.
@@ -13,7 +14,6 @@ struct GUI {
   /// The width of indent to use when wrapping chat messages.
   static let chatWrapIndent = 4
 
-  var root: GUIGroupElement
   var client: Client
   var renderStatistics = RenderStatistics(gpuCountersEnabled: false)
   var fpsUpdateInterval = 0.4
@@ -21,6 +21,11 @@ struct GUI {
   var savedRenderStatistics = RenderStatistics(gpuCountersEnabled: false)
   var context: GUIContext
   var profiler: Profiler<RenderingMeasurement>
+  // system info for debug menu
+  static let cpuName = HWInfo.CPU.name()
+  static let cpuArch = CpuArchitecture.current()?.rawValue
+  static let totalMem = (HWInfo.ramAmount() ?? 0) / (1024 * 1024 * 1024)
+  static let gpuInfo = GPUDetection.mainMetalGPU()?.infoString()
 
   init(
     client: Client,
@@ -30,8 +35,6 @@ struct GUI {
   ) throws {
     self.client = client
     self.profiler = profiler
-
-    root = GUIGroupElement([0, 0])
 
     let resources = client.resourcePack.vanillaResources
     let font = resources.fontPalette.defaultFont
@@ -73,9 +76,9 @@ struct GUI {
     )
   }
 
-  mutating func update(_ screenSize: Vec2i) {
+  mutating func update(_ screenSize: Vec2i) -> GUIGroupElement {
     let state = client.game.guiState()
-    root = GUIGroupElement(screenSize)
+    var root = GUIGroupElement(screenSize)
 
     // Hot bar area (hot bar, health, food, etc.)
     hotbarArea(&root)
@@ -85,11 +88,16 @@ struct GUI {
 
     // Debug screen
     if state.showDebugScreen {
-      root.add(debugScreen(), .position(2, 3))
+      debugScreen(&root)
     }
+
+    // Show inventory
+    // if state.showInventory {}
 
     // Chat
     chat(&root, state.chat.messages, state.messageInput, screenSize)
+
+    return root
   }
 
   func chat(
@@ -264,7 +272,7 @@ struct GUI {
     }
   }
 
-  mutating func debugScreen() -> GUIList {
+  mutating func debugScreen(_ root: inout GUIGroupElement) {
     // Fetch relevant player properties
     var blockPosition = BlockPosition(x: 0, y: 0, z: 0)
     var chunkSectionPosition = ChunkSectionPosition(sectionX: 0, sectionY: 0, sectionZ: 0)
@@ -292,8 +300,8 @@ struct GUI {
     let renderStatistics = savedRenderStatistics
 
     // Version
-    var list = GUIList(rowHeight: 9, renderRowBackground: true)
-    list.add("Minecraft \(Constants.versionString) (Delta Client)")
+    var leftList = GUIList(rowHeight: 9, renderRowBackground: true)
+    leftList.add("Minecraft \(Constants.versionString) (Delta Client)")
 
     // FPS
     var theoreticalFPSString = ""
@@ -306,54 +314,61 @@ struct GUI {
       gpuTimeString = String(format: ", %.02fms gpu", gpuTime)
     }
     let fpsString = String(format: "%.00f", renderStatistics.averageFPS)
-    list.add("\(fpsString) fps\(theoreticalFPSString) (\(cpuTimeString)ms cpu\(gpuTimeString))")
+    leftList.add("\(fpsString) fps\(theoreticalFPSString) (\(cpuTimeString)ms cpu\(gpuTimeString))")
 
     // Dimension
-    list.add("Dimension: \(client.game.world.dimension.identifier)")
-    list.add(spacer: 6)
+    leftList.add("Dimension: \(client.game.world.dimension.identifier)")
+    leftList.add(spacer: 6)
 
     // Position
     let x = String(format: "%.02f", position.x)
     let y = String(format: "%.02f", position.y)
     let z = String(format: "%.02f", position.z)
-    list.add("XYZ: \(x) / \(y) / \(z)")
+    leftList.add("XYZ: \(x) / \(y) / \(z)")
 
     // Block under feet
-    list.add("Block: \(blockPosition.x) \(blockPosition.y) \(blockPosition.z)")
+    leftList.add("Block: \(blockPosition.x) \(blockPosition.y) \(blockPosition.z)")
 
     // Chunk section and relative position
     let relativePosition = blockPosition.relativeToChunkSection
     let relativePositionString = "\(relativePosition.x) \(relativePosition.y) \(relativePosition.z)"
     let chunkSectionString = "\(chunkSectionPosition.sectionX) \(chunkSectionPosition.sectionY) \(chunkSectionPosition.sectionZ)"
-    list.add("Chunk: \(relativePositionString) in \(chunkSectionString)")
+    leftList.add("Chunk: \(relativePositionString) in \(chunkSectionString)")
 
     // Heading and rotation
     let yawString = String(format: "%.01f", yaw)
     let pitchString = String(format: "%.01f", pitch)
-    list.add("Facing: \(heading) (Towards \(heading.isPositive ? "positive" : "negative") \(heading.axis)) (\(yawString) / \(pitchString))")
+    leftList.add("Facing: \(heading) (Towards \(heading.isPositive ? "positive" : "negative") \(heading.axis)) (\(yawString) / \(pitchString))")
 
     // Lighting (at foot level)
     var lightPosition = blockPosition
     lightPosition.y += 1
     let skyLightLevel = client.game.world.getSkyLightLevel(at: lightPosition)
     let blockLightLevel = client.game.world.getBlockLightLevel(at: lightPosition)
-    list.add("Light: \(skyLightLevel) sky, \(blockLightLevel) block")
+    leftList.add("Light: \(skyLightLevel) sky, \(blockLightLevel) block")
 
     // Biome
     let biome = client.game.world.getBiome(at: blockPosition)
-    list.add("Biome: \(biome?.identifier.description ?? "not loaded")")
+    leftList.add("Biome: \(biome?.identifier.description ?? "not loaded")")
 
     // Gamemode
-    list.add("Gamemode: \(gamemode.string)")
+    leftList.add("Gamemode: \(gamemode.string)")
 
-    return list
+    var rightList = GUIList(rowHeight: 9, renderRowBackground: true, alignment: .right)
+
+    rightList.add("CPU: \(Self.cpuName ?? "unknown") (\(Self.cpuArch ?? "n/a"))")
+    rightList.add("Total mem: \(Self.totalMem)GB")
+    rightList.add("GPU: \(Self.gpuInfo ?? "unknown")")
+
+    root.add(leftList, .position(2, 3))
+    root.add(rightList, .top(3), .right(2))
   }
 
   mutating func meshes(
     effectiveDrawableSize: Vec2i
   ) throws -> [GUIElementMesh] {
     profiler.push(.updateContent)
-    update(effectiveDrawableSize)
+    var root = update(effectiveDrawableSize)
     profiler.pop()
 
     profiler.push(.createMeshes)

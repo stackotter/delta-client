@@ -21,6 +21,7 @@ var targets: [Target] = [
       "FirebladeECS",
       "ASN1Parser",
       "CryptoSwift",
+      "SwiftCPUDetect",
       .product(name: "SwiftyRequest", package: "SwiftyRequest", condition: .when(platforms: [.linux])),
       .product(name: "OpenCombine", package: "OpenCombine", condition: .when(platforms: [.linux])),
       .product(name: "Atomics", package: "swift-atomics"),
@@ -87,7 +88,8 @@ let package = Package(
     .package(url: "https://github.com/kelvin13/swift-png", from: "4.0.2"),
     .package(url: "https://github.com/stackotter/ASN1Parser", branch: "main"),
     .package(url: "https://github.com/krzyzanowskim/CryptoSwift", from: "1.6.0"),
-    .package(url: "https://github.com/Kitura/SwiftyRequest.git", from: "3.1.0")
+    .package(url: "https://github.com/Kitura/SwiftyRequest.git", from: "3.1.0"),
+    .package(url: "https://github.com/JWhitmore1/SwiftCPUDetect", .branch("main"))
   ],
   targets: targets
 )
