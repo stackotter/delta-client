@@ -56,7 +56,7 @@ public struct Socket: Sendable, Hashable {
 
     /// An internal API for converting addresses to their native storage type.
     /// - Throws: An error is thrown if an invalid IP address is encountered.
-    func toNative() throws -> sockaddr_storage {
+    func toNative() throws -> sockaddr {
       switch self {
         case .ip4(let host, let port):
           var address = Socket.makeAddressINET(port: port)
@@ -166,8 +166,7 @@ public struct Socket: Sendable, Hashable {
 
   /// Binds the socket to a specific address.
   public func bind(to address: Address) throws {
-    let storage = try address.toNative()
-    var addr: sockaddr = Self.unsafeCast(storage)
+    var addr = try address.toNative()
     let result = Socket.bind(file.rawValue, &addr, socklen_t(address.nativeSize))
     guard result >= 0 else {
       throw SocketError.actionFailed("bind")
@@ -262,11 +261,7 @@ public struct Socket: Sendable, Hashable {
   /// Attempts to connect to a given address.
   public func connect(to address: Address) throws {
     var addr = try address.toNative()
-    let result = withUnsafePointer(to: &addr) {
-      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-        Socket.connect(file.rawValue, $0, socklen_t(address.nativeSize))
-      }
-    }
+    let result = Socket.connect(file.rawValue, &addr, socklen_t(address.nativeSize))
     guard result >= 0 || errno == EISCONN else {
       if errno == EINPROGRESS {
         throw SocketError.blocked
@@ -352,7 +347,9 @@ public struct Socket: Sendable, Hashable {
     var value = value
     return withUnsafePointer(to: &value) { pointer in
       return pointer.withMemoryRebound(to: B.self, capacity: 1) { pointer in
-        return pointer.pointee
+        let val = pointer.pointee
+        var x = val
+        return val
       }
     }
   }

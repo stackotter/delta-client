@@ -73,7 +73,7 @@ public final class GUIRenderer: Renderer {
     // Adjust scale per screen scale factor
     var uniforms = createUniforms(width, height, scale)
     if uniforms != previousUniforms || true {
-      uniformsBuffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<Uniforms>.stride)
+      uniformsBuffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<GUIUniforms>.size)
       previousUniforms = uniforms
     }
     profiler.pop()
