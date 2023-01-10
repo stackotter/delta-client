@@ -11,5 +11,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-      - name: GitHub Action for SwiftLint
-        uses: norio-nomura/action-swiftlint@3.2.1
+      - name: Lint
+        run: |
+          URL="https://github.com/realm/SwiftLint/releases/download/0.50.3/portable_swiftlint.zip"
+          curl -LO "$URL"
+          unzip portable_swiftlint -d ${{ github.action_path }}/swiftlint
+          rm -rf portable_swiftlint.zip
+          echo "Linting with swiftlint $(${{ github.action_path }}/swiftlint/swiftlint version)"
+          ${{ github.action_path }}/swiftlint/swiftlint lint --reporter github-actions-logging
+        shell: bash
