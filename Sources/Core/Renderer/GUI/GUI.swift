@@ -2,6 +2,8 @@ import Metal
 import Collections
 import FirebladeMath
 import DeltaCore
+import SwiftCPUDetect
+import SwiftSystemValues
 
 struct GUI {
   /// The number of seconds until messages should be hidden from the regular GUI.
@@ -81,7 +83,9 @@ struct GUI {
     root.add(GUISprite.crossHair, .center)
 
     // Debug screen
-    debugScreen(&root)
+    if state.showDebugScreen {
+      debugScreen(&root)
+    }
 
     // Chat
     chat(&root, state.chat.messages, state.messageInput, screenSize)
@@ -345,8 +349,14 @@ struct GUI {
 
     var rightList = GUIList(rowHeight: 9, renderRowBackground: true, rightAlign: true)
 
-    rightList.add("Swift: 1.x.x_x 64bit")
-    rightList.add("Mem: xx% xxxx/xxxxMB")
+    var cpuName = HWInfo.CPU.name()
+    var cpuArch = CpuArchitecture.current()?.rawValue
+    var totalMem = (HWInfo.ramAmmount() ?? 0) / (1024 * 1024 * 1024)
+    var gpuInfo = GPUDetection.mainMetalGPU()?.infoString()
+
+    rightList.add("CPU: \(cpuName ?? "unknown") (\(cpuArch ?? "n/a"))")
+    rightList.add("Total mem: \(totalMem)GB")
+    rightList.add("GPU: \(gpuInfo ?? "unknown")")
 
     root.add(leftList, .position(2, 3))
     root.add(rightList, .top(3), .right(2))
