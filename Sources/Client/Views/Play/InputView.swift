@@ -11,6 +11,7 @@ final class InputDelegateWrapper {
 
 final class InputViewModel {
   var monitorsAdded = false
+  var scrollWheelDeltaY: Float = 0
   #if os(macOS)
   var previousModifierFlags: NSEvent.ModifierFlags?
   #endif
@@ -78,12 +79,21 @@ struct InputView<Content: View>: View {
             let deltaY = Float(event.scrollingDeltaY)
             delegateWrapper.delegate?.onScroll(deltaY)
 
+            model.scrollWheelDeltaY += deltaY
+
+            // TODO: Implement a scroll wheel sensitivity setting
+            let threshold: Float = 0.5
             let key: Key
-            if deltaY > 0 {
+            if model.scrollWheelDeltaY >= threshold {
               key = .scrollUp
-            } else {
+            } else if deltaY <= -threshold {
               key = .scrollDown
+            } else {
+              return nil
             }
+
+            model.scrollWheelDeltaY = 0
+
             delegateWrapper.delegate?.onKeyDown(key)
             delegateWrapper.delegate?.onKeyUp(key)
 
