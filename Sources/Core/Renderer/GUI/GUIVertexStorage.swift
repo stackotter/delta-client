@@ -1,5 +1,5 @@
 /// Vertices are stored in tuples as an optimisation.
-typealias GUIQuadVertices = (GUIVertex, GUIVertex, GUIVertex, GUIVertex)
+typealias GUIQuadVertices = (GUIVertex, GUIVertex, GUIVertex, GUIVertex) // swiftlint:disable:this large_tuple
 
 /// Specialized storage for GUI vertices that can work with two different storage formats (with
 /// identical memory layouts, but different types). This is useful because using tuples that group

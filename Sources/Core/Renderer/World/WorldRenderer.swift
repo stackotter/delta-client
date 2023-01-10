@@ -331,6 +331,8 @@ public final class WorldRenderer: Renderer {
   ) -> Geometry {
     let thickness: Float = 0.004
     let padding: Float = -thickness + 0.001
+
+    // swiftlint:disable:next large_tuple
     var boxes: [(position: Vec3f, size: Vec3f, axis: Axis, faces: [Direction])] = []
     for side: Direction in [.north, .east, .south, .west] {
       // Create up-right edge between this side and the next

@@ -16,6 +16,7 @@ extension Mat4x4f {
       throw BlockModelPaletteError.invalidMatrixDataLength(data.count)
     }
 
+    // swiftlint:disable:next large_tuple
     let vectors: (Mat4x4f.Vector, Mat4x4f.Vector, Mat4x4f.Vector, Mat4x4f.Vector) = data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
       let pointer = pointer.bindMemory(to: Mat4x4f.Vector.self)
       return (

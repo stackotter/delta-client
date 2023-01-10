@@ -150,7 +150,7 @@ struct LightMap {
 
     for i in 0..<LightLevel.levelCount {
       var level = Double(i) / Double(LightLevel.maximumLightLevel)
-      level = level / (4 - 3 * level)
+      level /= (4 - 3 * level)
       levels.append(MathUtil.lerp(from: level, to: 1, progress: ambientLight))
     }
 
