@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v1
       - name: Lint
         run: |
-          URL="https://github.com/realm/SwiftLint/releases/download/0.50.3/portable_swiftlint.zip"
+          URL="https://github.com/realm/SwiftLint/releases/download/0.50.3/swiftlint_linux.zip"
           curl -LO "$URL"
           unzip portable_swiftlint -d ./swiftlint
           rm -rf portable_swiftlint.zip
