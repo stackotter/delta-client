@@ -46,7 +46,7 @@ To run Delta Client from terminal you can run this command: `/path/to/DeltaClien
 
 ### Building from source
 
-To build Delta Client you'll first need to install Xcode and the latest version of [Swift Bundler](https://github.com/stackotter/swift-bundler). Once you've installed both of those, run the following commands in terminal;
+To build Delta Client you'll first need to install Xcode 14 and the latest version of [Swift Bundler](https://github.com/stackotter/swift-bundler). Please note that using Xcode 13 is ok but you may run into some weird memory corruption issues, so test with Xcode 14 before assuming that it's a Delta Client bug. Once you've installed the requirements, run the following commands in terminal;
 
 ```sh
 # Clone Delta Client
