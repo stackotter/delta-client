@@ -16,7 +16,7 @@ The main focus of this project is to create a highly efficient Java Edition comp
 
 If you want to have a say in the development of the client or have any questions, feel free to join the community on [Discord](https://discord.gg/xZPyDbmR6k).
 
-![Playing with Delta Client in a Hypixel lobby](https://github.com/stackotter/delta-client/blob/main/Screenshots/hypixel-3.png?raw=true)
+![Playing with Delta Client in a Hypixel lobby](Screenshots/hypixel-3.png)
 
 ## Performance
 
@@ -145,6 +145,6 @@ To start a test server, download a 1.16.1 server jar from [here](https://mcversi
 
 ## More screenshots
 
-![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/survival.png?raw=true)
+![Delta Client being used to view a survival world from a vantage point on a mountain](Screenshots/survival.png)
 
-![alt text](https://github.com/stackotter/delta-client/blob/main/Screenshots/ui.png?raw=true)
+![Delta Client's server selection UI](Screenshots/ui.png)
