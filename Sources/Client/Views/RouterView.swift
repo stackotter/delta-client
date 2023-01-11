@@ -5,7 +5,7 @@ struct RouterView: View {
   @EnvironmentObject var modalState: StateWrapper<ModalState>
   @EnvironmentObject var appState: StateWrapper<AppState>
   @EnvironmentObject var loadingState: StateWrapper<LoadingState>
-  
+
   var body: some View {
     Group {
       switch modalState.current {
@@ -38,7 +38,7 @@ struct RouterView: View {
       }
     }
   }
-  
+
   func mainView(_ loadedResources: LoadedResources) -> some View {
     VStack {
       switch appState.current {
