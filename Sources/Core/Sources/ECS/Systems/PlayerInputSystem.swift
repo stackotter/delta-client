@@ -160,6 +160,10 @@ public final class PlayerInputSystem: System {
 
         // Ensure that the message doesn't exceed 256 bytes (including if multi-byte characters are entered).
         for character in newCharacters {
+          guard character.isASCII, character != "\t" else {
+            // TODO: Make this check less restrictive, it's currently over-cautious
+            continue
+          }
           guard character.utf8.count + message.utf8.count <= GUIState.maximumMessageLength else {
             break
           }
