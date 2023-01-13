@@ -95,7 +95,6 @@ New total time: 5.7885ms
 I now store block models in an array instead of a dictionary because dictionaries are slow.
 
 1. get culling neighbours: 4.12294ms
-
 2. calculate face visibility: 1.03458ms
 3. get neighbour indices: 0.96912ms
 4. get block models: 0.87172ms

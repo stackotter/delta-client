@@ -369,7 +369,7 @@ struct GUI {
     effectiveDrawableSize: Vec2i
   ) throws -> [GUIElementMesh] {
     profiler.push(.updateContent)
-    var root = update(effectiveDrawableSize)
+    let root = update(effectiveDrawableSize)
     profiler.pop()
 
     profiler.push(.createMeshes)

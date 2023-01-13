@@ -170,6 +170,9 @@ public struct WorldMesh {
     defer { lock.unlock() }
 
     visibleSections = visibilityGraph.chunkSectionsVisible(from: camera, renderDistance: renderDistance)
+    // print("blah")
+    // print(visibleSections.contains(ChunkSectionPosition(sectionX: 11, sectionY: 2, sectionZ: 9)))
+    // print(world.chunk(at: ChunkPosition(chunkX: 11, chunkZ: 9))!.getSection(at: 2)!.isEmpty)
 
     for section in visibleSections {
       if meshWorker.jobCount == maximumQueuedJobCount {

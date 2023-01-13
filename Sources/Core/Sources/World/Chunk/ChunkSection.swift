@@ -11,34 +11,34 @@ extension Chunk {
     public static let depth = Chunk.depth
     /// The number of blocks in a chunk section.
     public static let numBlocks = width * height * depth
-    
+
     /// Block ids. Use Position.blockIndex to convert a position to an index in this array. The position must be relative to the section.
     public var blocks: [UInt16]
     /// The number of non-air blocks in the chunk section.
     public var blockCount: Int
-    
+
     /// Whether the section is all air or not.
     public var isEmpty: Bool {
       blockCount == 0
     }
-    
+
     /// Create an empty chunk section.
     public init() {
       blocks = [UInt16](repeating: 0, count: Section.numBlocks)
       blockCount = 0
     }
-    
+
     /// Create a chunk section populated with blocks.
     /// - Parameters:
     ///   - blocks: An array of block ids. Length must be equal to ``numBlocks``.
     ///   - blockCount: The number of non-air blocks in the array.
     public init(blocks: [UInt16], blockCount: Int) {
       assert(blocks.count == Self.numBlocks, "Attempted to initialize Chunk.Section with \(blocks.count) blocks but it must have \(Self.numBlocks) blocks")
-      
+
       self.blocks = blocks
       self.blockCount = blockCount
     }
-    
+
     /// Create a chunk section populated with blocks.
     /// - Parameters:
     ///   - blockIds: Block ids or indices into the palette if the palette isn't empty. Length must be equal to ``numBlocks``.
@@ -46,12 +46,12 @@ extension Chunk {
     ///   - blockCount: The number of non-air blocks in the array.
     public init(blockIds: [UInt16], palette: [UInt16], blockCount: Int) {
       assert(blockIds.count == Self.numBlocks, "Attempted to initialize Chunk.Section with \(blockIds.count) blocks but it must have \(Self.numBlocks) blocks")
-      
+
       self.blocks = []
       blocks.reserveCapacity(blockIds.count)
-      
+
       self.blockCount = blockCount
-      
+
       // See https://wiki.vg/Chunk_Format
       if !palette.isEmpty {
         for blockId in blockIds {
@@ -66,7 +66,7 @@ extension Chunk {
         self.blocks = blockIds
       }
     }
-    
+
     /// Get the id of the block at the specified position.
     /// - Parameter position: Position of the block relative to this section.
     /// - Returns: The block id.
@@ -77,7 +77,7 @@ extension Chunk {
       let index = position.relativeToChunkSection.blockIndex
       return getBlockId(at: index)
     }
-    
+
     /// Get the id of the block at the specified index in the section.
     /// - Parameter index: The index of the block relative to this section.
     /// - Returns: The block id, or `0` if the index is invalid
@@ -88,7 +88,7 @@ extension Chunk {
       }
       return Int(blocks[index])
     }
-    
+
     /// Set the block id at the specified position.
     /// - Parameters:
     ///   - position: Position of the block relative to this section.
@@ -100,26 +100,26 @@ extension Chunk {
       let index = position.relativeToChunkSection.blockIndex
       setBlockId(at: index, to: id)
     }
-    
+
     /// Set the block id at the specified position. Does nothing if the block index is invalid.
     /// - Parameters:
     ///   - index: Index of the block relative to this section.
     ///   - id: The new block id.
     public mutating func setBlockId(at index: Int, to id: Int) {
       guard index < Section.numBlocks && index >= 0 else {
-        log.warning("Invalid position passed to Chunk.Section.setBlockState(at:to:); index=\(index)")
+        log.warning("Invalid position passed to Chunk.Section.setBlockId(at:to:); index=\(index)")
         return
       }
-      
-      self.blocks[index] = UInt16(id)
-      
-      if RegistryStore.shared.blockRegistry.isAir(getBlockId(at: index)) {
+
+      if RegistryStore.shared.blockRegistry.isAir(Int(blocks[index])) {
         blockCount += 1
       }
-      
+
       if RegistryStore.shared.blockRegistry.isAir(id) {
         blockCount -= 1
       }
+
+      blocks[index] = UInt16(id)
     }
   }
 }

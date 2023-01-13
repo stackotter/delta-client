@@ -2,7 +2,7 @@ import Foundation
 
 public struct TimeUpdatePacket: ClientboundPacket {
   public static let id: Int = 0x4e
-  
+
   public var worldAge: Int
   public var timeOfDay: Int
 
@@ -10,7 +10,7 @@ public struct TimeUpdatePacket: ClientboundPacket {
     worldAge = try packetReader.readLong()
     timeOfDay = try packetReader.readLong()
   }
-  
+
   public func handle(for client: Client) throws {
     client.game.world.setAge(worldAge)
     client.game.world.setTimeOfDay(timeOfDay)
