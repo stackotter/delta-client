@@ -73,12 +73,12 @@ public final class ScreenRenderer: Renderer {
       throw RenderError.failedToUpdateRenderTargetSize
     }
 
-    // Update pixel format for depth texture. Match other texture parameters with colour attachment (above).
-    nativeRenderTextureDescriptor.pixelFormat = .depth32Float
-    if device.hasUnifiedMemory {
-      nativeRenderTextureDescriptor.storageMode = .private
-    }
-    guard let depthTexture = device.makeTexture(descriptor: nativeRenderTextureDescriptor) else {
+    let depthTextureDescriptor = MTLTextureDescriptor()
+    depthTextureDescriptor.width = width
+    depthTextureDescriptor.height = height
+    depthTextureDescriptor.pixelFormat = .depth32Float
+    depthTextureDescriptor.storageMode = .private
+    guard let depthTexture = device.makeTexture(descriptor: depthTextureDescriptor) else {
       throw RenderError.failedToUpdateRenderTargetSize
     }
 
