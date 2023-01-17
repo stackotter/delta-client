@@ -50,7 +50,7 @@ struct TroubleshootingView: View {
         }.buttonStyle(SecondaryButtonStyle())
 
         #if os(macOS)
-        Button("Open logs") {
+        Button("View logs") {
           NSWorkspace.shared.open(StorageManager.default.currentLogFile)
         }.buttonStyle(SecondaryButtonStyle())
         #endif
