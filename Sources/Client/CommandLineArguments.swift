@@ -5,7 +5,7 @@ import Logging
 /// An error thrown while parsing ``CommandLineArguments``.
 enum CommandLineArgumentsError: LocalizedError {
   case invalidLogLevel(String)
-  
+
   var errorDescription: String? {
     switch self {
       case .invalidLogLevel(let level):
@@ -29,13 +29,29 @@ struct CommandLineArguments: ParsableCommand {
   @Option(
     help: "The minimum log level to output to stdout.",
     transform: { string in
-      guard let level = Logger.Level(rawValue: string) else {
-        throw CommandLineArgumentsError.invalidLogLevel(string)
+      switch string {
+        case "trace":
+          return .trace
+        case "verbose":
+          return .verbose
+        case "debug":
+          return .debug
+        case "info":
+          return .info
+        case "notice":
+          return .notice
+        case "warning":
+          return .warning
+        case "error":
+          return .error
+        case "critical":
+          return .critical
+        default:
+          throw CommandLineArgumentsError.invalidLogLevel(string)
       }
-      return level
     })
-  var logLevel = Logger.Level.info
-  
+  var logLevel = LogLevel.info
+
   /// Xcode passes the `-NSDocumentRevisionsDebugMode` flag when running applications (no clue why).
   /// It needs to be defined here because otherwise it throws an error due to strict parsing.
   @Option(

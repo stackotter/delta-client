@@ -56,15 +56,6 @@
         }
       },
       {
-        "package": "DeltaLogger",
-        "repositoryURL": "https://github.com/stackotter/delta-logger",
-        "state": {
-          "branch": "main",
-          "revision": "a2ffeb3596fd32bf5ff0ad9fda9b610ae7481745",
-          "version": null
-        }
-      },
-      {
         "package": "DNS",
         "repositoryURL": "https://github.com/Bouke/DNS.git",
         "state": {
@@ -116,6 +107,24 @@
           "branch": null,
           "revision": "9cf67e363738dbab61b47fb5eaed78d3db31e5ee",
           "version": "0.13.0"
+        }
+      },
+      {
+        "package": "Puppy",
+        "repositoryURL": "https://github.com/sushichop/Puppy",
+        "state": {
+          "branch": null,
+          "revision": "9f3cf02dc92bc233e40ba8a66af20abb97978929",
+          "version": "0.6.0"
+        }
+      },
+      {
+        "package": "Rainbow",
+        "repositoryURL": "https://github.com/onevcat/Rainbow",
+        "state": {
+          "branch": null,
+          "revision": "e0dada9cd44e3fa7ec3b867e49a8ddbf543e3df3",
+          "version": "4.0.1"
         }
       },
       {

@@ -4,7 +4,7 @@ import PackageDescription
 
 // MARK: Products
 
-var productTargets = ["DeltaCore"]
+var productTargets = ["DeltaCore", "DeltaLogger"]
 #if canImport(Metal)
 productTargets.append("DeltaRenderer")
 #endif
@@ -43,6 +43,15 @@ var targets: [Target] = [
     ]
   ),
 
+  .target(
+    name: "DeltaLogger",
+    dependencies: [
+      "Puppy",
+      "Rainbow"
+    ],
+    path: "Logger"
+  ),
+
   .testTarget(
     name: "DeltaCoreUnitTests",
     dependencies: ["DeltaCore"]
@@ -73,7 +82,6 @@ let package = Package(
   ],
   dependencies: [
     .package(name: "ZIPFoundation", url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.0"),
-    .package(name: "DeltaLogger", url: "https://github.com/stackotter/delta-logger", .branch("main")),
     .package(name: "SwiftProtobuf", url: "https://github.com/apple/swift-protobuf.git", from: "1.6.0"),
     .package(name: "swift-collections", url: "https://github.com/apple/swift-collections.git", from: "0.0.7"),
     .package(name: "swift-atomics", url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
@@ -89,7 +97,9 @@ let package = Package(
     .package(url: "https://github.com/stackotter/ASN1Parser", branch: "main"),
     .package(url: "https://github.com/krzyzanowskim/CryptoSwift", from: "1.6.0"),
     .package(url: "https://github.com/Kitura/SwiftyRequest.git", from: "3.1.0"),
-    .package(url: "https://github.com/JWhitmore1/SwiftCPUDetect", .branch("main"))
+    .package(url: "https://github.com/JWhitmore1/SwiftCPUDetect", .branch("main")),
+    .package(url: "https://github.com/sushichop/Puppy", from: "0.6.0"),
+    .package(url: "https://github.com/onevcat/Rainbow", from: "4.0.1")
   ],
   targets: targets
 )

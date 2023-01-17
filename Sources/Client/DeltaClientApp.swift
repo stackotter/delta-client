@@ -141,7 +141,7 @@ struct DeltaClientApp: App {
       StorageManager.default.pluginsDirectory = pluginsDirectory
     }
 
-    setLogLevel(arguments.logLevel)
+    setConsoleLogLevel(arguments.logLevel)
   }
 
   var body: some Scene {
