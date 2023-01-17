@@ -1,15 +1,16 @@
 import SwiftUI
+import DeltaCore
 
 struct ProgressLoadingView: View {
   // MARK: Public properties
-  
+
   /// Loader progress
-  public let progress: Double
+  @State public var progress: Double
   /// Loading message
   public let message: String
-  
+
   // MARK: Private properties
-  
+
   /// Loader bar border height
   private let loaderHeight: CGFloat = 20
   /// Loader bar border width
@@ -18,9 +19,9 @@ struct ProgressLoadingView: View {
   private let inset: CGFloat = 6
   /// Progress bar width percentage
   @State private var animatedProgress: Double = 0
-  
+
   // MARK: Init
-  
+
   /// Creates a new progress bar view.
   /// - Parameters:
   ///   - progress: The progress from 0 to 1.
@@ -32,18 +33,18 @@ struct ProgressLoadingView: View {
     self.progress = progress
     self.message = message
   }
-  
+
   // MARK: View
-  
+
   var body: some View {
     GeometryReader { proxy in
       let parentWidth = proxy.size.width
       let loaderWidth = parentWidth * 0.6
       let progressBarWidth = loaderWidth - 2 * inset
-      
+
       VStack(alignment: .center) {
         Text(message)
-        
+
         HStack(alignment: .center) {
           Color.white
             .frame(width: progressBarWidth * animatedProgress)
@@ -62,8 +63,10 @@ struct ProgressLoadingView: View {
       .background(Color.black)
     }
     .onChange(of: progress) { newProgress in
-      withAnimation(.easeInOut(duration: 1)) {
-        animatedProgress = newProgress
+      ThreadUtil.runInMain {
+        withAnimation(.easeInOut(duration: 1)) {
+          animatedProgress = newProgress
+        }
       }
     }
     .onAppear {
