@@ -44,7 +44,9 @@ extension GUIVertexStorage {
           }
         }
       case .flatArray(var array):
-        return action(UnsafeMutableBufferPointer(start: &array, count: array.count))
+        return array.withUnsafeMutableBufferPointer { pointer in
+          return action(pointer)
+        }
     }
   }
 
