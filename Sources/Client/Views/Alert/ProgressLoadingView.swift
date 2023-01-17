@@ -5,7 +5,7 @@ struct ProgressLoadingView: View {
   // MARK: Public properties
 
   /// Loader progress
-  @State public var progress: Double
+  public var progress: Double
   /// Loading message
   public let message: String
 
