@@ -62,6 +62,15 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
   func handleItemAction(_ index: Int, _ action: Action) {
     switch action {
       case .delete:
+        if selected == index {
+          if items.count == 1 {
+            selected = nil
+          } else {
+            selected = 0
+          }
+        } else if let selectedIndex = selected, selectedIndex > index {
+          selected = selectedIndex - 1
+        }
         items.remove(at: index)
       case .edit:
         state.update(to: .editItem(index))
