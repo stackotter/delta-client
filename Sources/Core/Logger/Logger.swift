@@ -40,6 +40,25 @@ struct ConsoleLogFormatter: LogFormattable {
   }
 }
 
+struct FileLogFormatter: LogFormattable {
+  func formatMessage(
+    _ level: LogLevel,
+    message: String,
+    tag: String,
+    function: String,
+    file: String,
+    line: UInt,
+    swiftLogInfo: [String : String],
+    label: String,
+    date: Date,
+    threadID: UInt64
+  ) -> String {
+    let date = dateFormatter(date)
+    let moduleName = moduleName(file)
+    return "[\(date)] [\(moduleName)] [\(level)] \(message)"
+  }
+}
+
 var consoleLogger = ConsoleLogger(
   "dev.stackotter.delta-client.ConsoleLogger",
   logLevel: .debug,
@@ -65,7 +84,7 @@ public func setConsoleLogLevel(_ logLevel: LogLevel) {
   log.add(consoleLogger)
 }
 
-public func addFileLogger(loggingTo file: URL) throws {
+public func enableFileLogger(loggingTo file: URL) throws {
   let rotationConfig = RotationConfig(
     suffixExtension: .date_uuid,
     maxFileSize: 5 * 1024 * 1024,
@@ -74,6 +93,7 @@ public func addFileLogger(loggingTo file: URL) throws {
   let fileLogger = try FileRotationLogger(
     "dev.stackotter.delta-client.FileRotationLogger",
     logLevel: .debug,
+    logFormat: FileLogFormatter(),
     fileURL: file.absoluteURL,
     rotationConfig: rotationConfig
   )

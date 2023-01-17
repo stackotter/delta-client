@@ -5,12 +5,12 @@ import ZIPFoundation
 final class StorageManager {
   /// Delta client's default storage manager.
   static var `default` = StorageManager()
-  
+
   /// Whether this is the first time the app has been launched or not.
   public let isFirstLaunch: Bool
   /// The directory to store all of the client's persistent data.
   public var storageDirectory: URL
-  
+
   /// The directory within the storage directory to store the vanilla assets.
   public var vanillaAssetsDirectory: URL
   /// The directory within the storage directory to store registry data.
@@ -21,7 +21,14 @@ final class StorageManager {
   public var cacheDirectory: URL
   /// The directory containing gpu captures.
   public var gpuCaptureDirectory: URL
-  
+  /// The directory containing logs.
+  public var logsDirectory: URL
+
+  /// The current log file.
+  public var currentLogFile: URL {
+    return logsDirectory.appendingPathComponent("delta-client.log")
+  }
+
   private init() {
     // Get the url of the storage directory
     if let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
@@ -32,16 +39,17 @@ final class StorageManager {
       let fallback = FileManager.default.temporaryDirectory.appendingPathComponent("dev.stackotter.delta-client.fallback")
       storageDirectory = fallback
     }
-    
+
     vanillaAssetsDirectory = storageDirectory.appendingPathComponent("assets")
     registryDirectory = storageDirectory.appendingPathComponent("registries")
     pluginsDirectory = storageDirectory.appendingPathComponent("plugins")
     cacheDirectory = storageDirectory.appendingPathComponent("cache")
     gpuCaptureDirectory = storageDirectory.appendingPathComponent("captures")
-    
+    logsDirectory = storageDirectory.appendingPathComponent("logs")
+
     let storagePath = storageDirectory.path
     log.trace("Using \(storagePath) as storage directory")
-    
+
     // Create the storage directory if required
     if !Self.directoryExists(at: storageDirectory) {
       do {
@@ -52,7 +60,7 @@ final class StorageManager {
         DeltaClientApp.fatal("Failed to create storage directory: \(error)")
       }
     }
-    
+
     // Check if this is a fresh launch of the app
     let launchMarker = storageDirectory.appendingPathComponent(".haslaunched")
     isFirstLaunch = !Self.fileExists(at: launchMarker)
@@ -64,14 +72,15 @@ final class StorageManager {
       } catch {
         DeltaClientApp.fatal("Failed to reset storage for fresh install: \(error)")
       }
-      
+
       // Create the launch marker
       FileManager.default.createFile(
         atPath: launchMarker.path,
         contents: nil,
-        attributes: nil)
+        attributes: nil
+      )
     }
-    
+
     // Create plugins directory if required
     if !Self.directoryExists(at: pluginsDirectory) {
       do {
@@ -82,31 +91,31 @@ final class StorageManager {
       }
     }
   }
-  
+
   // MARK: Static shortenings of FileManager methods
-  
+
   /// Checks if a file or directory exists at the given url.
   private static func itemExists(at url: URL) -> Bool {
     return FileManager.default.fileExists(atPath: url.path)
   }
-  
+
   /// Checks if a file or directory exists at the given url updating isDirectory.
   private static func itemExists(at url: URL, isDirectory: inout ObjCBool) -> Bool {
     return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
   }
-  
+
   /// Checks if a file exists at the given url.
   private static func fileExists(at url: URL) -> Bool {
     var isDirectory: ObjCBool = false
     return itemExists(at: url, isDirectory: &isDirectory) && !isDirectory.boolValue
   }
-  
+
   /// Checks if a directory exists at the given url.
   private static func directoryExists(at url: URL) -> Bool {
     var isDirectory: ObjCBool = false
     return itemExists(at: url, isDirectory: &isDirectory) && isDirectory.boolValue
   }
-  
+
   /// Creates a directory at the given url with intermediate directories.
   /// Replaces any existing item at the url with an empty directory.
   private static func createDirectory(at url: URL) throws {
@@ -114,96 +123,98 @@ final class StorageManager {
     try FileManager.default.createDirectory(
       at: url, withIntermediateDirectories: true, attributes: nil)
   }
-  
+
   private static func contentsOfDirectory(at url: URL) throws -> [URL] {
     return try FileManager.default.contentsOfDirectory(
-      at: url, includingPropertiesForKeys: nil, options: [])
+      at: url, includingPropertiesForKeys: nil, options: []
+    )
   }
-  
+
   // MARK: Instance method aliases of the static methods to clean up api
-  
+
   /// Checks if a file or directory exists at the given url.
   public func itemExists(at url: URL) -> Bool {
     return Self.itemExists(at: url)
   }
-  
+
   /// Checks if a file or directory exists at the given url updating isDirectory.
   public func itemExists(at url: URL, isDirectory: inout ObjCBool) -> Bool {
     return Self.itemExists(at: url, isDirectory: &isDirectory)
   }
-  
+
   /// Checks if a file exists at the given url.
   public func fileExists(at url: URL) -> Bool {
     return Self.fileExists(at: url)
   }
-  
+
   /// Checks if a directory exists at the given url.
   public func directoryExists(at url: URL) -> Bool {
     return Self.directoryExists(at: url)
   }
-  
+
   /// Creates a directory at the given url with intermediate directories.
   /// Replaces any existing item at the url with an empty directory.
   public func createDirectory(at url: URL) throws {
     // Remove the current item if it exists
     try Self.createDirectory(at: url)
   }
-  
+
   public func contentsOfDirectory(at url: URL) throws -> [URL] {
     return try Self.contentsOfDirectory(at: url)
   }
-  
+
   // MARK: Delta client specific methods
-  
+
   /// Returns the absolute URL of a path relative to the storage directory.
   public func absoluteFromRelative(_ relativePath: String) -> URL {
     return storageDirectory.appendingPathComponent(relativePath)
   }
-  
+
   /// Creates a unique GPU capture output file path of the form `capture dd-MM-yyyy HH-mm-ss.gputrace`.
   public func getUniqueGPUCaptureFile() -> URL {
     let date = Date()
     let formatter = DateFormatter()
     formatter.dateFormat = "dd-MM-yyyy HH-mm-ss"
-    
+
     let fileName = "capture \(formatter.string(from: date)).gputrace"
     return gpuCaptureDirectory.appendingPathComponent(fileName)
   }
-  
+
   /// Create a zip backup of the storage directory.
   public func createBackup() throws {
     let date = Date()
     let formatter = DateFormatter()
     formatter.dateFormat = "dd-MM-yyyy HH-mm-ss"
-    
+
     let backupName = "backup \(formatter.string(from: date))"
     let backupFile = absoluteFromRelative("\(backupName).zip")
-    
+
     do {
       try FileManager.default.zipItem(at: storageDirectory, to: backupFile)
     } catch {
       throw StorageError.failedToCreateBackup(error)
     }
   }
-  
+
   /// Unzips the specified item to the specified directory creating the directory if required.
   public func unzipItem(at item: URL, to destination: URL) throws {
     try createDirectory(at: destination)
     try FileManager.default.unzipItem(at: item, to: destination)
   }
-  
+
   /// Copies the specified item to the destination directory.
   public func copyItem(at item: URL, to destination: URL) throws {
     try FileManager.default.copyItem(at: item, to: destination)
   }
-  
+
   /// Delete the application support directory's contents excluding backups.
   private func resetStorage() throws {
     let contents = try FileManager.default.contentsOfDirectory(
       at: storageDirectory,
       includingPropertiesForKeys: nil,
-      options: .skipsHiddenFiles)
-    
+      options: .skipsHiddenFiles
+    )
+
     for item in contents {
       // Remove item if it is not a backup
       if !item.lastPathComponent.hasPrefix("backup") {
@@ -211,20 +222,20 @@ final class StorageManager {
       }
     }
   }
-  
+
   // MARK: Troubleshooting methods
-  
+
   /// Clears cache directory.
   public func clearCache() throws {
     log.info("Clearing cache")
-    
+
     guard directoryExists(at: StorageManager.default.cacheDirectory) else {
       return
     }
-    
+
     try FileManager.default.removeItem(at: StorageManager.default.cacheDirectory)
   }
-  
+
   /// Will perform a fresh install on next launch. No backup will be made.
   public func factoryReset() throws {
     log.info("Performing factory reset")

@@ -15,6 +15,12 @@ struct DeltaClientApp: App {
   // MARK: Init
 
   init() {
+    do {
+      try enableFileLogger(loggingTo: StorageManager.default.currentLogFile)
+    } catch {
+      Self.modalWarning("File logging disabled: failed to setup log file")
+    }
+
     let taskQueue = DispatchQueue(label: "dev.stackotter.delta-client.startupTasks")
 
     Self.handleCommandLineArguments()
@@ -116,8 +122,6 @@ struct DeltaClientApp: App {
           }
         }
 
-        updateLoadingState(step: .finish)
-
         // Get user to login if they haven't already
         if ConfigManager.default.config.accounts.isEmpty {
           Self.appState.update(to: .login)
@@ -169,6 +173,11 @@ struct DeltaClientApp: App {
           }
         }
         .keyboardShortcut(KeyboardShortcut(KeyEquivalent(","), modifiers: [.command]))
+      })
+      CommandGroup(after: .toolbar, addition: {
+        Button("Logs") {
+          NSWorkspace.shared.open(StorageManager.default.currentLogFile)
+        }
       })
       CommandGroup(after: .windowSize, addition: {
         Button("Toggle Full Screen") {

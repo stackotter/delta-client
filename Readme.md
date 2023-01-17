@@ -42,7 +42,7 @@ One of the biggest advantages of Delta Client is its performance. Epic compariso
 6. Delta Client will now open and start downloading the required assets (this only has to happen once and should take around 40s with a mediocre internet speed)
 7. You can move Delta Client to your Applications folder for ease of use if you want
 
-To run Delta Client from terminal you can run this command: `/path/to/DeltaClient.app/Contents/MacOS/DeltaClient --log-level debug`. This allows you to see the debug logs as the app is running.
+To view application logs, click `View > Logs` in the menu bar while Delta Client is open.
 
 ### Building from source
 

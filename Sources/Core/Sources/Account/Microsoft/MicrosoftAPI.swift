@@ -1,7 +1,6 @@
 import Foundation
 
 public enum MicrosoftAPIError: LocalizedError {
-  case invalidRedirectURL
   case noUserHashInResponse
   case failedToSerializeRequest
   case failedToDeserializeResponse(Error, String)
@@ -16,11 +15,9 @@ public enum MicrosoftAPIError: LocalizedError {
   case failedToGetAttachedLicenses(Error)
   case accountDoesntOwnMinecraft
   case failedToGetMinecraftAccount(Error)
-  
+
   public var errorDescription: String? {
     switch self {
-      case .invalidRedirectURL:
-        return "Invalid redirect URL."
       case .noUserHashInResponse:
         return "No user hash in response."
       case .failedToSerializeRequest:
@@ -31,13 +28,13 @@ public enum MicrosoftAPIError: LocalizedError {
         Reason: \(error.localizedDescription)
         Data: \(string)
         """
-      case .xstsAuthenticationFailed(let xSTSAuthenticationError):
+      case .xstsAuthenticationFailed(let xstsAuthenticationError):
         return """
         XSTS authentication failed.
-        Code: \(xSTSAuthenticationError.code)
-        Identity: \(xSTSAuthenticationError.identity)
-        Message: \(xSTSAuthenticationError.message)
-        Redirect: \(xSTSAuthenticationError.redirect)
+        Code: \(xstsAuthenticationError.code)
+        Identity: \(xstsAuthenticationError.identity)
+        Message: \(xstsAuthenticationError.message)
+        Redirect: \(xstsAuthenticationError.redirect)
         """
       case .expiredAccessToken:
         return "Expired access token."
@@ -99,8 +96,6 @@ public enum MicrosoftAPI {
   // swiftlint:disable force_unwrapping
   /// The client id used for Microsoft authentication.
   public static let clientId = "e5c1b05f-4e94-4747-90bf-3e9d40f830f1"
-  /// The redirect URL Delta Client uses for Microsoft OAuth.
-  public static let redirectURL = URL(string: "ms-xal-\(clientId)://auth")!
 
   private static let xstsSandboxId = "RETAIL"
   private static let xstsRelyingParty = "rp://api.minecraftservices.com/"
@@ -244,12 +239,15 @@ public enum MicrosoftAPI {
   /// - Parameter account: The account to refresh.
   /// - Returns: The refreshed account.
   public static func refreshMinecraftAccount(_ account: MicrosoftAccount) async throws -> MicrosoftAccount {
+    log.debug("Start refresh microsoft account")
     var account = account
     if account.microsoftAccessToken.hasExpired {
       account.microsoftAccessToken = try await MicrosoftAPI.refreshMicrosoftAccessToken(account.microsoftAccessToken)
     }
 
-    return try await MicrosoftAPI.getMinecraftAccount(account.microsoftAccessToken)
+    account = try await MicrosoftAPI.getMinecraftAccount(account.microsoftAccessToken)
+    log.debug("Finish refresh microsoft account")
+    return account
   }
 
   // MARK: Private methods
