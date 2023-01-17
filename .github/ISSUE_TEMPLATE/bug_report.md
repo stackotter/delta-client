@@ -20,6 +20,11 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
+**Logs**
+If applicable, obtain the logs at `~/Library/Application Support/dev.stackotter.delta-client/logs/delta-client.log`
+and attach the relevant part here (probably the last few lines). This is made easy by the `View > Logs`
+menu bar item.
+
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
