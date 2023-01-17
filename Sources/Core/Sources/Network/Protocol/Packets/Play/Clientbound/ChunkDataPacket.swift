@@ -49,13 +49,13 @@ public struct ChunkDataPacket: ClientboundPacket {
     blockEntities = []
     blockEntities.reserveCapacity(numBlockEntities)
     for _ in 0..<numBlockEntities {
+      let blockEntityNBT = try! packetReader.readNBTCompound()
       do {
-        let blockEntityNBT = try packetReader.readNBTCompound()
 
-        let x: Int = try blockEntityNBT.get("x")
-        let y: Int = try blockEntityNBT.get("y")
-        let z: Int = try blockEntityNBT.get("z")
-        let position = BlockPosition(x: x, y: y, z: z)
+        let x: Int32 = try blockEntityNBT.get("x")
+        let y: Int32 = try blockEntityNBT.get("y")
+        let z: Int32 = try blockEntityNBT.get("z")
+        let position = BlockPosition(x: Int(x), y: Int(y), z: Int(z))
 
         let identifierString: String = try blockEntityNBT.get("id")
         let identifier = try Identifier(identifierString)

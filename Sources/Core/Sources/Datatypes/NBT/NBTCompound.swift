@@ -8,7 +8,7 @@ public enum NBTError: LocalizedError {
   case failedToGetList(_ key: String)
   case failedToGetTag(_ key: String)
   case failedToOpenURL
-  
+
   public var errorDescription: String? {
     switch self {
       case .emptyList:
@@ -40,42 +40,42 @@ extension NBT {
     public var name: String = ""
     public var numBytes = -1
     public var isRoot: Bool
-    
+
     public var description: String {
       return "\(tags)"
     }
-    
+
     // MARK: Init
-    
+
     public init(name: String = "", isRoot: Bool = false) {
       self.buffer = Buffer()
       self.isRoot = isRoot
       self.name = name
     }
-    
+
     public init(fromBytes bytes: [UInt8], isRoot: Bool = true) throws {
       try self.init(fromBuffer: Buffer(bytes), isRoot: isRoot)
     }
-    
+
     public init(fromBuffer buffer: Buffer, withName name: String = "", isRoot: Bool = true) throws {
       let initialBufferIndex = buffer.index
-      
+
       self.buffer = buffer
       self.isRoot = isRoot
       self.name = name
-      
+
       try unpack()
-      
+
       if isRoot && !tags.isEmpty {
         let root: Compound = try get("")
         tags = root.tags
         self.name = root.name
       }
-      
+
       let numBytesRead = self.buffer.index - initialBufferIndex
       numBytes = numBytesRead
     }
-    
+
     public init(fromURL url: URL) throws {
       let data: Data
       do {
@@ -86,18 +86,18 @@ extension NBT {
       let bytes = [UInt8](data)
       try self.init(fromBytes: bytes)
     }
-    
+
     // MARK: Getters
-    
+
     public func get<T>(_ key: String) throws -> T {
-      guard let tag = tags[key]?.value as? T else {
+      guard let value = tags[key]?.value, let tag = value as? T else {
         throw NBTError.failedToGetTag(key)
       }
       return tag
     }
-    
+
     public func getList<T>(_ key: String) throws -> T {
-      guard let nbtList = tags[key]!.value as? List else {
+      guard let nbtList = tags[key]?.value as? List else {
         throw NBTError.failedToGetList(key)
       }
       guard let list = nbtList.list as? T else {
@@ -105,9 +105,9 @@ extension NBT {
       }
       return list
     }
-    
+
     // MARK: Unpacking
-    
+
     public mutating func unpack() throws {
       var n = 0
       while true {
@@ -118,12 +118,12 @@ extension NBT {
           }
           let nameLength = Int(try buffer.readShort(endianness: .big))
           let name = try buffer.readString(length: nameLength)
-          
+
           tags[name] = try readTag(ofType: type, withId: n, andName: name)
         } else { // type not valid
           throw NBTError.invalidTagType
         }
-        
+
         // the root tag should only contain one command
         if isRoot {
           break
@@ -131,7 +131,7 @@ extension NBT {
         n += 1
       }
     }
-    
+
     private mutating func readTag(ofType type: TagType, withId id: Int = 0, andName name: String = "") throws -> Tag {
       var value: Any?
       switch type {
@@ -162,7 +162,7 @@ extension NBT {
             if length < 0 {
               throw NBTError.emptyList
             }
-            
+
             var list = List(type: listType)
             if length != 0 {
               for _ in 0..<length {
@@ -197,13 +197,13 @@ extension NBT {
       }
       return Tag(id: id, name: name, type: type, value: value!)
     }
-    
+
     // MARK: Packing
-    
+
     public mutating func pack() -> [UInt8] {
       buffer = Buffer()
       let tags = self.tags.values
-      
+
       if isRoot {
         buffer.writeByte(TagType.compound.rawValue)
         writeName(self.name)
@@ -214,15 +214,15 @@ extension NBT {
         writeTag(tag)
       }
       writeTag(Tag(id: 0, type: .end, value: nil))
-      
+
       return buffer.bytes
     }
-    
+
     private mutating func writeName(_ name: String) {
       buffer.writeShort(UInt16(name.utf8.count), endianness: .big)
       buffer.writeString(name)
     }
-    
+
     // TODO: Remove force casts
     // swiftlint:disable force_cast
     private mutating func writeTag(_ tag: Tag) {
@@ -251,10 +251,10 @@ extension NBT {
           let list = tag.value as! List
           let listType = list.type
           let listLength = list.count
-          
+
           buffer.writeByte(listType.rawValue)
           buffer.writeSignedInt(Int32(listLength), endianness: .big)
-          
+
           for elem in list.list {
             let value = Tag(id: 0, type: listType, value: elem)
             writeTag(value)
