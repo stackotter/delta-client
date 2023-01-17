@@ -7,12 +7,12 @@ on:
 
 jobs:
   test-macos:
-    runs-on: macOS-11
+    runs-on: macOS-12
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Force Xcode 13.2
-        run: sudo xcode-select -switch /Applications/Xcode_13.2.app
+      - name: Force Xcode 14.2
+        run: sudo xcode-select -switch /Applications/Xcode_14.2.app
       - name: Version
         run: swift --version
       - name: Test

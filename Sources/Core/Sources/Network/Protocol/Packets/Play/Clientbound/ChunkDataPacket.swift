@@ -49,9 +49,8 @@ public struct ChunkDataPacket: ClientboundPacket {
     blockEntities = []
     blockEntities.reserveCapacity(numBlockEntities)
     for _ in 0..<numBlockEntities {
-      let blockEntityNBT = try! packetReader.readNBTCompound()
       do {
-
+        let blockEntityNBT = try packetReader.readNBTCompound()
         let x: Int32 = try blockEntityNBT.get("x")
         let y: Int32 = try blockEntityNBT.get("y")
         let z: Int32 = try blockEntityNBT.get("z")
