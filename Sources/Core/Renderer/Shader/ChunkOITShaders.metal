@@ -15,6 +15,8 @@ struct FragmentOut {
 
 constexpr sampler textureSampler (mag_filter::nearest, min_filter::nearest, mip_filter::linear);
 
+constant float precomputedWeight = 0.286819249;
+
 fragment FragmentOut chunkOITFragmentShader(RasterizerData in [[stage_in]],
                                                      texture2d_array<float, access::sample> textureArray [[texture(0)]],
                                                      constant uint8_t *lightMap [[buffer(0)]]) {
@@ -35,9 +37,24 @@ fragment FragmentOut chunkOITFragmentShader(RasterizerData in [[stage_in]],
   color.rgb *= color.a;
 
   // Order independent transparency code adapted from https://casual-effects.blogspot.com/2015/03/implemented-weighted-blended-order.html?m=1
+  // I have changed the maths a lot to get it working well at all. I've hardcoded the depth for now
+  // and it seems to be working quite well.
 
-  float depthFactor = in.position.z;
-  float w = color.a * max(1e-2, min(3e3, depthFactor * depthFactor * depthFactor));
+  // This code was used to calculate z which was used in weight calculations. This had super weird
+  // artifacts and it turns out that just hardcoding the depth to 16 works way better than any depth
+  // weighting algorithms I have tried. The precomputedWeight is calculated using Equation 7 from
+  // the 2013 paper by Morgan mcGuire and Louis Bavoil of NVIDIA: https://jcgt.org/published/0002/02/09/
+  //
+  //   float d = in.position.z;
+  //   float far = 400;
+  //   float near = 0.04;
+  //   float z = (far * near) / (d * (far - near) - far) + 32;
+  //
+  //   constant float z = 16;
+  //   constant float zCubed = z * z * z;
+  //   constant float precomputedWeight = max(1e-2, min(3e3, 10 / (1e-5 + zCubed / 125 + zCubed * zCubed / 8e6)));
+
+  float w = color.a * precomputedWeight;
   out.accumulation = color * w;
   out.revealage = color.a;
 
