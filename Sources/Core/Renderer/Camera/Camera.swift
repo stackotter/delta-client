@@ -12,7 +12,7 @@ public struct Camera {
   /// The near clipping plane.
   public private(set) var nearDistance: Float = 0.04
   /// The far clipping plant.
-  public private(set) var farDistance: Float = 400
+  public private(set) var farDistance: Float = 800
 
   /// The aspect ratio.
   public private(set) var aspect: Float = 1
