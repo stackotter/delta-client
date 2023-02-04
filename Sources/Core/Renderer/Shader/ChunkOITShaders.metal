@@ -32,12 +32,12 @@ fragment FragmentOut chunkOITFragmentShader(RasterizerData in [[stage_in]],
 
   color *= brightness / 255.0;
   color *= in.tint;
+  color.rgb *= color.a;
 
   // Order independent transparency code adapted from https://casual-effects.blogspot.com/2015/03/implemented-weighted-blended-order.html?m=1
 
-  float depthFactor = 1 - in.position.z;
-
-  float w = color.a * max(1e-2, 3e3 * depthFactor * depthFactor * depthFactor);
+  float depthFactor = in.position.z;
+  float w = color.a * max(1e-2, min(3e3, depthFactor * depthFactor * depthFactor));
   out.accumulation = color * w;
   out.revealage = color.a;
 
@@ -64,5 +64,5 @@ vertex OITCompositingRasterizerData chunkOITCompositingVertexShader(uint vertexI
 fragment float4 chunkOITCompositingFragmentShader(RasterizerData in [[stage_in]],
                                                   float4 accumulation [[color(1)]],
                                                   float revealage [[color(2)]]) {
-  return float4(accumulation.rgb / max(accumulation.a, 0.00001), 1 - revealage);
+  return float4(accumulation.rgb / max(min(accumulation.a, 5e4), 1e-4), 1 - revealage);
 }
