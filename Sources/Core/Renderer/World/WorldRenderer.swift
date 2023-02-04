@@ -12,6 +12,10 @@ public final class WorldRenderer: Renderer {
 
   /// Render pipeline used for rendering world geometry.
   private var renderPipelineState: MTLRenderPipelineState
+  /// Render pipeline used for rendering translucent world geometry.
+  private var transparencyRenderPipelineState: MTLRenderPipelineState
+  /// Render pipeline used for compositing translucent geometry onto the screen buffer.
+  private var compositingRenderPipelineState: MTLRenderPipelineState
 
   /// The device used for rendering.
   private var device: MTLDevice
@@ -44,6 +48,10 @@ public final class WorldRenderer: Renderer {
   /// A buffer containing the light map (updated each frame).
   private var lightMapBuffer: MTLBuffer?
 
+  /// The depth stencil state used for order independent transparency (which requires read-only
+  /// depth).
+  private let readOnlyDepthState: MTLDepthStencilState
+
   // MARK: Init
 
   /// Creates a new world renderer.
@@ -62,6 +70,15 @@ public final class WorldRenderer: Renderer {
     let library = try MetalUtil.loadDefaultLibrary(device)
     let vertexFunction = try MetalUtil.loadFunction("chunkVertexShader", from: library)
     let fragmentFunction = try MetalUtil.loadFunction("chunkFragmentShader", from: library)
+    let transparentFragmentFunction = try MetalUtil.loadFunction("chunkOITFragmentShader", from: library)
+    let transparentCompositingVertexFunction = try MetalUtil.loadFunction(
+      "chunkOITCompositingVertexShader",
+      from: library
+    )
+    let transparentCompositingFragmentFunction = try MetalUtil.loadFunction(
+      "chunkOITCompositingFragmentShader",
+      from: library
+    )
 
     // Create block palette array texture.
     resources = client.resourcePack.vanillaResources
@@ -74,14 +91,54 @@ public final class WorldRenderer: Renderer {
     // Create light map
     lightMap = LightMap(ambientLight: Double(client.game.world.dimension.ambientLight))
 
-    // Create pipeline
+    // Create opaque pipeline
     renderPipelineState = try MetalUtil.makeRenderPipelineState(
       device: device,
-      label: "dev.stackotter.delta-client.WorldRenderer",
+      label: "dev.stackotter.delta-client.WorldRenderer.renderPipelineState",
       vertexFunction: vertexFunction,
       fragmentFunction: fragmentFunction,
+      blendingEnabled: false
+    )
+
+    // Create OIT pipeline
+    transparencyRenderPipelineState = try MetalUtil.makeRenderPipelineState(
+      device: device,
+      label: "dev.stackotter.delta-client.WorldRenderer.orderIndependentTransparencyRenderPipelineState",
+      vertexFunction: vertexFunction,
+      fragmentFunction: transparentFragmentFunction,
+      blendingEnabled: true,
+      editDescriptor: { (descriptor: MTLRenderPipelineDescriptor) in
+        // Accumulation texture
+        descriptor.colorAttachments[1].isBlendingEnabled = true
+        descriptor.colorAttachments[1].rgbBlendOperation = .add
+        descriptor.colorAttachments[1].alphaBlendOperation = .add
+        descriptor.colorAttachments[1].sourceRGBBlendFactor = .one
+        descriptor.colorAttachments[1].sourceAlphaBlendFactor = .one
+        descriptor.colorAttachments[1].destinationRGBBlendFactor = .one
+        descriptor.colorAttachments[1].destinationAlphaBlendFactor = .one
+
+        // Revealage texture
+        descriptor.colorAttachments[2].isBlendingEnabled = true
+        descriptor.colorAttachments[2].rgbBlendOperation = .add
+        descriptor.colorAttachments[2].alphaBlendOperation = .add
+        descriptor.colorAttachments[2].sourceRGBBlendFactor = .zero
+        descriptor.colorAttachments[2].sourceAlphaBlendFactor = .zero
+        descriptor.colorAttachments[2].destinationRGBBlendFactor = .oneMinusSourceColor
+        descriptor.colorAttachments[2].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+      }
+    )
+
+    // Create OIT compositing pipeline
+    compositingRenderPipelineState = try MetalUtil.makeRenderPipelineState(
+      device: device,
+      label: "dev.stackotter.delta-client.WorldRenderer.compositingRenderPipelineState",
+      vertexFunction: transparentCompositingVertexFunction,
+      fragmentFunction: transparentCompositingFragmentFunction,
       blendingEnabled: true
     )
+
+    // Create the depth state used for order independent transparency
+    readOnlyDepthState = try MetalUtil.createDepthState(device: device)
 
     // Create entity renderer
     entityRenderer = try EntityRenderer(
@@ -244,7 +301,8 @@ public final class WorldRenderer: Renderer {
     profiler.pop()
 
     // Setup render pass for encoding translucent geometry after entity rendering pass
-    encoder.setRenderPipelineState(renderPipelineState)
+    encoder.setRenderPipelineState(transparencyRenderPipelineState)
+    encoder.setDepthStencilState(readOnlyDepthState)
     encoder.setFragmentTexture(arrayTexture.texture, index: 0)
     encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 3) // Instance uniforms
 
@@ -259,6 +317,11 @@ public final class WorldRenderer: Renderer {
         commandQueue: commandQueue
       )
     }
+
+    // Composite translucent geometry onto the screen buffer. No vertices need to be supplied, the
+    // shader has the screen's corners hardcoded for simplicity.
+    encoder.setRenderPipelineState(compositingRenderPipelineState)
+    encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
     profiler.pop()
   }
 
