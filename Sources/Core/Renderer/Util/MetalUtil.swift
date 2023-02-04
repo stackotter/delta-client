@@ -8,27 +8,37 @@ public enum MetalUtil {
     label: String,
     vertexFunction: MTLFunction,
     fragmentFunction: MTLFunction,
-    blendingEnabled: Bool
+    blendingEnabled: Bool,
+    editDescriptor: ((MTLRenderPipelineDescriptor) -> Void)? = nil,
+    isOffScreenPass: Bool = true
   ) throws -> MTLRenderPipelineState {
-    let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
-    pipelineStateDescriptor.label = label
-    pipelineStateDescriptor.vertexFunction = vertexFunction
-    pipelineStateDescriptor.fragmentFunction = fragmentFunction
-    pipelineStateDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-    pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float
+    let descriptor = MTLRenderPipelineDescriptor()
+    descriptor.label = label
+    descriptor.vertexFunction = vertexFunction
+    descriptor.fragmentFunction = fragmentFunction
+    descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+    descriptor.depthAttachmentPixelFormat = .depth32Float
 
-    if blendingEnabled {
-      pipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
-      pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
-      pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
-      pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
-      pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .zero
-      pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
-      pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .zero
+    // Optionally include accumulation and revealage buffers for order independent transparency
+    if isOffScreenPass {
+      descriptor.colorAttachments[1].pixelFormat = .bgra8Unorm
+      descriptor.colorAttachments[2].pixelFormat = .r8Unorm
     }
 
+    if blendingEnabled {
+      descriptor.colorAttachments[0].isBlendingEnabled = true
+      descriptor.colorAttachments[0].rgbBlendOperation = .add
+      descriptor.colorAttachments[0].alphaBlendOperation = .add
+      descriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+      descriptor.colorAttachments[0].sourceAlphaBlendFactor = .zero
+      descriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+      descriptor.colorAttachments[0].destinationAlphaBlendFactor = .zero
+    }
+
+    editDescriptor?(descriptor)
+
     do {
-      return try device.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
+      return try device.makeRenderPipelineState(descriptor: descriptor)
     } catch {
       throw RenderError.failedToCreateEntityRenderPipelineState(error)
     }
@@ -155,12 +165,14 @@ public enum MetalUtil {
   }
 
   /// Creates a simple depth stencil state.
-  /// - Parameter device: Device to create the state with.
+  /// - Parameters:
+  ///   - device: Device to create the state with.
+  ///   - readOnly: If `true`, the depth texture will not be written to.
   /// - Returns: A depth stencil state.
-  public static func createDepthState(device: MTLDevice) throws -> MTLDepthStencilState {
+  public static func createDepthState(device: MTLDevice, readOnly: Bool = false) throws -> MTLDepthStencilState {
     let depthDescriptor = MTLDepthStencilDescriptor()
     depthDescriptor.depthCompareFunction = .lessEqual
-    depthDescriptor.isDepthWriteEnabled = true
+    depthDescriptor.isDepthWriteEnabled = !readOnly
 
     guard let depthState = device.makeDepthStencilState(descriptor: depthDescriptor) else {
       throw RenderError.failedToCreateWorldDepthStencilState
@@ -189,5 +201,27 @@ public enum MetalUtil {
     renderPassDescriptor.depthAttachment.storeAction = MTLStoreAction.store
 
     return renderPassDescriptor
+  }
+
+  public static func createTexture(
+    device: MTLDevice,
+    width: Int,
+    height: Int,
+    pixelFormat: MTLPixelFormat,
+    editDescriptor: ((MTLTextureDescriptor) -> Void)? = nil
+  ) throws -> MTLTexture {
+    let descriptor = MTLTextureDescriptor()
+    descriptor.usage = [.shaderRead, .shaderWrite, .renderTarget]
+    descriptor.width = width
+    descriptor.height = height
+    descriptor.pixelFormat = pixelFormat
+
+    editDescriptor?(descriptor)
+
+    guard let texture = device.makeTexture(descriptor: descriptor) else {
+      throw RenderError.failedToUpdateRenderTargetSize
+    }
+
+    return texture
   }
 }

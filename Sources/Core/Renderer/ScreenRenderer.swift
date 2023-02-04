@@ -4,7 +4,6 @@ import DeltaCore
 
 /// The renderer managing offscreen rendering and displaying final result in view.
 public final class ScreenRenderer: Renderer {
-  // MARK: - Private properties
   /// The device used to render.
   private var device: MTLDevice
 
@@ -23,10 +22,15 @@ public final class ScreenRenderer: Renderer {
   /// Render target depth texture
   private var renderTargetDepthTexture: MTLTexture?
 
+  /// The accumulation texture used for rendering of order independent transparency.
+  private var transparencyAccumulationTexture: MTLTexture?
+
+  /// The revealage texture used for rendering of order independent transparency.
+  private var transparencyRevealageTexture: MTLTexture?
+
   /// Client for which rendering is performed
   private var client: Client
 
-  // MARK: - Init
   public init(
     client: Client,
     device: MTLDevice,
@@ -43,11 +47,11 @@ public final class ScreenRenderer: Renderer {
       label: "ScreenRenderer",
       vertexFunction: try MetalUtil.loadFunction("screenVertexFunction", from: library),
       fragmentFunction: try MetalUtil.loadFunction("screenFragmentFunction", from: library),
-      blendingEnabled: false
+      blendingEnabled: false,
+      isOffScreenPass: false
     )
   }
 
-  // MARK: - Public
   public var renderDescriptor: MTLRenderPassDescriptor {
     return offScreenRenderPassDescriptor
   }
@@ -64,35 +68,61 @@ public final class ScreenRenderer: Renderer {
       }
     }
 
-    let nativeRenderTextureDescriptor = MTLTextureDescriptor()
-    nativeRenderTextureDescriptor.usage = [.shaderRead, .shaderWrite, .renderTarget]
-    nativeRenderTextureDescriptor.width = width
-    nativeRenderTextureDescriptor.height = height
-    nativeRenderTextureDescriptor.pixelFormat = view.colorPixelFormat
-    guard let colourTexture = device.makeTexture(descriptor: nativeRenderTextureDescriptor) else {
-      throw RenderError.failedToUpdateRenderTargetSize
+    renderTargetTexture = try MetalUtil.createTexture(
+      device: device,
+      width: width,
+      height: height,
+      pixelFormat: view.colorPixelFormat
+    ) { descriptor in
+      descriptor.storageMode = .private
     }
 
-    let depthTextureDescriptor = MTLTextureDescriptor()
-    depthTextureDescriptor.width = width
-    depthTextureDescriptor.height = height
-    depthTextureDescriptor.pixelFormat = .depth32Float
-    depthTextureDescriptor.storageMode = .private
-    guard let depthTexture = device.makeTexture(descriptor: depthTextureDescriptor) else {
-      throw RenderError.failedToUpdateRenderTargetSize
+    renderTargetDepthTexture = try MetalUtil.createTexture(
+      device: device,
+      width: width,
+      height: height,
+      pixelFormat: .depth32Float
+    ) { descriptor in
+      descriptor.storageMode = .private
     }
 
-    // Update internal colour and depth textures
-    self.renderTargetTexture = colourTexture
-    self.renderTargetDepthTexture = depthTexture
+    // Create accumulation texture for order independent transparency
+    transparencyAccumulationTexture = try MetalUtil.createTexture(
+      device: device,
+      width: width,
+      height: height,
+      pixelFormat: .bgra8Unorm
+    )
+
+    // Create revealage texture for order independent transparency
+    transparencyRevealageTexture = try MetalUtil.createTexture(
+      device: device,
+      width: width,
+      height: height,
+      pixelFormat: .r8Unorm
+    )
 
     // Update render pass descriptor. Set clear colour to sky colour
-    offScreenRenderPassDescriptor = MetalUtil.createRenderPassDescriptor(
+    let passDescriptor = MetalUtil.createRenderPassDescriptor(
       device,
       targetRenderTexture: renderTargetTexture!,
       targetDepthTexture: renderTargetDepthTexture!,
       clearColour: MTLClearColorMake(0.65, 0.8, 1, 1) // Sky colour
     )
+
+    let accumulationClearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
+    passDescriptor.colorAttachments[1].texture = transparencyAccumulationTexture
+    passDescriptor.colorAttachments[1].clearColor = accumulationClearColor
+    passDescriptor.colorAttachments[1].loadAction = MTLLoadAction.clear
+    passDescriptor.colorAttachments[1].storeAction = MTLStoreAction.store
+
+    let revealageClearColor = MTLClearColor(red: 1, green: 0, blue: 0, alpha: 0)
+    passDescriptor.colorAttachments[2].texture = transparencyRevealageTexture
+    passDescriptor.colorAttachments[2].clearColor = revealageClearColor
+    passDescriptor.colorAttachments[2].loadAction = MTLLoadAction.clear
+    passDescriptor.colorAttachments[2].storeAction = MTLStoreAction.store
+
+    offScreenRenderPassDescriptor = passDescriptor
   }
 
   public func render(
@@ -102,6 +132,8 @@ public final class ScreenRenderer: Renderer {
     worldToClipUniformsBuffer: MTLBuffer,
     camera: Camera
   ) throws {
+    // TODO: Investigate using a blit operation instead.
+
     profiler.push(.encode)
     // Set pipeline for rendering on-screen
     encoder.setRenderPipelineState(pipelineState)
