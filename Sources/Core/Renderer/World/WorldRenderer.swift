@@ -311,7 +311,7 @@ public final class WorldRenderer: Renderer {
     try worldMesh.mutateVisibleMeshes(fromBackToFront: true) { _, mesh in
       try mesh.renderTranslucent(
         viewedFrom: camera.position,
-        sortTranslucent: true,
+        sortTranslucent: false,
         renderEncoder: encoder,
         device: device,
         commandQueue: commandQueue
