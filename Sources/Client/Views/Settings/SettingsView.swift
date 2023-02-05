@@ -14,9 +14,9 @@ struct SettingsView: View {
   var isInGame: Bool
   var client: Client?
   var done: () -> Void
-  
+
   @State private var currentPage: SettingsState?
-  
+
   init(
     isInGame: Bool,
     client: Client?,
@@ -28,7 +28,7 @@ struct SettingsView: View {
     self.done = done
     self._currentPage = State(initialValue: landingPage ?? SettingsState.allCases[0])
   }
-  
+
   var body: some View {
     NavigationView {
       List {
@@ -44,7 +44,7 @@ struct SettingsView: View {
           tag: SettingsState.controls,
           selection: $currentPage
         )
-        
+
         if !isInGame {
           NavigationLink(
             "Accounts",
@@ -52,7 +52,7 @@ struct SettingsView: View {
             tag: SettingsState.accounts,
             selection: $currentPage
           )
-          
+
           #if os(macOS)
           NavigationLink(
             "Update",
@@ -75,7 +75,7 @@ struct SettingsView: View {
             selection: $currentPage
           )
         }
-        
+
         Button("Done", action: {
           withAnimation(nil) { done() }
         })

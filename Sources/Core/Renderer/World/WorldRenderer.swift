@@ -51,6 +51,8 @@ public final class WorldRenderer: Renderer {
   /// The depth stencil state used for order independent transparency (which requires read-only
   /// depth).
   private let readOnlyDepthState: MTLDepthStencilState
+  /// The depth stencil state used when order independent transparency is disabled.
+  private let depthState: MTLDepthStencilState
 
   // MARK: Init
 
@@ -97,7 +99,7 @@ public final class WorldRenderer: Renderer {
       label: "dev.stackotter.delta-client.WorldRenderer.renderPipelineState",
       vertexFunction: vertexFunction,
       fragmentFunction: fragmentFunction,
-      blendingEnabled: false
+      blendingEnabled: true
     )
 
     // Create OIT pipeline
@@ -138,7 +140,10 @@ public final class WorldRenderer: Renderer {
     )
 
     // Create the depth state used for order independent transparency
-    readOnlyDepthState = try MetalUtil.createDepthState(device: device)
+    readOnlyDepthState = try MetalUtil.createDepthState(device: device, readOnly: true)
+
+    // Create the regular depth state.
+    depthState = try MetalUtil.createDepthState(device: device, readOnly: true)
 
     // Create entity renderer
     entityRenderer = try EntityRenderer(
@@ -301,8 +306,12 @@ public final class WorldRenderer: Renderer {
     profiler.pop()
 
     // Setup render pass for encoding translucent geometry after entity rendering pass
-    encoder.setRenderPipelineState(transparencyRenderPipelineState)
-    encoder.setDepthStencilState(readOnlyDepthState)
+    if client.configuration.render.enableOrderIndependentTransparency {
+      encoder.setRenderPipelineState(transparencyRenderPipelineState)
+      encoder.setDepthStencilState(readOnlyDepthState)
+    } else {
+      encoder.setRenderPipelineState(renderPipelineState)
+    }
     encoder.setFragmentTexture(arrayTexture.texture, index: 0)
     encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 3) // Instance uniforms
 
@@ -311,7 +320,7 @@ public final class WorldRenderer: Renderer {
     try worldMesh.mutateVisibleMeshes(fromBackToFront: true) { _, mesh in
       try mesh.renderTranslucent(
         viewedFrom: camera.position,
-        sortTranslucent: false,
+        sortTranslucent: !client.configuration.render.enableOrderIndependentTransparency,
         renderEncoder: encoder,
         device: device,
         commandQueue: commandQueue
@@ -320,8 +329,11 @@ public final class WorldRenderer: Renderer {
 
     // Composite translucent geometry onto the screen buffer. No vertices need to be supplied, the
     // shader has the screen's corners hardcoded for simplicity.
-    encoder.setRenderPipelineState(compositingRenderPipelineState)
-    encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
+    if client.configuration.render.enableOrderIndependentTransparency {
+      encoder.setRenderPipelineState(compositingRenderPipelineState)
+      encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
+      encoder.setDepthStencilState(depthState)
+    }
     profiler.pop()
   }
 
