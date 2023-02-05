@@ -4,31 +4,33 @@ import DeltaCore
 struct VideoSettingsView: View {
   /// Config updates are sent straight to the client as soon as they are made if a client is provided.
   var client: Client?
-  
+
   @State var renderDistance: Float = 0
   @State var fov: Float = 0
   @State var renderMode: RenderMode = .normal
-  
+  @State var enableOrderIndependentTransparency: Bool = false
+
   var config: RenderConfiguration {
     return RenderConfiguration(
       fovY: Float(fov.rounded()),
       renderDistance: Int(renderDistance),
-      mode: renderMode
+      mode: renderMode,
+      enableOrderIndependentTransparency: enableOrderIndependentTransparency
     )
   }
-  
+
   /// - Parameter client: If present, config updates are sent to this client.
   init(client: Client? = nil) {
     self.client = client
   }
-  
+
   /// Handles when the user changes a value.
   func onValueChanged<T>(_ newValue: T) {
     if let client = client {
       client.configuration.render = config
     }
   }
-  
+
   /// Handles when the user stops/starts editing.
   func onEditingChanged(_ newValue: Bool) {
     // If the user has stopped editing, update config
@@ -36,14 +38,14 @@ struct VideoSettingsView: View {
       save()
     }
   }
-  
+
   /// Saves the user's choices to the config file.
   func save() {
     var config = ConfigManager.default.config
     config.render = self.config
     ConfigManager.default.setConfig(to: config)
   }
-  
+
   var body: some View {
     ScrollView {
       HStack {
@@ -57,7 +59,7 @@ struct VideoSettingsView: View {
         )
           .frame(width: 220)
       }
-      
+
       HStack {
         Text("FOV: \(Int(fov.rounded()))")
         Spacer()
@@ -68,7 +70,7 @@ struct VideoSettingsView: View {
         )
           .frame(width: 220)
       }
-      
+
       HStack {
         Text("Render mode")
         Spacer()
@@ -87,14 +89,30 @@ struct VideoSettingsView: View {
         #endif
           .frame(width: 220)
       }
+
+      HStack {
+        Text("Order independent transparency")
+        Spacer()
+        Toggle(
+          "Order independent transparency",
+          isOn: $enableOrderIndependentTransparency.onChange { newValue in
+            onValueChanged(newValue)
+            save()
+          }
+        )
+          .labelsHidden()
+          .toggleStyle(.switch)
+          .frame(width: 220)
+      }
     }
-    .frame(width: 400)
+    .frame(width: 450)
     .navigationTitle("Video")
     .onAppear {
       let config = ConfigManager.default.config.render
       renderDistance = Float(config.renderDistance)
       fov = config.fovY
       renderMode = config.mode
+      enableOrderIndependentTransparency = config.enableOrderIndependentTransparency
     }
   }
 }
