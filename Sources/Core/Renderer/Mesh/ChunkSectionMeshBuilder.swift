@@ -157,7 +157,7 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
     let culledFaces = getCullingNeighbours(at: position, blockId: blockId, neighbours: neighbours)
 
     // Return early if there can't possibly be any visible faces
-    if blockModel.cullableFaces.count == 6 && culledFaces.count == 6 && blockModel.nonCullableFaces.isEmpty {
+    if blockModel.cullableFaces == DirectionSet.all && culledFaces == DirectionSet.all && blockModel.nonCullableFaces.isEmpty {
       return
     }
 
@@ -220,7 +220,7 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
     translucentMesh: inout SortableMesh,
     position: BlockPosition,
     modelToWorld: Mat4x4f,
-    culledFaces: Set<Direction>,
+    culledFaces: DirectionSet,
     lightLevel: LightLevel,
     neighbourLightLevels: [Direction: LightLevel],
     tintColor: Vec3f
@@ -343,7 +343,7 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
   /// - Returns: A dictionary of face direction to light level for all faces in `visibleFaces`.
   func getNeighbouringLightLevels(
     neighbours: [BlockNeighbour],
-    visibleFaces: Set<Direction>
+    visibleFaces: DirectionSet
   ) -> [Direction: LightLevel] {
     var lightLevels = [Direction: LightLevel](minimumCapacity: 6)
     for neighbour in neighbours {
@@ -369,7 +369,7 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
     forFluid fluid: Fluid? = nil,
     blockId: Int,
     neighbours: [BlockNeighbour]
-  ) -> Set<Direction> {
+  ) -> DirectionSet {
     let neighbouringBlocks = getNeighbouringBlockIds(neighbours: neighbours)
     return getCullingNeighbours(
       at: position,
@@ -391,9 +391,9 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
     forFluid fluid: Fluid? = nil,
     blockId: Int,
     neighbouringBlocks: [(Direction, Int)]
-  ) -> Set<Direction> {
+  ) -> DirectionSet {
     // TODO: Skip directions that the block can't be culled from if possible
-    var cullingNeighbours = Set<Direction>(minimumCapacity: 6)
+    var cullingNeighbours = DirectionSet()
     let blockCullsSameKind = RegistryStore.shared.blockRegistry.selfCullingBlocks.contains(blockId)
 
     for (direction, neighbourBlockId) in neighbouringBlocks where neighbourBlockId != 0 {

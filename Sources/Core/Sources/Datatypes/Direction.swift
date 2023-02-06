@@ -10,7 +10,7 @@ public enum Direction: Int {
   case west = 4
   case east = 5
 
-  /// The array of all directions. Matches the order of ``DirectionSet/directions``.
+  /// The array of all directions.
   public static let allDirections: [Direction] = [
     .north,
     .south,

@@ -5,7 +5,7 @@ public enum Account: Codable, Identifiable {
   case microsoft(MicrosoftAccount)
   case mojang(MojangAccount)
   case offline(OfflineAccount)
-  
+
   /// The account's id.
   public var id: String {
     switch self {
@@ -15,7 +15,7 @@ public enum Account: Codable, Identifiable {
         return account.id
     }
   }
-  
+
   /// The account type to display to users.
   public var type: String {
     switch self {
@@ -27,7 +27,7 @@ public enum Account: Codable, Identifiable {
         return "Offline"
     }
   }
-  
+
   /// The account's username.
   public var username: String {
     switch self {
@@ -37,7 +37,7 @@ public enum Account: Codable, Identifiable {
         return account.username
     }
   }
-  
+
   /// The online version of this account if the account supports online mode.
   public var online: OnlineAccount? {
     switch self {
@@ -47,7 +47,7 @@ public enum Account: Codable, Identifiable {
         return nil
     }
   }
-  
+
   /// The offline version of this account.
   public var offline: OfflineAccount {
     switch self {
@@ -57,7 +57,7 @@ public enum Account: Codable, Identifiable {
         return account
     }
   }
-  
+
   /// Refreshes the account.
   /// - Parameter clientToken: The client token to use when refreshing the account.
   public mutating func refreshIfExpired(withClientToken clientToken: String) async throws {

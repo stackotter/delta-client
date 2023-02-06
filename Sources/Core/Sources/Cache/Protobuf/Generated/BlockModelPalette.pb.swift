@@ -199,11 +199,11 @@ public struct ProtobufBlockModel {
 
   public var parts: [ProtobufBlockModelPart] = []
 
-  public var cullingFaces: [ProtobufDirection] = []
+  public var cullingFaces: Int32 = 0
 
-  public var cullableFaces: [ProtobufDirection] = []
+  public var cullableFaces: Int32 = 0
 
-  public var nonCullableFaces: [ProtobufDirection] = []
+  public var nonCullableFaces: Int32 = 0
 
   public var textureType: ProtobufTextureType = .opaque
 
@@ -268,6 +268,18 @@ public struct ProtobufBlockModelPalette {
   public init() {}
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension ProtobufDirection: @unchecked Sendable {}
+extension ProtobufTextureType: @unchecked Sendable {}
+extension ProtobufBlockModelFace: @unchecked Sendable {}
+extension ProtobufBlockModelElement: @unchecked Sendable {}
+extension ProtobufBlockModelPart: @unchecked Sendable {}
+extension ProtobufBlockModel: @unchecked Sendable {}
+extension ProtobufVariants: @unchecked Sendable {}
+extension ProtobufDisplayTransforms: @unchecked Sendable {}
+extension ProtobufBlockModelPalette: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension ProtobufDirection: SwiftProtobuf._ProtoNameProviding {
@@ -318,6 +330,10 @@ extension ProtobufBlockModelFace: SwiftProtobuf.Message, SwiftProtobuf._MessageI
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if self.direction != .down {
       try visitor.visitSingularEnumField(value: self.direction, fieldNumber: 1)
     }
@@ -330,9 +346,9 @@ extension ProtobufBlockModelFace: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     if self.texture != 0 {
       try visitor.visitSingularInt32Field(value: self.texture, fieldNumber: 4)
     }
-    if let v = self._cullface {
+    try { if let v = self._cullface {
       try visitor.visitSingularEnumField(value: v, fieldNumber: 5)
-    }
+    } }()
     if self.isTinted != false {
       try visitor.visitSingularBoolField(value: self.isTinted, fieldNumber: 6)
     }
@@ -418,12 +434,16 @@ extension ProtobufBlockModelPart: SwiftProtobuf.Message, SwiftProtobuf._MessageI
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if self.ambientOcclusion != false {
       try visitor.visitSingularBoolField(value: self.ambientOcclusion, fieldNumber: 1)
     }
-    if let v = self._displayTransformsIndex {
+    try { if let v = self._displayTransformsIndex {
       try visitor.visitSingularInt32Field(value: v, fieldNumber: 2)
-    }
+    } }()
     if !self.elements.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.elements, fieldNumber: 3)
     }
@@ -456,9 +476,9 @@ extension ProtobufBlockModel: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeRepeatedMessageField(value: &self.parts) }()
-      case 2: try { try decoder.decodeRepeatedEnumField(value: &self.cullingFaces) }()
-      case 3: try { try decoder.decodeRepeatedEnumField(value: &self.cullableFaces) }()
-      case 4: try { try decoder.decodeRepeatedEnumField(value: &self.nonCullableFaces) }()
+      case 2: try { try decoder.decodeSingularInt32Field(value: &self.cullingFaces) }()
+      case 3: try { try decoder.decodeSingularInt32Field(value: &self.cullableFaces) }()
+      case 4: try { try decoder.decodeSingularInt32Field(value: &self.nonCullableFaces) }()
       case 5: try { try decoder.decodeSingularEnumField(value: &self.textureType) }()
       default: break
       }
@@ -469,14 +489,14 @@ extension ProtobufBlockModel: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if !self.parts.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.parts, fieldNumber: 1)
     }
-    if !self.cullingFaces.isEmpty {
-      try visitor.visitPackedEnumField(value: self.cullingFaces, fieldNumber: 2)
+    if self.cullingFaces != 0 {
+      try visitor.visitSingularInt32Field(value: self.cullingFaces, fieldNumber: 2)
     }
-    if !self.cullableFaces.isEmpty {
-      try visitor.visitPackedEnumField(value: self.cullableFaces, fieldNumber: 3)
+    if self.cullableFaces != 0 {
+      try visitor.visitSingularInt32Field(value: self.cullableFaces, fieldNumber: 3)
     }
-    if !self.nonCullableFaces.isEmpty {
-      try visitor.visitPackedEnumField(value: self.nonCullableFaces, fieldNumber: 4)
+    if self.nonCullableFaces != 0 {
+      try visitor.visitSingularInt32Field(value: self.nonCullableFaces, fieldNumber: 4)
     }
     if self.textureType != .opaque {
       try visitor.visitSingularEnumField(value: self.textureType, fieldNumber: 5)

@@ -6,7 +6,7 @@ public enum CardinalDirection: CaseIterable {
   case east
   case south
   case west
-  
+
   /// The opposite direction.
   public var opposite: CardinalDirection {
     let oppositeMap: [CardinalDirection: CardinalDirection] = [
