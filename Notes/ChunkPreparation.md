@@ -103,3 +103,14 @@ I now store block models in an array instead of a dictionary because dictionarie
 New total time: 4.9672ms
 
 It now takes 8-9 seconds to prepare all chunks within 10 render distance.
+
+## Replacing Set<Direction> with DirectionSet (a bitset-based implementation)
+
+This is just overall a much better data structure for the situation. It also ended up improving the
+block model cache loading time by a bit over 20% because the data structure is much better suited to
+binary caching (fixed size and just a single integer).
+
+Original total time: 6.03ms (not sure whether my computer was slower or the mesh builder slowly got
+slower)
+
+New total time: 3.35ms (1.8x faster than with Set<Direction>)
