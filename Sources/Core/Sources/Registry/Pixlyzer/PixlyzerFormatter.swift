@@ -11,7 +11,7 @@ public enum PixlyzerError: LocalizedError {
   case invalidUTF8BlockName(String)
   /// Failed to get the water fluid from the fluid registry.
   case failedToGetWaterFluid
-  
+
   public var errorDescription: String? {
     switch self {
       case .missingBlockId(let id):

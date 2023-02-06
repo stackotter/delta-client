@@ -51,7 +51,8 @@ public struct ChunkSectionVoxelGraph {
 
     assert(
       dimension * dimension * dimension == voxels.count,
-      "Attempted to initialise a ChunkSectionVoxelGraph with an invalid number of voxels for its dimension (dimension=\(dimension), voxel_count=\(voxels.count)")
+      "Attempted to initialise a ChunkSectionVoxelGraph with an invalid number of voxels for its dimension (dimension=\(dimension), voxel_count=\(voxels.count)"
+    )
   }
 
   // MARK: Public methods
@@ -101,8 +102,8 @@ public struct ChunkSectionVoxelGraph {
         iterativeFloodFill(x: seedX, y: seedY, z: seedZ, group: &group)
         for i in 0..<5 {
           for j in (i+1)..<6 {
-            let first = DirectionSet.directions[i]
-            let second = DirectionSet.directions[j]
+            let first = Direction.allDirections[i]
+            let second = Direction.allDirections[j]
 
             if group.contains(first) && group.contains(second) {
               let first = ChunkSectionFace.allCases[i]

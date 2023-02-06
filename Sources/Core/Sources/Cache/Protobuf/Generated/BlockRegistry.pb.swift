@@ -515,6 +515,27 @@ public struct ProtobufBlockRegistry {
   public init() {}
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension ProtobufBlockComputedTintType: @unchecked Sendable {}
+extension ProtobufBlockOffset: @unchecked Sendable {}
+extension ProtobufBlockFluidState: @unchecked Sendable {}
+extension ProtobufBlockTintRGBColor: @unchecked Sendable {}
+extension ProtobufBlockTint: @unchecked Sendable {}
+extension ProtobufBlockPhysicalMaterial: @unchecked Sendable {}
+extension ProtobufBlockLightMaterial: @unchecked Sendable {}
+extension ProtobufBlockSoundMaterial: @unchecked Sendable {}
+extension ProtobufBlockOcclusionShapeIds: @unchecked Sendable {}
+extension ProtobufBlockIsSturdy: @unchecked Sendable {}
+extension ProtobufVec3f: @unchecked Sendable {}
+extension ProtobufAABB: @unchecked Sendable {}
+extension ProtobufBlockShape: @unchecked Sendable {}
+extension ProtobufBlock: @unchecked Sendable {}
+extension ProtobufBlockModelPartDescriptor: @unchecked Sendable {}
+extension ProtobufBlockModelVariantDescriptor: @unchecked Sendable {}
+extension ProtobufBlockModelDescriptor: @unchecked Sendable {}
+extension ProtobufBlockRegistry: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension ProtobufBlockComputedTintType: SwiftProtobuf._ProtoNameProviding {
@@ -644,12 +665,16 @@ extension ProtobufBlockTint: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._computedTint {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._computedTint {
       try visitor.visitSingularEnumField(value: v, fieldNumber: 1)
-    }
-    if let v = self._hardcodedTint {
+    } }()
+    try { if let v = self._hardcodedTint {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -970,12 +995,16 @@ extension ProtobufAABB: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._position {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._position {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
-    if let v = self._size {
+    } }()
+    try { if let v = self._size {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1016,6 +1045,10 @@ extension ProtobufBlockShape: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if self.isDynamic != false {
       try visitor.visitSingularBoolField(value: self.isDynamic, fieldNumber: 1)
     }
@@ -1028,12 +1061,12 @@ extension ProtobufBlockShape: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if !self.outlineShape.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.outlineShape, fieldNumber: 4)
     }
-    if let v = self._occlusionShapeIds {
+    try { if let v = self._occlusionShapeIds {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-    }
-    if let v = self._isSturdy {
+    } }()
+    try { if let v = self._isSturdy {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
-    }
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1135,6 +1168,10 @@ extension ProtobufBlock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
       if _storage._id != 0 {
         try visitor.visitSingularInt32Field(value: _storage._id, fieldNumber: 1)
       }
@@ -1150,27 +1187,27 @@ extension ProtobufBlock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       if !_storage._className.isEmpty {
         try visitor.visitSingularStringField(value: _storage._className, fieldNumber: 5)
       }
-      if let v = _storage._fluidState {
+      try { if let v = _storage._fluidState {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
-      }
-      if let v = _storage._tint {
+      } }()
+      try { if let v = _storage._tint {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-      }
-      if let v = _storage._offset {
+      } }()
+      try { if let v = _storage._offset {
         try visitor.visitSingularEnumField(value: v, fieldNumber: 8)
-      }
-      if let v = _storage._material {
+      } }()
+      try { if let v = _storage._material {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
-      }
-      if let v = _storage._lightMaterial {
+      } }()
+      try { if let v = _storage._lightMaterial {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
-      }
-      if let v = _storage._soundMaterial {
+      } }()
+      try { if let v = _storage._soundMaterial {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
-      }
-      if let v = _storage._shape {
+      } }()
+      try { if let v = _storage._shape {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
-      }
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }

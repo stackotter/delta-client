@@ -55,6 +55,12 @@ public struct ChunkSectionMesh {
     device: MTLDevice,
     commandQueue: MTLCommandQueue
   ) throws {
-    try translucentMesh.render(viewedFrom: position, sort: sortTranslucent, encoder: renderEncoder, device: device, commandQueue: commandQueue)
+    try translucentMesh.render(
+      viewedFrom: position,
+      sort: sortTranslucent,
+      encoder: renderEncoder,
+      device: device,
+      commandQueue: commandQueue
+    )
   }
 }

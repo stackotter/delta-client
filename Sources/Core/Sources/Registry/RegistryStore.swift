@@ -33,7 +33,7 @@ public struct RegistryStore {
   /// - Parameters:
   ///   - directory: Directory used for caching registries.
   ///   - onProgress: Callback triggered whenever the operation progress is updated.
-  public static func populateShared(_ directory: URL, _ onProgress: ((Double, String) -> Void)?) throws {
+  public static func populateShared(_ directory: URL, _ onProgress: ((Double, String) -> Void)? = nil) throws {
     shared = try loadCached(directory, onProgress: onProgress)
   }
 

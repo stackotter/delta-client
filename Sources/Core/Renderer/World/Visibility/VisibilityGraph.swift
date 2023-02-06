@@ -227,7 +227,7 @@ public struct VisibilityGraph {
         let neighbourPosition = position.neighbour(inDirection: exitFace)
 
         // Avoids doubling back. If a chunk has been exited from the top face, any chunks after that shouldn't be exited from the bottom face.
-        if current.directions.contains(DirectionSet.member(exitFace.opposite)) {
+        if current.directions.contains(exitFace.opposite) {
           continue
         }
 
@@ -254,7 +254,7 @@ public struct VisibilityGraph {
         visited.insert(neighbourPosition)
 
         var directions = current.directions
-        directions.insert(DirectionSet.member(exitFace))
+        directions.insert(exitFace)
 
         queue.append(SearchQueueEntry(
           position: neighbourPosition,

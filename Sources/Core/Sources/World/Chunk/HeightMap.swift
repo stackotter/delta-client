@@ -5,13 +5,13 @@
 public struct HeightMap {
   /// The highest block with a non-zero opacity in each column of the chunk.
   public var heightMap: [Int]
-  
+
   /// Creates a new height map.
   /// - Parameter heightMap: The height for each column of the chunk in order of increasing x and then increasing z.
   public init(heightMap: [Int]) {
     self.heightMap = heightMap
   }
-  
+
   /// Gets the highest non-transparent block in the specified column.
   /// - Parameters:
   ///   - x: The x coordinate of the column.
@@ -20,7 +20,7 @@ public struct HeightMap {
   public func getHighestLightBlockingBlock(_ x: Int, _ z: Int) -> Int {
     return heightMap[columnIndex(x, z)]
   }
-  
+
   /// Gets the highest non-transparent block in the specified column.
   /// - Parameters:
   ///   - position: The position of a block in the column to check.
@@ -35,7 +35,7 @@ public struct HeightMap {
   public mutating func handleBlockUpdate(at position: BlockPosition, in chunk: Chunk, acquireChunkLock: Bool = true) {
     let newBlock = chunk.getBlock(at: position, acquireLock: acquireChunkLock)
     let columnIndex = self.columnIndex(position)
-    
+
     let highestLightBlockingBlock = heightMap[columnIndex]
     if position.y > highestLightBlockingBlock {
       if newBlock.lightMaterial.opacity != 0 {
@@ -54,19 +54,19 @@ public struct HeightMap {
           break
         }
       }
-      
+
       // If the column is empty set the height to -1
       if !foundBlock {
         heightMap[columnIndex] = -1
       }
     }
   }
-  
+
   /// Calculates the index of the specified column in ``heightMap``.
   private func columnIndex(_ position: BlockPosition) -> Int {
     return columnIndex(position.x, position.z)
   }
-  
+
   /// Calculates the index of the specified column in ``heightMap``.
   private func columnIndex(_ x: Int, _ z: Int) -> Int {
     return Int(z * 16 + x)

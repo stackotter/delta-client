@@ -30,7 +30,7 @@ enum ResourcePackError: LocalizedError {
   case versionManifestFailure(Error)
   /// Failed to decode the versions manifest.
   case versionsManifestFailure(Error)
-  
+
   var errorDescription: String? {
     switch self {
       case .noSuchDirectory:
@@ -211,9 +211,18 @@ public struct ResourcePack {
 
     // Attempt to load block model palette from the resource pack cache if it exists
     var loadedFromCache = false
+    var isCacheInvalid = false
     if let cacheDirectory = cacheDirectory {
       let modelCacheFile = cacheDirectory.appendingPathComponent("block_models.bin")
-      if FileManager.default.fileExists(atPath: modelCacheFile.path) {
+
+      // TODO: Find a better way to version the block palette cache. For now we invalidate ones made
+      // before the format change (from Set<Direction> to DirectionSet).
+      let date = try? FileManager.default.attributesOfItem(atPath: modelCacheFile.path)[.modificationDate] as? Date
+      if let date = date, date < Date(timeIntervalSince1970: 1675725295) {
+        isCacheInvalid = true
+      }
+
+      if !isCacheInvalid && FileManager.default.fileExists(atPath: modelCacheFile.path) {
         log.debug("Loading cached block models")
         do {
           resources.blockModelPalette = try BlockModelPalette(fromFile: modelCacheFile)
@@ -243,6 +252,11 @@ public struct ResourcePack {
             namespace: namespace,
             blockTexturePalette: resources.blockTexturePalette
           )
+
+          if isCacheInvalid, let cacheDirectory = cacheDirectory {
+            let modelCacheFile = cacheDirectory.appendingPathComponent("block_models.bin")
+            try resources.blockModelPalette.cache(toFile: modelCacheFile)
+          }
         }
       }
     }
@@ -333,7 +347,11 @@ public struct ResourcePack {
   }
 
   /// Downloads the vanilla client and extracts its assets (textures, block models, etc.).
-  public static func downloadVanillaAssets(forVersion version: String, to directory: URL, _ onProgress: ((Double, String) -> Void)?) throws {
+  public static func downloadVanillaAssets(
+    forVersion version: String,
+    to directory: URL,
+    _ onProgress: ((Double, String) -> Void)? = nil
+  ) throws {
     var progress = TaskProgress<DownloadStep>()
 
     func updateProgressStatus(step: DownloadStep) {

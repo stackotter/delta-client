@@ -38,9 +38,9 @@ message ProtobufBlockModelPart {
 
 message ProtobufBlockModel {
   repeated ProtobufBlockModelPart parts = 1;
-  repeated ProtobufDirection culling_faces = 2;
-  repeated ProtobufDirection cullable_faces = 3;
-  repeated ProtobufDirection non_cullable_faces = 4;
+  int32 culling_faces = 2;
+  int32 cullable_faces = 3;
+  int32 non_cullable_faces = 4;
   ProtobufTextureType texture_type = 5;
 }
 

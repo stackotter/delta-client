@@ -6,7 +6,7 @@ struct BlockMeshBuilder {
   let model: BlockModel
   let position: BlockPosition
   let modelToWorld: Mat4x4f
-  let culledFaces: Set<Direction> // TODO: Make bitset based replacement for optimisation
+  let culledFaces: DirectionSet
   let lightLevel: LightLevel
   let neighbourLightLevels: [Direction: LightLevel] // TODO: Convert to array for faster access
   let tintColor: Vec3f

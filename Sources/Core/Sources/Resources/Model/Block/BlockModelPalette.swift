@@ -36,7 +36,7 @@ public struct BlockModelPalette {
     for model in models {
       var isFull = false
       for part in model {
-        if part.cullingFaces.count == 6 && part.textureType == .opaque {
+        if part.cullingFaces == DirectionSet.all && part.textureType == .opaque {
           isFull = true
           break
         }
@@ -152,9 +152,9 @@ public struct BlockModelPalette {
     with blockTexturePalette: TexturePalette,
     isOpaque: Bool
   ) throws -> BlockModel {
-    var cullingFaces: Set<Direction> = []
-    var cullableFaces: Set<Direction> = []
-    var nonCullableFaces: Set<Direction> = []
+    var cullingFaces: DirectionSet = []
+    var cullableFaces: DirectionSet = []
+    var nonCullableFaces: DirectionSet = []
     var textureType = TextureType.opaque
 
     let parts: [BlockModelPart] = try partDescriptors.map { renderDescriptor in
@@ -199,7 +199,7 @@ public struct BlockModelPalette {
       }
 
       // Rotate the culling face directions to correctly match the block
-      cullingFaces.formUnion(Set<Direction>(rotatedCullingFaces.map { direction in
+      cullingFaces.formUnion(DirectionSet(rotatedCullingFaces.map { direction in
         rotate(direction, byRotationFrom: renderDescriptor)
       }))
 
