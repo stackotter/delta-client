@@ -6,12 +6,12 @@ public struct FluidState: Codable {
   public var height: Int
   /// Is the fluid part of a waterlogged block.
   public var isWaterlogged: Bool
-  
+
   /// The fluid this fluid state is for.
   public var fluid: Fluid {
     return RegistryStore.shared.fluidRegistry.fluid(withId: fluidId)
   }
-  
+
   public init(fluidId: Int, height: Int, isWaterlogged: Bool) {
     self.fluidId = fluidId
     self.height = height

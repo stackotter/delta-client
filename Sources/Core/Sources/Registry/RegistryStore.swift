@@ -1,5 +1,16 @@
 import Foundation
 
+public enum RegistryStoreError: LocalizedError {
+  case outDatedBlockRegistry
+
+  public var errorDescription: String? {
+    switch self {
+      case .outDatedBlockRegistry:
+        return "The block registry cache is outdated and must be regenerated."
+    }
+  }
+}
+
 /// Holds static Minecraft data such as biomes, fluids and blocks. Delta Client populates it launch.
 public struct RegistryStore {
   /// The shared registry instance.
@@ -85,6 +96,13 @@ public struct RegistryStore {
     }
 
     do {
+      let date = try? FileManager.default.attributesOfItem(
+        atPath: directory.appendingPathComponent(BlockRegistry.getCacheFileName()).path
+      )[.modificationDate] as? Date
+      if let date = date, date < Date(timeIntervalSince1970: 1675725295) {
+        throw RegistryStoreError.outDatedBlockRegistry
+      }
+
       updateProgressState(step: .loadBlock)
       let blockRegistry = try BlockRegistry.loadCached(from: directory)
 
