@@ -209,7 +209,8 @@ public enum PixlyzerFormatter {
 
       for (stateId, pixlyzerState) in pixlyzerBlock.states {
         let isWaterlogged = pixlyzerState.properties?.waterlogged == true || BlockRegistry.waterloggedBlockClasses.contains(pixlyzerBlock.className)
-        let fluid = isWaterlogged ? water : fluid
+        let isBubbleColumn = identifier == Identifier(name: "block/bubble_column")
+        let fluid = isWaterlogged || isBubbleColumn ? water : fluid
         let block = Block(
           pixlyzerBlock,
           pixlyzerState,
