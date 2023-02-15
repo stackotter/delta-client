@@ -1,5 +1,6 @@
 extension BlockModel: ProtobufCachable {
   public init(from message: ProtobufBlockModel) throws {
+    parts = []
     parts.reserveCapacity(message.parts.count)
     for part in message.parts {
       parts.append(try BlockModelPart(from: part))

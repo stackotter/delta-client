@@ -2,7 +2,7 @@ import Foundation
 import FirebladeMath
 
 /// The transforms to apply when displaying rendering a model in different situations.
-public struct ModelDisplayTransforms {
+public struct ModelDisplayTransforms: Equatable {
   /// Transform to use for displaying in right hand in third person.
   public var thirdPersonRightHand: Mat4x4f
   /// Transform to use for displaying in left hand in third person.

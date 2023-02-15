@@ -27,7 +27,7 @@ enum BlockModelPaletteError: LocalizedError {
   case invalidBlockTint
   /// Invalid block offset in cached protobuf message.
   case invalidBlockOffset
-  
+
   var errorDescription: String? {
     switch self {
       case .noSuchParent(let identifier):

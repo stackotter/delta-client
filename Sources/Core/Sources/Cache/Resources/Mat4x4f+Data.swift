@@ -2,7 +2,7 @@ import Foundation
 import FirebladeMath
 
 extension Mat4x4f {
-  func data() -> Data {
+  public func data() -> Data {
     var mutableColumns = columns
     let data = Data(
       bytes: &mutableColumns,
@@ -11,7 +11,7 @@ extension Mat4x4f {
     return data
   }
 
-  init(from data: Data) throws {
+  public init(from data: Data) throws {
     guard data.count == MemoryLayout<Mat4x4f.Vector>.stride * 4 else {
       throw BlockModelPaletteError.invalidMatrixDataLength(data.count)
     }

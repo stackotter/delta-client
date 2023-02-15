@@ -1,5 +1,5 @@
 /// A set of directions.
-public struct DirectionSet: SetAlgebra {
+public struct DirectionSet: SetAlgebra, Equatable {
   public typealias Element = Direction
 
   public var rawValue: UInt8
