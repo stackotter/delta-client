@@ -52,17 +52,19 @@ public struct Buffer {
   /// - Throws: ``BufferError/rangeOutOfBounds`` if the requested number of bytes can't be read.
   public mutating func readInteger(size: Int, endianness: Endianness) throws -> UInt64 {
     assert(size <= 8)
+    // TODO: throw error if out of bounds and turn assert into an error too
 
-    let patternBytes = try readBytes(size)
     var bitPattern: UInt64 = 0
     switch endianness {
       case .little:
-        for (index, byte) in patternBytes.enumerated() {
+        for index in 0..<size {
+          let byte = try readByte()
           bitPattern |= UInt64(byte) << (index * 8)
         }
       case .big:
         let sizeMinusOne = size - 1
-        for (index, byte) in patternBytes.enumerated() {
+        for index in 0..<size {
+          let byte = try readByte()
           bitPattern |= UInt64(byte) << ((sizeMinusOne - index) * 8)
         }
     }
