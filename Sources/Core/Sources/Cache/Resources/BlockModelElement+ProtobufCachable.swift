@@ -5,6 +5,7 @@ extension BlockModelElement: ProtobufCachable {
     transformation = try Mat4x4f(from: message.transformation)
     shade = message.shade
 
+    faces = []
     faces.reserveCapacity(message.faces.count)
     for face in message.faces {
       faces.append(try BlockModelFace(from: face))

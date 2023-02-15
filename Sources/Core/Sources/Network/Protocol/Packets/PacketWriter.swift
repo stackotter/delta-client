@@ -3,7 +3,11 @@ import FirebladeMath
 
 // TODO: document packet writer
 public struct PacketWriter {
-  public var buffer = Buffer([])
+  public var buffer: Buffer
+
+  public init() {
+    buffer = Buffer([])
+  }
 
   // MARK: Basic datatypes
 

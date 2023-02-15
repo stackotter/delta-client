@@ -4,7 +4,7 @@ import FirebladeMath
 // TODO: For plugin API make the block model palette api safe and easy to use (for adding/editing models)
 
 /// Contains block models loaded from a resource pack.
-public struct BlockModelPalette {
+public struct BlockModelPalette: Equatable {
   /// Block models indexed by block state id. Each is an array of block model variants. Any models
   /// after the max block state id are extra models such as the ones used in the inventory.
   public var models: [[BlockModel]] = []
@@ -23,25 +23,37 @@ public struct BlockModelPalette {
   public init() {}
 
   /// Create a populated palette.
+  /// - Parameters:
+  ///   - models: The models indexed by block state id.
+  ///   - displayTransforms: The display transforms referenced by block models in the palette.
+  ///   - identifierToIndex: A map from identifier to block model index.
+  ///   - fullyOpaqueBlocks: An array indexed by block state id that stores whether each block is
+  ///     fully opaque or not. See ``BlockModelPalette/fullyOpaqueBlocks``. If not supplied
+  ///     (recommended), it is generated from `models`.
   public init(
     models: [[BlockModel]],
     displayTransforms: [ModelDisplayTransforms],
-    identifierToIndex: [Identifier: Int]
+    identifierToIndex: [Identifier: Int],
+    fullyOpaqueBlocks: [Bool]? = nil
   ) {
     self.models = models
     self.displayTransforms = displayTransforms
     self.identifierToIndex = identifierToIndex
 
-    fullyOpaqueBlocks.reserveCapacity(models.count)
-    for model in models {
-      var isFull = false
-      for part in model {
-        if part.cullingFaces == DirectionSet.all && part.textureType == .opaque {
-          isFull = true
-          break
+    if let fullyOpaqueBlocks = fullyOpaqueBlocks {
+      self.fullyOpaqueBlocks = fullyOpaqueBlocks
+    } else {
+      self.fullyOpaqueBlocks.reserveCapacity(models.count)
+      for model in models {
+        var isFull = false
+        for part in model {
+          if part.cullingFaces == DirectionSet.all && part.textureType == .opaque {
+            isFull = true
+            break
+          }
         }
+        self.fullyOpaqueBlocks.append(isFull)
       }
-      fullyOpaqueBlocks.append(isFull)
     }
   }
 
