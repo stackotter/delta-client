@@ -90,4 +90,8 @@ the fixed length integer decoding code path of `Buffer`) by rearranging code to 
 Because `uvs` is so performance critical, I ended up using some unsafe pointer stuff to avoid
 unnecessary copies and byte reordering (caused by MC protocol). I basically just store the Float
 array's raw bytes in the cache directly because it's a fixed length array. This increased the
-deserialization speed by 2.09x (to 140.65397ms).
+deserialization speed by 2.09x (to 140.65397ms). This change also decreased the serialized size to
+20229880 bytes (almost a 9% decrease).
+
+After some further optimization of `Buffer.readInteger(size:endianness:)` I managed to get another
+2x deserialization speed improvement (down to 69.15092ms).
