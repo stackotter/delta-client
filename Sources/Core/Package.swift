@@ -20,7 +20,6 @@ var targets: [Target] = [
       "ASN1Parser",
       "CryptoSwift",
       "SwiftCPUDetect",
-      .product(name: "SwiftProtobuf", package: "swift-protobuf"),
       .product(name: "FirebladeECS", package: "ecs"),
       .product(name: "SwiftyRequest", package: "SwiftyRequest", condition: .when(platforms: [.linux])),
       .product(name: "OpenCombine", package: "OpenCombine", condition: .when(platforms: [.linux])),
@@ -77,7 +76,6 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.0"),
-    .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.6.0"),
     .package(url: "https://github.com/apple/swift-collections.git", from: "0.0.7"),
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
     .package(url: "https://github.com/stackotter/ecs.git", branch: "master"),
