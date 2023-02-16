@@ -105,5 +105,12 @@ The next optimization gave a massive improvement by greatly simplifying the seri
 deserialization process for many simple types. Specifically those that are contiguous, fixed size,
 and don't use indirection. These types can simply just have their raw bytes copied into the output
 and subsequently these bytes can be copied out as that type when deserializing (using unsafe pointer
-tricks). This gave another 1.52x improvement in deserialization speed (down to 37.13298ms). It also gave us our first big
-improvement in serialization speed of 1.3x (down to 38.87498ms).
+tricks). This gave another 1.52x improvement in deserialization speed (down to 37.13298ms). It also
+gave us our first big improvement in serialization speed of 1.3x (down to 38.87498ms).
+
+Given that `BlockModelFace` is the most performance critical part of serializing/deserializing the
+block model palette and it's technically a fixed amount of data, I decided to try making it a simply
+serializable type. All this involved was converting the fixed length array of `uvs` to a
+tuple-equivalent `struct`. I wasn't able to use a tuple because I needed `uvs` to be `Equatable` and
+tuples can't conform to protocols (how silly). After removing use of indirection in `BlockModelFace`
+I was able to improve deserialization times by a factor of around 4.5 (to around 8.6ms).

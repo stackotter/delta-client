@@ -305,7 +305,7 @@ public struct BlockModelPalette: Equatable {
     _ face: IntermediateBlockModelFace,
     on element: IntermediateBlockModelElement,
     from renderDescriptor: BlockModelRenderDescriptor
-  ) throws -> [Vec2f] {
+  ) throws -> BlockModelFace.UVs {
     let direction = face.direction
     let minimumPoint = element.from
     let maximumPoint = element.to
@@ -394,7 +394,12 @@ public struct BlockModelPalette: Equatable {
       coordinates = rotateTextureCoordinates(coordinates, by: uvLockRotationDegrees)
     }
 
-    return coordinates
+    return BlockModelFace.UVs(
+      coordinates[0],
+      coordinates[1],
+      coordinates[2],
+      coordinates[3]
+    )
   }
 
   // TODO: make this an extension of arrays or something

@@ -6,12 +6,12 @@ extension BlockModelFace: ProtobufCachable {
     actualDirection = try Direction(from: message.actualDirection)
 
     let cachedUVs = message.uvs
-    uvs = [
+    uvs = BlockModelFace.UVs(
       Vec2f(cachedUVs[0], cachedUVs[1]),
       Vec2f(cachedUVs[2], cachedUVs[3]),
       Vec2f(cachedUVs[4], cachedUVs[5]),
       Vec2f(cachedUVs[6], cachedUVs[7])
-    ]
+    )
 
     texture = Int(message.texture)
 
