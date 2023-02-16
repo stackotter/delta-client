@@ -211,21 +211,13 @@ public struct ResourcePack {
 
     // Attempt to load block model palette from the resource pack cache if it exists
     var loadedFromCache = false
-    var isCacheInvalid = false
     if let cacheDirectory = cacheDirectory {
-      let modelCacheFile = cacheDirectory.appendingPathComponent("block_models.bin")
+      let modelCacheFile = cacheDirectory.appendingPathComponent("block_models.cache")
 
-      // TODO: Find a better way to version the block palette cache. For now we invalidate ones made
-      // before the format change (from Set<Direction> to DirectionSet).
-      let date = try? FileManager.default.attributesOfItem(atPath: modelCacheFile.path)[.modificationDate] as? Date
-      if let date = date, date < Date(timeIntervalSince1970: 1675725295) {
-        isCacheInvalid = true
-      }
-
-      if !isCacheInvalid && FileManager.default.fileExists(atPath: modelCacheFile.path) {
+      if FileManager.default.fileExists(atPath: modelCacheFile.path) {
         log.debug("Loading cached block models")
         do {
-          resources.blockModelPalette = try BlockModelPalette(fromFile: modelCacheFile)
+          resources.blockModelPalette = try BlockModelPalette.deserialize(fromFile: modelCacheFile)
           loadedFromCache = true
         } catch {
           log.warning("Failed to load block models from cache, deleting cache")
@@ -253,9 +245,10 @@ public struct ResourcePack {
             blockTexturePalette: resources.blockTexturePalette
           )
 
-          if isCacheInvalid, let cacheDirectory = cacheDirectory {
-            let modelCacheFile = cacheDirectory.appendingPathComponent("block_models.bin")
-            try resources.blockModelPalette.cache(toFile: modelCacheFile)
+          if let cacheDirectory = cacheDirectory {
+            log.debug("Caching block model palette")
+            let modelCacheFile = cacheDirectory.appendingPathComponent("block_models.cache")
+            try resources.blockModelPalette.serialize(intoFile: modelCacheFile)
           }
         }
       }
@@ -322,8 +315,8 @@ public struct ResourcePack {
       try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true, attributes: nil)
 
       // Cache block models
-      let blockModelCacheFile = cacheDirectory.appendingPathComponent("block_models.bin")
-      try resources.blockModelPalette.cache(toFile: blockModelCacheFile)
+      let blockModelCacheFile = cacheDirectory.appendingPathComponent("block_models.cache")
+      try resources.blockModelPalette.serialize(intoFile: blockModelCacheFile)
     }
   }
 
