@@ -95,3 +95,15 @@ deserialization speed by 2.09x (to 140.65397ms). This change also decreased the 
 
 After some further optimization of `Buffer.readInteger(size:endianness:)` I managed to get another
 2x deserialization speed improvement (down to 69.15092ms).
+
+I ended up deviating from the Minecraft protocol for integers to allow the use of unsafe pointers to
+decode them which gave another 1.23x increase in deserialization speed (down to 56.47790ms).
+Essentially I just store integers by copying their raw bytes so that while deserializing I can just
+get a pointer into the reader's buffer and cast it to a pointer to an integer.
+
+The next optimization gave a massive improvement by greatly simplifying the serialization and
+deserialization process for many simple types. Specifically those that are contiguous, fixed size,
+and don't use indirection. These types can simply just have their raw bytes copied into the output
+and subsequently these bytes can be copied out as that type when deserializing (using unsafe pointer
+tricks). This gave another 1.52x improvement in deserialization speed (down to 37.13298ms). It also gave us our first big
+improvement in serialization speed of 1.3x (down to 38.87498ms).
