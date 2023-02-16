@@ -15,12 +15,6 @@ enum BlockModelPaletteError: LocalizedError {
   case invalidDirectionString(String)
   /// A texture had an invalid identifier string (likely a texture variable).
   case invalidTexture(String)
-  /// An invalid direction was found in the Protobuf cache.
-  case invalidDirection
-  /// An invalid texture type was found in the Protobuf cache.
-  case invalidTextureType
-  /// A matrix was stored with an invalid number of bytes in the Protobuf cache. Expected to be 64.
-  case invalidMatrixDataLength(Int)
   /// Invalid computed tint type in cached protobuf message.
   case invalidComputedTintTypeRawValue(ProtobufBlockComputedTintType.RawValue)
   /// Invalid block tint in cached protobuf message.
@@ -50,12 +44,6 @@ enum BlockModelPaletteError: LocalizedError {
         A texture had an invalid identifier string (likely a texture variable):
         Identifier string: \(string)
         """
-      case .invalidDirection:
-        return "An invalid direction was found in the Protobuf cache."
-      case .invalidTextureType:
-        return "An invalid texture type was found in the Protobuf cache."
-      case .invalidMatrixDataLength(let length):
-        return "A matrix was stored with an invalid number of bytes in the Protobuf cache. Expected to be 64. Got \(length) instead"
       case .invalidComputedTintTypeRawValue(let rawValue):
         return """
         Invalid computed tint type in cached protobuf message.
