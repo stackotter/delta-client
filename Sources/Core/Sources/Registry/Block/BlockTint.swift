@@ -6,7 +6,7 @@ extension Block {
     /// Apply a harcoded tint color to every instance of the block.
     case hardcoded(RGBColor)
   }
-  
+
   /// Types of tints that can be computed.
   public enum ComputedTintType: String, Codable {
     case waterTint = "minecraft:water_tint"

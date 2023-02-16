@@ -1,7 +1,9 @@
 import Foundation
 import FirebladeMath
 
-/// Stores the transforms and properties to apply to a model before rendering it.
+/// Stores the transforms and properties to apply to a model before rendering it. For changes to the
+/// block registry's render descriptors to take effect you must force the block model palette to be
+/// regenerated, or regenerate it yourself.
 ///
 /// A neater format for ``PixlyzerBlockModelDescriptor``.
 public struct BlockModelRenderDescriptor: Codable {

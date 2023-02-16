@@ -212,12 +212,12 @@ public struct ResourcePack {
     // Attempt to load block model palette from the resource pack cache if it exists
     var loadedFromCache = false
     if let cacheDirectory = cacheDirectory {
-      let modelCacheFile = cacheDirectory.appendingPathComponent("block_models.cache")
+      let modelCacheFile = cacheDirectory.appendingPathComponent(BlockModelPalette.cacheFileName)
 
       if FileManager.default.fileExists(atPath: modelCacheFile.path) {
         log.debug("Loading cached block models")
         do {
-          resources.blockModelPalette = try BlockModelPalette.deserialize(fromFile: modelCacheFile)
+          resources.blockModelPalette = try BlockModelPalette.loadCached(from: cacheDirectory)
           loadedFromCache = true
         } catch {
           log.warning("Failed to load block models from cache, deleting cache")
@@ -247,8 +247,7 @@ public struct ResourcePack {
 
           if let cacheDirectory = cacheDirectory {
             log.debug("Caching block model palette")
-            let modelCacheFile = cacheDirectory.appendingPathComponent("block_models.cache")
-            try resources.blockModelPalette.serialize(intoFile: modelCacheFile)
+            try resources.blockModelPalette.cache(to: cacheDirectory)
           }
         }
       }
@@ -315,8 +314,7 @@ public struct ResourcePack {
       try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true, attributes: nil)
 
       // Cache block models
-      let blockModelCacheFile = cacheDirectory.appendingPathComponent("block_models.cache")
-      try resources.blockModelPalette.serialize(intoFile: blockModelCacheFile)
+      try resources.blockModelPalette.cache(to: cacheDirectory)
     }
   }
 

@@ -10,12 +10,12 @@ extension Block {
     /// Whether the block is only transparent under some conditions. E.g. slabs have conditional
     /// transparency (light only passes through in certain directions).
     public var isConditionallyTransparent: Bool
-    
+
     /// Whether this material is opaque.
     public var isOpaque: Bool {
       return opacity == 15
     }
-    
+
     public init(
       isTranslucent: Bool,
       opacity: Int,
@@ -27,7 +27,7 @@ extension Block {
       self.luminance = luminance
       self.isConditionallyTransparent = isConditionallyTransparent
     }
-    
+
     /// Used for missing blocks.
     public static var `default` = LightMaterial(
       isTranslucent: false,

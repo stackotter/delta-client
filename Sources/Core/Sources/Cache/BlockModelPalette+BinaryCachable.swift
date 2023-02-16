@@ -3,7 +3,7 @@ extension TextureType: BitwiseCopyable {}
 extension Direction: BitwiseCopyable {}
 extension ModelDisplayTransforms: BitwiseCopyable {}
 
-extension BlockModelPalette: RootSerializable {
+extension BlockModelPalette: BinaryCachable {
   public static var serializationFormatVersion: Int {
     return 0
   }

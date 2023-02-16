@@ -79,7 +79,7 @@ public extension RootSerializable {
   }
 
   /// Serializes this value into a file.
-  func serialize(intoFile file: URL) throws {
+  func serialize(toFile file: URL) throws {
     let buffer = serialize()
     try Data(buffer.bytes).write(to: file)
   }
@@ -210,6 +210,27 @@ extension Array: Serializable where Element: Serializable {
     }
 
     return array
+  }
+}
+
+extension Set: Serializable where Element: Serializable {
+  public func serialize(into buffer: inout Buffer) {
+    count.serialize(into: &buffer)
+    for element in self {
+      element.serialize(into: &buffer)
+    }
+  }
+
+  public static func deserialize(from buffer: inout Buffer) throws -> Set<Element> {
+    let count = try Int.deserialize(from: &buffer)
+    var set: Set<Element> = []
+    set.reserveCapacity(count)
+
+    for _ in 0..<count {
+      set.insert(try .deserialize(from: &buffer))
+    }
+
+    return set
   }
 }
 
