@@ -15,7 +15,7 @@ extension Block {
     public var hitSound: Int
     /// Sound to play when something falls onto this block?
     public var fallSound: Int
-    
+
     public init(
       volume: Double,
       pitch: Double,
@@ -33,7 +33,7 @@ extension Block {
       self.hitSound = hitSound
       self.fallSound = fallSound
     }
-    
+
     /// Used for missing blocks.
     public static var `default` = SoundMaterial(
       volume: 0,

@@ -35,12 +35,7 @@ var targets: [Target] = [
       .product(name: "SwiftImage", package: "swift-image"),
       .product(name: "PNG", package: "swift-png")
     ],
-    path: "Sources",
-    exclude: [
-      "Cache/Protobuf/BlockModelPalette.proto",
-      "Cache/Protobuf/BlockRegistry.proto",
-      "Cache/Protobuf/Compile.sh"
-    ]
+    path: "Sources"
   ),
 
   .target(

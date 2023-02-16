@@ -104,7 +104,7 @@ extension Block {
       isLarge: pixlyzerState.largeCollisionShape ?? false,
       collisionShape: collisionShape,
       outlineShape: outlineShape,
-      occlusionShape: pixlyzerState.occlusionShape?.items,
+      occlusionShapeIds: pixlyzerState.occlusionShape?.items,
       isSturdy: pixlyzerState.isSturdy?.items)
 
     self.init(

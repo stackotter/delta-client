@@ -96,13 +96,6 @@ public struct RegistryStore {
     }
 
     do {
-      let date = try? FileManager.default.attributesOfItem(
-        atPath: directory.appendingPathComponent(BlockRegistry.getCacheFileName()).path
-      )[.modificationDate] as? Date
-      if let date = date, date < Date(timeIntervalSince1970: 1675725295) {
-        throw RegistryStoreError.outDatedBlockRegistry
-      }
-
       updateProgressState(step: .loadBlock)
       let blockRegistry = try BlockRegistry.loadCached(from: directory)
 

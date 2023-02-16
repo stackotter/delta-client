@@ -62,6 +62,18 @@ public struct BlockRegistry {
     }
   }
 
+  init(
+    blocks: [Block],
+    renderDescriptors: [[[BlockModelRenderDescriptor]]],
+    selfCullingBlocks: Set<Int>,
+    airBlocks: Set<Int>
+  ) {
+    self.blocks = blocks
+    self.renderDescriptors = renderDescriptors
+    self.selfCullingBlocks = selfCullingBlocks
+    self.airBlocks = airBlocks
+  }
+
   // MARK: Access
 
   /// Get information about the specified block.

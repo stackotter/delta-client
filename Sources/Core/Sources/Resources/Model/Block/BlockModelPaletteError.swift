@@ -15,12 +15,6 @@ enum BlockModelPaletteError: LocalizedError {
   case invalidDirectionString(String)
   /// A texture had an invalid identifier string (likely a texture variable).
   case invalidTexture(String)
-  /// Invalid computed tint type in cached protobuf message.
-  case invalidComputedTintTypeRawValue(ProtobufBlockComputedTintType.RawValue)
-  /// Invalid block tint in cached protobuf message.
-  case invalidBlockTint
-  /// Invalid block offset in cached protobuf message.
-  case invalidBlockOffset
 
   var errorDescription: String? {
     switch self {
@@ -44,15 +38,6 @@ enum BlockModelPaletteError: LocalizedError {
         A texture had an invalid identifier string (likely a texture variable):
         Identifier string: \(string)
         """
-      case .invalidComputedTintTypeRawValue(let rawValue):
-        return """
-        Invalid computed tint type in cached protobuf message.
-        Raw value: \(rawValue)
-        """
-      case .invalidBlockTint:
-        return "Invalid block tint in cached protobuf message."
-      case .invalidBlockOffset:
-        return "Invalid block offset in cached protobuf message."
     }
   }
 }
