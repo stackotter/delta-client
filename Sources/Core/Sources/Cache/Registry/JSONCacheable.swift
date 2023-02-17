@@ -1,13 +1,13 @@
 import Foundation
 
-/// Allows ``Codable`` types to easily conform to the ``Cachable`` protocol.
-public protocol JSONCachable: Cachable, Codable {}
+/// Allows ``Codable`` types to easily conform to the ``Cacheable`` protocol.
+public protocol JSONCacheable: Cacheable, Codable {}
 
-public enum JSONCachableError: LocalizedError {
+public enum JSONCacheableError: LocalizedError {
   /// Failed to load a value from a JSON cache file.
-  case failedToLoadFromCache(JSONCachable.Type, Error)
+  case failedToLoadFromCache(JSONCacheable.Type, Error)
   /// Failed to cache a value to a JSON cache file.
-  case failedToCache(JSONCachable.Type, Error)
+  case failedToCache(JSONCacheable.Type, Error)
 
   public var errorDescription: String? {
     switch self {
@@ -27,13 +27,13 @@ public enum JSONCachableError: LocalizedError {
   }
 }
 
-public extension JSONCachable {
+public extension JSONCacheable {
   static func loadCached(from cacheDirectory: URL) throws -> Self {
     do {
       let data = try Data(contentsOf: cacheDirectory.appendingPathComponent(cacheFileName))
       return try CustomJSONDecoder().decode(Self.self, from: data)
     } catch {
-      throw JSONCachableError.failedToLoadFromCache(Self.self, error)
+      throw JSONCacheableError.failedToLoadFromCache(Self.self, error)
     }
   }
 
@@ -42,7 +42,7 @@ public extension JSONCachable {
       let data = try JSONEncoder().encode(self)
       try data.write(to: directory.appendingPathComponent(Self.cacheFileName))
     } catch {
-      throw JSONCachableError.failedToCache(Self.self, error)
+      throw JSONCacheableError.failedToCache(Self.self, error)
     }
   }
 }

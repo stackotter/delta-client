@@ -1,14 +1,14 @@
 import Foundation
 
 /// Allows values of conforming types to easily be cached.
-public protocol BinaryCachable: Cachable, RootSerializable {}
+public protocol BinaryCacheable: Cacheable, RootSerializable {}
 
-/// An error thrown by a type conforming to ``BinaryCachable``.
-public enum BinaryCachableError: LocalizedError {
+/// An error thrown by a type conforming to ``BinaryCacheable``.
+public enum BinaryCacheableError: LocalizedError {
   /// Failed to load a value from a binary cache file.
-  case failedToLoadFromCache(BinaryCachable.Type, Error)
+  case failedToLoadFromCache(BinaryCacheable.Type, Error)
   /// Failed to cache a value to a binary cache file.
-  case failedToCache(BinaryCachable.Type, Error)
+  case failedToCache(BinaryCacheable.Type, Error)
 
   public var errorDescription: String? {
     switch self {
@@ -28,12 +28,12 @@ public enum BinaryCachableError: LocalizedError {
   }
 }
 
-public extension BinaryCachable {
+public extension BinaryCacheable {
   static func loadCached(from cacheDirectory: URL) throws -> Self {
     do {
       return try deserialize(fromFile: cacheDirectory.appendingPathComponent(cacheFileName))
     } catch {
-      throw BinaryCachableError.failedToLoadFromCache(Self.self, error)
+      throw BinaryCacheableError.failedToLoadFromCache(Self.self, error)
     }
   }
 
@@ -41,7 +41,7 @@ public extension BinaryCachable {
     do {
       try serialize(toFile: directory.appendingPathComponent(Self.cacheFileName))
     } catch {
-      throw BinaryCachableError.failedToCache(Self.self, error)
+      throw BinaryCacheableError.failedToCache(Self.self, error)
     }
   }
 }
