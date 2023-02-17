@@ -1,0 +1,1 @@
+extension FluidRegistry: JSONCacheable {}

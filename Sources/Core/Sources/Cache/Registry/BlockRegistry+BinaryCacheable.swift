@@ -6,7 +6,7 @@ extension Block.SoundMaterial: BitwiseCopyable {}
 extension FluidState: BitwiseCopyable {}
 extension AxisAlignedBoundingBox: BitwiseCopyable {}
 
-extension BlockRegistry: BinaryCachable {
+extension BlockRegistry: BinaryCacheable {
   public static var serializationFormatVersion: Int {
     return 0
   }
