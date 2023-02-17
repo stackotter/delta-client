@@ -1,7 +1,7 @@
 import Foundation
 
-/// An error thrown during serialization implemented via ``Serializable``.
-public enum SerializationError: LocalizedError {
+/// An error thrown during serialization implemented via ``BinarySerializable``.
+public enum BinarySerializationError: LocalizedError {
   case invalidSerializationFormatVersion(Int, expectedVersion: Int)
 
   public var errorDescription: String? {
@@ -16,7 +16,7 @@ public enum SerializationError: LocalizedError {
   }
 }
 
-/// An error thrown during deserialization implemented via ``Serializable``.
+/// An error thrown during deserialization implemented via ``BinarySerializable``.
 public enum DeserializationError: LocalizedError {
   case invalidRawValue
 
@@ -30,14 +30,14 @@ public enum DeserializationError: LocalizedError {
 
 /// A conforming type is able to be serialized and deserialized using Delta Client's custom binary
 /// caching mechanism.
-public protocol Serializable {
+public protocol BinarySerializable {
   /// Serializes the value into a byte buffer.
   func serialize(into buffer: inout Buffer)
   /// Deserializes a value from a byte buffer.
   static func deserialize(from buffer: inout Buffer) throws -> Self
 }
 
-public extension Serializable {
+public extension BinarySerializable {
   /// Serializes the value into a byte buffer.
   func serialize() -> Buffer {
     var buffer = Buffer()
@@ -54,11 +54,11 @@ public extension Serializable {
 
 /// A conforming type is intended to be the root type of a binary cache and includes a validated
 /// format version that should be bumped after each change that would effect the format of the cache.
-public protocol RootSerializable: Serializable {
+public protocol RootBinarySerializable: BinarySerializable {
   static var serializationFormatVersion: Int { get }
 }
 
-public extension RootSerializable {
+public extension RootBinarySerializable {
   /// Serializes the value into a byte buffer prefixed by its format version.
   func serialize() -> Buffer {
     var buffer = Buffer()
@@ -73,7 +73,7 @@ public extension RootSerializable {
     var buffer = buffer
     let incomingVersion = try Int.deserialize(from: &buffer)
     guard incomingVersion == serializationFormatVersion else {
-      throw SerializationError.invalidSerializationFormatVersion(incomingVersion, expectedVersion: serializationFormatVersion)
+      throw BinarySerializationError.invalidSerializationFormatVersion(incomingVersion, expectedVersion: serializationFormatVersion)
     }
     return try deserialize(from: &buffer)
   }
@@ -96,11 +96,11 @@ public extension RootSerializable {
 /// runtime check is performed that ensures that conforming types are actually bitwise copyable
 /// types (a.k.a. a plain ol' datatypes, see [_isPOD](https://github.com/apple/swift/blob/5a7b8c7922348179cc6dbc7281108e59d94ccecb/stdlib/public/core/Builtin.swift#L709))
 ///
-/// The ``Serializable`` implementation provided by conforming to this marker protocol essentially
+/// The ``BinarySerializable`` implementation provided by conforming to this marker protocol essentially
 /// just copies the raw bytes of a type into the output for serialization, and reverses the process
 /// extremely efficiently when deserializing using unsafe pointers. Bitwise copyable types are the
 /// fastest types to serialize and deserialize.
-public protocol BitwiseCopyable: Serializable {}
+public protocol BitwiseCopyable: BinarySerializable {}
 
 public extension BitwiseCopyable {
   @inline(__always)
@@ -154,19 +154,19 @@ extension UInt8: BitwiseCopyable {}
 extension Float: BitwiseCopyable {}
 extension Double: BitwiseCopyable {}
 
-extension Matrix2x2: BitwiseCopyable, Serializable {}
-extension Matrix3x3: BitwiseCopyable, Serializable {}
-extension Matrix4x4: BitwiseCopyable, Serializable {}
+extension Matrix2x2: BitwiseCopyable, BinarySerializable {}
+extension Matrix3x3: BitwiseCopyable, BinarySerializable {}
+extension Matrix4x4: BitwiseCopyable, BinarySerializable {}
 
-extension SIMD2: BitwiseCopyable, Serializable {}
-extension SIMD3: BitwiseCopyable, Serializable {}
-extension SIMD4: BitwiseCopyable, Serializable {}
-extension SIMD8: BitwiseCopyable, Serializable {}
-extension SIMD16: BitwiseCopyable, Serializable {}
-extension SIMD32: BitwiseCopyable, Serializable {}
-extension SIMD64: BitwiseCopyable, Serializable {}
+extension SIMD2: BitwiseCopyable, BinarySerializable {}
+extension SIMD3: BitwiseCopyable, BinarySerializable {}
+extension SIMD4: BitwiseCopyable, BinarySerializable {}
+extension SIMD8: BitwiseCopyable, BinarySerializable {}
+extension SIMD16: BitwiseCopyable, BinarySerializable {}
+extension SIMD32: BitwiseCopyable, BinarySerializable {}
+extension SIMD64: BitwiseCopyable, BinarySerializable {}
 
-extension String: Serializable {
+extension String: BinarySerializable {
   public func serialize(into buffer: inout Buffer) {
     count.serialize(into: &buffer)
     buffer.writeString(self)
@@ -178,7 +178,7 @@ extension String: Serializable {
   }
 }
 
-public extension Serializable where Self: RawRepresentable, RawValue: Serializable {
+public extension BinarySerializable where Self: RawRepresentable, RawValue: BinarySerializable {
   func serialize(into buffer: inout Buffer) {
     rawValue.serialize(into: &buffer)
   }
@@ -192,7 +192,7 @@ public extension Serializable where Self: RawRepresentable, RawValue: Serializab
   }
 }
 
-extension Array: Serializable where Element: Serializable {
+extension Array: BinarySerializable where Element: BinarySerializable {
   public func serialize(into buffer: inout Buffer) {
     count.serialize(into: &buffer)
     for element in self {
@@ -213,7 +213,7 @@ extension Array: Serializable where Element: Serializable {
   }
 }
 
-extension Set: Serializable where Element: Serializable {
+extension Set: BinarySerializable where Element: BinarySerializable {
   public func serialize(into buffer: inout Buffer) {
     count.serialize(into: &buffer)
     for element in self {
@@ -234,7 +234,7 @@ extension Set: Serializable where Element: Serializable {
   }
 }
 
-extension Optional: Serializable where Wrapped: Serializable {
+extension Optional: BinarySerializable where Wrapped: BinarySerializable {
   public func serialize(into buffer: inout Buffer) {
     if let value = self {
       true.serialize(into: &buffer)
@@ -254,7 +254,7 @@ extension Optional: Serializable where Wrapped: Serializable {
   }
 }
 
-extension Dictionary: Serializable where Key: Serializable, Value: Serializable {
+extension Dictionary: BinarySerializable where Key: BinarySerializable, Value: BinarySerializable {
   public func serialize(into buffer: inout Buffer) {
     count.serialize(into: &buffer)
     for (key, value) in self {
