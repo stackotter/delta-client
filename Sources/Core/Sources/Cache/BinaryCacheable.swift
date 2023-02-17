@@ -1,7 +1,7 @@
 import Foundation
 
 /// Allows values of conforming types to easily be cached.
-public protocol BinaryCacheable: Cacheable, RootSerializable {}
+public protocol BinaryCacheable: Cacheable, RootBinarySerializable {}
 
 /// An error thrown by a type conforming to ``BinaryCacheable``.
 public enum BinaryCacheableError: LocalizedError {

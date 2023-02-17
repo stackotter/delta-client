@@ -28,7 +28,7 @@ extension BlockRegistry: BinaryCacheable {
   }
 }
 
-extension Block: Serializable {
+extension Block: BinarySerializable {
   public func serialize(into buffer: inout Buffer) {
     id.serialize(into: &buffer)
     vanillaParentBlockId.serialize(into: &buffer)
@@ -60,7 +60,7 @@ extension Block: Serializable {
   }
 }
 
-extension Block.Shape: Serializable {
+extension Block.Shape: BinarySerializable {
   public func serialize(into buffer: inout Buffer) {
     isDynamic.serialize(into: &buffer)
     isLarge.serialize(into: &buffer)
@@ -82,7 +82,7 @@ extension Block.Shape: Serializable {
   }
 }
 
-extension CompoundBoundingBox: Serializable {
+extension CompoundBoundingBox: BinarySerializable {
   public func serialize(into buffer: inout Buffer) {
     aabbs.serialize(into: &buffer)
   }
@@ -92,7 +92,7 @@ extension CompoundBoundingBox: Serializable {
   }
 }
 
-extension BlockModelRenderDescriptor: Serializable {
+extension BlockModelRenderDescriptor: BinarySerializable {
   public func serialize(into buffer: inout Buffer) {
     model.serialize(into: &buffer)
     xRotationDegrees.serialize(into: &buffer)

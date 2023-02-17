@@ -25,7 +25,7 @@ extension BlockModelPalette: BinaryCacheable {
   }
 }
 
-extension Identifier: Serializable {
+extension Identifier: BinarySerializable {
   public func serialize(into buffer: inout Buffer) {
     namespace.serialize(into: &buffer)
     name.serialize(into: &buffer)
@@ -39,7 +39,7 @@ extension Identifier: Serializable {
   }
 }
 
-extension BlockModel: Serializable {
+extension BlockModel: BinarySerializable {
   public func serialize(into buffer: inout Buffer) {
     parts.serialize(into: &buffer)
     cullingFaces.serialize(into: &buffer)
@@ -59,7 +59,7 @@ extension BlockModel: Serializable {
   }
 }
 
-extension BlockModelPart: Serializable {
+extension BlockModelPart: BinarySerializable {
   public func serialize(into buffer: inout Buffer) {
     ambientOcclusion.serialize(into: &buffer)
     displayTransformsIndex.serialize(into: &buffer)
@@ -75,7 +75,7 @@ extension BlockModelPart: Serializable {
   }
 }
 
-extension BlockModelElement: Serializable {
+extension BlockModelElement: BinarySerializable {
   public func serialize(into buffer: inout Buffer) {
     transformation.serialize(into: &buffer)
     shade.serialize(into: &buffer)
