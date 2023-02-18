@@ -185,6 +185,13 @@ public struct Texture {
     self.type = type ?? Self.typeOfTexture(self.image)
   }
 
+  /// An internal initializer used to create texture from data stored in the binary cache.
+  init(type: TextureType, image: Image<BGRA<UInt8>>, animation: Animation?) {
+    self.type = type
+    self.image = image
+    self.animation = animation
+  }
+
   /// Accesses the pixel at the given coordinates in the image and crashes if the coordinates are
   /// out of bounds.
   public subscript(_ x: Int, _ y: Int) -> BGRA<UInt8> {

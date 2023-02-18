@@ -5,16 +5,16 @@ extension Texture {
   public struct Animation {
     public var interpolate: Bool
     public var frames: [Frame]
-    
+
     public init(interpolate: Bool, frames: [Frame]) {
       self.interpolate = interpolate
       self.frames = frames
     }
-    
+
     /// `maxFrameIndex` is the number of frames present in the corresponding texture.
     public init(from mcMeta: AnimationMCMeta, maxFrameIndex: Int) {
       interpolate = mcMeta.animation.interpolate ?? false
-      
+
       // Reformat frames
       frames = []
       let defaultFrameTime = mcMeta.animation.frametime ?? 1

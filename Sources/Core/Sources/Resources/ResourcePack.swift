@@ -169,6 +169,22 @@ public struct ResourcePack {
     )
   }
 
+  /// Loads a texture palette from a directory containing textures. Attempts to load the palette
+  /// from the given cache file if present.
+  public static func loadTexturePalette(
+    from directory: URL,
+    namespace: String,
+    cacheFile: URL?
+  ) throws -> TexturePalette? {
+    if let cacheFile = cacheFile, let palette = try? TexturePalette.loadCached(from: cacheFile) {
+      return palette
+    } else if FileManager.default.directoryExists(at: directory) {
+      return try TexturePalette.load(from: directory, inNamespace: namespace, withType: directory.lastPathComponent)
+    } else {
+      return nil
+    }
+  }
+
   /// Loads the resources in the given directory and gives them the specified namespace.
   public static func loadResources(
     from directory: URL,
@@ -183,22 +199,25 @@ public struct ResourcePack {
     let textureDirectory = directory.appendingPathComponent("textures")
     if FileManager.default.directoryExists(at: textureDirectory) {
       // Load block textures if pack contains any
-      let blockTextureDirectory = textureDirectory.appendingPathComponent("block")
-      if FileManager.default.directoryExists(at: blockTextureDirectory) {
-        resources.blockTexturePalette = try TexturePalette.load(from: blockTextureDirectory, inNamespace: namespace, withType: "block")
-      }
-
-      // Load GUI textures if pack contains them
-      let guiTextureDirectory = textureDirectory.appendingPathComponent("gui")
-      if FileManager.default.directoryExists(at: guiTextureDirectory) && namespace == "minecraft" {
-        resources.guiTexturePalette = try TexturePalette.load(from: guiTextureDirectory, inNamespace: namespace, withType: "gui")
-      }
+      resources.blockTexturePalette = try loadTexturePalette(
+        from: textureDirectory.appendingPathComponent("block"),
+        namespace: namespace,
+        cacheFile: cacheDirectory?.appendingPathComponent("BlockTexturePalette.bin")
+      ) ?? TexturePalette()
 
       /// Load item textures if pack contains any
-      let itemTextureDirectory = textureDirectory.appendingPathComponent("item")
-      if FileManager.default.directoryExists(at: itemTextureDirectory) && namespace == "minecraft" {
-        resources.itemTexturePalette = try TexturePalette.load(from: itemTextureDirectory, inNamespace: namespace, withType: "item")
-      }
+      resources.itemTexturePalette = try loadTexturePalette(
+        from: textureDirectory.appendingPathComponent("item"),
+        namespace: namespace,
+        cacheFile: cacheDirectory?.appendingPathComponent("ItemTexturePalette.bin")
+      ) ?? TexturePalette()
+
+      // Load GUI textures if pack contains them
+      resources.guiTexturePalette = try loadTexturePalette(
+        from: textureDirectory.appendingPathComponent("gui"),
+        namespace: namespace,
+        cacheFile: cacheDirectory?.appendingPathComponent("GUITexturePalette.bin")
+      ) ?? TexturePalette()
     }
 
     // Load biome colors
@@ -212,12 +231,12 @@ public struct ResourcePack {
     // Attempt to load block model palette from the resource pack cache if it exists
     var loadedFromCache = false
     if let cacheDirectory = cacheDirectory {
-      let modelCacheFile = cacheDirectory.appendingPathComponent(BlockModelPalette.cacheFileName)
+      let modelCacheFile = cacheDirectory.appendingPathComponent(BlockModelPalette.defaultCacheFileName)
 
       if FileManager.default.fileExists(atPath: modelCacheFile.path) {
         log.debug("Loading cached block models")
         do {
-          resources.blockModelPalette = try BlockModelPalette.loadCached(from: cacheDirectory)
+          resources.blockModelPalette = try BlockModelPalette.loadCached(fromDirectory: cacheDirectory)
           loadedFromCache = true
         } catch {
           log.warning("Failed to load block models from cache, deleting cache")
@@ -247,7 +266,7 @@ public struct ResourcePack {
 
           if let cacheDirectory = cacheDirectory {
             log.debug("Caching block model palette")
-            try resources.blockModelPalette.cache(to: cacheDirectory)
+            try resources.blockModelPalette.cache(toDirectory: cacheDirectory)
           }
         }
       }
@@ -314,7 +333,12 @@ public struct ResourcePack {
       try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true, attributes: nil)
 
       // Cache block models
-      try resources.blockModelPalette.cache(to: cacheDirectory)
+      try resources.blockModelPalette.cache(toDirectory: cacheDirectory)
+
+      // Cache textures
+      try resources.blockTexturePalette.cache(to: cacheDirectory.appendingPathComponent("BlockTexturePalette.bin"))
+      try resources.itemTexturePalette.cache(to: cacheDirectory.appendingPathComponent("ItemTexturePalette.bin"))
+      try resources.guiTexturePalette.cache(to: cacheDirectory.appendingPathComponent("GUITexturePalette.bin"))
     }
   }
 
