@@ -169,26 +169,17 @@ public struct ResourcePack {
     )
   }
 
-  /// Loads a texture palette from a directory containing textures. Attempts to load the palette
-  /// from the given cache file if present.
-  public static func loadTexturePalette(
-    from directory: URL,
-    namespace: String,
-    cacheFile: URL?
-  ) throws -> TexturePalette? {
-    if let cacheFile = cacheFile, let palette = try? TexturePalette.loadCached(from: cacheFile) {
-      return palette
-    } else if FileManager.default.directoryExists(at: directory) {
-      if let cacheFile = cacheFile {
-        // Delete cache in case it exists and is incorrect
-        try? FileManager.default.removeItem(
-          at: cacheFile.deletingLastPathComponent().deletingLastPathComponent()
-        )
-      }
-      return try TexturePalette.load(from: directory, inNamespace: namespace, withType: directory.lastPathComponent)
-    } else {
-      return nil
-    }
+  public static func loadCachedResources(
+    cacheDirectory: URL
+  ) throws -> ResourcePack.Resources {
+    var resources = Resources()
+    resources.blockTexturePalette = try TexturePalette.loadCached(from: cacheDirectory.appendingPathComponent("BlockTexturePalette.bin"))
+    resources.itemTexturePalette = try TexturePalette.loadCached(from: cacheDirectory.appendingPathComponent("ItemTexturePalette.bin"))
+    resources.guiTexturePalette = try TexturePalette.loadCached(from: cacheDirectory.appendingPathComponent("GUITexturePalette.bin"))
+    resources.blockModelPalette = try BlockModelPalette.loadCached(fromDirectory: cacheDirectory)
+    resources.itemModelPalette = try ItemModelPalette.loadCached(fromDirectory: cacheDirectory)
+    resources.fontPalette = try FontPalette.loadCached(fromDirectory: cacheDirectory)
+    return resources
   }
 
   /// Loads the resources in the given directory and gives them the specified namespace.
@@ -197,35 +188,25 @@ public struct ResourcePack {
     inNamespace namespace: String,
     cacheDirectory: URL?
   ) throws -> ResourcePack.Resources {
-    // TODO: Separate regular loading from cached loading (once everything in the resource pack is cacheable)
     log.debug("Loading resources from '\(namespace)' namespace")
+
     var resources = Resources()
-
-    // Load block textures if the pack contains any
-    log.debug("Loading textures")
-    let textureDirectory = directory.appendingPathComponent("textures")
-    if FileManager.default.directoryExists(at: textureDirectory) {
-      // Load block textures if pack contains any
-      resources.blockTexturePalette = try loadTexturePalette(
-        from: textureDirectory.appendingPathComponent("block"),
-        namespace: namespace,
-        cacheFile: cacheDirectory?.appendingPathComponent("BlockTexturePalette.bin")
-      ) ?? TexturePalette()
-
-      /// Load item textures if pack contains any
-      resources.itemTexturePalette = try loadTexturePalette(
-        from: textureDirectory.appendingPathComponent("item"),
-        namespace: namespace,
-        cacheFile: cacheDirectory?.appendingPathComponent("ItemTexturePalette.bin")
-      ) ?? TexturePalette()
-
-      // Load GUI textures if pack contains them
-      resources.guiTexturePalette = try loadTexturePalette(
-        from: textureDirectory.appendingPathComponent("gui"),
-        namespace: namespace,
-        cacheFile: cacheDirectory?.appendingPathComponent("GUITexturePalette.bin")
-      ) ?? TexturePalette()
+    var loadedCachedResources = false
+    if let cacheDirectory = cacheDirectory {
+      do {
+        resources = try loadCachedResources(cacheDirectory: cacheDirectory)
+        loadedCachedResources = true
+      } catch {
+        do {
+          try FileManager.default.removeItem(at: cacheDirectory.deletingLastPathComponent())
+        } catch {
+          log.warning("Failed to delete invalid resource caches")
+        }
+      }
     }
+
+    let textureDirectory = directory.appendingPathComponent("textures")
+    let modelDirectory = directory.appendingPathComponent("models")
 
     // Load biome colors
     log.debug("Loading biome colors")
@@ -235,86 +216,7 @@ public struct ResourcePack {
       resources.biomeColors = biomeColors
     }
 
-    // Attempt to load block model palette from the resource pack cache if it exists
-    var loadedFromCache = false
-    if let cacheDirectory = cacheDirectory {
-      let modelCacheFile = cacheDirectory.appendingPathComponent(BlockModelPalette.defaultCacheFileName)
-
-      if FileManager.default.fileExists(atPath: modelCacheFile.path) {
-        log.debug("Loading cached block models")
-        do {
-          resources.blockModelPalette = try BlockModelPalette.loadCached(fromDirectory: cacheDirectory)
-          loadedFromCache = true
-        } catch {
-          log.warning("Failed to load block models from cache, deleting cache")
-          do {
-            try FileManager.default.removeItem(at: modelCacheFile.deletingLastPathComponent())
-          } catch {
-            log.warning("Failed to remove invalid block model cache, ignoring anyway")
-          }
-        }
-      } else {
-        try? FileManager.default.removeItem(at: cacheDirectory.deletingLastPathComponent())
-      }
-    }
-
-    // Load models if present and not loaded from cache
-    let modelDirectory = directory.appendingPathComponent("models")
-    if !loadedFromCache, FileManager.default.directoryExists(at: modelDirectory) {
-      log.debug("Loading block models from resourcepack")
-      // Load block models if present
-      let blockModelDirectory = modelDirectory.appendingPathComponent("block")
-      if FileManager.default.directoryExists(at: blockModelDirectory) {
-        // Load block models
-        resources.blockModelPalette = try BlockModelPalette.load(
-          from: blockModelDirectory,
-          namespace: namespace,
-          blockTexturePalette: resources.blockTexturePalette
-        )
-
-        if let cacheDirectory = cacheDirectory {
-          log.debug("Caching block model palette")
-          try resources.blockModelPalette.cache(toDirectory: cacheDirectory)
-        }
-      }
-    }
-
-    // Load item models
-    loadedFromCache = false
-    if let cacheDirectory = cacheDirectory {
-      let modelCacheFile = cacheDirectory.appendingPathComponent(ItemModelPalette.defaultCacheFileName)
-
-      if FileManager.default.fileExists(atPath: modelCacheFile.path) {
-        log.debug("Loading cached item models")
-        do {
-          resources.itemModelPalette = try ItemModelPalette.loadCached(fromDirectory: cacheDirectory)
-          loadedFromCache = true
-        } catch {
-          log.warning("Failed to load item models from cache, deleting cache")
-          do {
-            try FileManager.default.removeItem(at: cacheDirectory.deletingLastPathComponent())
-          } catch {
-            log.warning("Failed to remove invalid item model cache, ignoring anyway")
-          }
-        }
-      } else {
-        try? FileManager.default.removeItem(at: cacheDirectory.deletingLastPathComponent())
-      }
-    }
-
-    let itemModelDirectory = directory.appendingPathComponent("models/item")
-    if !loadedFromCache, FileManager.default.directoryExists(at: itemModelDirectory) {
-      log.debug("Loading item models")
-      resources.itemModelPalette = try ItemModelPalette.load(
-        from: itemModelDirectory,
-        itemTexturePalette: resources.itemTexturePalette,
-        blockTexturePalette: resources.blockTexturePalette,
-        blockModelPalette: resources.blockModelPalette,
-        namespace: namespace
-      )
-    }
-
-    // Load locales if present
+    // Load locales
     let localeDirectory = directory.appendingPathComponent("lang")
     if FileManager.default.directoryExists(at: localeDirectory) {
       log.debug("Loading locales")
@@ -325,37 +227,72 @@ public struct ResourcePack {
       }
     }
 
-    // Load fonts if present
-    loadedFromCache = false
-    if let cacheDirectory = cacheDirectory {
-      let fontCacheFile = cacheDirectory.appendingPathComponent(FontPalette.defaultCacheFileName)
+    if !loadedCachedResources {
+      log.debug("Loading textures")
 
-      if FileManager.default.fileExists(atPath: fontCacheFile.path) {
-        log.debug("Loading cached fonts")
-        do {
-          resources.fontPalette = try FontPalette.loadCached(fromDirectory: cacheDirectory)
-          loadedFromCache = true
-        } catch {
-          log.warning("Failed to load fonts from cache, deleting cache (error: \(error))")
-          do {
-            try FileManager.default.removeItem(at: cacheDirectory.deletingLastPathComponent())
-          } catch {
-            log.warning("Failed to remove invalid font cache, ignoring anyway")
-          }
-        }
-      } else {
-        try? FileManager.default.removeItem(at: cacheDirectory.deletingLastPathComponent())
+      // Load block textures
+      let blockTextureDirectory = textureDirectory.appendingPathComponent("block")
+      if FileManager.default.directoryExists(at: blockTextureDirectory) {
+        resources.blockTexturePalette = try TexturePalette.load(
+          from: blockTextureDirectory,
+          inNamespace: namespace,
+          withType: "block"
+        )
       }
-    }
 
-    let fontDirectory = directory.appendingPathComponent("font")
-    if !loadedFromCache, FileManager.default.directoryExists(at: fontDirectory) {
-      log.debug("Loading fonts")
-      let fontPalette = try FontPalette.load(
-        from: fontDirectory,
-        textureDirectory: textureDirectory
-      )
-      resources.fontPalette = fontPalette
+      /// Load item textures
+      let itemTextureDirectory = textureDirectory.appendingPathComponent("item")
+      if FileManager.default.directoryExists(at: itemTextureDirectory) {
+        resources.itemTexturePalette = try TexturePalette.load(
+          from: itemTextureDirectory,
+          inNamespace: namespace,
+          withType: "item"
+        )
+      }
+
+      // Load GUI textures
+      let guiTextureDirectory = textureDirectory.appendingPathComponent("gui")
+      if FileManager.default.directoryExists(at: guiTextureDirectory) {
+        resources.guiTexturePalette = try TexturePalette.load(
+          from: guiTextureDirectory,
+          inNamespace: namespace,
+          withType: "gui"
+        )
+      }
+
+      // Load block models
+      let blockModelDirectory = modelDirectory.appendingPathComponent("block")
+      if FileManager.default.directoryExists(at: blockModelDirectory) {
+        log.debug("Loading block models")
+        resources.blockModelPalette = try BlockModelPalette.load(
+          from: blockModelDirectory,
+          namespace: namespace,
+          blockTexturePalette: resources.blockTexturePalette
+        )
+      }
+
+      // Load item models
+      let itemModelDirectory = modelDirectory.appendingPathComponent("item")
+      if FileManager.default.directoryExists(at: itemModelDirectory) {
+        log.debug("Loading item models")
+        resources.itemModelPalette = try ItemModelPalette.load(
+          from: itemModelDirectory,
+          itemTexturePalette: resources.itemTexturePalette,
+          blockTexturePalette: resources.blockTexturePalette,
+          blockModelPalette: resources.blockModelPalette,
+          namespace: namespace
+        )
+      }
+
+      // Load fonts
+      let fontDirectory = directory.appendingPathComponent("font")
+      if FileManager.default.directoryExists(at: fontDirectory) {
+        log.debug("Loading fonts")
+        resources.fontPalette = try FontPalette.load(
+          from: fontDirectory,
+          textureDirectory: textureDirectory
+        )
+      }
     }
 
     return resources
