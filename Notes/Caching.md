@@ -155,3 +155,13 @@ Although I started out with the plan to use the Minecraft network protocol binar
 the cache, I quickly realised that the Minecraft network protocol just isn't built for high
 performance serialization and deserialization. That's why I ended up just creating an approach that
 is essentially a fancy memdump that can handle indirection and complicated data structures.
+
+### Aftermath
+
+I've implemented binary caching for the item model palette, block registry, font palette, and
+texture palettes (almost all of the expensive things to load). Overall this amounted to a 4x faster
+app launch time which is pretty amazing. The caching code is also way nicer than the old Protobuf
+stuff, and any optimization of BinarySerializable will basically have an effect on all of the
+expensive start up tasks making it a very appealing target. However, startup time is now 160ms (when
+files have been cached in memory by previous launches; it's around 200ms when they haven't been), so
+I don't think I need to put in any more work for now :sweat_smile:.
