@@ -51,6 +51,17 @@ public struct Font {
     }
   }
 
+  /// An internal initializer used to efficiently construct fonts from caches.
+  init(
+    characters: [Character: CharacterDescriptor],
+    asciiCharacters: [CharacterDescriptor?],
+    textures: [Texture]
+  ) {
+    self.characters = characters
+    self.asciiCharacters = asciiCharacters
+    self.textures = textures
+  }
+
   /// Loads a font from a font manifest and texture directory.
   /// - Parameters:
   ///   - manifestFile: The font's manifest file.

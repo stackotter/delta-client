@@ -3,6 +3,7 @@ import Foundation
 /// An error thrown during serialization implemented via ``BinarySerializable``.
 public enum BinarySerializationError: LocalizedError {
   case invalidSerializationFormatVersion(Int, expectedVersion: Int)
+  case invalidCaseId(Int, type: String)
 
   public var errorDescription: String? {
     switch self {
@@ -11,6 +12,12 @@ public enum BinarySerializationError: LocalizedError {
         Invalid serialization format version.
         Expected: \(expectedVersion)
         Received: \(version)
+        """
+      case .invalidCaseId(let id, let type):
+        return """
+        Invalid enum case id.
+        Id: \(id)
+        Enum: \(type)
         """
     }
   }
@@ -104,13 +111,13 @@ public protocol BitwiseCopyable: BinarySerializable {}
 
 public extension BitwiseCopyable {
   @inline(__always)
-  func serialize(into writer: inout Buffer) {
+  func serialize(into buffer: inout Buffer) {
     precondition(_isPOD(Self.self), "\(type(of: self)) must be a bitwise copyable datatype to conform to BitwiseCopyable")
     var value = self
-    withUnsafeBytes(of: &value) { buffer in
-      let pointer = buffer.assumingMemoryBound(to: UInt8.self).baseAddress!
+    withUnsafeBytes(of: &value) { bufferPointer in
+      let pointer = bufferPointer.assumingMemoryBound(to: UInt8.self).baseAddress!
       for i in 0..<MemoryLayout<Self>.size {
-        writer.writeByte(pointer.advanced(by: i).pointee)
+        buffer.writeByte(pointer.advanced(by: i).pointee)
       }
 
       if MemoryLayout<Self>.size == MemoryLayout<Self>.stride {
@@ -122,7 +129,7 @@ public extension BitwiseCopyable {
       // the buffer happened to be aligned with the end of a page. Using a for loop seems to be the
       // fastest way to do this with Swift's array API. There would definitely be faster ways in C.
       for _ in MemoryLayout<Self>.size..<MemoryLayout<Self>.stride {
-        writer.writeByte(0)
+        buffer.writeByte(0)
       }
     }
   }
@@ -175,6 +182,22 @@ extension String: BinarySerializable {
   public static func deserialize(from buffer: inout Buffer) throws -> Self {
     let count = try Int.deserialize(from: &buffer)
     return try buffer.readString(length: count)
+  }
+}
+
+extension Character: BinarySerializable {
+  public func serialize(into buffer: inout Buffer) {
+    self.utf8.count.serialize(into: &buffer)
+    buffer.writeBytes([UInt8](self.utf8))
+  }
+
+  public static func deserialize(from buffer: inout Buffer) throws -> Self {
+    let count = try Int.deserialize(from: &buffer)
+    let bytes = try buffer.readBytes(count)
+    guard let string = String(bytes: bytes, encoding: .utf8) else {
+      throw BufferError.invalidByteInUTF8String
+    }
+    return Character(string)
   }
 }
 

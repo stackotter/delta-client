@@ -25,7 +25,10 @@ public struct FontPalette {
   ///   - textureDirectory: The directory containing the namespace's resources.
   /// - Returns: A font palette.
   public static func load(from manifestDirectory: URL, textureDirectory: URL) throws -> FontPalette {
-    let contents = try FileManager.default.contentsOfDirectory(at: manifestDirectory, includingPropertiesForKeys: nil)
+    let contents = try FileManager.default.contentsOfDirectory(
+      at: manifestDirectory,
+      includingPropertiesForKeys: nil
+    )
     var fonts: [String: Font] = [:]
     for file in contents where file.pathExtension == "json" {
       let name = file.deletingPathExtension().lastPathComponent
