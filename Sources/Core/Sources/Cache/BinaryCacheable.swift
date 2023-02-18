@@ -29,17 +29,17 @@ public enum BinaryCacheableError: LocalizedError {
 }
 
 public extension BinaryCacheable {
-  static func loadCached(from cacheDirectory: URL) throws -> Self {
+  static func loadCached(from file: URL) throws -> Self {
     do {
-      return try deserialize(fromFile: cacheDirectory.appendingPathComponent(cacheFileName))
+      return try deserialize(fromFile: file)
     } catch {
       throw BinaryCacheableError.failedToLoadFromCache(Self.self, error)
     }
   }
 
-  func cache(to directory: URL) throws {
+  func cache(to file: URL) throws {
     do {
-      try serialize(toFile: directory.appendingPathComponent(Self.cacheFileName))
+      try serialize(toFile: file)
     } catch {
       throw BinaryCacheableError.failedToCache(Self.self, error)
     }

@@ -34,6 +34,14 @@ public final class TexturePalette { // TODO: Currently a class to avoid copies, 
     }
   }
 
+  /// Creates a texture palette by providing all of its properties. Used internally for caching, and
+  /// not very useful outside of that usecase.
+  init(textures: [Texture], width: Int, identifierToIndex: [Identifier: Int]) {
+    self.textures = textures
+    self.width = width
+    self.identifierToIndex = identifierToIndex
+  }
+
   // MARK: Access
 
   /// Returns the index of the texture referred to by the given identifier if it exists.

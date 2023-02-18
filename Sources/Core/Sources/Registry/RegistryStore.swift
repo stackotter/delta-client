@@ -97,19 +97,19 @@ public struct RegistryStore {
 
     do {
       updateProgressState(step: .loadBlock)
-      let blockRegistry = try BlockRegistry.loadCached(from: directory)
+      let blockRegistry = try BlockRegistry.loadCached(fromDirectory: directory)
 
       updateProgressState(step: .loadBiome)
-      let biomeRegistry = try BiomeRegistry.loadCached(from: directory)
+      let biomeRegistry = try BiomeRegistry.loadCached(fromDirectory: directory)
 
       updateProgressState(step: .loadFluid)
-      let fluidRegistry = try FluidRegistry.loadCached(from: directory)
+      let fluidRegistry = try FluidRegistry.loadCached(fromDirectory: directory)
 
       updateProgressState(step: .loadEntity)
-      let entityRegistry = try EntityRegistry.loadCached(from: directory)
+      let entityRegistry = try EntityRegistry.loadCached(fromDirectory: directory)
 
       updateProgressState(step: .loadItem)
-      let itemRegistry = try ItemRegistry.loadCached(from: directory)
+      let itemRegistry = try ItemRegistry.loadCached(fromDirectory: directory)
 
       return RegistryStore(
         blockRegistry: blockRegistry,
@@ -119,7 +119,7 @@ public struct RegistryStore {
         itemRegistry: itemRegistry
       )
     } catch {
-      log.warning("Failed to load cached registries; \(error)")
+      log.info("Failed to load cached registries. Loading from Pixlyzer data")
       log.info("Downloading registries")
 
       let registry = try PixlyzerFormatter.downloadAndFormatRegistries(Constants.versionString)
@@ -130,19 +130,19 @@ public struct RegistryStore {
       )
 
       updateProgressState(step: .cacheBlock)
-      try registry.blockRegistry.cache(to: directory)
+      try registry.blockRegistry.cache(toDirectory: directory)
 
       updateProgressState(step: .cacheBiome)
-      try registry.biomeRegistry.cache(to: directory)
+      try registry.biomeRegistry.cache(toDirectory: directory)
 
       updateProgressState(step: .cacheFluid)
-      try registry.fluidRegistry.cache(to: directory)
+      try registry.fluidRegistry.cache(toDirectory: directory)
 
       updateProgressState(step: .cacheEntity)
-      try registry.entityRegistry.cache(to: directory)
+      try registry.entityRegistry.cache(toDirectory: directory)
 
       updateProgressState(step: .cacheItem)
-      try registry.itemRegistry.cache(to: directory)
+      try registry.itemRegistry.cache(toDirectory: directory)
 
       return registry
     }

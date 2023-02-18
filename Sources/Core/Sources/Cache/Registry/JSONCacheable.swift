@@ -28,19 +28,19 @@ public enum JSONCacheableError: LocalizedError {
 }
 
 public extension JSONCacheable {
-  static func loadCached(from cacheDirectory: URL) throws -> Self {
+  static func loadCached(from file: URL) throws -> Self {
     do {
-      let data = try Data(contentsOf: cacheDirectory.appendingPathComponent(cacheFileName))
+      let data = try Data(contentsOf: file)
       return try CustomJSONDecoder().decode(Self.self, from: data)
     } catch {
       throw JSONCacheableError.failedToLoadFromCache(Self.self, error)
     }
   }
 
-  func cache(to directory: URL) throws {
+  func cache(to file: URL) throws {
     do {
       let data = try JSONEncoder().encode(self)
-      try data.write(to: directory.appendingPathComponent(Self.cacheFileName))
+      try data.write(to: file)
     } catch {
       throw JSONCacheableError.failedToCache(Self.self, error)
     }
