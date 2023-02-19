@@ -209,11 +209,10 @@ public struct ResourcePack {
     let modelDirectory = directory.appendingPathComponent("models")
 
     // Load biome colors
-    log.debug("Loading biome colors")
     let colorMapDirectory = textureDirectory.appendingPathComponent("colormap")
     if FileManager.default.directoryExists(at: colorMapDirectory) {
-      let biomeColors = try BiomeColors(from: colorMapDirectory)
-      resources.biomeColors = biomeColors
+      log.debug("Loading biome colors")
+      resources.biomeColors = try BiomeColors(from: colorMapDirectory)
     }
 
     // Load locales
@@ -366,6 +365,7 @@ public struct ResourcePack {
       log.info(progress.message)
       onProgress?(progress.progress, progress.message)
     }
+
     // Get the url for the client jar
     updateProgressStatus(step: .fetchManifest)
     let versionManifest = try getVersionManifest(for: version)

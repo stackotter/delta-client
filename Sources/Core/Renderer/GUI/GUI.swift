@@ -120,16 +120,11 @@ struct GUI {
 
       let text = message.content.toText(with: client.resourcePack.getDefaultLocale())
       let wrappedLines: [String]
-      do {
-        wrappedLines = try builder.wrap(
-          text,
-          maximumWidth: Self.chatHistoryWidth - 2,
-          indent: Self.chatWrapIndent
-        )
-      } catch {
-        wrappedLines = ["Failed to wrap chat message"]
-        log.trace("error: Failed to wrap chat message '\(text)', err: \(error)")
-      }
+      wrappedLines = builder.wrap(
+        text,
+        maximumWidth: Self.chatHistoryWidth - 2,
+        indent: Self.chatWrapIndent
+      )
 
       var done = false
       for (i, line) in wrappedLines.enumerated().reversed() {

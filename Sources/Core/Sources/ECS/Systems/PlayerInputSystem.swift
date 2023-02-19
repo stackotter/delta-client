@@ -126,7 +126,11 @@ public final class PlayerInputSystem: System {
   }
 
   /// - Returns: Whether to suppress the input associated with the event or not. `true` while user is typing.
-  private func handleChat(_ event: KeyPressEvent, _ inputState: InputState, _ guiState: GUIStateStorage) throws -> Bool {
+  private func handleChat(
+    _ event: KeyPressEvent,
+    _ inputState: InputState,
+    _ guiState: GUIStateStorage
+  ) throws -> Bool {
     if var message = guiState.messageInput {
       var newCharacters: [Character] = []
       if event.key == .enter {
@@ -160,7 +164,7 @@ public final class PlayerInputSystem: System {
 
         // Ensure that the message doesn't exceed 256 bytes (including if multi-byte characters are entered).
         for character in newCharacters {
-          guard character.isASCII, character != "\t" else {
+          guard character.isPrintable, character != "\t" else {
             // TODO: Make this check less restrictive, it's currently over-cautious
             continue
           }

@@ -5,22 +5,20 @@ import DeltaCore
 struct TextMeshBuilder {
   var font: Font
 
-  func width(of text: String) throws -> Int {
-    return try text.map { character in
-      return try descriptor(for: character).width + 1
-    }.reduce(0, +) - 1
-  }
-
   func descriptor(for character: Character) throws -> CharacterDescriptor {
     guard let descriptor = font.descriptor(for: character) else {
-      throw TextMeshBuilderError.invalidCharacter(character)
+      guard let descriptor = font.descriptor(for: "�") else {
+        log.warning("Failed to replace invalid character '\(character)' with placeholder '�'.")
+        throw TextMeshBuilderError.invalidCharacter(character)
+      }
+      return descriptor
     }
     return descriptor
   }
 
   /// `indent` must be less than `maximumWidth` and `maximumWidth` must greater than the width of
   /// each individual character in the string.
-  func wrap(_ text: String, maximumWidth: Int, indent: Int) throws -> [String] {
+  func wrap(_ text: String, maximumWidth: Int, indent: Int) -> [String] {
     assert(indent < maximumWidth, "indent must be smaller than maximumWidth")
 
     if text == "" {
@@ -34,7 +32,13 @@ struct TextMeshBuilder {
       let character = text[i]
       // TODO: Figure out how to load the rest of the characters (such as stars) from the font to
       // fix chat rendering on Hypixel
-      let descriptor = try descriptor(for: character)
+      let descriptor: CharacterDescriptor
+      do {
+        descriptor = try self.descriptor(for: character)
+      } catch {
+        continue
+      }
+
       assert(
         descriptor.width < maximumWidth,
         "maximumWidth must be greater than every individual character in the string"
@@ -72,7 +76,7 @@ struct TextMeshBuilder {
         }
       }
       let nonWrappedText = text[startIndex...]
-      lines.append(contentsOf: try wrap(
+      lines.append(contentsOf: wrap(
         String(nonWrappedText),
         maximumWidth: maximumWidth - indent,
         indent: 0
@@ -101,7 +105,12 @@ struct TextMeshBuilder {
     var quads: [GUIQuad] = []
     quads.reserveCapacity(text.count)
     for character in text {
-      let descriptor = try descriptor(for: character)
+      let descriptor: CharacterDescriptor
+      do {
+        descriptor = try self.descriptor(for: character)
+      } catch {
+        continue
+      }
 
       var quad = try Self.build(
         descriptor,
