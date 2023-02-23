@@ -19,10 +19,18 @@ constant float precomputedWeight = 0.286819249;
 
 fragment FragmentOut chunkOITFragmentShader(RasterizerData in [[stage_in]],
                                                      texture2d_array<float, access::sample> textureArray [[texture(0)]],
-                                                     constant uint8_t *lightMap [[buffer(0)]]) {
+                                                     constant uint8_t *lightMap [[buffer(0)]],
+                                                     constant float &time [[buffer(1)]]) {
   // Sample the relevant texture slice
   FragmentOut out;
   float4 color = textureArray.sample(textureSampler, in.uv, in.textureState.currentFrameIndex);
+  if (in.textureState.nextFrameIndex != 65535) {
+    float start = (float)in.textureState.previousUpdate;
+    float end = (float)in.textureState.nextUpdate;
+    float progress = (time - start) / (end - start);
+    float4 nextColor = textureArray.sample(textureSampler, in.uv, in.textureState.nextFrameIndex);
+    color = mix(color, nextColor, progress);
+  }
 
   // Apply light level
   int index = in.skyLightLevel * 16 + in.blockLightLevel;
