@@ -22,7 +22,7 @@ fragment FragmentOut chunkOITFragmentShader(RasterizerData in [[stage_in]],
                                                      constant uint8_t *lightMap [[buffer(0)]]) {
   // Sample the relevant texture slice
   FragmentOut out;
-  float4 color = textureArray.sample(textureSampler, in.uv, in.textureIndex);
+  float4 color = textureArray.sample(textureSampler, in.uv, in.textureState.currentFrameIndex);
 
   // Apply light level
   int index = in.skyLightLevel * 16 + in.blockLightLevel;

@@ -2,6 +2,13 @@
 
 using namespace metal;
 
+struct TextureState {
+  uint16_t currentFrameIndex;
+  uint16_t nextFrameIndex;
+  uint32_t previousUpdate;
+  uint32_t nextUpdate;
+};
+
 struct Vertex {
   float x;
   float y;
@@ -22,7 +29,8 @@ struct RasterizerData {
   float4 position [[position]];
   float2 uv;
   float4 tint;
-  uint16_t textureIndex; // Index of texture to use
+  TextureState textureState;
+  bool hasTexture;
   bool isTransparent;
   uint8_t skyLightLevel;
   uint8_t blockLightLevel;

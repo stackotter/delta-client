@@ -3,7 +3,7 @@ import SwiftImage
 
 /// A palette containing textures that can be animated. All of the textures must be the same size or
 /// multiples of 2 of eachother. Textures are assumed to be square.
-public final class TexturePalette { // TODO: Currently a class to avoid copies, maybe use a `Box` or `Ref` type instead.
+public struct TexturePalette {
   /// The palette's textures, indexed by ``identifierToIndex``.
   public var textures: [Texture]
 
@@ -12,6 +12,12 @@ public final class TexturePalette { // TODO: Currently a class to avoid copies, 
 
   /// An index for ``textures``.
   public var identifierToIndex: [Identifier: Int]
+
+  /// The default animation state for the texture palette. Defaults to the first frame for every
+  /// animated texture.
+  public var defaultAnimationState: AnimationState {
+    return AnimationState(for: textures)
+  }
 
   // MARK: Init
 

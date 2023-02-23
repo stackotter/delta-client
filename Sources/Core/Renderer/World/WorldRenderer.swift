@@ -23,8 +23,8 @@ public final class WorldRenderer: Renderer {
   private var resources: ResourcePack.Resources
   /// The command queue used for rendering.
   private var commandQueue: MTLCommandQueue
-  /// The array texture containing all of the block textures.
-  private var arrayTexture: AnimatedArrayTexture
+  /// The Metal texture palette containing the array-texture and animation-related buffers.
+  private var texturePalette: MetalTexturePalette
   /// The light map texture used to calculate rendered brightness.
   private var lightMap: LightMap
 
@@ -84,7 +84,7 @@ public final class WorldRenderer: Renderer {
 
     // Create block palette array texture.
     resources = client.resourcePack.vanillaResources
-    arrayTexture = try AnimatedArrayTexture(
+    texturePalette = try MetalTexturePalette(
       palette: resources.blockTexturePalette,
       device: device,
       commandQueue: commandQueue
@@ -213,11 +213,7 @@ public final class WorldRenderer: Renderer {
     profiler.push(.updateAnimatedTextures)
     #if os(macOS)
     // TODO: Figure out why array texture updates perform so terribly on iOS
-    arrayTexture.update(
-      tick: client.game.tickScheduler.tickNumber,
-      device: device,
-      commandQueue: commandQueue
-    )
+    texturePalette.update()
     #endif
     profiler.pop()
 
@@ -232,11 +228,15 @@ public final class WorldRenderer: Renderer {
     lightMapBuffer = try lightMap.getBuffer(device, reusing: lightMapBuffer)
     profiler.pop()
 
-    // Setup render pass
+    // Setup render pass. The instance uniforms (vertex buffer index 3) are set to the identity
+    // matrix because this phase of the renderer doesn't use instancing although the chunk shader
+    // does support it.
     encoder.setRenderPipelineState(renderPipelineState)
-    encoder.setFragmentTexture(arrayTexture.texture, index: 0)
-    encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 3) // Instance uniforms
+    encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 3)
+    encoder.setVertexBuffer(texturePalette.textureStatesBuffer, offset: 0, index: 4)
+    encoder.setFragmentTexture(texturePalette.arrayTexture, index: 0)
     encoder.setFragmentBuffer(lightMapBuffer, offset: 0, index: 0)
+    encoder.setFragmentBuffer(texturePalette.timeBuffer, offset: 0, index: 1)
 
     // Render transparent and opaque geometry
     profiler.push(.encodeOpaque)
@@ -312,8 +312,13 @@ public final class WorldRenderer: Renderer {
     } else {
       encoder.setRenderPipelineState(renderPipelineState)
     }
-    encoder.setFragmentTexture(arrayTexture.texture, index: 0)
-    encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 3) // Instance uniforms
+
+    encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 3)
+    encoder.setVertexBuffer(texturePalette.textureStatesBuffer, offset: 0, index: 4)
+
+    encoder.setFragmentTexture(texturePalette.arrayTexture, index: 0)
+    encoder.setFragmentBuffer(lightMapBuffer, offset: 0, index: 0)
+    encoder.setFragmentBuffer(texturePalette.timeBuffer, offset: 0, index: 1)
 
     // Render translucent geometry
     profiler.push(.encodeTranslucent)

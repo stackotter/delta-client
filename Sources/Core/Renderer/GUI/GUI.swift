@@ -46,23 +46,29 @@ struct GUI {
     fontArrayTexture.label = "fontArrayTexture"
 
     let guiTexturePalette = try GUITexturePalette(resources.guiTexturePalette)
-    let guiArrayTexture = try guiTexturePalette.palette.createArrayTexture(
+    let guiArrayTexture = try MetalTexturePalette.createArrayTexture(
+      for: resources.guiTexturePalette,
       device: device,
-      commandQueue: commandQueue
+      commandQueue: commandQueue,
+      includeAnimations: false
     )
     guiArrayTexture.label = "guiArrayTexture"
 
     let itemTexturePalette = resources.itemTexturePalette
-    let itemArrayTexture = try itemTexturePalette.createArrayTexture(
+    let itemArrayTexture = try MetalTexturePalette.createArrayTexture(
+      for: resources.itemTexturePalette,
       device: device,
-      commandQueue: commandQueue
+      commandQueue: commandQueue,
+      includeAnimations: false
     )
     itemArrayTexture.label = "itemArrayTexture"
 
     let blockTexturePalette = resources.blockTexturePalette
-    let blockArrayTexture = try blockTexturePalette.createArrayTexture(
+    let blockArrayTexture = try MetalTexturePalette.createArrayTexture(
+      for: resources.blockTexturePalette,
       device: device,
-      commandQueue: commandQueue
+      commandQueue: commandQueue,
+      includeAnimations: false
     )
     blockArrayTexture.label = "blockArrayTexture"
 
@@ -76,7 +82,7 @@ struct GUI {
       itemModelPalette: resources.itemModelPalette,
       blockArrayTexture: blockArrayTexture,
       blockModelPalette: resources.blockModelPalette,
-      blockTexturePalette: resources.blockTexturePalette
+      blockTexturePalette: blockTexturePalette
     )
   }
 

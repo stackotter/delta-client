@@ -10,14 +10,18 @@ vertex RasterizerData chunkVertexShader(uint vertexId [[vertex_id]],
                                         constant Vertex *vertices [[buffer(0)]],
                                         constant Uniforms &worldUniforms [[buffer(1)]],
                                         constant Uniforms &chunkUniforms [[buffer(2)]],
-                                        constant Uniforms *instanceUniforms [[buffer(3)]]) {
+                                        constant Uniforms *instanceUniforms [[buffer(3)]],
+                                        constant TextureState *textureStates [[buffer(4)]]) {
   Uniforms instance = instanceUniforms[instanceId];
   Vertex in = vertices[vertexId];
   RasterizerData out;
 
   out.position = float4(in.x, in.y, in.z, 1.0) * instance.transformation * chunkUniforms.transformation * worldUniforms.transformation;
   out.uv = float2(in.u, in.v);
-  out.textureIndex = in.textureIndex;
+  out.hasTexture = in.textureIndex != 65535;
+  if (out.hasTexture) {
+    out.textureState = textureStates[in.textureIndex];
+  }
   out.isTransparent = in.isTransparent;
   out.tint = float4(in.r, in.g, in.b, in.a);
   out.skyLightLevel = in.skyLightLevel;
@@ -28,16 +32,21 @@ vertex RasterizerData chunkVertexShader(uint vertexId [[vertex_id]],
 
 fragment float4 chunkFragmentShader(RasterizerData in [[stage_in]],
                                     texture2d_array<float, access::sample> textureArray [[texture(0)]],
-                                    constant uint8_t *lightMap [[buffer(0)]]) {
-  // TODO: Remove isTransparent, it's not needed anymore. All vertices in this shader can be assumed
-  // to be transparent.
-
+                                    constant uint8_t *lightMap [[buffer(0)]],
+                                    constant float &time [[buffer(1)]]) {
   // Sample the relevant texture slice
   float4 color;
-  if (in.textureIndex == 65535) {
-    color = float4(1, 1, 1, 1);
+  if (in.hasTexture) {
+    color = textureArray.sample(textureSampler, in.uv, in.textureState.currentFrameIndex);
+    if (in.textureState.nextFrameIndex != 65535) {
+      float start = (float)in.textureState.previousUpdate;
+      float end = (float)in.textureState.nextUpdate;
+      float progress = (time - start) / (end - start);
+      float4 nextColor = textureArray.sample(textureSampler, in.uv, in.textureState.nextFrameIndex);
+      color = mix(color, nextColor, progress);
+    }
   } else {
-    color = textureArray.sample(textureSampler, in.uv, in.textureIndex);
+    color = float4(1, 1, 1, 1);
   }
 
   // Discard transparent fragments
