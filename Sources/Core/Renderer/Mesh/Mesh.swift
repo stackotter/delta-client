@@ -71,7 +71,7 @@ public struct Mesh {
     // Get buffers. If the buffer is valid and not nil, it is used. If the buffer is invalid and not nil,
     // it is repopulated with the new data (if big enough, otherwise a new buffer is created). If the
     // buffer is nil, a new one is created.
-    let vertexBuffer = try ((vertexBufferIsValid ? vertexBuffer : nil) ?? Self.createPrivateBuffer(
+    let vertexBuffer = try ((vertexBufferIsValid ? vertexBuffer : nil) ?? MetalUtil.createPrivateBuffer(
       labelled: "vertexBuffer",
       containing: vertices,
       reusing: vertexBuffer,
@@ -79,7 +79,7 @@ public struct Mesh {
       commandQueue: commandQueue
     ))
 
-    let indexBuffer = try ((indexBufferIsValid ? indexBuffer : nil) ?? Self.createPrivateBuffer(
+    let indexBuffer = try ((indexBufferIsValid ? indexBuffer : nil) ?? MetalUtil.createPrivateBuffer(
       labelled: "indexBuffer",
       containing: indices,
       reusing: indexBuffer,
@@ -87,7 +87,7 @@ public struct Mesh {
       commandQueue: commandQueue
     ))
 
-    let uniformsBuffer = try ((uniformsBufferIsValid ? uniformsBuffer : nil) ?? Self.createPrivateBuffer(
+    let uniformsBuffer = try ((uniformsBufferIsValid ? uniformsBuffer : nil) ?? MetalUtil.createPrivateBuffer(
       labelled: "uniformsBuffer",
       containing: [uniforms],
       reusing: uniformsBuffer,
@@ -138,49 +138,5 @@ public struct Mesh {
     vertices = []
     indices = []
     invalidateBuffers(keepUniformsBuffer: true)
-  }
-
-  /// Creates a buffer on the GPU containing a given array. Reuses the supplied private buffer if it's big enough.
-  /// - Returns: A new private buffer.
-  private static func createPrivateBuffer<T>(
-    labelled label: String = "buffer",
-    containing items: [T],
-    reusing existingBuffer: MTLBuffer? = nil,
-    device: MTLDevice,
-    commandQueue: MTLCommandQueue
-  ) throws -> MTLBuffer {
-    // First copy the array to a scratch buffer (accessible from both CPU and GPU)
-    let bufferSize = MemoryLayout<T>.stride * items.count
-    guard let sharedBuffer = device.makeBuffer(bytes: items, length: bufferSize, options: [.storageModeShared]) else {
-      throw MeshError.failedToCreateBuffer
-    }
-
-    // Create a private buffer (only accessible from GPU) or reuse the existing buffer if possible
-    let privateBuffer: MTLBuffer
-    if let existingBuffer = existingBuffer, existingBuffer.length >= bufferSize {
-//      log.trace("Reusing existing metal \(label)")
-      privateBuffer = existingBuffer
-    } else {
-//      log.trace("Creating new metal \(label)")
-      guard let buffer = device.makeBuffer(length: bufferSize, options: [.storageModePrivate]) else {
-        throw MeshError.failedToCreateBuffer
-      }
-      privateBuffer = buffer
-    }
-    privateBuffer.label = label
-
-    guard
-      let commandBuffer = commandQueue.makeCommandBuffer(),
-      let encoder = commandBuffer.makeBlitCommandEncoder()
-    else {
-      throw MeshError.failedToCreateBuffer
-    }
-
-    // Encode and commit a blit operation to copy the contents of the scratch buffer into the private buffer
-    encoder.copy(from: sharedBuffer, sourceOffset: 0, to: privateBuffer, destinationOffset: 0, size: bufferSize)
-    encoder.endEncoding()
-    commandBuffer.commit()
-
-    return privateBuffer
   }
 }

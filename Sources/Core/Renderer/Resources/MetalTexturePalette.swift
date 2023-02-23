@@ -146,7 +146,7 @@ public struct MetalTexturePalette {
     textureDescriptor.mipmapLevelCount = 1 + Int(Foundation.log2(Double(width)).rounded(.down))
 
     guard let arrayTexture = device.makeTexture(descriptor: textureDescriptor) else {
-      throw RenderError.failedToCreateTextureArray
+      throw RenderError.failedToCreateArrayTexture
     }
 
     arrayTexture.label = "arrayTexture"
@@ -188,11 +188,17 @@ public struct MetalTexturePalette {
       throw MetalTexturePaletteError.failedToCreateBlitCommandEncoder
     }
 
-    blitCommandEncoder.generateMipmaps(for: arrayTexture)
+    textureDescriptor.storageMode = .private
+    guard let privateArrayTexture = device.makeTexture(descriptor: textureDescriptor) else {
+      throw RenderError.failedToCreatePrivateArrayTexture
+    }
+
+    blitCommandEncoder.copy(from: arrayTexture, to: privateArrayTexture)
+    blitCommandEncoder.generateMipmaps(for: privateArrayTexture)
     blitCommandEncoder.endEncoding()
     commandBuffer.commit()
 
-    return arrayTexture
+    return privateArrayTexture
   }
 
   public mutating func update() {

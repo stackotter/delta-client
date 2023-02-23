@@ -3,8 +3,10 @@ import Foundation
 // TODO: Move to Renderer target once possible
 
 public enum RenderError: LocalizedError {
-  /// Failed to create a metal texture array.
-  case failedToCreateTextureArray
+  /// Failed to create a metal array texture.
+  case failedToCreateArrayTexture
+  /// Failed to create a private metal array texture.
+  case failedToCreatePrivateArrayTexture
   /// Failed to get the Delta Core bundle.
   case failedToGetBundle
   /// Failed to find default.metallib in the bundle.
@@ -49,13 +51,17 @@ public enum RenderError: LocalizedError {
   case failedToStartCapture(Error)
   /// Failed to update render target textures
   case failedToUpdateRenderTargetSize
-  
+  /// Failed to create blit command encoder.
+  case failedToCreateBlitCommandEncoder
+
   public var errorDescription: String? {
     switch self {
       case .failedToUpdateRenderTargetSize:
         return "Failed to update render target texture size."
-      case .failedToCreateTextureArray:
-        return "Failed to create a metal texture array."
+      case .failedToCreateArrayTexture:
+        return "Failed to create an array texture."
+      case .failedToCreatePrivateArrayTexture:
+        return "Failed to create a private array texture."
       case .failedToGetBundle:
         return "Failed to get the Delta Core bundle.."
       case .failedToLocateMetallib:
@@ -95,7 +101,7 @@ public enum RenderError: LocalizedError {
       case .failedToCreateEntityGeometryBuffers:
         return "Failed to create geometry buffers for the entity renderer."
       case .failedToCreateBuffer(let label):
-        return "Failed to create a metal buffer with label: \(label ?? "no label provided")."
+        return "Failed to create a buffer with label: \(label ?? "no label provided")."
       case .failedToGetCurrentRenderPassDescriptor:
         return "Failed to get the current render pass descriptor for a frame."
       case .failedToCreateTimerEvent:
@@ -119,6 +125,8 @@ public enum RenderError: LocalizedError {
         Failed to start GPU frame capture.
         Reason: \(error.localizedDescription)
         """
+      case .failedToCreateBlitCommandEncoder:
+        return "Failed to create blit command encoder."
     }
   }
 }
