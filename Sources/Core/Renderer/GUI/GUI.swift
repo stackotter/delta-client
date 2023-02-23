@@ -42,7 +42,10 @@ struct GUI {
 
     let resources = client.resourcePack.vanillaResources
     let font = resources.fontPalette.defaultFont
-    let fontArrayTexture = try font.createArrayTexture(device)
+    let fontArrayTexture = try font.createArrayTexture(
+      device: device,
+      commandQueue: commandQueue
+    )
     fontArrayTexture.label = "fontArrayTexture"
 
     let guiTexturePalette = try GUITexturePalette(resources.guiTexturePalette)

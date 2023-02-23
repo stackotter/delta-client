@@ -3,10 +3,13 @@ import DeltaCore
 
 extension Font {
   /// Creates an array texture containing the font's atlases.
-  /// - Parameter device: The device to create the texture with.
+  /// - Parameters:
+  ///   - device: The device to create the texture with.
+  ///   - commandQueue: The command queue to use for blit operations.
   /// - Returns: An array texture containing the textures in ``textures``.
   public func createArrayTexture(
-    _ device: MTLDevice
+    device: MTLDevice,
+    commandQueue: MTLCommandQueue
   ) throws -> MTLTexture {
     guard !textures.isEmpty else {
       throw FontError.emptyFont
@@ -69,6 +72,22 @@ extension Font {
       }
     }
 
-    return arrayTexture
+    guard
+      let commandBuffer = commandQueue.makeCommandBuffer(),
+      let blitCommandEncoder = commandBuffer.makeBlitCommandEncoder()
+    else {
+      throw RenderError.failedToCreateBlitCommandEncoder
+    }
+
+    textureDescriptor.storageMode = .private
+    guard let privateArrayTexture = device.makeTexture(descriptor: textureDescriptor) else {
+      throw RenderError.failedToCreatePrivateArrayTexture
+    }
+
+    blitCommandEncoder.copy(from: arrayTexture, to: privateArrayTexture)
+    blitCommandEncoder.endEncoding()
+    commandBuffer.commit()
+
+    return privateArrayTexture
   }
 }

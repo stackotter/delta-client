@@ -211,7 +211,7 @@ public enum MetalUtil {
     editDescriptor: ((MTLTextureDescriptor) -> Void)? = nil
   ) throws -> MTLTexture {
     let descriptor = MTLTextureDescriptor()
-    descriptor.usage = [.shaderRead, .shaderWrite, .renderTarget]
+    descriptor.usage = [.shaderRead, .renderTarget]
     descriptor.width = width
     descriptor.height = height
     descriptor.pixelFormat = pixelFormat
