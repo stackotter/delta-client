@@ -80,7 +80,7 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
     .package(url: "https://github.com/stackotter/ecs.git", branch: "master"),
     .package(url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
-    .package(url: "https://github.com/pointfreeco/swift-parsing", from: "0.8.0"),
+    .package(url: "https://github.com/pointfreeco/swift-parsing", from: "0.12.1"),
     .package(url: "https://github.com/stackotter/fireblade-math.git", branch: "matrix2x2"),
     .package(url: "https://github.com/seznam/swift-resolver", from: "0.3.0"),
     .package(url: "https://github.com/fourplusone/swift-package-zlib", from: "1.2.11"),
