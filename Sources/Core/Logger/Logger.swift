@@ -41,6 +41,8 @@ struct ConsoleLogFormatter: LogFormattable {
 }
 
 struct FileLogFormatter: LogFormattable {
+  let dateFormatter = DateFormatter()
+
   func formatMessage(
     _ level: LogLevel,
     message: String,
@@ -53,7 +55,7 @@ struct FileLogFormatter: LogFormattable {
     date: Date,
     threadID: UInt64
   ) -> String {
-    let date = dateFormatter(date, withFormatter: DateFormatter())
+    let date = dateFormatter.string(from: date)
     let moduleName = moduleName(file)
     return "[\(date)] [\(moduleName)] [\(level)] \(message)"
   }
