@@ -46,16 +46,12 @@ To view application logs, click `View > Logs` in the menu bar while Delta Client
 
 ### Building from source
 
-To build Delta Client you'll first need to install Xcode 14, [homebrew](https://brew.sh), and the latest version of [Swift Bundler](https://github.com/stackotter/swift-bundler). Please note that using Xcode 13 is ok but you may run into some weird memory corruption issues, so test with Xcode 14 before assuming that it's a Delta Client bug. Once you've installed the requirements, run the following commands in terminal;
+To build Delta Client you'll first need to install Xcode 14 and the latest version of [Swift Bundler](https://github.com/stackotter/swift-bundler). Please note that using Xcode 13 is ok but you may run into some weird memory corruption issues, so test with Xcode 14 before assuming that it's a Delta Client bug. Once you've installed the requirements, run the following commands in terminal;
 
 ```sh
 # Clone Delta Client
 git clone https://github.com/stackotter/delta-client
 cd delta-client
-
-# gtk isn't required for building the regular UI, but SwiftPM will still fail even if you're
-# building the SwiftUI-backed UI because it's a bit conservative about dependencies.
-brew install gtk4
 
 # Perform a release build and output the bundled app to the current directory
 sh ./build.sh

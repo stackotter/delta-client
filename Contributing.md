@@ -47,10 +47,6 @@ You can use any ide you want to work on Delta Client (vscode and xcode are the b
 you'll need Xcode installed anyway because sadly that's currently the only way to get Metal and
 SwiftUI build support.
 
-The last manually installed dependency you'll need is gtk4 (even if you aren't working on the
-Gtk-based UI; because SwiftPM is a bit conservative in resolving dependencies). First install
-[homebrew](https://brew.sh) and then install gtk4 with the command `brew install gtk4`.
-
 Next, fork Delta Client and then clone it.
 
 ```sh
