@@ -204,21 +204,23 @@ public class LANServerEnumerator: ObservableObject {
   /// - Parameter message: The message to parse.
   /// - Returns: The motd and port.
   private func parseMessage(_ message: String) -> (String, UInt16)? {
-    let packetParser = Parse {
+    let portParser = OneOf<Substring, _, _> {
+      // Sometimes the port also includes a host ("host:port") so we must handle that case
+      Parse {
+        Prefix { $0 != ":" }
+        ":"
+        UInt16.parser()
+      }.map { $0.1 }
+
+      // Otherwise it's just a port
+      UInt16.parser()
+    }
+
+    let packetParser = Parse<Substring, _> {
       "[MOTD]"
       Prefix { $0 != "["}
       "[/MOTD][AD]"
-      OneOf {
-        // Sometimes the port also includes a host ("host:port") so we must handle that case
-        Parse {
-          Prefix { $0 != ":" }
-          ":"
-          UInt16.parser()
-        }.map { $0.1 }
-
-        // Otherwise it's just a port
-        UInt16.parser()
-      }
+      portParser
       "[/AD]"
     }.map { tuple -> (String, UInt16) in
       (String(tuple.0), tuple.1)
