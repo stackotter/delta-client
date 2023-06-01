@@ -17,26 +17,7 @@ struct AccountSettingsView: View {
         $accounts.onChange(save),
         selected: $selectedIndex.onChange(saveSelected),
         itemEditor: AccountLoginView.self,
-        row: { item, selected, isFirst, isLast, handler in
-          HStack {
-            Image(systemName: "chevron.right")
-              .opacity(selected ? 1 : 0)
-
-            VStack(alignment: .leading) {
-              Text(item.username)
-                .font(.headline)
-              Text(item.type)
-                .font(.subheadline)
-            }
-
-            Spacer()
-
-            Button("Select") { handler(.select) }
-              .disabled(selected)
-              .buttonStyle(BorderlessButtonStyle())
-            IconButton("xmark") { handler(.delete) }
-          }
-        },
+        row: row,
         saveAction: saveAction,
         cancelAction: nil,
         emptyMessage: "No accounts")
@@ -45,6 +26,27 @@ struct AccountSettingsView: View {
     .onAppear {
       accounts = Array(ConfigManager.default.config.accounts.values)
       selectedIndex = getSelectedIndex()
+    }
+  }
+
+  func row(item: Account, selected: Bool, isFirst: Bool, isLast: Bool, handler: @escaping (EditableListAction) -> Void) -> some View {
+    HStack {
+      Image(systemName: "chevron.right")
+        .opacity(selected ? 1 : 0)
+
+      VStack(alignment: .leading) {
+        Text(item.username)
+          .font(.headline)
+        Text(item.type)
+          .font(.subheadline)
+      }
+
+      Spacer()
+
+      Button("Select") { handler(.select) }
+        .disabled(selected)
+        .buttonStyle(BorderlessButtonStyle())
+      IconButton("xmark") { handler(.delete) }
     }
   }
 

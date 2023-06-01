@@ -23,7 +23,7 @@ public struct Identifier: Hashable, Equatable, Codable, CustomStringConvertible 
   private static let nameAllowedCharacters = Set("0123456789abcdefghijklmnopqrstuvwxyz-_./")
 
   /// The parser used to parse identifiers from strings.
-  private static let identifierParser = OneOf {
+  private static let identifierParser = OneOf<Substring, Identifier, _> {
     Parse {
       Prefix(1...) { namespaceAllowedCharacters.contains($0) }
 

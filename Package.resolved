@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift",
         "state": {
           "branch": null,
-          "revision": "19b3c3ceed117c5cc883517c4e658548315ba70b",
-          "version": "1.6.0"
+          "revision": "eee9ad754926c40a0f7e73f152357d37b119b7fa",
+          "version": "1.7.1"
         }
       },
       {
@@ -105,8 +105,8 @@
         "repositoryURL": "https://github.com/OpenCombine/OpenCombine.git",
         "state": {
           "branch": null,
-          "revision": "9cf67e363738dbab61b47fb5eaed78d3db31e5ee",
-          "version": "0.13.0"
+          "revision": "8576f0d579b27020beccbccc3ea6844f3ddfc2c2",
+          "version": "0.14.0"
         }
       },
       {
@@ -114,8 +114,8 @@
         "repositoryURL": "https://github.com/sushichop/Puppy",
         "state": {
           "branch": null,
-          "revision": "9f3cf02dc92bc233e40ba8a66af20abb97978929",
-          "version": "0.6.0"
+          "revision": "b5af02a72a5a1f92a68e6eceee19cac804067ad9",
+          "version": "0.7.0"
         }
       },
       {
@@ -132,8 +132,8 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
           "branch": null,
-          "revision": "4ad606ba5d7673ea60679a61ff867cc1ff8c8e86",
-          "version": "1.2.1"
+          "revision": "fee6933f37fde9a5e12a1e4aeaa93fe60116ff2a",
+          "version": "1.2.2"
         }
       },
       {
@@ -141,8 +141,17 @@
         "repositoryURL": "https://github.com/apple/swift-atomics.git",
         "state": {
           "branch": null,
-          "revision": "ff3d2212b6b093db7f177d0855adbc4ef9c5f036",
-          "version": "1.0.3"
+          "revision": "6c89474e62719ddcc1e9614989fff2f68208fe10",
+          "version": "1.1.0"
+        }
+      },
+      {
+        "package": "swift-case-paths",
+        "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
+        "state": {
+          "branch": null,
+          "revision": "fc45e7b2cfece9dd80b5a45e6469ffe67fe67984",
+          "version": "0.14.1"
         }
       },
       {
@@ -159,7 +168,7 @@
         "repositoryURL": "https://github.com/stackotter/swift-cross-ui",
         "state": {
           "branch": "main",
-          "revision": "fd84efff90b16a513d6c688b8ae2231593bfd2ac",
+          "revision": "331c0935d56c217297c64a31d54b446ef56ba16d",
           "version": null
         }
       },
@@ -174,11 +183,11 @@
       },
       {
         "package": "swift-log",
-        "repositoryURL": "https://github.com/apple/swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {
           "branch": null,
-          "revision": "6fe203dc33195667ce1759bf0182975e4653ba1c",
-          "version": "1.4.4"
+          "revision": "32e8d724467f8fe623624570367e3d50c5638e46",
+          "version": "1.5.2"
         }
       },
       {
@@ -222,8 +231,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-parsing",
         "state": {
           "branch": null,
-          "revision": "1d3aa2f359388b67c16000556830645382cd5c4f",
-          "version": "0.8.0"
+          "revision": "27c941bbd22a4bbc53005a15a0440443fd892f70",
+          "version": "0.12.1"
         }
       },
       {
@@ -263,15 +272,6 @@
         }
       },
       {
-        "package": "SwiftGtk",
-        "repositoryURL": "https://github.com/stackotter/SwiftGtk",
-        "state": {
-          "branch": "main",
-          "revision": "f5ea8c81356e4d1a6706f9725c08d252b4e4df9b",
-          "version": null
-        }
-      },
-      {
         "package": "SwiftPackagesBase",
         "repositoryURL": "https://github.com/ITzTravelInTime/SwiftPackagesBase",
         "state": {
@@ -296,6 +296,15 @@
           "branch": null,
           "revision": "3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed",
           "version": null
+        }
+      },
+      {
+        "package": "xctest-dynamic-overlay",
+        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
+        "state": {
+          "branch": null,
+          "revision": "4af50b38daf0037cfbab15514a241224c3f62f98",
+          "version": "0.8.5"
         }
       },
       {

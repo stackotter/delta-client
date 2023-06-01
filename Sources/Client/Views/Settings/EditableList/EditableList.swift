@@ -6,6 +6,14 @@ enum EditableListState {
   case editItem(Int)
 }
 
+enum EditableListAction {
+  case delete
+  case edit
+  case moveUp
+  case moveDown
+  case select
+}
+
 struct EditableList<Row: View, ItemEditor: EditorView>: View {
   @ObservedObject var state = StateWrapper<EditableListState>(initial: .list)
 
@@ -18,7 +26,7 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
     _ selected: Bool,
     _ isFirst: Bool,
     _ isLast: Bool,
-    _ handler: @escaping (Action) -> Void
+    _ handler: @escaping (EditableListAction) -> Void
   ) -> Row
 
   let save: (() -> Void)?
@@ -26,14 +34,6 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
 
   /// Message to display when the list is empty.
   let emptyMessage: String
-
-  enum Action {
-    case delete
-    case edit
-    case moveUp
-    case moveDown
-    case select
-  }
 
   init(
     _ items: Binding<[ItemEditor.Item]>,
@@ -44,7 +44,7 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
       _ selected: Bool,
       _ isFirst: Bool,
       _ isLast: Bool,
-      _ handler: @escaping (Action) -> Void
+      _ handler: @escaping (EditableListAction) -> Void
     ) -> Row,
     saveAction: (() -> Void)?,
     cancelAction: (() -> Void)?,
@@ -59,7 +59,7 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
     cancel = cancelAction
   }
 
-  func handleItemAction(_ index: Int, _ action: Action) {
+  func handleItemAction(_ index: Int, _ action: EditableListAction) {
     switch action {
       case .delete:
         if selected == index {
