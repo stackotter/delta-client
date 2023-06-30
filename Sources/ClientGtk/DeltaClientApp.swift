@@ -11,7 +11,7 @@ struct DeltaClientApp: App {
     case play(ServerDescriptor, ResourcePack)
   }
 
-  class StateStorage: AppState {
+  class StateStorage: Observable {
     @Observed var state = DeltaClientState.loading(message: "Loading")
   }
 

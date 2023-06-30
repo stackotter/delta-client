@@ -1,7 +1,7 @@
 import SwiftCrossUI
 import DeltaCore
 
-class ServerSelectionState: ViewState {
+class ServerSelectionState: Observable {
   @Observed var address = ""
   @Observed var error: String?
 }

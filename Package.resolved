@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift",
         "state": {
           "branch": null,
-          "revision": "eee9ad754926c40a0f7e73f152357d37b119b7fa",
-          "version": "1.7.1"
+          "revision": "32f641cf24fc7abc1c591a2025e9f2f572648b0f",
+          "version": "1.7.2"
         }
       },
       {
@@ -168,7 +168,7 @@
         "repositoryURL": "https://github.com/stackotter/swift-cross-ui",
         "state": {
           "branch": "main",
-          "revision": "3723584ac413dcddfcb490f3fa83d15b49f565f6",
+          "revision": "e4491a59449dec572c1d0d2c214f35825dbc34aa",
           "version": null
         }
       },
