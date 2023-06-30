@@ -2,7 +2,7 @@ import Dispatch
 import SwiftCrossUI
 import DeltaCore
 
-class GameViewState: ViewState {
+class GameViewState: Observable {
   enum State {
     case error(String)
     case connecting

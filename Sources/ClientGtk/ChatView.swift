@@ -1,7 +1,7 @@
 import SwiftCrossUI
 import DeltaCore
 
-class ChatViewState: ViewState {
+class ChatViewState: Observable {
   @Observed var error: String?
   @Observed var messages: [String] = []
   @Observed var message = ""
@@ -51,7 +51,7 @@ struct ChatView: View {
     ForEach(state.messages.reversed()) { message in
       Text(message)
     }
-    .frame(height: 200)
+    .frame(minHeight: 200)
     .padding(.top, 10)
   }
 }
