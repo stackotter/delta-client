@@ -1,132 +1,270 @@
 import Foundation
 
-public enum Key: String, Hashable, Codable {
-  case leftShift = "Left shift"
-  case rightShift = "Right shift"
-  case leftControl = "Left control"
-  case rightControl = "Right control"
-  case leftOption = "Left option"
-  case rightOption = "Right option"
-  case leftCommand = "Left command"
-  case rightCommand = "Right command"
-  case function = "Function"
+public enum Key: Hashable, Codable {
+  typealias RawValue = String
+  
+  case leftShift
+  case rightShift
+  case leftControl
+  case rightControl
+  case leftOption
+  case rightOption
+  case leftCommand
+  case rightCommand
+  case function
 
-  case a = "A"
-  case b = "B"
-  case c = "C"
-  case d = "D"
-  case e = "E"
-  case f = "F"
-  case g = "G"
-  case h = "H"
-  case i = "I"
-  case j = "J"
-  case k = "K"
-  case l = "L"
-  case m = "M"
-  case n = "N"
-  case o = "O"
-  case p = "P"
-  case q = "Q"
-  case r = "R"
-  case s = "S"
-  case t = "T"
-  case u = "U"
-  case v = "V"
-  case w = "W"
-  case x = "X"
-  case y = "Y"
-  case z = "Z"
+  case a
+  case b
+  case c
+  case d
+  case e
+  case f
+  case g
+  case h
+  case i
+  case j
+  case k
+  case l
+  case m
+  case n
+  case o
+  case p
+  case q
+  case r
+  case s
+  case t
+  case u
+  case v
+  case w
+  case x
+  case y
+  case z
 
-  case zero = "0"
-  case one = "1"
-  case two = "2"
-  case three = "3"
-  case four = "4"
-  case five = "5"
-  case six = "6"
-  case seven = "7"
-  case eight = "8"
-  case nine = "9"
+  case zero
+  case one
+  case two
+  case three
+  case four
+  case five
+  case six
+  case seven
+  case eight
+  case nine
 
-  case numberPad0 = "NP0"
-  case numberPad1 = "NP1"
-  case numberPad2 = "NP2"
-  case numberPad3 = "NP3"
-  case numberPad4 = "NP4"
-  case numberPad5 = "NP5"
-  case numberPad6 = "NP6"
-  case numberPad7 = "NP7"
-  case numberPad8 = "NP8"
-  case numberPad9 = "NP9"
+  case numberPad0
+  case numberPad1
+  case numberPad2
+  case numberPad3
+  case numberPad4
+  case numberPad5
+  case numberPad6
+  case numberPad7
+  case numberPad8
+  case numberPad9
 
-  case numberPadDec = "NumPad Dec"
-  case numberPadPlus = "NumPad +"
-  case numberPadMinus = "NumPad -"
-  case numberPadEquals = "NumPad ="
-  case numberPadAsterisk = "NumPad *"
-  case numberPadForwardSlash = "NumPad /"
-  case numberPadClear = "NumPad Clear"
-  case numberPadEnter = "NumPad Enter"
+  case numberPadDec
+  case numberPadPlus
+  case numberPadMinus
+  case numberPadEquals
+  case numberPadAsterisk
+  case numberPadForwardSlash
+  case numberPadClear
+  case numberPadEnter
 
-  case dash = "-"
-  case equals = "="
-  case backSlash = "\\"
-  case forwardSlash = "/"
-  case openSquareBracket = "["
-  case closeSquareBracket = "]"
+  case dash
+  case equals
+  case backSlash
+  case forwardSlash
+  case openSquareBracket
+  case closeSquareBracket
 
-  case comma = ","
-  case period = "."
-  case backTick = "`"
-  case semicolon = ";"
-  case singleQuote = "'"
+  case comma
+  case period
+  case backTick
+  case semicolon
+  case singleQuote
 
-  case tab = "Tab"
-  case insert = "Ins"
-  case enter = "Enter"
-  case space = "Space"
-  case delete = "Delete"
-  case escape = "Escape"
+  case tab
+  case insert
+  case enter
+  case space
+  case delete
+  case escape
 
-  case f1 = "F1"
-  case f2 = "F2"
-  case f3 = "F3"
-  case f4 = "F4"
-  case f5 = "F5"
-  case f6 = "F6"
-  case f7 = "F7"
-  case f8 = "F8"
-  case f9 = "F9"
-  case f10 = "F10"
-  case f11 = "F11"
-  case f12 = "F12"
-  case f13 = "F13"
-  case f14 = "F14"
-  case f15 = "F15"
-  case f16 = "F16"
-  case f17 = "F17"
-  case f18 = "F18"
-  case f19 = "F19"
-  case f20 = "F20"
-  case fDel = "FDel"
+  case f1
+  case f2
+  case f3
+  case f4
+  case f5
+  case f6
+  case f7
+  case f8
+  case f9
+  case f10
+  case f11
+  case f12
+  case f13
+  case f14
+  case f15
+  case f16
+  case f17
+  case f18
+  case f19
+  case f20
+  case fDel
 
-  case home = "Home"
-  case end = "End"
-  case pageUp = "Page up"
-  case pageDown = "Page down"
+  case home
+  case end
+  case pageUp
+  case pageDown
 
-  case upArrow = "Up arrow"
-  case downArrow = "Down arrow"
-  case leftArrow = "Left arrow"
-  case rightArrow = "Right arrow"
+  case upArrow
+  case downArrow
+  case leftArrow
+  case rightArrow
 
   // Mouse buttons
 
-  case leftMouseButton = "Left click"
-  case rightMouseButton = "Right click"
-  case scrollUp = "Scroll up"
-  case scrollDown = "Scroll down"
+  case leftMouseButton
+  case rightMouseButton
+  case scrollUp
+  case scrollDown
+
+  case otherMouseButton(Int)
+
+  public var rawValue: String {
+    switch self {
+      case .leftShift: return "Left shift"
+      case .rightShift: return "Right shift"
+      case .leftControl: return "Left control"
+      case .rightControl: return "Right control"
+      case .leftOption: return "Left option"
+      case .rightOption: return "Right option"
+      case .leftCommand: return "Left command"
+      case .rightCommand: return "Right command"
+      case .function: return "Function"
+
+      case .a: return "A"
+      case .b: return "B"
+      case .c: return "C"
+      case .d: return "D"
+      case .e: return "E"
+      case .f: return "F"
+      case .g: return "G"
+      case .h: return "H"
+      case .i: return "I"
+      case .j: return "J"
+      case .k: return "K"
+      case .l: return "L"
+      case .m: return "M"
+      case .n: return "N"
+      case .o: return "O"
+      case .p: return "P"
+      case .q: return "Q"
+      case .r: return "R"
+      case .s: return "S"
+      case .t: return "T"
+      case .u: return "U"
+      case .v: return "V"
+      case .w: return "W"
+      case .x: return "X"
+      case .y: return "Y"
+      case .z: return "Z"
+
+      case .zero: return "0"
+      case .one: return "1"
+      case .two: return "2"
+      case .three: return "3"
+      case .four: return "4"
+      case .five: return "5"
+      case .six: return "6"
+      case .seven: return "7"
+      case .eight: return "8"
+      case .nine: return "9"
+
+      case .numberPad0: return "NP0"
+      case .numberPad1: return "NP1"
+      case .numberPad2: return "NP2"
+      case .numberPad3: return "NP3"
+      case .numberPad4: return "NP4"
+      case .numberPad5: return "NP5"
+      case .numberPad6: return "NP6"
+      case .numberPad7: return "NP7"
+      case .numberPad8: return "NP8"
+      case .numberPad9: return "NP9"
+
+      case .numberPadDec: return "NumPad Dec"
+      case .numberPadPlus: return "NumPad +"
+      case .numberPadMinus: return "NumPad -"
+      case .numberPadEquals: return "NumPad: return"
+      case .numberPadAsterisk: return "NumPad *"
+      case .numberPadForwardSlash: return "NumPad /"
+      case .numberPadClear: return "NumPad Clear"
+      case .numberPadEnter: return "NumPad Enter"
+
+      case .dash: return "-"
+      case .equals: return "="
+      case .backSlash: return "\\"
+      case .forwardSlash: return "/"
+      case .openSquareBracket: return "["
+      case .closeSquareBracket: return "]"
+
+      case .comma: return ","
+      case .period: return "."
+      case .backTick: return "`"
+      case .semicolon: return ";"
+      case .singleQuote: return "'"
+
+      case .tab: return "Tab"
+      case .insert: return "Ins"
+      case .enter: return "Enter"
+      case .space: return "Space"
+      case .delete: return "Delete"
+      case .escape: return "Escape"
+
+      case .f1: return "F1"
+      case .f2: return "F2"
+      case .f3: return "F3"
+      case .f4: return "F4"
+      case .f5: return "F5"
+      case .f6: return "F6"
+      case .f7: return "F7"
+      case .f8: return "F8"
+      case .f9: return "F9"
+      case .f10: return "F10"
+      case .f11: return "F11"
+      case .f12: return "F12"
+      case .f13: return "F13"
+      case .f14: return "F14"
+      case .f15: return "F15"
+      case .f16: return "F16"
+      case .f17: return "F17"
+      case .f18: return "F18"
+      case .f19: return "F19"
+      case .f20: return "F20"
+      case .fDel: return "FDel"
+
+      case .home: return "Home"
+      case .end: return "End"
+      case .pageUp: return "Page up"
+      case .pageDown: return "Page down"
+
+      case .upArrow: return "Up arrow"
+      case .downArrow: return "Down arrow"
+      case .leftArrow: return "Left arrow"
+      case .rightArrow: return "Right arrow"
+
+      // Mouse buttons
+
+      case .leftMouseButton: return "Left click"
+      case .rightMouseButton: return "Right click"
+      case .scrollUp: return "Scroll up"
+      case .scrollDown: return "Scroll down"
+
+      case .otherMouseButton(let number):
+        return "Mouse button \(number)"
+    }
+  }
 
   public init?(keyCode: UInt16) {
     if let key = Self.keyCodeToKey[keyCode] {
