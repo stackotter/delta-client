@@ -1,6 +1,6 @@
 # Delta Client - Changing the meaning of speed
 
-[![Discord](https://img.shields.io/discord/851058836776419368.svg?label=&logo=discord&logoColor=ffffff&color=5C5C5C&labelColor=6A7EC2)](https://discord.gg/xZPyDbmR6k)
+[![Discord](https://img.shields.io/discord/851058836776419368.svg?label=&logo=discord&logoColor=ffffff&color=5C5C5C&labelColor=6A7EC2)](https://deltaclient.app/discord)
 
 An open source rewrite of the *Minecraft: Java Edition* client, written in Swift for macOS and iOS (experimental). Currently Delta Client only supports connecting to **1.16.1** servers.
 
@@ -14,7 +14,7 @@ This client is not finished yet. If you're looking for a client to use to play M
 
 The main focus of this project is to create a highly efficient Java Edition compatible client written in Swift for macOS. The client also has experimental support for iOS, and is in the process of getting ported to Linux using SwiftCrossUI and eventually Kinzoku (once it is ready).
 
-If you want to have a say in the development of the client or have any questions, feel free to join the community on [Discord](https://discord.gg/xZPyDbmR6k).
+If you want to have a say in the development of the client or have any questions, feel free to join the community on [Discord](https://deltaclient.app/discord).
 
 ![Playing with Delta Client in a Hypixel lobby](Screenshots/hypixel-3.png)
 
