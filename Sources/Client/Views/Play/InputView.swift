@@ -100,7 +100,7 @@ struct InputView<Content: View>: View {
             return nil
           })
 
-          NSEvent.addLocalMonitorForEvents(matching: [.rightMouseDown, .leftMouseDown], handler: { event in
+          NSEvent.addLocalMonitorForEvents(matching: [.rightMouseDown, .leftMouseDown, .otherMouseDown], handler: { event in
             if !enabled {
               return event
             }
@@ -111,11 +111,14 @@ struct InputView<Content: View>: View {
             if event.associatedEventsMask.contains(.rightMouseDown) {
               delegateWrapper.delegate?.onKeyDown(.rightMouseButton)
             }
+            if event.associatedEventsMask.contains(.otherMouseDown) {
+              delegateWrapper.delegate?.onKeyDown(.otherMouseButton(event.buttonNumber))
+            }
 
             return passthroughMouseClicks ? event : nil
           })
 
-          NSEvent.addLocalMonitorForEvents(matching: [.rightMouseUp, .leftMouseUp], handler: { event in
+          NSEvent.addLocalMonitorForEvents(matching: [.rightMouseUp, .leftMouseUp, .otherMouseUp], handler: { event in
             if !enabled {
               return event
             }
@@ -125,6 +128,9 @@ struct InputView<Content: View>: View {
             }
             if event.associatedEventsMask.contains(.rightMouseUp) {
               delegateWrapper.delegate?.onKeyUp(.rightMouseButton)
+            }
+            if event.associatedEventsMask.contains(.otherMouseUp) {
+              delegateWrapper.delegate?.onKeyUp(.otherMouseButton(event.buttonNumber))
             }
 
             return passthroughMouseClicks ? event : nil
