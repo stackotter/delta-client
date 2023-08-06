@@ -108,6 +108,9 @@ public final class InputState: SingleComponent {
         } else {
           inputs.remove(.sprint)
         }
+        tickCount = 0
+        forwardsDownTime = 0
+        forwardsUpTime = 0
         forwardsDownTime = tickCount
       }
 
