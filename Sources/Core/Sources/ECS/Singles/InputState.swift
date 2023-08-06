@@ -94,6 +94,7 @@ public final class InputState: SingleComponent {
   /// Ticks the input state by flushing ``newlyPressed`` into ``keys`` and ``inputs``, and clearing
   /// ``newlyReleased``. Also emits events to the given ``EventBus``.
   func tick(_ isInputSuppressed: [Bool], _ eventBus: EventBus) {
+    /// increment the tick count
     tickCount += 1
     /// increment the time since the forwards key was pressed if it is currently pressed
     assert(isInputSuppressed.count == newlyPressed.count, "`isInputSuppressed` should be the same length as `newlyPressed`")
@@ -103,11 +104,14 @@ public final class InputState: SingleComponent {
       }
       ///test for forwards key
       if event.input == .moveForward {
+        /// if the forwards key has been pressed, released, and pressed again within 6 ticks, sprint
         if forwardsDownTime < forwardsUpTime && (forwardsDownTime + 6) > tickCount {
           inputs.insert(.sprint)
         } else {
+          /// if not then stop the user from sprinting
           inputs.remove(.sprint)
         }
+        /// reset the counts so the ints don't overflow
         tickCount = 0
         forwardsDownTime = 0
         forwardsUpTime = 0
@@ -125,7 +129,9 @@ public final class InputState: SingleComponent {
     }
 
     for event in newlyReleased {
+      ///test for forwards key being released
       if event.input == .moveForward {
+        /// if the forwards key has been released, set the time since it was released
         forwardsUpTime = tickCount
       }
       
