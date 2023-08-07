@@ -24,6 +24,14 @@ public final class InputState: SingleComponent {
   /// The position of the right thumbstick.
   public private(set) var rightThumbstick: Vec2f = Vec2f(0, 0)
 
+  /// The time since the last time the player pressed the forwards key.
+  public private(set) var forwardsDownTime: Int = 0
+    /// Whether the sprint was triggered by a double tap
+  public private(set) var sprintFromDoubleTap: Bool = false
+  /// Counts the ticks
+  public private(set) var tickCount: Int = 0
+
+
   // MARK: Init
 
   /// Creates an empty input state.
@@ -86,10 +94,30 @@ public final class InputState: SingleComponent {
   /// Ticks the input state by flushing ``newlyPressed`` into ``keys`` and ``inputs``, and clearing
   /// ``newlyReleased``. Also emits events to the given ``EventBus``.
   func tick(_ isInputSuppressed: [Bool], _ eventBus: EventBus) {
+    // Increment the tick count
+    tickCount += 1
     assert(isInputSuppressed.count == newlyPressed.count, "`isInputSuppressed` should be the same length as `newlyPressed`")
     for (var event, suppressInput) in zip(newlyPressed, isInputSuppressed) {
       if suppressInput {
         event.input = nil
+      }
+      // Test for forwards key
+      if event.input == .moveForward {
+        if !inputs.contains(.moveForward) {
+          // If the forwards key has been pressed within 6 ticks, sprint
+          if (forwardsDownTime + 6) >= tickCount {
+            inputs.insert(.sprint)
+          }
+          // The sprint comes from a double tap
+          sprintFromDoubleTap = true
+        }
+        // Update the forwards key down time
+        forwardsDownTime = tickCount
+      }
+
+      if event.input == .sprint {
+        //If the user presses the sprint key then the sprint doesn't come from a double tap
+        sprintFromDoubleTap = false
       }
 
       eventBus.dispatch(event)
@@ -103,6 +131,14 @@ public final class InputState: SingleComponent {
     }
 
     for event in newlyReleased {
+      // Test for forwards key being released
+      if event.input == .moveForward {
+        if sprintFromDoubleTap {
+          // Remove sprint if the forwards key is released and the sprint came from a double tap
+          inputs.remove(.sprint)
+        }
+      }
+      
       // TODO: The release event of any inputs that were suppressed should probably also be suppressed
       eventBus.dispatch(event)
 
