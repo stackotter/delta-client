@@ -26,7 +26,7 @@ public final class InputState: SingleComponent {
 
   /// The time since the last time the player pressed the forwards key.
   public private(set) var forwardsDownTime: Int = 0
-    /// Whether the spring was triggerf by a double tap
+    /// Whether the spring was triggered by a double tap
   public private(set) var sprintFromDoubleTap: Bool = false
   /// Counts the ticks
   public private(set) var tickCount: Int = 0
