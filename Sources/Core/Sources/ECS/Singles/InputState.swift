@@ -26,8 +26,8 @@ public final class InputState: SingleComponent {
 
   /// The time since the last time the player pressed the forwards key.
   public private(set) var forwardsDownTime: Int = 0
-  /// The time since the last time the player released the forwards key.
-  public private(set) var forwardsUpTime: Int = 0
+    /// Whether the spring was triggerf by a double tap
+  public private(set) var sprintFromDoubleTap: Bool = false
   /// Counts the ticks
   public private(set) var tickCount: Int = 0
 
@@ -94,20 +94,28 @@ public final class InputState: SingleComponent {
   /// Ticks the input state by flushing ``newlyPressed`` into ``keys`` and ``inputs``, and clearing
   /// ``newlyReleased``. Also emits events to the given ``EventBus``.
   func tick(_ isInputSuppressed: [Bool], _ eventBus: EventBus) {
-    // increment the tick count
+    //Iincrement the tick count
     tickCount += 1
-    // increment the time since the forwards key was pressed if it is currently pressed
+    // Increment the time since the forwards key was pressed if it is currently pressed
     assert(isInputSuppressed.count == newlyPressed.count, "`isInputSuppressed` should be the same length as `newlyPressed`")
     for (var event, suppressInput) in zip(newlyPressed, isInputSuppressed) {
       if suppressInput {
         event.input = nil
       }
-      // test for forwards key
+      // Test for forwards key
       if event.input == .moveForward {
-        // if the forwards key has been released within 6 ticks, sprint
-        if (forwardsUpTime + 6) > tickCount {
-          inputs.insert(.sprint)
+        if !inputs.contains(.moveForward) {
+          // If the forwards key has been released within 6 ticks, sprint
+          if (forwardsDownTime + 6) >= tickCount {
+            inputs.insert(.sprint)
+          }
+          sprintFromDoubleTap = true
         }
+        forwardsDownTime = tickCount
+      }
+
+      if event.input == .sprint {
+        sprintFromDoubleTap = false
       }
 
       eventBus.dispatch(event)
@@ -121,12 +129,11 @@ public final class InputState: SingleComponent {
     }
 
     for event in newlyReleased {
-      // test for forwards key being released
+      // Test for forwards key being released
       if event.input == .moveForward {
-        // if the forwards key has been released, stop sprinting
-        inputs.remove(.sprint)
-        // if the forwards key has been released, set the time since it was released
-        forwardsUpTime = tickCount
+        if sprintFromDoubleTap {
+          inputs.remove(.sprint)
+        }
       }
       
       // TODO: The release event of any inputs that were suppressed should probably also be suppressed
