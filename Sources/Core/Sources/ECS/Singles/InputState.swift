@@ -96,7 +96,6 @@ public final class InputState: SingleComponent {
   func tick(_ isInputSuppressed: [Bool], _ eventBus: EventBus) {
     //Iincrement the tick count
     tickCount += 1
-    // Increment the time since the forwards key was pressed if it is currently pressed
     assert(isInputSuppressed.count == newlyPressed.count, "`isInputSuppressed` should be the same length as `newlyPressed`")
     for (var event, suppressInput) in zip(newlyPressed, isInputSuppressed) {
       if suppressInput {
@@ -105,16 +104,19 @@ public final class InputState: SingleComponent {
       // Test for forwards key
       if event.input == .moveForward {
         if !inputs.contains(.moveForward) {
-          // If the forwards key has been released within 6 ticks, sprint
+          // If the forwards key has been pressed within 6 ticks, sprint
           if (forwardsDownTime + 6) >= tickCount {
             inputs.insert(.sprint)
           }
+          // The sprint comes from a double tap
           sprintFromDoubleTap = true
         }
+        // Update the forwards key down time
         forwardsDownTime = tickCount
       }
 
       if event.input == .sprint {
+        //If the user presses the sprint key then the sprint doesn't come from a double tap
         sprintFromDoubleTap = false
       }
 
@@ -132,6 +134,7 @@ public final class InputState: SingleComponent {
       // Test for forwards key being released
       if event.input == .moveForward {
         if sprintFromDoubleTap {
+          // Remove sprint if the forwards key is released and the sprint came from a double tap
           inputs.remove(.sprint)
         }
       }
