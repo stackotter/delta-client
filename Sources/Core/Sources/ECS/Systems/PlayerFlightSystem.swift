@@ -17,12 +17,16 @@ public struct PlayerFlightSystem: System {
     }
     
     let inputState = nexus.single(InputState.self).component
-    
+
     if gamemode.gamemode.isAlwaysFlying {
       onGround.onGround = false
       flying.isFlying = true
     } else if onGround.onGround || !attributes.canFly {
       flying.isFlying = false
+    }
+
+    if inputState.inputs.contains(.fly) && !flying.isFlying && attributes.canFly {
+      flying.isFlying = true
     }
     
     if flying.isFlying {

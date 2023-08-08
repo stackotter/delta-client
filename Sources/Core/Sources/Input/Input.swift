@@ -10,6 +10,7 @@ public enum Input: Codable, CaseIterable {
   case strafeLeft
   case strafeRight
   case jump
+  case fly
   case sneak
   case sprint
   case toggleDebugHUD
@@ -29,6 +30,10 @@ public enum Input: Codable, CaseIterable {
   case previousSlot
   case openChat
 
+  public var isBindable: Bool {
+    return self != .fly
+  }
+
   public var humanReadableLabel: String {
     switch self {
       case .place:
@@ -45,6 +50,8 @@ public enum Input: Codable, CaseIterable {
         return "Strafe right"
       case .jump:
         return "Jump"
+      case .fly:
+        return "Fly"
       case .sneak:
         return "Sneak"
       case .sprint:

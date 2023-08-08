@@ -3,7 +3,8 @@ import FirebladeMath
 
 /// The game's input state.
 public final class InputState: SingleComponent {
-  // MARK: Public properties
+  /// The maximum number of ticks between consecutive inputs to count as a double tap.
+  public static let maximumDoubleTapDelay = 6
 
   /// The newly pressed keys in the order that they were pressed. Only includes presses since last
   /// call to ``flushInputs()``.
@@ -24,17 +25,16 @@ public final class InputState: SingleComponent {
   /// The position of the right thumbstick.
   public private(set) var rightThumbstick: Vec2f = Vec2f(0, 0)
 
-  /// The time since forwards was last pressed (not released).
+  /// The time since forwards last changed from not pressed to pressed.
   public private(set) var ticksSinceForwardsPressed: Int = 0
   /// Whether the sprint was triggered by double tapping forwards.
   public private(set) var sprintIsFromDoubleTap: Bool = false
 
-  // MARK: Init
+  /// The time since jump last changed from not pressed to pressed.
+  public private(set) var ticksSinceJumpPressed: Int = 0
 
   /// Creates an empty input state.
   public init() {}
-
-  // MARK: Public methods
 
   /// Presses an input.
   /// - Parameters:
@@ -91,25 +91,34 @@ public final class InputState: SingleComponent {
   /// Ticks the input state by flushing ``newlyPressed`` into ``keys`` and ``inputs``, and clearing
   /// ``newlyReleased``. Also emits events to the given ``EventBus``.
   func tick(_ isInputSuppressed: [Bool], _ eventBus: EventBus) {
-    // Increment the tick count
-    ticksSinceForwardsPressed += 1
     assert(isInputSuppressed.count == newlyPressed.count, "`isInputSuppressed` should be the same length as `newlyPressed`")
+
+    ticksSinceForwardsPressed += 1
+    ticksSinceJumpPressed += 1
+
     for (var event, suppressInput) in zip(newlyPressed, isInputSuppressed) {
       if suppressInput {
         event.input = nil
       }
 
-      // Detect double pressing forwards (to activate sprint)
-      if event.input == .moveForward {
-        if !inputs.contains(.moveForward) && !inputs.contains(.sprint) {
-          // If the forwards key has been pressed within 6 ticks, press sprint
-          if ticksSinceForwardsPressed <= 6 {
-            inputs.insert(.sprint)
-            // Mark the sprint input for removal once forwards is pressed.
-            sprintIsFromDoubleTap = true
-          }
+      // Detect double pressing forwards (to activate sprint).
+      if event.input == .moveForward && !inputs.contains(.moveForward) {
+        // If the forwards key has been pressed within 6 ticks, press sprint.
+        if !inputs.contains(.sprint) && ticksSinceForwardsPressed <= Self.maximumDoubleTapDelay {
+          inputs.insert(.sprint)
+
+          // Mark the sprint input for removal once forwards is pressed.
+          sprintIsFromDoubleTap = true
         }
         ticksSinceForwardsPressed = 0
+      }
+
+      // Detect double pressing jump (to fly).
+      if event.input == .jump && !inputs.contains(.jump) {
+        if ticksSinceJumpPressed <= Self.maximumDoubleTapDelay {
+          inputs.insert(.fly)
+        }
+        ticksSinceJumpPressed = 0
       }
 
       // Make sure that sprint isn't removed when forwards is released if it was pressed by the user.
@@ -122,6 +131,7 @@ public final class InputState: SingleComponent {
       if let key = event.key {
         keys.insert(key)
       }
+
       if let input = event.input {
         inputs.insert(input)
       }
@@ -145,5 +155,10 @@ public final class InputState: SingleComponent {
     }
 
     flushInputs()
+
+    // `fly` is a synthetic input and is always immediately released.
+    if inputs.contains(.fly) {
+      release(key: nil, input: .fly)
+    }
   }
 }

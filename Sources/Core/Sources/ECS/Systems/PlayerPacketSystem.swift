@@ -101,6 +101,7 @@ public struct PlayerPacketSystem: System {
 
     if flying.isFlying != state.wasFlying {
       state.wasFlying = flying.isFlying
+      // TODO: Ensure other player flags are preserved
       try connection.sendPacket(PlayerAbilitiesServerboundPacket(flags: flying.isFlying ? [.flying] : []))
     }
 

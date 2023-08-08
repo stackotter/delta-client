@@ -17,7 +17,7 @@ struct KeymapEditorView: View {
 
   var body: some View {
     VStack {
-      ForEach(Input.allCases, id: \.self) { input in
+      ForEach(Input.allCases.filter(\.isBindable), id: \.self) { input in
         let key = state.keymap[input]
         let isUnique = key == nil ? true : state.keymap.values.filter({ $0 == key }).count == 1
         let isBound = state.keymap[input] != nil
