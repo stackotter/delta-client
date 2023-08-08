@@ -157,7 +157,7 @@ public final class PlayerInputSystem: System {
           if guiState.playerMessageHistory.count > 0 {
             // Index up a message
             guiState.currentMessageIndex = guiState.playerMessageHistory.count - 1
-            if guiState.currentMessageIndex == guiState.currentMessageIndex {
+            if let currentMessageIndex: Int = guiState.currentMessageIndex {
               // Set the message input to the message at the index
               guiState.messageInput = guiState.playerMessageHistory[guiState.currentMessageIndex!]
             }
@@ -167,7 +167,7 @@ public final class PlayerInputSystem: System {
           if guiState.currentMessageIndex! > 0 {
             guiState.currentMessageIndex! -= 1
           }
-          if guiState.currentMessageIndex == guiState.currentMessageIndex {
+          if let currentMessageIndex: Int = guiState.currentMessageIndex {
             // Set the message input to the message at the index
             guiState.messageInput = guiState.playerMessageHistory[guiState.currentMessageIndex!]
           }
@@ -177,7 +177,7 @@ public final class PlayerInputSystem: System {
         if guiState.currentMessageIndex != nil {
           if guiState.currentMessageIndex! < guiState.playerMessageHistory.count - 1 {
             guiState.currentMessageIndex! += 1
-            if guiState.currentMessageIndex == guiState.currentMessageIndex {
+            if let currentMessageIndex: Int = guiState.currentMessageIndex {
               guiState.messageInput = guiState.playerMessageHistory[guiState.currentMessageIndex!]
             }
           } else {
