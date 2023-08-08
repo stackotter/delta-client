@@ -6,6 +6,9 @@ public struct GUIState {
   public var showInventory = false
   public var chat = Chat()
   public var messageInput: String?
+  public var stashedMessageInput: String?
+  public var playerMessageHistory: [String] = []
+  public var currentMessageIndex: Int?
 
   public var isChatOpen: Bool {
     return messageInput != nil

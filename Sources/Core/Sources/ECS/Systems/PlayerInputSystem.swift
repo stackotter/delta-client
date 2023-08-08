@@ -136,15 +136,59 @@ public final class PlayerInputSystem: System {
       if event.key == .enter {
         if !message.isEmpty {
           try connection?.sendPacket(ChatMessageServerboundPacket(message))
+          guiState.playerMessageHistory.append(message)
+          guiState.currentMessageIndex = nil
         }
         guiState.messageInput = nil
         return true
       } else if event.key == .escape {
         guiState.messageInput = nil
+        guiState.currentMessageIndex = nil
         return true
       } else if event.key == .delete {
         if !message.isEmpty {
           guiState.messageInput?.removeLast()
+        }
+      } else if event.key == .upArrow {
+        // If no message is selected, select the above message
+        if guiState.currentMessageIndex == nil {
+          guiState.stashedMessageInput = guiState.messageInput
+          // If there are no messages, do nothing
+          if guiState.playerMessageHistory.count > 0 {
+            // Index up a message
+            guiState.currentMessageIndex = guiState.playerMessageHistory.count - 1
+            if guiState.currentMessageIndex == guiState.currentMessageIndex {
+              // Set the message input to the message at the index
+              guiState.messageInput = guiState.playerMessageHistory[guiState.currentMessageIndex!]
+            }
+          }
+        } else {
+          // If there is a message selected, index up a message
+          if guiState.currentMessageIndex! > 0 {
+            guiState.currentMessageIndex! -= 1
+          }
+          if guiState.currentMessageIndex == guiState.currentMessageIndex {
+            // Set the message input to the message at the index
+            guiState.messageInput = guiState.playerMessageHistory[guiState.currentMessageIndex!]
+          }
+        }
+      } else if event.key == .downArrow {
+        // If there is a message selected, index down a message
+        if guiState.currentMessageIndex != nil {
+          if guiState.currentMessageIndex! < guiState.playerMessageHistory.count - 1 {
+            guiState.currentMessageIndex! += 1
+            if guiState.currentMessageIndex == guiState.currentMessageIndex {
+              guiState.messageInput = guiState.playerMessageHistory[guiState.currentMessageIndex!]
+            }
+          } else {
+            // If there is no message to index down to, go back to what the user was typing originally
+            guiState.currentMessageIndex = nil
+            if guiState.stashedMessageInput != nil {
+              guiState.messageInput = guiState.stashedMessageInput
+            } else {
+              guiState.messageInput = ""
+            }
+          }
         }
       } else {
         #if os(macOS)
