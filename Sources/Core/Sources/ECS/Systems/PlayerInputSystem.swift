@@ -151,40 +151,29 @@ public final class PlayerInputSystem: System {
         }
       } else if event.key == .upArrow {
         // If no message is selected, select the above message
-        if guiState.currentMessageIndex == nil {
+        if let index = guiState.currentMessageIndex, index > 0 {
+          guiState.currentMessageIndex = index - 1
+          guiState.messageInput = guiState.playerMessageHistory[index - 1]
+        } else if guiState.currentMessageIndex == nil {
           guiState.stashedMessageInput = guiState.messageInput
-          // If there are no messages, do nothing
-          if guiState.playerMessageHistory.count > 0 {
-            // Index up a message
+          if !guiState.playerMessageHistory.isEmpty {
             guiState.currentMessageIndex = guiState.playerMessageHistory.count - 1
-            if let currentMessageIndex: Int = guiState.currentMessageIndex {
-              // Set the message input to the message at the index
-              guiState.messageInput = guiState.playerMessageHistory[guiState.currentMessageIndex!]
+            if let index = guiState.currentMessageIndex {
+              guiState.messageInput = guiState.playerMessageHistory[index]
             }
-          }
-        } else {
-          // If there is a message selected, index up a message
-          if guiState.currentMessageIndex! > 0 {
-            guiState.currentMessageIndex! -= 1
-          }
-          if let currentMessageIndex: Int = guiState.currentMessageIndex {
-            // Set the message input to the message at the index
-            guiState.messageInput = guiState.playerMessageHistory[guiState.currentMessageIndex!]
           }
         }
       } else if event.key == .downArrow {
         // If there is a message selected, index down a message
-        if guiState.currentMessageIndex != nil {
-          if guiState.currentMessageIndex! < guiState.playerMessageHistory.count - 1 {
-            guiState.currentMessageIndex! += 1
-            if let currentMessageIndex: Int = guiState.currentMessageIndex {
-              guiState.messageInput = guiState.playerMessageHistory[guiState.currentMessageIndex!]
-            }
+        if let index = guiState.currentMessageIndex {
+          if index < guiState.playerMessageHistory.count - 1 {
+            guiState.currentMessageIndex = index + 1
+            guiState.messageInput = guiState.playerMessageHistory[index + 1]
           } else {
             // If there is no message to index down to, go back to what the user was typing originally
             guiState.currentMessageIndex = nil
-            if guiState.stashedMessageInput != nil {
-              guiState.messageInput = guiState.stashedMessageInput
+            if let stashedMessage = guiState.stashedMessageInput {
+              guiState.messageInput = stashedMessage
             } else {
               guiState.messageInput = ""
             }
