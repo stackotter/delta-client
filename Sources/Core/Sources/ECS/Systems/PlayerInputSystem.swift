@@ -156,7 +156,7 @@ public final class PlayerInputSystem: System {
           guiState.messageInput = guiState.playerMessageHistory[index - 1]
         } else if guiState.currentMessageIndex == nil && !guiState.playerMessageHistory.isEmpty {
           guiState.stashedMessageInput = guiState.messageInput
-          let index = guistate.playerMessageHistory.count - 1
+          let index = guiState.playerMessageHistory.count - 1
           guiState.currentMessageIndex = index
           guiState.messageInput = guiState.playerMessageHistory[index]
         }
