@@ -154,14 +154,11 @@ public final class PlayerInputSystem: System {
         if let index = guiState.currentMessageIndex, index > 0 {
           guiState.currentMessageIndex = index - 1
           guiState.messageInput = guiState.playerMessageHistory[index - 1]
-        } else if guiState.currentMessageIndex == nil {
+        } else if guiState.currentMessageIndex == nil && !guiState.playerMessageHistory.isEmpty {
           guiState.stashedMessageInput = guiState.messageInput
-          if !guiState.playerMessageHistory.isEmpty {
-            guiState.currentMessageIndex = guiState.playerMessageHistory.count - 1
-            if let index = guiState.currentMessageIndex {
-              guiState.messageInput = guiState.playerMessageHistory[index]
-            }
-          }
+          let index = guistate.playerMessageHistory.count - 1
+          guiState.currentMessageIndex = index
+          guiState.messageInput = guiState.playerMessageHistory[index]
         }
       } else if event.key == .downArrow {
         // If there is a message selected, index down a message
@@ -172,11 +169,7 @@ public final class PlayerInputSystem: System {
           } else {
             // If there is no message to index down to, go back to what the user was typing originally
             guiState.currentMessageIndex = nil
-            if let stashedMessage = guiState.stashedMessageInput {
-              guiState.messageInput = stashedMessage
-            } else {
-              guiState.messageInput = ""
-            }
+            guiState.messageInput = guiState.stashedMessageInput ?? ""
           }
         }
       } else {
