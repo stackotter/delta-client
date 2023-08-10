@@ -136,15 +136,41 @@ public final class PlayerInputSystem: System {
       if event.key == .enter {
         if !message.isEmpty {
           try connection?.sendPacket(ChatMessageServerboundPacket(message))
+          guiState.playerMessageHistory.append(message)
+          guiState.currentMessageIndex = nil
         }
         guiState.messageInput = nil
         return true
       } else if event.key == .escape {
         guiState.messageInput = nil
+        guiState.currentMessageIndex = nil
         return true
       } else if event.key == .delete {
         if !message.isEmpty {
           guiState.messageInput?.removeLast()
+        }
+      } else if event.key == .upArrow {
+        // If no message is selected, select the above message
+        if let index = guiState.currentMessageIndex, index > 0 {
+          guiState.currentMessageIndex = index - 1
+          guiState.messageInput = guiState.playerMessageHistory[index - 1]
+        } else if guiState.currentMessageIndex == nil && !guiState.playerMessageHistory.isEmpty {
+          guiState.stashedMessageInput = guiState.messageInput
+          let index = guiState.playerMessageHistory.count - 1
+          guiState.currentMessageIndex = index
+          guiState.messageInput = guiState.playerMessageHistory[index]
+        }
+      } else if event.key == .downArrow {
+        // If there is a message selected, index down a message
+        if let index = guiState.currentMessageIndex {
+          if index < guiState.playerMessageHistory.count - 1 {
+            guiState.currentMessageIndex = index + 1
+            guiState.messageInput = guiState.playerMessageHistory[index + 1]
+          } else {
+            // If there is no message to index down to, go back to what the user was typing originally
+            guiState.currentMessageIndex = nil
+            guiState.messageInput = guiState.stashedMessageInput ?? ""
+          }
         }
       } else {
         #if os(macOS)
