@@ -9,6 +9,15 @@ public struct GUIState {
   public var stashedMessageInput: String?
   public var playerMessageHistory: [String] = []
   public var currentMessageIndex: Int?
+  /// The cursor position in the message input. 0 is the end of the message, and the maximum value is the beginning of the message.
+  public var messageInputCursor: Int = 0
+  public var messageInputCursorIndex: String.Index {
+    if let messageInput = messageInput {
+      return messageInput.index(messageInput.endIndex, offsetBy: -messageInputCursor)
+    } else {
+      return "".endIndex
+    }
+  }
 
   public var isChatOpen: Bool {
     return messageInput != nil
