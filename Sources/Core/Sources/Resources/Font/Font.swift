@@ -8,6 +8,7 @@ public enum FontError: LocalizedError {
   case emptyFont
   case invalidUnicodePageFileTemplate
   case invalidUnicodeScalar(page: Int, index: Int)
+  case invalidGlyphSizesFile
 
   public var errorDescription: String? {
     switch self {
@@ -23,6 +24,8 @@ public enum FontError: LocalizedError {
         return "Unicode page file path templates must be an identifier including exactly one occurence of '%s'."
       case let .invalidUnicodeScalar(page, index):
         return "Failed to create unicode scalar while loading legacy unicode font: page=\(page), index=\(index)."
+      case .invalidGlyphSizesFile:
+        return "glyph_sizes.bin must be exactly 65536 bytes long"
     }
   }
 }
@@ -113,6 +116,10 @@ public struct Font {
           //   This is probably a larger issue affecting a bunch of the resource hanling code,
           //   a generic way to get resource paths from identifiers is probably required.
           let glyphSizeFilePath = namespaceDirectory.appendingPathComponent(metadata.sizes.name)
+          let glyphSizeBytes = [UInt8](try Data(contentsOf: glyphSizeFilePath))
+          guard glyphSizeBytes.count == 256 * 256 else {
+            throw FontError.invalidGlyphSizesFile
+          }
 
           let pageFilePathTemplateParts = metadata.template.split(separator: ":")
           guard
@@ -145,7 +152,13 @@ public struct Font {
             for x in 0..<16 {
               for y in 0..<16 {
                 let index = x + y * 16
-                guard let unicodeScalar = UnicodeScalar(UInt16((page << 8) + index)) else {
+                let absoluteIndex = (page << 8) + index
+
+                let glyphSizeByte = glyphSizeBytes[absoluteIndex]
+                let xOffset = Int(glyphSizeByte >> 4)
+                let width = Int(glyphSizeByte & 0xf) - xOffset
+
+                guard let unicodeScalar = UnicodeScalar(UInt16(absoluteIndex)) else {
                   throw FontError.invalidUnicodeScalar(page: page, index: index)
                 }
 
@@ -159,9 +172,9 @@ public struct Font {
 
                 characters[character] = CharacterDescriptor(
                   texture: textureIndex,
-                  x: x * 16,
+                  x: x * 16 + xOffset,
                   y: y * 16,
-                  width: 16,
+                  width: width,
                   height: 16,
                   verticalOffset: 0,
                   scalingFactor: 0.5
