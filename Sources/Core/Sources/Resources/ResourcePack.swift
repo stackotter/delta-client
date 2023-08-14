@@ -289,6 +289,7 @@ public struct ResourcePack {
         log.debug("Loading fonts")
         resources.fontPalette = try FontPalette.load(
           from: fontDirectory,
+          namespaceDirectory: directory,
           textureDirectory: textureDirectory
         )
       }

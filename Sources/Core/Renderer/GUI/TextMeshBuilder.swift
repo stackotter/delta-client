@@ -40,11 +40,11 @@ struct TextMeshBuilder {
       }
 
       assert(
-        descriptor.width < maximumWidth,
+        descriptor.renderedWidth < maximumWidth,
         "maximumWidth must be greater than every individual character in the string"
       )
 
-      width += descriptor.width
+      width += descriptor.renderedWidth
       if i != text.startIndex {
         width += 1 // character spacing
       }
@@ -168,19 +168,19 @@ struct TextMeshBuilder {
 
     let position = Vec2f(
       0,
-      Float(Font.defaultCharacterHeight - character.height - character.verticalOffset)
+      Float(Font.defaultCharacterHeight - character.renderedHeight - character.verticalOffset)
     )
     let size = Vec2f(
-      Float(character.width),
-      Float(character.height)
+      Float(character.renderedWidth),
+      Float(character.renderedHeight)
     )
     let uvMin = Vec2f(
       Float(character.x) / arrayTextureWidth,
       Float(character.y) / arrayTextureHeight
     )
     let uvSize = Vec2f(
-      size.x / arrayTextureWidth,
-      size.y / arrayTextureHeight
+      Float(character.width) / arrayTextureWidth,
+      Float(character.height) / arrayTextureHeight
     )
 
     return GUIQuad(

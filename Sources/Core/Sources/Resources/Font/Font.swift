@@ -6,6 +6,8 @@ public enum FontError: LocalizedError {
   case failedToGetArrayTextureHeight
   case failedToCreateArrayTexture
   case emptyFont
+  case invalidUnicodePageFileTemplate
+  case invalidUnicodeScalar(page: Int, index: Int)
 
   public var errorDescription: String? {
     switch self {
@@ -17,6 +19,10 @@ public enum FontError: LocalizedError {
         return "Failed to create array texture."
       case .emptyFont:
         return "Empty font."
+      case .invalidUnicodePageFileTemplate:
+        return "Unicode page file path templates must be an identifier including exactly one occurence of '%s'."
+      case let .invalidUnicodeScalar(page, index):
+        return "Failed to create unicode scalar while loading legacy unicode font: page=\(page), index=\(index)."
     }
   }
 }
@@ -65,39 +71,106 @@ public struct Font {
   /// Loads a font from a font manifest and texture directory.
   /// - Parameters:
   ///   - manifestFile: The font's manifest file.
+  ///   - namespaceDirectory: The current resource namespace's root directory.
   ///   - textureDirectory: The resource pack's texture directory.
   /// - Throws: An error if texture or manifest loading fails.
-  public static func load(from manifestFile: URL, textureDirectory: URL) throws -> Font {
+  public static func load(from manifestFile: URL, namespaceDirectory: URL, textureDirectory: URL) throws -> Font {
     let manifest = try FontManifest.load(from: manifestFile)
-    return try load(from: manifest, textureDirectory: textureDirectory)
+    return try load(from: manifest, namespaceDirectory: namespaceDirectory, textureDirectory: textureDirectory)
   }
 
   /// Loads a font from a font manifest and texture directory.
   /// - Parameters:
   ///   - manifest: The font's manifest.
+  ///   - namespaceDirectory: The current resource namespace's root directory.
   ///   - textureDirectory: The resource pack's texture directory.
   /// - Throws: An error if texture loading fails.
-  public static func load(from manifest: FontManifest, textureDirectory: URL) throws -> Font {
-    // Load textures and characters from atlases
+  public static func load(from manifest: FontManifest, namespaceDirectory: URL, textureDirectory: URL) throws -> Font {
     var characters: [Character: CharacterDescriptor] = [:]
     var textures: [Texture] = []
+
     for provider in manifest.providers {
-      if case let .bitmap(atlas) = provider {
-        // Load texture from file
-        let file = textureDirectory.appendingPathComponent(atlas.file.name)
-        let texture = try Texture(pngFile: file, type: .transparent)
-        textures.append(texture)
+      switch provider {
+        case let .bitmap(atlas):
+          // Load texture from file
+          let file = textureDirectory.appendingPathComponent(atlas.file.name)
+          let texture = try Texture(pngFile: file, type: .transparent)
+          textures.append(texture)
 
-        // Calculate bounding boxes of characters in atlas
-        let descriptors = Self.descriptors(
-          from: atlas,
-          texture: texture,
-          textureIndex: textures.count - 1
-        )
+          // Calculate bounding boxes of characters in atlas
+          let descriptors = Self.descriptors(
+            from: atlas,
+            texture: texture,
+            textureIndex: textures.count - 1
+          )
 
-        for (character, descriptor) in descriptors {
-          characters[character] = descriptor
-        }
+          for (character, descriptor) in descriptors {
+            characters[character] = descriptor
+          }
+        case let .legacyUnicode(metadata):
+          // TODO: These identifiers could be referring to resources in another namespace.
+          //   We should support that instead of assuming that they're from the same namespace.
+          //   This is probably a larger issue affecting a bunch of the resource hanling code,
+          //   a generic way to get resource paths from identifiers is probably required.
+          let glyphSizeFilePath = namespaceDirectory.appendingPathComponent(metadata.sizes.name)
+
+          let pageFilePathTemplateParts = metadata.template.split(separator: ":")
+          guard
+            pageFilePathTemplateParts.count <= 2,
+            let pageFilePathTemplate = pageFilePathTemplateParts.last
+          else {
+            throw FontError.invalidUnicodePageFileTemplate
+          }
+
+          guard
+            pageFilePathTemplate.contains("%s"),
+            pageFilePathTemplate.components(separatedBy: "%s").count <= 2
+          else {
+            throw FontError.invalidUnicodePageFileTemplate
+          }
+
+          for page in 0..<256 {
+            let pageNumber = String(format: "%02x", page)
+            let path = pageFilePathTemplate.replacingOccurrences(of: "%s", with: pageNumber)
+            let textureFile = textureDirectory.appendingPathComponent(path)
+
+            guard FileManager.default.fileExists(atPath: textureFile.path) else {
+              continue
+            }
+            
+            let texture = try Texture(pngFile: textureFile, type: .transparent)
+            let textureIndex = textures.count
+            textures.append(texture)
+
+            for x in 0..<16 {
+              for y in 0..<16 {
+                let index = x + y * 16
+                guard let unicodeScalar = UnicodeScalar(UInt16((page << 8) + index)) else {
+                  throw FontError.invalidUnicodeScalar(page: page, index: index)
+                }
+
+                let character = Character(unicodeScalar)
+
+                // The legacy unicode provider is just a fallback so it shouldn't override
+                // characters from other fonts.
+                guard characters[character] == nil else {
+                  continue
+                }
+
+                characters[character] = CharacterDescriptor(
+                  texture: textureIndex,
+                  x: x * 16,
+                  y: y * 16,
+                  width: 16,
+                  height: 16,
+                  verticalOffset: 0,
+                  scalingFactor: 0.5
+                )
+              }
+            }
+          }
+        case .trueType:
+          continue
       }
     }
 
@@ -202,7 +275,8 @@ public struct Font {
       y: yIndex * Self.defaultCharacterHeight + minY,
       width: width,
       height: height,
-      verticalOffset: Self.defaultCharacterHeight - maxY - 1
+      verticalOffset: Self.defaultCharacterHeight - maxY - 1,
+      scalingFactor: 1
     )
   }
 }
