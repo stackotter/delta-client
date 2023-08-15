@@ -11,7 +11,7 @@ public struct PlayerFOVSystem: System {
     ).makeIterator()
 
     guard let (fov, attributes, flying, _) = family.next() else {
-      log.error("PlayerJumpSystem failed to get player to tick")
+      log.error("PlayerFOVSystem failed to get player to tick")
       return
     }
 

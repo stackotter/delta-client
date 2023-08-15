@@ -3,6 +3,8 @@ import FirebladeMath
 
 // TODO: Implement pushoutofblocks method (see decompiled vanilla sources)
 public struct PlayerCollisionSystem: System {
+  static let stepHeight: Double = 0.6
+  
   public func update(_ nexus: Nexus, _ world: World) {
     var family = nexus.family(
       requiresAll: EntityPosition.self,
@@ -24,12 +26,16 @@ public struct PlayerCollisionSystem: System {
     }
 
     let original = velocity.vector
-    velocity.vector = Self.getAdjustedVelocity(
+    let (adjustedVelocity, step) = Self.getAdjustedVelocityWithStepping(
       position.vector,
       velocity.vector,
       hitbox.aabb(at: position.vector),
-      world
+      world,
+      onGround.onGround
     )
+
+    velocity.vector = adjustedVelocity
+    position.vector.y += step
 
     onGround.onGround = original.y < 0 && original.y != velocity.y
 
@@ -37,11 +43,77 @@ public struct PlayerCollisionSystem: System {
     collisionState.collidingHorizontally = original.x != velocity.x || original.z != velocity.z
   }
 
+  /// Adjusts the player's velocity to avoid collisions while automatically going up blocks under
+  /// 0.5 tall (e.g. slabs or carpets).
+  /// - Parameters:
+  ///   - position: The player's position.
+  ///   - velocity: The player's velocity.
+  ///   - aabb: The player's hitbox.
+  ///   - world: The world the player is colliding with.
+  /// - Returns: The adjusted velocity, the magnitude will be between 0 and the magnitude of the original velocity.
+  private static func getAdjustedVelocityWithStepping(
+    _ position: Vec3d,
+    _ velocity: Vec3d,
+    _ aabb: AxisAlignedBoundingBox,
+    _ world: World,
+    _ onGround: Bool
+  ) -> (velocity: Vec3d, step: Double) {
+    let adjustedVelocity = getAdjustedVelocity(position, velocity, aabb, world)
+
+    let willBeOnGround = adjustedVelocity.y != velocity.y && velocity.y < 0
+    let onGround = onGround || willBeOnGround
+    let wasHorizontallyRestricted = adjustedVelocity.x != velocity.x || adjustedVelocity.z != velocity.z
+
+    // Check if the player could step up to move further
+    if onGround && wasHorizontallyRestricted {
+      var velocityWithStep = getAdjustedVelocity(
+        position,
+        [velocity.x, Self.stepHeight, velocity.z],
+        aabb,
+        world
+      )
+
+      let maximumVerticalVelocity = getAdjustedVelocity(
+        position,
+        [0, Self.stepHeight, 0],
+        aabb.extend(by: [velocity.x, 0, velocity.z]),
+        world
+      ).y
+
+      if maximumVerticalVelocity < Self.stepHeight {
+        // If the player would hit their head while ascending a full stepHeight, check if stepping as
+        // high as possible without hitting their head would avoid other collisions.
+        let velocityWithSmallerStep = getAdjustedVelocity(
+          position,
+          [velocity.x, 0, velocity.z],
+          aabb.offset(by: maximumVerticalVelocity, along: .y),
+          world
+        )
+
+        if velocityWithSmallerStep.horizontalMagnitude > velocityWithStep.horizontalMagnitude {
+          velocityWithStep = velocityWithSmallerStep
+          velocityWithStep.y = maximumVerticalVelocity
+        }
+      }
+
+      if velocityWithStep.horizontalMagnitude > adjustedVelocity.horizontalMagnitude {
+        // Recalculate the y velocity required to get up the 'step'.
+        velocityWithStep += getAdjustedVelocity(position, [0, -Self.stepHeight, 0], aabb.offset(by: velocityWithStep), world)
+        let step = velocityWithStep.y
+        velocityWithStep.y = 0
+        return (velocity: velocityWithStep, step: step)
+      }
+    }
+
+    return (velocity: adjustedVelocity, step: 0)
+  }
+
   /// Adjusts the player's velocity to avoid collisions.
   /// - Parameters:
   ///   - position: The player's position.
   ///   - velocity: The player's velocity.
-  ///   - hitbox: The player's hitbox.
+  ///   - aabb: The player's hitbox.
+  ///   - world: The world the player is colliding with.
   /// - Returns: The adjusted velocity, the magnitude will be between 0 and the magnitude of the original velocity.
   private static func getAdjustedVelocity(
     _ position: Vec3d,

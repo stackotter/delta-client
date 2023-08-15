@@ -129,6 +129,20 @@ public struct AxisAlignedBoundingBox: Codable {
     return aabb
   }
 
+  /// Extends the bounding box by the given vector. Unlike `grow`, it doesn't expand in every direction.
+  /// The expansion direction along each axis depends on the sign of the corresponding component of the
+  /// vector.
+  public func extend(by vector: Vec3d) -> AxisAlignedBoundingBox {
+    var aabb = self
+    let xDirection = vector.x >= 0 ? Axis.x.positiveDirection : Axis.x.negativeDirection
+    let yDirection = vector.y >= 0 ? Axis.y.positiveDirection : Axis.y.negativeDirection
+    let zDirection = vector.z >= 0 ? Axis.z.positiveDirection : Axis.z.negativeDirection
+    aabb = aabb.extend(xDirection, amount: abs(vector.x))
+    aabb = aabb.extend(yDirection, amount: abs(vector.y))
+    aabb = aabb.extend(zDirection, amount: abs(vector.z))
+    return aabb
+  }
+
   /// Grows by the given amount in each direction.
   /// - Parameter amount: The amount to grow by.
   /// - Returns: The new bounding box.

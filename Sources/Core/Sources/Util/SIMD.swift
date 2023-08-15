@@ -13,6 +13,20 @@ extension Vec3 {
   }
 }
 
+extension Vec3d {
+  /// The magnitude of the vector when disregarding the vertical component.
+  public var horizontalMagnitude: Double {
+    return sqrt(x*x + z*z)
+  }
+}
+
+extension Vec3f {
+  /// The magnitude of the vector when disregarding the vertical component.
+  public var horizontalMagnitude: Float {
+    return sqrt(x*x + z*z)
+  }
+}
+
 extension Vec where Scalar: BinaryFloatingPoint {
   /// The squared magnitude of the vector (use when you're using magnitude purely for comparison because it's faster).
   public var magnitudeSquared: Scalar {
