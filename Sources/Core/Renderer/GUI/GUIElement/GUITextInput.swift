@@ -13,8 +13,8 @@ struct GUITextInput: GUIElement {
     ).meshes(context: context)
 
     // Message
-    var messageBeforeCursor = String(content.prefix(upTo: cursorIndex))
-    var messageAfterCursor = String(content.suffix(from: cursorIndex))
+    let messageBeforeCursor = String(content.prefix(upTo: cursorIndex))
+    let messageAfterCursor = String(content.suffix(from: cursorIndex))
     var messageMeshBeforeCursor = try messageBeforeCursor.meshes(context: context)
     var messageMeshAfterCursor = try messageAfterCursor.meshes(context: context)
 
@@ -31,10 +31,12 @@ struct GUITextInput: GUIElement {
       if messageMeshAfterCursor.size().x == 0 {
         cursor = try "_".meshes(context: context)
         let messageWidth = messageMeshBeforeCursor.size().x + messageMeshAfterCursor.size().x
-        var xOffset = 2
+        var xOffset: Int
         if messageWidth != 0 {
           xOffset = messageWidth + 4
-        }
+        } else {
+          xOffset = 2
+        } 
         cursor.translate(amount: [xOffset, 2])
       } else {
         let cursorWidth = 1
@@ -43,10 +45,12 @@ struct GUITextInput: GUIElement {
           size: [cursorWidth, cursorHeight],
           color: [1, 1, 1, 1]
         ).meshes(context: context)
-        var xOffset = messageMeshBeforeCursor.size().x + 3
+        var xOffset: Int
         if messageMeshBeforeCursor.size().x == 0 {
           xOffset = messageMeshBeforeCursor.size().x + 2
-        }
+        } else {
+          xOffset = messageMeshBeforeCursor.size().x + 3
+        } 
         cursor.translate(amount: [xOffset, 1])
       }
     }
