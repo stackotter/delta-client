@@ -44,6 +44,8 @@ public struct Player {
   public private(set) var inventory: PlayerInventory
   /// The component storing the state of collisions from the latest tick.
   public private(set) var collisionState: PlayerCollisionState
+  /// The component storing the player's fov multiplier.
+  public private(set) var fov: PlayerFOV
 
   /// A ray starting from the player's eyes and travelling in the direction they are looking.
   public var ray: Ray {
@@ -74,6 +76,7 @@ public struct Player {
     gamemode = PlayerGamemode()
     inventory = PlayerInventory()
     collisionState = PlayerCollisionState()
+    fov = PlayerFOV()
   }
 
   /// Adds the player to a game.
@@ -103,6 +106,7 @@ public struct Player {
       gamemode
       inventory
       collisionState
+      fov
     }
   }
 }

@@ -13,6 +13,10 @@ import Glibc
 
 /// A highly accurate timer used to implement the ticking mechanism. Completely threadsafe.
 public final class TickScheduler: @unchecked Sendable {
+  // MARK: Static properties
+
+  public static let defaultTicksPerSecond: Double = 20
+  
   // MARK: Public properties
 
   /// The number of ticks to perform per second.
@@ -48,7 +52,14 @@ public final class TickScheduler: @unchecked Sendable {
   /// - Parameters:
   ///   - nexus: The nexus to run updates on.
   ///   - nexusLock: The lock to acquire for each tick to keep the nexus threadsafe.
-  public init(_ nexus: Nexus, nexusLock: ReadWriteLock, _ world: World, ticksPerSecond: Double = 20) {
+  ///   - world: The world to pass to systems (usually used for things such as collisions).
+  ///   - ticksPerSecond: The number of ticks per second to run the scheduler at.
+  public init(
+    _ nexus: Nexus,
+    nexusLock: ReadWriteLock,
+    _ world: World,
+    ticksPerSecond: Double = defaultTicksPerSecond
+  ) {
     self.nexus = nexus
     self.nexusLock = nexusLock
     self.world = world

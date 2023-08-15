@@ -334,7 +334,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   private func getCameraUniforms(_ view: MTKView) -> MTLBuffer {
     let aspect = Float(view.drawableSize.width / view.drawableSize.height)
     camera.setAspect(aspect)
-    camera.setFovY(MathUtil.radians(from: client.configuration.render.fovY))
+
+    let effectiveFovY = client.configuration.render.fovY * client.game.fovMultiplier()
+    camera.setFovY(MathUtil.radians(from: effectiveFovY))
 
     client.game.accessPlayer { player in
       var eyePosition = Vec3f(player.position.smoothVector)

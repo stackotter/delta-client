@@ -5,7 +5,7 @@ import FirebladeECS
 public final class Game: @unchecked Sendable {
   // MARK: Public properties
 
-  /// The scheduler that runs the game's systems every 20th of a second.
+  /// The scheduler that runs the game's systems every 20th of a second (by default).
   public private(set) var tickScheduler: TickScheduler
   /// The event bus for emitting events.
   public private(set) var eventBus: EventBus
@@ -84,6 +84,7 @@ public final class Game: @unchecked Sendable {
     tickScheduler.addSystem(PlayerVelocitySystem())
     tickScheduler.addSystem(PlayerCollisionSystem())
     tickScheduler.addSystem(PlayerPositionSystem())
+    tickScheduler.addSystem(PlayerFOVSystem())
 
     tickScheduler.addSystem(EntitySmoothingSystem())
     tickScheduler.addSystem(EntityPacketHandlingSystem())
@@ -264,11 +265,11 @@ public final class Game: @unchecked Sendable {
   /// - Parameters:
   ///   - acquireLock: If `false`, no lock is acquired. Only use if you know what you're doing.
   ///   - action: The action to perform on the player.
-  public func accessPlayer(acquireLock: Bool = true, action: (Player) -> Void) {
+  public func accessPlayer<T>(acquireLock: Bool = true, action: (Player) throws -> T) rethrows -> T {
     if acquireLock { nexusLock.acquireWriteLock() }
     defer { if acquireLock { nexusLock.unlock() } }
 
-    action(player)
+    return try action(player)
   }
 
   /// Queues handling of an entity-related packet to occur during the next game tick.
@@ -327,6 +328,14 @@ public final class Game: @unchecked Sendable {
     }
 
     return gamemode
+  }
+
+  /// Calculates the current fov multiplier from various factors such as movement speed
+  /// and whether the player is flying. Emulates vanilla's behaviour.
+  public func fovMultiplier() -> Float {
+    return accessPlayer { player in
+      return player.fov.smoothMultiplier
+    }
   }
 
   // MARK: Lifecycle
