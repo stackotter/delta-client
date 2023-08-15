@@ -111,7 +111,7 @@ struct GUI {
     }
 
     // Chat
-    chat(&root, state.chat.messages, state.messageInput, screenSize)
+    chat(&root, state.chat.messages, state.messageInput, state.messageInputCursorIndex, screenSize)
 
     return root
   }
@@ -120,6 +120,7 @@ struct GUI {
     _ parentGroup: inout GUIGroupElement,
     _ messages: Deque<ChatMessage>,
     _ messageInput: String?,
+    _ messageInputCursorIndex: String.Index,
     _ screenSize: Vec2i
   ) {
     let chatIsOpen = messageInput != nil
@@ -184,14 +185,14 @@ struct GUI {
     if let messageInput = messageInput {
       parentGroup.add(GUITextInput(
         content: messageInput,
-        width: screenSize.x - 4
+        width: screenSize.x - 4,
+        cursorIndex: messageInputCursorIndex
       ), .bottom(2), .left(2))
     }
   }
 
   func hotbarArea(_ parentGroup: inout GUIGroupElement) {
     var group = GUIGroupElement([184, 40])
-
     var gamemode: Gamemode = .adventure
     var health: Float = 0
     var food: Int = 0

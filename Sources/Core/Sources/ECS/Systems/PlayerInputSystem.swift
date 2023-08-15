@@ -148,8 +148,8 @@ public final class PlayerInputSystem: System {
         guiState.currentMessageIndex = nil
         return true
       } else if event.key == .delete {
-        if !message.isEmpty {
-          guiState.messageInput?.removeLast()
+        if !message.isEmpty && guiState.messageInputCursor < guiState.messageInput?.count ?? 0 {
+          guiState.messageInput?.remove(at: message.index(before: guiState.messageInputCursorIndex))
         }
       } else if event.key == .upArrow {
         // If no message is selected, select the above message
@@ -174,6 +174,10 @@ public final class PlayerInputSystem: System {
             guiState.messageInput = guiState.stashedMessageInput ?? ""
           }
         }
+      } else if event.key == .leftArrow && guiState.messageInput?.count ?? 0 > guiState.messageInputCursor {
+        guiState.messageInputCursor += 1
+      } else if event.key == .rightArrow && guiState.messageInputCursor > 0 {
+        guiState.messageInputCursor -= 1
       } else {
         #if os(macOS)
         if event.key == .v && !inputState.keys.intersection([.leftCommand, .rightCommand]).isEmpty {
@@ -199,7 +203,7 @@ public final class PlayerInputSystem: System {
           guard character.utf8.count + message.utf8.count <= GUIState.maximumMessageLength else {
             break
           }
-          message.append(character)
+          message.insert(character, at: guiState.messageInputCursorIndex)
         }
         guiState.messageInput = message
       }
