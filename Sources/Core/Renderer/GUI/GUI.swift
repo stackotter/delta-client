@@ -97,6 +97,7 @@ struct GUI {
       return root
     }
 
+    // TODO: Crosshair should be visible in spectator mode when able to interact with an entity
     if client.game.currentGamemode() != .spectator {
       // Hot bar area (hot bar, health, food, etc.)
       hotbarArea(&root)
