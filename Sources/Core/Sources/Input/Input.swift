@@ -1,6 +1,6 @@
 import Foundation
 
-/// A player input. On a laptop or desktop, this represents a key press.
+/// A player input. On a laptop or desktop, this represents a key press or mouse button press.
 public enum Input: Codable, CaseIterable {
   case place
   case destroy
@@ -13,6 +13,7 @@ public enum Input: Codable, CaseIterable {
   case fly
   case sneak
   case sprint
+  case toggleHUD
   case toggleDebugHUD
   case toggleInventory
   case changePerspective
@@ -56,6 +57,8 @@ public enum Input: Codable, CaseIterable {
         return "Sneak"
       case .sprint:
         return "Sprint"
+      case .toggleHUD:
+        return "Toggle HUD"
       case .toggleDebugHUD:
         return "Toggle debug HUD"
       case .toggleInventory:

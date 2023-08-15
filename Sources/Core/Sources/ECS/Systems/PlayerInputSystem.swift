@@ -46,6 +46,8 @@ public final class PlayerInputSystem: System {
         switch event.input {
           case .changePerspective:
             camera.cyclePerspective()
+          case .toggleHUD:
+            guiState.showHUD = !guiState.showHUD
           case .toggleDebugHUD:
             guiState.showDebugScreen = !guiState.showDebugScreen
           case .toggleInventory:

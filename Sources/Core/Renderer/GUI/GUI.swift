@@ -93,6 +93,10 @@ struct GUI {
     let state = client.game.guiState()
     var root = GUIGroupElement(screenSize)
 
+    guard state.showHUD else {
+      return root
+    }
+
     // Hot bar area (hot bar, health, food, etc.)
     hotbarArea(&root)
 
