@@ -97,11 +97,13 @@ struct GUI {
       return root
     }
 
-    // Hot bar area (hot bar, health, food, etc.)
-    hotbarArea(&root)
+    if client.game.currentGamemode() != .spectator {
+      // Hot bar area (hot bar, health, food, etc.)
+      hotbarArea(&root)
 
-    // Render crosshair
-    root.add(GUISprite.crossHair, .center)
+      // Render crosshair
+      root.add(GUISprite.crossHair, .center)
+    }
 
     // Debug screen
     if state.showDebugScreen {
