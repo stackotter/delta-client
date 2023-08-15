@@ -75,6 +75,7 @@ public final class Game: @unchecked Sendable {
     // The order of the systems may seem weird, but it has to be this way so that the physics
     // behaves identically to vanilla
     tickScheduler.addSystem(PlayerFrictionSystem())
+    tickScheduler.addSystem(PlayerClimbSystem())
     tickScheduler.addSystem(PlayerGravitySystem())
     tickScheduler.addSystem(PlayerSmoothingSystem())
     tickScheduler.addSystem(PlayerInputSystem(connection, self, eventBus))

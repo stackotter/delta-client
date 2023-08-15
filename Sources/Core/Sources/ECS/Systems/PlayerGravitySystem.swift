@@ -7,11 +7,19 @@ public struct PlayerGravitySystem: System {
       requiresAll: EntityFlying.self,
       EntityVelocity.self,
       EntityPosition.self,
+      PlayerGamemode.self,
+      PlayerCollisionState.self,
       ClientPlayerEntity.self
     ).makeIterator()
     
-    guard let (flying, velocity, position, _) = family.next() else {
+    guard let (flying, velocity, position, gamemode, collisionState, _) = family.next() else {
       log.error("PlayerGravitySystem failed to get player to tick")
+      return
+    }
+
+    let inputState = nexus.single(InputState.self).component
+
+    guard !PlayerClimbSystem.isStoppedOnLadder(position, world, gamemode.gamemode, inputState, collisionState) else {
       return
     }
     

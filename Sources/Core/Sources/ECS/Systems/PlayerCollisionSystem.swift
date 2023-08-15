@@ -26,6 +26,7 @@ public struct PlayerCollisionSystem: System {
     }
 
     let original = velocity.vector
+
     let (adjustedVelocity, step) = Self.getAdjustedVelocityWithStepping(
       position.vector,
       velocity.vector,
@@ -58,6 +59,8 @@ public struct PlayerCollisionSystem: System {
     _ world: World,
     _ onGround: Bool
   ) -> (velocity: Vec3d, step: Double) {
+    // TODO: Rewrite to be more delta clienty perhaps (currently quite similar to vanilla's impl)
+
     let adjustedVelocity = getAdjustedVelocity(position, velocity, aabb, world)
 
     let willBeOnGround = adjustedVelocity.y != velocity.y && velocity.y < 0

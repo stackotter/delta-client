@@ -61,6 +61,15 @@ public class EntityPosition: Component {
     )
   }
 
+  /// The block at the entity position.
+  public var block: BlockPosition {
+    return BlockPosition(
+      x: Int(x.rounded(.down)),
+      y: Int(y.rounded(.down)),
+      z: Int(z.rounded(.down))
+    )
+  }
+
   /// The block underneath the entity position.
   public var blockUnderneath: BlockPosition {
     return BlockPosition(
