@@ -27,6 +27,8 @@ public struct PlayerFlightSystem: System {
 
     if inputState.inputs.contains(.fly) && !flying.isFlying && attributes.canFly {
       flying.isFlying = true
+    } else if inputState.inputs.contains(.fly) && flying.isFlying && !gamemode.gamemode.isAlwaysFlying {
+      flying.isFlying = false
     }
     
     if flying.isFlying {
