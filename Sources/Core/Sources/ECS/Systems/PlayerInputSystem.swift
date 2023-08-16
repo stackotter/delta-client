@@ -195,6 +195,7 @@ public final class PlayerInputSystem: System {
         #endif
 
         // Ensure that the message doesn't exceed 256 bytes (including if multi-byte characters are entered).
+        var count = 0
         for character in newCharacters {
           guard character.isPrintable, character != "\t" else {
             // TODO: Make this check less restrictive, it's currently over-cautious
@@ -203,7 +204,10 @@ public final class PlayerInputSystem: System {
           guard character.utf8.count + message.utf8.count <= GUIState.maximumMessageLength else {
             break
           }
-          message.insert(character, at: guiState.messageInputCursorIndex)
+
+          let index = message.index(guiState.messageInputCursorIndex, offsetBy: count)
+          message.insert(character, at: index)
+          count += 1
         }
         guiState.messageInput = message
       }
