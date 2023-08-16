@@ -113,6 +113,11 @@ public struct BlockPosition {
   public static func + (lhs: BlockPosition, rhs: Vec3i) -> BlockPosition {
     return BlockPosition(x: lhs.x &+ rhs.x, y: lhs.y &+ rhs.y, z: lhs.z &+ rhs.z)
   }
+
+  /// Gets the position of the neighbouring block in the given direction.
+  public func neighbour(_ direction: Direction) -> BlockPosition {
+    return self + direction.intVector
+  }
 }
 
 extension BlockPosition: Hashable {

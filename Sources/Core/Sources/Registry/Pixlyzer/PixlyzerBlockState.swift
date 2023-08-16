@@ -5,6 +5,8 @@ public struct PixlyzerBlockState: Decodable {
   public struct Properties: Codable {
     public var level: Int?
     public var waterlogged: Bool?
+    public var facing: Direction?
+    public var open: Bool?
   }
   
   public var luminance: Int?

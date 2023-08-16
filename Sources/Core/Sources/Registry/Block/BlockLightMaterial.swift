@@ -1,3 +1,5 @@
+import Foundation
+
 extension Block {
   /// A block's material properties that are relevant to light.
   public struct LightMaterial: Codable {

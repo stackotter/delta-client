@@ -5,14 +5,12 @@ public struct PlayerClimbSystem: System {
     var family = nexus.family(
       requiresAll: EntityPosition.self,
       EntityVelocity.self,
-      EntityHitBox.self,
-      EntityOnGround.self,
       PlayerGamemode.self,
       PlayerCollisionState.self,
       ClientPlayerEntity.self
     ).makeIterator()
 
-    guard let (position, velocity, hitbox, onGround, gamemode, collisionState, _) = family.next() else {
+    guard let (position, velocity, gamemode, collisionState, _) = family.next() else {
       log.error("PlayerClimbSystem failed to get player to tick")
       return
     }
@@ -45,8 +43,22 @@ public struct PlayerClimbSystem: System {
       return false
     }
 
-    let blockIdentifier = world.getBlock(at: position.block).identifier
-    return blockIdentifier == Identifier(name: "block/ladder")
+    let block = world.getBlock(at: position.block)
+
+    if block.isClimbable {
+      return true
+    } else {
+      // If the player is on an open trapdoor above a ladder then they're also counted as being on a ladder
+      // as long as the ladder and trapdoor are facing the same way.
+      let blockBelow = world.getBlock(at: position.block.neighbour(.down))
+      let blockIdentifierBelow = blockBelow.identifier
+
+      let ladder = Identifier(name: "block/ladder")
+      let onTrapdoorAboveLadder = block.className == "TrapdoorBlock" && blockIdentifierBelow == ladder
+      let blocksFacingSameDirection = block.stateProperties.facing == blockBelow.stateProperties.facing
+      let trapdoorIsOpen = block.stateProperties.isOpen == true
+      return onTrapdoorAboveLadder && blocksFacingSameDirection && trapdoorIsOpen
+    }
   }
 
   static func isStoppedOnLadder(

@@ -72,13 +72,15 @@ extension Block {
       velocityMultiplier: pixlyzerBlock.velocityMultiplier ?? 1,
       jumpVelocityMultiplier: pixlyzerBlock.jumpVelocityMultiplier ?? 1,
       requiresTool: pixlyzerState.requiresTool,
-      hardness: pixlyzerState.hardness)
+      hardness: pixlyzerState.hardness
+    )
 
     let lightMaterial = Block.LightMaterial(
       isTranslucent: pixlyzerState.translucent ?? false,
       opacity: pixlyzerState.lightBlock ?? 1,
       luminance: pixlyzerState.luminance ?? 0,
-      isConditionallyTransparent: pixlyzerState.hasSidedTransparency ?? false)
+      isConditionallyTransparent: pixlyzerState.hasSidedTransparency ?? false
+    )
 
     let soundMaterial = Block.SoundMaterial(
       volume: pixlyzerState.soundVolume,
@@ -87,7 +89,8 @@ extension Block {
       stepSound: pixlyzerState.stepSound,
       placeSound: pixlyzerState.placeSound,
       hitSound: pixlyzerState.hitSound,
-      fallSound: pixlyzerState.fallSound)
+      fallSound: pixlyzerState.fallSound
+    )
 
     var collisionShape = CompoundBoundingBox()
     if let collisionShapeId = pixlyzerState.collisionShape {
@@ -105,7 +108,13 @@ extension Block {
       collisionShape: collisionShape,
       outlineShape: outlineShape,
       occlusionShapeIds: pixlyzerState.occlusionShape?.items,
-      isSturdy: pixlyzerState.isSturdy?.items)
+      isSturdy: pixlyzerState.isSturdy?.items
+    )
+
+    let stateProperties = Block.StateProperties(
+      facing: pixlyzerState.properties?.facing,
+      isOpen: pixlyzerState.properties?.open
+    )
 
     self.init(
       id: stateId,
@@ -118,7 +127,9 @@ extension Block {
       material: material,
       lightMaterial: lightMaterial,
       soundMaterial: soundMaterial,
-      shape: shape)
+      shape: shape,
+      stateProperties: stateProperties
+    )
   }
   // swiftlint:enable function_body_length
 }

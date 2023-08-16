@@ -25,10 +25,18 @@ public struct Block: Codable {
   public var soundMaterial: SoundMaterial
   /// Information about the shape of the block.
   public var shape: Shape
+  /// Properties of the block specific to each block state (e.g. direction of dispenser).
+  public var stateProperties: StateProperties
 
   /// The id of the fluid in this block.
   public var fluidId: Int? {
     return fluidState?.fluidId
+  }
+
+  /// Whether the block is climable or not (e.g. a ladder or a vine).
+  public var isClimbable: Bool {
+    // TODO: Load block tags from Pixlyzer (or some other source if Pixlyzer doesn't have them)
+    return ["LadderBlock", "VineBlock", "WeepingVinesBlock", "TwistingVinesPlantBlock"].contains(className)
   }
 
   /// Create a new block with the specified properties.
@@ -43,7 +51,8 @@ public struct Block: Codable {
     material: PhysicalMaterial,
     lightMaterial: LightMaterial,
     soundMaterial: SoundMaterial,
-    shape: Shape
+    shape: Shape,
+    stateProperties: StateProperties
   ) {
     self.id = id
     self.vanillaParentBlockId = vanillaParentBlockId
@@ -56,6 +65,7 @@ public struct Block: Codable {
     self.lightMaterial = lightMaterial
     self.soundMaterial = soundMaterial
     self.shape = shape
+    self.stateProperties = stateProperties
   }
 
   /// Returns the offset to apply to the given block at the given position when rendering.
@@ -86,7 +96,7 @@ public struct Block: Codable {
   }
 
   /// Used when a block does not exist (e.g. when an invalid block id is received from the server).
-  public static var missing = Block(
+  public static let missing = Block(
     id: -1,
     vanillaParentBlockId: -1,
     identifier: Identifier(name: "missing"),
@@ -97,6 +107,7 @@ public struct Block: Codable {
     material: PhysicalMaterial.default,
     lightMaterial: LightMaterial.default,
     soundMaterial: SoundMaterial.default,
-    shape: Shape.default
+    shape: Shape.default,
+    stateProperties: StateProperties.default
   )
 }

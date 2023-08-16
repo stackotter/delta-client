@@ -2,7 +2,7 @@ import Foundation
 import FirebladeMath
 
 /// A direction enum where the raw value is the same as in some of the Minecraft packets.
-public enum Direction: Int {
+public enum Direction: Int, CustomStringConvertible {
   case down = 0
   case up = 1
   case north = 2
@@ -27,6 +27,23 @@ public enum Direction: Int {
     .south,
     .west
   ]
+
+  public var description: String {
+    switch self {
+      case .down:
+        return "down"
+      case .up:
+        return "up"
+      case .north:
+        return "north"
+      case .south:
+        return "south"
+      case .west:
+        return "west"
+      case .east:
+        return "east"
+    }
+  }
 
   /// Returns the directions on the xz plane that are perpendicular to a direction.
   public var perpendicularXZ: [Direction] {
@@ -152,5 +169,25 @@ public enum Direction: Int {
         newIndex = MathUtil.mod(newIndex, loop.count)
         return loop[newIndex]
     }
+  }
+}
+
+extension Direction: Codable {
+  public init(from decoder: Decoder) throws {
+    let string = try decoder.singleValueContainer().decode(String.self)
+    guard let direction = Direction(string: string) else {
+      throw DecodingError.dataCorrupted(
+        .init(
+          codingPath: decoder.codingPath,
+          debugDescription: "Invalid direction '\(string)'"
+        )
+      )
+    }
+    self = direction
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var container = try encoder.singleValueContainer()
+    try container.encode(description)
   }
 }

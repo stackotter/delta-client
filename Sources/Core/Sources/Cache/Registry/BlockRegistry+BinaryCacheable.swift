@@ -5,6 +5,7 @@ extension Block.LightMaterial: BitwiseCopyable {}
 extension Block.SoundMaterial: BitwiseCopyable {}
 extension FluidState: BitwiseCopyable {}
 extension AxisAlignedBoundingBox: BitwiseCopyable {}
+extension Block.StateProperties: BitwiseCopyable {}
 
 extension BlockRegistry: BinaryCacheable {
   public static var serializationFormatVersion: Int {
@@ -41,6 +42,7 @@ extension Block: BinarySerializable {
     lightMaterial.serialize(into: &buffer)
     soundMaterial.serialize(into: &buffer)
     shape.serialize(into: &buffer)
+    stateProperties.serialize(into: &buffer)
   }
 
   public static func deserialize(from buffer: inout Buffer) throws -> Block {
@@ -55,7 +57,8 @@ extension Block: BinarySerializable {
       material: try .deserialize(from: &buffer),
       lightMaterial: try .deserialize(from: &buffer),
       soundMaterial: try .deserialize(from: &buffer),
-      shape: try .deserialize(from: &buffer)
+      shape: try .deserialize(from: &buffer),
+      stateProperties: try .deserialize(from: &buffer)
     )
   }
 }
