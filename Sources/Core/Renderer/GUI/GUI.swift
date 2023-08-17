@@ -114,7 +114,17 @@ struct GUI {
     // Chat
     chat(&root, state.chat.messages, state.messageInput, state.messageInputCursorIndex, screenSize)
 
+    if state.showInventory {
+      inventory(&root)
+    }
+
     return root
+  }
+
+  func inventory(
+    _ parentGroup: inout GUIGroupElement
+  ) {
+    parentGroup.add(GUISprite.inventory, .center)
   }
 
   func chat(

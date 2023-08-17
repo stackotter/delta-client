@@ -7,7 +7,7 @@ enum ResourcePackError: LocalizedError {
   /// The resource pack's `pack.mcmeta` is invalid.
   case failedToReadMCMeta(Error)
   /// Failed to list the contents of a texture directory.
-  case failedToEnumerateTextures(Error)
+  case failedToEnumerateTextures
   /// Failed to figure out what namespaces are included in this resource pack.
   case failedToEnumerateNamespaces
   /// Failed to convert an image into a texture.
@@ -40,11 +40,8 @@ enum ResourcePackError: LocalizedError {
         The resource pack's `pack.mcmeta` is invalid.
         Reason: \(error.localizedDescription)
         """
-      case .failedToEnumerateTextures(let error):
-        return """
-        Failed to list the contents of a texture directory.
-        Reason: \(error.localizedDescription)
-        """
+      case .failedToEnumerateTextures:
+        return "Failed to list the contents of a texture directory."
       case .failedToEnumerateNamespaces:
         return "Failed to figure out what namespaces are included in this resource pack."
       case .failedToLoadTexture(let identifier, let error):
@@ -255,7 +252,9 @@ public struct ResourcePack {
         resources.guiTexturePalette = try TexturePalette.load(
           from: guiTextureDirectory,
           inNamespace: namespace,
-          withType: "gui"
+          withType: "gui",
+          recursive: true,
+          isAnimated: false
         )
       }
 

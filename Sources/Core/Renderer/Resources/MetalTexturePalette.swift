@@ -128,10 +128,11 @@ public struct MetalTexturePalette {
     }
 
     let width = palette.width
+    let height = palette.height
 
     let textureDescriptor = MTLTextureDescriptor()
     textureDescriptor.width = width
-    textureDescriptor.height = width
+    textureDescriptor.height = height
     textureDescriptor.pixelFormat = .bgra8Unorm
     textureDescriptor.textureType = .type2DArray
     textureDescriptor.arrayLength = count
@@ -152,17 +153,26 @@ public struct MetalTexturePalette {
     arrayTexture.label = "arrayTexture"
 
     let bytesPerPixel = 4
-    let bytesPerRow = bytesPerPixel * width
-    let bytesPerFrame = bytesPerRow * width
     var frameIndex = 0
     for texture in palette.textures {
-      for frame in 0..<(texture.animation?.frames.count ?? 1) {
+      let frameWidth = texture.width
+      let frameCount = texture.animation?.frames.count ?? 1
+      let frameHeight = texture.height / frameCount
+      let bytesPerRow = bytesPerPixel * frameWidth
+      let bytesPerFrame = bytesPerRow * frameHeight
+
+      guard frameHeight <= height else {
+        frameIndex += frameCount
+        continue
+      }
+
+      for frame in 0..<frameCount {
         let offset = frame * bytesPerFrame
         texture.image.withUnsafeBytes { pointer in
           arrayTexture.replace(
             region: MTLRegion(
               origin: MTLOrigin(x: 0, y: 0, z: 0),
-              size: MTLSize(width: width, height: width, depth: 1)
+              size: MTLSize(width: frameWidth, height: frameHeight, depth: 1)
             ),
             mipmapLevel: 0,
             slice: frameIndex,

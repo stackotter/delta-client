@@ -187,7 +187,7 @@ extension Direction: Codable {
   }
 
   public func encode(to encoder: Encoder) throws {
-    var container = try encoder.singleValueContainer()
+    var container = encoder.singleValueContainer()
     try container.encode(description)
   }
 }

@@ -8,6 +8,7 @@ extension TexturePalette: BinaryCacheable {
   public func serialize(into buffer: inout Buffer) {
     textures.serialize(into: &buffer)
     width.serialize(into: &buffer)
+    height.serialize(into: &buffer)
     identifierToIndex.serialize(into: &buffer)
   }
 
@@ -15,6 +16,7 @@ extension TexturePalette: BinaryCacheable {
     return TexturePalette(
       textures: try .deserialize(from: &buffer),
       width: try .deserialize(from: &buffer),
+      height: try .deserialize(from: &buffer),
       identifierToIndex: try .deserialize(from: &buffer)
     )
   }

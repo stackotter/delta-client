@@ -3,6 +3,7 @@ public enum GUITextureSlice: Int, CaseIterable {
   case bars
   case icons
   case widgets
+  case inventory
 
   /// The path of the slice's underlying texture in a resource pack's textures directory.
   public var path: String {
@@ -13,6 +14,8 @@ public enum GUITextureSlice: Int, CaseIterable {
         return "icons.png"
       case .widgets:
         return "widgets.png"
+      case .inventory:
+        return "container/inventory.png"
     }
   }
 
@@ -25,6 +28,8 @@ public enum GUITextureSlice: Int, CaseIterable {
         return Identifier(name: "gui/icons")
       case .widgets:
         return Identifier(name: "gui/widgets")
+      case .inventory:
+        return Identifier(name: "gui/container/inventory")
     }
   }
 }

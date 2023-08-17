@@ -7,8 +7,10 @@ public struct TexturePalette {
   /// The palette's textures, indexed by ``identifierToIndex``.
   public var textures: [Texture]
 
-  /// The width of the textures in this palette. The heights will be multiples of this number.
+  /// The width of the textures in this palette.
   public var width: Int
+  /// The height of a single texture frame in this palette. The heights of the textures will be multiples of this number.
+  public var height: Int
 
   /// An index for ``textures``.
   public var identifierToIndex: [Identifier: Int]
@@ -25,13 +27,15 @@ public struct TexturePalette {
   public init() {
     textures = []
     width = 0
+    height = 0
     identifierToIndex = [:]
   }
 
   /// Creates a texture palette containing the given textures which all share the same specified width.
-  public init(_ textures: [(Identifier, Texture)], width: Int) {
+  public init(_ textures: [(Identifier, Texture)], width: Int, height: Int) {
     self.textures = []
     self.width = width
+    self.height = height
     identifierToIndex = [:]
 
     for (index, (identifier, texture)) in textures.enumerated() {
@@ -42,9 +46,10 @@ public struct TexturePalette {
 
   /// Creates a texture palette by providing all of its properties. Used internally for caching, and
   /// not very useful outside of that usecase.
-  init(textures: [Texture], width: Int, identifierToIndex: [Identifier: Int]) {
+  init(textures: [Texture], width: Int, height: Int, identifierToIndex: [Identifier: Int]) {
     self.textures = textures
     self.width = width
+    self.height = height
     self.identifierToIndex = identifierToIndex
   }
 
@@ -68,20 +73,32 @@ public struct TexturePalette {
 
   /// Loads the texture palette present in the given directory. `type` refers to the part before the
   /// slash in the name. Like `block` in `minecraft:block/dirt`.
+  /// - Parameters:
+  ///   - recursive: If recursive, textures will also be loaded from
+  ///     subdirectories of the given directory.
+  ///   - isAnimated: If `true`, all textures are resized to the same width and their height must be a multiple
+  ///     of their width. Also, the palette height (frame height) will be set to the palette width.
+  ///     Used for palettes like the block and item texture palettes.
   public static func load(
     from directory: URL,
     inNamespace namespace: String,
-    withType type: String
+    withType type: String,
+    recursive: Bool = false,
+    isAnimated: Bool = true
   ) throws -> TexturePalette {
-    let files: [URL]
-    do {
-      files = try FileManager.default.contentsOfDirectory(
+    // I hate the remnants of ObjC left in Swift, this is such a stupid file enumeration API
+    guard
+      let enumerator = FileManager.default.enumerator(
         at: directory,
-        includingPropertiesForKeys: nil,
-        options: []
+        includingPropertiesForKeys: [],
+        options: recursive ? [] : [.skipsSubdirectoryDescendants]
       )
-    } catch {
-      throw ResourcePackError.failedToEnumerateTextures(error)
+    else {
+      throw ResourcePackError.failedToEnumerateTextures
+    }
+
+    let files = enumerator.compactMap { file in
+      return file as? URL
     }
 
     // Textures are loaded in two phases so that we know what the widest texture is before we do
@@ -89,14 +106,21 @@ public struct TexturePalette {
 
     // Load the images
     var maxWidth = 0 // The width of the widest texture in the palette
+    var maxHeight = 0
     var images: [(Identifier, Image<RGBA<UInt8>>)] = []
     for file in files where file.pathExtension == "png" {
-      let name = file.deletingPathExtension().lastPathComponent
+      var name = file.deletingPathExtension().path.dropFirst(directory.path.count)
+      if name.hasPrefix("/") {
+        name = name.dropFirst()
+      }
       let identifier = Identifier(namespace: namespace, name: "\(type)/\(name)")
 
       let image = try Image<RGBA<UInt8>>(fromPNGFile: file)
       if image.width > maxWidth {
         maxWidth = image.width
+      }
+      if image.height > maxHeight {
+        maxHeight = image.height
       }
 
       images.append((identifier, image))
@@ -111,11 +135,12 @@ public struct TexturePalette {
         // Hardcode leaves as opaque for performance reasons
         let hardcodeOpaque = identifier.name.hasSuffix("leaves")
 
+        // Only check dimensions if we need to resize
         var texture = try Texture(
           image: image,
           type: hardcodeOpaque ? .opaque : nil,
-          scaledToWidth: maxWidth,
-          checkDimensions: true
+          scaledToWidth: isAnimated ? maxWidth : image.width,
+          checkDimensions: isAnimated
         )
 
         if texture.type == .opaque {
@@ -135,6 +160,6 @@ public struct TexturePalette {
       }
     }
 
-    return TexturePalette(textures, width: maxWidth)
+    return TexturePalette(textures, width: maxWidth, height: isAnimated ? maxWidth : maxHeight)
   }
 }
