@@ -144,6 +144,7 @@ public final class PlayerInputSystem: System {
           guiState.currentMessageIndex = nil
         }
         guiState.messageInput = nil
+        eventBus.dispatch(CaptureCursorEvent())
         return true
       } else if event.key == .escape {
         guiState.messageInput = nil

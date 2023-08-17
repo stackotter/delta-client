@@ -238,8 +238,7 @@ struct GameView: View {
           }
         case .playing:
           ZStack {
-            gameView.opacity(model.showInGameMenu ? 0.2 : 1)
-
+            gameView
             overlayView
           }
         case .gpuFrameCaptureComplete(let file):
@@ -314,26 +313,32 @@ struct GameView: View {
     }
   }
 
+  /// In-game menu overlay.
   var overlayView: some View {
     VStack {
-      // In-game menu overlay
       if model.showInGameMenu {
-        switch model.overlayState.current {
-          case .menu:
-            VStack {
-              Button("Back to game", action: model.closeMenu)
-                .keyboardShortcut(.escape, modifiers: [])
-                .buttonStyle(PrimaryButtonStyle())
-              Button("Settings", action: { model.overlayState.update(to: .settings) })
-                .buttonStyle(SecondaryButtonStyle())
-              Button("Disconnect", action: disconnect)
-                .buttonStyle(SecondaryButtonStyle())
+        GeometryReader { geometry in
+          VStack {
+            switch model.overlayState.current {
+              case .menu:
+                VStack {
+                  Button("Back to game", action: model.closeMenu)
+                    .keyboardShortcut(.escape, modifiers: [])
+                    .buttonStyle(PrimaryButtonStyle())
+                  Button("Settings", action: { model.overlayState.update(to: .settings) })
+                    .buttonStyle(SecondaryButtonStyle())
+                  Button("Disconnect", action: disconnect)
+                    .buttonStyle(SecondaryButtonStyle())
+                }
+                .frame(width: 200)
+              case .settings:
+                SettingsView(isInGame: true, client: model.client, onDone: {
+                  model.overlayState.update(to: .menu)
+                })
             }
-            .frame(width: 200)
-          case .settings:
-            SettingsView(isInGame: true, client: model.client, onDone: {
-              model.overlayState.update(to: .menu)
-            })
+          }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .background(Color.black.opacity(0.702), alignment: .center)
         }
       }
     }
