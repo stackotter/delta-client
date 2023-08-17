@@ -27,6 +27,9 @@ class Box<T> {
 class GameViewModel: ObservableObject {
   @Published var state = StateWrapper<GameState>(initial: .connecting)
   @Published var overlayState = StateWrapper<OverlayState>(initial: .menu)
+  @Published var showInGameMenu = false
+
+  @Binding var inputCaptured: Bool
 
   var client: Client
   var inputDelegate: ClientInputDelegate
@@ -36,11 +39,18 @@ class GameViewModel: ObservableObject {
 
   var cancellables: [AnyCancellable] = []
 
-  init(client: Client, inputDelegate: ClientInputDelegate, renderCoordinator: RenderCoordinator, serverDescriptor: ServerDescriptor) {
+  init(
+    client: Client,
+    inputDelegate: ClientInputDelegate,
+    renderCoordinator: RenderCoordinator,
+    serverDescriptor: ServerDescriptor,
+    inputCaptured: Binding<Bool>
+  ) {
     self.client = client
     self.inputDelegate = inputDelegate
     self.renderCoordinator = renderCoordinator
     self.serverDescriptor = serverDescriptor
+    self._inputCaptured = inputCaptured
 
     client.eventBus.registerHandler { [weak self] event in
       guard let self = self else { return }
@@ -58,10 +68,13 @@ class GameViewModel: ObservableObject {
   }
 
   func closeMenu() {
+    // TODO: Sync configuration more generally
     client.configuration.keymap = ConfigManager.default.config.keymap
     inputDelegate.mouseSensitivity = ConfigManager.default.config.mouseSensitivity
+    inputCaptured = true
 
     withAnimation(nil) {
+      showInGameMenu = false
       inputDelegate.captureCursor()
     }
   }
@@ -150,6 +163,13 @@ class GameViewModel: ObservableObject {
         }
       case _ as OpenInGameMenuEvent:
         inputDelegate.releaseCursor()
+        overlayState.update(to: .menu)
+        showInGameMenu = true
+        inputCaptured = false
+      case _ as ReleaseCursorEvent:
+        inputDelegate.releaseCursor()
+      case _ as CaptureCursorEvent:
+        inputDelegate.captureCursor()
       case let event as FinishFrameCaptureEvent:
         inputDelegate.releaseCursor()
         state.update(to: .gpuFrameCaptureComplete(file: event.file))
@@ -163,7 +183,6 @@ struct GameView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
 
   @ObservedObject var model: GameViewModel
-  @Binding var cursorCaptured: Bool
 
   init(
     serverDescriptor: ServerDescriptor,
@@ -186,10 +205,9 @@ struct GameView: View {
       client: client,
       inputDelegate: inputDelegate,
       renderCoordinator: renderCoordinator,
-      serverDescriptor: serverDescriptor
+      serverDescriptor: serverDescriptor,
+      inputCaptured: inputCaptureEnabled
     )
-
-    _cursorCaptured = inputCaptureEnabled
 
     // Setup plugins
     DeltaClientApp.pluginEnvironment.addEventBus(client.eventBus)
@@ -220,7 +238,7 @@ struct GameView: View {
           }
         case .playing:
           ZStack {
-            gameView.opacity(cursorCaptured ? 1 : 0.2)
+            gameView.opacity(model.showInGameMenu ? 0.2 : 1)
 
             overlayView
           }
@@ -278,27 +296,15 @@ struct GameView: View {
       if #available(macOS 13, iOS 16, *) {
         MetalView(renderCoordinator: model.renderCoordinator)
           .onAppear {
-            model.inputDelegate.bind($cursorCaptured.onChange { newValue in
-              // When showing overlay make sure menu is the first view
-              if newValue == false {
-                model.overlayState.update(to: .menu)
-              }
-            })
-
             model.inputDelegate.captureCursor()
+            model.inputCaptured = true
           }
       }
       else {
         MetalViewClass(renderCoordinator: model.renderCoordinator)
           .onAppear {
-            model.inputDelegate.bind($cursorCaptured.onChange { newValue in
-              // When showing overlay make sure menu is the first view
-              if newValue == false {
-                model.overlayState.update(to: .menu)
-              }
-            })
-
             model.inputDelegate.captureCursor()
+            model.inputCaptured = true
           }
       }
 
@@ -308,45 +314,10 @@ struct GameView: View {
     }
   }
 
-  var playerPositionString: String {
-    func string(_ value: Double) -> String {
-      String(format: "%.02f", value)
-    }
-
-    let position = playerPosition
-    return "\(string(position.x)) \(string(position.y)) \(string(position.z))"
-  }
-
-  var playerChunkSectionString: String {
-    let section = EntityPosition(playerPosition).chunkSection
-
-    return "\(section.sectionX) \(section.sectionY) \(section.sectionZ)"
-  }
-
-  var playerPosition: Vec3d {
-    var position = Vec3d(repeating: 0)
-    model.client.game.accessPlayer { player in
-      position = player.position.smoothVector
-    }
-    return position
-  }
-
-  var gamemode: Gamemode {
-    var gamemode = Gamemode.survival
-    model.client.game.accessPlayer { player in
-      gamemode = player.gamemode.gamemode
-    }
-    return gamemode
-  }
-
-  var renderStats: RenderStatistics {
-    model.renderCoordinator.statistics
-  }
-
   var overlayView: some View {
     VStack {
       // In-game menu overlay
-      if !cursorCaptured {
+      if model.showInGameMenu {
         switch model.overlayState.current {
           case .menu:
             VStack {

@@ -40,7 +40,7 @@ public final class PlayerInputSystem: System {
     // Handle non-movement inputs
     var isInputSuppressed: [Bool] = []
     for event in inputState.newlyPressed {
-      var suppressInput = try handleChat(event, inputState, guiState) || handleInventory(event, guiState)
+      let suppressInput = try handleChat(event, inputState, guiState) || handleInventory(event, guiState)
 
       if !suppressInput {
         switch event.input {
@@ -52,6 +52,7 @@ public final class PlayerInputSystem: System {
             guiState.showDebugScreen = !guiState.showDebugScreen
           case .toggleInventory:
             guiState.showInventory = !guiState.showInventory
+            eventBus.dispatch(ReleaseCursorEvent())
           case .slot1:
             inventory.selectedHotbarSlot = 0
           case .slot2:
@@ -147,6 +148,7 @@ public final class PlayerInputSystem: System {
       } else if event.key == .escape {
         guiState.messageInput = nil
         guiState.currentMessageIndex = nil
+        eventBus.dispatch(CaptureCursorEvent())
         return true
       } else if event.key == .delete {
         if !message.isEmpty && guiState.messageInputCursor < guiState.messageInput?.count ?? 0 {
@@ -214,6 +216,7 @@ public final class PlayerInputSystem: System {
       }
     } else if event.input == .openChat {
       guiState.messageInput = ""
+      eventBus.dispatch(ReleaseCursorEvent())
     } else if event.key == .forwardSlash {
       guiState.messageInput = "/"
     }
@@ -232,6 +235,7 @@ public final class PlayerInputSystem: System {
     }
 
     if event.key == .escape || event.input == .toggleInventory {
+      eventBus.dispatch(CaptureCursorEvent())
       guiState.showInventory = false
     }
 

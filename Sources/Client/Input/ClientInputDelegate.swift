@@ -14,7 +14,7 @@ final class ClientInputDelegate: InputDelegate {
 
   var client: Client
 
-  @Binding var cursorCaptured: Bool
+  var cursorCaptured: Bool
   var pressedKeys: Set<Key> = []
 
   var leftTriggerIsPressed = false
@@ -24,11 +24,21 @@ final class ClientInputDelegate: InputDelegate {
     self.client = client
 
     // Use a dummy binding until `bind(_:)` is called.
-    _cursorCaptured = Binding<Bool>(get: { true }, set: { _ in })
+    cursorCaptured = false
 
     // Function to run intially to lookout for any MFI or Remote Controllers in the area
-    NotificationCenter.default.addObserver(self, selector: #selector(connectControllers), name: NSNotification.Name.GCControllerDidConnect, object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(disconnectControllers), name: NSNotification.Name.GCControllerDidDisconnect, object: nil)
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(connectControllers),
+      name: NSNotification.Name.GCControllerDidConnect,
+      object: nil
+    )
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(disconnectControllers),
+      name: NSNotification.Name.GCControllerDidDisconnect,
+      object: nil
+    )
 
     // Check for controllers that might already be connected.
     connectControllers()
@@ -124,10 +134,6 @@ final class ClientInputDelegate: InputDelegate {
         }
       }
     }
-  }
-
-  func bind(_ cursorCaptured: Binding<Bool>) {
-    _cursorCaptured = cursorCaptured
   }
 
   func onKeyDown(_ key: Key, _ characters: [Character] = []) {
