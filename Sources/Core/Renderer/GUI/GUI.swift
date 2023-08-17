@@ -115,15 +115,24 @@ struct GUI {
     chat(&root, state.chat.messages, state.messageInput, state.messageInputCursorIndex, screenSize)
 
     if state.showInventory {
-      inventory(&root)
+      inventory(&root, screenSize)
     }
 
     return root
   }
 
   func inventory(
-    _ parentGroup: inout GUIGroupElement
+    _ parentGroup: inout GUIGroupElement,
+    _ screenSize: Vec2i
   ) {
+    // TODO: Figure out the exact overlay opacity that vanilla uses
+    parentGroup.add(
+      GUIRectangle(
+        size: screenSize,
+        color: [0, 0, 0, 0.702]
+      ),
+      .center
+    )
     parentGroup.add(GUISprite.inventory, .center)
   }
 
