@@ -40,7 +40,7 @@ public final class PlayerInputSystem: System {
     // Handle non-movement inputs
     var isInputSuppressed: [Bool] = []
     for event in inputState.newlyPressed {
-      let suppressInput = try handleChat(event, inputState, guiState)
+      var suppressInput = try handleChat(event, inputState, guiState) || handleInventory(event, guiState)
 
       if !suppressInput {
         switch event.input {
@@ -119,7 +119,8 @@ public final class PlayerInputSystem: System {
     }
 
     // Handle mouse input
-    if !guiState.isChatOpen {
+    // TODO: Make these modal flags more consistently named
+    if !guiState.isChatOpen && !guiState.showInventory {
       updateRotation(inputState, rotation)
     }
 
@@ -219,6 +220,22 @@ public final class PlayerInputSystem: System {
 
     // Supress inputs while the user is typing
     return guiState.isChatOpen
+  }
+
+  /// - Returns: Whether to suppress the input associated with the event or not. `true` while user is typing.
+  private func handleInventory(
+    _ event: KeyPressEvent,
+    _ guiState: GUIStateStorage
+  ) -> Bool {
+    guard guiState.showInventory else {
+      return false
+    }
+
+    if event.key == .escape || event.input == .toggleInventory {
+      guiState.showInventory = false
+    }
+
+    return true
   }
 
   /// Updates the direction which the player is looking.
