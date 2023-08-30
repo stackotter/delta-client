@@ -22,7 +22,7 @@ public final class ConfigManager {
     }
   }
 
-  /// The implementation of ClientConfiguration that allows DeltaCore to access required config values.
+  /// Access to the implementation of ClientConfiguration that allows DeltaCore to access required config values.
   public var coreConfiguration: ClientConfiguration {
     get { return _coreConfiguration }
   }
@@ -33,7 +33,7 @@ public final class ConfigManager {
   private var _config: Config
   /// The file to store config in.
   private let configFile: URL
-  /// An internal reference to coreConfiguration with the definite type so its internal properties can be accessed.
+  /// An internal reference to the implementation of ClientConfiguration with the definite type so its internal properties can be accessed.
   private var _coreConfiguration: CoreConfiguration
 
   /// A queue to ensure that writing to the config file always happens serially.
@@ -183,18 +183,18 @@ class CoreConfiguration: ClientConfiguration {
   }
 
   public var render: RenderConfiguration {
-    get { return self.config.render }
+    get { return config.render }
   }
 
   public var keymap: Keymap {
-    get { return self.config.keymap }
+    get { return config.keymap }
   }
 
   public var toggleSprint: Bool {
-    get { return self.config.toggleSprint }
+    get { return config.toggleSprint }
   }
 
   public var toggleSneak: Bool {
-    get { return self.config.toggleSneak }
+    get { return config.toggleSneak }
   }
 }
