@@ -126,7 +126,7 @@ public final class PlayerInputSystem: System {
     }
 
     inputState.resetMouseDelta()
-    inputState.tick(isInputSuppressed, eventBus)
+    inputState.tick(isInputSuppressed, eventBus, game.configuration)
   }
 
   /// - Returns: Whether to suppress the input associated with the event or not. `true` while user is typing.

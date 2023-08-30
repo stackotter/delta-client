@@ -1,19 +1,12 @@
-/// Clientside configuration such as clientside render distance.
-public struct ClientConfiguration {
+/// Clientside configuration such as keymap and clientside render distance.
+/// Any package creating a Client instance should implement this protocol to allow DeltaCore to access configuration values.
+public protocol ClientConfiguration {
   /// The configuration related to rendering.
-  public var render: RenderConfiguration
+  var render: RenderConfiguration { get }
   /// The configured keymap.
-  public var keymap: Keymap
-
-  /// Creates a new client configuration.
-  /// - Parameters:
-  ///   - render: See ``RenderConfiguration`` for the default values.
-  ///   - keymap: See ``Keymap`` for the default bindings.
-  public init(
-    render: RenderConfiguration = RenderConfiguration(),
-    keymap: Keymap = Keymap.default
-  ) {
-    self.render = render
-    self.keymap = keymap
-  }
+  var keymap: Keymap { get }
+  /// Whether to use the sprint key as a toggle.
+  var toggleSprint: Bool { get }
+  /// Whether to use the sneak key as a toggle.
+  var toggleSneak: Bool { get }
 }

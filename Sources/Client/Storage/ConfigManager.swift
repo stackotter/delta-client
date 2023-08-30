@@ -21,6 +21,11 @@ public final class ConfigManager {
       _config = newValue
     }
   }
+
+  /// The implementation of ClientConfiguration that allows DeltaCore to access required config values.
+  public var coreConfiguration: ClientConfiguration {
+    get { return _coreConfiguration }
+  }
   
   // MARK: Private properties
   
@@ -28,6 +33,8 @@ public final class ConfigManager {
   private var _config: Config
   /// The file to store config in.
   private let configFile: URL
+  /// An internal reference to coreConfiguration with the definite type so its internal properties can be accessed.
+  private var _coreConfiguration: CoreConfiguration
 
   /// A queue to ensure that writing to the config file always happens serially.
   private let queue = DispatchQueue(label: "dev.stackotter.delta-client.ConfigManager")
@@ -43,6 +50,7 @@ public final class ConfigManager {
     // Create default config if no config file exists
     guard StorageManager.default.fileExists(at: configFile) else {
       _config = Config()
+      _coreConfiguration = CoreConfiguration(_config)
       let data: Data
       do {
         data = try JSONEncoder().encode(_config)
@@ -71,6 +79,7 @@ public final class ConfigManager {
         DeltaClientApp.fatal("Failed to encode config: \(error)")
       }
     }
+    _coreConfiguration = CoreConfiguration(_config)
   }
   
   // MARK: Public methods
@@ -130,11 +139,12 @@ public final class ConfigManager {
 
   /// Updates the config and writes it to the config file.
   /// - Parameter config: The config to write.
-  public func setConfig(to config: Config) {
+  /// - Parameter saveToFile: Whether to write to the file or just update internal references.
+  public func setConfig(to config: Config, saveToFile: Bool = true) {
     self.config = config
     
     do {
-      try commitConfig()
+      try commitConfig(saveToFile: saveToFile)
     } catch {
       log.error("Failed to write config to file: \(error)")
     }
@@ -150,10 +160,41 @@ public final class ConfigManager {
   // MARK: Private methods
 
   /// Commits the current config to this manager's config file.
-  private func commitConfig() throws {
-    try queue.sync {
-      let data = try JSONEncoder().encode(self.config)
-      try data.write(to: self.configFile)
+  /// - Parameter saveToFile: Whether to write to the file or just update internal references.
+  private func commitConfig(saveToFile: Bool = true) throws {
+    _coreConfiguration.config = config
+
+    if saveToFile {
+      try queue.sync {
+        let data = try JSONEncoder().encode(self.config)
+        try data.write(to: self.configFile)
+      }
     }
+  }
+}
+
+/// Enables DeltaCore to access required configuration values.
+/// This is passed to the Client constructor.
+class CoreConfiguration: ClientConfiguration {
+  var config: Config
+  
+  init(_ config: Config) {
+    self.config = config
+  }
+
+  public var render: RenderConfiguration {
+    get { return self.config.render }
+  }
+
+  public var keymap: Keymap {
+    get { return self.config.keymap }
+  }
+
+  public var toggleSprint: Bool {
+    get { return self.config.toggleSprint }
+  }
+
+  public var toggleSneak: Bool {
+    get { return self.config.toggleSneak }
   }
 }

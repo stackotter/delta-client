@@ -26,9 +26,9 @@ struct VideoSettingsView: View {
 
   /// Handles when the user changes a value.
   func onValueChanged<T>(_ newValue: T) {
-    if let client = client {
-      client.configuration.render = config
-    }
+    var config = ConfigManager.default.config
+    config.render = self.config
+    ConfigManager.default.setConfig(to: config, saveToFile: false)
   }
 
   /// Handles when the user stops/starts editing.

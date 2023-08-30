@@ -68,8 +68,6 @@ class GameViewModel: ObservableObject {
   }
 
   func closeMenu() {
-    // TODO: Sync configuration more generally
-    client.configuration.keymap = ConfigManager.default.config.keymap
     inputDelegate.mouseSensitivity = ConfigManager.default.config.mouseSensitivity
     inputCaptured = true
 
@@ -190,9 +188,7 @@ struct GameView: View {
     inputCaptureEnabled: Binding<Bool>,
     delegateSetter setDelegate: (InputDelegate) -> Void
   ) {
-    let client = Client(resourcePack: resourcePack)
-    client.configuration.render = ConfigManager.default.config.render
-    client.configuration.keymap = ConfigManager.default.config.keymap
+    let client = Client(resourcePack: resourcePack, configuration: ConfigManager.default.coreConfiguration)
 
     // Setup input system
     let inputDelegate = ClientInputDelegate(for: client)
