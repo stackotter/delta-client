@@ -3,8 +3,6 @@ import DeltaCore
 
 /// Manages the config stored in a config file.
 public final class ConfigManager {
-  // MARK: Public properties
-  
   /// The manager for the default config file.
   public static var `default` = ConfigManager(for: StorageManager.default.absoluteFromRelative("config.json"))
 
@@ -23,25 +21,17 @@ public final class ConfigManager {
   }
 
   /// Access to the implementation of ClientConfiguration that allows DeltaCore to access required config values.
-  public var coreConfiguration: ClientConfiguration {
-    get { return _coreConfiguration }
-  }
-  
-  // MARK: Private properties
+  var coreConfiguration: CoreConfiguration
   
   /// The non-threadsafe storage for ``config``.
   private var _config: Config
   /// The file to store config in.
   private let configFile: URL
-  /// An internal reference to the implementation of ClientConfiguration with the definite type so its internal properties can be accessed.
-  private var _coreConfiguration: CoreConfiguration
 
   /// A queue to ensure that writing to the config file always happens serially.
   private let queue = DispatchQueue(label: "dev.stackotter.delta-client.ConfigManager")
   /// The lock used to synchronise access to ``ConfigManager/_config``.
   private let lock = ReadWriteLock()
-  
-  // MARK: Init
 
   /// Creates a manager for the specified config file. Creates default config if required.
   private init(for configFile: URL) {
@@ -50,7 +40,7 @@ public final class ConfigManager {
     // Create default config if no config file exists
     guard StorageManager.default.fileExists(at: configFile) else {
       _config = Config()
-      _coreConfiguration = CoreConfiguration(_config)
+      coreConfiguration = CoreConfiguration(_config)
       let data: Data
       do {
         data = try JSONEncoder().encode(_config)
@@ -79,10 +69,8 @@ public final class ConfigManager {
         DeltaClientApp.fatal("Failed to encode config: \(error)")
       }
     }
-    _coreConfiguration = CoreConfiguration(_config)
+    coreConfiguration = CoreConfiguration(_config)
   }
-  
-  // MARK: Public methods
   
   /// Commits the given account to the config file.
   /// - Parameters:
@@ -156,13 +144,11 @@ public final class ConfigManager {
     config = Config()
     try commitConfig()
   }
-  
-  // MARK: Private methods
 
   /// Commits the current config to this manager's config file.
   /// - Parameter saveToFile: Whether to write to the file or just update internal references.
   private func commitConfig(saveToFile: Bool = true) throws {
-    _coreConfiguration.config = config
+    coreConfiguration.config = config
 
     if saveToFile {
       try queue.sync {
