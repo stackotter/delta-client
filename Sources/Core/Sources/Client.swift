@@ -14,20 +14,7 @@ public final class Client: @unchecked Sendable {
   /// The game this client is playing in.
   public var game: Game
   /// The client's configuration
-  public var configuration: ClientConfiguration {
-    didSet {
-      guard connection?.hasJoined == true else {
-        return
-      }
-
-      // Send update to server if connected
-      do {
-        try connection?.sendPacket(ClientSettingsPacket(configuration))
-      } catch {
-        eventBus.dispatch(ErrorEvent(error: error, message: "Failed to send client configuration update"))
-      }
-    }
-  }
+  public let configuration: ClientConfiguration
 
   /// The connection to the current server.
   public var connection: ServerConnection?

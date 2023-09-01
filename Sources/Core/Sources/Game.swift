@@ -9,8 +9,6 @@ public final class Game: @unchecked Sendable {
   public private(set) var tickScheduler: TickScheduler
   /// The event bus for emitting events.
   public private(set) var eventBus: EventBus
-  /// The struct that allows for accessing clientside configuration values.
-  public let configuration: ClientConfiguration
   /// Maps Vanilla entity Ids to identifiers of entities in the ``Nexus``.
   private var entityIdToEntityIdentifier: [Int: EntityIdentifier] = [:]
 
@@ -61,7 +59,6 @@ public final class Game: @unchecked Sendable {
   /// Creates a game with default properties. Creates the player. Starts the tick loop.
   public init(eventBus: EventBus, configuration: ClientConfiguration, connection: ServerConnection? = nil) {
     self.eventBus = eventBus
-    self.configuration = configuration
 
     world = World(eventBus: eventBus)
 
@@ -81,7 +78,7 @@ public final class Game: @unchecked Sendable {
     tickScheduler.addSystem(PlayerClimbSystem())
     tickScheduler.addSystem(PlayerGravitySystem())
     tickScheduler.addSystem(PlayerSmoothingSystem())
-    tickScheduler.addSystem(PlayerInputSystem(connection, self, eventBus))
+    tickScheduler.addSystem(PlayerInputSystem(connection, self, eventBus, configuration))
     tickScheduler.addSystem(PlayerFlightSystem())
     tickScheduler.addSystem(PlayerAccelerationSystem())
     tickScheduler.addSystem(PlayerJumpSystem())

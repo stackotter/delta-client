@@ -33,9 +33,9 @@ public final class InputState: SingleComponent {
   /// The time since jump last changed from not pressed to pressed.
   public private(set) var ticksSinceJumpPressed: Int = 0
 
-  /// Whether sprint is currently toggled. Only used if toggle sprint is enabled
+  /// Whether sprint is currently toggled. Only used if toggle sprint is enabled.
   public private(set) var isSprintToggled: Bool = false
-  /// Whether sneak is currently toggled. Only used if toggle sneak is enabled
+  /// Whether sneak is currently toggled. Only used if toggle sneak is enabled.
   public private(set) var isSneakToggled: Bool = false
 
   /// Creates an empty input state.
