@@ -20,7 +20,7 @@ public final class ConfigManager {
     }
   }
 
-  /// Access to the implementation of ClientConfiguration that allows DeltaCore to access required config values.
+  /// The implementation of ClientConfiguration that allows DeltaCore to access required config values.
   var coreConfiguration: CoreConfiguration
   
   /// The non-threadsafe storage for ``config``.

@@ -27,6 +27,7 @@ public final class Client: @unchecked Sendable {
 
   /// Creates a new client instance.
   /// - Parameter resourcePack: The resources to use.
+  /// - Parameter configuration: The clientside configuration.
   public init(resourcePack: ResourcePack, configuration: ClientConfiguration) {
     self.resourcePack = resourcePack
     self.configuration = configuration
