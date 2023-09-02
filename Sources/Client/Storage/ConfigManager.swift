@@ -21,7 +21,7 @@ public final class ConfigManager {
   }
 
   /// The implementation of ClientConfiguration that allows DeltaCore to access required config values.
-  var coreConfiguration: CoreConfiguration
+  let coreConfiguration: CoreConfiguration
   
   /// The non-threadsafe storage for ``config``.
   private var _config: Config
