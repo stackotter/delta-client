@@ -57,7 +57,7 @@ public final class Game: @unchecked Sendable {
   // MARK: Init
 
   /// Creates a game with default properties. Creates the player. Starts the tick loop.
-  public init(eventBus: EventBus, connection: ServerConnection? = nil) {
+  public init(eventBus: EventBus, configuration: ClientConfiguration, connection: ServerConnection? = nil) {
     self.eventBus = eventBus
 
     world = World(eventBus: eventBus)
@@ -78,7 +78,7 @@ public final class Game: @unchecked Sendable {
     tickScheduler.addSystem(PlayerClimbSystem())
     tickScheduler.addSystem(PlayerGravitySystem())
     tickScheduler.addSystem(PlayerSmoothingSystem())
-    tickScheduler.addSystem(PlayerInputSystem(connection, self, eventBus))
+    tickScheduler.addSystem(PlayerInputSystem(connection, self, eventBus, configuration))
     tickScheduler.addSystem(PlayerFlightSystem())
     tickScheduler.addSystem(PlayerAccelerationSystem())
     tickScheduler.addSystem(PlayerJumpSystem())

@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ControlsSettingsView: View {
   @State var sensitivity = ConfigManager.default.config.mouseSensitivity
+  @State var toggleSprint = ConfigManager.default.config.toggleSprint
+  @State var toggleSneak = ConfigManager.default.config.toggleSneak
 
   var body: some View {
     ScrollView {
@@ -26,6 +28,40 @@ struct ControlsSettingsView: View {
           inputDelegateSetter: delegateSetter
         )
       }
+
+      HStack {
+        Text("Toggle sprint").frame(width: 150)
+        Spacer()
+        Toggle(
+          "Toggle sprint",
+          isOn: $toggleSprint.onChange { newValue in
+            var config = ConfigManager.default.config
+            config.toggleSprint = newValue
+            ConfigManager.default.setConfig(to: config)
+          }
+        )
+          .labelsHidden()
+          .toggleStyle(.switch)
+        Spacer()
+      }
+      .frame(width: 400)
+
+      HStack {
+        Text("Toggle sneak").frame(width: 150)
+        Spacer()
+        Toggle(
+          "Toggle sneak",
+          isOn: $toggleSneak.onChange { newValue in
+            var config = ConfigManager.default.config
+            config.toggleSneak = newValue
+            ConfigManager.default.setConfig(to: config)
+          }
+        )
+          .labelsHidden()
+          .toggleStyle(.switch)
+        Spacer()
+      }
+      .frame(width: 400)
     }
   }
 

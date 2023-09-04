@@ -16,6 +16,10 @@ public struct Config: Codable {
   public var unloadedPlugins: [String]
   /// The user's keymap.
   public var keymap: Keymap
+  /// Whether to use the sprint key as a toggle.
+  public var toggleSprint: Bool
+  /// Whether to use the sneak key as a toggle.
+  public var toggleSneak: Bool
   /// The in game mouse sensitivity
   public var mouseSensitivity: Float
 
@@ -36,6 +40,8 @@ public struct Config: Codable {
     render = RenderConfiguration()
     unloadedPlugins = []
     keymap = Keymap.default
+    toggleSprint = false
+    toggleSneak = false
     mouseSensitivity = 1
   }
 }

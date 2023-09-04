@@ -16,7 +16,7 @@ class GameViewState: Observable {
 
   init(_ server: ServerDescriptor, _ resourcePack: ResourcePack) {
     self.server = server
-    client = Client(resourcePack: resourcePack)
+    client = Client(resourcePack: resourcePack, configuration: CoreConfiguration())
     client.eventBus.registerHandler { [weak self] event in
       guard let self = self else { return }
       self.handleClientEvent(event)

@@ -14,20 +14,7 @@ public final class Client: @unchecked Sendable {
   /// The game this client is playing in.
   public var game: Game
   /// The client's configuration
-  public var configuration = ClientConfiguration() {
-    didSet {
-      guard connection?.hasJoined == true else {
-        return
-      }
-
-      // Send update to server if connected
-      do {
-        try connection?.sendPacket(ClientSettingsPacket(configuration))
-      } catch {
-        eventBus.dispatch(ErrorEvent(error: error, message: "Failed to send client configuration update"))
-      }
-    }
-  }
+  public let configuration: ClientConfiguration
 
   /// The connection to the current server.
   public var connection: ServerConnection?
@@ -40,9 +27,11 @@ public final class Client: @unchecked Sendable {
 
   /// Creates a new client instance.
   /// - Parameter resourcePack: The resources to use.
-  public init(resourcePack: ResourcePack) {
+  /// - Parameter configuration: The clientside configuration.
+  public init(resourcePack: ResourcePack, configuration: ClientConfiguration) {
     self.resourcePack = resourcePack
-    game = Game(eventBus: eventBus)
+    self.configuration = configuration
+    game = Game(eventBus: eventBus, configuration: configuration)
   }
 
   deinit {
@@ -65,7 +54,7 @@ public final class Client: @unchecked Sendable {
       guard let self = self else { return }
       self.handlePacket(packet)
     }
-    game = Game(eventBus: eventBus, connection: connection)
+    game = Game(eventBus: eventBus, configuration: configuration, connection: connection)
     hasFinishedDownloadingTerrain = false
     try connection.login(username: account.username)
     self.connection = connection

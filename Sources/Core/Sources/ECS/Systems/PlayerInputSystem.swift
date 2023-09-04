@@ -8,11 +8,13 @@ public final class PlayerInputSystem: System {
   var connection: ServerConnection?
   weak var game: Game?
   var eventBus: EventBus
+  let configuration: ClientConfiguration
 
-  public init(_ connection: ServerConnection?, _ game: Game, _ eventBus: EventBus) {
+  public init(_ connection: ServerConnection?, _ game: Game, _ eventBus: EventBus, _ configuration: ClientConfiguration) {
     self.connection = connection
     self.game = game
     self.eventBus = eventBus
+    self.configuration = configuration
   }
 
   public func update(_ nexus: Nexus, _ world: World) throws {
@@ -126,7 +128,7 @@ public final class PlayerInputSystem: System {
     }
 
     inputState.resetMouseDelta()
-    inputState.tick(isInputSuppressed, eventBus)
+    inputState.tick(isInputSuppressed, eventBus, configuration)
   }
 
   /// - Returns: Whether to suppress the input associated with the event or not. `true` while user is typing.

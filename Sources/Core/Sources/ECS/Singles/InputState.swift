@@ -33,6 +33,11 @@ public final class InputState: SingleComponent {
   /// The time since jump last changed from not pressed to pressed.
   public private(set) var ticksSinceJumpPressed: Int = 0
 
+  /// Whether sprint is currently toggled. Only used if toggle sprint is enabled.
+  public private(set) var isSprintToggled: Bool = false
+  /// Whether sneak is currently toggled. Only used if toggle sneak is enabled.
+  public private(set) var isSneakToggled: Bool = false
+
   /// Creates an empty input state.
   public init() {}
 
@@ -90,11 +95,21 @@ public final class InputState: SingleComponent {
 
   /// Ticks the input state by flushing ``newlyPressed`` into ``keys`` and ``inputs``, and clearing
   /// ``newlyReleased``. Also emits events to the given ``EventBus``.
-  func tick(_ isInputSuppressed: [Bool], _ eventBus: EventBus) {
+  func tick(_ isInputSuppressed: [Bool], _ eventBus: EventBus, _ configuration: ClientConfiguration) {
     assert(isInputSuppressed.count == newlyPressed.count, "`isInputSuppressed` should be the same length as `newlyPressed`")
 
     ticksSinceForwardsPressed += 1
     ticksSinceJumpPressed += 1
+
+    // Reset toggles if they're disabled
+    if (!configuration.toggleSprint && isSprintToggled) {
+      inputs.remove(.sprint)
+      isSprintToggled = false
+    }
+    if (!configuration.toggleSneak && isSneakToggled) {
+      inputs.remove(.sneak)
+      isSneakToggled = false
+    }
 
     for (var event, suppressInput) in zip(newlyPressed, isInputSuppressed) {
       if suppressInput {
@@ -133,6 +148,24 @@ public final class InputState: SingleComponent {
       }
 
       if let input = event.input {
+        // Toggle sprint if enabled
+        if configuration.toggleSprint && input == .sprint {
+          isSprintToggled = !isSprintToggled
+          if !isSprintToggled {
+            inputs.remove(input)
+            continue
+          }
+        }
+
+        // Toggle sneak if enabled
+        if configuration.toggleSneak && input == .sneak {
+          isSneakToggled = !isSneakToggled
+          if !isSneakToggled {
+            inputs.remove(input)
+            continue
+          }
+        }
+        
         inputs.insert(input)
       }
     }
@@ -145,6 +178,11 @@ public final class InputState: SingleComponent {
       
       // TODO: The release event of any inputs that were suppressed should probably also be suppressed
       eventBus.dispatch(event)
+
+      // Don't remove sprint or sneak if toggling is enabled
+      if (event.input == .sprint && configuration.toggleSprint) || (event.input == .sneak && configuration.toggleSneak) {
+        continue
+      }
 
       if let key = event.key {
         keys.remove(key)
