@@ -64,8 +64,11 @@ class GameViewState: Observable {
 struct GameView: View {
   var state: GameViewState
 
-  init(_ server: ServerDescriptor, _ resourcePack: ResourcePack) {
+  var completionHandler: () -> Void
+
+  init(_ server: ServerDescriptor, _ resourcePack: ResourcePack, _ completionHandler: @escaping () -> Void) {
     state = GameViewState(server, resourcePack)
+    self.completionHandler = completionHandler
   }
 
   var body: some ViewContent {
@@ -76,6 +79,10 @@ struct GameView: View {
         Text("Connecting...")
       case .connected:
         ChatView(state.client)
+        Button("Disconnect") {
+          state.client.disconnect()
+          completionHandler()
+        }
     }
   }
 }

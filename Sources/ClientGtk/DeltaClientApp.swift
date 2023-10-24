@@ -85,11 +85,13 @@ struct DeltaClientApp: App {
         case .loading(let message):
           Text(message)
         case .selectServer(let resourcePack):
-          ServerSelectionView { server in
+          ServerListView { server in
             state.state = .play(server, resourcePack)
           }
         case .play(let server, let resourcePack):
-          GameView(server, resourcePack)
+          GameView(server, resourcePack) {
+            state.state = .selectServer(resourcePack)
+          }
       }
     }.padding(10)
   }
