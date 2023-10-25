@@ -2,12 +2,17 @@ import SwiftCrossUI
 import DeltaCore
 
 enum DetailState {
-  case addition, server(ServerDescriptor), error(String)
+  case addition
+  case server(ServerDescriptor)
+  case error(String)
 }
 
 class ServerListViewState: Observable {
   @Observed var servers: [ServerDescriptor] = []
   @Observed var detailState = DetailState.addition
+
+  @Observed var name = ""
+  @Observed var address = ""
 }
 
 struct ServerListView: View {
@@ -27,12 +32,12 @@ struct ServerListView: View {
             Button(server.name) {
               state.detailState = .server(server)
             }
-            .padding(Edge.Set.bottom, 5)
+            .padding(.bottom, 5)
           }
         }
       }
       .frame(minWidth: 100)
-      .padding(Edge.Set.trailing, 10)
+      .padding(.trailing, 10)
     } detail: {
       VStack {
         switch state.detailState {
@@ -41,7 +46,7 @@ struct ServerListView: View {
           case .server(let server):
             Text(server.name)
             if let port = server.port {
-              Text(server.host + ":" + String(port))
+              Text("\(server.host):\(port)")
             } else {
               Text(server.host)
             }
@@ -50,26 +55,26 @@ struct ServerListView: View {
               completionHandler(server)
             }
           case .error(let message):
-            Text(message)
+            Text("Error: \(message)")
+            Button ("Back") {
+              state.detailState = .addition
+            }
         }
       }
-      .padding(Edge.Set.leading, 10)
+      .padding(.leading, 10)
     }
   }
 
   var additionView: some View {
     VStack {
-      @Observed var name = ""
-      @Observed var address = ""
-
       Text("Add server")
-      TextField("Name", $name)
-      TextField("Address", $address)
+      TextField("Name", state.$name)
+      TextField("Address", state.$address)
       
       Button("Add") {
-        let parts = address.split(separator: ":")
-        guard parts.count <= 2 else {
-          state.detailState = .error("Too many colons")
+        let parts = state.address.split(separator: ":")
+        guard parts.count > 0, parts.count <= 2 else {
+          state.detailState = .error("Invalid address")
           return
         }
 
@@ -84,9 +89,12 @@ struct ServerListView: View {
           port = parsed
         }
 
-        let descriptor = ServerDescriptor(name: name, host: host, port: port)
+        let descriptor = ServerDescriptor(name: state.name, host: host, port: port)
         state.servers.append(descriptor)
         state.detailState = .server(descriptor)
+        
+        state.name = ""
+        state.address = ""
       }
     }
   }
