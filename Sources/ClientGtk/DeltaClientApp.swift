@@ -32,7 +32,7 @@ struct DeltaClientApp: App {
 
       do {
         // Download vanilla assets if they haven't already been downloaded
-        if !directoryExists(at: assetsDirectory) {
+        if !StorageManager.directoryExists(at: assetsDirectory) {
           loading("Downloading assets")
           try ResourcePack.downloadVanillaAssets(forVersion: Constants.versionString, to: assetsDirectory) { progress, message in
             loading(message)
@@ -48,12 +48,12 @@ struct DeltaClientApp: App {
         // Load resource pack and cache it if necessary
         loading("Loading resource pack")
         let packCache = cacheDirectory.appendingPathComponent("vanilla.rpcache/")
-        var cacheExists = directoryExists(at: packCache)
+        var cacheExists = StorageManager.directoryExists(at: packCache)
         let resourcePack = try ResourcePack.load(
           from: assetsDirectory,
           cacheDirectory: cacheExists ? packCache : nil
         )
-        cacheExists = directoryExists(at: packCache)
+        cacheExists = StorageManager.directoryExists(at: packCache)
         if !cacheExists {
           do {
             try resourcePack.cache(to: packCache)
@@ -71,12 +71,6 @@ struct DeltaClientApp: App {
 
   func loading(_ message: String) {
     self.state.state = .loading(message: message)
-  }
-
-  func directoryExists(at url: URL) -> Bool {
-    var isDirectory: ObjCBool = false
-    let exists = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
-    return exists && isDirectory.boolValue
   }
 
   var body: some ViewContent {
