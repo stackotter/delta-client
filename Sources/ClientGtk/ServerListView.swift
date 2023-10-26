@@ -6,10 +6,7 @@ indirect enum DetailState {
   case adding
   case editing(_ index: Int)
 
-  case error(_ message: String, returnState: DetailState?)
-  static func error(_ message: String) -> DetailState {
-    return .error(message, returnState: nil)
-  }
+  case error(_ message: String, returnState: DetailState)
 }
 
 class ServerListViewState: Observable {
@@ -54,10 +51,8 @@ struct ServerListView: View {
             editingView(index)
           case .error(let message, let returnState):
             Text("Error: \(message)")
-            if let returnState {
-              Button ("Back") {
-                state.detailState = returnState
-              }
+            Button ("Back") {
+              state.detailState = returnState
             }
         }
       }
@@ -70,11 +65,7 @@ struct ServerListView: View {
 
     return VStack {
       Text(server.name)
-      if let port = server.port {
-        Text("\(server.host):\(port)")
-      } else {
-        Text(server.host)
-      }
+      Text(server.description)
 
       Button("Connect") {
         completionHandler(server)
@@ -82,11 +73,7 @@ struct ServerListView: View {
 
       Button("Edit") {
         state.name = server.name
-        if let port = server.port {
-          state.address = "\(server.host):\(port)"
-        } else {
-          state.address = "\(server.host)"
-        }
+        state.address = server.description
         state.detailState = .editing(index)
       }
     }
@@ -100,10 +87,8 @@ struct ServerListView: View {
       
       Button("Add") {
         do {
-          let (host, port) = try ServerListView.parseAddress(state.address)
-
-          let descriptor = ServerDescriptor(name: state.name, host: host, port: port)
-          state.servers.append(descriptor)
+          let (host, port) = try Self.parseAddress(state.address)
+          state.servers.append(ServerDescriptor(name: state.name, host: host, port: port))
           save()
 
           state.detailState = .server(state.servers.count - 1)
@@ -126,11 +111,8 @@ struct ServerListView: View {
 
       Button("Apply") {
         do {
-          let (host, port) = try ServerListView.parseAddress(state.address)
-
-          state.servers[index].name = state.name
-          state.servers[index].host = host
-          state.servers[index].port = port
+          let (host, port) = try Self.parseAddress(state.address)
+          state.servers[index] = ServerDescriptor(name: state.name, host: host, port: port)
           save()
 
           state.detailState = .server(index)
