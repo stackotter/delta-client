@@ -13,7 +13,7 @@ indirect enum DetailState {
 }
 
 class ServerListViewState: Observable {
-  @Observed var servers: [ServerDescriptor] = []
+  @Observed var servers: [ServerDescriptor] = ConfigManager.default.config.servers
   @Observed var detailState = DetailState.adding
 
   @Observed var name = ""
@@ -104,8 +104,9 @@ struct ServerListView: View {
 
           let descriptor = ServerDescriptor(name: state.name, host: host, port: port)
           state.servers.append(descriptor)
+          save()
+
           state.detailState = .server(state.servers.count - 1)
-          
           state.name = ""
           state.address = ""
         } catch AddressParsingError.invalidPort {
@@ -130,8 +131,9 @@ struct ServerListView: View {
           state.servers[index].name = state.name
           state.servers[index].host = host
           state.servers[index].port = port
-          state.detailState = .server(index)
+          save()
 
+          state.detailState = .server(index)
           state.name = ""
           state.address = ""
         } catch AddressParsingError.invalidPort {
@@ -143,6 +145,8 @@ struct ServerListView: View {
 
       Button("Remove") {
         state.servers.remove(at: index)
+        save()
+
         state.name = ""
         state.address = ""
         if (state.servers.count > 0) {
@@ -176,5 +180,11 @@ struct ServerListView: View {
     }
 
     return (host, port)
+  }
+
+  private func save() {
+    var config = ConfigManager.default.config
+    config.servers = state.servers
+    ConfigManager.default.setConfig(to: config)
   }
 }
