@@ -130,7 +130,7 @@ final class StorageManager {
     )
   }
 
-  // MARK: Instance method aliases of the static methods to clean up api
+  // MARK: Instance method aliases of the static methods to clean up API
 
   /// Checks if a file or directory exists at the given url.
   public func itemExists(at url: URL) -> Bool {
@@ -163,7 +163,12 @@ final class StorageManager {
     return try Self.contentsOfDirectory(at: url)
   }
 
-  // MARK: Delta client specific methods
+  /// Copies the specified item to the destination directory.
+  public func copyItem(at item: URL, to destination: URL) throws {
+    try FileManager.default.copyItem(at: item, to: destination)
+  }
+
+  // MARK: Delta Client specific methods
 
   /// Returns the absolute URL of a path relative to the storage directory.
   public func absoluteFromRelative(_ relativePath: String) -> URL {
@@ -200,11 +205,6 @@ final class StorageManager {
   public func unzipItem(at item: URL, to destination: URL) throws {
     try createDirectory(at: destination)
     try FileManager.default.unzipItem(at: item, to: destination)
-  }
-
-  /// Copies the specified item to the destination directory.
-  public func copyItem(at item: URL, to destination: URL) throws {
-    try FileManager.default.copyItem(at: item, to: destination)
   }
 
   /// Delete the application support directory's contents excluding backups.
