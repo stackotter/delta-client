@@ -25,7 +25,11 @@ class GameViewState: Observable {
     do {
       // TODO: Use structured concurrency to get join server to wait until login is finished so that
       // errors can be handled inline
-      try client.joinServer(describedBy: server, with: Account.offline(OfflineAccount(username: "epicgtk69")))
+      if let account = ConfigManager.default.config.selectedAccount {
+        try client.joinServer(describedBy: server, with: account)
+      } else {
+        state = .error("Please select an account")
+      }
     } catch {
       state = .error("Failed to join server: \(error.localizedDescription)")
     }
@@ -75,6 +79,9 @@ struct GameView: View {
     switch state.state {
       case .error(let message):
         Text(message)
+        Button("Back") {
+          completionHandler()
+        }
       case .connecting:
         Text("Connecting...")
       case .connected:
