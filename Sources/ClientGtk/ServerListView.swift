@@ -18,7 +18,8 @@ class ServerListViewState: Observable {
 }
 
 struct ServerListView: View {
-  var completionHandler: (ServerDescriptor) -> Void
+  var joinServer: (ServerDescriptor) -> Void
+  var openSettings: () -> Void
 
   var state = ServerListViewState()
 
@@ -27,6 +28,10 @@ struct ServerListView: View {
       VStack {
         Button("Add server") {
           state.detailState = .adding
+        }
+
+        Button("Settings") {
+          openSettings()
         }
 
         ScrollView {
@@ -68,7 +73,7 @@ struct ServerListView: View {
       Text(server.description)
 
       Button("Connect") {
-        completionHandler(server)
+        joinServer(server)
       }
 
       Button("Edit") {

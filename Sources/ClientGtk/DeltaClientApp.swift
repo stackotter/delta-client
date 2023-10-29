@@ -7,12 +7,14 @@ import DeltaCore
 struct DeltaClientApp: App {
   enum DeltaClientState {
     case loading(message: String)
-    case selectServer(ResourcePack)
+    case selectServer
+    case settings
     case play(ServerDescriptor, ResourcePack)
   }
 
   class StateStorage: Observable {
     @Observed var state = DeltaClientState.loading(message: "Loading")
+    var resourcePack: ResourcePack?
   }
 
   var identifier = "dev.stackotter.DeltaClientApp"
@@ -49,20 +51,22 @@ struct DeltaClientApp: App {
         loading("Loading resource pack")
         let packCache = cacheDirectory.appendingPathComponent("vanilla.rpcache/")
         var cacheExists = StorageManager.directoryExists(at: packCache)
-        let resourcePack = try ResourcePack.load(
+        state.resourcePack = try ResourcePack.load(
           from: assetsDirectory,
           cacheDirectory: cacheExists ? packCache : nil
         )
         cacheExists = StorageManager.directoryExists(at: packCache)
         if !cacheExists {
           do {
-            try resourcePack.cache(to: packCache)
+            if let resourcePack = state.resourcePack {
+              try resourcePack.cache(to: packCache)
+            }
           } catch {
             log.warning("Failed to cache vanilla resource pack")
           }
         }
 
-        self.state.state = .selectServer(resourcePack)
+        self.state.state = .selectServer
       } catch {
         loading("Failed to load: \(error.localizedDescription) (\(error))")
       }
@@ -78,13 +82,21 @@ struct DeltaClientApp: App {
       switch state.state {
         case .loading(let message):
           Text(message)
-        case .selectServer(let resourcePack):
+        case .selectServer:
           ServerListView { server in
-            state.state = .play(server, resourcePack)
+            if let resourcePack = state.resourcePack {
+              state.state = .play(server, resourcePack)
+            }
+          } openSettings: {
+            state.state = .settings
+          }
+        case .settings:
+          SettingsView {
+            state.state = .selectServer
           }
         case .play(let server, let resourcePack):
           GameView(server, resourcePack) {
-            state.state = .selectServer(resourcePack)
+            state.state = .selectServer
           }
       }
     }.padding(10)
