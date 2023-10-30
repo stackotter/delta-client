@@ -16,8 +16,8 @@ struct RouterView: View {
                 .navigationTitle("Loading")
             case let .loadingWithMessage(message, progress):
               ProgressLoadingView(progress: progress, message: message)
-            case let .error(message):
-              TroubleshootingView(fatalErrorMessage: message)
+            case let .error(error):
+              TroubleshootingView(error: error)
             case let .done(loadedResources):
               mainView(loadedResources)
           }

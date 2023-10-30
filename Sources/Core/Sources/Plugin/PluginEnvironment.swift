@@ -56,19 +56,13 @@ public class PluginEnvironment: ObservableObject {
     }
   }
 
-  // MARK: Init
-
   /// Creates an empty plugin environment.
   public init() {}
-
-  // MARK: Access
 
   /// Returns the specified plugin if it's loaded.
   public func plugin(_ identifier: String) -> Plugin? {
     return plugins[identifier]?.plugin
   }
-
-  // MARK: Loading
 
   /// Loads all plugins contained within the specified directory.
   ///
@@ -95,7 +89,9 @@ public class PluginEnvironment: ObservableObject {
         try loadPlugin(from: file, manifest)
       } catch {
         ThreadUtil.runInMain {
-          errors.append(PluginError(bundle: file.lastPathComponent, underlyingError: error))
+          let bundle = file.lastPathComponent
+          log.error("Error occured when loading plugin '\(bundle)': \(error)")
+          errors.append(PluginError(bundle: bundle, underlyingError: error))
         }
       }
     }
@@ -178,8 +174,6 @@ public class PluginEnvironment: ObservableObject {
     }
   }
 
-  // MARK: Unloading
-
   /// Unloads all loaded plugins.
   /// - Parameter keepRegistered: If `true`, the client will remember the plugins and keep them in ``unloadedPlugins``.
   ///                             This keeps the plugins unloaded across sessions.
@@ -206,8 +200,6 @@ public class PluginEnvironment: ObservableObject {
       }
     }
   }
-
-  // MARK: Event handling
 
   /// Called when the client is about to join a server.
   /// - Parameters:

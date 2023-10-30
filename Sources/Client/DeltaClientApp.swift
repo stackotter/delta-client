@@ -21,119 +21,86 @@ struct DeltaClientApp: App {
       Self.modalWarning("File logging disabled: failed to setup log file")
     }
 
-    let taskQueue = DispatchQueue(label: "dev.stackotter.delta-client.startupTasks")
-
     Self.handleCommandLineArguments()
 
     DiscordManager.shared.updateRichPresence(to: .menu)
 
     // Load plugins, registries and resources
-    taskQueue.async {
-      var startupProgress = TaskProgress<StartupStep>()
-
-      func updateLoadingState(step: StartupStep, message: String? = nil, taskProgress: Double = 0) {
-        let secretMessages: [String] = [
-          "Frying eggs",
-          "Baking cookies",
-          "Planting trees",
-          "Filling up oceans",
-          "Painting clouds",
-          "Dreaming of ancient worlds"
-        ]
-        let shouldShowSecretMessage = Double.random(in: 0...1) <= 0.005
-
-        let loadingMessage: String
-        if shouldShowSecretMessage {
-          loadingMessage = secretMessages.randomElement() ?? step.message
-        } else if let message = message {
-          loadingMessage = message
-        } else {
-          loadingMessage = step.message
+    DispatchQueue(label: "test").async {
+      var previousStep: StartupStep?
+      let startup = TaskProgress<StartupStep>().onChange { progress in
+        if progress.currentStep != previousStep {
+          let percentage = String(format: "%.01f", progress.progress * 100)
+          log.info("\(progress.message) (\(percentage)%)")
         }
 
-        if startupProgress.currentStep != step {
-          log.info(step.message)
-        }
-
-        startupProgress.update(to: step, stepProgress: taskProgress)
+        previousStep = progress.currentStep
 
         Self.loadingState.update(to: .loadingWithMessage(
-          loadingMessage,
-          progress: startupProgress.progress
+          progress.message,
+          progress: progress.progress
         ))
       }
 
       do {
-        let start = CFAbsoluteTimeGetCurrent()
+        let stopwatch = Stopwatch()
 
-        // Refresh accounts if they're close to expiring (expire in the next 3 hours)
-        for account in ConfigManager.default.config.accounts.values {
-          guard let expiry = account.online?.accessToken.expiry else {
-            continue
-          }
+        let config = ConfigManager.default.config
 
-          if expiry - Int(CFAbsoluteTimeGetCurrent()) < 10800 {
-            Task {
-              var account = account
-              try? await account.refreshIfExpired(withClientToken: ConfigManager.default.config.clientToken)
-              ConfigManager.default.addAccount(account)
-            }
-          }
+        guard let storage = StorageDirectory.platformDefault else {
+          throw RichError("Failed to get storage directory")
+        }
+        try storage.ensureCreated()
+
+        Task {
+          await ConfigManager.default.refreshAccounts()
         }
 
-        // Load plugins first
-        updateLoadingState(step: .loadPlugins)
-        do {
+        startup.perform(.loadPlugins) {
           try Self.pluginEnvironment.loadPlugins(
-            from: StorageManager.default.pluginsDirectory,
-            excluding: ConfigManager.default.config.unloadedPlugins)
-          for error in Self.pluginEnvironment.errors {
-            log.error("Error occured when loading plugin '\(error.bundle)': \(error.underlyingError)")
-          }
-        } catch {
+            from: storage.pluginDirectory,
+            excluding: config.unloadedPlugins
+          )
+        } handleError: { error in
           Self.modalError("Error occurred during plugin loading, no plugins will be available: \(error)")
         }
 
-        // Download vanilla assets if they haven't already been downloaded
-        if !StorageManager.default.directoryExists(at: StorageManager.default.vanillaAssetsDirectory) {
-          updateLoadingState(step: .downloadAssets)
-          try ResourcePack.downloadVanillaAssets(forVersion: Constants.versionString, to: StorageManager.default.vanillaAssetsDirectory) { progress, message in
-            updateLoadingState(step: .downloadAssets, message: message, taskProgress: progress)
-          }
+        try startup.perform(.downloadAssets, if: !FileSystem.directoryExists(storage.assetDirectory)) { progressHandler in
+          try ResourcePack.downloadVanillaAssets(
+            forVersion: Constants.versionString,
+            to: storage.assetDirectory,
+            progressHandler: progressHandler
+          )
         }
 
-        // Load registries
-        updateLoadingState(step: .loadRegistries)
-        try RegistryStore.populateShared(StorageManager.default.registryDirectory) { progress, message in
-          updateLoadingState(step: .loadRegistries, message: message, taskProgress: progress)
+        try startup.perform(.loadRegistries) { progressHandler in
+          try RegistryStore.populateShared(storage.registryDirectory, progressHandler: progressHandler)
         }
 
         // Load resource pack and cache it if necessary
-        updateLoadingState(step: .loadResourcePacks)
-        let packCache = StorageManager.default.cacheDirectory.appendingPathComponent("vanilla.rpcache/")
-        var cacheExists = StorageManager.default.directoryExists(at: packCache)
-        let resourcePack = try ResourcePack.load(from: StorageManager.default.vanillaAssetsDirectory, cacheDirectory: cacheExists ? packCache : nil)
-        cacheExists = StorageManager.default.directoryExists(at: packCache)
-        if !cacheExists {
-          do {
-            try resourcePack.cache(to: packCache)
-          } catch {
-            log.warning("Failed to cache vanilla resource pack")
+        let resourcePack = try startup.perform(.loadResourcePacks) {
+          let packCache = storage.cache(forResourcePackNamed: "vanilla")
+          let resourcePack = try ResourcePack.load(from: storage.assetDirectory, cacheDirectory: packCache)
+          if !FileSystem.directoryExists(packCache) {
+            do {
+              try resourcePack.cache(to: packCache)
+            } catch {
+              Self.modalWarning("Failed to cache vanilla resource pack")
+            }
           }
+          return resourcePack
         }
 
         // Get user to login if they haven't already
-        if ConfigManager.default.config.accounts.isEmpty {
+        if config.accounts.isEmpty {
           Self.appState.update(to: .login)
         }
 
-        // Finish loading
-        let elapsedMilliseconds = (CFAbsoluteTimeGetCurrent() - start) * 1000
-        log.info(String(format: "Done (%.2fms)", elapsedMilliseconds))
+        log.info("Finished loading (\(stopwatch.elapsed))")
 
         Self.loadingState.update(to: .done(LoadedResources(resourcePack: resourcePack)))
       } catch {
-        Self.loadingState.update(to: .error("Failed to load: \(error)"))
+        Self.loadingState.update(to: .error(error))
       }
     }
   }
@@ -190,12 +157,13 @@ struct DeltaClientApp: App {
 
   /// Display a dismissible warning.
   static func modalWarning(_ message: String) {
-    log.warning("\(message)")
+    log.warning(message)
     Self.modalState.update(to: .warning(message))
   }
 
   /// Display a dismissible error and then transition to `safeState` if supplied.
   static func modalError(_ message: String, safeState: AppState? = nil) {
+    log.error(message)
     Self.modalState.update(to: .error(message, safeState: safeState))
   }
 

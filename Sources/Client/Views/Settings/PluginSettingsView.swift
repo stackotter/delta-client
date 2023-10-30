@@ -11,30 +11,30 @@ struct PluginSettingsView: View {
     ConfigManager.default.setConfig(to: config)
   }
   
-	var body: some View {
-		VStack {
-			HStack {
+  var body: some View {
+    VStack {
+      HStack {
         // Loaded plugins
-				VStack {
-					Text("Loaded").font(.title2)
+        VStack {
+          Text("Loaded").font(.title2)
           
-					ScrollView {
+          ScrollView {
             ForEach(Array(pluginEnvironment.plugins), id: \.key) { (identifier, plugin) in
-							HStack {
+              HStack {
                 Text(plugin.manifest.name)
                 
-								Button("Unload") {
+                Button("Unload") {
                   pluginEnvironment.unloadPlugin(identifier)
                   updateConfig()
-								}
-							}
-						}
+                }
+              }
+            }
             
             if pluginEnvironment.plugins.isEmpty {
               Text("no loaded plugins").italic()
             }
-					}
-				}.frame(maxWidth: .infinity)
+          }
+        }.frame(maxWidth: .infinity)
         
         // Unloaded plugins
         VStack {
@@ -82,23 +82,23 @@ struct PluginSettingsView: View {
             }
           }.frame(maxWidth: .infinity)
         }
-			}
+      }
       
       // Global actions
-			HStack {
-				Button("Unload all") {
+      HStack {
+        Button("Unload all") {
           pluginEnvironment.unloadAll()
           updateConfig()
-				}
-				Button("Reload all") {
+        }
+        Button("Reload all") {
           pluginEnvironment.reloadAll(StorageManager.default.pluginsDirectory)
           updateConfig()
-				}
+        }
         Button("Open plugins directory") {
           NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: StorageManager.default.pluginsDirectory.path)
         }
-			}
-		}
-	}
+      }
+    }
+  }
 }
 #endif

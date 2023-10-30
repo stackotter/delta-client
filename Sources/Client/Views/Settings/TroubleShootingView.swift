@@ -1,4 +1,5 @@
 import SwiftUI
+import DeltaCore
 
 struct TroubleshootingView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
@@ -9,21 +10,34 @@ struct TroubleshootingView: View {
   /// Duration of `PopupView` transition animation
   private var popupAnimationDuration: Double = 0.3
   /// Content for a never-disappearing error message displayed above the option buttons
-  private let fatalErrorMessage: String?
+  private let error: (any Error)?
   /// The queue for running troubleshooting tasks.
   private let taskQueue = DispatchQueue(label: "dev.stackotter.delta-client.troublehootingTasks")
 
-  /// - Parameter fatalErrorMessage: Content of a permanent error message to be displayed.
-  init(fatalErrorMessage: String? = nil) {
-    self.fatalErrorMessage = fatalErrorMessage
+  /// - Parameter error: Content of a permanent error message to be displayed.
+  init(error: (any Error)? = nil) {
+    self.error = error
+  }
+
+  /// The error message to show if any.
+  var errorMessage: String? {
+    guard let error = error else {
+      return nil
+    }
+
+    if let error = error as? RichError {
+      return error.richDescription
+    } else {
+      return "\(error)"
+    }
   }
 
   var body: some View {
     ZStack {
       // Troubleshooting options
       VStack {
-        if let errorMessage = fatalErrorMessage {
-          Text("Fatal: \(errorMessage)")
+        if let errorMessage = errorMessage {
+          Text(errorMessage)
             .padding(.bottom, 10)
         }
 

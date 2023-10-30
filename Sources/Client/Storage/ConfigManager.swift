@@ -145,6 +145,24 @@ public final class ConfigManager {
     try commitConfig()
   }
 
+  // TODO: Maybe we just shouldn't even refresh at app start, we could just refresh at time of
+  //   use.
+  /// Refreshes all accounts which are close to expiring (a 3 hour buffer decreases likelihood
+  /// of accounts expiring before they are used).
+  public func refreshAccounts() async {
+    for account in config.accounts.values {
+      guard let expiry = account.online?.accessToken.expiry else {
+        continue
+      }
+
+      if expiry - Int(CFAbsoluteTimeGetCurrent()) < 3 * 60 * 60 {
+        var account = account
+        try? await account.refreshIfExpired(withClientToken: config.clientToken)
+        addAccount(account)
+      }
+    }
+  }
+
   /// Commits the current config to this manager's config file.
   /// - Parameter saveToFile: Whether to write to the file or just update internal references.
   private func commitConfig(saveToFile: Bool = true) throws {

@@ -156,7 +156,7 @@ public struct TexturePalette {
 
         textures.append((identifier, texture))
       } catch {
-        throw ResourcePackError.failedToLoadTexture(identifier, error)
+        throw ResourcePackError.failedToLoadTexture(identifier).becauseOf(error)
       }
     }
 

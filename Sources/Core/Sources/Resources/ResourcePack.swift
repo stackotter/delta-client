@@ -5,13 +5,13 @@ enum ResourcePackError: LocalizedError {
   /// The specified resource pack directory does not exist.
   case noSuchDirectory
   /// The resource pack's `pack.mcmeta` is invalid.
-  case failedToReadMCMeta(Error)
+  case failedToReadMCMeta
   /// Failed to list the contents of a texture directory.
   case failedToEnumerateTextures
   /// Failed to figure out what namespaces are included in this resource pack.
   case failedToEnumerateNamespaces
   /// Failed to convert an image into a texture.
-  case failedToLoadTexture(Identifier, Error)
+  case failedToLoadTexture(Identifier)
   /// Failed to read the image for the given texture from a file.
   case failedToReadTextureImage(URL)
   /// Failed to create a `CGDataProvider` for the given image file.
@@ -23,32 +23,26 @@ enum ResourcePackError: LocalizedError {
   /// Failed to copy the vanilla assets from the extracted client jar.
   case assetCopyFailure
   /// Failed to create a dummy pack.mcmeta for the downloaded vanilla assets.
-  case failedToCreatePackMCMetaData
+  case failedToCreatePackMCMeta
   /// No client jar is available to download for the specified version.
   case noURLForVersion(String)
   /// Failed to decode a version manifest.
-  case versionManifestFailure(Error)
+  case versionManifestFailure
   /// Failed to decode the versions manifest.
-  case versionsManifestFailure(Error)
+  case versionsManifestFailure
 
   var errorDescription: String? {
     switch self {
       case .noSuchDirectory:
         return "The specified resource pack directory does not exist."
-      case .failedToReadMCMeta(let error):
-        return """
-        The resource pack's `pack.mcmeta` is invalid.
-        Reason: \(error.localizedDescription)
-        """
+      case .failedToReadMCMeta:
+        return "The resource pack's `pack.mcmeta` is invalid."
       case .failedToEnumerateTextures:
         return "Failed to list the contents of a texture directory."
       case .failedToEnumerateNamespaces:
         return "Failed to figure out what namespaces are included in this resource pack."
-      case .failedToLoadTexture(let identifier, let error):
-        return """
-        Failed to convert an image into a texture with identifier: `\(identifier.description)`.
-        Reason: \(error.localizedDescription)
-        """
+      case .failedToLoadTexture(let identifier):
+        return "Failed to convert an image into a texture with identifier: `\(identifier.description)`."
       case .failedToReadTextureImage(let url):
         return """
         Failed to read the image for the given texture from a file.
@@ -62,23 +56,17 @@ enum ResourcePackError: LocalizedError {
       case .clientJarDownloadFailure:
         return "Failed to download the specified client jar."
       case .clientJarExtractionFailure:
-        return " Failed to extract assets from a client jar."
+        return "Failed to extract assets from a client jar."
       case .assetCopyFailure:
         return "Failed to copy the vanilla assets from the extracted client jar."
-      case .failedToCreatePackMCMetaData:
-        return "Failed to create a dummy pack.mcmeta for the downloaded vanilla assets."
+      case .failedToCreatePackMCMeta:
+        return "Failed to create a dummy pack.mcmeta for the downloaded vanilla assets"
       case .noURLForVersion(let version):
         return "No client jar is available to download for version: \(version)."
-      case .versionManifestFailure(let error):
-        return """
-        Failed to decode a version manifest.
-        Reason: \(error.localizedDescription)
-        """
-      case .versionsManifestFailure(let error):
-        return """
-        Failed to decode the versions manifest.
-        Reason: \(error.localizedDescription)
-        """
+      case .versionManifestFailure:
+        return "Failed to decode a version manifest."
+      case .versionsManifestFailure:
+        return "Failed to decode the versions manifest."
     }
   }
 }
@@ -189,7 +177,7 @@ public struct ResourcePack {
 
     var resources = Resources()
     var loadedCachedResources = false
-    if let cacheDirectory = cacheDirectory {
+    if let cacheDirectory = cacheDirectory, FileManager.default.directoryExists(at: cacheDirectory) {
       do {
         resources = try loadCachedResources(cacheDirectory: cacheDirectory)
         loadedCachedResources = true
@@ -304,7 +292,7 @@ public struct ResourcePack {
       let data = try Data(contentsOf: mcMetaFile)
       mcMeta = try CustomJSONDecoder().decode(ResourcePack.PackMCMeta.self, from: data)
     } catch {
-      throw ResourcePackError.failedToReadMCMeta(error)
+      throw ResourcePackError.failedToReadMCMeta.becauseOf(error)
     }
 
     return mcMeta
@@ -336,7 +324,7 @@ public struct ResourcePack {
   // MARK: Download
 
   /// Tasks to be exectued during the `downloadVanillaAssets` process
-  private enum DownloadStep: CaseIterable, TaskStep {
+  public enum DownloadStep: CaseIterable, TaskStep {
     case fetchManifest, downloadJar, extractJar, copyingAssets, creatingMcmeta
 
     public var relativeDuration: Double { 1 }
@@ -356,66 +344,61 @@ public struct ResourcePack {
   public static func downloadVanillaAssets(
     forVersion version: String,
     to directory: URL,
-    _ onProgress: ((Double, String) -> Void)? = nil
+    progressHandler: ((TaskProgress<DownloadStep>) -> Void)? = nil
   ) throws {
-    var progress = TaskProgress<DownloadStep>()
-
-    func updateProgressStatus(step: DownloadStep) {
-      progress.update(to: step)
-      log.info(progress.message)
-      onProgress?(progress.progress, progress.message)
-    }
+    let progress = TaskProgress<DownloadStep>()
+      .onChange(action: progressHandler ?? { _ in })
+      .onChange { progress in
+        log.info(progress.message)
+      }
 
     // Get the url for the client jar
-    updateProgressStatus(step: .fetchManifest)
+    progress.update(to: .fetchManifest)
     let versionManifest = try getVersionManifest(for: version)
     let clientJarURL = versionManifest.downloads.client.url
 
     // Download the client jar
-    updateProgressStatus(step: .downloadJar)
+    progress.update(to: .downloadJar)
     let temporaryDirectory = FileManager.default.temporaryDirectory
     let clientJarTempFile = temporaryDirectory.appendingPathComponent("client.jar")
     do {
       let data = try RequestUtil.data(contentsOf: clientJarURL)
       try data.write(to: clientJarTempFile)
     } catch {
-      log.error("Failed to download client jar: \(error)")
-      throw ResourcePackError.clientJarDownloadFailure
+      throw ResourcePackError.clientJarDownloadFailure.becauseOf(error)
     }
 
     // Extract the contents of the client jar (jar files are just zip archives)
-    updateProgressStatus(step: .extractJar)
+    progress.update(to: .extractJar)
     let extractedClientJarDirectory = temporaryDirectory.appendingPathComponent("client", isDirectory: true)
     try? FileManager.default.removeItem(at: extractedClientJarDirectory)
     do {
       try FileManager.default.unzipItem(at: clientJarTempFile, to: extractedClientJarDirectory, skipCRC32: true)
     } catch {
-      log.error("Failed to extract client jar: \(error)")
-      throw ResourcePackError.clientJarExtractionFailure
+      throw ResourcePackError.clientJarExtractionFailure.becauseOf(error)
     }
 
     // Copy the assets from the extracted client jar to application support
-    updateProgressStatus(step: .copyingAssets)
+    progress.update(to: .copyingAssets)
     do {
       try FileManager.default.copyItem(
         at: extractedClientJarDirectory.appendingPathComponent("assets"),
         to: directory)
     } catch {
-      log.error("Failed to copy assets from extracted client jar: \(error)")
-      throw ResourcePackError.assetCopyFailure
+      throw ResourcePackError.assetCopyFailure.becauseOf(error)
     }
 
     // Create a default pack.mcmeta for it
-    updateProgressStatus(step: .creatingMcmeta)
+    progress.update(to: .creatingMcmeta)
     let contents = #"{"pack": {"pack_format": 5, "description": "The default vanilla assets"}}"#
     guard let data = contents.data(using: .utf8) else {
-      throw ResourcePackError.failedToCreatePackMCMetaData
+      throw ResourcePackError.failedToCreatePackMCMeta
     }
 
     do {
       try data.write(to: directory.appendingPathComponent("pack.mcmeta"))
     } catch {
-      log.error("Failed to write pack.mcmeta file to vanilla assets")
+      throw ResourcePackError.failedToCreatePackMCMeta.becauseOf(error)
     }
   }
 
@@ -428,7 +411,7 @@ public struct ResourcePack {
       let data = try RequestUtil.data(contentsOf: versionsManifestURL)
       versionsManifest = try CustomJSONDecoder().decode(VersionsManifest.self, from: data)
     } catch {
-      throw ResourcePackError.versionsManifestFailure(error)
+      throw ResourcePackError.versionsManifestFailure.becauseOf(error)
     }
 
     return versionsManifest
@@ -448,7 +431,7 @@ public struct ResourcePack {
       let data = try RequestUtil.data(contentsOf: versionURL)
       versionManifest = try CustomJSONDecoder().decode(VersionManifest.self, from: data)
     } catch {
-      throw ResourcePackError.versionManifestFailure(error)
+      throw ResourcePackError.versionManifestFailure.becauseOf(error)
     }
 
     return versionManifest
