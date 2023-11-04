@@ -44,6 +44,11 @@ struct StorageDirectory {
   /// The root of the storage directory.
   private(set) var baseDirectory: URL
 
+  /// A custom plugin directory which overrides the default plugin directory
+  /// location. Set to `nil` for ``StorageDirectory/pluginDirectory`` to go
+  /// back to the default.
+  var pluginDirectoryOverride: URL?
+
   /// The directory for assets (e.g. the vanilla resource pack).
   var assetDirectory: URL {
     baseDirectory.appendingPathComponent("assets")
@@ -56,7 +61,7 @@ struct StorageDirectory {
 
   /// The directory for user-installed plugins.
   var pluginDirectory: URL {
-    baseDirectory.appendingPathComponent("plugins")
+    pluginDirectoryOverride ?? baseDirectory.appendingPathComponent("plugins")
   }
 
   /// The directory for performance-enhancing caches.
@@ -74,9 +79,25 @@ struct StorageDirectory {
     baseDirectory.appendingPathComponent("logs")
   }
 
+  /// The current log file.
+  var currentLogFile: URL {
+    logDirectory.appendingPathComponent("delta-client.log")
+  }
+
   /// Initializes a storage directory (without guaranteeing that it exists).
   init(_ base: URL) {
     baseDirectory = base
+  }
+
+  /// Creates a unique GPU capture output file path of the form
+  /// `capture_dd-MM-yyyy_HH-mm-ss.gputrace`.
+  func uniqueGPUCaptureFile() -> URL {
+    let date = Date()
+    let formatter = DateFormatter()
+    formatter.dateFormat = "dd-MM-yyyy_HH-mm-ss"
+
+    let fileName = "capture_\(formatter.string(from: date)).gputrace"
+    return gpuCaptureDirectory.appendingPathComponent(fileName)
   }
 
   /// Creates the storage directory if it doesn't already exist.

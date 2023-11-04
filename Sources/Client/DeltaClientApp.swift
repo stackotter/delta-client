@@ -1,74 +1,17 @@
 import SwiftUI
 import DeltaCore
 
-class Modal: ObservableObject {
-  enum Content {
-    case warning(String)
-    case errorMessage(String)
-    case error(Error)
-
-    var message: String {
-      switch self {
-        case let .warning(message):
-          return message
-        case let .errorMessage(message):
-          return message
-        case let .error(error):
-          if let richError = error as? RichError {
-            return richError.richDescription
-          } else {
-            return error.localizedDescription
-          }
-      }
-    }
-  }
-
-  var isPresented: Binding<Bool> {
-    Binding {
-      self.content != nil
-    } set: { newValue in
-      if !newValue {
-        self.content = nil
-        self.dismissHandler?()
-      }
-    }
-  }
-
-  @Published var content: Content?
-  var dismissHandler: (() -> Void)?
-
-  func warning(_ message: String, onDismiss dismissHandler: (() -> Void)? = nil) {
-    log.warning(message)
-    ThreadUtil.runInMain {
-      content = .warning(message)
-      self.dismissHandler = dismissHandler
-    }
-  }
-
-  func error(_ message: String, onDismiss dismissHandler: (() -> Void)? = nil) {
-    log.error(message)
-    ThreadUtil.runInMain {
-      content = .errorMessage(message)
-      self.dismissHandler = dismissHandler
-    }
-  }
-
-  func error(_ error: Error, onDismiss dismissHandler: (() -> Void)? = nil) {
-    log.error(error.localizedDescription)
-    ThreadUtil.runInMain {
-      content = .error(error)
-      self.dismissHandler = dismissHandler
-    }
-  }
-}
-
 /// The entry-point for Delta Client.
 struct DeltaClientApp: App {
   @ObservedObject var appState = StateWrapper<AppState>(initial: .serverList)
   @ObservedObject var pluginEnvironment = PluginEnvironment()
   @ObservedObject var modal = Modal()
 
+  @State var storage: StorageDirectory?
+
   @State var hasLoaded = false
+
+  let arguments: CommandLineArguments
 
   /// A Delta Client version.
   enum Version {
@@ -92,34 +35,18 @@ struct DeltaClientApp: App {
   }
 
   init() {
-    do {
-      try enableFileLogger(loggingTo: StorageManager.default.currentLogFile)
-    } catch {
-      modal.warning("File logging disabled: failed to setup log file")
-    }
-
-    Self.handleCommandLineArguments()
+    arguments = CommandLineArguments.parseOrExit()
+    setConsoleLogLevel(arguments.logLevel)
 
     DiscordManager.shared.updateRichPresence(to: .menu)
   }
 
-  static func handleCommandLineArguments() {
-    let arguments = CommandLineArguments.parseOrExit()
-
-    if let pluginsDirectory = arguments.pluginsDirectory {
-      StorageManager.default.pluginsDirectory = pluginsDirectory
-    }
-
-    setConsoleLogLevel(arguments.logLevel)
-  }
-
   var body: some Scene {
     WindowGroup {
-      LoadAndThen($hasLoaded) { storageDirectory, resourcePack, pluginEnvironment in
+      LoadAndThen(arguments, $hasLoaded, $storage) { resourcePack, pluginEnvironment in
         RouterView(resourcePack: resourcePack)
           .environmentObject(resourcePack)
           .environmentObject(pluginEnvironment)
-          .environment(\.storage, storageDirectory)
           .onAppear {
             // TODO: Make a nice clean onboarding experience
             if ConfigManager.default.config.selectedAccount == nil {
@@ -127,6 +54,7 @@ struct DeltaClientApp: App {
             }
           }
       }
+        .environment(\.storage, storage ?? StorageDirectoryEnvironmentKey.defaultValue)
         .environmentObject(modal)
         .environmentObject(appState)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -154,7 +82,11 @@ struct DeltaClientApp: App {
       })
       CommandGroup(after: .toolbar, addition: {
         Button("Logs") {
-          NSWorkspace.shared.open(StorageManager.default.currentLogFile)
+          guard let file = storage?.currentLogFile else {
+            modal.error("File logging not enabled yet")
+            return
+          }
+          NSWorkspace.shared.open(file)
         }
       })
       CommandGroup(after: .windowSize, addition: {

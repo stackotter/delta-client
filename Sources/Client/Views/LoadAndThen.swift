@@ -3,7 +3,6 @@ import Combine
 import DeltaCore
 
 struct LoadResult {
-  var storageDirectory: StorageDirectory
   var resourcePack: Box<ResourcePack>
   var pluginEnvironment: PluginEnvironment
 }
@@ -33,13 +32,19 @@ struct LoadAndThen<Child: View>: View {
   @State var loadResult: LoadResult?
 
   @Binding var hasLoaded: Bool
-  var content: (StorageDirectory, Box<ResourcePack>, PluginEnvironment) -> Child
+  @Binding var storage: StorageDirectory?
+  let arguments: CommandLineArguments
+  var content: (Box<ResourcePack>, PluginEnvironment) -> Child
 
   init(
+    _ arguments: CommandLineArguments,
     _ hasLoaded: Binding<Bool>,
-    content: @escaping (StorageDirectory, Box<ResourcePack>, PluginEnvironment) -> Child
+    _ storage: Binding<StorageDirectory?>,
+    content: @escaping (Box<ResourcePack>, PluginEnvironment) -> Child
   ) {
-    self._hasLoaded = hasLoaded
+    self.arguments = arguments
+    _hasLoaded = hasLoaded
+    _storage = storage
     self.content = content
   }
 
@@ -58,10 +63,21 @@ struct LoadAndThen<Child: View>: View {
 
     let config = ConfigManager.default.config
 
-    guard let storage = StorageDirectory.platformDefault else {
+    guard var storage = StorageDirectory.platformDefault else {
       throw RichError("Failed to get storage directory")
     }
     try storage.ensureCreated()
+    storage.pluginDirectoryOverride = arguments.pluginsDirectory
+    self.storage = storage
+
+    // Enable file logging as there isn't really a better place to put this. Despite
+    // not being part of loading per-say, it needs to be enabled as early as possible
+    // to be maximally useful, so we can't exactly wait till a better time.
+    do {
+      try enableFileLogger(loggingTo: storage.currentLogFile)
+    } catch {
+      modal.warning("Failed to enable file logger")
+    }
 
     Task {
       await ConfigManager.default.refreshAccounts()
@@ -108,7 +124,6 @@ struct LoadAndThen<Child: View>: View {
 
     ThreadUtil.runInMain {
       loadResult = LoadResult(
-        storageDirectory: storage,
         resourcePack: Box(resourcePack),
         pluginEnvironment: pluginEnvironment
       )
@@ -119,7 +134,7 @@ struct LoadAndThen<Child: View>: View {
   var body: some View {
     VStack {
       if let loadResult = loadResult {
-        content(loadResult.storageDirectory, loadResult.resourcePack, loadResult.pluginEnvironment)
+        content(loadResult.resourcePack, loadResult.pluginEnvironment)
       } else {
         ProgressLoadingView(progress: startup.progress, message: startup.message)
       }

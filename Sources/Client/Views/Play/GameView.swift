@@ -36,6 +36,7 @@ class GameViewModel: ObservableObject {
   var renderCoordinator: RenderCoordinator
   var downloadedChunksCount = Box(0)
   var serverDescriptor: ServerDescriptor
+  var storage: StorageDirectory?
 
   var cancellables: [AnyCancellable] = []
 
@@ -50,7 +51,7 @@ class GameViewModel: ObservableObject {
     self.inputDelegate = inputDelegate
     self.renderCoordinator = renderCoordinator
     self.serverDescriptor = serverDescriptor
-    self._inputCaptured = inputCaptured
+    _inputCaptured = inputCaptured
 
     watch(state)
     watch(overlayState)
@@ -181,7 +182,12 @@ class GameViewModel: ObservableObject {
           throw generalError.error
         }
       case let event as KeyPressEvent where event.input == .performGPUFrameCapture:
-        let outputFile = StorageManager.default.getUniqueGPUCaptureFile()
+        guard let outputFile = storage?.uniqueGPUCaptureFile() else {
+          // TODO: GameViewModel as a whole is a mess, it should be created in GameView's onAppear
+          //   instead of the init so that we can access environment values and environment objects
+          //   in a much safer way.
+          return
+        }
         do {
           try renderCoordinator.captureFrames(count: 10, to: outputFile)
         } catch {

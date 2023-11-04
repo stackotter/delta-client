@@ -217,7 +217,7 @@ enum Updater {
       .appendingPathComponent("DeltaClient.app").path
       .replacingOccurrences(of: " ", with: "\\ ")
     let currentApp = Bundle.main.bundlePath.replacingOccurrences(of: " ", with: "\\ ")
-    let logFile = StorageManager.default.storageDirectory
+    let logFile = storage.baseDirectory
       .appendingPathComponent("output.log").path
       .replacingOccurrences(of: " ", with: "\\ ")
 
