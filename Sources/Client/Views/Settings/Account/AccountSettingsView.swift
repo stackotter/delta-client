@@ -20,7 +20,9 @@ struct AccountSettingsView: View {
         row: row,
         saveAction: saveAction,
         cancelAction: nil,
-        emptyMessage: "No accounts")
+        emptyMessage: "No accounts",
+        forceShowCreation: accounts.isEmpty
+      )
     }
     .navigationTitle("Accounts")
     .onAppear {

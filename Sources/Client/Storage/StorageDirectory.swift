@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import DeltaCore
 
 /// An error thrown by ``StorageDirectory``.
@@ -13,6 +14,19 @@ enum StorageDirectoryError: LocalizedError {
   }
 }
 
+struct StorageDirectoryEnvironmentKey: EnvironmentKey {
+  static let defaultValue: StorageDirectory = StorageDirectory(URL(fileURLWithPath: "."))
+}
+
+extension EnvironmentValues {
+  var storage: StorageDirectory {
+    get { self[StorageDirectoryEnvironmentKey.self] }
+    set { self[StorageDirectoryEnvironmentKey.self] = newValue }
+  }
+}
+
+// TODO: Find if there's a way to just have this as a struct (it's just immutable data, but needs
+//   to be a class).
 /// A wrapper around Delta Client's storage directory URL. Used to define a consistent structure,
 /// and house useful helper methods. Never guarantees that the described directories exist.
 struct StorageDirectory {
@@ -28,7 +42,7 @@ struct StorageDirectory {
   }
 
   /// The root of the storage directory.
-  var baseDirectory: URL
+  private(set) var baseDirectory: URL
 
   /// The directory for assets (e.g. the vanilla resource pack).
   var assetDirectory: URL {
@@ -120,5 +134,10 @@ struct StorageDirectory {
         try FileSystem.remove(item)
       }
     }
+  }
+
+  /// Removes all caches from the storage directory.
+  func removeCache() throws {
+    try FileSystem.remove(cacheDirectory)
   }
 }

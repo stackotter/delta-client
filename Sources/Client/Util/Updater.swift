@@ -2,187 +2,246 @@
 import SwiftUI
 import DeltaCore
 
+/// An error thrown by ``Updater``.
+enum UpdaterError: LocalizedError {
+  case failedToGetDownloadURL
+  case failedToGetDownloadURLFromGitHubReleases
+  case alreadyUpToDate
+  case failedToGetBranches
+  case failedToGetGitHubAPIResponse
+  case failedToDownloadUpdate
+  case failedToSaveDownload
+  case failedToUnzipUpdate
+  case failedToDeleteCache
+  case invalidReleaseURL
+  case invalidNightlyURL
+  case invalidGitHubComparisonURL
+  
+  var errorDescription: String? {
+    switch self {
+      case .failedToGetDownloadURL:
+        return "Failed to get download URL."
+      case .failedToGetDownloadURLFromGitHubReleases:
+        return "Failed to get download URL from GitHub Releases."
+      case .alreadyUpToDate:
+        return "You are already up to date."
+      case .failedToGetBranches:
+        return "Failed to get branches."
+      case .failedToGetGitHubAPIResponse:
+        return "Failed to get GitHub API response."
+      case .failedToDownloadUpdate:
+        return "Failed to download update."
+      case .failedToSaveDownload:
+        return "Failed to save download to disk."
+      case .failedToUnzipUpdate:
+        return "Failed to unzip update."
+      case .failedToDeleteCache:
+        return "Failed to delete cache."
+      case .invalidReleaseURL:
+        return "Invalid release URL."
+      case .invalidNightlyURL:
+        return "Invalid nightly URL."
+      case .invalidGitHubComparisonURL:
+        return "Invalid GitHub comparison URL."
+    }
+  }
+}
+
+/// An update to perform.
+enum Update {
+  /// Update from GitHub releases.
+  case latestRelease
+  /// Update from latest CI build.
+  case nightly(branch: String)
+
+  /// Whether the update is nightly or not.
+  var isNightly: Bool {
+    switch self {
+      case .latestRelease:
+        return false
+      case .nightly:
+        return true
+    }
+  }
+}
+
+/// A download for an update.
+struct Download {
+  /// The download's URL.
+  var url: URL
+  /// The version to display.
+  var version: String
+}
+
 /// Used to update the client to either the latest successful CI build or the latest GitHub release.
-public final class Updater: ObservableObject {
-  /// The type of update this updater will perform.
-  public var updateType: UpdateType
+enum Updater {
+  /// A step in an update. Used to track progress.
+  enum UpdateStep: TaskStep {
+    case downloadUpdate
+    case unzipUpdate
+    case unzipUpdateSecondLayer
+    case deleteCache
+    case tMinus3
+    case tMinus2
+    case tMinus1
 
-  public enum UpdateType {
-    /// Update from GitHub releases.
-    case stable
-    /// Update from latest CI build.
-    case unstable
-  }
-
-  private var progress = Progress()
-  private var queue: OperationQueue
-  private var observations: [NSKeyValueObservation] = []
-
-  // MARK: SwiftUI
-
-  @Published public var fractionCompleted: Double?
-  @Published public var stepDescription = ""
-  @Published public var version: String?
-  @Published public var canCancel = true
-  @Published public var branches = [String]()
-  @Published public var hasErrored = false
-  @Published public var error: Error?
-
-  /// The branch used for unstable updates.
-  @Published public var unstableBranch = "main"
-
-  // MARK: Init
-
-  public convenience init() {
-    self.init(.stable)
-  }
-
-  public init(_ updateType: UpdateType) {
-    self.updateType = updateType
-    queue = OperationQueue()
-    queue.name = "dev.stackotter.delta-client.update"
-    queue.maxConcurrentOperationCount = 1
-  }
-
-  // MARK: Perform update
-
-  /// Starts the requested update asynchronously.
-  public func startUpdate() {
-    reset()
-    queue.addOperation {
-      self.updateStep("Getting download URL")
-      let downloadURL: URL
-      let downloadVersion: String
-      do {
-        (downloadURL, downloadVersion) = try self.getDownloadURL(self.updateType)
-      } catch {
-        DeltaClientApp.modalError("Failed to get download URL: \(error.localizedDescription)", safeState: .serverList)
-        return
+    var message: String {
+      switch self {
+        case .downloadUpdate:
+          return "Downloading update"
+        case .unzipUpdate:
+          return "Unzipping update"
+        case .unzipUpdateSecondLayer:
+          return "Unzipping second layer of update"
+        case .deleteCache:
+          return "Deleting cache"
+        case .tMinus3:
+          return "Restarting app in 3"
+        case .tMinus2:
+          return "Restarting app in 2"
+        case .tMinus1:
+          return "Restarting app in 1"
       }
+    }
 
-      ThreadUtil.runInMain {
-        self.version = downloadVersion
+    var relativeDuration: Double {
+      switch self {
+        case .downloadUpdate:
+          return 10
+        case .unzipUpdate:
+          return 2
+        case .unzipUpdateSecondLayer:
+          return 2
+        case .deleteCache:
+          return 1
+        case .tMinus3:
+          return 1
+        case .tMinus2:
+          return 1
+        case .tMinus1:
+          return 1
       }
-
-      self.updateStep("Downloading DeltaClient.app")
-      let task = URLSession.shared.dataTask(with: downloadURL, completionHandler: self.finishUpdate)
-      self.observations.append(task.progress.observe(\.fractionCompleted, options: [.old, .new], changeHandler: self.updateFractionCompleted))
-      self.observations.append(self.progress.observe(\.fractionCompleted, options: [.old, .new], changeHandler: self.updateFractionCompleted))
-      task.resume()
     }
   }
 
-  /// The completion handler for the download task. Unzips the downloaded file and performs the swap and restart.
-  private func finishUpdate(_ data: Data?, _ response: URLResponse?, _ error: Error?) {
+  /// Performs a given update. Once the update's version string is known, `displayVersion`
+  /// is updated (allowing a UI to display the version before the update has finished).
+  /// `storage` is used to delete the cache before restarting the app.
+  ///
+  /// Never returns (unless an error occurs) because it restarts the app to allow the
+  /// update to take effect.
+  static func performUpdate(download: Download, isNightly: Bool, storage: StorageDirectory, progress: TaskProgress<UpdateStep>? = nil) async throws -> Never {
+    let progress = progress ?? TaskProgress()
+    // Download the release
+    let data = try await progress.perform(.downloadUpdate) { observeStepProgress in
+      try await withCheckedThrowingContinuation { continuation in
+        let task = URLSession.shared.dataTask(with: download.url) { data, response, error in
+          if let data = data {
+          continuation.resume(returning: data)
+          } else {
+            var richError: any LocalizedError = UpdaterError.failedToDownloadUpdate
+            if let error = error {
+              richError = richError.becauseOf(error)
+            }
+            continuation.resume(throwing: richError)
+          }
+        }
+        observeStepProgress(task.progress)
+        task.resume()
+      }
+    }
+
+    try Task.checkCancellation()
+
     let temp = FileManager.default.temporaryDirectory
     let zipFile = temp.appendingPathComponent("DeltaClient.zip")
-    let temp2 = temp.appendingPathComponent("DeltaClient-\(UUID().uuidString)")
+    let outputDirectory = temp.appendingPathComponent("DeltaClient-\(UUID().uuidString)")
 
-    queue.addOperation {
-      if let data = data {
-        do {
-          try data.write(to: zipFile)
-        } catch {
-          DeltaClientApp.modalError("Failed to write download to disk; \(error)", safeState: .serverList)
-        }
-      }
+    do {
+      try data.write(to: zipFile)
+    } catch {
+      throw UpdaterError.failedToSaveDownload.becauseOf(error)
     }
 
-    queue.addOperation {
-      self.updateStep("Unzipping DeltaClient.zip")
-      self.progress.completedUnitCount = 0
+    try Task.checkCancellation()
 
-      let queue = self.queue
+    try await progress.perform(.unzipUpdate) { observeStepProgress in
       do {
-        try FileManager.default.unzipItem(at: zipFile, to: temp2, skipCRC32: true, progress: self.progress)
-
-        if self.updateType == .unstable {
-          // Builds downloaded from workflow runs (through nightly.link) have two layers of zip
-          self.updateStep("Unzipping a second layer of zip")
-          self.progress.completedUnitCount = 0
-          try FileManager.default.unzipItem(at: temp2.appendingPathComponent("DeltaClient.zip"), to: temp2, skipCRC32: true, progress: self.progress)
-        }
+        let progress = Progress()
+        observeStepProgress(progress)
+        try FileManager.default.unzipItem(at: zipFile, to: outputDirectory, skipCRC32: true, progress: progress)
       } catch {
-        // Just a workaround because somehow this job unsuspends as when the a subsequent update attempt writes to DeltaClient.zip
-        if !queue.isSuspended {
-          DeltaClientApp.modalError("Failed to unzip DeltaClient.zip; \(error)", safeState: .serverList)
-        }
+        throw UpdaterError.failedToUnzipUpdate.becauseOf(error)
       }
     }
 
-    // Delete the cache to avoid common issues when updating
-    queue.addOperation {
-      let queue = self.queue
-      self.updateStep("Deleting cache")
-      sleep(1) // Delay so people have a chance of seeing the message
+    try Task.checkCancellation()
+
+    // Nightly builds have two layers of zip for whatever reason
+    try await progress.perform(.unzipUpdateSecondLayer, if: isNightly) { observeStepProgress in
+      let progress = Progress()
+      observeStepProgress(progress)
+
+      try FileManager.default.unzipItem(
+        at: outputDirectory.appendingPathComponent("DeltaClient.zip"),
+        to: outputDirectory,
+        skipCRC32: true,
+        progress: progress
+      )
+    }
+
+    try Task.checkCancellation()
+
+    // Delete the cache to avoid common issues which can occur after updating
+    try progress.perform(.deleteCache) {
       do {
-        try FileManager.default.removeItem(at: StorageManager.default.cacheDirectory)
+        try FileSystem.remove(storage.cacheDirectory)
       } catch {
-        if !queue.isSuspended {
-          DeltaClientApp.modalError("Failed to delete cache directory; \(error)", safeState: .serverList)
-        }
+        throw UpdaterError.failedToDeleteCache.becauseOf(error)
       }
     }
 
-    queue.addOperation {
-      self.updateStep("Restarting app in 3")
-      sleep(1)
-      self.updateStep("Restarting app in 2")
-      sleep(1)
-      self.updateStep("Restarting app in 1")
-      sleep(1)
-    }
+    try Task.checkCancellation()
+    progress.update(to: .tMinus3)
+    try await Task.sleep(nanoseconds: 1_000_000_000)
+    try Task.checkCancellation()
+    progress.update(to: .tMinus2)
+    try await Task.sleep(nanoseconds: 1_000_000_000)
+    try Task.checkCancellation()
+    progress.update(to: .tMinus1)
+    try await Task.sleep(nanoseconds: 1_000_000_000)
+    try Task.checkCancellation()
 
     // Create a background task to replace the app and relaunch
-    queue.addOperation {
-      ThreadUtil.runInMain {
-        self.canCancel = false
-      }
-    }
+    let newApp = outputDirectory
+      .appendingPathComponent("DeltaClient.app").path
+      .replacingOccurrences(of: " ", with: "\\ ")
+    let currentApp = Bundle.main.bundlePath.replacingOccurrences(of: " ", with: "\\ ")
+    let logFile = StorageManager.default.storageDirectory
+      .appendingPathComponent("output.log").path
+      .replacingOccurrences(of: " ", with: "\\ ")
 
-    queue.addOperation {
-      let newApp = temp2.appendingPathComponent("DeltaClient.app").path.replacingOccurrences(of: " ", with: "\\ ")
-      let currentApp = Bundle.main.bundlePath.replacingOccurrences(of: " ", with: "\\ ")
-      if !self.queue.isSuspended {
-        let logFile = StorageManager.default.storageDirectory
-          .appendingPathComponent("output.log").path
-          .replacingOccurrences(of: " ", with: "\\ ")
+    // TODO: Refactor to avoid potential for command injection attacks (relatively low impact anyway,
+    //   Delta Client doesn't run with elevated privileges, and this requires user interaction).
+    Utils.shell(
+      #"nohup sh -c 'sleep 3; rm -rf \#(currentApp); mv \#(newApp) \#(currentApp); open \#(currentApp); open \#(currentApp)' >\#(logFile) 2>&1 &"#
+    )
 
-        Utils.shell(
-          #"nohup sh -c 'sleep 3; rm -rf \#(currentApp); mv \#(newApp) \#(currentApp); open \#(currentApp); open \#(currentApp)' >\#(logFile) 2>&1 &"#
-        )
+    Foundation.exit(0)
+  }
 
-        Foundation.exit(0)
-      }
+  /// Gets the download for a given update.
+  static func getDownload(for update: Update) throws -> Download {
+    switch update {
+      case .latestRelease:
+        return try getLatestReleaseDownload()
+      case .nightly(let branch):
+        return try getLatestNightlyDownload(branch: branch)
     }
   }
 
-  /// Cancels the update if `canCancel` is true.
-  public func cancel() {
-    queue.cancelAllOperations()
-    queue.isSuspended = true
-    for observation in observations {
-      observation.invalidate()
-    }
-    observations = []
-  }
-
-  // MARK: Helper
-
-  /// - Returns: A download URL and a version string
-  public func getDownloadURL(_ type: UpdateType) throws -> (URL, String) {
-    switch type {
-      case .stable:
-        return try Self.getLatestStableDownloadURL()
-      case .unstable:
-        return try Self.getLatestUnstableDownloadURL(branch: unstableBranch)
-    }
-  }
-
-  /// Get the download URL for the latest GitHub release.
-  ///
-  /// - Returns: A download URL and a version string
-  private static func getLatestStableDownloadURL() throws -> (URL, String) {
+  /// Gets the download for the latest GitHub release.
+  static func getLatestReleaseDownload() throws -> Download {
     var decoder = CustomJSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
 
@@ -194,126 +253,77 @@ public final class Updater: ObservableObject {
       data = try Data(contentsOf: apiURL)
       response = try decoder.decode([GitHubReleasesAPIResponse].self, from: data)
     } catch {
-      throw UpdateError.failedToGetGitHubAPIResponse(error)
+      throw UpdaterError.failedToGetGitHubAPIResponse.becauseOf(error)
     }
 
     guard
       let tagName = response.first?.tagName,
-      let downloadUrl = response.first?.assets.first?.browserDownloadUrl
+      let downloadURL = response.first?.assets.first?.browserDownloadURL
     else {
-      throw UpdateError.failedToGetDownloadURLFromGitHubReleases
+      throw UpdaterError.failedToGetDownloadURLFromGitHubReleases
     }
 
-    let url = URL(string: downloadUrl)!
-    return (url, tagName)
+    guard let url = URL(string: downloadURL) else {
+      throw UpdaterError.invalidReleaseURL.with("URL", downloadURL)
+    }
+    return Download(url: url, version: tagName)
   }
 
-  /// Get the download URL for the artifact uploaded by the latest successful GitHub action run.
-  ///
-  /// - Returns: A download URL
-  private static func getLatestUnstableDownloadURL(branch: String) throws -> (URL, String) {
+  /// Gets the download for the artifact uploaded by the latest successful GitHub action run
+  /// on a given branch.
+  static func getLatestNightlyDownload(branch: String) throws -> Download {
     let branches = try getBranches()
     guard let commit = (branches.filter { $0.name == branch }.first?.commit) else {
-      throw UpdateError.failedToGetDownloadURL
+      throw UpdaterError.failedToGetDownloadURL.with("Reason", "Branch '\(branch)' doesn't exist.")
     }
-    let hash = commit.sha.prefix(7)
 
-    if let currentVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
-      if let range = currentVersionString.range(of: "commit: ") {
-        let currentCommit = currentVersionString[range.upperBound...]
-        if currentCommit == commit.sha {
-          throw UpdateError.alreadyUpToDate(currentCommit)
-        }
+    if case let .commit(currentCommit) = DeltaClientApp.version {
+      guard currentCommit != commit.sha else {
+        throw UpdaterError.alreadyUpToDate.with("Current commit", currentCommit)
       }
     }
 
-    let url = URL(string: "https://backend.deltaclient.app/download/\(branch)/latest/DeltaClient.app.zip")!
-    return (url, "commit \(hash) (latest)")
+    let hash = commit.sha.prefix(7)
+    let url = "https://backend.deltaclient.app/download/\(branch)/latest/DeltaClient.app.zip"
+    guard let url = URL(string: url) else {
+      throw UpdaterError.invalidNightlyURL.with("URL", url)
+    }
+
+    return Download(url: url, version: "commit \(hash) (latest)")
   }
 
-  private static func getBranches() throws -> [GitHubBranch] {
+  /// Gets basic information about all branches of the Delta Client GitHub repository.
+  static func getBranches() throws -> [GitHubBranch] {
     let url = URL(string: "https://api.github.com/repos/stackotter/delta-client/branches")!
     do {
       let data = try Data(contentsOf: url)
       let response = try CustomJSONDecoder().decode([GitHubBranch].self, from: data)
       return response
     } catch {
-      throw UpdateError.failedToGetBranches(error)
+      throw UpdaterError.failedToGetBranches.becauseOf(error)
     }
   }
 
-  public func loadUnstableBranches() {
-    queue.addOperation {
-      self.hasErrored = false
-      do {
-        // Remove duplicates but maintain order
-        var seen = Set<String>()
-        let branches = try Self.getBranches()
-          .map(\.name)
-          .filter { seen.insert($0).inserted }
-
-        ThreadUtil.runInMain {
-          self.branches = branches
-          self.hasErrored = false
-        }
-      } catch {
-        ThreadUtil.runInMain {
-          self.hasErrored = true
-          log.debug("\(error)")
-          self.error = error
-        }
-      }
+  /// Compares two gitrefs in the Delta Client GitHub repository.
+  static func compareGitRefs(_ first: String, _ second: String) throws -> GitHubComparison.Status {
+    let url = "https://api.github.com/repos/stackotter/delta-client/compare/\(first)...\(second)"
+    guard let url = URL(string: url) else {
+      throw UpdaterError.invalidGitHubComparisonURL.with("URL", url)
     }
+    let data = try Data(contentsOf: url)
+    return try CustomJSONDecoder().decode(GitHubComparison.self, from: data).status
   }
   
-  /// Check if a commit (by its SHA) exists on a given branch.
-  /// - Returns: If the commit exists on the branch
-  private static func getBranchComparisonStatus(commit: String, branch: String) -> GitHubComparison.Status? {
-    let url = URL(string: "https://api.github.com/repos/stackotter/delta-client/compare/\(branch)...\(commit)")!
-    if let data = try? Data(contentsOf: url) {
-      return try? CustomJSONDecoder().decode(GitHubComparison.self, from: data).status
+  /// Checks if the user is on the main branch and a newer commit is available.
+  static func isUpdateAvailable() throws -> Bool {
+    let currentVersion = DeltaClientApp.version
+    guard case let .commit(commit) = currentVersion else {
+      return false
     }
-    return nil
-  }
-  
-  /// If the current version is on the main branch, check if a newer commit is available.
-  /// - Returns: Whether or not an "unstable" update is available from the main branch.
-  static func isUpdateAvailable() -> Bool {
-    if let currentVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
-      if let range = currentVersionString.range(of: "commit: ") {
-        // Check if this current version is from the main branch and behind the HEAD
-        if getBranchComparisonStatus(commit: String(currentVersionString[range.upperBound...]), branch: "main") == .behind {
-          return true
-        }
-      }
-    }
-    return false
-  }
 
-  /// Resets the updater back to its initial state
-  private func reset() {
-    ThreadUtil.runInMain {
-      stepDescription = ""
-      fractionCompleted = nil
-      version = nil
-      canCancel = true
-      queue = OperationQueue()
-      queue.name = "dev.stackotter.delta-client.update"
-      queue.maxConcurrentOperationCount = 1
-      progress = Progress()
-    }
-  }
-
-  private func updateFractionCompleted(_ progress: Progress, _ change: NSKeyValueObservedChange<Double>) {
-    ThreadUtil.runInMain {
-      fractionCompleted = change.newValue ?? 0
-    }
-  }
-
-  private func updateStep(_ name: String) {
-    ThreadUtil.runInMain {
-      stepDescription = name
-    }
+    // TODO: When releases are supported again, check for newer releases if the user if on a release build.
+    let status = try compareGitRefs(commit, "main")
+    return status == .behind
   }
 }
 #endif

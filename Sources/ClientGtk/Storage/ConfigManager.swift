@@ -46,7 +46,8 @@ public final class ConfigManager {
         data = try JSONEncoder().encode(_config)
         FileManager.default.createFile(atPath: configFile.path, contents: data, attributes: nil)
       } catch {
-        DeltaClientApp.fatal("Failed to encode config: \(error)")
+        // TODO: Proper error handling for ConfigManager
+        // DeltaClientApp.fatal("Failed to encode config: \(error)")
       }
       return
     }
@@ -65,7 +66,7 @@ public final class ConfigManager {
         data = try JSONEncoder().encode(_config)
         FileManager.default.createFile(atPath: configFile.path, contents: data, attributes: nil)
       } catch {
-        DeltaClientApp.fatal("Failed to encode config: \(error)")
+        // DeltaClientApp.fatal("Failed to encode config: \(error)")
       }
     }
     coreConfiguration = CoreConfiguration(_config)

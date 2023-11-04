@@ -2,8 +2,21 @@ import SwiftUI
 import DeltaCore
 
 #if os(macOS)
+enum PluginSettingsViewError: LocalizedError {
+  case failedToLoadPlugin(identifier: String)
+
+  var errorDescription: String? {
+    switch self {
+      case let .failedToLoadPlugin(identifier):
+        return "Failed to load plugin '\(identifier)'"
+    }
+  }
+}
+
 struct PluginSettingsView: View {
   @EnvironmentObject var pluginEnvironment: PluginEnvironment
+  @EnvironmentObject var modal: Modal
+  @Environment(\.storage) var storage: StorageDirectory
   
   func updateConfig() {
     var config = ConfigManager.default.config
@@ -48,10 +61,10 @@ struct PluginSettingsView: View {
                 Button("Load") {
                   do {
                     try pluginEnvironment.loadPlugin(from: plugin.bundle)
+                    updateConfig()
                   } catch {
-                    DeltaClientApp.modalError("Failed to load plugin '\(identifier)': \(error)")
+                    modal.error(PluginSettingsViewError.failedToLoadPlugin(identifier: identifier).becauseOf(error))
                   }
-                  updateConfig()
                 }
               }
             }
@@ -91,11 +104,11 @@ struct PluginSettingsView: View {
           updateConfig()
         }
         Button("Reload all") {
-          pluginEnvironment.reloadAll(StorageManager.default.pluginsDirectory)
+          pluginEnvironment.reloadAll(storage.pluginDirectory)
           updateConfig()
         }
         Button("Open plugins directory") {
-          NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: StorageManager.default.pluginsDirectory.path)
+          NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: storage.pluginDirectory.path)
         }
       }
     }

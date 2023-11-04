@@ -2,79 +2,38 @@ import Foundation
 
 public enum MicrosoftAPIError: LocalizedError {
   case noUserHashInResponse
-  case failedToSerializeRequest
-  case failedToDeserializeResponse(Error, String)
-  case xstsAuthenticationFailed(XSTSAuthenticationError)
+  case failedToDeserializeResponse
+  case xstsAuthenticationFailed
   case expiredAccessToken
-
-  case failedToGetOAuthCodeFromURL(URL)
-  case failedToGetMicrosoftAccessToken(Error)
-  case failedToGetXboxLiveToken(Error)
-  case failedToGetXSTSToken(Error)
-  case failedToGetMinecraftAccessToken(Error)
-  case failedToGetAttachedLicenses(Error)
+  case failedToGetXboxLiveToken
+  case failedToGetXSTSToken
+  case failedToGetMinecraftAccessToken
+  case failedToGetAttachedLicenses
   case accountDoesntOwnMinecraft
-  case failedToGetMinecraftAccount(Error)
+  case failedToGetMinecraftAccount
 
   public var errorDescription: String? {
     switch self {
       case .noUserHashInResponse:
         return "No user hash in response."
-      case .failedToSerializeRequest:
-        return "Failed to serialize request."
-      case .failedToDeserializeResponse(let error, let string):
-        return """
-        Failed to deserialize response.
-        Reason: \(error.localizedDescription)
-        Data: \(string)
-        """
-      case .xstsAuthenticationFailed(let xstsAuthenticationError):
-        return """
-        XSTS authentication failed.
-        Code: \(xstsAuthenticationError.code)
-        Identity: \(xstsAuthenticationError.identity)
-        Message: \(xstsAuthenticationError.message)
-        Redirect: \(xstsAuthenticationError.redirect)
-        """
+      case .failedToDeserializeResponse:
+        return "Failed to deserialize response."
+      case .xstsAuthenticationFailed:
+        return "XSTS authentication failed."
       case .expiredAccessToken:
         return "Expired access token."
-      case .failedToGetOAuthCodeFromURL(let url):
-        return """
-        Failed to get OAuth code from URL.
-        URL: \(url.absoluteString)
-        """
-      case .failedToGetMicrosoftAccessToken(let error):
-        return """
-        Failed to get microsoft access token.
-        Reason: \(error.localizedDescription)
-        """
-      case .failedToGetXboxLiveToken(let error):
-        return """
-        Failed to get Xbox Live token.
-        Reason: \(error.localizedDescription)
-        """
-      case .failedToGetXSTSToken(let error):
-        return """
-        Failed to get XSTS token.
-        Reason: \(error.localizedDescription)
-        """
-      case .failedToGetMinecraftAccessToken(let error):
-        return """
-        Failed to get Minecraft access token.
-        Reason: \(error.localizedDescription)
-        """
-      case .failedToGetAttachedLicenses(let error):
-        return """
-        Failed to get attached licenses.
-        Reason: \(error.localizedDescription)
-        """
+      case .failedToGetXboxLiveToken:
+        return "Failed to get Xbox Live token."
+      case .failedToGetXSTSToken:
+        return "Failed to get XSTS token."
+      case .failedToGetMinecraftAccessToken:
+        return "Failed to get Minecraft access token."
+      case .failedToGetAttachedLicenses:
+        return "Failed to get attached licenses."
       case .accountDoesntOwnMinecraft:
         return "Account doesnt own Minecraft."
-      case .failedToGetMinecraftAccount(let error):
-        return """
-        Failed to get Minecraft account.
-        Reason: \(error.localizedDescription)
-        """
+      case .failedToGetMinecraftAccount:
+        return "Failed to get Minecraft account."
     }
   }
 }
@@ -193,7 +152,7 @@ public enum MicrosoftAPI {
     do {
       xboxLiveToken = try await MicrosoftAPI.getXBoxLiveToken(microsoftAccessToken)
     } catch {
-      throw MicrosoftAPIError.failedToGetXboxLiveToken(error)
+      throw MicrosoftAPIError.failedToGetXboxLiveToken.becauseOf(error)
     }
 
     // Get XSTS token
@@ -201,7 +160,7 @@ public enum MicrosoftAPI {
     do {
       xstsToken = try await MicrosoftAPI.getXSTSToken(xboxLiveToken)
     } catch {
-      throw MicrosoftAPIError.failedToGetXSTSToken(error)
+      throw MicrosoftAPIError.failedToGetXSTSToken.becauseOf(error)
     }
 
     // Get Minecraft access token
@@ -209,7 +168,7 @@ public enum MicrosoftAPI {
     do {
       minecraftAccessToken = try await MicrosoftAPI.getMinecraftAccessToken(xstsToken, xboxLiveToken)
     } catch {
-      throw MicrosoftAPIError.failedToGetMinecraftAccessToken(error)
+      throw MicrosoftAPIError.failedToGetMinecraftAccessToken.becauseOf(error)
     }
 
     // Get a list of the user's licenses
@@ -217,7 +176,7 @@ public enum MicrosoftAPI {
     do {
       licenses = try await MicrosoftAPI.getAttachedLicenses(minecraftAccessToken)
     } catch {
-      throw MicrosoftAPIError.failedToGetAttachedLicenses(error)
+      throw MicrosoftAPIError.failedToGetAttachedLicenses.becauseOf(error)
     }
 
     if licenses.isEmpty {
@@ -229,7 +188,7 @@ public enum MicrosoftAPI {
     do {
       account = try await MicrosoftAPI.getMinecraftAccount(minecraftAccessToken, microsoftAccessToken)
     } catch {
-      throw MicrosoftAPIError.failedToGetMinecraftAccount(error)
+      throw MicrosoftAPIError.failedToGetMinecraftAccount.becauseOf(error)
     }
 
     return account
@@ -339,10 +298,26 @@ public enum MicrosoftAPI {
       do {
         error = try decodeResponse(data)
       } catch {
-        throw MicrosoftAPIError.failedToDeserializeResponse(error, String(decoding: data, as: UTF8.self))
+        throw MicrosoftAPIError.failedToDeserializeResponse
+          .with("Content", String(decoding: data, as: UTF8.self))
+          .becauseOf(error)
       }
 
-      throw MicrosoftAPIError.xstsAuthenticationFailed(error)
+      // Decode Microsoft's cryptic error codes
+      let message: String
+      switch error.code {
+        case 2148916233:
+          message = "This Microsoft account does not have an attached Xbox Live account (\(error.redirect))"
+        case 2148916238:
+          message = "Child accounts must first be added to a family (\(error.redirect))"
+        default:
+          message = error.message
+      }
+
+      throw MicrosoftAPIError.xstsAuthenticationFailed
+        .with("Reason", message)
+        .with("Code", error.code)
+        .with("Identity", error.identity)
     }
 
     return response.token
@@ -396,7 +371,9 @@ public enum MicrosoftAPI {
     do {
       return try CustomJSONDecoder().decode(Response.self, from: data)
     } catch {
-      throw MicrosoftAPIError.failedToDeserializeResponse(error, String(decoding: data, as: UTF8.self))
+      throw MicrosoftAPIError.failedToDeserializeResponse
+        .with("Content", String(decoding: data, as: UTF8.self))
+        .becauseOf(error)
     }
   }
 }

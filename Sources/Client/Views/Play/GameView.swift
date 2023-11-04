@@ -52,13 +52,20 @@ class GameViewModel: ObservableObject {
     self.serverDescriptor = serverDescriptor
     self._inputCaptured = inputCaptured
 
-    client.eventBus.registerHandler { [weak self] event in
-      guard let self = self else { return }
-      self.handleClientEvent(event)
-    }
-
     watch(state)
     watch(overlayState)
+  }
+
+  func registerEventHandler(using modal: Modal, appState: StateWrapper<AppState>) {
+    client.eventBus.registerHandler { [weak self] event in
+      guard let self = self else { return }
+      do {
+        try self.handleClientEvent(event)
+      } catch {
+        modal.error(error)
+        appState.update(to: .serverList)
+      }
+    }
   }
 
   func watch<T: ObservableObject>(_ value: T) {
@@ -77,43 +84,70 @@ class GameViewModel: ObservableObject {
     }
   }
 
-  func joinServer(_ descriptor: ServerDescriptor) {
-    // Get the account to use
-    guard let account = ConfigManager.default.config.selectedAccount else {
-      log.error("Error, attempted to join server without a selected account.")
-      DeltaClientApp.modalError("Please login and select an account before joining a server", safeState: .accounts)
-      return
-    }
+  enum GameViewError: LocalizedError {
+    case noAccountSelected
+    case failedToRefreshAccount
+    case failedToSendJoinServerRequest
+    case connectionFailed
+    case disconnectedDuringLogin
+    case disconnectedDuringPlay
+    case failedToDecodePacket
+    case failedToHandlePacket
+    case failedToStartFrameCapture
 
-    // Refresh the account (if it's an online account) and then join the server
-    Task {
-      let refreshedAccount: Account
-      do {
-        refreshedAccount = try await ConfigManager.default.getRefreshedAccount()
-      } catch {
-        let message = "Failed to refresh account '\(account.username)': \(error)"
-        log.error(message)
-        DeltaClientApp.modalError(message, safeState: .serverList)
-        return
-      }
-
-      do {
-        try self.client.joinServer(
-          describedBy: descriptor,
-          with: refreshedAccount)
-      } catch {
-        let message = "Failed to send join server request: \(error)"
-        log.error(message)
-        DeltaClientApp.modalError(message, safeState: .serverList)
+    var errorDescription: String? {
+      switch self {
+        case .noAccountSelected:
+          return "Please login and select an account before joining a server."
+        case .failedToRefreshAccount:
+          return "Failed to refresh account."
+        case .failedToSendJoinServerRequest:
+          return "Failed to send join server request."
+        case .connectionFailed:
+          return "Failed to connect to server."
+        case .disconnectedDuringLogin:
+          return "Disconnected from server during login."
+        case .disconnectedDuringPlay:
+          return "Disconnected from server during play."
+        case .failedToDecodePacket:
+          return "Failed to decode packet."
+        case .failedToHandlePacket:
+          return "Failed to handle packet."
+        case .failedToStartFrameCapture:
+          return "Failed to start frame capture."
       }
     }
   }
 
-  func handleClientEvent(_ event: Event) {
+  func joinServer(_ descriptor: ServerDescriptor) async throws {
+    // Get the account to use
+    guard let account = ConfigManager.default.config.selectedAccount else {
+      throw GameViewError.noAccountSelected
+    }
+
+    // Refresh the account (if it's an online account) and then join the server
+    let refreshedAccount: Account
+    do {
+      refreshedAccount = try await ConfigManager.default.getRefreshedAccount()
+    } catch {
+      throw GameViewError.failedToRefreshAccount
+        .with("Username", account.username)
+        .becauseOf(error)
+    }
+
+    do {
+      try self.client.joinServer(
+        describedBy: descriptor,
+        with: refreshedAccount)
+    } catch {
+      throw GameViewError.failedToSendJoinServerRequest.becauseOf(error)
+    }
+  }
+
+  func handleClientEvent(_ event: Event) throws {
     switch event {
       case let connectionFailedEvent as ConnectionFailedEvent:
-        let serverName = serverDescriptor.host + (serverDescriptor.port != nil ? (":" + String(serverDescriptor.port!)) : "")
-        DeltaClientApp.modalError("Connection to \(serverName) failed: \(connectionFailedEvent.networkError)", safeState: .serverList)
+        throw GameViewError.connectionFailed.with("Address", serverDescriptor).becauseOf(connectionFailedEvent.networkError)
       case _ as LoginStartEvent:
         state.update(to: .loggingIn)
       case _ as JoinWorldEvent:
@@ -133,31 +167,25 @@ class GameViewModel: ObservableObject {
       case _ as TerrainDownloadCompletionEvent:
         state.update(to: .playing)
       case let disconnectEvent as PlayDisconnectEvent:
-        DeltaClientApp.modalError("Disconnected from server during play:\n\n\(disconnectEvent.reason)", safeState: .serverList)
+        throw GameViewError.disconnectedDuringPlay.with("Reason", disconnectEvent.reason)
       case let disconnectEvent as LoginDisconnectEvent:
-        DeltaClientApp.modalError("Disconnected from server during login:\n\n\(disconnectEvent.reason)", safeState: .serverList)
+        throw GameViewError.disconnectedDuringLogin.with("Reason", disconnectEvent.reason)
       case let packetError as PacketHandlingErrorEvent:
-        DeltaClientApp.modalError(
-          "Failed to handle packet with id 0x\(String(packetError.packetId, radix: 16)):\n\n\(packetError.error)",
-          safeState: .serverList
-        )
+        throw GameViewError.failedToHandlePacket.with("Id", packetError.packetId.hexWithPrefix).with("Reason", packetError.error)
       case let packetError as PacketDecodingErrorEvent:
-        DeltaClientApp.modalError(
-          "Failed to decode packet with id 0x\(String(packetError.packetId, radix: 16)):\n\n\(packetError.error)",
-          safeState: .serverList
-        )
+        throw GameViewError.failedToDecodePacket.with("Id", packetError.packetId.hexWithPrefix).with("Reason", packetError.error)
       case let generalError as ErrorEvent:
         if let message = generalError.message {
-          DeltaClientApp.modalError("\(message); \(generalError.error)")
+          throw RichError(message).becauseOf(generalError.error)
         } else {
-          DeltaClientApp.modalError("\(generalError.error)")
+          throw generalError.error
         }
       case let event as KeyPressEvent where event.input == .performGPUFrameCapture:
         let outputFile = StorageManager.default.getUniqueGPUCaptureFile()
         do {
           try renderCoordinator.captureFrames(count: 10, to: outputFile)
         } catch {
-          DeltaClientApp.modalError("Failed to start frame capture: \(error)", safeState: .serverList)
+          throw GameViewError.failedToStartFrameCapture.becauseOf(error)
         }
       case _ as OpenInGameMenuEvent:
         inputDelegate.releaseCursor()
@@ -179,16 +207,27 @@ class GameViewModel: ObservableObject {
 
 struct GameView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
+  @EnvironmentObject var modal: Modal
+  @EnvironmentObject var pluginEnvironment: PluginEnvironment
 
   @ObservedObject var model: GameViewModel
 
+  let serverDescriptor: ServerDescriptor
+
   init(
     serverDescriptor: ServerDescriptor,
-    resourcePack: ResourcePack,
+    resourcePack: Box<ResourcePack>,
     inputCaptureEnabled: Binding<Bool>,
     delegateSetter setDelegate: (InputDelegate) -> Void
   ) {
-    let client = Client(resourcePack: resourcePack, configuration: ConfigManager.default.coreConfiguration)
+    self.serverDescriptor = serverDescriptor
+
+    // TODO: Update the flow of the game view so that we don't have to create a dummy
+    //   resource pack.
+    let client = Client(
+      resourcePack: resourcePack.value,
+      configuration: ConfigManager.default.coreConfiguration
+    )
 
     // Setup input system
     let inputDelegate = ClientInputDelegate(for: client)
@@ -204,13 +243,6 @@ struct GameView: View {
       serverDescriptor: serverDescriptor,
       inputCaptured: inputCaptureEnabled
     )
-
-    // Setup plugins
-    DeltaClientApp.pluginEnvironment.addEventBus(client.eventBus)
-    DeltaClientApp.pluginEnvironment.handleWillJoinServer(server: serverDescriptor, client: client)
-
-    // Connect to server
-    model.joinServer(serverDescriptor)
   }
 
   var body: some View {
@@ -258,6 +290,23 @@ struct GameView: View {
               }.buttonStyle(PrimaryButtonStyle())
             }.frame(width: 200)
           }
+      }
+    }
+    .onAppear {
+      // Setup plugins
+      pluginEnvironment.addEventBus(model.client.eventBus)
+      pluginEnvironment.handleWillJoinServer(server: serverDescriptor, client: model.client)
+
+      model.registerEventHandler(using: modal, appState: appState)
+
+      // Connect to server
+      Task {
+        do {
+          try await model.joinServer(serverDescriptor)
+        } catch {
+          modal.error(error)
+          appState.update(to: .serverList)
+        }
       }
     }
     .onDisappear {

@@ -48,7 +48,8 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
     ) -> Row,
     saveAction: (() -> Void)?,
     cancelAction: (() -> Void)?,
-    emptyMessage: String = "No items"
+    emptyMessage: String = "No items",
+    forceShowCreation: Bool = false
   ) {
     self._items = items
     self._selected = selected
@@ -57,6 +58,10 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
     self.emptyMessage = emptyMessage
     save = saveAction
     cancel = cancelAction
+
+    if forceShowCreation {
+      state.update(to: .addItem)
+    }
   }
 
   func handleItemAction(_ index: Int, _ action: EditableListAction) {

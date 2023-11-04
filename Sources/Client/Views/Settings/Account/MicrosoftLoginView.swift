@@ -1,11 +1,19 @@
 import SwiftUI
 import DeltaCore
 
-#if os(macOS)
-import AppKit
-#elseif os(iOS)
-import UIKit
-#endif
+enum MicrosoftLoginViewError: LocalizedError {
+  case failedToAuthorizeDevice
+  case failedToAuthenticate
+
+  var errorDescription: String? {
+    switch self {
+      case .failedToAuthorizeDevice:
+        return "Failed to authorize device."
+      case .failedToAuthenticate:
+        return "Failed to authenticate Microsoft account."
+    }
+  }
+}
 
 enum MicrosoftState {
   case authorizingDevice
@@ -14,10 +22,13 @@ enum MicrosoftState {
 }
 
 struct MicrosoftLoginView: View {
+  @EnvironmentObject var modal: Modal
+  @EnvironmentObject var appState: StateWrapper<AppState>
+  
   @ObservedObject var loginViewState: StateWrapper<LoginViewState>
-  var completionHandler: (Account) -> Void
+  @StateObject var state = StateWrapper<MicrosoftState>(initial: .authorizingDevice)
 
-  @StateObject private var state = StateWrapper<MicrosoftState>(initial: .authorizingDevice)
+  var completionHandler: (Account) -> Void
 
   var body: some View {
     VStack {
@@ -26,17 +37,12 @@ struct MicrosoftLoginView: View {
           Text("Fetching device authorization code")
         case .login(let response):
           Text(response.message)
+
           Link("Open in browser", destination: response.verificationURI)
             .padding(10)
+
           Button("Copy code") {
-            #if os(macOS)
-            NSPasteboard.general.clearContents()
-            NSPasteboard.general.setString(response.userCode, forType: .string)
-            #elseif os(iOS)
-            UIPasteboard.general.string = response.userCode
-            #else
-            #error("Unsupported platform, unknown clipboard implementation")
-            #endif
+            Clipboard.copy(response.userCode)
           }
           .buttonStyle(PrimaryButtonStyle())
           .frame(width: 200)
@@ -46,7 +52,7 @@ struct MicrosoftLoginView: View {
 
           Button("Done") {
             state.update(to: .authenticatingUser)
-            authenticate(with: response)
+            authenticate(with: response.deviceCode)
           }
           .buttonStyle(PrimaryButtonStyle())
           .frame(width: 200)
@@ -70,37 +76,32 @@ struct MicrosoftLoginView: View {
         let response = try await MicrosoftAPI.authorizeDevice()
         state.update(to: .login(response))
       } catch {
-        DeltaClientApp.modalError("Failed to authorize device: \(error)", safeState: .serverList)
+        modal.error(MicrosoftLoginViewError.failedToAuthorizeDevice.becauseOf(error)) {
+          appState.update(to: .serverList)
+        }
       }
     }
   }
 
-  func authenticate(with response: MicrosoftDeviceAuthorizationResponse) {
+  func authenticate(with deviceCode: String) {
     Task {
-      let account: MicrosoftAccount
       do {
-        let accessToken = try await MicrosoftAPI.getMicrosoftAccessToken(response.deviceCode)
-        account = try await MicrosoftAPI.getMinecraftAccount(accessToken)
+        let accessToken = try await MicrosoftAPI.getMicrosoftAccessToken(deviceCode)
+        let account = try await MicrosoftAPI.getMinecraftAccount(accessToken)
+        completionHandler(.microsoft(account))
       } catch {
-        guard case let .failedToGetXSTSToken(MicrosoftAPIError.xstsAuthenticationFailed(xstsError)) = error as? MicrosoftAPIError else {
-          DeltaClientApp.modalError("Failed to authenticate Microsoft account: \(error)", safeState: .serverList)
-          return
+        // We can trust MicrosoftAPIError's messages to be suitably human readable
+        let modalError: Error
+        if let error = error as? MicrosoftAPIError {
+          modalError = error
+        } else {
+          modalError = MicrosoftLoginViewError.failedToAuthenticate.becauseOf(error)
         }
 
-        // TODO: Add localized descriptions to all authentication related errors
-        // XSTS errors are the most common so they get nice user-friendly errors
-        switch xstsError.code {
-          case 2148916233: // No Xbox Live account
-            DeltaClientApp.modalError("This Microsoft account does not have an attached Xbox Live account (\(xstsError.redirect))", safeState: .serverList)
-          case 2148916238: // Child account
-            DeltaClientApp.modalError("Child accounts must first be added to a family (\(xstsError.redirect))", safeState: .serverList)
-          default:
-            DeltaClientApp.modalError("Failed to get XSTS token: \(error)", safeState: .serverList)
+        modal.error(modalError) {
+          appState.update(to: .serverList)
         }
-        return
       }
-
-      completionHandler(Account.microsoft(account))
     }
   }
 }

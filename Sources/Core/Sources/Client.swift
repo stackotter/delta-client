@@ -7,7 +7,7 @@ public final class Client: @unchecked Sendable {
   // MARK: Public properties
 
   /// The resource pack to use.
-  public let resourcePack: ResourcePack
+  public var resourcePack: ResourcePack
   /// The account this client uses to join servers.
   public var account: Account?
 

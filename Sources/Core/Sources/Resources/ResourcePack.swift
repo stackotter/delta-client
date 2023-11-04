@@ -344,21 +344,15 @@ public struct ResourcePack {
   public static func downloadVanillaAssets(
     forVersion version: String,
     to directory: URL,
-    progressHandler: ((TaskProgress<DownloadStep>) -> Void)? = nil
+    progress: TaskProgress<DownloadStep>? = nil
   ) throws {
-    let progress = TaskProgress<DownloadStep>()
-      .onChange(action: progressHandler ?? { _ in })
-      .onChange { progress in
-        log.info(progress.message)
-      }
-
     // Get the url for the client jar
-    progress.update(to: .fetchManifest)
+    progress?.update(to: .fetchManifest)
     let versionManifest = try getVersionManifest(for: version)
     let clientJarURL = versionManifest.downloads.client.url
 
     // Download the client jar
-    progress.update(to: .downloadJar)
+    progress?.update(to: .downloadJar)
     let temporaryDirectory = FileManager.default.temporaryDirectory
     let clientJarTempFile = temporaryDirectory.appendingPathComponent("client.jar")
     do {
@@ -369,7 +363,7 @@ public struct ResourcePack {
     }
 
     // Extract the contents of the client jar (jar files are just zip archives)
-    progress.update(to: .extractJar)
+    progress?.update(to: .extractJar)
     let extractedClientJarDirectory = temporaryDirectory.appendingPathComponent("client", isDirectory: true)
     try? FileManager.default.removeItem(at: extractedClientJarDirectory)
     do {
@@ -379,7 +373,7 @@ public struct ResourcePack {
     }
 
     // Copy the assets from the extracted client jar to application support
-    progress.update(to: .copyingAssets)
+    progress?.update(to: .copyingAssets)
     do {
       try FileManager.default.copyItem(
         at: extractedClientJarDirectory.appendingPathComponent("assets"),
@@ -389,7 +383,7 @@ public struct ResourcePack {
     }
 
     // Create a default pack.mcmeta for it
-    progress.update(to: .creatingMcmeta)
+    progress?.update(to: .creatingMcmeta)
     let contents = #"{"pack": {"pack_format": 5, "description": "The default vanilla assets"}}"#
     guard let data = contents.data(using: .utf8) else {
       throw ResourcePackError.failedToCreatePackMCMeta

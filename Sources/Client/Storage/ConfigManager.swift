@@ -33,6 +33,8 @@ public final class ConfigManager {
   /// The lock used to synchronise access to ``ConfigManager/_config``.
   private let lock = ReadWriteLock()
 
+  // TODO: Refactor ConfigManager so that fatal errors aren't required. Preferably
+  //   by not using it as a singleton anymore.
   /// Creates a manager for the specified config file. Creates default config if required.
   private init(for configFile: URL) {
     self.configFile = configFile
@@ -46,7 +48,7 @@ public final class ConfigManager {
         data = try JSONEncoder().encode(_config)
         FileManager.default.createFile(atPath: configFile.path, contents: data, attributes: nil)
       } catch {
-        DeltaClientApp.fatal("Failed to encode config: \(error)")
+        fatalError("Failed to encode config: \(error)")
       }
       return
     }
@@ -58,7 +60,7 @@ public final class ConfigManager {
     } catch {
       // Existing config is corrupted, overwrite it with defaults
       log.error("Invalid config.json, overwriting with defaults")
-      DeltaClientApp.modalError("Invalid config.json, overwriting with defaults")
+      log.error("Invalid config.json, overwriting with defaults")
 
       _config = Config()
       let data: Data
@@ -66,7 +68,7 @@ public final class ConfigManager {
         data = try JSONEncoder().encode(_config)
         FileManager.default.createFile(atPath: configFile.path, contents: data, attributes: nil)
       } catch {
-        DeltaClientApp.fatal("Failed to encode config: \(error)")
+        fatalError("Failed to encode config: \(error)")
       }
     }
     coreConfiguration = CoreConfiguration(_config)

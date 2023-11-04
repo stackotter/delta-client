@@ -39,16 +39,19 @@ struct ServerListView: View {
     } catch {
       log.warning("Failed to start LAN server enumerator: \(error)")
     }
-
-    checkForUpdatesAsync()
   }
 
-  func checkForUpdatesAsync() {
-    DispatchQueue(label: "Server list update checker").async {
-      let result = Updater.isUpdateAvailable()
-      DispatchQueue.main.sync {
-        self.model.updateAvailable = result
-      }
+  func checkForUpdates() async {
+    let result: Bool
+    do {
+      result = try Updater.isUpdateAvailable()
+    } catch {
+      log.warning("Failed to check for updates: \(error)")
+      return
+    }
+
+    await MainActor.run {
+      self.model.updateAvailable = result
     }
   }
 
@@ -109,7 +112,13 @@ struct ServerListView: View {
         }
       }
       .listStyle(SidebarListStyle())
-    }.onDisappear {
+    }
+    .onAppear {
+      Task {
+        await checkForUpdates()
+      }
+    }
+    .onDisappear {
       lanServerEnumerator?.stop()
     }
   }

@@ -4,89 +4,92 @@ import DeltaCore
 
 #if os(macOS)
 enum UpdateViewState {
-  case selectUpdate
-  case performUpdate
-}
-
-enum UpdateError: LocalizedError {
-  case failedToGetDownloadURL
-  case failedToGetDownloadURLFromGitHubReleases
-  case alreadyUpToDate(String.SubSequence)
-  case failedToGetBranches(Error)
-  case failedToGetGitHubAPIResponse(Error)
-  
-  var errorDescription: String? {
-    switch self {
-      case .failedToGetDownloadURL:
-        return "Failed to get download URL."
-      case .failedToGetDownloadURLFromGitHubReleases:
-        return "Failed to get download URL from GitHub Releases."
-      case .alreadyUpToDate(let commit):
-        return "You are already up to date (commit \(commit))"
-      case .failedToGetBranches(let error):
-        return """
-        Failed to get branches.
-        Reason: \(error.localizedDescription).
-        """
-      case .failedToGetGitHubAPIResponse(let error):
-        return """
-        Failed to get GitHub API response.
-        Reason: \(error.localizedDescription).
-        """
-    }
-  }
+  case loadingBranches
+  case selectBranch(branches: [String])
+  case updating
 }
 
 struct UpdateView: View {
-  @ObservedObject private var state = StateWrapper<UpdateViewState>(initial: .selectUpdate)
-  @ObservedObject private var updater = Updater()
+  @EnvironmentObject var appState: StateWrapper<AppState>
+  @EnvironmentObject var modal: Modal
+  @Environment(\.storage) var storage: StorageDirectory
 
-  init() {
-    updater.loadUnstableBranches()
-  }
+  @ObservedObject var state = StateWrapper<UpdateViewState>(initial: .loadingBranches)
+  @ObservedObject var progress = TaskProgress<Updater.UpdateStep>()
+
+  @State var branch: String?
+  @State var updateVersion: String?
+
+  var task: Task<(), Never>?
+
+  init() {}
 
   var body: some View {
     switch state.current {
-      case .selectUpdate:
-        if !updater.hasErrored {
-          VStack {
-            if !updater.branches.isEmpty {
-              Menu {
-                ForEach(updater.branches, id: \.self) { branch in
-                  Button(branch) {
-                    updater.unstableBranch = branch
+      case .loadingBranches:
+        Text("Loading branches...")
+          .onAppear {
+            Task {
+              do {
+                let branches = try Updater.getBranches().map(\.name)
+                state.update(to: .selectBranch(branches: branches))
+              } catch {
+                modal.error(error) {
+                  appState.update(to: .serverList)
+                }
+              }
+            }
+          }
+      case let .selectBranch(branches):
+        VStack {
+          Menu {
+            ForEach(branches, id: \.self) { branch in
+              Button(branch) {
+                self.branch = branch
+              }
+            }
+          } label: {
+            if let branch = branch {
+              Text("Branch: \(branch)")
+            } else {
+              Text("Select a branch")
+            }
+          }
+
+          if let branch = branch {
+            Button("Update to latest commit") {
+              state.update(to: .updating)
+              Task {
+                do {
+                  let download = try Updater.getDownload(for: .nightly(branch: branch))
+                  updateVersion = download.version
+                  try await Updater.performUpdate(
+                    download: download,
+                    isNightly: true,
+                    storage: storage,
+                    progress: progress
+                  )
+                } catch {
+                  modal.error(error) {
+                    appState.update(to: .serverList)
                   }
                 }
-              } label: {
-                Text("Branch: \(updater.unstableBranch)")
               }
-            } else {
-              Text("Error: no branches found")
-            }
-
-            Button("Update to latest commit") {
-              updater.updateType = .unstable
-              state.update(to: .performUpdate)
             }
             .buttonStyle(SecondaryButtonStyle())
-            Spacer()
+          } else {
+            Button("Update to latest commit") {}
+              .disabled(true)
+              .buttonStyle(SecondaryButtonStyle())
           }
-          .frame(width: 200)
-          .padding(.vertical)
-        } else {
-          VStack {
-            Text("Failed to load update information: \(updater.error?.localizedDescription ?? "No error information")")
-            Button("Try again") {
-              updater.loadUnstableBranches()
-            }.buttonStyle(PrimaryButtonStyle())
-          }
-          .frame(width: 300)
         }
-      case .performUpdate:
+        .frame(width: 200)
+        .padding(.vertical)
+      case .updating:
         // Shows the progress of an update
         VStack(alignment: .leading, spacing: 16) {
           Group {
-            if let version = updater.version {
+            if let version = updateVersion {
               Text("Updating to \(version)")
             } else {
               Text("Fetching update information")
@@ -94,21 +97,19 @@ struct UpdateView: View {
           }
           .font(.title)
 
-          ProgressView(value: updater.fractionCompleted, label: { Text(updater.stepDescription) })
+          ProgressView(value: progress.progress) {
+            Text(progress.message)
+          }
 
           Button("Cancel") {
-            state.update(to: .selectUpdate)
+            state.update(to: .loadingBranches)
           }
           .buttonStyle(SecondaryButtonStyle())
           .frame(width: 200)
-          .disabled(!updater.canCancel)
         }
         .frame(maxWidth: 500)
-        .onAppear {
-          updater.startUpdate()
-        }
         .onDisappear {
-          updater.cancel()
+          task?.cancel()
         }
     }
   }

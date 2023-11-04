@@ -35,7 +35,6 @@ final class StorageManager {
       storageDirectory = applicationSupport.appendingPathComponent("dev.stackotter.delta-client")
     } else {
       log.warning("Failed to get application support directory, using temporary directory instead")
-      DeltaClientApp.modalWarning("Failed to get application support directory, using temporary directory instead")
       let fallback = FileManager.default.temporaryDirectory.appendingPathComponent("dev.stackotter.delta-client.fallback")
       storageDirectory = fallback
     }
@@ -57,7 +56,7 @@ final class StorageManager {
         try? FileManager.default.removeItem(at: storageDirectory)
         try Self.createDirectory(at: storageDirectory)
       } catch {
-        DeltaClientApp.fatal("Failed to create storage directory: \(error)")
+        // DeltaClientApp.fatal("Failed to create storage directory: \(error)")
       }
     }
 
@@ -70,7 +69,7 @@ final class StorageManager {
         try createBackup()
         try resetStorage()
       } catch {
-        DeltaClientApp.fatal("Failed to reset storage for fresh install: \(error)")
+        // DeltaClientApp.fatal("Failed to reset storage for fresh install: \(error)")
       }
 
       // Create the launch marker
@@ -87,7 +86,7 @@ final class StorageManager {
         log.info("Creating plugins directory")
         try Self.createDirectory(at: pluginsDirectory)
       } catch {
-        DeltaClientApp.fatal("Failed to create plugins directory")
+        // DeltaClientApp.fatal("Failed to create plugins directory")
       }
     }
   }

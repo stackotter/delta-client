@@ -22,9 +22,9 @@ enum StartupStep: CaseIterable, TaskStep {
   var relativeDuration: Double {
     switch self {
       case .loadPlugins: return 3
-      case .downloadAssets: return 10
-      case .loadRegistries: return 8
-      case .loadResourcePacks: return 5
+      case .downloadAssets: return 15
+      case .loadRegistries: return 3
+      case .loadResourcePacks: return 15
     }
   }
 }

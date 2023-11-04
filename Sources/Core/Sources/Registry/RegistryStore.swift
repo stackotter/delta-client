@@ -46,9 +46,9 @@ public struct RegistryStore {
   ///   - onProgress: Callback triggered whenever the operation progress is updated.
   public static func populateShared(
     _ directory: URL,
-    progressHandler: ((TaskProgress<RegistryLoadingStep>) -> Void)? = nil
+    progress: TaskProgress<RegistryLoadingStep>? = nil
   ) throws {
-    shared = try loadCached(directory, progressHandler: progressHandler)
+    shared = try loadCached(directory, progress: progress)
   }
 
   /// Steps to be exectued during the `populateShared` process.
@@ -88,27 +88,24 @@ public struct RegistryStore {
   /// - Returns: The loaded registry.
   public static func loadCached(
     _ directory: URL,
-    progressHandler: ((TaskProgress<RegistryLoadingStep>) -> Void)?
+    progress: TaskProgress<RegistryLoadingStep>? = nil
   ) throws -> RegistryStore {
-    let progress = TaskProgress<RegistryLoadingStep>()
-      .onChange(action: progressHandler ?? { _ in })
-
     // TODO: Make caching more fine-grained, only reload the registries for
     //   which cache loading failed. Also reduce duplication.
     do {
-      progress.update(to: .loadBlock)
+      progress?.update(to: .loadBlock)
       let blockRegistry = try BlockRegistry.loadCached(fromDirectory: directory)
 
-      progress.update(to: .loadBiome)
+      progress?.update(to: .loadBiome)
       let biomeRegistry = try BiomeRegistry.loadCached(fromDirectory: directory)
 
-      progress.update(to: .loadFluid)
+      progress?.update(to: .loadFluid)
       let fluidRegistry = try FluidRegistry.loadCached(fromDirectory: directory)
 
-      progress.update(to: .loadEntity)
+      progress?.update(to: .loadEntity)
       let entityRegistry = try EntityRegistry.loadCached(fromDirectory: directory)
 
-      progress.update(to: .loadItem)
+      progress?.update(to: .loadItem)
       let itemRegistry = try ItemRegistry.loadCached(fromDirectory: directory)
 
       return RegistryStore(
@@ -121,6 +118,7 @@ public struct RegistryStore {
     } catch {
       log.info("Failed to load cached registries. Loading from Pixlyzer data")
 
+      // TODO: Track downloading and formatting progress as well for a more precise progress tracking.
       let registry = try PixlyzerFormatter.downloadAndFormatRegistries(Constants.versionString)
       try FileManager.default.createDirectory(
         at: directory,
@@ -128,19 +126,19 @@ public struct RegistryStore {
         attributes: nil
       )
 
-      progress.update(to: .cacheBlock)
+      progress?.update(to: .cacheBlock)
       try registry.blockRegistry.cache(toDirectory: directory)
 
-      progress.update(to: .cacheBiome)
+      progress?.update(to: .cacheBiome)
       try registry.biomeRegistry.cache(toDirectory: directory)
 
-      progress.update(to: .cacheFluid)
+      progress?.update(to: .cacheFluid)
       try registry.fluidRegistry.cache(toDirectory: directory)
 
-      progress.update(to: .cacheEntity)
+      progress?.update(to: .cacheEntity)
       try registry.entityRegistry.cache(toDirectory: directory)
 
-      progress.update(to: .cacheItem)
+      progress?.update(to: .cacheItem)
       try registry.itemRegistry.cache(toDirectory: directory)
 
       return registry

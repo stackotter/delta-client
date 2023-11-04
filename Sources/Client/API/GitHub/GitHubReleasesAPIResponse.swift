@@ -5,6 +5,10 @@ struct GitHubReleasesAPIResponse: Codable {
   var assets: [Asset]
   
   struct Asset: Codable {
-    var browserDownloadUrl: String
+    var browserDownloadURL: String
+
+    enum CodingKeys: String, CodingKey {
+      case browserDownloadURL = "browserDownloadUrl"
+    }
   }
 }

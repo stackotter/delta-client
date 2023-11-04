@@ -1,108 +1,106 @@
 import SwiftUI
 import DeltaCore
 
+class Modal: ObservableObject {
+  enum Content {
+    case warning(String)
+    case errorMessage(String)
+    case error(Error)
+
+    var message: String {
+      switch self {
+        case let .warning(message):
+          return message
+        case let .errorMessage(message):
+          return message
+        case let .error(error):
+          if let richError = error as? RichError {
+            return richError.richDescription
+          } else {
+            return error.localizedDescription
+          }
+      }
+    }
+  }
+
+  var isPresented: Binding<Bool> {
+    Binding {
+      self.content != nil
+    } set: { newValue in
+      if !newValue {
+        self.content = nil
+        self.dismissHandler?()
+      }
+    }
+  }
+
+  @Published var content: Content?
+  var dismissHandler: (() -> Void)?
+
+  func warning(_ message: String, onDismiss dismissHandler: (() -> Void)? = nil) {
+    log.warning(message)
+    ThreadUtil.runInMain {
+      content = .warning(message)
+      self.dismissHandler = dismissHandler
+    }
+  }
+
+  func error(_ message: String, onDismiss dismissHandler: (() -> Void)? = nil) {
+    log.error(message)
+    ThreadUtil.runInMain {
+      content = .errorMessage(message)
+      self.dismissHandler = dismissHandler
+    }
+  }
+
+  func error(_ error: Error, onDismiss dismissHandler: (() -> Void)? = nil) {
+    log.error(error.localizedDescription)
+    ThreadUtil.runInMain {
+      content = .error(error)
+      self.dismissHandler = dismissHandler
+    }
+  }
+}
+
 /// The entry-point for Delta Client.
 struct DeltaClientApp: App {
-  // MARK: Global state
-  // These are static so that they can be used from static functions like `modalError`. And because otherwise they can't be captured by the async startup task.
+  @ObservedObject var appState = StateWrapper<AppState>(initial: .serverList)
+  @ObservedObject var pluginEnvironment = PluginEnvironment()
+  @ObservedObject var modal = Modal()
 
-  @ObservedObject private static var modalState = StateWrapper<ModalState>(initial: .none)
-  @ObservedObject private static var appState = StateWrapper<AppState>(initial: .serverList)
-  @ObservedObject private static var loadingState = StateWrapper<LoadingState>(initial: .loading)
+  @State var hasLoaded = false
 
-  @ObservedObject public static var pluginEnvironment = PluginEnvironment()
+  /// A Delta Client version.
+  enum Version {
+    /// A version such as `1.0.0`.
+    case semantic(String)
+    /// A nightly build's version (e.g. `ae348f8...`).
+    case commit(String)
+  }
 
-  // MARK: Init
+  /// Gets the current client's version.
+  static var version: Version {
+    guard let versionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String else {
+      fatalError("Info.plist is missing a version string")
+    }
+
+    if versionString.hasPrefix("commit: ") {
+      return .commit(String(versionString.dropFirst("commit: ".count)))
+    } else {
+      return .semantic(versionString)
+    }
+  }
 
   init() {
     do {
       try enableFileLogger(loggingTo: StorageManager.default.currentLogFile)
     } catch {
-      Self.modalWarning("File logging disabled: failed to setup log file")
+      modal.warning("File logging disabled: failed to setup log file")
     }
 
     Self.handleCommandLineArguments()
 
     DiscordManager.shared.updateRichPresence(to: .menu)
-
-    // Load plugins, registries and resources
-    DispatchQueue(label: "test").async {
-      var previousStep: StartupStep?
-      let startup = TaskProgress<StartupStep>().onChange { progress in
-        if progress.currentStep != previousStep {
-          let percentage = String(format: "%.01f", progress.progress * 100)
-          log.info("\(progress.message) (\(percentage)%)")
-        }
-
-        previousStep = progress.currentStep
-
-        Self.loadingState.update(to: .loadingWithMessage(
-          progress.message,
-          progress: progress.progress
-        ))
-      }
-
-      do {
-        let stopwatch = Stopwatch()
-
-        let config = ConfigManager.default.config
-
-        guard let storage = StorageDirectory.platformDefault else {
-          throw RichError("Failed to get storage directory")
-        }
-        try storage.ensureCreated()
-
-        Task {
-          await ConfigManager.default.refreshAccounts()
-        }
-
-        startup.perform(.loadPlugins) {
-          try Self.pluginEnvironment.loadPlugins(
-            from: storage.pluginDirectory,
-            excluding: config.unloadedPlugins
-          )
-        } handleError: { error in
-          Self.modalError("Error occurred during plugin loading, no plugins will be available: \(error)")
-        }
-
-        try startup.perform(.downloadAssets, if: !FileSystem.directoryExists(storage.assetDirectory)) { progressHandler in
-          try ResourcePack.downloadVanillaAssets(
-            forVersion: Constants.versionString,
-            to: storage.assetDirectory,
-            progressHandler: progressHandler
-          )
-        }
-
-        try startup.perform(.loadRegistries) { progressHandler in
-          try RegistryStore.populateShared(storage.registryDirectory, progressHandler: progressHandler)
-        }
-
-        // Load resource pack and cache it if necessary
-        let resourcePack = try startup.perform(.loadResourcePacks) {
-          let packCache = storage.cache(forResourcePackNamed: "vanilla")
-          let resourcePack = try ResourcePack.load(from: storage.assetDirectory, cacheDirectory: packCache)
-          if !FileSystem.directoryExists(packCache) {
-            do {
-              try resourcePack.cache(to: packCache)
-            } catch {
-              Self.modalWarning("Failed to cache vanilla resource pack")
-            }
-          }
-          return resourcePack
-        }
-
-        // Get user to login if they haven't already
-        if config.accounts.isEmpty {
-          Self.appState.update(to: .login)
-        }
-
-        log.info("Finished loading (\(stopwatch.elapsed))")
-
-        Self.loadingState.update(to: .done(LoadedResources(resourcePack: resourcePack)))
-      } catch {
-        Self.loadingState.update(to: .error(error))
-      }
-    }
   }
 
   static func handleCommandLineArguments() {
@@ -117,26 +115,39 @@ struct DeltaClientApp: App {
 
   var body: some Scene {
     WindowGroup {
-      RouterView()
+      LoadAndThen($hasLoaded) { storageDirectory, resourcePack, pluginEnvironment in
+        RouterView(resourcePack: resourcePack)
+          .environmentObject(resourcePack)
+          .environmentObject(pluginEnvironment)
+          .environment(\.storage, storageDirectory)
+          .onAppear {
+            // TODO: Make a nice clean onboarding experience
+            if ConfigManager.default.config.selectedAccount == nil {
+              appState.update(to: .accounts)
+            }
+          }
+      }
+        .environmentObject(modal)
+        .environmentObject(appState)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .environmentObject(Self.modalState)
-        .environmentObject(Self.appState)
-        .environmentObject(Self.loadingState)
-        .environmentObject(Self.pluginEnvironment)
         .navigationTitle("Delta Client")
+        .alert(isPresented: modal.isPresented) {
+          Alert(title: Text("Error"), message: (modal.content?.message).map(Text.init), dismissButton: Alert.Button.default(Text("OK")))
+        }
     }
     .commands {
       // Add preferences menu item and shortcut (cmd+,)
       CommandGroup(after: .appSettings, addition: {
         Button("Preferences") {
-          // Check if it makes sense to be able to open settings right now
-          if case .none = Self.modalState.current, case .done = Self.loadingState.current {
-            switch Self.appState.current {
-              case .serverList, .editServerList, .accounts, .login, .directConnect:
-                Self.appState.update(to: .settings(nil))
-              case .playServer, .settings, .fatalError:
-                break
-            }
+          guard hasLoaded, modal.content == nil else {
+            return
+          }
+
+          switch appState.current {
+            case .serverList, .editServerList, .accounts, .login, .directConnect:
+              appState.update(to: .settings(nil))
+            case .playServer, .settings, .fatalError:
+              break
           }
         }
         .keyboardShortcut(KeyboardShortcut(KeyEquivalent(","), modifiers: [.command]))
@@ -153,23 +164,5 @@ struct DeltaClientApp: App {
         .keyboardShortcut(KeyboardShortcut(KeyEquivalent("f"), modifiers: [.control, .command]))
       })
     }
-  }
-
-  /// Display a dismissible warning.
-  static func modalWarning(_ message: String) {
-    log.warning(message)
-    Self.modalState.update(to: .warning(message))
-  }
-
-  /// Display a dismissible error and then transition to `safeState` if supplied.
-  static func modalError(_ message: String, safeState: AppState? = nil) {
-    log.error(message)
-    Self.modalState.update(to: .error(message, safeState: safeState))
-  }
-
-  /// Logs a fatal error and then fatal errors.
-  static func fatal(_ message: String) -> Never {
-    log.critical(message)
-    fatalError(message)
   }
 }
