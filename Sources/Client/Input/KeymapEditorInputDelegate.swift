@@ -2,11 +2,17 @@ import SwiftUI
 import DeltaCore
 
 class KeymapEditorInputDelegate: InputDelegate {
+  let managedConfig: ManagedConfig
   let editorState: KeymapEditorState
   @Binding var inputCaptured: Bool
 
-  init(editorState: KeymapEditorState, inputCaptured: Binding<Bool>) {
-	  self.editorState = editorState
+  init(
+    managedConfig: ManagedConfig,
+    editorState: KeymapEditorState,
+    inputCaptured: Binding<Bool>
+  ) {
+    self.managedConfig = managedConfig
+    self.editorState = editorState
     _inputCaptured = inputCaptured
   }
 
@@ -25,9 +31,7 @@ class KeymapEditorInputDelegate: InputDelegate {
       editorState.keymap[selectedInput] = key
     }
 
-    var config = ConfigManager.default.config
-    config.keymap.bindings = editorState.keymap
-    ConfigManager.default.setConfig(to: config)
+    managedConfig.keymap.bindings = editorState.keymap
   }
 
   func onKeyUp(_ key: Key) {

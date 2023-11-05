@@ -84,6 +84,11 @@ struct StorageDirectory {
     logDirectory.appendingPathComponent("delta-client.log")
   }
 
+  /// The client configuration file.
+  var configFile: URL {
+    baseDirectory.appendingPathComponent("config.json")
+  }
+
   /// Initializes a storage directory (without guaranteeing that it exists).
   init(_ base: URL) {
     baseDirectory = base

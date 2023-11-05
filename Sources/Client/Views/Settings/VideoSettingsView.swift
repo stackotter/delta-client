@@ -2,71 +2,35 @@ import SwiftUI
 import DeltaCore
 
 struct VideoSettingsView: View {
-  /// Config updates are sent straight to the client as soon as they are made if a client is provided.
-  var client: Client?
-
-  @State var renderDistance: Float = 0
-  @State var fov: Float = 0
-  @State var renderMode: RenderMode = .normal
-  @State var enableOrderIndependentTransparency: Bool = false
-
-  var config: RenderConfiguration {
-    return RenderConfiguration(
-      fovY: Float(fov.rounded()),
-      renderDistance: Int(renderDistance),
-      mode: renderMode,
-      enableOrderIndependentTransparency: enableOrderIndependentTransparency
-    )
-  }
-
-  /// - Parameter client: If present, config updates are sent to this client.
-  init(client: Client? = nil) {
-    self.client = client
-  }
-
-  /// Handles when the user changes a value.
-  func onValueChanged<T>(_ newValue: T) {
-    var config = ConfigManager.default.config
-    config.render = self.config
-    ConfigManager.default.setConfig(to: config, saveToFile: false)
-  }
-
-  /// Handles when the user stops/starts editing.
-  func onEditingChanged(_ newValue: Bool) {
-    // If the user has stopped editing, update config
-    if newValue == false {
-      save()
-    }
-  }
-
-  /// Saves the user's choices to the config file.
-  func save() {
-    var config = ConfigManager.default.config
-    config.render = self.config
-    ConfigManager.default.setConfig(to: config)
-  }
+  @EnvironmentObject var managedConfig: ManagedConfig
 
   var body: some View {
     ScrollView {
       HStack {
-        Text("Render distance: \(Int(renderDistance))")
+        Text("Render distance: \(managedConfig.render.renderDistance)")
         Spacer()
         Slider(
-          value: $renderDistance.onChange(onValueChanged),
+          value: Binding {
+            Float(managedConfig.render.renderDistance)
+          } set: { newValue in
+            managedConfig.render.renderDistance = Int(newValue.rounded())
+          },
           in: 0...32,
-          step: 1,
-          onEditingChanged: onEditingChanged
+          step: 1
         )
           .frame(width: 220)
       }
 
       HStack {
-        Text("FOV: \(Int(fov.rounded()))")
+        Text("FOV: \(Int(managedConfig.render.fovY.rounded()))")
         Spacer()
         Slider(
-          value: $fov.onChange(onValueChanged),
-          in: 30...110,
-          onEditingChanged: onEditingChanged
+          value: Binding {
+            managedConfig.render.fovY
+          } set: { newValue in
+            managedConfig.render.fovY = newValue.rounded()
+          },
+          in: 30...110
         )
           .frame(width: 220)
       }
@@ -74,10 +38,7 @@ struct VideoSettingsView: View {
       HStack {
         Text("Render mode")
         Spacer()
-        Picker("Render mode", selection: $renderMode.onChange({ newValue in
-          onValueChanged(newValue)
-          save()
-        })) {
+        Picker("Render mode", selection: $managedConfig.render.mode) {
           ForEach(RenderMode.allCases) { mode in
             Text(mode.rawValue.capitalized)
           }
@@ -95,10 +56,7 @@ struct VideoSettingsView: View {
         Spacer()
         Toggle(
           "Order independent transparency",
-          isOn: $enableOrderIndependentTransparency.onChange { newValue in
-            onValueChanged(newValue)
-            save()
-          }
+          isOn: $managedConfig.render.enableOrderIndependentTransparency
         )
           .labelsHidden()
           .toggleStyle(.switch)
@@ -107,12 +65,5 @@ struct VideoSettingsView: View {
     }
     .frame(width: 450)
     .navigationTitle("Video")
-    .onAppear {
-      let config = ConfigManager.default.config.render
-      renderDistance = Float(config.renderDistance)
-      fov = config.fovY
-      renderMode = config.mode
-      enableOrderIndependentTransparency = config.enableOrderIndependentTransparency
-    }
   }
 }

@@ -2,6 +2,8 @@ import SwiftUI
 import DeltaCore
 
 struct AccountSettingsView: View {
+  @EnvironmentObject var managedConfig: ManagedConfig
+
   @State var accounts: [Account] = []
   @State var selectedIndex: Int? = nil
 
@@ -26,7 +28,7 @@ struct AccountSettingsView: View {
     }
     .navigationTitle("Accounts")
     .onAppear {
-      accounts = Array(ConfigManager.default.config.accounts.values)
+      accounts = Array(managedConfig.accounts.values)
       selectedIndex = getSelectedIndex()
     }
   }
@@ -71,12 +73,14 @@ struct AccountSettingsView: View {
       return // Updating accounts will run this function again so we just stop here
     }
 
-    ConfigManager.default.setAccounts(uniqueAccounts, selected: accountId)
+    managedConfig.accounts = [:]
+    managedConfig.config.addAccounts(uniqueAccounts)
+    managedConfig.config.selectAccount(withId: accountId)
   }
 
   /// Updates the selected account in the config file.
   func saveSelected(_ index: Int?) {
-    ConfigManager.default.selectAccount(getSelectedAccount()?.id)
+    managedConfig.config.selectAccount(withId: getSelectedAccount()?.id)
   }
 
   /// Returns the currently selected account if any.
@@ -95,7 +99,7 @@ struct AccountSettingsView: View {
 
   /// Returns the index of the currently selected account according to the current configuration.
   func getSelectedIndex() -> Int? {
-    guard let selectedAccountId = ConfigManager.default.config.selectedAccountId else {
+    guard let selectedAccountId = managedConfig.selectedAccountId else {
       return nil
     }
 

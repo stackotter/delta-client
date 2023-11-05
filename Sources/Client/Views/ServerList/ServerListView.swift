@@ -1,77 +1,19 @@
 import SwiftUI
 import DeltaCore
 
-class ServerListViewModel: ObservableObject {
-  @Published var updateAvailable = false
-}
-
 struct ServerListView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
+  @EnvironmentObject var managedConfig: ManagedConfig
+  @EnvironmentObject var modal: Modal
 
-  @State var pingers: [Pinger]
-  @ObservedObject var model = ServerListViewModel()
-
-  var lanServerEnumerator: LANServerEnumerator?
-
-  init() {
-    // Create server pingers
-    let servers = ConfigManager.default.config.servers
-    _pingers = State(initialValue: servers.map { server in
-      Pinger(server)
-    })
-
-    // Attempt to create LAN server enumerator
-    let eventBus = EventBus()
-    do {
-      lanServerEnumerator = LANServerEnumerator(eventBus: eventBus)
-      eventBus.registerHandler { event in
-        switch event {
-          case let event as ErrorEvent:
-            log.warning("\(event.message ?? "Error"): \(event.error)")
-          default:
-            break
-        }
-      }
-
-      // Start pinging and enumerating
-      refresh()
-      try lanServerEnumerator?.start()
-    } catch {
-      log.warning("Failed to start LAN server enumerator: \(error)")
-    }
-  }
-
-  func checkForUpdates() async {
-    let result: Bool
-    do {
-      result = try Updater.isUpdateAvailable()
-    } catch {
-      log.warning("Failed to check for updates: \(error)")
-      return
-    }
-
-    await MainActor.run {
-      self.model.updateAvailable = result
-    }
-  }
-
-  /// Ping all servers again and clear discovered LAN servers.
-  func refresh() {
-    for pinger in pingers {
-      try? pinger.ping()
-    }
-
-    lanServerEnumerator?.clear()
-  }
-
-  // Navigate to update settings view
-  func update() {
-    appState.update(to: .settings(.update))
-  }
+  @State var pingers: [Pinger] = []
+  @State var lanServerEnumerator: LANServerEnumerator?
+  @State var updateAvailable = false
 
   var body: some View {
     NavigationView {
       List {
+        // Server list
         if !pingers.isEmpty {
           ForEach(pingers, id: \.self) { pinger in
             NavigationLink(destination: ServerDetail(pinger: pinger)) {
@@ -91,12 +33,12 @@ struct ServerListView: View {
         }
 
         HStack {
-          // Edit
+          // Edit server list
           IconButton("square.and.pencil") {
             appState.update(to: .editServerList)
           }
 
-          // Refresh servers
+          // Refresh server list (ping all servers) and discovered LAN servers
           IconButton("arrow.clockwise") {
             refresh()
           }
@@ -107,19 +49,71 @@ struct ServerListView: View {
           }
         }
 
-        if (model.updateAvailable) {
-          Button("Update", action: update).padding(.top, 5)
+        if (updateAvailable) {
+          Button("Update") {
+            appState.update(to: .settings(.update))
+          }.padding(.top, 5)
         }
       }
       .listStyle(SidebarListStyle())
     }
     .onAppear {
+      // Check for updates
       Task {
         await checkForUpdates()
+      }
+
+      // Create server pingers
+      let servers = managedConfig.config.servers
+      pingers = servers.map { server in
+        Pinger(server)
+      }
+
+      refresh()
+
+      // TODO: The whole EventBus architecture is pretty unwieldy at the moment,
+      //   all this code just to create and start a lan server enumerator?
+      // Create LAN server enumerator
+      let eventBus = EventBus()
+      lanServerEnumerator = LANServerEnumerator(eventBus: eventBus)
+      eventBus.registerHandler { event in
+        switch event {
+          case let event as ErrorEvent:
+            log.warning("\(event.message ?? "Error"): \(event.error)")
+          default:
+            break
+        }
+      }
+
+      do {
+        try lanServerEnumerator?.start()
+      } catch {
+        modal.error(RichError("Failed to start LAN server enumerator.").becauseOf(error))
       }
     }
     .onDisappear {
       lanServerEnumerator?.stop()
     }
+  }
+
+  // Check if any Delta Client updates are available.
+  func checkForUpdates() async {
+    do {
+      let result = try Updater.isUpdateAvailable()
+      await MainActor.run {
+        updateAvailable = result
+      }
+    } catch {
+      modal.error(RichError("Failed to check for updates").becauseOf(error))
+    }
+  }
+
+  /// Ping all servers and clear discovered LAN servers.
+  func refresh() {
+    for pinger in pingers {
+      try? pinger.ping()
+    }
+
+    lanServerEnumerator?.clear()
   }
 }

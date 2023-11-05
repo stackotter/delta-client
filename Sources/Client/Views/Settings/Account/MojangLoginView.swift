@@ -2,16 +2,18 @@ import SwiftUI
 import DeltaCore
 
 struct MojangLoginView: View {
+  @EnvironmentObject var managedConfig: ManagedConfig
+  
+  @State var isEmailValid = false
+  @State var email = ""
+  @State var password = ""
+  
+  @State var errorMessage: String?
+  @State var authenticating = false
+  
   @ObservedObject var loginViewState: StateWrapper<LoginViewState>
   var completionHandler: (Account) -> Void
-  
-  @State private var isEmailValid = false
-  @State private var email = ""
-  @State private var password = ""
-  
-  @State private var errorMessage: String?
-  @State private var authenticating = false
-  
+
   var body: some View {
     VStack {
       if authenticating {
@@ -48,7 +50,7 @@ struct MojangLoginView: View {
     
     let email = email
     let password = password
-    let clientToken = ConfigManager.default.config.clientToken
+    let clientToken = managedConfig.clientToken
     
     Task {
       do {

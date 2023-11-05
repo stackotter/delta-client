@@ -10,7 +10,7 @@ final class ClientInputDelegate: InputDelegate {
   /// ``mouseSensitivity`` is multiplied by this factor before use.
   let sensitivityAdjustmentFactor: Float = 0.004
 
-  var mouseSensitivity = ConfigManager.default.config.mouseSensitivity
+  var mouseSensitivity: Float
 
   var client: Client
 
@@ -20,8 +20,9 @@ final class ClientInputDelegate: InputDelegate {
   var leftTriggerIsPressed = false
   var rightTriggerIsPressed = false
 
-  init(for client: Client) {
+  init(for client: Client, mouseSensitivity: Float) {
     self.client = client
+    self.mouseSensitivity = mouseSensitivity
 
     // Use a dummy binding until `bind(_:)` is called.
     cursorCaptured = false

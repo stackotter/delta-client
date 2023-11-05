@@ -34,7 +34,7 @@ struct SettingsView: View {
       List {
         NavigationLink(
           "Video",
-          destination: VideoSettingsView(client: client).padding(),
+          destination: VideoSettingsView().padding(),
           tag: SettingsState.video,
           selection: $currentPage
         )

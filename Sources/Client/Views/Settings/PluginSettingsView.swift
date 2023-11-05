@@ -16,12 +16,11 @@ enum PluginSettingsViewError: LocalizedError {
 struct PluginSettingsView: View {
   @EnvironmentObject var pluginEnvironment: PluginEnvironment
   @EnvironmentObject var modal: Modal
+  @EnvironmentObject var managedConfig: ManagedConfig
   @Environment(\.storage) var storage: StorageDirectory
   
   func updateConfig() {
-    var config = ConfigManager.default.config
-    config.unloadedPlugins = [String](pluginEnvironment.unloadedPlugins.keys)
-    ConfigManager.default.setConfig(to: config)
+    managedConfig.unloadedPlugins = Array(pluginEnvironment.unloadedPlugins.keys)
   }
   
   var body: some View {

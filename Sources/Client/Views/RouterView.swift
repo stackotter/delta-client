@@ -3,6 +3,7 @@ import DeltaCore
 
 struct RouterView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
+  @EnvironmentObject var managedConfig: ManagedConfig
 
   var resourcePack: Box<ResourcePack>
 
@@ -15,7 +16,7 @@ struct RouterView: View {
           EditServerListView()
         case .login:
           AccountLoginView(completion: { account in
-            ConfigManager.default.addAccount(account, shouldSelect: true)
+            managedConfig.config.addAccount(account)
             appState.update(to: .serverList)
           }, cancelation: nil)
         case .accounts:
@@ -28,6 +29,7 @@ struct RouterView: View {
           InputView { inputCaptureEnabled, setDelegate in
             GameView(
               serverDescriptor: descriptor,
+              managedConfig: managedConfig,
               resourcePack: resourcePack,
               inputCaptureEnabled: inputCaptureEnabled,
               delegateSetter: setDelegate

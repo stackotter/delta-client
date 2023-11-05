@@ -2,16 +2,27 @@ import SwiftUI
 import DeltaCore
 
 struct KeymapEditorView: View {
+  @EnvironmentObject var managedConfig: ManagedConfig
+
   /// Whether key inputs are being captured by the view
   @Binding var inputCaptured: Bool
-
   /// A wrapper for the current keymap and the currently selected input
   @ObservedObject var state: KeymapEditorState
 
-  init(inputCaptured: Binding<Bool>, inputDelegateSetter setInputDelegate: (InputDelegate) -> Void) {
+  init(
+    managedConfig: ManagedConfig,
+    inputCaptured: Binding<Bool>,
+    inputDelegateSetter setInputDelegate: (InputDelegate) -> Void
+  ) {
+    // TODO: Refactor InputView so use environment values and environment objects instead of
+    //   the stupid delegate pattern (this would mean that we don't need this weird init at all)
     _inputCaptured = inputCaptured
-    state = KeymapEditorState(keymap: ConfigManager.default.config.keymap.bindings)
-    let inputDelegate = KeymapEditorInputDelegate(editorState: state, inputCaptured: _inputCaptured)
+    state = KeymapEditorState(keymap: managedConfig.keymap.bindings)
+    let inputDelegate = KeymapEditorInputDelegate(
+      managedConfig: managedConfig,
+      editorState: state,
+      inputCaptured: _inputCaptured
+    )
     setInputDelegate(inputDelegate)
   }
 
@@ -50,9 +61,7 @@ struct KeymapEditorView: View {
           // Button to unbind an input
           IconButton("xmark", isDisabled: !isBound || isSelected) {
             state.keymap.removeValue(forKey: input)
-            var config = ConfigManager.default.config
-            config.keymap.bindings = state.keymap
-            ConfigManager.default.setConfig(to: config)
+            managedConfig.keymap.bindings = state.keymap
           }
         }
         .frame(width: 400)

@@ -24,6 +24,7 @@ enum TroubleshootingError: LocalizedError {
 struct TroubleshootingView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
   @EnvironmentObject var modal: Modal
+  @EnvironmentObject var managedConfig: ManagedConfig
 
   @Environment(\.storage) var storage: StorageDirectory
 
@@ -72,7 +73,7 @@ struct TroubleshootingView: View {
         perform(
           "Resetting config",
           "Reset config successfully",
-          action: ConfigManager.default.resetConfig,
+          action: managedConfig.reset,
           error: TroubleshootingError.failedToResetConfig
         ) {
           message = nil

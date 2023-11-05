@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct ControlsSettingsView: View {
-  @State var sensitivity = ConfigManager.default.config.mouseSensitivity
-  @State var toggleSprint = ConfigManager.default.config.toggleSprint
-  @State var toggleSneak = ConfigManager.default.config.toggleSneak
+  @EnvironmentObject var managedConfig: ManagedConfig
+
+  @State var sensitivity: Float = 0
+  @State var toggleSprint = false
+  @State var toggleSneak = false
 
   var body: some View {
     ScrollView {
@@ -14,9 +16,7 @@ struct ControlsSettingsView: View {
         Slider(value: $sensitivity, in: 0...10, onEditingChanged: { isEditing in
           if !isEditing {
             sensitivity = Self.roundSensitivity(sensitivity)
-            var config = ConfigManager.default.config
-            config.mouseSensitivity = sensitivity
-            ConfigManager.default.setConfig(to: config)
+            managedConfig.mouseSensitivity = sensitivity
           }
         })
       }
@@ -24,6 +24,7 @@ struct ControlsSettingsView: View {
 
       InputView(passthroughMouseClicks: false) { inputCaptured, delegateSetter in
         KeymapEditorView(
+          managedConfig: managedConfig,
           inputCaptured: inputCaptured,
           inputDelegateSetter: delegateSetter
         )
@@ -35,9 +36,7 @@ struct ControlsSettingsView: View {
         Toggle(
           "Toggle sprint",
           isOn: $toggleSprint.onChange { newValue in
-            var config = ConfigManager.default.config
-            config.toggleSprint = newValue
-            ConfigManager.default.setConfig(to: config)
+            managedConfig.toggleSprint = newValue
           }
         )
           .labelsHidden()
@@ -52,9 +51,7 @@ struct ControlsSettingsView: View {
         Toggle(
           "Toggle sneak",
           isOn: $toggleSneak.onChange { newValue in
-            var config = ConfigManager.default.config
-            config.toggleSneak = newValue
-            ConfigManager.default.setConfig(to: config)
+            managedConfig.toggleSneak = newValue
           }
         )
           .labelsHidden()
@@ -63,9 +60,14 @@ struct ControlsSettingsView: View {
       }
       .frame(width: 400)
     }
+    .onAppear {
+      sensitivity = managedConfig.mouseSensitivity
+      toggleSprint = managedConfig.toggleSprint
+      toggleSneak = managedConfig.toggleSneak
+    }
   }
 
-  /// Rounds sensitivity to the nearest even number percentage.
+  /// Rounds mouse sensitivity to the nearest even number percentage.
   private static func roundSensitivity(_ sensitivity: Float) -> Float {
     if abs(100 - sensitivity * 100) <= 3 {
       return 1
@@ -73,6 +75,7 @@ struct ControlsSettingsView: View {
     return Float(Int(round(sensitivity * 100 / 2)) * 2) / 100
   }
 
+  /// Formats mouse sensitivity as a rounded percentage.
   private static func formatSensitivity(_ sensitivity: Float) -> String {
     return "\(Int(roundSensitivity(sensitivity) * 100))%"
   }

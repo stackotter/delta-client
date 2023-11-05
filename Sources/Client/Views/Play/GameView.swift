@@ -37,6 +37,7 @@ class GameViewModel: ObservableObject {
   var downloadedChunksCount = Box(0)
   var serverDescriptor: ServerDescriptor
   var storage: StorageDirectory?
+  var managedConfig: ManagedConfig
 
   var cancellables: [AnyCancellable] = []
 
@@ -45,13 +46,15 @@ class GameViewModel: ObservableObject {
     inputDelegate: ClientInputDelegate,
     renderCoordinator: RenderCoordinator,
     serverDescriptor: ServerDescriptor,
-    inputCaptured: Binding<Bool>
+    inputCaptured: Binding<Bool>,
+    managedConfig: ManagedConfig
   ) {
     self.client = client
     self.inputDelegate = inputDelegate
     self.renderCoordinator = renderCoordinator
     self.serverDescriptor = serverDescriptor
     _inputCaptured = inputCaptured
+    self.managedConfig = managedConfig
 
     watch(state)
     watch(overlayState)
@@ -76,7 +79,7 @@ class GameViewModel: ObservableObject {
   }
 
   func closeMenu() {
-    inputDelegate.mouseSensitivity = ConfigManager.default.config.mouseSensitivity
+    inputDelegate.mouseSensitivity = managedConfig.mouseSensitivity
     inputCaptured = true
 
     withAnimation(nil) {
@@ -122,14 +125,14 @@ class GameViewModel: ObservableObject {
 
   func joinServer(_ descriptor: ServerDescriptor) async throws {
     // Get the account to use
-    guard let account = ConfigManager.default.config.selectedAccount else {
+    guard let account = managedConfig.config.selectedAccount else {
       throw GameViewError.noAccountSelected
     }
 
     // Refresh the account (if it's an online account) and then join the server
     let refreshedAccount: Account
     do {
-      refreshedAccount = try await ConfigManager.default.getRefreshedAccount()
+      refreshedAccount = try await managedConfig.selectedAccountRefreshedIfNecessary()
     } catch {
       throw GameViewError.failedToRefreshAccount
         .with("Username", account.username)
@@ -215,6 +218,7 @@ struct GameView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
   @EnvironmentObject var modal: Modal
   @EnvironmentObject var pluginEnvironment: PluginEnvironment
+  @EnvironmentObject var managedConfig: ManagedConfig
 
   @ObservedObject var model: GameViewModel
 
@@ -222,6 +226,7 @@ struct GameView: View {
 
   init(
     serverDescriptor: ServerDescriptor,
+    managedConfig: ManagedConfig,
     resourcePack: Box<ResourcePack>,
     inputCaptureEnabled: Binding<Bool>,
     delegateSetter setDelegate: (InputDelegate) -> Void
@@ -229,14 +234,14 @@ struct GameView: View {
     self.serverDescriptor = serverDescriptor
 
     // TODO: Update the flow of the game view so that we don't have to create a dummy
-    //   resource pack.
+    //   config.
     let client = Client(
       resourcePack: resourcePack.value,
-      configuration: ConfigManager.default.coreConfiguration
+      configuration: managedConfig
     )
 
     // Setup input system
-    let inputDelegate = ClientInputDelegate(for: client)
+    let inputDelegate = ClientInputDelegate(for: client, mouseSensitivity: managedConfig.mouseSensitivity)
     setDelegate(inputDelegate)
 
     // Create render coordinator
@@ -247,7 +252,8 @@ struct GameView: View {
       inputDelegate: inputDelegate,
       renderCoordinator: renderCoordinator,
       serverDescriptor: serverDescriptor,
-      inputCaptured: inputCaptureEnabled
+      inputCaptured: inputCaptureEnabled,
+      managedConfig: managedConfig
     )
   }
 

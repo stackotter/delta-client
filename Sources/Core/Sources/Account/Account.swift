@@ -58,22 +58,24 @@ public enum Account: Codable, Identifiable {
     }
   }
 
-  /// Refreshes the account.
+  /// Refreshes the account's access token (if it has one).
   /// - Parameter clientToken: The client token to use when refreshing the account.
-  public mutating func refreshIfExpired(withClientToken clientToken: String) async throws {
+  public func refreshed(withClientToken clientToken: String) async throws -> Self {
     switch self {
       case .microsoft(let account):
-        if account.accessToken.hasExpired {
-          let account = try await MicrosoftAPI.refreshMinecraftAccount(account)
-          self = .microsoft(account)
-        }
+        let account = try await MicrosoftAPI.refreshMinecraftAccount(account)
+        return .microsoft(account)
       case .mojang(let account):
-        if account.accessToken.hasExpired {
-          let account = try await MojangAPI.refresh(account, with: clientToken)
-          self = .mojang(account)
-        }
+        let account = try await MojangAPI.refresh(account, with: clientToken)
+        return .mojang(account)
       case .offline:
-        return
+        return self
     }
+  }
+
+  /// Refreshes the account's access token in place (if it has one).
+  /// - Parameter clientToken: The client token to use when refreshing the account.
+  public mutating func refresh(withClientToken clientToken: String) async throws {
+    self = try await refreshed(withClientToken: clientToken)
   }
 }

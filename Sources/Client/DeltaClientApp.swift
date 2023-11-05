@@ -43,14 +43,15 @@ struct DeltaClientApp: App {
 
   var body: some Scene {
     WindowGroup {
-      LoadAndThen(arguments, $hasLoaded, $storage) { resourcePack, pluginEnvironment in
+      LoadAndThen(arguments, $hasLoaded, $storage) { managedConfig, resourcePack, pluginEnvironment in
         RouterView(resourcePack: resourcePack)
           .environmentObject(resourcePack)
           .environmentObject(pluginEnvironment)
+          .environmentObject(managedConfig)
           .onAppear {
             // TODO: Make a nice clean onboarding experience
-            if ConfigManager.default.config.selectedAccount == nil {
-              appState.update(to: .accounts)
+            if managedConfig.selectedAccountId == nil {
+              appState.update(to: .login)
             }
           }
       }

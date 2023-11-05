@@ -4,20 +4,14 @@ import Combine
 
 struct EditServerListView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
+  @EnvironmentObject var managedConfig: ManagedConfig
   
-  @State var servers = ConfigManager.default.config.servers
-  
-  func save() {
-    var config = ConfigManager.default.config
-    config.servers = servers
-    ConfigManager.default.setConfig(to: config)
-    appState.pop()
-  }
+  @State var servers: [ServerDescriptor] = []
   
   var body: some View {
     VStack {
       EditableList(
-        $servers,
+        $managedConfig.servers,
         itemEditor: ServerEditorView.self,
         row: { item, selected, isFirst, isLast, handler in
           HStack {
@@ -41,8 +35,8 @@ struct EditServerListView: View {
             }
           }
         },
-        saveAction: save,
-        cancelAction: appState.pop,
+        saveAction: appState.pop,
+        cancelAction: appState.pop, // TODO: There is no cancel anymore
         emptyMessage: "No servers")
     }
     .padding()

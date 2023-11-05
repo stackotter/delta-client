@@ -1,30 +1,32 @@
 import Foundation
 import DeltaCore
 
-public struct Config: Codable {
+// TODO: Use an ordered dictionary for `accounts` so that order is maintained
+//   even when loaded from disk on the next launch.
+struct Config: Codable, ClientConfiguration {
   /// The random token used to identify ourselves to Mojang's API
-  public var clientToken: String
+  var clientToken = UUID().uuidString
   /// The id of the currently selected account.
-  public var selectedAccountId: String?
+  var selectedAccountId: String?
   /// The dictionary containing all of the user's accounts.
-  public var accounts: [String: Account]
+  var accounts: [String: Account] = [:]
   /// The user's server list.
-  public var servers: [ServerDescriptor]
+  var servers: [ServerDescriptor] = []
   /// Rendering related configuration.
-  public var render: RenderConfiguration
+  var render = RenderConfiguration()
   /// Plugins that the user has explicitly unloaded.
-  public var unloadedPlugins: [String]
+  var unloadedPlugins: [String] = []
   /// The user's keymap.
-  public var keymap: Keymap
+  var keymap = Keymap.default
   /// Whether to use the sprint key as a toggle.
-  public var toggleSprint: Bool
+  var toggleSprint = false
   /// Whether to use the sneak key as a toggle.
-  public var toggleSneak: Bool
+  var toggleSneak = false
   /// The in game mouse sensitivity
-  public var mouseSensitivity: Float
+  var mouseSensitivity: Float = 1
 
   /// The account the user has currently selected.
-  public var selectedAccount: Account? {
+  var selectedAccount: Account? {
     if let id = selectedAccountId {
       return accounts[id]
     } else {
@@ -33,15 +35,36 @@ public struct Config: Codable {
   }
 
   /// Creates the default config.
-  public init() {
-    clientToken = UUID().uuidString
-    accounts = [:]
-    servers = []
-    render = RenderConfiguration()
-    unloadedPlugins = []
-    keymap = Keymap.default
-    toggleSprint = false
-    toggleSneak = false
-    mouseSensitivity = 1
+  init() {}
+
+  /// Loads a configuration from a JSON configuration file.
+  static func load(from file: URL) throws -> Config {
+    let data = try Data(contentsOf: file)
+    return try JSONDecoder().decode(Self.self, from: data)
+  }
+
+  /// Saves the configuration to a JSON file.
+  func save(to file: URL) throws {
+    let data = try JSONEncoder().encode(self)
+    try data.write(to: file)
+  }
+
+  /// Adds an account to the configuration. If an account with the same id already
+  /// exists, it gets replaced.
+  mutating func addAccount(_ account: Account) {
+    accounts[account.id] = account
+  }
+
+  /// Sets the selected account id. If the `id` is `nil`, then no account is selected.
+  mutating func selectAccount(withId id: String?) {
+    selectedAccountId = id
+  }
+
+  /// Adds a collection of accounts to the configuration. Any existing accounts with
+  /// overlapping ids are replaced.
+  mutating func addAccounts(_ accounts: [Account]) {
+    for account in accounts {
+      addAccount(account)
+    }
   }
 }

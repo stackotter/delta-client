@@ -3,6 +3,7 @@ import Combine
 import DeltaCore
 
 struct LoadResult {
+  var managedConfig: ManagedConfig
   var resourcePack: Box<ResourcePack>
   var pluginEnvironment: PluginEnvironment
 }
@@ -28,19 +29,19 @@ extension Box: ObservableObject {
 struct LoadAndThen<Child: View>: View {
   @EnvironmentObject var modal: Modal
 
-  @ObservedObject var startup = TaskProgress<StartupStep>()
+  @StateObject var startup = TaskProgress<StartupStep>()
   @State var loadResult: LoadResult?
 
   @Binding var hasLoaded: Bool
   @Binding var storage: StorageDirectory?
   let arguments: CommandLineArguments
-  var content: (Box<ResourcePack>, PluginEnvironment) -> Child
+  var content: (ManagedConfig, Box<ResourcePack>, PluginEnvironment) -> Child
 
   init(
     _ arguments: CommandLineArguments,
     _ hasLoaded: Binding<Bool>,
     _ storage: Binding<StorageDirectory?>,
-    content: @escaping (Box<ResourcePack>, PluginEnvironment) -> Child
+    content: @escaping (ManagedConfig, Box<ResourcePack>, PluginEnvironment) -> Child
   ) {
     self.arguments = arguments
     _hasLoaded = hasLoaded
@@ -61,14 +62,30 @@ struct LoadAndThen<Child: View>: View {
 
     let stopwatch = Stopwatch()
 
-    let config = ConfigManager.default.config
-
     guard var storage = StorageDirectory.platformDefault else {
       throw RichError("Failed to get storage directory")
     }
     try storage.ensureCreated()
     storage.pluginDirectoryOverride = arguments.pluginsDirectory
     self.storage = storage
+
+    // Load configuration, replacing it with defaults if it can't be read
+    let config: Config
+    do {
+      config = try Config.load(from: storage.configFile)
+    } catch {
+      modal.error(RichError("Failed to load config; resetting to defaults").becauseOf(error))
+      config = Config()
+      do {
+        try config.save(to: storage.configFile)
+      } catch {
+        throw RichError("Failed to save new config").becauseOf(error)
+      }
+    }
+
+    let managedConfig = ManagedConfig(config, backedBy: storage.configFile) { error in
+      modal.error(RichError("Failed to save config").becauseOf(error))
+    }
 
     // Enable file logging as there isn't really a better place to put this. Despite
     // not being part of loading per-say, it needs to be enabled as early as possible
@@ -80,7 +97,21 @@ struct LoadAndThen<Child: View>: View {
     }
 
     Task {
-      await ConfigManager.default.refreshAccounts()
+      let errors = await managedConfig.refreshAccounts()
+
+      if errors.isEmpty {
+        return
+      }
+
+      var richError = RichError("Failed to refresh accounts.")
+      if errors.count > 1 {
+        for (i, error) in errors.enumerated() {
+          richError = richError.with("Reason \(i + 1)", error)
+        }
+      } else if let reason = errors.first {
+        richError = richError.becauseOf(reason)
+      }
+      modal.error(richError)
     }
 
     let pluginEnvironment = PluginEnvironment()
@@ -124,6 +155,7 @@ struct LoadAndThen<Child: View>: View {
 
     ThreadUtil.runInMain {
       loadResult = LoadResult(
+        managedConfig: managedConfig,
         resourcePack: Box(resourcePack),
         pluginEnvironment: pluginEnvironment
       )
@@ -132,9 +164,11 @@ struct LoadAndThen<Child: View>: View {
   }
 
   var body: some View {
-    VStack {
+    return {
+    print("Updating")
+    return VStack {
       if let loadResult = loadResult {
-        content(loadResult.resourcePack, loadResult.pluginEnvironment)
+        content(loadResult.managedConfig, loadResult.resourcePack, loadResult.pluginEnvironment)
       } else {
         ProgressLoadingView(progress: startup.progress, message: startup.message)
       }
@@ -144,11 +178,19 @@ struct LoadAndThen<Child: View>: View {
         do {
           try load()
         } catch {
-          modal.error(RichError("Failed to load.").becauseOf(error)) {
+          let richError: RichError
+          if let error = error as? RichError {
+            richError = error
+          } else {
+            richError = RichError("Failed to load.").becauseOf(error)
+          }
+
+          modal.error(richError) {
             Foundation.exit(1)
           }
         }
       }
     }
+    }()
   }
 }
