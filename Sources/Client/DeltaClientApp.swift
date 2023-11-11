@@ -3,9 +3,10 @@ import DeltaCore
 
 /// The entry-point for Delta Client.
 struct DeltaClientApp: App {
-  @ObservedObject var appState = StateWrapper<AppState>(initial: .serverList)
-  @ObservedObject var pluginEnvironment = PluginEnvironment()
-  @ObservedObject var modal = Modal()
+  @StateObject var appState = StateWrapper<AppState>(initial: .serverList)
+  @StateObject var pluginEnvironment = PluginEnvironment()
+  @StateObject var modal = Modal()
+  @StateObject var controllerHub = ControllerHub()
 
   @State var storage: StorageDirectory?
 
@@ -59,6 +60,7 @@ struct DeltaClientApp: App {
         .environment(\.storage, storage ?? StorageDirectoryEnvironmentKey.defaultValue)
         .environmentObject(modal)
         .environmentObject(appState)
+        .environmentObject(controllerHub)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .navigationTitle("Delta Client")
         .alert(isPresented: modal.isPresented) {
