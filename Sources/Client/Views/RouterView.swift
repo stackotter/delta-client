@@ -4,8 +4,7 @@ import DeltaCore
 struct RouterView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
   @EnvironmentObject var managedConfig: ManagedConfig
-
-  var resourcePack: Box<ResourcePack>
+  @EnvironmentObject var resourcePack: Box<ResourcePack>
 
   var body: some View {
     VStack {
@@ -26,19 +25,9 @@ struct RouterView: View {
         case .directConnect:
           DirectConnectView()
         case .playServer(let descriptor):
-          InputView { inputCaptureEnabled, setDelegate in
-            GameView(
-              serverDescriptor: descriptor,
-              managedConfig: managedConfig,
-              resourcePack: resourcePack,
-              inputCaptureEnabled: inputCaptureEnabled,
-              delegateSetter: setDelegate
-            )
-          }
-        case .fatalError(let message):
-          FatalErrorView(message: message)
+          GameView(serverDescriptor: descriptor)
         case .settings(let landingPage):
-          SettingsView(isInGame: false, client: nil, landingPage: landingPage, onDone: {
+          SettingsView(isInGame: false, landingPage: landingPage, onDone: {
             appState.pop()
           })
       }

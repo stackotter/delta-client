@@ -4,35 +4,19 @@ import DeltaCore
 struct KeymapEditorView: View {
   @EnvironmentObject var managedConfig: ManagedConfig
 
-  /// Whether key inputs are being captured by the view
-  @Binding var inputCaptured: Bool
-  /// A wrapper for the current keymap and the currently selected input
-  @ObservedObject var state: KeymapEditorState
-
-  init(
-    managedConfig: ManagedConfig,
-    inputCaptured: Binding<Bool>,
-    inputDelegateSetter setInputDelegate: (InputDelegate) -> Void
-  ) {
-    // TODO: Refactor InputView so use environment values and environment objects instead of
-    //   the stupid delegate pattern (this would mean that we don't need this weird init at all)
-    _inputCaptured = inputCaptured
-    state = KeymapEditorState(keymap: managedConfig.keymap.bindings)
-    let inputDelegate = KeymapEditorInputDelegate(
-      managedConfig: managedConfig,
-      editorState: state,
-      inputCaptured: _inputCaptured
-    )
-    setInputDelegate(inputDelegate)
-  }
+  /// Whether key inputs are being captured by the view.
+  @State var inputCaptured = false
+  /// The input currently selected for rebinding.
+  @State var selectedInput: Input?
 
   var body: some View {
-    VStack {
-      ForEach(Input.allCases.filter(\.isBindable), id: \.self) { input in
-        let key = state.keymap[input]
-        let isUnique = key == nil ? true : state.keymap.values.filter({ $0 == key }).count == 1
-        let isBound = state.keymap[input] != nil
-        let isSelected = state.selectedInput == input
+    InputView(listening: $inputCaptured, cursorCaptured: false) {
+      ForEach(Input.allCases.filter(\.isBindable), id: \.self) { (input: Input) in
+        let bindings = managedConfig.keymap.bindings
+        let key = bindings[input]
+        let isUnique = key == nil ? true : bindings.values.filter({ $0 == key }).count == 1
+        let isBound = bindings[input] != nil
+        let isSelected = selectedInput == input
 
         let labelColor = Self.labelColor(isUnique: isUnique, isBound: isBound, isSelected: isSelected)
 
@@ -42,14 +26,14 @@ struct KeymapEditorView: View {
             .frame(width: 150)
 
           // Button to set a new binding
-          let keyName = state.keymap[input]?.rawValue ?? "Unbound"
+          let keyName = bindings[input]?.rawValue ?? "Unbound"
           Button(action: {
             if isSelected {
-              state.keymap[input] = .leftMouseButton
-              state.selectedInput = nil
+              managedConfig.keymap.bindings[input] = .leftMouseButton
+              selectedInput = nil
               inputCaptured = false
             } else {
-              state.selectedInput = input
+              selectedInput = input
               inputCaptured = true
             }
           }, label: {
@@ -57,15 +41,32 @@ struct KeymapEditorView: View {
               .foregroundColor(labelColor)
           })
           .buttonStyle(SecondaryButtonStyle())
+          .disabled(isSelected)
 
           // Button to unbind an input
           IconButton("xmark", isDisabled: !isBound || isSelected) {
-            state.keymap.removeValue(forKey: input)
-            managedConfig.keymap.bindings = state.keymap
+            managedConfig.keymap.bindings.removeValue(forKey: input)
           }
         }
         .frame(width: 400)
       }
+    }
+    .passthroughClicks()
+    .onKeyPress { key, _ in
+      guard let selectedInput = selectedInput else {
+        return
+      }
+
+      if key == .escape {
+        managedConfig.keymap.bindings.removeValue(forKey: selectedInput)
+      } else {
+        managedConfig.keymap.bindings[selectedInput] = key
+      }
+
+      self.selectedInput = nil
+    }
+    .onKeyRelease { key in
+      inputCaptured = false
     }
   }
 

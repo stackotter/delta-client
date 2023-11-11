@@ -11,7 +11,7 @@ enum RequestError: LocalizedError {
   case failedToConvertBodyToData
   /// The response was not of type HTTP.
   case invalidURLResponse
-  /// The status code of the response was not greater than or equal to 400.
+  /// Request failed.
   case unsuccessfulRequest(_ statusCode: Int)
   /// Something has gone horribly wrong.
   case unknownError
@@ -23,10 +23,7 @@ enum RequestError: LocalizedError {
       case .invalidURLResponse:
         return "The response was not of type HTTP."
       case .unsuccessfulRequest(let statusCode):
-        return """
-        The status code of the response was not greater than or equal to 400.
-        Response status code: \(statusCode).
-        """
+        return "Request failed with status code \(statusCode)."
       case .unknownError:
         return "Something has gone horribly wrong."
     }

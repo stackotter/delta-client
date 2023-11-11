@@ -12,19 +12,16 @@ enum SettingsState: CaseIterable {
 
 struct SettingsView: View {
   var isInGame: Bool
-  var client: Client?
   var done: () -> Void
 
   @State private var currentPage: SettingsState?
 
   init(
     isInGame: Bool,
-    client: Client?,
     landingPage: SettingsState? = nil,
     onDone done: @escaping () -> Void
   ) {
     self.isInGame = isInGame
-    self.client = client
     self.done = done
     self._currentPage = State(initialValue: landingPage ?? SettingsState.allCases[0])
   }

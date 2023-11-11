@@ -35,7 +35,15 @@ class Modal: ObservableObject {
   }
 
   @Published var content: Content?
-  var dismissHandler: (() -> Void)?
+
+  private var dismissHandler: (() -> Void)?
+  /// Handlers to call when an error occurs. Guaranteed to be called on the
+  /// main thread.
+  private var errorHandlers: [(Error) -> Void] = []
+
+  func onError(_ action: @escaping (Error) -> Void) {
+    errorHandlers.append(action)
+  }
 
   func warning(_ message: String, onDismiss dismissHandler: (() -> Void)? = nil) {
     log.warning(message)
@@ -50,6 +58,9 @@ class Modal: ObservableObject {
     ThreadUtil.runInMain {
       content = .errorMessage(message)
       self.dismissHandler = dismissHandler
+      for errorHandler in errorHandlers {
+        errorHandler(RichError(message))
+      }
     }
   }
 
@@ -58,6 +69,9 @@ class Modal: ObservableObject {
     ThreadUtil.runInMain {
       content = .error(error)
       self.dismissHandler = dismissHandler
+      for errorHandler in errorHandlers {
+        errorHandler(error)
+      }
     }
   }
 }

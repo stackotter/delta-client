@@ -21,10 +21,11 @@ struct DeltaClientApp: App {
     case commit(String)
   }
 
-  /// Gets the current client's version.
-  static var version: Version {
+  /// Gets the current client's version. `nil` if the app doesn't have an `Info.plist` or
+  /// the `CFBundleShortVersionString` key is missing.
+  static var version: Version? {
     guard let versionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String else {
-      fatalError("Info.plist is missing a version string")
+      return nil
     }
 
     if versionString.hasPrefix("commit: ") {
@@ -44,7 +45,7 @@ struct DeltaClientApp: App {
   var body: some Scene {
     WindowGroup {
       LoadAndThen(arguments, $hasLoaded, $storage) { managedConfig, resourcePack, pluginEnvironment in
-        RouterView(resourcePack: resourcePack)
+        RouterView()
           .environmentObject(resourcePack)
           .environmentObject(pluginEnvironment)
           .environmentObject(managedConfig)
@@ -75,7 +76,7 @@ struct DeltaClientApp: App {
           switch appState.current {
             case .serverList, .editServerList, .accounts, .login, .directConnect:
               appState.update(to: .settings(nil))
-            case .playServer, .settings, .fatalError:
+            case .playServer, .settings:
               break
           }
         }

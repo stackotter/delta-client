@@ -22,13 +22,7 @@ struct ControlsSettingsView: View {
       }
       .frame(width: 450)
 
-      InputView(passthroughMouseClicks: false) { inputCaptured, delegateSetter in
-        KeymapEditorView(
-          managedConfig: managedConfig,
-          inputCaptured: inputCaptured,
-          inputDelegateSetter: delegateSetter
-        )
-      }
+      KeymapEditorView()
 
       HStack {
         Text("Toggle sprint").frame(width: 150)

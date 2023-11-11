@@ -4,9 +4,6 @@ import DeltaRenderer
 import Combine
 
 enum GameState {
-  case connecting
-  case loggingIn
-  case downloadingChunks(numberReceived: Int, total: Int)
   case playing
   case gpuFrameCaptureComplete(file: URL)
 }
@@ -24,343 +21,109 @@ class Box<T> {
   }
 }
 
-class GameViewModel: ObservableObject {
-  @Published var state = StateWrapper<GameState>(initial: .connecting)
-  @Published var overlayState = StateWrapper<OverlayState>(initial: .menu)
-  @Published var showInGameMenu = false
-
-  @Binding var inputCaptured: Bool
-
-  var client: Client
-  var inputDelegate: ClientInputDelegate
-  var renderCoordinator: RenderCoordinator
-  var downloadedChunksCount = Box(0)
-  var serverDescriptor: ServerDescriptor
-  var storage: StorageDirectory?
-  var managedConfig: ManagedConfig
-
-  var cancellables: [AnyCancellable] = []
-
-  init(
-    client: Client,
-    inputDelegate: ClientInputDelegate,
-    renderCoordinator: RenderCoordinator,
-    serverDescriptor: ServerDescriptor,
-    inputCaptured: Binding<Bool>,
-    managedConfig: ManagedConfig
-  ) {
-    self.client = client
-    self.inputDelegate = inputDelegate
-    self.renderCoordinator = renderCoordinator
-    self.serverDescriptor = serverDescriptor
-    _inputCaptured = inputCaptured
-    self.managedConfig = managedConfig
-
-    watch(state)
-    watch(overlayState)
-  }
-
-  func registerEventHandler(using modal: Modal, appState: StateWrapper<AppState>) {
-    client.eventBus.registerHandler { [weak self] event in
-      guard let self = self else { return }
-      do {
-        try self.handleClientEvent(event)
-      } catch {
-        modal.error(error)
-        appState.update(to: .serverList)
-      }
-    }
-  }
-
-  func watch<T: ObservableObject>(_ value: T) {
-    self.cancellables.append(value.objectWillChange.sink { [weak self] _ in
-      self?.objectWillChange.send()
-    })
-  }
-
-  func closeMenu() {
-    inputDelegate.mouseSensitivity = managedConfig.mouseSensitivity
-    inputCaptured = true
-
-    withAnimation(nil) {
-      showInGameMenu = false
-      inputDelegate.captureCursor()
-    }
-  }
-
-  enum GameViewError: LocalizedError {
-    case noAccountSelected
-    case failedToRefreshAccount
-    case failedToSendJoinServerRequest
-    case connectionFailed
-    case disconnectedDuringLogin
-    case disconnectedDuringPlay
-    case failedToDecodePacket
-    case failedToHandlePacket
-    case failedToStartFrameCapture
-
-    var errorDescription: String? {
-      switch self {
-        case .noAccountSelected:
-          return "Please login and select an account before joining a server."
-        case .failedToRefreshAccount:
-          return "Failed to refresh account."
-        case .failedToSendJoinServerRequest:
-          return "Failed to send join server request."
-        case .connectionFailed:
-          return "Failed to connect to server."
-        case .disconnectedDuringLogin:
-          return "Disconnected from server during login."
-        case .disconnectedDuringPlay:
-          return "Disconnected from server during play."
-        case .failedToDecodePacket:
-          return "Failed to decode packet."
-        case .failedToHandlePacket:
-          return "Failed to handle packet."
-        case .failedToStartFrameCapture:
-          return "Failed to start frame capture."
-      }
-    }
-  }
-
-  func joinServer(_ descriptor: ServerDescriptor) async throws {
-    // Get the account to use
-    guard let account = managedConfig.config.selectedAccount else {
-      throw GameViewError.noAccountSelected
-    }
-
-    // Refresh the account (if it's an online account) and then join the server
-    let refreshedAccount: Account
-    do {
-      refreshedAccount = try await managedConfig.selectedAccountRefreshedIfNecessary()
-    } catch {
-      throw GameViewError.failedToRefreshAccount
-        .with("Username", account.username)
-        .becauseOf(error)
-    }
-
-    do {
-      try self.client.joinServer(
-        describedBy: descriptor,
-        with: refreshedAccount)
-    } catch {
-      throw GameViewError.failedToSendJoinServerRequest.becauseOf(error)
-    }
-  }
-
-  func handleClientEvent(_ event: Event) throws {
-    switch event {
-      case let connectionFailedEvent as ConnectionFailedEvent:
-        throw GameViewError.connectionFailed.with("Address", serverDescriptor).becauseOf(connectionFailedEvent.networkError)
-      case _ as LoginStartEvent:
-        state.update(to: .loggingIn)
-      case _ as JoinWorldEvent:
-        // Approximation of the number of chunks the server will send (used in progress indicator)
-        let totalChunksToReceieve = Int(Foundation.pow(Double(client.game.maxViewDistance * 2 + 3), 2))
-        state.update(to: .downloadingChunks(numberReceived: 0, total: totalChunksToReceieve))
-      case _ as World.Event.AddChunk:
-        ThreadUtil.runInMain {
-          if case let .downloadingChunks(_, total) = state.current {
-            // An intermediate variable is used to reduce the number of SwiftUI updates generated by downloading chunks
-            downloadedChunksCount.value += 1
-            if downloadedChunksCount.value % 25 == 0 {
-              state.update(to: .downloadingChunks(numberReceived: downloadedChunksCount.value, total: total))
-            }
-          }
-        }
-      case _ as TerrainDownloadCompletionEvent:
-        state.update(to: .playing)
-      case let disconnectEvent as PlayDisconnectEvent:
-        throw GameViewError.disconnectedDuringPlay.with("Reason", disconnectEvent.reason)
-      case let disconnectEvent as LoginDisconnectEvent:
-        throw GameViewError.disconnectedDuringLogin.with("Reason", disconnectEvent.reason)
-      case let packetError as PacketHandlingErrorEvent:
-        throw GameViewError.failedToHandlePacket.with("Id", packetError.packetId.hexWithPrefix).with("Reason", packetError.error)
-      case let packetError as PacketDecodingErrorEvent:
-        throw GameViewError.failedToDecodePacket.with("Id", packetError.packetId.hexWithPrefix).with("Reason", packetError.error)
-      case let generalError as ErrorEvent:
-        if let message = generalError.message {
-          throw RichError(message).becauseOf(generalError.error)
-        } else {
-          throw generalError.error
-        }
-      case let event as KeyPressEvent where event.input == .performGPUFrameCapture:
-        guard let outputFile = storage?.uniqueGPUCaptureFile() else {
-          // TODO: GameViewModel as a whole is a mess, it should be created in GameView's onAppear
-          //   instead of the init so that we can access environment values and environment objects
-          //   in a much safer way.
-          return
-        }
-        do {
-          try renderCoordinator.captureFrames(count: 10, to: outputFile)
-        } catch {
-          throw GameViewError.failedToStartFrameCapture.becauseOf(error)
-        }
-      case _ as OpenInGameMenuEvent:
-        inputDelegate.releaseCursor()
-        overlayState.update(to: .menu)
-        showInGameMenu = true
-        inputCaptured = false
-      case _ as ReleaseCursorEvent:
-        inputDelegate.releaseCursor()
-      case _ as CaptureCursorEvent:
-        inputDelegate.captureCursor()
-      case let event as FinishFrameCaptureEvent:
-        inputDelegate.releaseCursor()
-        state.update(to: .gpuFrameCaptureComplete(file: event.file))
-      default:
-        break
-    }
-  }
-}
-
+// TODO: Reintroduce controller support.
 struct GameView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
-  @EnvironmentObject var modal: Modal
-  @EnvironmentObject var pluginEnvironment: PluginEnvironment
   @EnvironmentObject var managedConfig: ManagedConfig
+  @EnvironmentObject var modal: Modal
+  @Environment(\.storage) var storage: StorageDirectory
 
-  @ObservedObject var model: GameViewModel
+  @StateObject var state = StateWrapper<GameState>(initial: .playing)
+  @StateObject var overlayState = StateWrapper<OverlayState>(initial: .menu)
 
-  let serverDescriptor: ServerDescriptor
-
-  init(
-    serverDescriptor: ServerDescriptor,
-    managedConfig: ManagedConfig,
-    resourcePack: Box<ResourcePack>,
-    inputCaptureEnabled: Binding<Bool>,
-    delegateSetter setDelegate: (InputDelegate) -> Void
-  ) {
-    self.serverDescriptor = serverDescriptor
-
-    // TODO: Update the flow of the game view so that we don't have to create a dummy
-    //   config.
-    let client = Client(
-      resourcePack: resourcePack.value,
-      configuration: managedConfig
-    )
-
-    // Setup input system
-    let inputDelegate = ClientInputDelegate(for: client, mouseSensitivity: managedConfig.mouseSensitivity)
-    setDelegate(inputDelegate)
-
-    // Create render coordinator
-    let renderCoordinator = RenderCoordinator(client)
-
-    model = GameViewModel(
-      client: client,
-      inputDelegate: inputDelegate,
-      renderCoordinator: renderCoordinator,
-      serverDescriptor: serverDescriptor,
-      inputCaptured: inputCaptureEnabled,
-      managedConfig: managedConfig
-    )
-  }
+  @State var pressedKeys: Set<Key> = []
+  @State var showInGameMenu = false
+  @State var inputCaptured = true
+  @State var cursorCaptured = true
+  
+  var serverDescriptor: ServerDescriptor
 
   var body: some View {
-    VStack {
-      switch model.state.current {
-        case .connecting:
-          connectingView
-        case .loggingIn:
-          loggingInView
-        case .downloadingChunks(let numberReceived, let total):
-          VStack {
-            Text("Downloading chunks...")
-            HStack {
-              ProgressView(value: Double(numberReceived) / Double(total))
-              Text("\(numberReceived) of \(total)")
+    JoinServerAndThen(serverDescriptor) { client in
+      WithRenderCoordinator(for: client) { renderCoordinator in
+        VStack {
+          switch state.current {
+            case .playing:
+              ZStack {
+                InputView(listening: $inputCaptured, cursorCaptured: cursorCaptured) {
+                  gameView(renderCoordinator: renderCoordinator)
+                }
+                .onKeyPress { [weak client] key, characters in
+                  pressedKeys.insert(key)
+                  client?.press(key, characters)
+                }
+                .onKeyRelease { [weak client] key in
+                  pressedKeys.remove(key)
+                  client?.release(key)
+                }
+                .onMouseMove { [weak client] deltaX, deltaY in
+                  // TODO: Formalise this adjustment factor somewhere
+                  let sensitivityAdjustmentFactor: Float = 0.004
+                  let sensitivity = sensitivityAdjustmentFactor * managedConfig.mouseSensitivity
+                  client?.moveMouse(sensitivity * deltaX, sensitivity * deltaY)
+                }
+                .passthroughClicks(!cursorCaptured)
+
+                overlayView
+              }
+            case .gpuFrameCaptureComplete(let file):
+              frameCaptureResult(file)
+          }
+        }
+        .onAppear {
+          modal.onError { [weak client] _ in
+            client?.game.tickScheduler.cancel()
+            cursorCaptured = false
+            inputCaptured = false
+          }
+
+          client.eventBus.registerHandler { event in
+            switch event {
+              case _ as OpenInGameMenuEvent:
+                showInGameMenu = true
+                cursorCaptured = false
+                inputCaptured = false
+              case _ as ReleaseCursorEvent:
+                cursorCaptured = false
+              case _ as CaptureCursorEvent:
+                cursorCaptured = true
+              case let event as KeyPressEvent where event.input == .performGPUFrameCapture:
+                let outputFile = storage.uniqueGPUCaptureFile()
+                do {
+                  try renderCoordinator.captureFrames(count: 10, to: outputFile)
+                } catch {
+                  modal.error(RichError("Failed to start frame capture").becauseOf(error))
+                }
+              case let event as FinishFrameCaptureEvent:
+                cursorCaptured = false
+                inputCaptured = false
+                state.update(to: .gpuFrameCaptureComplete(file: event.file))
+              default:
+                break
             }
-              .frame(maxWidth: 200)
-            Button("Cancel", action: disconnect)
-              .buttonStyle(SecondaryButtonStyle())
-              .frame(width: 150)
           }
-        case .playing:
-          ZStack {
-            gameView
-            overlayView
-          }
-        case .gpuFrameCaptureComplete(let file):
-          VStack {
-            Text("GPU frame capture complete")
-
-            Group {
-              #if os(macOS)
-              Button("Show in finder") {
-                NSWorkspace.shared.activateFileViewerSelecting([file])
-              }.buttonStyle(SecondaryButtonStyle())
-              #elseif os(iOS)
-              // TODO: Add a file sharing menu for iOS
-              Text("I have no clue how to get hold of the file")
-              #else
-              #error("Unsupported platform, no file opening method")
-              #endif
-
-              Button("OK") {
-                model.state.pop()
-              }.buttonStyle(PrimaryButtonStyle())
-            }.frame(width: 200)
-          }
-      }
-    }
-    .onAppear {
-      // Setup plugins
-      pluginEnvironment.addEventBus(model.client.eventBus)
-      pluginEnvironment.handleWillJoinServer(server: serverDescriptor, client: model.client)
-
-      model.registerEventHandler(using: modal, appState: appState)
-
-      // Connect to server
-      Task {
-        do {
-          try await model.joinServer(serverDescriptor)
-        } catch {
-          modal.error(error)
-          appState.update(to: .serverList)
         }
       }
-    }
-    .onDisappear {
-      model.client.disconnect()
-      model.renderCoordinator = RenderCoordinator(model.client)
-      model.inputDelegate.releaseCursor()
+    } cancellationHandler: {
+      appState.update(to: .serverList)
     }
   }
 
-  var connectingView: some View {
-    VStack {
-      Text("Establishing connection...")
-      Button("Cancel", action: disconnect)
-        .buttonStyle(SecondaryButtonStyle())
-        .frame(width: 150)
-    }
-  }
-
-  var loggingInView: some View {
-    VStack {
-      Text("Logging in...")
-      Button("Cancel", action: disconnect)
-        .buttonStyle(SecondaryButtonStyle())
-        .frame(width: 150)
-    }
-  }
-
-  var gameView: some View {
+  func gameView(renderCoordinator: RenderCoordinator) -> some View {
     ZStack {
       // Renderer
       if #available(macOS 13, iOS 16, *) {
-        MetalView(renderCoordinator: model.renderCoordinator)
+        MetalView(renderCoordinator: renderCoordinator)
           .onAppear {
-            model.inputDelegate.captureCursor()
-            model.inputCaptured = true
+            cursorCaptured = true
+            inputCaptured = true
           }
       }
       else {
-        MetalViewClass(renderCoordinator: model.renderCoordinator)
+        MetalViewClass(renderCoordinator: renderCoordinator)
           .onAppear {
-            model.inputDelegate.captureCursor()
-            model.inputCaptured = true
+            cursorCaptured = true
+            inputCaptured = true
           }
       }
 
@@ -370,27 +133,62 @@ struct GameView: View {
     }
   }
 
+  func frameCaptureResult(_ file: URL) -> some View {
+    VStack {
+      Text("GPU frame capture complete")
+
+      Group {
+        #if os(macOS)
+        Button("Show in finder") {
+          NSWorkspace.shared.activateFileViewerSelecting([file])
+        }.buttonStyle(SecondaryButtonStyle())
+        #elseif os(iOS)
+        // TODO: Add a file sharing menu for iOS
+        Text("I have no clue how to get hold of the file")
+        #else
+        #error("Unsupported platform, no file opening method")
+        #endif
+
+        Button("OK") {
+          state.pop()
+        }.buttonStyle(PrimaryButtonStyle())
+      }.frame(width: 200)
+    }
+  }
+
+  func openMenu() {
+    inputCaptured = false
+    cursorCaptured = false
+    showInGameMenu = true
+  }
+
+  func closeMenu() {
+    inputCaptured = true
+    cursorCaptured = true
+    showInGameMenu = false
+  }
+
   /// In-game menu overlay.
   var overlayView: some View {
     VStack {
-      if model.showInGameMenu {
+      if showInGameMenu {
         GeometryReader { geometry in
           VStack {
-            switch model.overlayState.current {
+            switch overlayState.current {
               case .menu:
                 VStack {
-                  Button("Back to game", action: model.closeMenu)
+                  Button("Back to game", action: closeMenu)
                     .keyboardShortcut(.escape, modifiers: [])
                     .buttonStyle(PrimaryButtonStyle())
-                  Button("Settings", action: { model.overlayState.update(to: .settings) })
+                  Button("Settings") { overlayState.update(to: .settings) }
                     .buttonStyle(SecondaryButtonStyle())
                   Button("Disconnect", action: disconnect)
                     .buttonStyle(SecondaryButtonStyle())
                 }
                 .frame(width: 200)
               case .settings:
-                SettingsView(isInGame: true, client: model.client, onDone: {
-                  model.overlayState.update(to: .menu)
+                SettingsView(isInGame: true, onDone: {
+                  overlayState.update(to: .menu)
                 })
             }
           }

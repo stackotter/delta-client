@@ -316,8 +316,7 @@ enum Updater {
   
   /// Checks if the user is on the main branch and a newer commit is available.
   static func isUpdateAvailable() throws -> Bool {
-    let currentVersion = DeltaClientApp.version
-    guard case let .commit(commit) = currentVersion else {
+    guard case let .commit(commit) = DeltaClientApp.version else {
       return false
     }
 

@@ -76,24 +76,30 @@ extension LocalizedError {
   /// instead of wrapping it in another ``RichError``. Calling this method a second time overwrites the
   /// underlying error set by the previous call.
   public func becauseOf(_ error: any Error) -> RichError {
-    let richError: RichError
+    var richError: RichError
     if let self = self as? RichError {
       richError = self
     } else {
       richError = RichError(self)
     }
-    return RichError.becauseOf(richError)(error)
+
+    // Don't use `RichError.becauseOf` here even though this is duplicated code (because it creates an infinite loop otherwise)
+    richError.reason = error
+    return richError
   }
 
   /// Adds key-value context to an error. If the error is already rich, this modifies a copy of the error
   /// instead of wrapping it in another ``RichError``.
   public func with(_ key: String, _ value: Any) -> RichError {
-    let richError: RichError
+    var richError: RichError
     if let self = self as? RichError {
       richError = self
     } else {
       richError = RichError(self)
     }
-    return RichError.with(richError)(key, value)
+
+    // Don't use `RichError.with` here even though this is duplicated code (because it creates an infinite loop otherwise)
+    richError.context.append((key, value))
+    return richError
   }
 }

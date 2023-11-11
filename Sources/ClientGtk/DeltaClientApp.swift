@@ -101,10 +101,4 @@ struct DeltaClientApp: App {
       }
     }.padding(10)
   }
-
-  /// Logs a fatal error and then fatal errors.
-  static func fatal(_ message: String) -> Never {
-    log.critical(message)
-    fatalError(message)
-  }
 }

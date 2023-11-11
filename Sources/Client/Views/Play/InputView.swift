@@ -1,52 +1,117 @@
 import SwiftUI
 import DeltaCore
 
-final class InputDelegateWrapper {
-  var delegate: InputDelegate?
+struct InputView<Content: View>: View {
+  @State var monitorsAdded = false
+  @State var scrollWheelDeltaY: Float = 0
 
-  init(_ delegate: InputDelegate?) {
-    self.delegate = delegate
-  }
-}
-
-final class InputViewModel {
-  var monitorsAdded = false
-  var scrollWheelDeltaY: Float = 0
   #if os(macOS)
-  var previousModifierFlags: NSEvent.ModifierFlags?
+  @State var previousModifierFlags: NSEvent.ModifierFlags?
   #endif
 
-  init() {}
-}
+  @Binding var listening: Bool
 
-struct InputView<Content: View>: View {
-  private var delegateWrapper = InputDelegateWrapper(nil)
-  private var content: (_ enabled: Binding<Bool>, _ setDelegate: (InputDelegate) -> Void) -> Content
+  private var content: () -> Content
 
-  /// Whether or not this view is intercepting input events. Defaults to false.
-  @State private var enabled = false
+  private var onKeyRelease: ((Key) -> Void)?
+  private var onKeyPress: ((Key, [Character]) -> Void)?
+  private var onMouseMove: ((_ deltaX: Float, _ deltaY: Float) -> Void)?
+  private var onScroll: ((_ deltaY: Float) -> Void)?
+  private var shouldPassthroughClicks = false
 
-  private var model = InputViewModel()
-  private var passthroughMouseClicks: Bool
-
-  init(passthroughMouseClicks: Bool = false, @ViewBuilder _ content: @escaping (_ enabled: Binding<Bool>, _ setDelegate: (InputDelegate) -> Void) -> Content) {
-    self.passthroughMouseClicks = passthroughMouseClicks
+  init(
+    listening: Binding<Bool>,
+    cursorCaptured: Bool,
+    @ViewBuilder _ content: @escaping () -> Content
+  ) {
+    _listening = listening
     self.content = content
+
+    if cursorCaptured {
+      Self.captureCursor()
+    } else {
+      Self.releaseCursor()
+    }
   }
 
-  func setDelegate(_ delegate: InputDelegate) {
-    delegateWrapper.delegate = delegate
+  /// Captures the cursor (locks it in place and makes it invisible).
+  private static func captureCursor() {
+    CGAssociateMouseAndMouseCursorPosition(0)
+    NSCursor.hide()
+  }
+
+  /// Releases the cursor, making it visible and able to move around.
+  private static func releaseCursor() {
+    CGAssociateMouseAndMouseCursorPosition(1)
+    NSCursor.unhide()
+  }
+
+  /// If listening, the view will still process clicks, but the click will
+  /// get passed through for the underlying view to process as well.
+  func passthroughClicks(_ passthroughClicks: Bool = true) -> Self {
+    with(\.shouldPassthroughClicks, passthroughClicks)
+  }
+
+  /// Adds an action to run when a key is released.
+  func onKeyRelease(_ action: @escaping (Key) -> Void) -> Self {
+    appendingAction(to: \.onKeyRelease, action)
+  }
+
+  /// Adds an action to run when a key is pressed.
+  func onKeyPress(_ action: @escaping (Key, [Character]) -> Void) -> Self {
+    appendingAction(to: \.onKeyPress, action)
+  }
+
+  /// Adds an action to run when the mouse is moved.
+  func onMouseMove(_ action: @escaping (_ deltaX: Float, _ deltaY: Float) -> Void) -> Self {
+    appendingAction(to: \.onMouseMove, action)
+  }
+
+  /// Adds an action to run when scrolling occurs.
+  func onScroll(_ action: @escaping (_ deltaY: Float) -> Void) -> Self {
+    appendingAction(to: \.onScroll, action)
+  }
+
+  /// Returns a copy of self with the specified property set to the given value.
+  private func with<T>(_ keyPath: WritableKeyPath<Self, T>, _ value: T) -> Self {
+    var view = self
+    view[keyPath: keyPath] = value
+    return view
+  }
+
+  // These two `appendingAction` methods probably don't make the code any shorter,
+  // but they're a pretty neat abstraction in my opinion and could probably come in
+  // handy in other parts of the client (in which case they could be in an extension
+  // of View or something)
+  private func appendingAction<T>(
+    to keyPath: WritableKeyPath<Self, ((T) -> Void)?>,
+    _ action: @escaping (T) -> Void
+  ) -> Self {
+    with(keyPath) { argument in
+      self[keyPath: keyPath]?(argument)
+      action(argument)
+    }
+  }
+
+  private func appendingAction<T, U>(
+    to keyPath: WritableKeyPath<Self, ((T, U) -> Void)?>,
+    _ action: @escaping (T, U) -> Void
+  ) -> Self {
+    with(keyPath) { argument1, argument2 in
+      self[keyPath: keyPath]?(argument1, argument2)
+      action(argument1, argument2)
+    }
   }
 
   var body: some View {
-    content($enabled, setDelegate)
+    content()
       .frame(maxWidth: .infinity, maxHeight: .infinity)
       #if os(iOS)
       .gesture(TapGesture(count: 2).onEnded { _ in
-        delegateWrapper.delegate?.onKeyDown(.escape)
+        delegateWrapper.delegate?.onKeyPress(.escape)
       })
       .gesture(LongPressGesture(minimumDuration: 2, maximumDistance: 9).onEnded { _ in
-        delegateWrapper.delegate?.onKeyDown(.f3)
+        delegateWrapper.delegate?.onKeyPress(.f3)
       })
       .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global).onChanged { value in
         delegateWrapper.delegate?.onMouseMove(
@@ -56,35 +121,38 @@ struct InputView<Content: View>: View {
       })
       #endif
       #if os(macOS)
+      .onDisappear {
+        Self.releaseCursor()
+      }
       .onAppear {
-        if !model.monitorsAdded {
+        if !monitorsAdded {
           NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged], handler: { event in
-            if !enabled {
+            if !listening {
               return event
             }
 
             let deltaX = Float(event.deltaX)
             let deltaY = Float(event.deltaY)
 
-            delegateWrapper.delegate?.onMouseMove(deltaX, deltaY)
+            onMouseMove?(deltaX, deltaY)
 
             return event
           })
 
           NSEvent.addLocalMonitorForEvents(matching: [.scrollWheel], handler: { event in
-            if !enabled {
+            if !listening {
               return event
             }
 
             let deltaY = Float(event.scrollingDeltaY)
-            delegateWrapper.delegate?.onScroll(deltaY)
+            onScroll?(deltaY)
 
-            model.scrollWheelDeltaY += deltaY
+            scrollWheelDeltaY += deltaY
 
             // TODO: Implement a scroll wheel sensitivity setting
             let threshold: Float = 0.5
             let key: Key
-            if model.scrollWheelDeltaY >= threshold {
+            if scrollWheelDeltaY >= threshold {
               key = .scrollUp
             } else if deltaY <= -threshold {
               key = .scrollDown
@@ -92,57 +160,57 @@ struct InputView<Content: View>: View {
               return nil
             }
 
-            model.scrollWheelDeltaY = 0
+            scrollWheelDeltaY = 0
 
-            delegateWrapper.delegate?.onKeyDown(key)
-            delegateWrapper.delegate?.onKeyUp(key)
+            onKeyPress?(key, [])
+            onKeyRelease?(key)
 
             return nil
           })
 
           NSEvent.addLocalMonitorForEvents(matching: [.rightMouseDown, .leftMouseDown, .otherMouseDown], handler: { event in
-            if !enabled {
+            if !listening {
               return event
             }
 
             if event.associatedEventsMask.contains(.leftMouseDown) {
-              delegateWrapper.delegate?.onKeyDown(.leftMouseButton)
+              onKeyPress?(.leftMouseButton, [])
             }
             if event.associatedEventsMask.contains(.rightMouseDown) {
-              delegateWrapper.delegate?.onKeyDown(.rightMouseButton)
+              onKeyPress?(.rightMouseButton, [])
             }
             if event.associatedEventsMask.contains(.otherMouseDown) {
-              delegateWrapper.delegate?.onKeyDown(.otherMouseButton(event.buttonNumber))
+              onKeyPress?(.otherMouseButton(event.buttonNumber), [])
             }
 
-            return passthroughMouseClicks ? event : nil
+            return shouldPassthroughClicks ? event : nil
           })
 
           NSEvent.addLocalMonitorForEvents(matching: [.rightMouseUp, .leftMouseUp, .otherMouseUp], handler: { event in
-            if !enabled {
+            if !listening {
               return event
             }
 
             if event.associatedEventsMask.contains(.leftMouseUp) {
-              delegateWrapper.delegate?.onKeyUp(.leftMouseButton)
+              onKeyRelease?(.leftMouseButton)
             }
             if event.associatedEventsMask.contains(.rightMouseUp) {
-              delegateWrapper.delegate?.onKeyUp(.rightMouseButton)
+              onKeyRelease?(.rightMouseButton)
             }
             if event.associatedEventsMask.contains(.otherMouseUp) {
-              delegateWrapper.delegate?.onKeyUp(.otherMouseButton(event.buttonNumber))
+              onKeyRelease?(.otherMouseButton(event.buttonNumber))
             }
 
-            return passthroughMouseClicks ? event : nil
+            return shouldPassthroughClicks ? event : nil
           })
 
           NSEvent.addLocalMonitorForEvents(matching: [.keyDown], handler: { event in
-            if !enabled {
+            if !listening {
               return event
             }
 
             if let key = Key(keyCode: event.keyCode) {
-              delegateWrapper.delegate?.onKeyDown(key, Array(event.characters ?? ""))
+              onKeyPress?(key, Array(event.characters ?? ""))
 
               if key == .q && event.modifierFlags.contains(.command) {
                 // Pass through quit command
@@ -159,78 +227,47 @@ struct InputView<Content: View>: View {
           })
 
           NSEvent.addLocalMonitorForEvents(matching: [.keyUp], handler: { event in
-            if !enabled {
+            if !listening {
               return event
             }
 
             if let key = Key(keyCode: event.keyCode) {
-              delegateWrapper.delegate?.onKeyUp(key)
+              onKeyRelease?(key)
             }
             return event
           })
 
           NSEvent.addLocalMonitorForEvents(matching: [.flagsChanged], handler: { event in
-            if !enabled {
+            if !listening {
               return event
             }
 
             let raw = Int32(event.modifierFlags.rawValue)
-            let previousRaw = Int32(model.previousModifierFlags?.rawValue ?? 0)
+            let previousRaw = Int32(previousModifierFlags?.rawValue ?? 0)
 
-            if raw & NX_DEVICELALTKEYMASK != 0 && previousRaw & NX_DEVICELALTKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.leftOption, [])
-            } else if raw & NX_DEVICELALTKEYMASK == 0 && previousRaw & NX_DEVICELALTKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.leftOption)
+            func check(_ key: Key, mask: Int32) {
+              if raw & mask != 0 && previousRaw & mask == 0 {
+                onKeyPress?(key, [])
+              } else if raw & mask == 0 && previousRaw & mask != 0 {
+                onKeyRelease?(key)
+              }
             }
 
-            if raw & NX_DEVICELCMDKEYMASK != 0 && previousRaw & NX_DEVICELCMDKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.leftCommand, [])
-            } else if raw & NX_DEVICELCMDKEYMASK == 0 && previousRaw & NX_DEVICELCMDKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.leftCommand)
-            }
+            check(.leftOption, mask: NX_DEVICELALTKEYMASK)
+            check(.leftCommand, mask: NX_DEVICELCMDKEYMASK)
+            check(.leftControl, mask: NX_DEVICELCTLKEYMASK)
+            check(.leftShift, mask: NX_DEVICELSHIFTKEYMASK)
+            check(.rightOption, mask: NX_DEVICERALTKEYMASK)
+            check(.rightCommand, mask: NX_DEVICERCMDKEYMASK)
+            check(.rightControl, mask: NX_DEVICERCTLKEYMASK)
+            check(.rightShift, mask: NX_DEVICERSHIFTKEYMASK)
 
-            if raw & NX_DEVICELCTLKEYMASK != 0 && previousRaw & NX_DEVICELCTLKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.leftControl, [])
-            } else if raw & NX_DEVICELCTLKEYMASK == 0 && previousRaw & NX_DEVICELCTLKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.leftControl)
-            }
-
-            if raw & NX_DEVICELSHIFTKEYMASK != 0 && previousRaw & NX_DEVICELSHIFTKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.leftShift, [])
-            } else if raw & NX_DEVICELSHIFTKEYMASK == 0 && previousRaw & NX_DEVICELSHIFTKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.leftShift)
-            }
-
-            if raw & NX_DEVICERALTKEYMASK != 0 && previousRaw & NX_DEVICERALTKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.rightOption, [])
-            } else if raw & NX_DEVICERALTKEYMASK == 0 && previousRaw & NX_DEVICERALTKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.rightOption)
-            }
-
-            if raw & NX_DEVICERCMDKEYMASK != 0 && previousRaw & NX_DEVICERCMDKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.rightCommand, [])
-            } else if raw & NX_DEVICERCMDKEYMASK == 0 && previousRaw & NX_DEVICERCMDKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.rightCommand)
-            }
-
-            if raw & NX_DEVICERCTLKEYMASK != 0 && previousRaw & NX_DEVICERCTLKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.rightControl, [])
-            } else if raw & NX_DEVICERCTLKEYMASK == 0 && previousRaw & NX_DEVICERCTLKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.rightControl)
-            }
-
-            if raw & NX_DEVICERSHIFTKEYMASK != 0 && previousRaw & NX_DEVICERSHIFTKEYMASK == 0 {
-              delegateWrapper.delegate?.onKeyDown(.rightShift, [])
-            } else if raw & NX_DEVICERSHIFTKEYMASK == 0 && previousRaw & NX_DEVICERSHIFTKEYMASK != 0 {
-              delegateWrapper.delegate?.onKeyUp(.rightShift)
-            }
-
-            model.previousModifierFlags = event.modifierFlags
+            previousModifierFlags = event.modifierFlags
 
             return event
           })
         }
-        model.monitorsAdded = true
+        monitorsAdded = true
       }
       #endif
   }

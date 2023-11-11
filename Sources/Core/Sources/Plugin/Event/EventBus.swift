@@ -31,10 +31,14 @@ public class EventBus {
   /// Concurrently sends an event to all registered handlers. Doesn't block the calling thread.
   public func dispatch(_ event: Event) {
     managementQueue.async {
+      // Copy handlers to avoid calling handlers while inside handlersLock.
+      // Some handlers may themselves want to acquire the handlersLock (e.g.
+      // to register a handler)
       self.handlersLock.acquireReadLock()
-      defer { self.handlersLock.unlock() }
+      let handlers = self.handlers
+      self.handlersLock.unlock()
 
-      for handler in self.handlers {
+      for handler in handlers {
         self.semaphore.wait()
         self.dispatchQueue.async {
           handler(event)

@@ -26,7 +26,7 @@ extension Box: ObservableObject {
   }
 }
 
-struct LoadAndThen<Child: View>: View {
+struct LoadAndThen<Content: View>: View {
   @EnvironmentObject var modal: Modal
 
   @StateObject var startup = TaskProgress<StartupStep>()
@@ -35,13 +35,13 @@ struct LoadAndThen<Child: View>: View {
   @Binding var hasLoaded: Bool
   @Binding var storage: StorageDirectory?
   let arguments: CommandLineArguments
-  var content: (ManagedConfig, Box<ResourcePack>, PluginEnvironment) -> Child
+  var content: (ManagedConfig, Box<ResourcePack>, PluginEnvironment) -> Content
 
   init(
     _ arguments: CommandLineArguments,
     _ hasLoaded: Binding<Bool>,
     _ storage: Binding<StorageDirectory?>,
-    content: @escaping (ManagedConfig, Box<ResourcePack>, PluginEnvironment) -> Child
+    content: @escaping (ManagedConfig, Box<ResourcePack>, PluginEnvironment) -> Content
   ) {
     self.arguments = arguments
     _hasLoaded = hasLoaded
@@ -109,7 +109,11 @@ struct LoadAndThen<Child: View>: View {
           richError = richError.with("Reason \(i + 1)", error)
         }
       } else if let reason = errors.first {
-        richError = richError.becauseOf(reason)
+        if let reason = reason as? RichError {
+          richError = reason
+        } else {
+          richError = richError.becauseOf(reason)
+        }
       }
       modal.error(richError)
     }
@@ -164,9 +168,7 @@ struct LoadAndThen<Child: View>: View {
   }
 
   var body: some View {
-    return {
-    print("Updating")
-    return VStack {
+    VStack {
       if let loadResult = loadResult {
         content(loadResult.managedConfig, loadResult.resourcePack, loadResult.pluginEnvironment)
       } else {
@@ -191,6 +193,5 @@ struct LoadAndThen<Child: View>: View {
         }
       }
     }
-    }()
   }
 }

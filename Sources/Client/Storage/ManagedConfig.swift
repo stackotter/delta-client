@@ -55,7 +55,7 @@ final class ManagedConfig: ObservableObject {
     // operating in-place on the config (taking an account would make it
     // unclear whether the account must be in the underlying config and
     // whether it gets saved after getting refreshed).
-    guard var account = config.accounts[id] else {
+    guard let account = config.accounts[id] else {
       throw ConfigError.invalidAccountId.with("Id", id)
     }
 
