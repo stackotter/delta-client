@@ -1,25 +1,19 @@
 import SwiftUI
 import Combine
 
-struct WithCurrentController<Content: View>: View {
-  @EnvironmentObject var controllerHub: ControllerHub
-
+struct WithController<Content: View>: View {
   @State var cancellable: AnyCancellable?
 
-  var content: (Controller?) -> Content
+  var controller: Controller?
+  var content: () -> Content
 
   private var onButtonPress: ((Controller.Button) -> Void)?
   private var onButtonRelease: ((Controller.Button) -> Void)?
   private var onThumbstickMove: ((Controller.Thumbstick, _ x: Float, _ y: Float) -> Void)?
 
-  init(@ViewBuilder _ content: @escaping (Controller?) -> Content) {
+  init(_ controller: Controller?, @ViewBuilder content: @escaping () -> Content) {
+    self.controller = controller
     self.content = content
-  }
-
-  init(@ViewBuilder _ content: @escaping () -> Content) {
-    self.content = { _ in
-      content()
-    }
   }
 
   func onButtonPress(_ action: @escaping (Controller.Button) -> Void) -> Self {
@@ -37,11 +31,11 @@ struct WithCurrentController<Content: View>: View {
   }
 
   var body: some View {
-    content(controllerHub.currentController)
+    content()
       .onAppear {
-        observe(controllerHub.currentController)
+        observe(controller)
       }
-      .onChange(of: controllerHub.currentController) { controller in
+      .onChange(of: controller) { controller in
         observe(controller)
       }
   }

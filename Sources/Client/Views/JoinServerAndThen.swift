@@ -22,14 +22,11 @@ enum ServerJoinState {
 }
 
 enum ServerJoinError: LocalizedError {
-  case noAccountSelected
   case failedToRefreshAccount
   case failedToSendJoinServerRequest
 
   var errorDescription: String? {
     switch self {
-      case .noAccountSelected:
-        return "Please login and select an account before joining a server."
       case .failedToRefreshAccount:
         return "Failed to refresh account."
       case .failedToSendJoinServerRequest:
@@ -48,15 +45,21 @@ struct JoinServerAndThen<Content: View>: View {
   @State var client: Client?
 
   var serverDescriptor: ServerDescriptor
+  /// Beware that this account may be outdated once the server has been
+  /// joined, as the account may have been refreshed. It should only be
+  /// used to join once (or only for its id and username).
+  var account: Account
   var content: (Client) -> Content
   var cancel: () -> Void
 
   init(
     _ serverDescriptor: ServerDescriptor,
+    with account: Account,
     @ViewBuilder content: @escaping (Client) -> Content,
     cancellationHandler cancel: @escaping () -> Void
   ) {
     self.serverDescriptor = serverDescriptor
+    self.account = account
     self.content = content
     self.cancel = cancel
   }
@@ -100,7 +103,7 @@ struct JoinServerAndThen<Content: View>: View {
 
       Task {
         do {
-          try await joinServer(serverDescriptor, with: client)
+          try await joinServer(serverDescriptor, with: account, client: client)
         } catch {
           modal.error(error)
           cancel()
@@ -185,16 +188,15 @@ struct JoinServerAndThen<Content: View>: View {
     }
   }
 
-  func joinServer(_ descriptor: ServerDescriptor, with client: Client) async throws {
-    // Get the account to use
-    guard let account = managedConfig.config.selectedAccount else {
-      throw ServerJoinError.noAccountSelected
-    }
-
+  func joinServer(
+    _ descriptor: ServerDescriptor,
+    with account: Account,
+    client: Client
+  ) async throws {
     // Refresh the account (if it's an online account) and then join the server
     let refreshedAccount: Account
     do {
-      refreshedAccount = try await managedConfig.selectedAccountRefreshedIfNecessary()
+      refreshedAccount = try await managedConfig.refreshAccount(withId: account.id)
     } catch {
       throw ServerJoinError.failedToRefreshAccount
         .with("Username", account.username)
@@ -204,7 +206,8 @@ struct JoinServerAndThen<Content: View>: View {
     do {
       try client.joinServer(
         describedBy: descriptor,
-        with: refreshedAccount)
+        with: refreshedAccount
+      )
     } catch {
       throw ServerJoinError.failedToSendJoinServerRequest.becauseOf(error)
     }

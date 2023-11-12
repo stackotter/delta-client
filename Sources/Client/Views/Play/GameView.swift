@@ -38,15 +38,27 @@ struct GameView: View {
   @State var cursorCaptured = true
   
   var serverDescriptor: ServerDescriptor
+  var account: Account
+  var controller: Controller?
+
+  init(
+    connectingTo serverDescriptor: ServerDescriptor,
+    with account: Account,
+    controller: Controller?
+  ) {
+    self.serverDescriptor = serverDescriptor
+    self.account = account
+    self.controller = controller
+  }
 
   var body: some View {
-    JoinServerAndThen(serverDescriptor) { client in
+    JoinServerAndThen(serverDescriptor, with: account) { client in
       WithRenderCoordinator(for: client) { renderCoordinator in
         VStack {
           switch state.current {
             case .playing:
               ZStack {
-                WithCurrentController {
+                WithController(controller) {
                   InputView(listening: $inputCaptured, cursorCaptured: cursorCaptured) {
                     gameView(renderCoordinator: renderCoordinator)
                   }
