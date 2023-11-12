@@ -75,15 +75,15 @@ class Controller: ObservableObject {
         // Some buttons set multiple updates when changing states because they're
         // analog (like the triggers on the PS5 controller), so we need to filter
         // those updates out.
-        guard newState != buttonStates[button.rawValue] else {
+        guard newState != self.buttonStates[button.rawValue] else {
           continue
         }
 
-        buttonStates[button.rawValue] = newState
+        self.buttonStates[button.rawValue] = newState
         if newState {
-          eventSubject.send(.buttonPressed(button))
+          self.eventSubject.send(.buttonPressed(button))
         } else {
-          eventSubject.send(.buttonReleased(button))
+          self.eventSubject.send(.buttonReleased(button))
         }
       }
 
@@ -97,9 +97,9 @@ class Controller: ObservableObject {
 
         let x = thumbstickElement.xAxis.value
         let y = thumbstickElement.yAxis.value
-        thumbstickStates[thumbstick.rawValue].x = x
-        thumbstickStates[thumbstick.rawValue].y = y
-        eventSubject.send(.thumbstickMoved(thumbstick, x: x, y: y))
+        self.thumbstickStates[thumbstick.rawValue].x = x
+        self.thumbstickStates[thumbstick.rawValue].y = y
+        self.eventSubject.send(.thumbstickMoved(thumbstick, x: x, y: y))
       }
     }
 

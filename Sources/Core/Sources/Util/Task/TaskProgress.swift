@@ -42,9 +42,11 @@ public final class TaskProgress<Step: TaskStep> {
   /// A handler to call whenever the progress changes.
   private var changeHandler: ((TaskProgress<Step>) -> Void)?
 
+  #if canImport(Darwin)
   /// A handle to the observation of a step's nested `Progress`. Required to keep
   /// the handle alive until the step completes.
   private var observation: NSKeyValueObservation?
+  #endif
 
   /// The total combined duration of all steps. There is no unit, it is just the sum
   /// of relative durations. Excludes ``TaskProgress/skippedSteps``.
@@ -210,6 +212,7 @@ public final class TaskProgress<Step: TaskStep> {
     return try action(innerProgress)
   }
 
+  #if canImport(Darwin)
   // TODO: This feels a bit janky and less intuitive than the other methods. Perhaps a more descriptive
   //   method name would help.
   /// Performs a step with a nested progress tracker. The step is given a way to register
@@ -253,4 +256,5 @@ public final class TaskProgress<Step: TaskStep> {
 
     return result
   }
+  #endif
 }
