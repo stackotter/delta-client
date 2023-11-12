@@ -1,53 +1,68 @@
 import GameController
+import DeltaCore
 
 class ControllerHub: ObservableObject {
-  var connectedControllers: [Controller] = []
+  @Published var controllers: [Controller] = []
+  @Published var currentController: Controller?
 
   init() {
-    NotificationCenter.default.addObserver(
-      self,
-      selector: #selector(updateControllers),
-      name: NSNotification.Name.GCControllerDidConnect,
-      object: nil
-    )
-
-    NotificationCenter.default.addObserver(
-      self,
-      selector: #selector(updateControllers),
-      name: NSNotification.Name.GCControllerDidDisconnect,
-      object: nil
-    )
+    // Register notification observers.
+    observe(NSNotification.Name.GCControllerDidConnect)
+    observe(NSNotification.Name.GCControllerDidDisconnect)
+    observe(NSNotification.Name.GCControllerDidBecomeCurrent)
+    observe(NSNotification.Name.GCControllerDidStopBeingCurrent)
 
     // Check for controllers that might already be connected.
     updateControllers()
   }
 
-  func isConnected(_ controller: GCController) -> Bool {
-    connectedControllers.contains { connectedController in
-      connectedController.controller == controller
-    }
+  /// Registers an observer to update all controllers when a given event occurs.
+  private func observe(_ event: NSNotification.Name) {
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(updateControllers),
+      name: event,
+      object: nil
+    )
   }
 
   @objc private func updateControllers() {
-    let currentControllers = GCController.controllers()
+    // If we jump to the main thread synchronously then some sort of internal GCController
+    // lock never gets dropped and `GCController.current` causes a deadlock (strange).
+    DispatchQueue.main.async {
+      let gcControllers = GCController.controllers()
 
-    // Handle newly connected controllers
-    for controller in currentControllers {
-      guard
-        !isConnected(controller),
-        let connectedController = Controller(for: controller)
-      else {
-        continue
+      // Handle newly connected controllers
+      for gcController in gcControllers {
+        guard
+          !self.controllers.contains(where: { $0.gcController == gcController }),
+          let controller = Controller(for: gcController)
+        else {
+          continue
+        }
+
+        self.controllers.append(controller)
+        log.info("Connected \(controller.name) controller")
       }
 
-      connectedControllers.append(connectedController)
-      log.info("Connected \(controller.productCategory) controller")
-    }
+      // Handle newly disconnected controllers
+      for (i, controller) in self.controllers.enumerated() {
+        if !gcControllers.contains(controller.gcController) {
+          self.controllers.remove(at: i)
+          log.info("Disconnected \(controller.name) controller")
+        }
+      }
 
-    // Handle newly disconnected controllers
-    for (i, controller) in connectedControllers.enumerated() {
-      if !currentControllers.contains(controller.controller) {
-        connectedControllers.remove(at: i)
+      // Update the current controller (last used)
+      var current: Controller? = nil
+      for controller in self.controllers {
+        if controller.gcController == GCController.current {
+          current = controller
+        }
+      }
+
+      if self.currentController != current {
+        self.currentController = current
       }
     }
   }

@@ -1,6 +1,7 @@
 import GameController
 import Combine
 
+/// A control on a controller (a button, a thumbstick, a trigger, etc).
 protocol Control {
   associatedtype Element: GCControllerElement
 
@@ -11,15 +12,18 @@ protocol Control {
 class Controller: ObservableObject {
   /// A display name for the controller.
   var name: String {
-    var name = controller.productCategory
-    if controller.playerIndex != GCControllerPlayerIndex.indexUnset {
-      name = "\(name) (player \(controller.playerIndex.rawValue))"
+    var name = gcController.productCategory
+    if gcController.playerIndex != GCControllerPlayerIndex.indexUnset {
+      name = "\(name) (player \(gcController.playerIndex.rawValue))"
     }
     return name
   }
 
-  /// The underlying controller getting wrapped.
-  let controller: GCController
+  /// The underlying controller getting wrapped. I usually wouldn't prefix
+  /// a property like that to match its type, but ``ControllerHub`` was getting
+  /// so confusing with the two different types of controllers both getting
+  /// referred to as `controller` and `controller.controller` and stuff.
+  let gcController: GCController
 
   /// A publisher for subscribing to controller input events.
   var eventPublisher: AnyPublisher<Event, Never> {
@@ -41,12 +45,12 @@ class Controller: ObservableObject {
 
   /// Wraps a controller to make it easily observable. Returns `nil` if the
   /// controller isn't supported (doesn't have an extended gamepad).
-  init?(for controller: GCController) {
-    guard let pad = controller.extendedGamepad else {
+  init?(for gcController: GCController) {
+    guard let pad = gcController.extendedGamepad else {
       return nil
     }
 
-    self.controller = controller
+    self.gcController = gcController
 
     pad.valueChangedHandler = { [weak self] pad, element in
       guard let self = self else { return }
@@ -111,7 +115,7 @@ class Controller: ObservableObject {
   /// that *a* controller was disconnected. If it was this one, do something
   /// about it.
   @objc private func handlePossibleDisconnect() {
-    guard !GCController.controllers().contains(controller) else {
+    guard !GCController.controllers().contains(gcController) else {
       // We survive another day, do nothing
       return
     }
@@ -212,5 +216,11 @@ extension Controller {
   struct ThumbstickState {
     var x: Float = 0
     var y: Float = 0
+  }
+}
+
+extension Controller: Equatable {
+  static func ==(_ lhs: Controller, _ rhs: Controller) -> Bool {
+    lhs.gcController == rhs.gcController
   }
 }

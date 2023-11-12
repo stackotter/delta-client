@@ -72,49 +72,18 @@ struct InputView<Content: View>: View {
     appendingAction(to: \.onScroll, action)
   }
 
-  /// Returns a copy of self with the specified property set to the given value.
-  private func with<T>(_ keyPath: WritableKeyPath<Self, T>, _ value: T) -> Self {
-    var view = self
-    view[keyPath: keyPath] = value
-    return view
-  }
-
-  // These two `appendingAction` methods probably don't make the code any shorter,
-  // but they're a pretty neat abstraction in my opinion and could probably come in
-  // handy in other parts of the client (in which case they could be in an extension
-  // of View or something)
-  private func appendingAction<T>(
-    to keyPath: WritableKeyPath<Self, ((T) -> Void)?>,
-    _ action: @escaping (T) -> Void
-  ) -> Self {
-    with(keyPath) { argument in
-      self[keyPath: keyPath]?(argument)
-      action(argument)
-    }
-  }
-
-  private func appendingAction<T, U>(
-    to keyPath: WritableKeyPath<Self, ((T, U) -> Void)?>,
-    _ action: @escaping (T, U) -> Void
-  ) -> Self {
-    with(keyPath) { argument1, argument2 in
-      self[keyPath: keyPath]?(argument1, argument2)
-      action(argument1, argument2)
-    }
-  }
-
   var body: some View {
     content()
       .frame(maxWidth: .infinity, maxHeight: .infinity)
       #if os(iOS)
       .gesture(TapGesture(count: 2).onEnded { _ in
-        delegateWrapper.delegate?.onKeyPress(.escape)
+        onKeyPress?(.escape)
       })
       .gesture(LongPressGesture(minimumDuration: 2, maximumDistance: 9).onEnded { _ in
-        delegateWrapper.delegate?.onKeyPress(.f3)
+        onKeyPress?(.f3)
       })
       .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global).onChanged { value in
-        delegateWrapper.delegate?.onMouseMove(
+        onMouseMove?(
           Float(value.translation.width),
           Float(value.translation.height)
         )

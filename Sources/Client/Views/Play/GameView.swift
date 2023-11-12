@@ -21,7 +21,8 @@ class Box<T> {
   }
 }
 
-// TODO: Reintroduce controller support.
+/// Where the real Minecraft stuff happens. This handles everything after you choose
+/// a server to join.
 struct GameView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
   @EnvironmentObject var managedConfig: ManagedConfig
@@ -45,24 +46,46 @@ struct GameView: View {
           switch state.current {
             case .playing:
               ZStack {
-                InputView(listening: $inputCaptured, cursorCaptured: cursorCaptured) {
-                  gameView(renderCoordinator: renderCoordinator)
+                WithCurrentController {
+                  InputView(listening: $inputCaptured, cursorCaptured: cursorCaptured) {
+                    gameView(renderCoordinator: renderCoordinator)
+                  }
+                  .onKeyPress { [weak client] key, characters in
+                    pressedKeys.insert(key)
+                    client?.press(key, characters)
+                  }
+                  .onKeyRelease { [weak client] key in
+                    pressedKeys.remove(key)
+                    client?.release(key)
+                  }
+                  .onMouseMove { [weak client] deltaX, deltaY in
+                    // TODO: Formalise this adjustment factor somewhere
+                    let sensitivityAdjustmentFactor: Float = 0.004
+                    let sensitivity = sensitivityAdjustmentFactor * managedConfig.mouseSensitivity
+                    client?.moveMouse(sensitivity * deltaX, sensitivity * deltaY)
+                  }
+                  .passthroughClicks(!cursorCaptured)
                 }
-                .onKeyPress { [weak client] key, characters in
-                  pressedKeys.insert(key)
-                  client?.press(key, characters)
+                .onButtonPress { button in
+                  guard let input = input(for: button) else {
+                    return
+                  }
+                  client.press(input)
                 }
-                .onKeyRelease { [weak client] key in
-                  pressedKeys.remove(key)
-                  client?.release(key)
+                .onButtonRelease { button in
+                  guard let input = input(for: button) else {
+                    return
+                  }
+                  client.release(input)
                 }
-                .onMouseMove { [weak client] deltaX, deltaY in
-                  // TODO: Formalise this adjustment factor somewhere
-                  let sensitivityAdjustmentFactor: Float = 0.004
-                  let sensitivity = sensitivityAdjustmentFactor * managedConfig.mouseSensitivity
-                  client?.moveMouse(sensitivity * deltaX, sensitivity * deltaY)
+                .onThumbstickMove { thumbstick, x, y in
+                  switch thumbstick {
+                    case .left:
+                      client.moveLeftThumbstick(x, y)
+                    case .right:
+                      client.moveRightThumbstick(x, y)
+                  }
                 }
-                .passthroughClicks(!cursorCaptured)
 
                 overlayView
               }
@@ -77,35 +100,39 @@ struct GameView: View {
             inputCaptured = false
           }
 
-          client.eventBus.registerHandler { event in
-            switch event {
-              case _ as OpenInGameMenuEvent:
-                showInGameMenu = true
-                cursorCaptured = false
-                inputCaptured = false
-              case _ as ReleaseCursorEvent:
-                cursorCaptured = false
-              case _ as CaptureCursorEvent:
-                cursorCaptured = true
-              case let event as KeyPressEvent where event.input == .performGPUFrameCapture:
-                let outputFile = storage.uniqueGPUCaptureFile()
-                do {
-                  try renderCoordinator.captureFrames(count: 10, to: outputFile)
-                } catch {
-                  modal.error(RichError("Failed to start frame capture").becauseOf(error))
-                }
-              case let event as FinishFrameCaptureEvent:
-                cursorCaptured = false
-                inputCaptured = false
-                state.update(to: .gpuFrameCaptureComplete(file: event.file))
-              default:
-                break
-            }
-          }
+          registerEventHandler(client, renderCoordinator)
         }
       }
     } cancellationHandler: {
       appState.update(to: .serverList)
+    }
+  }
+
+  func registerEventHandler(_ client: Client, _ renderCoordinator: RenderCoordinator) {
+    client.eventBus.registerHandler { event in
+      switch event {
+        case _ as OpenInGameMenuEvent:
+          showInGameMenu = true
+          cursorCaptured = false
+          inputCaptured = false
+        case _ as ReleaseCursorEvent:
+          cursorCaptured = false
+        case _ as CaptureCursorEvent:
+          cursorCaptured = true
+        case let event as KeyPressEvent where event.input == .performGPUFrameCapture:
+          let outputFile = storage.uniqueGPUCaptureFile()
+          do {
+            try renderCoordinator.captureFrames(count: 10, to: outputFile)
+          } catch {
+            modal.error(RichError("Failed to start frame capture").becauseOf(error))
+          }
+        case let event as FinishFrameCaptureEvent:
+          cursorCaptured = false
+          inputCaptured = false
+          state.update(to: .gpuFrameCaptureComplete(file: event.file))
+        default:
+          break
+      }
     }
   }
 
@@ -130,6 +157,32 @@ struct GameView: View {
       #if os(iOS)
       movementControls
       #endif
+    }
+  }
+
+  /// Gets the input associated with a particular controller button.
+  func input(for button: Controller.Button) -> Input? {
+    switch button {
+      case .buttonA:
+        return .jump
+      case .leftTrigger:
+        return .place
+      case .rightTrigger:
+        return .destroy
+      case .leftShoulder:
+        return .previousSlot
+      case .rightShoulder:
+        return .nextSlot
+      case .leftThumbstickButton:
+        return .sprint
+      case .buttonB:
+        return .sneak
+      case .dpadUp:
+        return .changePerspective
+      case .dpadRight:
+        return .openChat
+      default:
+        return nil
     }
   }
 
