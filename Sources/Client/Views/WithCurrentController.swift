@@ -38,22 +38,29 @@ struct WithCurrentController<Content: View>: View {
 
   var body: some View {
     content(controllerHub.currentController)
-      .onChange(of: controllerHub.currentController) { controller in
-        guard let controller = controller else {
-          cancellable = nil
-          return
-        }
-
-        cancellable = controller.eventPublisher.sink { event in
-          switch event {
-            case let .buttonPressed(button):
-              onButtonPress?(button)
-            case let .buttonReleased(button):
-              onButtonRelease?(button)
-            case let .thumbstickMoved(thumbstick, x, y):
-              onThumbstickMove?(thumbstick, x, y)
-          }
-        }
+      .onAppear {
+        observe(controllerHub.currentController)
       }
+      .onChange(of: controllerHub.currentController) { controller in
+        observe(controller)
+      }
+  }
+
+  func observe(_ controller: Controller?) {
+    guard let controller = controller else {
+      cancellable = nil
+      return
+    }
+
+    cancellable = controller.eventPublisher.sink { event in
+      switch event {
+        case let .buttonPressed(button):
+          onButtonPress?(button)
+        case let .buttonReleased(button):
+          onButtonRelease?(button)
+        case let .thumbstickMoved(thumbstick, x, y):
+          onThumbstickMove?(thumbstick, x, y)
+      }
+    }
   }
 }

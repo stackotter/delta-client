@@ -66,24 +66,24 @@ struct GameView: View {
                   }
                   .passthroughClicks(!cursorCaptured)
                 }
-                .onButtonPress { button in
+                .onButtonPress { [weak client] button in
                   guard let input = input(for: button) else {
                     return
                   }
-                  client.press(input)
+                  client?.press(input)
                 }
-                .onButtonRelease { button in
+                .onButtonRelease { [weak client] button in
                   guard let input = input(for: button) else {
                     return
                   }
-                  client.release(input)
+                  client?.release(input)
                 }
-                .onThumbstickMove { thumbstick, x, y in
+                .onThumbstickMove { [weak client] thumbstick, x, y in
                   switch thumbstick {
                     case .left:
-                      client.moveLeftThumbstick(x, y)
+                      client?.moveLeftThumbstick(x, y)
                     case .right:
-                      client.moveRightThumbstick(x, y)
+                      client?.moveRightThumbstick(x, y)
                   }
                 }
 
