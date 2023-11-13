@@ -14,7 +14,7 @@ class Controller: ObservableObject {
   var name: String {
     var name = gcController.productCategory
     if gcController.playerIndex != GCControllerPlayerIndex.indexUnset {
-      name = "\(name) (player \(gcController.playerIndex.rawValue))"
+      name = "\(name) (player \(gcController.playerIndex.rawValue + 1))"
     }
     return name
   }

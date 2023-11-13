@@ -41,6 +41,7 @@ class ControllerHub: ObservableObject {
           continue
         }
 
+        gcController.playerIndex = GCControllerPlayerIndex(rawValue: self.controllers.count) ?? .indexUnset
         self.controllers.append(controller)
         log.info("Connected \(controller.name) controller")
       }

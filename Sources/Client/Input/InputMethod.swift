@@ -7,7 +7,7 @@ enum InputMethod: Hashable {
       case .keyboardAndMouse:
         return "Keyboard and mouse"
       case let .controller(controller):
-        return controller.name
+        return controller.gcController.productCategory
     }
   }
 
@@ -18,7 +18,7 @@ enum InputMethod: Hashable {
       case let .controller(controller):
         let player = controller.gcController.playerIndex
         if player != .indexUnset {
-          return "\(player.rawValue)"
+          return "player \(player.rawValue + 1)"
         } else {
           return nil
         }
