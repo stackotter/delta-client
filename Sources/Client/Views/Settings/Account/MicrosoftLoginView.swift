@@ -15,24 +15,25 @@ enum MicrosoftLoginViewError: LocalizedError {
   }
 }
 
-enum MicrosoftState {
-  case authorizingDevice
-  case login(MicrosoftDeviceAuthorizationResponse)
-  case authenticatingUser
-}
-
 struct MicrosoftLoginView: View {
+  enum MicrosoftState {
+    case authorizingDevice
+    case login(MicrosoftDeviceAuthorizationResponse)
+    case authenticatingUser
+  }
+
   @EnvironmentObject var modal: Modal
   @EnvironmentObject var appState: StateWrapper<AppState>
-  
-  @ObservedObject var loginViewState: StateWrapper<LoginViewState>
-  @StateObject var state = StateWrapper<MicrosoftState>(initial: .authorizingDevice)
+
+  @State var state: MicrosoftState = .authorizingDevice
+
+  @Binding var loginViewState: LoginViewState
 
   var completionHandler: (Account) -> Void
 
   var body: some View {
     VStack {
-      switch state.current {
+      switch state {
         case .authorizingDevice:
           Text("Fetching device authorization code")
         case .login(let response):
@@ -51,7 +52,7 @@ struct MicrosoftLoginView: View {
           Spacer().frame(height: 16)
 
           Button("Done") {
-            state.update(to: .authenticatingUser)
+            state = .authenticatingUser
             authenticate(with: response.deviceCode)
           }
           .buttonStyle(PrimaryButtonStyle())
@@ -61,7 +62,7 @@ struct MicrosoftLoginView: View {
       }
 
       Button("Cancel") {
-        loginViewState.update(to: .chooseAccountType)
+        loginViewState = .chooseAccountType
       }
       .buttonStyle(SecondaryButtonStyle())
       .frame(width: 200)
@@ -74,7 +75,7 @@ struct MicrosoftLoginView: View {
     Task {
       do {
         let response = try await MicrosoftAPI.authorizeDevice()
-        state.update(to: .login(response))
+        state = .login(response)
       } catch {
         modal.error(MicrosoftLoginViewError.failedToAuthorizeDevice.becauseOf(error)) {
           appState.update(to: .serverList)

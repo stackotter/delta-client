@@ -4,7 +4,7 @@ import DeltaCore
 /// Manages the config stored in a config file.
 @dynamicMemberLookup
 final class ManagedConfig: ObservableObject {
-  /// The current config (thread-safe).
+  /// The current config.
   var config: Config {
     willSet {
       objectWillChange.send()

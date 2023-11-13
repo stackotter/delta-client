@@ -1,11 +1,5 @@
 import SwiftUI
 
-enum EditableListState {
-  case list
-  case addItem
-  case editItem(Int)
-}
-
 enum EditableListAction {
   case delete
   case edit
@@ -14,8 +8,14 @@ enum EditableListAction {
   case select
 }
 
+enum EditableListState {
+  case list
+  case addItem
+  case editItem(Int)
+}
+
 struct EditableList<Row: View, ItemEditor: EditorView>: View {
-  @ObservedObject var state = StateWrapper<EditableListState>(initial: .list)
+  @State var state: EditableListState = .list
 
   @Binding var items: [ItemEditor.Item]
   @Binding var selected: Int?
@@ -60,11 +60,11 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
     cancel = cancelAction
 
     if forceShowCreation {
-      state.update(to: .addItem)
+      _state = State(wrappedValue: .addItem)
     }
   }
 
-  func handleItemAction(_ index: Int, _ action: EditableListAction) {
+  func handleItemEditableListAction(_ index: Int, _ action: EditableListAction) {
     switch action {
       case .delete:
         if selected == index {
@@ -78,7 +78,7 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
         }
         items.remove(at: index)
       case .edit:
-        state.update(to: .editItem(index))
+        state = .editItem(index)
       case .moveUp:
         if index != 0 {
           let item = items.remove(at: index)
@@ -96,7 +96,7 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
 
   var body: some View {
     Group {
-      switch state.current {
+      switch state {
         case .list:
           VStack(alignment: .center, spacing: 16) {
             if items.count == 0 {
@@ -111,7 +111,7 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
                   let isFirst = index == 0
                   let isLast = index == items.count - 1
                   row(items[index], selected == index, isFirst, isLast, { action in
-                    handleItemAction(index, action)
+                    handleItemEditableListAction(index, action)
                   })
 
                   if index == items.count - 1 {
@@ -123,7 +123,7 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
 
             VStack {
               Button("Add") {
-                state.update(to: .addItem)
+                state = .addItem
               }
               .buttonStyle(SecondaryButtonStyle())
 
@@ -146,16 +146,16 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
           itemEditor.init(nil, completion: { newItem in
             items.append(newItem)
             selected = items.count - 1
-            state.update(to: .list)
+            state = .list
           }, cancelation: {
-            state.update(to: .list)
+            state = .list
           })
         case let .editItem(index):
           itemEditor.init(items[index], completion: { editedItem in
             items[index] = editedItem
-            state.update(to: .list)
+            state = .list
           }, cancelation: {
-            state.update(to: .list)
+            state = .list
           })
       }
     }

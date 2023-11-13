@@ -2,11 +2,12 @@ import SwiftUI
 import DeltaCore
 
 struct OfflineLoginView: View {
-  @ObservedObject var loginViewState: StateWrapper<LoginViewState>
-  var completionHandler: (Account) -> Void
-  
   @State private var username = ""
   @State private var errorMessage: String?
+  
+  @Binding var loginViewState: LoginViewState
+
+  var completionHandler: (Account) -> Void
   
   var body: some View {
     VStack {
@@ -19,7 +20,7 @@ struct OfflineLoginView: View {
       
       HStack {
         Button("Back") {
-          loginViewState.update(to: .chooseAccountType)
+          loginViewState = .chooseAccountType
         }.buttonStyle(SecondaryButtonStyle())
         Button("Login") {
           login()

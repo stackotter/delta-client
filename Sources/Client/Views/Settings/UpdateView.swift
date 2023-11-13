@@ -3,36 +3,36 @@ import ZIPFoundation
 import DeltaCore
 
 #if os(macOS)
-enum UpdateViewState {
-  case loadingBranches
-  case selectBranch(branches: [String])
-  case updating
-}
-
 struct UpdateView: View {
+  enum UpdateViewState {
+    case loadingBranches
+    case selectBranch(branches: [String])
+    case updating
+  }
+
   @EnvironmentObject var appState: StateWrapper<AppState>
   @EnvironmentObject var modal: Modal
   @Environment(\.storage) var storage: StorageDirectory
 
-  @ObservedObject var state = StateWrapper<UpdateViewState>(initial: .loadingBranches)
-  @ObservedObject var progress = TaskProgress<Updater.UpdateStep>()
+  @StateObject var progress = TaskProgress<Updater.UpdateStep>()
 
+  @State var state: UpdateViewState = .loadingBranches
   @State var branch: String?
   @State var updateVersion: String?
-
-  var task: Task<(), Never>?
 
   init() {}
 
   var body: some View {
-    switch state.current {
+    switch state {
       case .loadingBranches:
         Text("Loading branches...")
           .onAppear {
             Task {
               do {
                 let branches = try Updater.getBranches().map(\.name)
-                state.update(to: .selectBranch(branches: branches))
+                ThreadUtil.runInMain {
+                  state = .selectBranch(branches: branches)
+                }
               } catch {
                 modal.error(error) {
                   appState.update(to: .serverList)
@@ -58,7 +58,7 @@ struct UpdateView: View {
 
           if let branch = branch {
             Button("Update to latest commit") {
-              state.update(to: .updating)
+              state = .updating
               Task {
                 do {
                   let download = try Updater.getDownload(for: .nightly(branch: branch))
@@ -102,15 +102,12 @@ struct UpdateView: View {
           }
 
           Button("Cancel") {
-            state.update(to: .loadingBranches)
+            state = .loadingBranches
           }
           .buttonStyle(SecondaryButtonStyle())
           .frame(width: 200)
         }
         .frame(maxWidth: 500)
-        .onDisappear {
-          task?.cancel()
-        }
     }
   }
 }

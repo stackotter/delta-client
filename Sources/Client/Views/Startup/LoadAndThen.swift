@@ -8,24 +8,6 @@ struct LoadResult {
   var pluginEnvironment: PluginEnvironment
 }
 
-extension TaskProgress: ObservableObject {
-  public var objectWillChange: ObservableObjectPublisher {
-    let publisher = ObservableObjectPublisher()
-    onChange { _ in
-      ThreadUtil.runInMain {
-        publisher.send()
-      }
-    }
-    return publisher
-  }
-}
-
-extension Box: ObservableObject {
-  public var objectWillChange: ObservableObjectPublisher {
-    ObservableObjectPublisher()
-  }
-}
-
 struct LoadAndThen<Content: View>: View {
   @EnvironmentObject var modal: Modal
 

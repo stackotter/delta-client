@@ -11,7 +11,8 @@ struct MojangLoginView: View {
   @State var errorMessage: String?
   @State var authenticating = false
   
-  @ObservedObject var loginViewState: StateWrapper<LoginViewState>
+  @Binding var loginViewState: LoginViewState
+
   var completionHandler: (Account) -> Void
 
   var body: some View {
@@ -29,7 +30,7 @@ struct MojangLoginView: View {
         
         HStack {
           Button("Back") {
-            loginViewState.update(to: .chooseAccountType)
+            loginViewState = .chooseAccountType
           }.buttonStyle(SecondaryButtonStyle())
           Button("Login") {
             login()

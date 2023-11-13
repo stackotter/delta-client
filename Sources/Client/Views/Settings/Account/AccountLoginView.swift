@@ -11,7 +11,7 @@ enum LoginViewState {
 struct AccountLoginView: EditorView {
   typealias Item = Account
   
-  @StateObject var state = StateWrapper<LoginViewState>(initial: .chooseAccountType)
+  @State var state: LoginViewState = .chooseAccountType
   
   let completionHandler: (Item) -> Void
   let cancelationHandler: (() -> Void)?
@@ -23,21 +23,21 @@ struct AccountLoginView: EditorView {
   }
   
   var body: some View {
-    switch state.current {
+    switch state {
       case .chooseAccountType:
         VStack {
           Text("Choose account type")
           
           Button("Microsoft") {
-            state.update(to: .loginMicrosoft)
+            state = .loginMicrosoft
           }.buttonStyle(PrimaryButtonStyle())
           
           Button("Mojang") {
-            state.update(to: .loginMojang)
+            state = .loginMojang
           }.buttonStyle(PrimaryButtonStyle())
           
           Button("Offline") {
-            state.update(to: .loginOffline)
+            state = .loginOffline
           }.buttonStyle(PrimaryButtonStyle())
           
           Spacer().frame(height: 32)
@@ -49,11 +49,11 @@ struct AccountLoginView: EditorView {
         .navigationTitle("Account Login")
         .frame(width: 200)
       case .loginMicrosoft:
-        MicrosoftLoginView(loginViewState: state, completionHandler: completionHandler)
+        MicrosoftLoginView(loginViewState: $state, completionHandler: completionHandler)
       case .loginMojang:
-        MojangLoginView(loginViewState: state, completionHandler: completionHandler)
+        MojangLoginView(loginViewState: $state, completionHandler: completionHandler)
       case .loginOffline:
-        OfflineLoginView(loginViewState: state, completionHandler: completionHandler)
+        OfflineLoginView(loginViewState: $state, completionHandler: completionHandler)
     }
   }
 }

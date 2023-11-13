@@ -16,8 +16,7 @@ struct GameView: View {
   @EnvironmentObject var modal: Modal
   @Environment(\.storage) var storage: StorageDirectory
 
-  @StateObject var state = StateWrapper<GameState>(initial: .playing)
-
+  @State var state: GameState = .playing
   @State var inputCaptured = true
   @State var cursorCaptured = true
 
@@ -46,7 +45,7 @@ struct GameView: View {
     JoinServerAndThen(serverDescriptor, with: account) { client in
       WithRenderCoordinator(for: client) { renderCoordinator in
         VStack {
-          switch state.current {
+          switch state {
             case .playing:
               ZStack {
                 WithController(controller, listening: $inputCaptured) {
@@ -141,7 +140,9 @@ struct GameView: View {
             modal.error(RichError("Failed to start frame capture").becauseOf(error))
           }
         case let event as FinishFrameCaptureEvent:
-          state.update(to: .gpuFrameCaptureComplete(file: event.file))
+          ThreadUtil.runInMain {
+            state = .gpuFrameCaptureComplete(file: event.file)
+          }
         default:
           break
       }
@@ -213,7 +214,7 @@ struct GameView: View {
         #endif
 
         Button("OK") {
-          state.pop()
+          state = .playing
         }.buttonStyle(PrimaryButtonStyle())
       }.frame(width: 200)
     }
