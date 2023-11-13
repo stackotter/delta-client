@@ -1,7 +1,7 @@
 import Foundation
 
 /// A user account that authenticates using the new Microsoft method.
-public struct MicrosoftAccount: Codable, OnlineAccount {
+public struct MicrosoftAccount: Codable, OnlineAccount, Hashable {
   /// The account's id as a uuid.
   public var id: String
   /// The account's username.

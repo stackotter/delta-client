@@ -2,7 +2,7 @@ import Foundation
 import CoreFoundation
 
 /// An access token attached to an online account. Used for connecting to online-mode servers.
-public struct MinecraftAccessToken: Codable {
+public struct MinecraftAccessToken: Codable, Hashable {
   /// The access token.
   public var token: String
   /// The time that the token will expire at in system absolute time. If `nil`, the token won't expire.

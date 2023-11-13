@@ -1,7 +1,7 @@
 import Foundation
 
 /// A user account that can only connect to offline mode servers.
-public struct OfflineAccount: Codable {
+public struct OfflineAccount: Codable, Hashable {
   public var id: String
   public var username: String
   

@@ -1,8 +1,8 @@
 import Foundation
 import DeltaCore
+import OrderedCollections
 
-// TODO: Use an ordered dictionary for `accounts` so that order is maintained
-//   even when loaded from disk on the next launch.
+/// The client's configuration. Usually stored in a JSON file.
 struct Config: Codable, ClientConfiguration {
   /// The random token used to identify ourselves to Mojang's API
   var clientToken = UUID().uuidString
@@ -24,6 +24,11 @@ struct Config: Codable, ClientConfiguration {
   var toggleSneak = false
   /// The in game mouse sensitivity
   var mouseSensitivity: Float = 1
+
+  /// The user's accounts, ordered by username.
+  var orderedAccounts: [Account] {
+    accounts.values.sorted { $0.username <= $1.username }
+  }
 
   /// The account the user has currently selected.
   var selectedAccount: Account? {

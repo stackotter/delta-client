@@ -3,6 +3,8 @@ import Combine
 
 struct WithController<Content: View>: View {
   @State var cancellable: AnyCancellable?
+  /// If `false`, events aren't passed on to registered listeners.
+  @Binding var listening: Bool
 
   var controller: Controller?
   var content: () -> Content
@@ -11,8 +13,13 @@ struct WithController<Content: View>: View {
   private var onButtonRelease: ((Controller.Button) -> Void)?
   private var onThumbstickMove: ((Controller.Thumbstick, _ x: Float, _ y: Float) -> Void)?
 
-  init(_ controller: Controller?, @ViewBuilder content: @escaping () -> Content) {
+  init(
+    _ controller: Controller?,
+    listening: Binding<Bool>,
+    @ViewBuilder content: @escaping () -> Content
+  ) {
     self.controller = controller
+    _listening = listening
     self.content = content
   }
 
@@ -47,6 +54,10 @@ struct WithController<Content: View>: View {
     }
 
     cancellable = controller.eventPublisher.sink { event in
+      guard listening else {
+        return
+      }
+
       switch event {
         case let .buttonPressed(button):
           onButtonPress?(button)

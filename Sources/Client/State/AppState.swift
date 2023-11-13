@@ -8,6 +8,6 @@ indirect enum AppState: Equatable {
   case accounts
   case login
   case directConnect
-  case playServer(ServerDescriptor)
+  case playServer(ServerDescriptor, paneCount: Int)
   case settings(SettingsState?)
 }

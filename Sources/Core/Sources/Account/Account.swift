@@ -1,7 +1,7 @@
 import Foundation
 
 /// An account which can be a Microsoft, Mojang or offline account.
-public enum Account: Codable, Identifiable {
+public enum Account: Codable, Identifiable, Hashable {
   case microsoft(MicrosoftAccount)
   case mojang(MojangAccount)
   case offline(OfflineAccount)

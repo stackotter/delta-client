@@ -3,52 +3,43 @@ import DeltaCore
 import DeltaRenderer
 import Combine
 
-enum GameState {
-  case playing
-  case gpuFrameCaptureComplete(file: URL)
-}
-
-enum OverlayState {
-  case menu
-  case settings
-}
-
-class Box<T> {
-  var value: T
-
-  init(_ initialValue: T) {
-    self.value = initialValue
-  }
-}
-
-/// Where the real Minecraft stuff happens. This handles everything after you choose
-/// a server to join.
+/// Where the real Minecraft stuff happens. This renders the actual game itself and
+/// also handles user input.
 struct GameView: View {
+  enum GameState {
+    case playing
+    case gpuFrameCaptureComplete(file: URL)
+  }
+
   @EnvironmentObject var appState: StateWrapper<AppState>
   @EnvironmentObject var managedConfig: ManagedConfig
   @EnvironmentObject var modal: Modal
   @Environment(\.storage) var storage: StorageDirectory
 
   @StateObject var state = StateWrapper<GameState>(initial: .playing)
-  @StateObject var overlayState = StateWrapper<OverlayState>(initial: .menu)
 
-  @State var pressedKeys: Set<Key> = []
-  @State var showInGameMenu = false
   @State var inputCaptured = true
   @State var cursorCaptured = true
+
+  @Binding var inGameMenuPresented: Bool
   
   var serverDescriptor: ServerDescriptor
   var account: Account
   var controller: Controller?
+  var controllerOnly: Bool
 
   init(
     connectingTo serverDescriptor: ServerDescriptor,
     with account: Account,
-    controller: Controller?
+    controller: Controller?,
+    controllerOnly: Bool,
+    inGameMenuPresented: Binding<Bool>
   ) {
     self.serverDescriptor = serverDescriptor
     self.account = account
     self.controller = controller
+    self.controllerOnly = controllerOnly
+    _inGameMenuPresented = inGameMenuPresented
   }
 
   var body: some View {
@@ -58,25 +49,27 @@ struct GameView: View {
           switch state.current {
             case .playing:
               ZStack {
-                WithController(controller) {
-                  InputView(listening: $inputCaptured, cursorCaptured: cursorCaptured) {
+                WithController(controller, listening: $inputCaptured) {
+                  if controllerOnly {
                     gameView(renderCoordinator: renderCoordinator)
+                  } else {
+                    InputView(listening: $inputCaptured, cursorCaptured: !inGameMenuPresented && cursorCaptured) {
+                      gameView(renderCoordinator: renderCoordinator)
+                    }
+                    .onKeyPress { [weak client] key, characters in
+                      client?.press(key, characters)
+                    }
+                    .onKeyRelease { [weak client] key in
+                      client?.release(key)
+                    }
+                    .onMouseMove { [weak client] deltaX, deltaY in
+                      // TODO: Formalise this adjustment factor somewhere
+                      let sensitivityAdjustmentFactor: Float = 0.004
+                      let sensitivity = sensitivityAdjustmentFactor * managedConfig.mouseSensitivity
+                      client?.moveMouse(sensitivity * deltaX, sensitivity * deltaY)
+                    }
+                    .passthroughClicks(!cursorCaptured)
                   }
-                  .onKeyPress { [weak client] key, characters in
-                    pressedKeys.insert(key)
-                    client?.press(key, characters)
-                  }
-                  .onKeyRelease { [weak client] key in
-                    pressedKeys.remove(key)
-                    client?.release(key)
-                  }
-                  .onMouseMove { [weak client] deltaX, deltaY in
-                    // TODO: Formalise this adjustment factor somewhere
-                    let sensitivityAdjustmentFactor: Float = 0.004
-                    let sensitivity = sensitivityAdjustmentFactor * managedConfig.mouseSensitivity
-                    client?.moveMouse(sensitivity * deltaX, sensitivity * deltaY)
-                  }
-                  .passthroughClicks(!cursorCaptured)
                 }
                 .onButtonPress { [weak client] button in
                   guard let input = input(for: button) else {
@@ -98,11 +91,13 @@ struct GameView: View {
                       client?.moveRightThumbstick(x, y)
                   }
                 }
-
-                overlayView
               }
             case .gpuFrameCaptureComplete(let file):
               frameCaptureResult(file)
+                .onAppear {
+                  cursorCaptured = false
+                  inputCaptured = false
+                }
           }
         }
         .onAppear {
@@ -118,15 +113,22 @@ struct GameView: View {
     } cancellationHandler: {
       appState.update(to: .serverList)
     }
+    .onChange(of: inGameMenuPresented) { presented in
+      if presented {
+        cursorCaptured = false
+        inputCaptured = false
+      } else {
+        cursorCaptured = true
+        inputCaptured = true
+      }
+    }
   }
 
   func registerEventHandler(_ client: Client, _ renderCoordinator: RenderCoordinator) {
     client.eventBus.registerHandler { event in
       switch event {
         case _ as OpenInGameMenuEvent:
-          showInGameMenu = true
-          cursorCaptured = false
-          inputCaptured = false
+          inGameMenuPresented = true
         case _ as ReleaseCursorEvent:
           cursorCaptured = false
         case _ as CaptureCursorEvent:
@@ -139,8 +141,6 @@ struct GameView: View {
             modal.error(RichError("Failed to start frame capture").becauseOf(error))
           }
         case let event as FinishFrameCaptureEvent:
-          cursorCaptured = false
-          inputCaptured = false
           state.update(to: .gpuFrameCaptureComplete(file: event.file))
         default:
           break
@@ -150,15 +150,13 @@ struct GameView: View {
 
   func gameView(renderCoordinator: RenderCoordinator) -> some View {
     ZStack {
-      // Renderer
       if #available(macOS 13, iOS 16, *) {
         MetalView(renderCoordinator: renderCoordinator)
           .onAppear {
             cursorCaptured = true
             inputCaptured = true
           }
-      }
-      else {
+      } else {
         MetalViewClass(renderCoordinator: renderCoordinator)
           .onAppear {
             cursorCaptured = true
@@ -221,49 +219,6 @@ struct GameView: View {
     }
   }
 
-  func openMenu() {
-    inputCaptured = false
-    cursorCaptured = false
-    showInGameMenu = true
-  }
-
-  func closeMenu() {
-    inputCaptured = true
-    cursorCaptured = true
-    showInGameMenu = false
-  }
-
-  /// In-game menu overlay.
-  var overlayView: some View {
-    VStack {
-      if showInGameMenu {
-        GeometryReader { geometry in
-          VStack {
-            switch overlayState.current {
-              case .menu:
-                VStack {
-                  Button("Back to game", action: closeMenu)
-                    .keyboardShortcut(.escape, modifiers: [])
-                    .buttonStyle(PrimaryButtonStyle())
-                  Button("Settings") { overlayState.update(to: .settings) }
-                    .buttonStyle(SecondaryButtonStyle())
-                  Button("Disconnect", action: disconnect)
-                    .buttonStyle(SecondaryButtonStyle())
-                }
-                .frame(width: 200)
-              case .settings:
-                SettingsView(isInGame: true, onDone: {
-                  overlayState.update(to: .menu)
-                })
-            }
-          }
-            .frame(width: geometry.size.width, height: geometry.size.height)
-            .background(Color.black.opacity(0.702), alignment: .center)
-        }
-      }
-    }
-  }
-
   #if os(iOS)
   var movementControls: some View {
     VStack {
@@ -304,8 +259,4 @@ struct GameView: View {
     )
   }
   #endif
-
-  func disconnect() {
-    appState.update(to: .serverList)
-  }
 }

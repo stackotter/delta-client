@@ -224,3 +224,9 @@ extension Controller: Equatable {
     lhs.gcController == rhs.gcController
   }
 }
+
+extension Controller: Hashable {
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(gcController))
+  }
+}

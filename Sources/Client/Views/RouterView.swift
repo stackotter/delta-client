@@ -4,7 +4,6 @@ import DeltaCore
 struct RouterView: View {
   @EnvironmentObject var appState: StateWrapper<AppState>
   @EnvironmentObject var managedConfig: ManagedConfig
-  @EnvironmentObject var resourcePack: Box<ResourcePack>
   @EnvironmentObject var controllerHub: ControllerHub
 
   var body: some View {
@@ -25,15 +24,9 @@ struct RouterView: View {
           }).padding()
         case .directConnect:
           DirectConnectView()
-        case .playServer(let server):
-          WithSelectedAccount { account in
-            GameView(
-              connectingTo: server,
-              with: account,
-              controller: controllerHub.currentController
-            )
-          }
-        case .settings(let landingPage):
+        case let .playServer(server, paneCount):
+          PlayView(server, paneCount: paneCount)
+        case let .settings(landingPage):
           SettingsView(isInGame: false, landingPage: landingPage, onDone: {
             appState.pop()
           })
@@ -44,7 +37,7 @@ struct RouterView: View {
       switch newValue {
         case .serverList:
           DiscordManager.shared.updateRichPresence(to: .menu)
-        case .playServer(let descriptor):
+        case .playServer(let descriptor, _):
           DiscordManager.shared.updateRichPresence(to: .game(server: descriptor.name))
         default:
           break

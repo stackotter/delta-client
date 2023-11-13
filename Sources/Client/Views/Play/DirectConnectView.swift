@@ -37,7 +37,7 @@ struct DirectConnectView: View {
         Button("Connect") {
           if verify() {
             let descriptor = ServerDescriptor(name: "Direct Connect", host: host, port: port)
-            appState.update(to: .playServer(descriptor))
+            appState.update(to: .playServer(descriptor, paneCount: 1))
           }
         }
         .buttonStyle(PrimaryButtonStyle())

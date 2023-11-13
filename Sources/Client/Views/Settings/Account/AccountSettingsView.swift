@@ -1,6 +1,7 @@
 import SwiftUI
 import DeltaCore
 
+// TODO: Use Config.orderedAccounts to ensure that account ordering is at least consistent
 struct AccountSettingsView: View {
   @EnvironmentObject var managedConfig: ManagedConfig
 
@@ -33,7 +34,13 @@ struct AccountSettingsView: View {
     }
   }
 
-  func row(item: Account, selected: Bool, isFirst: Bool, isLast: Bool, handler: @escaping (EditableListAction) -> Void) -> some View {
+  func row(
+    item: Account,
+    selected: Bool,
+    isFirst: Bool,
+    isLast: Bool,
+    handler: @escaping (EditableListAction) -> Void
+  ) -> some View {
     HStack {
       Image(systemName: "chevron.right")
         .opacity(selected ? 1 : 0)

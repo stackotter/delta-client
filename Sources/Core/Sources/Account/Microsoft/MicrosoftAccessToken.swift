@@ -2,7 +2,7 @@ import Foundation
 import CoreFoundation
 
 /// An access token used for refreshing Minecraft access tokens attached to Microsoft accounts.
-public struct MicrosoftAccessToken: Codable {
+public struct MicrosoftAccessToken: Codable, Hashable {
   /// The access token.
   public var token: String
   /// The time that the token will expire at in system absolute time.

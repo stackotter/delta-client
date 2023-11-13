@@ -31,15 +31,25 @@ struct ServerDetail: View {
             ).padding(.bottom, 8)
 
             Button("Play") {
-              appState.update(to: .playServer(descriptor))
+              appState.update(to: .playServer(descriptor, paneCount: 1))
             }
               .buttonStyle(PrimaryButtonStyle())
+              .frame(width: 150)
+
+            Button("Play splitscreen") {
+              appState.update(to: .playServer(descriptor, paneCount: 2))
+            }
+              .buttonStyle(SecondaryButtonStyle())
               .frame(width: 150)
           case let .failure(error):
             Text(error.localizedDescription)
               .padding(.bottom, 8)
-            Button("Play") { }
+            Button("Play") {}
               .buttonStyle(DisabledButtonStyle())
+              .frame(width: 150)
+              .disabled(true)
+            Button("Play splitscreen") {}
+              .buttonStyle(SecondaryButtonStyle())
               .frame(width: 150)
               .disabled(true)
         }
