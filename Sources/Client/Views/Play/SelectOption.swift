@@ -47,7 +47,7 @@ struct SelectOption<Option: Hashable, Row: View, Content: View>: View {
 
               Image(systemName: "chevron.right")
             }
-            .contentShape(.rect)
+            .contentShape(Rectangle())
             .onTapGesture {
               guard !excludedOptions.contains(option) else {
                 return
