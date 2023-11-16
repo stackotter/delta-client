@@ -24,7 +24,7 @@ struct AccountSettingsView: View {
         saveAction: saveAction,
         cancelAction: nil,
         emptyMessage: "No accounts",
-        forceShowCreation: accounts.isEmpty
+        forceShowCreation: managedConfig.accounts.isEmpty
       )
     }
     .navigationTitle("Accounts")
