@@ -50,10 +50,10 @@ struct GameView: View {
               ZStack {
                 WithController(controller, listening: $inputCaptured) {
                   if controllerOnly {
-                    gameView(renderCoordinator: renderCoordinator)
+                    gameView(client: client, renderCoordinator: renderCoordinator)
                   } else {
                     InputView(listening: $inputCaptured, cursorCaptured: !inGameMenuPresented && cursorCaptured) {
-                      gameView(renderCoordinator: renderCoordinator)
+                      gameView(client: client, renderCoordinator: renderCoordinator)
                     }
                     .onKeyPress { [weak client] key, characters in
                       client?.press(key, characters)
@@ -149,7 +149,7 @@ struct GameView: View {
     }
   }
 
-  func gameView(renderCoordinator: RenderCoordinator) -> some View {
+  func gameView(client: Client, renderCoordinator: RenderCoordinator) -> some View {
     ZStack {
       if #available(macOS 13, iOS 16, *) {
         MetalView(renderCoordinator: renderCoordinator)
@@ -166,7 +166,7 @@ struct GameView: View {
       }
 
       #if os(iOS)
-      movementControls
+      movementControls(client)
       #endif
     }
   }
@@ -203,14 +203,14 @@ struct GameView: View {
 
       Group {
         #if os(macOS)
-        Button("Show in finder") {
-          NSWorkspace.shared.activateFileViewerSelecting([file])
-        }.buttonStyle(SecondaryButtonStyle())
+          Button("Show in finder") {
+            NSWorkspace.shared.activateFileViewerSelecting([file])
+          }.buttonStyle(SecondaryButtonStyle())
         #elseif os(iOS)
-        // TODO: Add a file sharing menu for iOS
-        Text("I have no clue how to get hold of the file")
+          // TODO: Add a file sharing menu for iOS
+          Text("I have no clue how to get hold of the file")
         #else
-        #error("Unsupported platform, no file opening method")
+          #error("Unsupported platform, no file opening method")
         #endif
 
         Button("OK") {
@@ -221,28 +221,28 @@ struct GameView: View {
   }
 
   #if os(iOS)
-  var movementControls: some View {
+  func movementControls(_ client: Client) -> some View {
     VStack {
       Spacer()
       HStack {
         HStack(alignment: .bottom) {
-          movementControl("a", .strafeLeft)
+          movementControl("a", .strafeLeft, client)
           VStack {
-            movementControl("w", .moveForward)
-            movementControl("s", .moveBackward)
+            movementControl("w", .moveForward, client)
+            movementControl("s", .moveBackward, client)
           }
-          movementControl("d", .strafeRight)
+          movementControl("d", .strafeRight, client)
         }
         Spacer()
         VStack {
-          movementControl("*", .jump)
-          movementControl("_", .sneak)
+          movementControl("*", .jump, client)
+          movementControl("_", .sneak, client)
         }
       }
     }
   }
 
-  func movementControl(_ label: String, _ input: Input) -> some View {
+  func movementControl(_ label: String, _ input: Input, _ client: Client) -> some View {
     return ZStack {
       Color.blue.frame(width: 50, height: 50)
       Text(label)
@@ -250,11 +250,11 @@ struct GameView: View {
       minimumDuration: 100000000000,
       maximumDistance: 50,
       perform: { return },
-      onPressingChanged: { isPressing in
+      onPressingChanged: { [weak client] isPressing in
         if isPressing {
-          model.client.press(input)
+          client?.press(input)
         } else {
-          model.client.release(input)
+          client?.release(input)
         }
       }
     )

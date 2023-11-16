@@ -72,6 +72,10 @@ public class PluginEnvironment: ObservableObject {
   /// - Parameter directory: Directory to load plugins from.
   /// - Parameter excludedIdentifiers: Identifier's of plugins to keep as unloaded (they will still be registered though).
   public func loadPlugins(from directory: URL, excluding excludedIdentifiers: [String] = []) throws {
+    guard FileSystem.directoryExists(directory) else {
+      return
+    }
+
     let contents = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil, options: [])
     for file in contents where file.pathExtension == "deltaplugin" {
       if plugins.values.contains(where: { $0.bundle == file }) {

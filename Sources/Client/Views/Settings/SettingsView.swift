@@ -23,7 +23,14 @@ struct SettingsView: View {
   ) {
     self.isInGame = isInGame
     self.done = done
-    self._currentPage = State(initialValue: landingPage ?? SettingsState.allCases[0])
+
+    #if os(iOS)
+      // On iOS, the navigation isn't a split view, so we should show the settings page selection
+      // view first instead of auto-selecting the first page.
+      self._currentPage = State(initialValue: landingPage)
+    #else
+      self._currentPage = State(initialValue: landingPage ?? SettingsState.allCases[0])
+    #endif
   }
 
   var body: some View {

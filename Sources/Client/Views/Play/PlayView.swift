@@ -19,18 +19,19 @@ struct PlayView: View {
   }
 
   var body: some View {
-    if paneCount == 1 {
-      WithSelectedAccount { account in
-        GameView(
-          connectingTo: server,
-          with: account,
-          controller: controllerHub.currentController,
-          controllerOnly: false,
-          inGameMenuPresented: $inGameMenuPresented
-        )
-      }
-    } else {
-      ZStack {
+    ZStack {
+      if paneCount == 1 {
+        WithSelectedAccount { account in
+          GameView(
+            connectingTo: server,
+            with: account,
+            controller: controllerHub.currentController,
+            controllerOnly: false,
+            inGameMenuPresented: $inGameMenuPresented
+          )
+
+        }
+      } else {
         HStack(spacing: 0) {
           ForEach(Array(0..<paneCount), id: \.self) { i in
             gamePane(i)
@@ -39,9 +40,9 @@ struct PlayView: View {
             }
           }
         }
-
-        InGameMenu(presented: $inGameMenuPresented)
       }
+
+      InGameMenu(presented: $inGameMenuPresented)
     }
   }
 

@@ -156,12 +156,21 @@ public final class WorldRenderer: Renderer {
     // Create world mesh
     worldMesh = WorldMesh(client.game.world, resources: resources)
 
+    // TODO: Improve storage mode selection
+    #if os(macOS)
+      let storageMode = MTLResourceOptions.storageModeManaged
+    #elseif os(iOS)
+      let storageMode = MTLResourceOptions.storageModeShared
+    #else
+      #error("Unsupported platform")
+    #endif
+
     var identityUniforms = Uniforms()
     identityUniformsBuffer = try MetalUtil.makeBuffer(
       device,
       bytes: &identityUniforms,
       length: MemoryLayout<Uniforms>.stride,
-      options: [.storageModeManaged]
+      options: storageMode
     )
 
     let maxOutlinePartCount = RegistryStore.shared.blockRegistry.blocks.map { block in
@@ -173,14 +182,14 @@ public final class WorldRenderer: Renderer {
     blockOutlineIndexBuffer = try MetalUtil.makeBuffer(
       device,
       length: MemoryLayout<UInt32>.stride * geometry.indices.count * maxOutlinePartCount,
-      options: .storageModeManaged,
+      options: storageMode,
       label: "blockOutlineIndexBuffer"
     )
 
     blockOutlineVertexBuffer = try MetalUtil.makeBuffer(
       device,
       length: MemoryLayout<BlockVertex>.stride * geometry.vertices.count * maxOutlinePartCount,
-      options: .storageModeManaged,
+      options: storageMode,
       label: "blockOutlineVertexBuffer"
     )
 
@@ -211,10 +220,7 @@ public final class WorldRenderer: Renderer {
 
     // Update animated textures
     profiler.push(.updateAnimatedTextures)
-    #if os(macOS)
-    // TODO: Figure out why array texture updates perform so terribly on iOS
     texturePalette.update()
-    #endif
     profiler.pop()
 
     // Get light map buffer

@@ -13,10 +13,10 @@ struct InputView<Content: View>: View {
 
   private var content: () -> Content
 
-  private var onKeyRelease: ((Key) -> Void)?
-  private var onKeyPress: ((Key, [Character]) -> Void)?
-  private var onMouseMove: ((_ deltaX: Float, _ deltaY: Float) -> Void)?
-  private var onScroll: ((_ deltaY: Float) -> Void)?
+  private var handleKeyRelease: ((Key) -> Void)?
+  private var handleKeyPress: ((Key, [Character]) -> Void)?
+  private var handleMouseMove: ((_ deltaX: Float, _ deltaY: Float) -> Void)?
+  private var handleScroll: ((_ deltaY: Float) -> Void)?
   private var shouldPassthroughClicks = false
 
   init(
@@ -36,14 +36,18 @@ struct InputView<Content: View>: View {
 
   /// Captures the cursor (locks it in place and makes it invisible).
   private static func captureCursor() {
-    CGAssociateMouseAndMouseCursorPosition(0)
-    NSCursor.hide()
+    #if os(macOS)
+      CGAssociateMouseAndMouseCursorPosition(0)
+      NSCursor.hide()
+    #endif
   }
 
   /// Releases the cursor, making it visible and able to move around.
   private static func releaseCursor() {
-    CGAssociateMouseAndMouseCursorPosition(1)
-    NSCursor.unhide()
+    #if os(macOS)
+      CGAssociateMouseAndMouseCursorPosition(1)
+      NSCursor.unhide()
+    #endif
   }
 
   /// If listening, the view will still process clicks, but the click will
@@ -54,22 +58,22 @@ struct InputView<Content: View>: View {
 
   /// Adds an action to run when a key is released.
   func onKeyRelease(_ action: @escaping (Key) -> Void) -> Self {
-    appendingAction(to: \.onKeyRelease, action)
+    appendingAction(to: \.handleKeyRelease, action)
   }
 
   /// Adds an action to run when a key is pressed.
   func onKeyPress(_ action: @escaping (Key, [Character]) -> Void) -> Self {
-    appendingAction(to: \.onKeyPress, action)
+    appendingAction(to: \.handleKeyPress, action)
   }
 
   /// Adds an action to run when the mouse is moved.
   func onMouseMove(_ action: @escaping (_ deltaX: Float, _ deltaY: Float) -> Void) -> Self {
-    appendingAction(to: \.onMouseMove, action)
+    appendingAction(to: \.handleMouseMove, action)
   }
 
   /// Adds an action to run when scrolling occurs.
   func onScroll(_ action: @escaping (_ deltaY: Float) -> Void) -> Self {
-    appendingAction(to: \.onScroll, action)
+    appendingAction(to: \.handleScroll, action)
   }
 
   var body: some View {
@@ -77,13 +81,13 @@ struct InputView<Content: View>: View {
       .frame(maxWidth: .infinity, maxHeight: .infinity)
       #if os(iOS)
       .gesture(TapGesture(count: 2).onEnded { _ in
-        onKeyPress?(.escape)
+        handleKeyPress?(.escape, [])
       })
       .gesture(LongPressGesture(minimumDuration: 2, maximumDistance: 9).onEnded { _ in
-        onKeyPress?(.f3)
+        handleKeyPress?(.f3, [])
       })
       .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global).onChanged { value in
-        onMouseMove?(
+        handleMouseMove?(
           Float(value.translation.width),
           Float(value.translation.height)
         )
@@ -103,7 +107,7 @@ struct InputView<Content: View>: View {
             let deltaX = Float(event.deltaX)
             let deltaY = Float(event.deltaY)
 
-            onMouseMove?(deltaX, deltaY)
+            handleMouseMove?(deltaX, deltaY)
 
             return event
           })
@@ -114,7 +118,7 @@ struct InputView<Content: View>: View {
             }
 
             let deltaY = Float(event.scrollingDeltaY)
-            onScroll?(deltaY)
+            handleScroll?(deltaY)
 
             scrollWheelDeltaY += deltaY
 
@@ -131,8 +135,8 @@ struct InputView<Content: View>: View {
 
             scrollWheelDeltaY = 0
 
-            onKeyPress?(key, [])
-            onKeyRelease?(key)
+            handleKeyPress?(key, [])
+            handleKeyRelease?(key)
 
             return nil
           })
@@ -143,13 +147,13 @@ struct InputView<Content: View>: View {
             }
 
             if event.associatedEventsMask.contains(.leftMouseDown) {
-              onKeyPress?(.leftMouseButton, [])
+              handleKeyPress?(.leftMouseButton, [])
             }
             if event.associatedEventsMask.contains(.rightMouseDown) {
-              onKeyPress?(.rightMouseButton, [])
+              handleKeyPress?(.rightMouseButton, [])
             }
             if event.associatedEventsMask.contains(.otherMouseDown) {
-              onKeyPress?(.otherMouseButton(event.buttonNumber), [])
+              handleKeyPress?(.otherMouseButton(event.buttonNumber), [])
             }
 
             return shouldPassthroughClicks ? event : nil
@@ -161,13 +165,13 @@ struct InputView<Content: View>: View {
             }
 
             if event.associatedEventsMask.contains(.leftMouseUp) {
-              onKeyRelease?(.leftMouseButton)
+              handleKeyRelease?(.leftMouseButton)
             }
             if event.associatedEventsMask.contains(.rightMouseUp) {
-              onKeyRelease?(.rightMouseButton)
+              handleKeyRelease?(.rightMouseButton)
             }
             if event.associatedEventsMask.contains(.otherMouseUp) {
-              onKeyRelease?(.otherMouseButton(event.buttonNumber))
+              handleKeyRelease?(.otherMouseButton(event.buttonNumber))
             }
 
             return shouldPassthroughClicks ? event : nil
@@ -179,7 +183,7 @@ struct InputView<Content: View>: View {
             }
 
             if let key = Key(keyCode: event.keyCode) {
-              onKeyPress?(key, Array(event.characters ?? ""))
+              handleKeyPress?(key, Array(event.characters ?? ""))
 
               if key == .q && event.modifierFlags.contains(.command) {
                 // Pass through quit command
@@ -201,7 +205,7 @@ struct InputView<Content: View>: View {
             }
 
             if let key = Key(keyCode: event.keyCode) {
-              onKeyRelease?(key)
+              handleKeyRelease?(key)
             }
             return event
           })
@@ -216,9 +220,9 @@ struct InputView<Content: View>: View {
 
             func check(_ key: Key, mask: Int32) {
               if raw & mask != 0 && previousRaw & mask == 0 {
-                onKeyPress?(key, [])
+                handleKeyPress?(key, [])
               } else if raw & mask == 0 && previousRaw & mask != 0 {
-                onKeyRelease?(key)
+                handleKeyRelease?(key)
               }
             }
 

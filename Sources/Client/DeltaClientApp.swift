@@ -67,38 +67,40 @@ struct DeltaClientApp: App {
           Alert(title: Text("Error"), message: (modal.content?.message).map(Text.init), dismissButton: Alert.Button.default(Text("OK")))
         }
     }
-    .commands {
-      // Add preferences menu item and shortcut (cmd+,)
-      CommandGroup(after: .appSettings, addition: {
-        Button("Preferences") {
-          guard hasLoaded, modal.content == nil else {
-            return
-          }
+    #if os(macOS)
+      .commands {
+        // Add preferences menu item and shortcut (cmd+,)
+        CommandGroup(after: .appSettings, addition: {
+          Button("Preferences") {
+            guard hasLoaded, modal.content == nil else {
+              return
+            }
 
-          switch appState.current {
-            case .serverList, .editServerList, .accounts, .login, .directConnect:
-              appState.update(to: .settings(nil))
-            case .playServer, .settings:
-              break
+            switch appState.current {
+              case .serverList, .editServerList, .accounts, .login, .directConnect:
+                appState.update(to: .settings(nil))
+              case .playServer, .settings:
+                break
+            }
           }
-        }
-        .keyboardShortcut(KeyboardShortcut(KeyEquivalent(","), modifiers: [.command]))
-      })
-      CommandGroup(after: .toolbar, addition: {
-        Button("Logs") {
-          guard let file = storage?.currentLogFile else {
-            modal.error("File logging not enabled yet")
-            return
+          .keyboardShortcut(KeyboardShortcut(KeyEquivalent(","), modifiers: [.command]))
+        })
+        CommandGroup(after: .toolbar, addition: {
+          Button("Logs") {
+            guard let file = storage?.currentLogFile else {
+              modal.error("File logging not enabled yet")
+              return
+            }
+            NSWorkspace.shared.open(file)
           }
-          NSWorkspace.shared.open(file)
-        }
-      })
-      CommandGroup(after: .windowSize, addition: {
-        Button("Toggle Full Screen") {
-          NSApp?.windows.first?.toggleFullScreen(nil)
-        }
-        .keyboardShortcut(KeyboardShortcut(KeyEquivalent("f"), modifiers: [.control, .command]))
-      })
-    }
+        })
+        CommandGroup(after: .windowSize, addition: {
+          Button("Toggle Full Screen") {
+            NSApp?.windows.first?.toggleFullScreen(nil)
+          }
+          .keyboardShortcut(KeyboardShortcut(KeyEquivalent("f"), modifiers: [.control, .command]))
+        })
+      }
+    #endif
   }
 }

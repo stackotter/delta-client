@@ -47,6 +47,13 @@ struct ServerListView: View {
           IconButton("personalhotspot") {
             appState.update(to: .directConnect)
           }
+
+          #if os(iOS)
+            // Settings
+            IconButton("gear") {
+              appState.update(to: .settings(nil))
+            }
+          #endif
         }
 
         if (updateAvailable) {
@@ -96,16 +103,18 @@ struct ServerListView: View {
     }
   }
 
-  // Check if any Delta Client updates are available.
+  // Check if any Delta Client updates are available. Does nothing if not on macOS.
   func checkForUpdates() async {
-    do {
-      let result = try Updater.isUpdateAvailable()
-      await MainActor.run {
-        updateAvailable = result
+    #if os(macOS)
+      do {
+        let result = try Updater.isUpdateAvailable()
+        await MainActor.run {
+          updateAvailable = result
+        }
+      } catch {
+        modal.error(RichError("Failed to check for updates").becauseOf(error))
       }
-    } catch {
-      modal.error(RichError("Failed to check for updates").becauseOf(error))
-    }
+    #endif
   }
 
   /// Ping all servers and clear discovered LAN servers.

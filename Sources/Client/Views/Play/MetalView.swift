@@ -73,32 +73,39 @@ final class MetalViewClass {
 
 
 #if os(macOS)
+  @available(macOS 13, *)
+  extension MetalView: NSViewRepresentable {
+    func makeNSView(context: Context) -> some NSView {
+      return makeMTKView(renderCoordinator: context.coordinator)
+    }
 
-@available(macOS 13, *)
-@available(iOS 16, *)
-extension MetalView: NSViewRepresentable {
-  func makeNSView(context: Context) -> some NSView {
-    return makeMTKView(renderCoordinator: context.coordinator)
+    func updateNSView(_ view: NSViewType, context: Context) {}
   }
 
-  func updateNSView(_ view: NSViewType, context: Context) {}
-}
+  extension MetalViewClass: NSViewRepresentable {
+    func makeNSView(context: Context) -> some NSView {
+      return makeMTKView(renderCoordinator: context.coordinator)
+    }
 
-extension MetalViewClass: NSViewRepresentable {
-  func makeNSView(context: Context) -> some NSView {
-    return makeMTKView(renderCoordinator: context.coordinator)
+    func updateNSView(_ view: NSViewType, context: Context) {}
   }
-
-  func updateNSView(_ view: NSViewType, context: Context) {}
-}
 #elseif os(iOS)
-extension MetalView: UIViewRepresentable {
-  func makeUIView(context: Context) -> some UIView {
-    return makeMTKView(renderCoordinator: context.coordinator)
+  @available(iOS 16, *)
+  extension MetalView: UIViewRepresentable {
+    func makeUIView(context: Context) -> some UIView {
+      return makeMTKView(renderCoordinator: context.coordinator)
+    }
+
+    func updateUIView(_ view: UIViewType, context: Context) {}
   }
 
-  func updateUIView(_ view: UIViewType, context: Context) {}
-}
+  extension MetalViewClass: UIViewRepresentable {
+    func makeUIView(context: Context) -> some UIView {
+      return makeMTKView(renderCoordinator: context.coordinator)
+    }
+
+    func updateUIView(_ view: UIViewType, context: Context) {}
+  }
 #else
-#error("Unsupported platform, no MetalView SwiftUI compatibility")
+  #error("Unsupported platform, no MetalView SwiftUI compatibility")
 #endif
