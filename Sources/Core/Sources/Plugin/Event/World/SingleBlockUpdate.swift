@@ -6,10 +6,5 @@ extension World.Event {
   public struct SingleBlockUpdate: Event {
     public let position: BlockPosition
     public let newState: Int
-
-    public init(position: BlockPosition, newState: Int) {
-      self.position = position
-      self.newState = newState
-    }
   }
 }

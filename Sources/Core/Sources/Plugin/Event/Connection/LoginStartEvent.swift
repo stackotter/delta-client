@@ -1,5 +1,3 @@
 import Foundation
 
-public struct LoginStartEvent: Event {
-  public init() { }
-}
+public struct LoginStartEvent: Event {}

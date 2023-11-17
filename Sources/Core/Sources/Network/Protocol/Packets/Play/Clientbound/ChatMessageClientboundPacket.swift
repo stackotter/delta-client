@@ -21,7 +21,7 @@ public struct ChatMessageClientboundPacket: ClientboundEntityPacket {
       guiState.chat.add(message)
     }
 
-    client.eventBus.dispatch(ChatMessageReceivedEvent(message))
+    client.eventBus.dispatch(ChatMessageReceivedEvent(message: message))
 
     let text = content.toText(with: locale)
     log.info(text)

@@ -1,5 +1,3 @@
 import Foundation
 
-public struct ConnectionReadyEvent: Event {
-  public init() { }
-}
+public struct ConnectionReadyEvent: Event {}

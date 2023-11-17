@@ -1,5 +1,3 @@
 import Foundation
 
-public struct TerrainDownloadCompletionEvent: Event {
-  public init() { }
-}
+public struct TerrainDownloadCompletionEvent: Event {}

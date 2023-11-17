@@ -1,5 +1,3 @@
 import Foundation
 
-public struct JoinWorldEvent: Event {
-  public init() {}
-}
+public struct JoinWorldEvent: Event {}

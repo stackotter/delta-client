@@ -14,5 +14,9 @@ public struct TimeUpdatePacket: ClientboundPacket {
   public func handle(for client: Client) throws {
     client.game.world.setAge(worldAge)
     client.game.world.setTimeOfDay(timeOfDay)
+    client.eventBus.dispatch(World.Event.TimeUpdate(
+      worldAge: worldAge,
+      timeOfDay: timeOfDay
+    ))
   }
 }

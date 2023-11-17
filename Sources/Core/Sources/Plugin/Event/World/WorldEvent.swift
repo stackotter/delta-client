@@ -1,5 +1,5 @@
 import Foundation
 
 extension World {
-  public enum Event { }
+  public enum Event {}
 }
