@@ -50,7 +50,9 @@ struct Config: Codable, ClientConfiguration {
 
   /// Saves the configuration to a JSON file.
   func save(to file: URL) throws {
-    let data = try JSONEncoder().encode(self)
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    let data = try encoder.encode(self)
     try data.write(to: file)
   }
 
