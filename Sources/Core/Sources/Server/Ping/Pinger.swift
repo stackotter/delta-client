@@ -65,6 +65,7 @@ public class Pinger: ObservableObject {
           try? self.ping()
         }
       } catch {
+        self.isConnecting = false
         log.trace("Failed to create server connection")
         ThreadUtil.runInMain {
           self.response = Result.failure(.connectionFailed(error))
