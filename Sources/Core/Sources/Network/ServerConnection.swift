@@ -142,30 +142,28 @@ public class ServerConnection {
         }
       }
 
-      // If `host` is an ip already, no need to perform DNS lookups
-      if isIp {
+      guard !isIp else {
         return (server.host, server.port ?? 25565)
-      } else {
-	      let resolver = Resolver()
-
-        // Check for SRV records if no port is specified
-        if server.port == nil {
-          do {
-            let records = try resolver.discover("_minecraft._tcp.\(server.host)")
-            if let record = records.first {
-              return (record.address, record.port.map(UInt16.init) ?? server.port ?? 25565)
-            }
-          } catch {}
-        }
-
-        // Check for regular records
-	      let records = try resolver.resolve(server.host)
-        if let record = records.first {
-          return (record.address, server.port ?? 25565)
-        }
-
-        throw ServerConnectionError.failedToResolveHostname(hostname: server.host, nil)
       }
+
+      // If `host` is an ip already, no need to perform DNS lookups
+      let resolver = Resolver(timeout: 10)
+
+      // Check for SRV records if no port is specified
+      if server.port == nil {
+        let records = try? resolver.discover("_minecraft._tcp.\(server.host)")
+        if let record = records?.first {
+          return (record.address, record.port.map(UInt16.init) ?? server.port ?? 25565)
+        }
+      }
+
+      // Check for regular records
+      let records = try resolver.resolve(server.host)
+      if let record = records.first {
+        return (record.address, server.port ?? 25565)
+      }
+
+      throw ServerConnectionError.failedToResolveHostname(hostname: server.host, nil)
     } catch {
       throw ServerConnectionError.failedToResolveHostname(hostname: server.host, error)
     }

@@ -86,7 +86,7 @@ let package = Package(
     .package(url: "https://github.com/fourplusone/swift-package-zlib", from: "1.2.11"),
     .package(url: "https://github.com/stackotter/swift-image.git", branch: "master"),
     .package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.13.0"),
-    .package(url: "https://github.com/stackotter/swift-png", revision: "2ef3b194250cf8827462fc84f36a4e0cdc471ef0"),
+    .package(url: "https://github.com/stackotter/swift-png", revision: "b11a34847192cec24fa91c23fe771e95eb2c08cc"),
     .package(url: "https://github.com/stackotter/ASN1Parser", branch: "main"),
     .package(url: "https://github.com/krzyzanowskim/CryptoSwift", from: "1.6.0"),
     .package(url: "https://github.com/Kitura/SwiftyRequest.git", from: "3.1.0"),
