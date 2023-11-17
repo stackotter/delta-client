@@ -83,6 +83,11 @@ public struct Texture {
   public var image: Image<BGRA<UInt8>>
   /// The animation to use when rendering this texture.
   public var animation: Animation?
+  /// The number of frames present in the texture. May differ from
+  /// `animation?.frames.count` because a single texture frame may be
+  /// used by multiple animation frames. Will be 1 if the texture isn't
+  /// animated.
+  public var frameCount: Int
 
   /// The pixel format used by Apple devices.
   public struct BGRA<Channel> {
@@ -103,29 +108,35 @@ public struct Texture {
     pngFile: URL,
     type: TextureType? = nil,
     scaledToWidth targetWidth: Int? = nil,
-    checkDimensions: Bool = false
+    checkDimensions: Bool = false,
+    animationMetadataFile: URL? = nil
   ) throws {
     let image = try Image<RGBA<UInt8>>(fromPNGFile: pngFile)
     try self.init(
       image: image,
       type: type,
       scaledToWidth: targetWidth,
-      checkDimensions: checkDimensions
+      checkDimensions: checkDimensions,
+      animationMetadataFile: animationMetadataFile
     )
   }
 
-  /// Loads a texture.
+  /// Loads a texture with an optional animation.
   /// - Parameters:
   ///   - image: The image containing the texture.
   ///   - type: The type of the texture. Calculated if not specified.
   ///   - targetWidth: Scales the image to this width.
-  ///   - checkDimensions: If `true`, the texture's width must be a power of two, and the height must be a multiple of the width.
-  ///                      `targetWidth` must also be a power of two if present.
+  ///   - checkDimensions: If `true`, the texture's width must be a power of two,
+  ///     and the height must be a multiple of the width. `targetWidth` must also
+  ///     be a power of two if present.
+  ///   - animationMetadataFile: A metadata file containing information about the
+  ///     texture's animation
   public init(
     image: Image<RGBA<UInt8>>,
     type: TextureType? = nil,
     scaledToWidth targetWidth: Int? = nil,
-    checkDimensions: Bool = false
+    checkDimensions: Bool = false,
+    animationMetadataFile: URL?
   ) throws {
     if checkDimensions {
       // The height of the texture must be a multiple of the width
@@ -157,6 +168,7 @@ public struct Texture {
     let width = scaleFactor * image.width
     let height = scaleFactor * image.height
 
+    // TODO: Don't scale if the scale factor is 1 (waste of cpu)
     let resized = image.resizedTo(
       width: width,
       height: height,
@@ -181,15 +193,28 @@ public struct Texture {
     }
 
     self.image = Image(width: resized.width, height: resized.height, pixels: pixels)
-
     self.type = type ?? Self.typeOfTexture(self.image)
+
+    if let animationMetadataFile = animationMetadataFile {
+      frameCount = height / width
+      do {
+        let data = try Data(contentsOf: animationMetadataFile)
+        let animationMCMeta = try CustomJSONDecoder().decode(AnimationMCMeta.self, from: data)
+        animation = Animation(from: animationMCMeta, maximumFrameIndex: frameCount)
+      } catch {
+        throw TextureError.failedToLoadTextureAnimation(error)
+      }
+    } else {
+      frameCount = 1
+    }
   }
 
   /// An internal initializer used to create texture from data stored in the binary cache.
-  init(type: TextureType, image: Image<BGRA<UInt8>>, animation: Animation?) {
+  init(type: TextureType, image: Image<BGRA<UInt8>>, animation: Animation?, frameCount: Int) {
     self.type = type
     self.image = image
     self.animation = animation
+    self.frameCount = frameCount
   }
 
   /// Accesses the pixel at the given coordinates in the image and crashes if the coordinates are
@@ -200,19 +225,6 @@ public struct Texture {
     }
     set {
       image[x, y] = newValue
-    }
-  }
-
-  /// Loads a texture animation from a json file in a resource pack, and then sets is as this texture's animation
-  /// - Parameter animationMetadataFile: The animation descriptor file.
-  public mutating func setAnimation(file animationMetadataFile: URL) throws {
-    let numFrames = height / width
-    do {
-      let data = try Data(contentsOf: animationMetadataFile)
-      let animationMCMeta = try CustomJSONDecoder().decode(AnimationMCMeta.self, from: data)
-      animation = Animation(from: animationMCMeta, maxFrameIndex: numFrames)
-    } catch {
-      throw TextureError.failedToLoadTextureAnimation(error)
     }
   }
 

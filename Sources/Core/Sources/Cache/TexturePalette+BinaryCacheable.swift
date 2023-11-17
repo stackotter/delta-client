@@ -27,13 +27,15 @@ extension Texture: BinarySerializable {
     type.serialize(into: &buffer)
     image.serialize(into: &buffer)
     animation.serialize(into: &buffer)
+    frameCount.serialize(into: &buffer)
   }
 
   public static func deserialize(from buffer: inout Buffer) throws -> Texture {
     return Texture(
       type: try .deserialize(from: &buffer),
       image: try .deserialize(from: &buffer),
-      animation: try .deserialize(from: &buffer)
+      animation: try .deserialize(from: &buffer),
+      frameCount: try .deserialize(from: &buffer)
     )
   }
 }

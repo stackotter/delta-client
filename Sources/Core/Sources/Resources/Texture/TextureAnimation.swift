@@ -11,8 +11,9 @@ extension Texture {
       self.frames = frames
     }
 
-    /// `maxFrameIndex` is the number of frames present in the corresponding texture.
-    public init(from mcMeta: AnimationMCMeta, maxFrameIndex: Int) {
+    /// - Parameter `maximumFrameIndex`: is the number of frames present in
+    ///   the corresponding texture.
+    public init(from mcMeta: AnimationMCMeta, maximumFrameIndex: Int) {
       interpolate = mcMeta.animation.interpolate ?? false
 
       // Reformat frames
@@ -22,14 +23,16 @@ extension Texture {
         for mcMetaFrame in mcMetaFrames {
           let frame = Frame(
             index: mcMetaFrame.index,
-            time: mcMetaFrame.time ?? defaultFrameTime)
+            time: mcMetaFrame.time ?? defaultFrameTime
+          )
           frames.append(frame)
         }
       } else {
-        for i in 0..<maxFrameIndex {
+        for i in 0..<maximumFrameIndex {
           let frame = Frame(
             index: i,
-            time: defaultFrameTime)
+            time: defaultFrameTime
+          )
           frames.append(frame)
         }
       }

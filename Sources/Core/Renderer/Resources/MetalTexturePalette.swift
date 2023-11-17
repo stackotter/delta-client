@@ -96,7 +96,7 @@ public struct MetalTexturePalette {
         previousUpdate: UInt32(0),
         nextUpdate: UInt32(frameTicks)
       ))
-      frameIndex += texture.animation?.frames.count ?? 1
+      frameIndex += texture.frameCount
     }
 
     textureStatesBuffer = device.makeBuffer(
@@ -121,7 +121,7 @@ public struct MetalTexturePalette {
     let count: Int
     if includeAnimations {
       count = palette.textures.map{ texture in
-        return texture.animation?.frames.count ?? 1
+        return texture.frameCount
       }.reduce(0, +)
     } else {
       count = palette.textures.count
@@ -136,6 +136,7 @@ public struct MetalTexturePalette {
     textureDescriptor.pixelFormat = .bgra8Unorm
     textureDescriptor.textureType = .type2DArray
     textureDescriptor.arrayLength = count
+
     #if os(macOS)
     textureDescriptor.storageMode = .managed
     #elseif os(iOS)
@@ -156,7 +157,7 @@ public struct MetalTexturePalette {
     var frameIndex = 0
     for texture in palette.textures {
       let frameWidth = texture.width
-      let frameCount = texture.animation?.frames.count ?? 1
+      let frameCount = texture.frameCount
       let frameHeight = texture.height / frameCount
       let bytesPerRow = bytesPerPixel * frameWidth
       let bytesPerFrame = bytesPerRow * frameHeight

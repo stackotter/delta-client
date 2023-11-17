@@ -130,28 +130,32 @@ public struct TexturePalette {
     var textures: [(Identifier, Texture)] = []
     for (identifier, image) in images {
       let name = identifier.name.split(separator: "/")[1]
-      let animationMetadataFile = directory.appendingPathComponent("\(name).png.mcmeta")
-      do {
-        // Hardcode leaves as opaque for performance reasons
-        let hardcodeOpaque = identifier.name.hasSuffix("leaves")
 
+      let animationMetadataFile: URL?
+      if FileSystem.fileExists(directory.appendingPathComponent("\(name).png.mcmeta")) {
+        animationMetadataFile = directory.appendingPathComponent("\(name).png.mcmeta")
+      } else {
+        animationMetadataFile = nil
+      }
+
+      // Hardcode leaves as opaque for performance reasons
+      let hardcodeOpaque = identifier.name.hasSuffix("leaves")
+
+      do {
         // Only check dimensions if we need to resize
         var texture = try Texture(
           image: image,
           type: hardcodeOpaque ? .opaque : nil,
           scaledToWidth: isAnimated ? maxWidth : image.width,
-          checkDimensions: isAnimated
+          checkDimensions: isAnimated,
+          animationMetadataFile: animationMetadataFile
         )
 
         if texture.type == .opaque {
           texture.setAlpha(255)
         } else {
-          // Change the color of transparent pixels to make mipmaps look more natural
+          // Change the color of transparent pixels to make mipmaps look more natural.
           texture.fixTransparentPixels()
-        }
-
-        if FileManager.default.fileExists(atPath: animationMetadataFile.path) {
-          try texture.setAnimation(file: animationMetadataFile)
         }
 
         textures.append((identifier, texture))
