@@ -13,6 +13,12 @@ public struct PlayerAccelerationSystem: System {
   )
 
   public func update(_ nexus: Nexus, _ world: World) {
+    let guiState = nexus.single(GUIStateStorage.self).component
+
+    guard guiState.movementAllowed else {
+      return
+    }
+
     var family = nexus.family(
       requiresAll: EntityNutrition.self,
       EntityFlying.self,

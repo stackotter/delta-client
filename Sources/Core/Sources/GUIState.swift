@@ -10,8 +10,11 @@ public struct GUIState {
   public var stashedMessageInput: String?
   public var playerMessageHistory: [String] = []
   public var currentMessageIndex: Int?
-  /// The cursor position in the message input. 0 is the end of the message, and the maximum value is the beginning of the message.
+
+  /// The cursor position in the message input. 0 is the end of the message,
+  /// and the maximum value is the beginning of the message.
   public var messageInputCursor: Int = 0
+
   public var messageInputCursorIndex: String.Index {
     if let messageInput = messageInput {
       return messageInput.index(messageInput.endIndex, offsetBy: -messageInputCursor)
@@ -20,9 +23,13 @@ public struct GUIState {
     }
   }
 
-  public var isChatOpen: Bool {
+  public var showChat: Bool {
     return messageInput != nil
   }
 
-  public init() {}
+  /// Whether the player is allowed to move, as opposed to being in a
+  /// menu or having chat open.
+  public var movementAllowed: Bool {
+    return !showChat && !showInventory
+  }
 }

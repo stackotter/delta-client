@@ -4,6 +4,7 @@ import FirebladeECS
 import AppKit // Used to access clipboard
 #endif
 
+/// Handles all player input except for input related to player movement (see ``PlayerAccelerationSystem``).
 public final class PlayerInputSystem: System {
   var connection: ServerConnection?
   weak var game: Game?
@@ -121,9 +122,8 @@ public final class PlayerInputSystem: System {
       isInputSuppressed.append(suppressInput)
     }
 
-    // Handle mouse input
-    // TODO: Make these modal flags more consistently named
-    if !guiState.isChatOpen && !guiState.showInventory {
+    // Handle mouse input.
+    if guiState.movementAllowed {
       updateRotation(inputState, rotation)
     }
 
@@ -224,8 +224,8 @@ public final class PlayerInputSystem: System {
       guiState.messageInput = "/"
     }
 
-    // Supress inputs while the user is typing
-    return guiState.isChatOpen
+    // Suppress inputs while the user is typing.
+    return guiState.showChat
   }
 
   /// - Returns: Whether to suppress the input associated with the event or not. `true` while user is typing.
