@@ -5,7 +5,7 @@ import OrderedCollections
 /// The client's configuration. Usually stored in a JSON file.
 struct Config: Codable, ClientConfiguration {
   /// The current config version used by the client.
-  static let currentVersion: Float = 1
+  static let currentVersion: Float = 0
 
   /// The config format version. Used to detect outdated config files (and maybe
   /// in future to migrate them). Completely independent from the actual Delta
