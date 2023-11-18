@@ -68,6 +68,13 @@ struct KeymapEditorView: View {
     .onKeyRelease { key in
       inputCaptured = false
     }
+
+    Button("Reset bindings to defaults") {
+      managedConfig.keymap.bindings = Keymap.default.bindings
+    }
+    .buttonStyle(SecondaryButtonStyle())
+    .frame(width: 250)
+    .padding(.top, 10)
   }
 
   static func labelColor(isUnique: Bool, isBound: Bool, isSelected: Bool) -> Color {

@@ -22,8 +22,6 @@ struct ControlsSettingsView: View {
       }
       .frame(width: 450)
 
-      KeymapEditorView()
-
       HStack {
         Text("Toggle sprint").frame(width: 150)
         Spacer()
@@ -53,6 +51,12 @@ struct ControlsSettingsView: View {
         Spacer()
       }
       .frame(width: 400)
+
+      Text("Bindings")
+        .font(.title)
+        .padding(.top, 16)
+
+      KeymapEditorView()
     }
     .onAppear {
       sensitivity = managedConfig.mouseSensitivity
