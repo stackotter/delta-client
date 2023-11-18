@@ -56,13 +56,11 @@ struct LoadAndThen<Content: View>: View {
     do {
       config = try Config.load(from: storage.configFile)
     } catch {
-      modal.error(RichError("Failed to load config; resetting to defaults").becauseOf(error))
+      modal.error(RichError("Failed to load config, using defaults").becauseOf(error))
       config = Config()
-      do {
-        try config.save(to: storage.configFile)
-      } catch {
-        throw RichError("Failed to save new config").becauseOf(error)
-      }
+      // Don't save the new config (wait until the user makes changes). This means that
+      // the user can quit the client and attempt to fix their config without having to
+      // start their config all over again.
     }
 
     let managedConfig = ManagedConfig(config, backedBy: storage.configFile) { error in
