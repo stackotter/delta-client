@@ -16,6 +16,9 @@ struct RouterView: View {
         case .login:
           AccountLoginView(completion: { account in
             managedConfig.config.addAccount(account)
+            if managedConfig.config.accounts.count == 1 {
+              managedConfig.config.selectAccount(withId: account.id)
+            }
             appState.update(to: .serverList)
           }, cancelation: nil)
         case .accounts:

@@ -87,7 +87,12 @@ struct AccountSettingsView: View {
 
   /// Updates the selected account in the config file.
   func saveSelected(_ index: Int?) {
-    managedConfig.config.selectAccount(withId: getSelectedAccount()?.id)
+    guard let index = index else {
+      managedConfig.config.selectAccount(withId: nil)
+      return
+    }
+
+    managedConfig.config.selectAccount(withId: accounts[index].id)
   }
 
   /// Returns the currently selected account if any.

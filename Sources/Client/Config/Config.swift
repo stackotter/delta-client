@@ -4,6 +4,11 @@ import OrderedCollections
 
 /// The client's configuration. Usually stored in a JSON file.
 struct Config: Codable, ClientConfiguration {
+  /// The config format version. Used to detect outdated config files (and maybe
+  /// in future to migrate them). Completely independent from the actual Delta
+  /// Client version.
+  var version: Float = 1
+
   /// The random token used to identify ourselves to Mojang's API
   var clientToken = UUID().uuidString
   /// The id of the currently selected account.

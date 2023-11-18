@@ -1,7 +1,7 @@
 import Foundation
 
 /// A player input. On a laptop or desktop, this represents a key press or mouse button press.
-public enum Input: Codable, CaseIterable {
+public enum Input: String, Codable, CaseIterable {
   case place
   case destroy
 

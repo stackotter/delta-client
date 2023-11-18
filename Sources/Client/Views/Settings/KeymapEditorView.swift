@@ -26,7 +26,7 @@ struct KeymapEditorView: View {
             .frame(width: 150)
 
           // Button to set a new binding
-          let keyName = bindings[input]?.rawValue ?? "Unbound"
+          let keyName = bindings[input]?.description ?? "Unbound"
           Button(action: {
             if isSelected {
               managedConfig.keymap.bindings[input] = .leftMouseButton
