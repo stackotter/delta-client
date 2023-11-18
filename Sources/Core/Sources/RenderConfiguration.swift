@@ -1,3 +1,6 @@
+// TODO: RenderConfiguration should probably be moved to the Renderer
+//   module if possible?
+
 /// Configuration for ``RenderCoordinator``.
 public struct RenderConfiguration: Codable {
   /// The vertical fov in degrees.

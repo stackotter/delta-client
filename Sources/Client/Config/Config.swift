@@ -21,7 +21,7 @@ struct Config: Codable, ClientConfiguration {
   /// The user's server list.
   var servers: [ServerDescriptor] = []
   /// Rendering related configuration.
-  var render = RenderConfiguration()
+  var render = RenderConfiguration(enableOrderIndependentTransparency: true)
   /// Plugins that the user has explicitly unloaded.
   var unloadedPlugins: [String] = []
   /// The user's keymap.
