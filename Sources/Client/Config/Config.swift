@@ -4,10 +4,13 @@ import OrderedCollections
 
 /// The client's configuration. Usually stored in a JSON file.
 struct Config: Codable, ClientConfiguration {
+  /// The current config version used by the client.
+  static let currentVersion: Float = 1
+
   /// The config format version. Used to detect outdated config files (and maybe
   /// in future to migrate them). Completely independent from the actual Delta
   /// Client version.
-  var version: Float = 1
+  var version: Float = currentVersion
 
   /// The random token used to identify ourselves to Mojang's API
   var clientToken = UUID().uuidString
@@ -50,6 +53,16 @@ struct Config: Codable, ClientConfiguration {
   /// Loads a configuration from a JSON configuration file.
   static func load(from file: URL) throws -> Config {
     let data = try Data(contentsOf: file)
+    let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+
+    guard let version = json?["version"] as? Float else {
+      throw ConfigError.missingVersion
+    }
+
+    guard version == currentVersion else {
+      throw ConfigError.unsupportedVersion(version)
+    }
+
     return try JSONDecoder().decode(Self.self, from: data)
   }
 

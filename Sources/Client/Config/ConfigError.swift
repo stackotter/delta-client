@@ -1,6 +1,10 @@
 import Foundation
 
 public enum ConfigError: LocalizedError {
+  /// The config file is missing a version.
+  case missingVersion
+  /// The config file is using an unsupported version.
+  case unsupportedVersion(Float)
   /// The account in question is of an invalid type.
   case invalidAccountType
   /// No account exists with the given id.
@@ -14,6 +18,11 @@ public enum ConfigError: LocalizedError {
   
   public var errorDescription: String? {
     switch self {
+      case .missingVersion:
+        return "Your config file is missing a 'version' field."
+      case let .unsupportedVersion(version):
+        return "Your config file version (\(version)) is unsupported. " +
+          "\(Config.currentVersion) is the current supported version."
       case .invalidAccountType:
         return "The account in question is of an invalid type."
       case .invalidAccountId:
