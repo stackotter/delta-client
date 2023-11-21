@@ -5,6 +5,9 @@ import Logging
 ///
 /// Includes chunks, lighting and some other metadata.
 public class World {
+  /// The color of fog when in lava.
+  public static let lavaFogColor = Vec3f(0.6, 0.1, 0)
+
   // MARK: Public properties
 
   /// The bus the world will emit events to.
@@ -131,6 +134,127 @@ public class World {
     timeLock.acquireWriteLock()
     defer { timeLock.unlock() }
     self.timeOfDay = timeOfDay
+  }
+
+  // MARK: Sky
+
+  /// Gets the sky color seen when viewed from a given position.
+  /// - Parameters:
+  ///   - position: The position that the world is being viewed from.
+  public func getSkyColor(at position: BlockPosition) -> Vec3f {
+    guard let biome = getBiome(at: position) else {
+      // TODO: Avoid force unwraps here
+      return RegistryStore.shared.biomeRegistry
+        .biome(for: Identifier(name: "plains"))!
+        .skyColor
+        .floatVector
+    }
+
+    return biome.skyColor.floatVector
+  }
+
+  /// Gets the color of fog that should be rendered when viewed from a given position.
+  /// - Parameters:
+  ///   - position: The position that the world is being viewed from.
+  ///   - renderDistance: The render distance that the fog will be rendered at. Often
+  ///     the true render distance minus 1 is used when above 2 render distance (to conceal
+  ///     more of the edge of the world).
+  ///   - acquireLock: Whether to acquire a lock or not before reading the value. Don't
+  ///     touch this unless you know what you're doing.
+  public func getFogColor(
+    at position: Vec3f,
+    withRenderDistance renderDistance: Int,
+    acquireLock: Bool = true
+  ) -> Vec3f {
+    let blockPosition = BlockPosition(x: Int(position.x), y: Int(position.y), z: Int(position.z))
+
+    guard let biome = getBiome(at: blockPosition) else {
+      // TODO: Avoid force unwraps here
+      return RegistryStore.shared.biomeRegistry
+        .biome(for: Identifier(name: "plains"))!
+        .skyColor
+        .floatVector
+    }
+
+    let fluidOnEyes = getFluidState(at: position, acquireLock: acquireLock)
+      .map(\.fluidId)
+      .map(RegistryStore.shared.fluidRegistry.fluid(withId:))
+
+    var fogColor: Vec3f
+    if fluidOnEyes?.isWater == true {
+      // TODO: Slowly adjust the water fog color as the player's 'eyes' adjust.
+      fogColor = biome.waterFogColor.floatVector
+    } else if fluidOnEyes?.isLava == true {
+      fogColor = Self.lavaFogColor
+    } else {
+      fogColor = MathUtil.lerp(
+        from: biome.fogColor.floatVector,
+        to: getSkyColor(at: blockPosition),
+        progress: 1 - FirebladeMath.pow(0.25 + 0.75 * min(32, Float(renderDistance)) / 32, 0.25)
+      )
+    }
+
+    // As the player nears the 
+    let voidFadeStart: Float = isFlat ? 1 : 32
+    if position.y < voidFadeStart {
+      let amount = position.y / voidFadeStart
+      fogColor *= amount * amount 
+    }
+
+    return fogColor
+  }
+
+  /// Gets the fog experienced by a player viewing the world from a given position.
+  /// - Parameters:
+  ///   - position: The position that the world is being viewed from.
+  ///   - renderDistance: The render distance that the fog will be rendered at. Often
+  ///     the true render distance minus 1 is used when above 2 render distance (to conceal
+  ///     more of the edge of the world).
+  ///   - acquireLock: Whether to acquire a lock or not before reading the value. Don't
+  ///     touch this unless you know what you're doing.
+  public func getFog(
+    at position: Vec3f,
+    withRenderDistance renderDistance: Int,
+    acquireLock: Bool = true
+  ) -> Fog {
+    // TODO: Check fog reverse engineering document for any other adjustments
+    //   to implement.
+    let fogColor = getFogColor(at: position, withRenderDistance: renderDistance)
+
+    let renderDistanceInBlocks = Float(renderDistance * Chunk.width)
+
+    let fluidOnEyes = getFluidState(at: position, acquireLock: acquireLock)
+      .map(\.fluidId)
+      .map(RegistryStore.shared.fluidRegistry.fluid(withId:))
+
+    guard fluidOnEyes?.isWater != true else {
+      // TODO: Calculate density as per reverse engineering document
+      return Fog(color: fogColor, style: .exponential(density: 0.05))
+    }
+    
+    // TODO: If player has blindness, the fog starts at 5/4 and ends at 5, lerping up to
+    //   starting at renderDistance/4 and ending at renderDistance over the last second of blindness
+
+    let fogStart: Float
+    let fogEnd: Float
+    if fluidOnEyes?.isLava == true {
+      // TODO: Should start at 0 and end at 3 if the player has fire resistance
+      fogStart = 0.25
+      fogEnd = 1
+    } else if dimension.isNether {
+      // TODO: This should also happen if there is a boss present which has the fog creation effect
+      //   (determined by flags of BossBarPacket)
+      fogStart = renderDistanceInBlocks / 20
+      fogEnd = min(96, renderDistanceInBlocks / 2)
+    } else {
+      fogStart = 0.75 * renderDistanceInBlocks
+      fogEnd = renderDistanceInBlocks
+    }
+
+    return Fog(
+      color: fogColor,
+      style: .linear(startDistance: fogStart, endDistance: fogEnd)
+    )
   }
 
   // MARK: Blocks

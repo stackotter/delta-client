@@ -5,9 +5,6 @@ import FirebladeMath
 
 /// The renderer managing offscreen rendering and displaying final result in view.
 public final class ScreenRenderer: Renderer {
-  /// The fog color used when the player's eyes are in lava.
-  public static let lavaFogColor: Vec3f = Vec3f(0.6, 0.1, 0)
-
   /// The device used to render.
   private var device: MTLDevice
 
@@ -166,59 +163,24 @@ public final class ScreenRenderer: Renderer {
 
   static func fogUniforms(client: Client, camera: Camera) -> FogUniforms {
     return client.game.accessPlayer { player in
-      let position = EntityPosition(Vec3d(player.ray.origin))
-      let biome = client.game.world.getBiome(at: position.block) ?? RegistryStore.shared.biomeRegistry.biome(for: Identifier(name: "plains"))!
+      // When the render distance is above 2, move the fog 1 chunk closer to conceal
+      // more of the world edge.
+      let renderDistance = max(client.configuration.render.renderDistance - 1, 2)
+      let fog = client.game.world.getFog(
+        at: player.ray.origin,
+        withRenderDistance: renderDistance
+      )
 
-      let block = client.game.world.getBlock(at: position.block)
-      let fluidOnEyes = client.game.world.getFluidState(at: player.ray.origin)
-        .map(\.fluidId)
-        .map(RegistryStore.shared.fluidRegistry.fluid(withId:))
-
-      let renderDistance = Float(max(client.configuration.render.renderDistance - 1, 2))
-
-      var fogColor: Vec3f
-      if fluidOnEyes?.isWater == true {
-        // TODO: Slowly adjust the water fog color as the player's 'eyes' adjust
-        fogColor = biome.waterFogColor.floatVector
-      } else if fluidOnEyes?.isLava == true {
-        fogColor = Self.lavaFogColor
-      } else {
-        fogColor = MathUtil.lerp(
-          from: biome.fogColor.floatVector,
-          to: biome.skyColor.floatVector,
-          progress: 1 - FirebladeMath.pow(0.25 + 0.75 * min(32, renderDistance) / 32, 0.25)
-        )
-      }
-
-      // As the player nears the 
-      let voidFadeStart: Float = client.game.world.isFlat ? 1 : 32
-      if player.ray.origin.y < voidFadeStart {
-        let amount = player.ray.origin.y / voidFadeStart
-        fogColor *= amount * amount 
-      }
-
-      // TODO: Check fog color reverse engineering document for any other adjustments
-      //   to implement.
-      // TODO: If player has blindness, the fog starts at 5/4 and ends at 5, lerping up to
-      //   starting at renderDistance/4 and ending at renderDistance over the last second of blindness
+      // TODO: Support the exponential fog style
       let fogStart: Float
       let fogEnd: Float
-      if fluidOnEyes?.isWater == true {
-        // TODO: Use exponential fog underwater
-        fogStart = 16
-        fogEnd = 32
-      } else if fluidOnEyes?.isLava == true {
-        // TODO: Should start at 0 and end at 3 if the player has fire resistance
-        fogStart = 0.25
-        fogEnd = 1
-      } else if client.game.world.dimension.isNether {
-        // TODO: This should also happen if there is a boss present which has the fog creation effect
-        //   (determined by flags of BossBarPacket)
-        fogStart = renderDistance / 20 * Float(Chunk.width)
-        fogEnd = min(96, renderDistance / 2) * Float(Chunk.width)
-      } else {
-        fogStart = 0.75 * renderDistance * Float(Chunk.width)
-        fogEnd = renderDistance * Float(Chunk.width)
+      switch fog.style {
+        case .exponential:
+          fogStart = 0
+          fogEnd = 16
+        case let .linear(start, end):
+          fogStart = start
+          fogEnd = end
       }
 
       return FogUniforms(
@@ -227,7 +189,7 @@ public final class ScreenRenderer: Renderer {
         farPlane: camera.farDistance,
         fogStart: fogStart,
         fogEnd: fogEnd,
-        fogColor: Vec4f(fogColor, 1)
+        fogColor: Vec4f(fog.color, 1)
       )
     }
   }
