@@ -15,6 +15,21 @@ public struct Dimension {
   public var bedWorks: Bool
   public var piglinSafe: Bool
 
+  /// Whether the dimension is the vanilla overworld or not.
+  public var isOverworld: Bool {
+    identifier == Identifier(name: "overworld")
+  }
+
+  /// Whether the dimension is the vanilla nether or not.
+  public var isNether: Bool {
+    identifier == Identifier(name: "the_nether")
+  }
+
+  /// Whether the dimension is the vanilla end or not.
+  public var isEnd: Bool {
+    identifier == Identifier(name: "the_end")
+  }
+
   public static let overworld = Dimension(
     identifier: Identifier(name: "overworld"),
     ambientLight: 0,

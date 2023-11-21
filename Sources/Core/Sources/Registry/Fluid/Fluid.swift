@@ -10,6 +10,16 @@ public final class Fluid: Codable {
   public var stillTexture: Identifier
   /// The id of the particle to use when this fluid is seeping through the ground.
   public var dripParticleType: Int?
+
+  /// Whether the fluid is vanilla water or not.
+  public var isWater: Bool {
+    identifier == Identifier(name: "water")
+  }
+
+  /// Whether the fluid is vanilla lava or not.
+  public var isLava: Bool {
+    identifier == Identifier(name: "lava")
+  }
   
   public init(
     id: Int,

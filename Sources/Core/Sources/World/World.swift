@@ -202,13 +202,50 @@ public class World {
     }
   }
 
+  // TODO: Should these getters be called `block(at:)` etc instead?
   /// Returns information about the type of block at the specified position.
   /// - Parameters:
   ///   - position: Position of block.
   ///   - acquireLock: Whether to acquire a lock or not before reading the value. Don't touch this unless you know what you're doing.
   /// - Returns: The block at the given position. ``Block/missing`` if the block doesn't exist.
   public func getBlock(at position: BlockPosition, acquireLock: Bool = true) -> Block {
-    return RegistryStore.shared.blockRegistry.block(withId: Int(getBlockId(at: position, acquireLock: acquireLock))) ?? Block.missing
+    let blockId = getBlockId(at: position, acquireLock: acquireLock)
+    return RegistryStore.shared.blockRegistry.block(withId: blockId) ?? Block.missing
+  }
+
+  /// Returns information about the fluid state at the specified position.
+  /// - Parameters:
+  ///   - position: Position of fluid.
+  ///   - acquireLock: Whether to acquire a lock or not before reading the value. Don't touch this unless you know what you're doing.
+  /// - Returns: The fluid state at the given position, if any.
+  public func getFluidState(at position: BlockPosition, acquireLock: Bool = true) -> FluidState? {
+    let block = getBlock(at: position)
+    return block.fluidState
+  }
+
+  /// Returns information about the type of fluid that the given point is in.
+  /// - Parameters:
+  ///   - position: Point to get fluid at.
+  ///   - acquireLock: Whether to acquire a lock or not before reading the value. Don't touch this unless you know what you're doing.
+  /// - Returns: The fluid at the given point, if any.
+  public func getFluidState(at position: Vec3f, acquireLock: Bool = true) -> FluidState? {
+    let blockPosition = BlockPosition(x: Int(position.x), y: Int(position.y), z: Int(position.z))
+    guard let fluidState = getFluidState(at: blockPosition) else {
+      return nil
+    }
+
+    let fluidStateAbove = getFluidState(at: blockPosition.neighbour(.up))
+    if fluidStateAbove?.fluidId == fluidState.fluidId {
+      return fluidState
+    }
+
+    let height = Float(fluidState.height + 1) / 9
+    let fluidEnd = Float(blockPosition.y) + height
+    if position.y <= fluidEnd {
+      return fluidState
+    } else {
+      return nil
+    }
   }
 
   // MARK: Lighting

@@ -46,11 +46,29 @@ public enum MathUtil {
   }
 
   // Linearly interpolates the individual components of two vectors.
+  public static func lerp<T: FloatingPoint>(from initial: Vec2<T>, to target: Vec2<T>, progress: T) -> Vec2<T> {
+    return Vec2(
+      lerp(from: initial.x, to: target.x, progress: progress),
+      lerp(from: initial.y, to: target.y, progress: progress)
+    )
+  }
+
+  // Linearly interpolates the individual components of two vectors.
   public static func lerp<T: FloatingPoint>(from initial: Vec3<T>, to target: Vec3<T>, progress: T) -> Vec3<T> {
     return Vec3(
       lerp(from: initial.x, to: target.x, progress: progress),
       lerp(from: initial.y, to: target.y, progress: progress),
       lerp(from: initial.z, to: target.z, progress: progress)
+    )
+  }
+
+  // Linearly interpolates the individual components of two vectors.
+  public static func lerp<T: FloatingPoint>(from initial: Vec4<T>, to target: Vec4<T>, progress: T) -> Vec4<T> {
+    return Vec4(
+      lerp(from: initial.x, to: target.x, progress: progress),
+      lerp(from: initial.y, to: target.y, progress: progress),
+      lerp(from: initial.z, to: target.z, progress: progress),
+      lerp(from: initial.w, to: target.z, progress: progress)
     )
   }
 
