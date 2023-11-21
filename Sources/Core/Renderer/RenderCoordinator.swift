@@ -146,12 +146,12 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     client.game.accessPlayer(acquireLock: true) { player in
       let position = player.position.block
       let biome = client.game.world.getBiome(at: position)
-      let color = biome?.skyColor ?? RegistryStore.shared.biomeRegistry.biome(for: Identifier(name: "plains"))!.skyColor
+      let skyColor = client.game.world.getSkyColor(at: position)
 
       renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(
-        red: Double(color.r) / 255,
-        green: Double(color.g) / 255,
-        blue: Double(color.b) / 255,
+        red: Double(skyColor.x) / 255,
+        green: Double(skyColor.y) / 255,
+        blue: Double(skyColor.z) / 255,
         alpha: 1
       )
     }

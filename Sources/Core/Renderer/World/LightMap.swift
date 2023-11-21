@@ -1,8 +1,10 @@
 import Foundation
 import Metal
 import FirebladeMath
-import DeltaCore // TODO: Move Vec3 and extensions of FirebladeMath into FirebladeMath to avoid this unnecessary import
+// TODO: Move Vec3 and extensions of FirebladeMath into FirebladeMath to avoid this unnecessary import
+import DeltaCore
 
+// TODO: Make LightMap an ECS singleton
 struct LightMap {
   static let gamma: Double = 0
 
@@ -11,7 +13,6 @@ struct LightMap {
   var ambientLight: Double
   var baseLevels: [Double]
   var lastFlickerUpdateTick: Int?
-  var previousTime: Int?
   var hasChanged = true
 
   init(ambientLight: Double) {
@@ -26,13 +27,18 @@ struct LightMap {
     }
   }
 
-  mutating func update(time: Int, tick: Int, ambientLight: Double, dimensionHasSkyLight: Bool) {
-    guard time != previousTime || tick != lastFlickerUpdateTick || ambientLight != self.ambientLight else {
+  // TODO: Refactor this function to be more delta clienty and look less like spaghetti Java code
+  mutating func update(
+    tick: Int,
+    sunAngleRadians: Float,
+    ambientLight: Double,
+    dimensionHasSkyLight: Bool
+  ) {
+    guard tick != lastFlickerUpdateTick || ambientLight != self.ambientLight else {
       return
     }
 
     hasChanged = true
-    previousTime = time
 
     // Update base levels if ambient light has changed
     if ambientLight != self.ambientLight {
@@ -47,7 +53,7 @@ struct LightMap {
     // Update sky brightness
     // TODO: When lightning is occurring, hardcode brightness to 1
     // TODO: implement night vision and water effects
-    let sunBrightness = Self.getSunBrightness(at: time)
+    let sunBrightness = Self.getSunBrightness(sunAngleRadians: sunAngleRadians)
     let skyBrightness = sunBrightness * 0.95 + 0.05
 
     let r = MathUtil.lerp(from: skyBrightness, to: 1, progress: 0.35)
@@ -157,25 +163,10 @@ struct LightMap {
     return levels
   }
 
-  static func getSunBrightness(at time: Int) -> Double {
+  static func getSunBrightness(sunAngleRadians: Float) -> Double {
     // TODO: Implement the effect of rain and thunder on sun brightness
-    let angle = getSunAngle(at: time)
-    // Vanilla doesn't subtract `pi` before taking the cosine, but if we don't it doesn't work
-    // correctly which is a bit odd (and sus).
-    var brightness = 1 - (Foundation.cos(angle * .pi * 2 - .pi) * 2 + 0.2)
+    var brightness = Double(Foundation.cos(sunAngleRadians) * 2 + 0.2)
     brightness = MathUtil.clamp(brightness, 0, 1)
-    brightness = 1 - brightness
     return brightness * 0.8 + 0.2
-  }
-
-  static func getSunAngle(at time: Int) -> Double {
-    // I actually don't really know what this maths is doing, it's apparently how vanilla calculates it
-    // though. It's probably just calculating the angle but adjusting the center of the orbit to be below
-    // the ground so that the length of day is more realistic or something.
-    let fraction = Double(time) / 24000 - 0.25
-    let fractionalPart = fraction - Foundation.floor(fraction)
-    let angle = 0.5 - Foundation.cos(fractionalPart * .pi) / 2
-    let adjusted = (fractionalPart * 2 + angle) / 3
-    return adjusted
   }
 }

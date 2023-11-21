@@ -142,15 +142,46 @@ public class World {
   /// - Parameters:
   ///   - position: The position that the world is being viewed from.
   public func getSkyColor(at position: BlockPosition) -> Vec3f {
-    guard let biome = getBiome(at: position) else {
-      // TODO: Avoid force unwraps here
-      return RegistryStore.shared.biomeRegistry
-        .biome(for: Identifier(name: "plains"))!
-        .skyColor
-        .floatVector
-    }
+    // TODO: Avoid the force unwrap. Possibly by updating the BiomeRegistry to ensure that
+    //   a plains biome is always present to use as a default (perhaps as a defaultBiome
+    //   property).
+    let biome = getBiome(at: position) ??
+      RegistryStore.shared.biomeRegistry.biome(for: Identifier(name: "plains"))!
 
-    return biome.skyColor.floatVector
+    let skyColor = biome.skyColor.floatVector
+    let skyBrightness = getSkyBrightness()
+
+    return skyColor * skyBrightness
+  }
+
+  // TODO: Does this only make sense for the overworld?
+  /// Gets the brightness of the sky due to the time of day.
+  public func getSkyBrightness() -> Float {
+    // The sun angle is used to calculate sun height, which is then adjusted to account
+    // for the fact that the sun still brightens the sky for a while after it sets.
+    let sunAngle = getSunAngleRadians()
+    // The sun's height from `-1` at midnight to `1` at midday.
+    let sunHeight = Foundation.cos(sunAngle)
+    return MathUtil.clamp(sunHeight * 2 + 0.5, 0, 1)
+  }
+
+  /// Gets the sun's angle in the sky with 0 being directly overhead, and the angle increasing
+  /// into the afternoon. Always in the interval `[0, 2π)`.
+  public func getSunAngleRadians() -> Float {
+    let time = getTimeOfDay()
+
+    // The progress of the day starting at 6am
+    let dayProgress = Float(time) / 24000
+    let dayProgressSinceNoon = Foundation.fmod(dayProgress - 0.25, 1)
+
+    // Due to modelling the world similarly to a sphere (in terms of its sky), the sun
+    // should spend less time above the horizontal than below it, which this extra factor
+    // takes care of.
+    let dayShorteningFactor = 0.5 - Foundation.cos(dayProgressSinceNoon * .pi) / 2
+    // The sun's progress around the sky from 0 to 1, with 0 being noon.
+    let sunProgress = (2 * dayProgressSinceNoon + dayShorteningFactor) / 3
+
+    return 2 * .pi * sunProgress
   }
 
   /// Gets the color of fog that should be rendered when viewed from a given position.
@@ -188,11 +219,24 @@ public class World {
       fogColor = Self.lavaFogColor
     } else {
       fogColor = MathUtil.lerp(
-        from: biome.fogColor.floatVector,
-        to: getSkyColor(at: blockPosition),
-        progress: 1 - FirebladeMath.pow(0.25 + 0.75 * min(32, Float(renderDistance)) / 32, 0.25)
+        from: getSkyColor(at: blockPosition),
+        to: biome.fogColor.floatVector,
+        progress: FirebladeMath.pow(0.25 + 0.75 * min(32, Float(renderDistance)) / 32, 0.25)
       )
+
+      // Take sky brightness into account.
+      if dimension.isEnd {
+        fogColor *= 0.15
+      } else if dimension.isOverworld {
+        let skyBrightness = getSkyBrightness()
+        fogColor *= Vec3f(
+          MathUtil.lerp(from: 0.06, to: 1, progress: skyBrightness),
+          MathUtil.lerp(from: 0.06, to: 1, progress: skyBrightness),
+          MathUtil.lerp(from: 0.09, to: 1, progress: skyBrightness)
+        )
+      }
     }
+
 
     // As the player nears the 
     let voidFadeStart: Float = isFlat ? 1 : 32

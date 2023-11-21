@@ -226,8 +226,8 @@ public final class WorldRenderer: Renderer {
     // Get light map buffer
     profiler.push(.updateLightMap)
     lightMap.update(
-      time: client.game.world.getTimeOfDay(),
       tick: client.game.tickScheduler.tickNumber,
+      sunAngleRadians: client.game.world.getSunAngleRadians(),
       ambientLight: Double(client.game.world.dimension.ambientLight),
       dimensionHasSkyLight: client.game.world.dimension.hasSkyLight
     )
