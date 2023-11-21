@@ -27,7 +27,7 @@ struct MetalView {
     mtkView.delegate = renderCoordinator
     mtkView.preferredFramesPerSecond = 10000
     mtkView.framebufferOnly = true
-    mtkView.clearColor = MTLClearColorMake(0, 0, 0, 1) // Clear with black colour
+    mtkView.clearColor = MTLClearColorMake(0, 0, 0, 1)
     mtkView.drawableSize = mtkView.frame.size
     mtkView.depthStencilPixelFormat = .depth32Float
 
@@ -60,7 +60,7 @@ final class MetalViewClass {
     mtkView.delegate = renderCoordinator
     mtkView.preferredFramesPerSecond = 10000
     mtkView.framebufferOnly = true
-    mtkView.clearColor = MTLClearColorMake(0.65, 0.8, 1, 1) // Sky colour
+    mtkView.clearColor = MTLClearColorMake(0, 0, 0, 1)
     mtkView.drawableSize = mtkView.frame.size
     mtkView.depthStencilPixelFormat = .depth32Float
     mtkView.clearDepth = 1.0

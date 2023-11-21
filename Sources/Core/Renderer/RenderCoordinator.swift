@@ -15,6 +15,9 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   /// The client to render.
   private var client: Client
 
+  /// The renderer for the world's sky box.
+  private var skyBoxRenderer: SkyBoxRenderer
+
   /// The renderer for the current world. Only renders blocks.
   private var worldRenderer: WorldRenderer
 
@@ -76,7 +79,15 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       fatalError("Failed to create camera: \(error)")
     }
 
-    // Create world renderer
+    do {
+      skyBoxRenderer = try SkyBoxRenderer(
+        client: client,
+        device: device
+      )
+    } catch {
+      fatalError("Failed to create sky box renderer: \(error)")
+    }
+
     do {
       worldRenderer = try WorldRenderer(
         client: client,
@@ -144,14 +155,19 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
 
     // Set sky color based off current biome
     client.game.accessPlayer(acquireLock: true) { player in
-      let position = player.position.block
-      let biome = client.game.world.getBiome(at: position)
-      let skyColor = client.game.world.getSkyColor(at: position)
+      // When the render distance is above 2, move the fog 1 chunk closer to conceal
+      // more of the world edge.
+      let renderDistance = max(client.configuration.render.renderDistance - 1, 2)
+
+      let fogColor = client.game.world.getFogColor(
+        at: player.ray.origin,
+        withRenderDistance: renderDistance
+      )
 
       renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(
-        red: Double(skyColor.x) / 255,
-        green: Double(skyColor.y) / 255,
-        blue: Double(skyColor.z) / 255,
+        red: Double(fogColor.x),
+        green: Double(fogColor.y),
+        blue: Double(fogColor.z),
         alpha: 1
       )
     }
@@ -182,6 +198,22 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         error: RenderError.failedToCreateRenderEncoder,
         message: "RenderCoordinator failed to create render encoder"
       ))
+      return
+    }
+    profiler.pop()
+
+    profiler.push(.skyBox)
+    do {
+      try skyBoxRenderer.render(
+        view: view,
+        encoder: renderEncoder,
+        commandBuffer: commandBuffer,
+        worldToClipUniformsBuffer: uniformsBuffer,
+        camera: camera
+      )
+    } catch {
+      log.error("Failed to render sky box: \(error)")
+      client.eventBus.dispatch(ErrorEvent(error: error, message: "Failed to render sky box"))
       return
     }
     profiler.pop()

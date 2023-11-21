@@ -19,7 +19,7 @@ public class Pinger: ObservableObject {
 
   public init(_ descriptor: ServerDescriptor) {
     self.descriptor = descriptor
-    queue = DispatchQueue(label: "dev.stackotter.delta-client.pinger-\(descriptor.name)")
+    queue = DispatchQueue(label: "pinger-\(descriptor.name)")
     connect()
   }
 

@@ -24,6 +24,7 @@ public struct Camera {
   /// positive z axis when looking down from above (yaw).
   public private(set) var yRot: Float = 0
 
+  // TODO: Rename these matrices to translation, rotation, and projection.
   /// A translation matrix from world-space to player-centered coordinates.
   var worldToPlayer: Mat4x4f {
     MatrixUtil.translationMatrix(-position)

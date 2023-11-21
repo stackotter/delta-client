@@ -96,7 +96,7 @@ public final class WorldRenderer: Renderer {
     // Create opaque pipeline
     renderPipelineState = try MetalUtil.makeRenderPipelineState(
       device: device,
-      label: "dev.stackotter.delta-client.WorldRenderer.renderPipelineState",
+      label: "WorldRenderer.opaque",
       vertexFunction: vertexFunction,
       fragmentFunction: fragmentFunction,
       blendingEnabled: true
@@ -105,7 +105,7 @@ public final class WorldRenderer: Renderer {
     // Create OIT pipeline
     transparencyRenderPipelineState = try MetalUtil.makeRenderPipelineState(
       device: device,
-      label: "dev.stackotter.delta-client.WorldRenderer.orderIndependentTransparencyRenderPipelineState",
+      label: "WorldRenderer.oit",
       vertexFunction: vertexFunction,
       fragmentFunction: transparentFragmentFunction,
       blendingEnabled: true,
@@ -133,7 +133,7 @@ public final class WorldRenderer: Renderer {
     // Create OIT compositing pipeline
     compositingRenderPipelineState = try MetalUtil.makeRenderPipelineState(
       device: device,
-      label: "dev.stackotter.delta-client.WorldRenderer.compositingRenderPipelineState",
+      label: "WorldRenderer.compositing",
       vertexFunction: transparentCompositingVertexFunction,
       fragmentFunction: transparentCompositingFragmentFunction,
       blendingEnabled: true

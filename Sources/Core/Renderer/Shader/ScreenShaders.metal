@@ -17,11 +17,13 @@ struct QuadVertex {
 
 struct FogUniforms {
   float4x4 inverseProjection;
+  float4 fogColor;
   float nearPlane;
   float farPlane;
   float fogStart;
   float fogEnd;
-  float4 fogColor;
+  float fogDensity;
+  bool isLinear;
 };
 
 vertex QuadVertex screenVertexFunction(uint id [[vertex_id]]) {
@@ -49,7 +51,15 @@ fragment float4 screenFragmentFunction(QuadVertex vert [[stage_in]],
 
   float distance = length(cameraspacePosition.xyz);
 
-  float fogIntensity = smoothstep(fogUniforms.fogStart, fogUniforms.fogEnd, distance);
+  float linearFogIntensity = smoothstep(fogUniforms.fogStart, fogUniforms.fogEnd, distance);
+  float exponentialFogIntensity = clamp(1.0 - exp(-fogUniforms.fogDensity * distance), 0.0, 1.0);
+
+  // Only render fog if the pixel is part of the terrain (the sky box already has its own fog)
+  float fogIntensity = (z != 1) *
+    (
+      linearFogIntensity * fogUniforms.isLinear +
+      exponentialFogIntensity * !fogUniforms.isLinear
+    );
 
   return color * (1.0 - fogIntensity) + fogUniforms.fogColor * fogIntensity;
 };

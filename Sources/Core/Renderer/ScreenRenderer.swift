@@ -172,24 +172,34 @@ public final class ScreenRenderer: Renderer {
       )
 
       // TODO: Support the exponential fog style
+      let isLinear: Bool
+      let fogDensity: Float
       let fogStart: Float
       let fogEnd: Float
       switch fog.style {
-        case .exponential:
+        case let .exponential(density):
+          isLinear = false
+          fogDensity = density
+          // Start and end are ignored by exponential fog
           fogStart = 0
-          fogEnd = 16
+          fogEnd = 0
         case let .linear(start, end):
+          isLinear = true
+          // Density is ignored by linear fog
+          fogDensity = 0
           fogStart = start
           fogEnd = end
       }
 
       return FogUniforms(
         inverseProjection: (camera.playerToCamera * camera.cameraToClip).inverted,
+        fogColor: Vec4f(fog.color, 1),
         nearPlane: camera.nearDistance,
         farPlane: camera.farDistance,
         fogStart: fogStart,
         fogEnd: fogEnd,
-        fogColor: Vec4f(fog.color, 1)
+        fogDensity: fogDensity,
+        isLinear: isLinear
       )
     }
   }

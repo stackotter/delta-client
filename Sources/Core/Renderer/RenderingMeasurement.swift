@@ -3,6 +3,8 @@ public enum RenderingMeasurement: String, Hashable {
   case updateCamera
   case createRenderCommandEncoder
 
+  case skyBox
+
   case world
   case updateWorldMesh
   case updateAnimatedTextures

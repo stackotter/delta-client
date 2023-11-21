@@ -61,7 +61,7 @@ public class LANServerEnumerator: ObservableObject {
   /// Used to notify about errors.
   private let eventBus: EventBus
   /// Dispatch queue used for networking.
-  private let queue = DispatchQueue(label: "dev.stackotter.delta-client.LANServerEnumerator")
+  private let queue = DispatchQueue(label: "LANServerEnumerator")
 
   // MARK: Init
 
