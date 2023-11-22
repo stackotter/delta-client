@@ -116,7 +116,8 @@ public class World {
     if let time = dimension.fixedTime {
       return time
     } else {
-      return timeOfDay
+      // Negative time of day is used to indicate that doDaylightCycle is false (weird)
+      return timeOfDay < 0 ? -timeOfDay : timeOfDay
     }
   }
 
