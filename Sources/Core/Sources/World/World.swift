@@ -295,6 +295,39 @@ public class World {
     )
   }
 
+  /// Gets the phase of the daylight cycle (sunrise, sunset, etc.).
+  ///
+  /// The color associated with sunrises and sunsets changes constantly throughout
+  /// that phase of the daylight cycle. To get the latest color you must call this
+  /// method again.
+  public func getDaylightCyclePhase() -> DaylightCyclePhase {
+    let sunAngleRadians = getSunAngleRadians()
+    let sunHeight = Foundation.cos(sunAngleRadians)
+    if sunHeight < -0.4 {
+      return .night
+    } else if sunHeight > 0.4 {
+      return .day
+    } else {
+      // The sunrise or sunset's current brightness from 0 to 1 (not true brightness,
+      // but it is correlated with actual brightness).
+      let brightnessFactor = sunHeight / 0.4 * 0.5 + 0.5
+      let sqrtAlpha = 0.01 + 0.99 * Foundation.sin(brightnessFactor * .pi)
+      let color = Vec4f(
+        brightnessFactor * 0.3 + 0.7,
+        brightnessFactor * brightnessFactor * 0.7 + 0.2,
+        0.2,
+        sqrtAlpha * sqrtAlpha
+      )
+
+      let isSunrise = Foundation.sin(sunAngleRadians) < 0
+      if isSunrise {
+        return .sunrise(color: color)
+      } else {
+        return .sunset(color: color)
+      }
+    }
+  }
+
   // MARK: Blocks
 
   /// Sets the block at the specified position to the specified block id.
