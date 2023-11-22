@@ -199,13 +199,8 @@ public class World {
   ) -> Vec3f {
     let blockPosition = BlockPosition(x: Int(position.x), y: Int(position.y), z: Int(position.z))
 
-    guard let biome = getBiome(at: blockPosition) else {
-      // TODO: Avoid force unwraps here
-      return RegistryStore.shared.biomeRegistry
-        .biome(for: Identifier(name: "plains"))!
-        .skyColor
-        .floatVector
-    }
+    let biome = getBiome(at: blockPosition)
+      ?? RegistryStore.shared.biomeRegistry.biome(for: Identifier(name: "plains"))!
 
     let fluidOnEyes = getFluidState(at: position, acquireLock: acquireLock)
       .map(\.fluidId)
@@ -237,11 +232,10 @@ public class World {
       }
     }
 
-
     // As the player nears the 
     let voidFadeStart: Float = isFlat ? 1 : 32
     if position.y < voidFadeStart {
-      let amount = position.y / voidFadeStart
+      let amount = max(0, position.y / voidFadeStart)
       fogColor *= amount * amount 
     }
 
