@@ -167,7 +167,7 @@ public final class ScreenRenderer: Renderer {
       // more of the world edge.
       let renderDistance = max(client.configuration.render.renderDistance - 1, 2)
       let fog = client.game.world.getFog(
-        at: player.ray.origin,
+        forViewerWithRay: player.ray,
         withRenderDistance: renderDistance
       )
 

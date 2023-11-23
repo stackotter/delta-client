@@ -153,7 +153,7 @@ public final class SkyBoxRenderer: Renderer {
 
       let skyColor = client.game.world.getSkyColor(at: blockPosition)
       let fogColor = client.game.world.getFogColor(
-        at: position,
+        forViewerWithRay: player.ray,
         withRenderDistance: renderDistance
       )
 

@@ -160,7 +160,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
       let renderDistance = max(client.configuration.render.renderDistance - 1, 2)
 
       let fogColor = client.game.world.getFogColor(
-        at: player.ray.origin,
+        forViewerWithRay: player.ray,
         withRenderDistance: renderDistance
       )
 

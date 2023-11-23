@@ -18,7 +18,7 @@ public struct Camera {
   public private(set) var position: Vec3f = [0, 0, 0]
 
   /// The camera's rotation around the x axis (pitch). -pi/2 radians is straight up,
-  /// 0 is straight ahead, and pi/2 radians is straight up.
+  /// 0 is straight ahead, and pi/2 radians is straight down.
   public private(set) var xRot: Float = 0
   /// The camera's rotation around the y axis measured counter-clockwise from the
   /// positive z axis when looking down from above (yaw).

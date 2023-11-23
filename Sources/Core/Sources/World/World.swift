@@ -1,4 +1,5 @@
 import Foundation
+import FirebladeMath
 import Logging
 
 /// Represents a Minecraft world. Completely thread-safe.
@@ -185,19 +186,21 @@ public class World {
     return 2 * .pi * sunProgress
   }
 
-  /// Gets the color of fog that should be rendered when viewed from a given position.
+  /// Gets the color of fog that is seen when viewed from a given position and looking
+  /// in a specific direction.
   /// - Parameters:
-  ///   - position: The position that the world is being viewed from.
+  ///   - ray: The ray defining the position and look direction of the viewer.
   ///   - renderDistance: The render distance that the fog will be rendered at. Often
   ///     the true render distance minus 1 is used when above 2 render distance (to conceal
   ///     more of the edge of the world).
   ///   - acquireLock: Whether to acquire a lock or not before reading the value. Don't
   ///     touch this unless you know what you're doing.
   public func getFogColor(
-    at position: Vec3f,
+    forViewerWithRay ray: Ray,
     withRenderDistance renderDistance: Int,
     acquireLock: Bool = true
   ) -> Vec3f {
+    let position = ray.origin
     let blockPosition = BlockPosition(x: Int(position.x), y: Int(position.y), z: Int(position.z))
 
     let biome = getBiome(at: blockPosition)
@@ -231,6 +234,27 @@ public class World {
           MathUtil.lerp(from: 0.09, to: 1, progress: skyBrightness)
         )
       }
+
+      if renderDistance >= 4 {
+        let sunHemisphereDirection = Vec3f(
+          Foundation.sin(getSunAngleRadians()) > 0 ? -1 : 1,
+          0,
+          0
+        )
+        let sunriseFogAmount = FirebladeMath.dot(ray.direction, sunHemisphereDirection)
+        if sunriseFogAmount > 0 {
+          switch getDaylightCyclePhase() {
+            case let .sunrise(sunriseColor), let .sunset(sunriseColor):
+              // The more see through the sunrise/sunset color, the less intense the directional
+              // fog color is.
+              let progress = sunriseFogAmount * sunriseColor.w
+              let sunriseColorRGB = Vec3f(sunriseColor.x, sunriseColor.y, sunriseColor.z)
+              fogColor = MathUtil.lerp(from: fogColor, to: sunriseColorRGB, progress: progress)
+            case .day, .night:
+              break
+          }
+        }
+      }
     }
 
     // As the player nears the 
@@ -243,26 +267,27 @@ public class World {
     return fogColor
   }
 
-  /// Gets the fog experienced by a player viewing the world from a given position.
+  /// Gets the fog experienced by a player viewing the world from a given position and looking
+  /// in a specific direction.
   /// - Parameters:
-  ///   - position: The position that the world is being viewed from.
+  ///   - ray: The ray defining the position and look direction of the viewer.
   ///   - renderDistance: The render distance that the fog will be rendered at. Often
   ///     the true render distance minus 1 is used when above 2 render distance (to conceal
   ///     more of the edge of the world).
   ///   - acquireLock: Whether to acquire a lock or not before reading the value. Don't
   ///     touch this unless you know what you're doing.
   public func getFog(
-    at position: Vec3f,
+    forViewerWithRay ray: Ray,
     withRenderDistance renderDistance: Int,
     acquireLock: Bool = true
   ) -> Fog {
     // TODO: Check fog reverse engineering document for any other adjustments
     //   to implement.
-    let fogColor = getFogColor(at: position, withRenderDistance: renderDistance)
+    let fogColor = getFogColor(forViewerWithRay: ray, withRenderDistance: renderDistance)
 
     let renderDistanceInBlocks = Float(renderDistance * Chunk.width)
 
-    let fluidOnEyes = getFluidState(at: position, acquireLock: acquireLock)
+    let fluidOnEyes = getFluidState(at: ray.origin, acquireLock: acquireLock)
       .map(\.fluidId)
       .map(RegistryStore.shared.fluidRegistry.fluid(withId:))
 
