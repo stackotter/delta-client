@@ -144,7 +144,7 @@ extension NBT {
         case .int:
           value = try buffer.readSignedInteger(endianness: .big)
         case .long:
-          value = try buffer.readLong(endianness: .big)
+          value = try buffer.readSignedLong(endianness: .big)
         case .float:
           value = try buffer.readFloat(endianness: .big)
         case .double:
