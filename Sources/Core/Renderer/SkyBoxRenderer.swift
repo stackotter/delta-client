@@ -296,6 +296,7 @@ public final class SkyBoxRenderer: Renderer {
       transformation:
         MatrixUtil.scalingMatrix(Self.sunSize / 2)
           * MatrixUtil.translationMatrix(Vec3f(0, Self.sunDistance, 0))
+          * MatrixUtil.rotationMatrix(-.pi / 2, around: .y)
           * MatrixUtil.rotationMatrix(client.game.world.getSunAngleRadians(), around: .z)
           * playerToClip,
       textureIndex: sunTextureIndex,
