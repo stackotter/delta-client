@@ -104,7 +104,12 @@ public final class SkyBoxRenderer: Renderer {
       vertexFunction: try MetalUtil.loadFunction("starVertex", from: library),
       fragmentFunction: try MetalUtil.loadFunction("starFragment", from: library),
       blendingEnabled: true
-    )
+    ) { descriptor in
+      // The stars are rendered similarly to the sun and moon. They add
+      // to the color instead of linearly blending with the colour because
+      // they're shining through from behind instead of overlayed on top.
+      descriptor.colorAttachments[0].destinationRGBBlendFactor = .one
+    }
 
     // TODO: Make these both private (storage mode) once that's simpler to do (after MetalUtil
     //   rewrite/replacement)
