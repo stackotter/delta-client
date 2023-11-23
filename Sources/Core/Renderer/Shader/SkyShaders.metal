@@ -110,3 +110,27 @@ fragment float4 celestialBodyFragment(CelestialBodyVertex in [[stage_in]],
                                       texture2d_array<float, access::sample> textureArray [[texture(0)]]) {
   return textureArray.sample(textureSampler, in.uv, in.index);
 }
+
+struct StarVertex {
+  float4 position [[position]];
+};
+
+struct StarUniforms {
+  float4x4 transformation;
+  float brightness;
+};
+
+vertex StarVertex starVertex(uint id [[vertex_id]],
+                             constant float3 *vertices [[buffer(0)]],
+                             constant struct StarUniforms &uniforms [[buffer(1)]]) {
+  float3 position = vertices[id];
+
+  return {
+    .position = float4(position, 1.0) * uniforms.transformation,
+  };
+}
+
+fragment float4 starFragment(StarVertex in [[stage_in]],
+                             constant struct StarUniforms &uniforms [[buffer(0)]]) {
+  return float4(uniforms.brightness);
+}

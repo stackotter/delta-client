@@ -362,6 +362,17 @@ public class World {
     (getTimeOfDay() / 24000) % 8
   }
 
+  /// Gets the brightness of the stars in the current dimension at the current time.
+  public func getStarBrightness() -> Float {
+    guard dimension.isOverworld else {
+      return 0
+    }
+
+    let brightness = 0.75 - 2 * Foundation.cos(getSunAngleRadians())
+    let clampedBrightness = MathUtil.clamp(brightness, 0, 1)
+    return clampedBrightness * clampedBrightness / 2
+  }
+
   // MARK: Blocks
 
   /// Sets the block at the specified position to the specified block id.

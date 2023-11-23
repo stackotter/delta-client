@@ -6,26 +6,31 @@ import DeltaCore
 /// It also includes distance fog cast on the planes which is what creates the
 /// smooth transition from the fog color at the horizon to the sky color overhead.
 public final class SkyBoxRenderer: Renderer {
-  private var client: Client
+  private let client: Client
 
-  private var skyPlaneRenderPipelineState: MTLRenderPipelineState
-  private var sunriseDiscRenderPipelineState: MTLRenderPipelineState
-  private var celestialBodyRenderPipelineState: MTLRenderPipelineState
+  private let skyPlaneRenderPipelineState: MTLRenderPipelineState
+  private let sunriseDiscRenderPipelineState: MTLRenderPipelineState
+  private let celestialBodyRenderPipelineState: MTLRenderPipelineState
+  private let starRenderPipelineState: MTLRenderPipelineState
 
-  private var quadVertexBuffer: MTLBuffer
-  private var quadIndexBuffer: MTLBuffer
+  private let quadVertexBuffer: MTLBuffer
+  private let quadIndexBuffer: MTLBuffer
 
   private var skyPlaneUniformsBuffer: MTLBuffer
   private var voidPlaneUniformsBuffer: MTLBuffer
 
-  private var sunriseDiscVertexBuffer: MTLBuffer
-  private var sunriseDiscIndexBuffer: MTLBuffer
+  private let sunriseDiscVertexBuffer: MTLBuffer
+  private let sunriseDiscIndexBuffer: MTLBuffer
   private var sunriseDiscUniformsBuffer: MTLBuffer
 
-  private var sunUniformsBuffer: MTLBuffer
-  private var moonUniformsBuffer: MTLBuffer
+  private let sunUniformsBuffer: MTLBuffer
+  private let moonUniformsBuffer: MTLBuffer
 
-  private var environmentTexturePalette: MetalTexturePalette
+  private let starVertexBuffer: MTLBuffer
+  private let starIndexBuffer: MTLBuffer
+  private let starUniformsBuffer: MTLBuffer
+
+  private let environmentTexturePalette: MetalTexturePalette
 
   /// The vertices for the sky plane quad (also used for the void plane).
   private static var quadVertices: [Vec3f] = [
@@ -92,6 +97,14 @@ public final class SkyBoxRenderer: Renderer {
       // different blending to usual.
       descriptor.colorAttachments[0].destinationRGBBlendFactor = .one
     }
+
+    starRenderPipelineState = try MetalUtil.makeRenderPipelineState(
+      device: device,
+      label: "SkyBoxRenderer.stars",
+      vertexFunction: try MetalUtil.loadFunction("starVertex", from: library),
+      fragmentFunction: try MetalUtil.loadFunction("starFragment", from: library),
+      blendingEnabled: true
+    )
 
     // TODO: Make these both private (storage mode) once that's simpler to do (after MetalUtil
     //   rewrite/replacement)
@@ -168,6 +181,31 @@ public final class SkyBoxRenderer: Renderer {
       palette: client.resourcePack.vanillaResources.environmentTexturePalette,
       device: device,
       commandQueue: commandQueue
+    )
+
+    var starVertices = Self.generateStarVertices()
+    starVertexBuffer = try MetalUtil.makeBuffer(
+      device,
+      bytes: &starVertices,
+      length: starVertices.count * MemoryLayout<Vec3f>.stride,
+      options: .storageModeShared,
+      label: "starVertexBuffer"
+    )
+
+    var starIndices = Self.generateStarIndices(starCount: starVertices.count / 4)
+    starIndexBuffer = try MetalUtil.makeBuffer(
+      device,
+      bytes: &starIndices,
+      length: starIndices.count * MemoryLayout<UInt32>.stride,
+      options: .storageModeShared,
+      label: "starIndexBuffer"
+    )
+
+    starUniformsBuffer = try MetalUtil.makeBuffer(
+      device,
+      length: MemoryLayout<StarUniforms>.stride,
+      options: .storageModeShared,
+      label: "starUniformsBuffer"
     )
   }
 
@@ -362,6 +400,34 @@ public final class SkyBoxRenderer: Renderer {
       indexBufferOffset: 0
     )
 
+    let starBrightness = client.game.world.getStarBrightness()
+    if starBrightness > 0 {
+      var starUniforms = StarUniforms(
+        transformation:
+          MatrixUtil.rotationMatrix(-.pi / 2, around: .y)
+            * MatrixUtil.rotationMatrix(client.game.world.getSunAngleRadians(), around: .z)
+            * playerToClip,
+        brightness: starBrightness
+      )
+      starUniformsBuffer.contents().copyMemory(
+        from: &starUniforms,
+        byteCount: MemoryLayout<StarUniforms>.stride
+      )
+
+      encoder.setRenderPipelineState(starRenderPipelineState)
+      encoder.setVertexBuffer(starVertexBuffer, offset: 0, index: 0)
+      encoder.setVertexBuffer(starUniformsBuffer, offset: 0, index: 1)
+      encoder.setFragmentBuffer(starUniformsBuffer, offset: 0, index: 0)
+
+      encoder.drawIndexedPrimitives(
+        type: .triangle,
+        indexCount: starIndexBuffer.length / MemoryLayout<UInt32>.stride,
+        indexType: .uint32,
+        indexBuffer: starIndexBuffer,
+        indexBufferOffset: 0
+      )
+    }
+
     // Render the void plane if visible.
     let voidPlaneVisibilityThreshold = client.game.world.isFlat
       ? Self.superFlatVoidPlaneVisibilityThreshold
@@ -427,6 +493,76 @@ public final class SkyBoxRenderer: Renderer {
         UInt32(i) + 1,
         ((UInt32(i) + 1) % 16) + 1
       ])
+    }
+    return indices
+  }
+
+  /// Generates the vertices for the star mesh.
+  static func generateStarVertices() -> [Vec3f] {
+    let baseVertices: [Vec4f] = [
+      Vec4f(-1, 0, -1, 1),
+      Vec4f(1, 0, -1, 1),
+      Vec4f(1, 0, 1, 1),
+      Vec4f(-1, 0, 1, 1)
+    ]
+
+    var vertices: [Vec3f] = []
+    var random = Random(10842)
+    for i in 0..<1500 {
+      let direction = Vec3f(
+        random.nextFloat(),
+        random.nextFloat(),
+        random.nextFloat()
+      ) * 2 - 1
+
+      // Generate the size before skipping the iteration because otherwise
+      // the random number generator gets out of sync with what it would be
+      // for Vanilla
+      let starSize = 0.15 + random.nextFloat() * 0.1
+
+      let magnitude = direction.magnitude
+      guard magnitude > 0.0001, magnitude < 1 else {
+        continue
+      }
+
+      let normalizedDirection = direction / magnitude
+      let yaw = -Foundation.atan2(direction.x, direction.z)
+      let horizontalMagnitude = Foundation.sqrt(
+        direction.x * direction.x + direction.z * direction.z
+      )
+      let pitch = Foundation.atan2(horizontalMagnitude, direction.y)
+
+      // Using `nextDouble` to have the same behaviour as Vanilla (it matters because of the
+      // random number generator).
+      let starRotation = Float(random.nextDouble() * 2 * .pi)
+      let transformation = MatrixUtil.scalingMatrix(starSize)
+        * MatrixUtil.rotationMatrix(-starRotation, around: .y)
+        * MatrixUtil.translationMatrix(Vec3f(0, 100, 0))
+        * MatrixUtil.rotationMatrix(pitch, around: .x)
+        * MatrixUtil.rotationMatrix(yaw, around: .y)
+
+      vertices.append(contentsOf: baseVertices.map { vertex in
+        let position = vertex * transformation
+        return Vec3f(
+          position.x,
+          position.y,
+          position.z
+        ) / position.w
+      })
+    }
+    return vertices
+  }
+
+  /// Generates the indices for the star mesh.
+  static func generateStarIndices(starCount: Int) -> [UInt32] {
+    var indices: [UInt32] = []
+    for i in 0..<starCount {
+      let offset = i * 4
+      let quadIndices = [0, 1, 2, 2, 3, 0]
+        .map { index in
+          UInt32(index + offset)
+        }
+      indices.append(contentsOf: quadIndices)
     }
     return indices
   }
