@@ -5,5 +5,7 @@ public struct SkyPlaneUniforms {
   public var fogColor: Vec4f
   public var fogStart: Float
   public var fogEnd: Float
-  public var transformation: Mat4x4f
+  public var size: Float
+  public var verticalOffset: Float
+  public var playerToClip: Mat4x4f
 }

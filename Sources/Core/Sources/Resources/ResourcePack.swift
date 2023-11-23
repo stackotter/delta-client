@@ -161,6 +161,7 @@ public struct ResourcePack {
     resources.blockTexturePalette = try TexturePalette.loadCached(from: cacheDirectory.appendingPathComponent("BlockTexturePalette.bin"))
     resources.itemTexturePalette = try TexturePalette.loadCached(from: cacheDirectory.appendingPathComponent("ItemTexturePalette.bin"))
     resources.guiTexturePalette = try TexturePalette.loadCached(from: cacheDirectory.appendingPathComponent("GUITexturePalette.bin"))
+    resources.environmentTexturePalette = try TexturePalette.loadCached(from: cacheDirectory.appendingPathComponent("EnvironmentTexturePalette.bin"))
     resources.blockModelPalette = try BlockModelPalette.loadCached(fromDirectory: cacheDirectory)
     resources.itemModelPalette = try ItemModelPalette.loadCached(fromDirectory: cacheDirectory)
     resources.fontPalette = try FontPalette.loadCached(fromDirectory: cacheDirectory)
@@ -246,6 +247,17 @@ public struct ResourcePack {
         )
       }
 
+      // Load GUI textures
+      let environmentTextureDirectory = textureDirectory.appendingPathComponent("environment")
+      if FileManager.default.directoryExists(at: environmentTextureDirectory) {
+        resources.environmentTexturePalette = try TexturePalette.load(
+          from: environmentTextureDirectory,
+          inNamespace: namespace,
+          withType: "environment",
+          isAnimated: false
+        )
+      }
+
       // Load block models
       let blockModelDirectory = modelDirectory.appendingPathComponent("block")
       if FileManager.default.directoryExists(at: blockModelDirectory) {
@@ -315,6 +327,7 @@ public struct ResourcePack {
       try resources.blockTexturePalette.cache(to: cacheDirectory.appendingPathComponent("BlockTexturePalette.bin"))
       try resources.itemTexturePalette.cache(to: cacheDirectory.appendingPathComponent("ItemTexturePalette.bin"))
       try resources.guiTexturePalette.cache(to: cacheDirectory.appendingPathComponent("GUITexturePalette.bin"))
+      try resources.environmentTexturePalette.cache(to: cacheDirectory.appendingPathComponent("EnvironmentTexturePalette.bin"))
 
       // Cache fonts
       try resources.fontPalette.cache(toDirectory: cacheDirectory)

@@ -82,7 +82,8 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     do {
       skyBoxRenderer = try SkyBoxRenderer(
         client: client,
-        device: device
+        device: device,
+        commandQueue: commandQueue
       )
     } catch {
       fatalError("Failed to create sky box renderer: \(error)")

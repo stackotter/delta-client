@@ -15,6 +15,8 @@ extension ResourcePack {
     public var itemModelPalette = ItemModelPalette()
     /// The GUI texture palette.
     public var guiTexturePalette = TexturePalette()
+    /// The environment texture palette (containing textures for the sun and moon etc.).
+    public var environmentTexturePalette = TexturePalette()
     /// The locales.
     public var locales: [String: MinecraftLocale] = [:]
     /// The colors of biomes.

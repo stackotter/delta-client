@@ -110,6 +110,11 @@ public struct MetalTexturePalette {
     timeBuffer?.label = "MetalTexturePalette.timeBuffer"
   }
 
+  /// Gets the index of the texture referred to by the given identifier if any.
+  public func textureIndex(for identifier: Identifier) -> Int? {
+    palette.textureIndex(for: identifier)
+  }
+
   /// Returns a metal array texture containing all textures (including each individual animation
   /// frame of each texture if `includeAnimations` is set to `true`).
   public static func createArrayTexture(

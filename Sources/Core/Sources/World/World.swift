@@ -235,7 +235,9 @@ public class World {
         )
       }
 
-      if renderDistance >= 4 {
+      // TODO: This is actually render distance 4, but decreased by 1 to cover more terrain,
+      //   move this adjustment into the fog calculation for more clarity
+      if renderDistance >= 3 {
         let sunHemisphereDirection = Vec3f(
           Foundation.sin(getSunAngleRadians()) > 0 ? -1 : 1,
           0,
@@ -352,6 +354,12 @@ public class World {
         return .sunset(color: color)
       }
     }
+  }
+
+  /// Gets the phase of the moon (an integer in the range `0..<8`). The moon's
+  /// phase progresses by 1 each day.
+  public func getMoonPhase() -> Int {
+    (getTimeOfDay() / 24000) % 8
   }
 
   // MARK: Blocks
