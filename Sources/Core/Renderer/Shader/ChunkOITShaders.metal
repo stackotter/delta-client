@@ -20,7 +20,8 @@ constant float precomputedWeight = 0.286819249;
 fragment FragmentOut chunkOITFragmentShader(RasterizerData in [[stage_in]],
                                             texture2d_array<float, access::sample> textureArray [[texture(0)]],
                                             constant uint8_t *lightMap [[buffer(0)]],
-                                            constant float &time [[buffer(1)]]) {
+                                            constant float &time [[buffer(1)]],
+                                            constant FogUniforms &fogUniforms [[buffer(2)]]) {
   // Sample the relevant texture slice
   FragmentOut out;
   float4 color = textureArray.sample(textureSampler, in.uv, in.textureState.currentFrameIndex);
@@ -42,6 +43,24 @@ fragment FragmentOut chunkOITFragmentShader(RasterizerData in [[stage_in]],
 
   color *= brightness / 255.0;
   color *= in.tint;
+
+  // Apply distance fog
+  float distance = length(in.cameraSpacePosition);
+  float linearFogIntensity = smoothstep(fogUniforms.fogStart, fogUniforms.fogEnd, distance);
+  float exponentialFogIntensity = clamp(1.0 - exp(-fogUniforms.fogDensity * distance), 0.0, 1.0);
+  float fogIntensity = linearFogIntensity * fogUniforms.isLinear
+                     + exponentialFogIntensity * !fogUniforms.isLinear;
+  color.rgb = color.rgb * (1.0 - fogIntensity) + fogUniforms.fogColor * fogIntensity;
+
+  // As the fog approaches an intensity of 1.0, the alpha of the fragment has to increase to 1.0
+  // as well so that the fragment disappears into the fog. Otherwise the fragment is still visible
+  // even once everything around it has disappeared into the fog (some weirdness with additive blending
+  // during the compositing step). Cubing the intensity to curve it a bit more makes it look a bit
+  // more correct (still looks a bit odd though).
+  float fogAlphaIntensity = fogIntensity * fogIntensity * fogIntensity * fogIntensity;
+  color.a = color.a * (1.0 - fogAlphaIntensity) + fogAlphaIntensity;
+
+  // Premultiply alpha
   color.rgb *= color.a;
 
   // Order independent transparency code adapted from https://casual-effects.blogspot.com/2015/03/implemented-weighted-blended-order.html?m=1

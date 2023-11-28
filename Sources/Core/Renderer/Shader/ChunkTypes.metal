@@ -51,7 +51,7 @@ struct OITCompositingRasterizerData {
 };
 
 struct FogUniforms {
-  float4 fogColor;
+  float3 fogColor;
   float fogStart;
   float fogEnd;
   float fogDensity;

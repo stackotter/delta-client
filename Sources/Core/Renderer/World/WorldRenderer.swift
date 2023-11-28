@@ -444,7 +444,7 @@ public final class WorldRenderer: Renderer {
     }
 
     return FogUniforms(
-      fogColor: Vec4f(fog.color, 1),
+      fogColor: fog.color,
       fogStart: fogStart,
       fogEnd: fogEnd,
       fogDensity: fogDensity,

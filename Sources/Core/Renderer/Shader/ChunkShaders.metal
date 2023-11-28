@@ -39,6 +39,8 @@ fragment float4 chunkFragmentShader(RasterizerData in [[stage_in]],
   float4 color;
   if (in.hasTexture) {
     color = textureArray.sample(textureSampler, in.uv, in.textureState.currentFrameIndex);
+    // If the texture is animated and requires interpolation, interpolate between the current
+    // frame and the next.
     if (in.textureState.nextFrameIndex != 65535) {
       float start = (float)in.textureState.previousUpdate;
       float end = (float)in.textureState.nextUpdate;
@@ -80,5 +82,6 @@ fragment float4 chunkFragmentShader(RasterizerData in [[stage_in]],
   float fogIntensity = linearFogIntensity * fogUniforms.isLinear
                      + exponentialFogIntensity * !fogUniforms.isLinear;
 
-  return color * (1.0 - fogIntensity) + fogUniforms.fogColor * fogIntensity;
+  color.rgb = color.rgb * (1.0 - fogIntensity) + fogUniforms.fogColor.rgb * fogIntensity;
+  return color;
 }
