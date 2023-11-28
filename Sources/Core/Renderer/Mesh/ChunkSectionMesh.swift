@@ -16,7 +16,7 @@ public struct ChunkSectionMesh {
   }
 
   /// Create a new chunk section mesh.
-  public init(_ uniforms: Uniforms) {
+  public init(_ uniforms: ChunkUniforms) {
     transparentAndOpaqueMesh = Mesh()
     transparentAndOpaqueMesh.uniforms = uniforms
     translucentMesh = SortableMesh(uniforms: uniforms)

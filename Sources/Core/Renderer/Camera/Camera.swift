@@ -30,7 +30,9 @@ public struct Camera {
     Ray(from: position, pitch: xRot, yaw: yRot)
   }
 
-  // TODO: Rename these matrices to translation, rotation, and projection.
+  // TODO: Rename these matrices to translation, rotation, and projection. Could
+  //   even replace translation and rotation with a single combined `framing`
+  //   matrix if no code ever uses them separately.
   /// A translation matrix from world-space to player-centered coordinates.
   public var worldToPlayer: Mat4x4f {
     MatrixUtil.translationMatrix(-position)
@@ -74,12 +76,12 @@ public struct Camera {
     //   camera shouldn't have to know about Metal at all, or throw any errors.
     for i in 0..<uniformsCount {
       guard let buffer = device.makeBuffer(
-        length: MemoryLayout<Uniforms>.stride,
+        length: MemoryLayout<CameraUniforms>.stride,
         options: .storageModeShared
       ) else {
         throw RenderError.failedtoCreateWorldUniformBuffers
       }
-      buffer.label = "dev.stackotter.Camera.uniforms-\(i)"
+      buffer.label = "Camera.uniforms-\(i)"
       uniformsBuffers.append(buffer)
     }
   }
@@ -89,14 +91,19 @@ public struct Camera {
     let buffer = uniformsBuffers[uniformsIndex]
     uniformsIndex = (uniformsIndex + 1) % uniformsCount
     var uniforms = getUniforms()
-    buffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<Uniforms>.stride)
+    buffer.contents().copyMemory(
+      from: &uniforms,
+      byteCount: MemoryLayout<CameraUniforms>.stride
+    )
     return buffer
   }
 
   /// Get the world to clip uniforms.
-  public mutating func getUniforms() -> Uniforms {
-    let transformation = getFrustum().worldToClip
-    return Uniforms(transformation: transformation)
+  public mutating func getUniforms() -> CameraUniforms {
+    return CameraUniforms(
+      framing: worldToPlayer * playerToCamera,
+      projection: cameraToClip
+    )
   }
 
   /// Sets this camera's vertical FOV. Horizontal FOV is calculated from vertical FOV and aspect ratio.

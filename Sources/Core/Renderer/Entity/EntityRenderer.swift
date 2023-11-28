@@ -90,7 +90,7 @@ public struct EntityRenderer: Renderer {
     }
 
     // Get all renderable entities
-    var entityUniforms: [Uniforms] = []
+    var entityUniforms: [EntityUniforms] = []
     client.game.accessNexus { nexus in
       // If the player is in first person view we don't render them
       profiler.push(.getEntities)
@@ -124,7 +124,7 @@ public struct EntityRenderer: Renderer {
 
         let scale: Mat4x4f = MatrixUtil.scalingMatrix(Vec3f(size))
         let translation: Mat4x4f = MatrixUtil.translationMatrix(Vec3f(position))
-        let uniforms = Uniforms(transformation: scale * translation)
+        let uniforms = EntityUniforms(transformation: scale * translation)
         entityUniforms.append(uniforms)
       }
       profiler.pop()
@@ -138,8 +138,8 @@ public struct EntityRenderer: Renderer {
     // more than 64 entities too big. The maximum size limit is imposed so that the buffer isn't too
     // much bigger than necessary. New buffers are always created with room for 32 more entities so
     // that a new buffer isn't created each time an entity is added.
-    let minimumBufferSize = entityUniforms.count * MemoryLayout<Uniforms>.stride
-    let maximumBufferSize = minimumBufferSize + 64 * MemoryLayout<Uniforms>.stride
+    let minimumBufferSize = entityUniforms.count * MemoryLayout<EntityUniforms>.stride
+    let maximumBufferSize = minimumBufferSize + 64 * MemoryLayout<EntityUniforms>.stride
     var instanceUniformsBuffer: MTLBuffer
 
     profiler.push(.getBuffer)
@@ -150,7 +150,7 @@ public struct EntityRenderer: Renderer {
       log.trace("Creating new instance uniforms buffer")
       instanceUniformsBuffer = try MetalUtil.makeBuffer(
         device,
-        length: minimumBufferSize + MemoryLayout<Uniforms>.stride * 32,
+        length: minimumBufferSize + MemoryLayout<EntityUniforms>.stride * 32,
         options: .storageModeShared,
         label: "entityInstanceUniforms"
       )

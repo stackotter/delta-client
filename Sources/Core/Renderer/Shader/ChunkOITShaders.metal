@@ -18,9 +18,9 @@ constexpr sampler textureSampler (mag_filter::nearest, min_filter::nearest, mip_
 constant float precomputedWeight = 0.286819249;
 
 fragment FragmentOut chunkOITFragmentShader(RasterizerData in [[stage_in]],
-                                                     texture2d_array<float, access::sample> textureArray [[texture(0)]],
-                                                     constant uint8_t *lightMap [[buffer(0)]],
-                                                     constant float &time [[buffer(1)]]) {
+                                            texture2d_array<float, access::sample> textureArray [[texture(0)]],
+                                            constant uint8_t *lightMap [[buffer(0)]],
+                                            constant float &time [[buffer(1)]]) {
   // Sample the relevant texture slice
   FragmentOut out;
   float4 color = textureArray.sample(textureSampler, in.uv, in.textureState.currentFrameIndex);

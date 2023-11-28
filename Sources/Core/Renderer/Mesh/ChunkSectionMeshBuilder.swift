@@ -61,7 +61,7 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
       Float(sectionPosition.sectionZ) * 16
     )
     let modelToWorldMatrix = MatrixUtil.translationMatrix(position)
-    let uniforms = Uniforms(transformation: modelToWorldMatrix)
+    let uniforms = ChunkUniforms(transformation: modelToWorldMatrix)
 
     var mesh = existingMesh ?? ChunkSectionMesh(uniforms)
     mesh.clearGeometry()

@@ -54,6 +54,9 @@ public final class WorldRenderer: Renderer {
   /// The depth stencil state used when order independent transparency is disabled.
   private let depthState: MTLDepthStencilState
 
+  /// The buffer for the uniforms used to render distance fog.
+  private let fogUniformsBuffer: MTLBuffer
+
   // MARK: Init
 
   /// Creates a new world renderer.
@@ -93,10 +96,11 @@ public final class WorldRenderer: Renderer {
     // Create light map
     lightMap = LightMap(ambientLight: Double(client.game.world.dimension.ambientLight))
 
-    // Create opaque pipeline
+    // TODO: Have another copy of this pipeline without blending enabled (to use when OIT is enabled)
+    // Create opaque pipeline (which also handles translucent geometry when OIT is disabled)
     renderPipelineState = try MetalUtil.makeRenderPipelineState(
       device: device,
-      label: "WorldRenderer.opaque",
+      label: "WorldRenderer.mainPipeline",
       vertexFunction: vertexFunction,
       fragmentFunction: fragmentFunction,
       blendingEnabled: true
@@ -165,11 +169,11 @@ public final class WorldRenderer: Renderer {
       #error("Unsupported platform")
     #endif
 
-    var identityUniforms = Uniforms()
+    var identityUniforms = ChunkUniforms()
     identityUniformsBuffer = try MetalUtil.makeBuffer(
       device,
       bytes: &identityUniforms,
-      length: MemoryLayout<Uniforms>.stride,
+      length: MemoryLayout<ChunkUniforms>.stride,
       options: storageMode
     )
 
@@ -191,6 +195,13 @@ public final class WorldRenderer: Renderer {
       length: MemoryLayout<BlockVertex>.stride * geometry.vertices.count * maxOutlinePartCount,
       options: storageMode,
       label: "blockOutlineVertexBuffer"
+    )
+
+    fogUniformsBuffer = try MetalUtil.makeBuffer(
+      device,
+      length: MemoryLayout<FogUniforms>.stride,
+      options: storageMode,
+      label: "fogUniformsBuffer"
     )
 
     // Register event handler
@@ -234,15 +245,23 @@ public final class WorldRenderer: Renderer {
     lightMapBuffer = try lightMap.getBuffer(device, reusing: lightMapBuffer)
     profiler.pop()
 
+    profiler.push(.updateFogUniforms)
+    var fogUniforms = Self.fogUniforms(client: client, camera: camera)
+    fogUniformsBuffer.contents().copyMemory(
+      from: &fogUniforms,
+      byteCount: MemoryLayout<FogUniforms>.stride
+    )
+    profiler.pop()
+
     // Setup render pass. The instance uniforms (vertex buffer index 3) are set to the identity
     // matrix because this phase of the renderer doesn't use instancing although the chunk shader
     // does support it.
     encoder.setRenderPipelineState(renderPipelineState)
-    encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 3)
-    encoder.setVertexBuffer(texturePalette.textureStatesBuffer, offset: 0, index: 4)
+    encoder.setVertexBuffer(texturePalette.textureStatesBuffer, offset: 0, index: 3)
     encoder.setFragmentTexture(texturePalette.arrayTexture, index: 0)
     encoder.setFragmentBuffer(lightMapBuffer, offset: 0, index: 0)
     encoder.setFragmentBuffer(texturePalette.timeBuffer, offset: 0, index: 1)
+    encoder.setFragmentBuffer(fogUniformsBuffer, offset: 0, index: 2)
 
     // Render transparent and opaque geometry
     profiler.push(.encodeOpaque)
@@ -264,17 +283,17 @@ public final class WorldRenderer: Renderer {
         let block = client.game.world.getBlock(at: targetedBlockPosition)
         let boundingBox = block.shape.outlineShape.offset(by: targetedBlockPosition.doubleVector)
 
-        for aabb in boundingBox.aabbs {
-          let geometry = Self.generateOutlineGeometry(
-            position: Vec3f(aabb.position),
-            size: Vec3f(aabb.size),
-            baseIndex: UInt32(indices.count)
-          )
-          indices.append(contentsOf: geometry.indices)
-          vertices.append(contentsOf: geometry.vertices)
-        }
-
         if !boundingBox.aabbs.isEmpty {
+          for aabb in boundingBox.aabbs {
+            let geometry = Self.generateOutlineGeometry(
+              position: Vec3f(aabb.position),
+              size: Vec3f(aabb.size),
+              baseIndex: UInt32(indices.count)
+            )
+            indices.append(contentsOf: geometry.indices)
+            vertices.append(contentsOf: geometry.vertices)
+          }
+
           blockOutlineVertexBuffer.contents().copyMemory(
             from: &vertices,
             byteCount: MemoryLayout<BlockVertex>.stride * vertices.count
@@ -292,8 +311,7 @@ public final class WorldRenderer: Renderer {
             indexCount: indices.count,
             indexType: .uint32,
             indexBuffer: blockOutlineIndexBuffer,
-            indexBufferOffset: 0,
-            instanceCount: 1
+            indexBufferOffset: 0
           )
         }
       }
@@ -319,8 +337,7 @@ public final class WorldRenderer: Renderer {
       encoder.setRenderPipelineState(renderPipelineState)
     }
 
-    encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 3)
-    encoder.setVertexBuffer(texturePalette.textureStatesBuffer, offset: 0, index: 4)
+    encoder.setVertexBuffer(texturePalette.textureStatesBuffer, offset: 0, index: 3)
 
     encoder.setFragmentTexture(texturePalette.arrayTexture, index: 0)
     encoder.setFragmentBuffer(lightMapBuffer, offset: 0, index: 0)
@@ -396,6 +413,43 @@ public final class WorldRenderer: Renderer {
       default:
         return
     }
+  }
+
+  static func fogUniforms(client: Client, camera: Camera) -> FogUniforms {
+    // When the render distance is above 2, move the fog 1 chunk closer to conceal
+    // more of the world edge.
+    let renderDistance = max(client.configuration.render.renderDistance - 1, 2)
+    let fog = client.game.world.getFog(
+      forViewerWithRay: camera.ray,
+      withRenderDistance: renderDistance
+    )
+
+    let isLinear: Bool
+    let fogDensity: Float
+    let fogStart: Float
+    let fogEnd: Float
+    switch fog.style {
+      case let .exponential(density):
+        isLinear = false
+        fogDensity = density
+        // Start and end are ignored by exponential fog
+        fogStart = 0
+        fogEnd = 0
+      case let .linear(start, end):
+        isLinear = true
+        // Density is ignored by linear fog
+        fogDensity = 0
+        fogStart = start
+        fogEnd = end
+    }
+
+    return FogUniforms(
+      fogColor: Vec4f(fog.color, 1),
+      fogStart: fogStart,
+      fogEnd: fogEnd,
+      fogDensity: fogDensity,
+      isLinear: isLinear
+    )
   }
 
   private static func generateOutlineGeometry(

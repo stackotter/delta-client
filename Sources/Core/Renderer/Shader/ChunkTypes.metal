@@ -27,6 +27,7 @@ struct Vertex {
 
 struct RasterizerData {
   float4 position [[position]];
+  float3 cameraSpacePosition;
   float2 uv;
   float4 tint;
   TextureState textureState;
@@ -36,10 +37,23 @@ struct RasterizerData {
   uint8_t blockLightLevel;
 };
 
-struct Uniforms {
+struct CameraUniforms {
+  float4x4 framing;
+  float4x4 projection;
+};
+
+struct ChunkUniforms {
   float4x4 transformation;
 };
 
 struct OITCompositingRasterizerData {
   float4 position [[position]];
+};
+
+struct FogUniforms {
+  float4 fogColor;
+  float fogStart;
+  float fogEnd;
+  float fogDensity;
+  bool isLinear;
 };

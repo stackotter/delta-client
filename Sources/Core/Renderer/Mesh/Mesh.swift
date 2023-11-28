@@ -19,7 +19,7 @@ public struct Mesh {
   /// The vertex windings.
   public var indices: [UInt32] = []
   /// The mesh's model to world transformation matrix.
-  public var uniforms = Uniforms()
+  public var uniforms = ChunkUniforms()
 
   /// A GPU buffer containing the vertices.
   public var vertexBuffer: MTLBuffer?
@@ -44,14 +44,14 @@ public struct Mesh {
   public init() {}
 
   /// Create a new populated mesh.
-  public init(vertices: [BlockVertex], indices: [UInt32], uniforms: Uniforms) {
+  public init(vertices: [BlockVertex], indices: [UInt32], uniforms: ChunkUniforms) {
     self.vertices = vertices
     self.indices = indices
     self.uniforms = uniforms
   }
 
   /// Create a new mesh with geometry.
-  public init(_ geometry: Geometry, uniforms: Uniforms) {
+  public init(_ geometry: Geometry, uniforms: ChunkUniforms) {
     self.init(vertices: geometry.vertices, indices: geometry.indices, uniforms: uniforms)
   }
 

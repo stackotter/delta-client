@@ -21,7 +21,7 @@ public struct SortableMesh {
   /// - Parameters:
   ///   - elements: Distinct mesh elements that should be rendered in order of distance.
   ///   - uniforms: The mesh's uniforms.
-  public init(_ elements: [SortableMeshElement] = [], uniforms: Uniforms) {
+  public init(_ elements: [SortableMeshElement] = [], uniforms: ChunkUniforms) {
     self.elements = elements
     underlyingMesh = Mesh()
     underlyingMesh.uniforms = uniforms

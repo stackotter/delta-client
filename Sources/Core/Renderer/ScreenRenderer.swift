@@ -29,9 +29,6 @@ public final class ScreenRenderer: Renderer {
   /// The revealage texture used for rendering of order independent transparency.
   private var transparencyRevealageTexture: MTLTexture?
 
-  /// The uniforms used to render distance fog.
-  private var fogUniformsBuffer: MTLBuffer
-
   /// Client for which rendering is performed
   private var client: Client
 
@@ -53,12 +50,6 @@ public final class ScreenRenderer: Renderer {
       fragmentFunction: try MetalUtil.loadFunction("screenFragmentFunction", from: library),
       blendingEnabled: false,
       isOffScreenPass: false
-    )
-
-    fogUniformsBuffer = try MetalUtil.makeBuffer(
-      device,
-      length: MemoryLayout<FogUniforms>.stride,
-      options: .storageModeShared
     )
   }
 
@@ -151,53 +142,9 @@ public final class ScreenRenderer: Renderer {
     encoder.setFragmentTexture(self.renderTargetTexture, index: 0)
     encoder.setFragmentTexture(self.renderTargetDepthTexture, index: 1)
 
-    var fogUniforms = Self.fogUniforms(client: client, camera: camera)
-    fogUniformsBuffer.contents().copyMemory(from: &fogUniforms, byteCount: MemoryLayout<FogUniforms>.size)
-    encoder.setFragmentBuffer(fogUniformsBuffer, offset: 0, index: 0)
-
     // A quad with total of 6 vertices (2 overlapping triangles) is drawn to present
     // rendering results on-screen. The geometry is defined within the shader (hard-coded).
     encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
     profiler.pop()
-  }
-
-  static func fogUniforms(client: Client, camera: Camera) -> FogUniforms {
-    // When the render distance is above 2, move the fog 1 chunk closer to conceal
-    // more of the world edge.
-    let renderDistance = max(client.configuration.render.renderDistance - 1, 2)
-    let fog = client.game.world.getFog(
-      forViewerWithRay: camera.ray,
-      withRenderDistance: renderDistance
-    )
-
-    let isLinear: Bool
-    let fogDensity: Float
-    let fogStart: Float
-    let fogEnd: Float
-    switch fog.style {
-      case let .exponential(density):
-        isLinear = false
-        fogDensity = density
-        // Start and end are ignored by exponential fog
-        fogStart = 0
-        fogEnd = 0
-      case let .linear(start, end):
-        isLinear = true
-        // Density is ignored by linear fog
-        fogDensity = 0
-        fogStart = start
-        fogEnd = end
-    }
-
-    return FogUniforms(
-      inverseProjection: (camera.playerToCamera * camera.cameraToClip).inverted,
-      fogColor: Vec4f(fog.color, 1),
-      nearPlane: camera.nearDistance,
-      farPlane: camera.farDistance,
-      fogStart: fogStart,
-      fogEnd: fogEnd,
-      fogDensity: fogDensity,
-      isLinear: isLinear
-    )
   }
 }
