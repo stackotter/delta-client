@@ -162,45 +162,42 @@ public final class ScreenRenderer: Renderer {
   }
 
   static func fogUniforms(client: Client, camera: Camera) -> FogUniforms {
-    return client.game.accessPlayer { player in
-      // When the render distance is above 2, move the fog 1 chunk closer to conceal
-      // more of the world edge.
-      let renderDistance = max(client.configuration.render.renderDistance - 1, 2)
-      let fog = client.game.world.getFog(
-        forViewerWithRay: player.ray,
-        withRenderDistance: renderDistance
-      )
+    // When the render distance is above 2, move the fog 1 chunk closer to conceal
+    // more of the world edge.
+    let renderDistance = max(client.configuration.render.renderDistance - 1, 2)
+    let fog = client.game.world.getFog(
+      forViewerWithRay: camera.ray,
+      withRenderDistance: renderDistance
+    )
 
-      // TODO: Support the exponential fog style
-      let isLinear: Bool
-      let fogDensity: Float
-      let fogStart: Float
-      let fogEnd: Float
-      switch fog.style {
-        case let .exponential(density):
-          isLinear = false
-          fogDensity = density
-          // Start and end are ignored by exponential fog
-          fogStart = 0
-          fogEnd = 0
-        case let .linear(start, end):
-          isLinear = true
-          // Density is ignored by linear fog
-          fogDensity = 0
-          fogStart = start
-          fogEnd = end
-      }
-
-      return FogUniforms(
-        inverseProjection: (camera.playerToCamera * camera.cameraToClip).inverted,
-        fogColor: Vec4f(fog.color, 1),
-        nearPlane: camera.nearDistance,
-        farPlane: camera.farDistance,
-        fogStart: fogStart,
-        fogEnd: fogEnd,
-        fogDensity: fogDensity,
-        isLinear: isLinear
-      )
+    let isLinear: Bool
+    let fogDensity: Float
+    let fogStart: Float
+    let fogEnd: Float
+    switch fog.style {
+      case let .exponential(density):
+        isLinear = false
+        fogDensity = density
+        // Start and end are ignored by exponential fog
+        fogStart = 0
+        fogEnd = 0
+      case let .linear(start, end):
+        isLinear = true
+        // Density is ignored by linear fog
+        fogDensity = 0
+        fogStart = start
+        fogEnd = end
     }
+
+    return FogUniforms(
+      inverseProjection: (camera.playerToCamera * camera.cameraToClip).inverted,
+      fogColor: Vec4f(fog.color, 1),
+      nearPlane: camera.nearDistance,
+      farPlane: camera.farDistance,
+      fogStart: fogStart,
+      fogEnd: fogEnd,
+      fogDensity: fogDensity,
+      isLinear: isLinear
+    )
   }
 }

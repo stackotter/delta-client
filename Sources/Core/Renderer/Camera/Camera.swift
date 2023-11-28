@@ -17,6 +17,7 @@ public struct Camera {
   /// The camera's position.
   public private(set) var position: Vec3f = [0, 0, 0]
 
+  // TODO: Rename xRot and yRot to pitch and yaw when refactoring Camera
   /// The camera's rotation around the x axis (pitch). -pi/2 radians is straight up,
   /// 0 is straight ahead, and pi/2 radians is straight down.
   public private(set) var xRot: Float = 0
@@ -24,19 +25,24 @@ public struct Camera {
   /// positive z axis when looking down from above (yaw).
   public private(set) var yRot: Float = 0
 
+  /// The ray defining the camera's position and the direction it faces.
+  public var ray: Ray {
+    Ray(from: position, pitch: xRot, yaw: yRot)
+  }
+
   // TODO: Rename these matrices to translation, rotation, and projection.
   /// A translation matrix from world-space to player-centered coordinates.
-  var worldToPlayer: Mat4x4f {
+  public var worldToPlayer: Mat4x4f {
     MatrixUtil.translationMatrix(-position)
   }
 
   /// A rotation matrix from player-centered coordinates to camera-space.
-  var playerToCamera: Mat4x4f {
+  public var playerToCamera: Mat4x4f {
     MatrixUtil.rotationMatrix(y: -(Float.pi + yRot)) * MatrixUtil.rotationMatrix(x: -xRot)
   }
 
   /// The projection matrix from camera-space to clip-space.
-  var cameraToClip: Mat4x4f {
+  public var cameraToClip: Mat4x4f {
     MatrixUtil.projectionMatrix(
       near: nearDistance,
       far: farDistance,

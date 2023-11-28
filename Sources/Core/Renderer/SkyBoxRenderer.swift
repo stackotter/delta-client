@@ -238,24 +238,14 @@ public final class SkyBoxRenderer: Renderer {
     // more of the world edge.
     let renderDistance = max(client.configuration.render.renderDistance - 1, 2)
 
-    // TODO: Use camera position instead of player position. It'd remove the need for locking
-    //   and a closure.
-    let (position, skyColor, fogColor) = client.game.accessPlayer { player in
-      let position = player.ray.origin
-      let blockPosition = BlockPosition(x: Int(position.x), y: Int(position.y), z: Int(position.z))
+    let position = camera.ray.origin
+    let blockPosition = BlockPosition(x: Int(position.x), y: Int(position.y), z: Int(position.z))
 
-      let skyColor = client.game.world.getSkyColor(at: blockPosition)
-      let fogColor = client.game.world.getFogColor(
-        forViewerWithRay: player.ray,
-        withRenderDistance: renderDistance
-      )
-
-      return (
-        position,
-        skyColor,
-        fogColor
-      )
-    }
+    let skyColor = client.game.world.getSkyColor(at: blockPosition)
+    let fogColor = client.game.world.getFogColor(
+      forViewerWithRay: camera.ray,
+      withRenderDistance: renderDistance
+    )
 
     // Render the sky plane.
     var skyPlaneUniforms = SkyPlaneUniforms(
@@ -513,7 +503,7 @@ public final class SkyBoxRenderer: Renderer {
 
     var vertices: [Vec3f] = []
     var random = Random(10842)
-    for i in 0..<1500 {
+    for _ in 0..<1500 {
       let direction = Vec3f(
         random.nextFloat(),
         random.nextFloat(),
@@ -530,7 +520,6 @@ public final class SkyBoxRenderer: Renderer {
         continue
       }
 
-      let normalizedDirection = direction / magnitude
       let yaw = -Foundation.atan2(direction.x, direction.z)
       let horizontalMagnitude = Foundation.sqrt(
         direction.x * direction.x + direction.z * direction.z

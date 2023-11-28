@@ -154,24 +154,6 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     // Fetch offscreen render pass descriptor from ScreenRenderer
     let renderPassDescriptor = screenRenderer.renderDescriptor
 
-    // Set sky color based off current biome
-    client.game.accessPlayer(acquireLock: true) { player in
-      // When the render distance is above 2, move the fog 1 chunk closer to conceal
-      // more of the world edge.
-      let renderDistance = max(client.configuration.render.renderDistance - 1, 2)
-
-      let fogColor = client.game.world.getFogColor(
-        forViewerWithRay: player.ray,
-        withRenderDistance: renderDistance
-      )
-
-      renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(
-        red: Double(fogColor.x),
-        green: Double(fogColor.y),
-        blue: Double(fogColor.z),
-        alpha: 1
-      )
-    }
 
     // The CPU start time if vsync was disabled
     let cpuStartTime = CFAbsoluteTimeGetCurrent()
@@ -180,6 +162,22 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     // Create world to clip uniforms buffer
     let uniformsBuffer = getCameraUniforms(view)
     profiler.pop()
+
+    // When the render distance is above 2, move the fog 1 chunk closer to conceal
+    // more of the world edge.
+    let renderDistance = max(client.configuration.render.renderDistance - 1, 2)
+
+    let fogColor = client.game.world.getFogColor(
+      forViewerWithRay: camera.ray,
+      withRenderDistance: renderDistance
+    )
+
+    renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(
+      red: Double(fogColor.x),
+      green: Double(fogColor.y),
+      blue: Double(fogColor.z),
+      alpha: 1
+    )
 
     profiler.push(.createRenderCommandEncoder)
     // Create command buffer
