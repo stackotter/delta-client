@@ -53,6 +53,8 @@ public enum RenderError: LocalizedError {
   case failedToUpdateRenderTargetSize
   /// Failed to create blit command encoder.
   case failedToCreateBlitCommandEncoder
+  /// A required texture is missing.
+  case missingTexture(Identifier)
 
   public var errorDescription: String? {
     switch self {
@@ -127,6 +129,8 @@ public enum RenderError: LocalizedError {
         """
       case .failedToCreateBlitCommandEncoder:
         return "Failed to create blit command encoder."
+      case .missingTexture(let identifier):
+        return "The required '\(identifier)' texture is missing."
     }
   }
 }

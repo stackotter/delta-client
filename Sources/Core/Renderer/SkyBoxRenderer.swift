@@ -12,6 +12,7 @@ public final class SkyBoxRenderer: Renderer {
   private let sunriseDiscRenderPipelineState: MTLRenderPipelineState
   private let celestialBodyRenderPipelineState: MTLRenderPipelineState
   private let starRenderPipelineState: MTLRenderPipelineState
+  private let endSkyRenderPipelineState: MTLRenderPipelineState
 
   private let quadVertexBuffer: MTLBuffer
   private let quadIndexBuffer: MTLBuffer
@@ -29,6 +30,10 @@ public final class SkyBoxRenderer: Renderer {
   private let starVertexBuffer: MTLBuffer
   private let starIndexBuffer: MTLBuffer
   private let starUniformsBuffer: MTLBuffer
+
+  private let endSkyVertexBuffer: MTLBuffer
+  private let endSkyIndexBuffer: MTLBuffer
+  private let endSkyUniformsBuffer: MTLBuffer
 
   private let environmentTexturePalette: MetalTexturePalette
 
@@ -110,6 +115,14 @@ public final class SkyBoxRenderer: Renderer {
       // they're shining through from behind instead of overlayed on top.
       descriptor.colorAttachments[0].destinationRGBBlendFactor = .one
     }
+
+    endSkyRenderPipelineState = try MetalUtil.makeRenderPipelineState(
+      device: device,
+      label: "SkyBoxRenderer.endSky",
+      vertexFunction: try MetalUtil.loadFunction("endSkyVertex", from: library),
+      fragmentFunction: try MetalUtil.loadFunction("endSkyFragment", from: library),
+      blendingEnabled: false
+    )
 
     // TODO: Make these both private (storage mode) once that's simpler to do (after MetalUtil
     //   rewrite/replacement)
@@ -212,6 +225,31 @@ public final class SkyBoxRenderer: Renderer {
       options: .storageModeShared,
       label: "starUniformsBuffer"
     )
+
+    var endSkyVertices = Self.generateEndSkyVertices()
+    endSkyVertexBuffer = try MetalUtil.makeBuffer(
+      device,
+      bytes: &endSkyVertices,
+      length: endSkyVertices.count * MemoryLayout<EndSkyVertex>.stride,
+      options: .storageModeShared,
+      label: "endSkyVertexBuffer"
+    )
+
+    var endSkyIndices = Self.generateEndSkyIndices()
+    endSkyIndexBuffer = try MetalUtil.makeBuffer(
+      device,
+      bytes: &endSkyIndices,
+      length: endSkyIndices.count * MemoryLayout<UInt32>.stride,
+      options: .storageModeShared,
+      label: "endSkyIndexBuffer"
+    )
+
+    endSkyUniformsBuffer = try MetalUtil.makeBuffer(
+      device,
+      length: MemoryLayout<EndSkyUniforms>.stride,
+      options: .storageModeShared,
+      label: "endSkyUniformsBuffer"
+    )
   }
 
   public func render(
@@ -221,6 +259,40 @@ public final class SkyBoxRenderer: Renderer {
     worldToClipUniformsBuffer: MTLBuffer,
     camera: Camera
   ) throws {
+    if client.game.world.dimension.isEnd {
+      let texturePalette = client.resourcePack.vanillaResources.environmentTexturePalette
+      let identifier = Identifier(name: "environment/end_sky")
+      guard
+        let textureIndex = texturePalette.textureIndex(for: identifier) 
+      else {
+        throw RenderError.missingTexture(identifier)
+      }
+      var endSkyUniforms = EndSkyUniforms(
+        transformation: camera.playerToCamera * camera.cameraToClip,
+        textureIndex: UInt16(textureIndex)
+      )
+      endSkyUniformsBuffer.contents().copyMemory(
+        from: &endSkyUniforms,
+        byteCount: MemoryLayout<EndSkyUniforms>.stride
+      )
+
+      encoder.setRenderPipelineState(endSkyRenderPipelineState)
+      encoder.setCullMode(.none)
+      encoder.setVertexBuffer(endSkyVertexBuffer, offset: 0, index: 0)
+      encoder.setVertexBuffer(endSkyUniformsBuffer, offset: 0, index: 1)
+      encoder.setFragmentBuffer(endSkyUniformsBuffer, offset: 0, index: 0)
+      encoder.setFragmentTexture(environmentTexturePalette.arrayTexture, index: 0)
+      encoder.drawIndexedPrimitives(
+        type: .triangle,
+        indexCount: endSkyIndexBuffer.length / MemoryLayout<UInt32>.stride,
+        indexType: .uint32,
+        indexBuffer: endSkyIndexBuffer,
+        indexBufferOffset: 0
+      )
+
+      return
+    }
+
     // Only the overworld has a sky plane.
     guard client.game.world.dimension.isOverworld else {
       return
@@ -557,6 +629,56 @@ public final class SkyBoxRenderer: Renderer {
           UInt32(index + offset)
         }
       indices.append(contentsOf: quadIndices)
+    }
+    return indices
+  }
+
+  static func generateEndSkyVertices() -> [EndSkyVertex] {
+    return [
+      // North
+      EndSkyVertex(position: Vec3f(-100, 100, -100), uv: Vec2f(0, 0)),
+      EndSkyVertex(position: Vec3f(100, 100, -100), uv: Vec2f(1, 0)),
+      EndSkyVertex(position: Vec3f(100, -100, -100), uv: Vec2f(1, 1)),
+      EndSkyVertex(position: Vec3f(-100, -100, -100), uv: Vec2f(0, 1)),
+
+      // South
+      EndSkyVertex(position: Vec3f(-100, -100, 100), uv: Vec2f(0, 0)),
+      EndSkyVertex(position: Vec3f(100, -100, 100), uv: Vec2f(1, 0)),
+      EndSkyVertex(position: Vec3f(100, 100, 100), uv: Vec2f(1, 1)),
+      EndSkyVertex(position: Vec3f(-100, 100, 100), uv: Vec2f(0, 1)),
+
+      // East
+      EndSkyVertex(position: Vec3f(100, -100, -100), uv: Vec2f(0, 0)),
+      EndSkyVertex(position: Vec3f(100, 100, -100), uv: Vec2f(1, 0)),
+      EndSkyVertex(position: Vec3f(100, 100, 100), uv: Vec2f(1, 1)),
+      EndSkyVertex(position: Vec3f(100, -100, 100), uv: Vec2f(0, 1)),
+
+      // West
+      EndSkyVertex(position: Vec3f(-100, 100, -100), uv: Vec2f(0, 0)),
+      EndSkyVertex(position: Vec3f(-100, -100, -100), uv: Vec2f(1, 0)),
+      EndSkyVertex(position: Vec3f(-100, -100, 100), uv: Vec2f(1, 1)),
+      EndSkyVertex(position: Vec3f(-100, 100, 100), uv: Vec2f(0, 1)),
+
+      // Above
+      EndSkyVertex(position: Vec3f(100, 100, 100), uv: Vec2f(0, 0)),
+      EndSkyVertex(position: Vec3f(-100, 100, 100), uv: Vec2f(1, 0)),
+      EndSkyVertex(position: Vec3f(-100, 100, -100), uv: Vec2f(1, 1)),
+      EndSkyVertex(position: Vec3f(100, 100, -100), uv: Vec2f(0, 1)),
+
+      // Before
+      EndSkyVertex(position: Vec3f(-100, -100, -100), uv: Vec2f(0, 0)),
+      EndSkyVertex(position: Vec3f(100, -100, -100), uv: Vec2f(1, 0)),
+      EndSkyVertex(position: Vec3f(100, -100, 100), uv: Vec2f(1, 1)),
+      EndSkyVertex(position: Vec3f(-100, -100, 100), uv: Vec2f(0, 1)),
+    ]
+  }
+
+  static func generateEndSkyIndices() -> [UInt32] {
+    var indices: [UInt32] = []
+    for i in 0..<6 {
+      indices.append(contentsOf: [
+        0, 1, 2, 2, 3, 0
+      ].map { UInt32($0 + i * 4) })
     }
     return indices
   }

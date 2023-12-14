@@ -134,3 +134,45 @@ fragment float4 starFragment(StarVertex in [[stage_in]],
                              constant struct StarUniforms &uniforms [[buffer(0)]]) {
   return float4(uniforms.brightness);
 }
+
+struct EndSkyInVertex {
+  float3 position;
+  float2 uv;
+};
+
+struct EndSkyVertex {
+  float4 position [[position]];
+  float2 uv;
+};
+
+struct EndSkyUniforms {
+  float4x4 transformation;
+  uint16_t textureIndex;
+};
+
+vertex EndSkyVertex endSkyVertex(uint id [[vertex_id]],
+                             constant struct EndSkyInVertex *vertices [[buffer(0)]],
+                             constant struct EndSkyUniforms &uniforms [[buffer(1)]]) {
+  struct EndSkyInVertex in = vertices[id];
+
+  return {
+    .position = float4(in.position, 1.0) * uniforms.transformation,
+    .uv = in.uv
+  };
+}
+
+constexpr sampler endSkyTextureSampler (mag_filter::nearest,
+                                        min_filter::nearest,
+                                        mip_filter::linear,
+                                        address::repeat);
+
+fragment float4 endSkyFragment(struct EndSkyVertex in [[stage_in]],
+                             texture2d_array<float, access::sample> textureArray [[texture(0)]],
+                             constant struct EndSkyUniforms &uniforms [[buffer(0)]]) {
+  // The end sky is half the size of the texture palette and tiles 16 times across each face.
+  // This is achieved by some UV maths and using fmod (I love fmod).
+  float2 uv = fmod(in.uv * 16 / 2, 0.5);
+
+  float4 color = textureArray.sample(endSkyTextureSampler, uv, uniforms.textureIndex);
+  return color * (float4(40.0, 40.0, 40.0, 255.0) / 255.0);
+}
