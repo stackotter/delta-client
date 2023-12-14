@@ -96,6 +96,7 @@ Not every version will be perfectly supported but I will try and have the most p
     - [x] Fluids (lava and water)
     - [x] Chunk frustum culling
     - [x] Biome blending (mostly)
+    - [x] [Sky box](https://github.com/stackotter/delta-client/pull/188)
   - [ ] Entities
     - [x] Basic entity rendering (just coloured cubes)
     - [ ] Render entity models
