@@ -133,7 +133,54 @@ struct GUI {
       ),
       .center
     )
-    parentGroup.add(GUISprite.inventory, .center)
+
+    var group = GUIGroupElement([GUISprite.inventory.descriptor.size.x, GUISprite.inventory.descriptor.size.y])
+    group.add(GUISprite.inventory, .center)
+
+    let (mainAreaRows, hotbar) = client.game.accessPlayer { player in
+      (player.inventory.mainAreaRows, player.inventory.hotbar)
+    }
+
+    for (y, row) in mainAreaRows.enumerated() {
+      for (x, slot) in row.enumerated() {
+        if let stack = slot.stack {
+          group.add(GUIInventoryItem(itemId: stack.itemId), .top(18 * y + 84), .left(18 * x + 8))
+
+          // Item count
+          // TODO: Move count rendering into GUIInventoryItem
+          if stack.count != 1 {
+            let bottom = 18 * (mainAreaRows.count - y - 1) + 29
+            let right = 18 * (row.count - x - 1) + 8
+            group.add(
+              GUIColoredString(String(stack.count), [62, 62, 62, 255] / 255),
+              .bottom(bottom - 1),
+              .right(right - 1)
+            )
+            group.add(String(stack.count), .bottom(bottom), .right(right))
+          }
+        }
+      }
+    }
+
+    for (x, slot) in hotbar.enumerated() {
+      if let stack = slot.stack {
+        group.add(GUIInventoryItem(itemId: stack.itemId), .top(142), .left(18 * x + 8))
+
+        // Item count
+        if stack.count != 1 {
+          let bottom = 8
+          let right = 18 * (hotbar.count - x - 1) + 8
+          group.add(
+            GUIColoredString(String(stack.count), [62, 62, 62, 255] / 255),
+            .bottom(bottom - 1),
+            .right(right - 1)
+          )
+          group.add(String(stack.count), .bottom(bottom), .right(right))
+        }
+      }
+    }
+
+    parentGroup.add(group, .center)
   }
 
   func chat(

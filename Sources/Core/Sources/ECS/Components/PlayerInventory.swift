@@ -10,6 +10,13 @@ public class PlayerInventory: Component {
   public static let hotbarSlotStartIndex = 36
   /// The index of the last hotbar slot.
   public static let hotbarSlotEndIndex = 44
+  /// The index of the first slot of the main inventory area (the 3 by 9 grid).
+  public static let mainAreaStartIndex = 9
+
+  /// The width of the main area.
+  public static let mainAreaWidth = 9
+  /// The height of the main area.
+  public static let mainAreaHeight = 3
 
   /// The inventory's contents.
   public var slots: [Slot]
@@ -18,6 +25,20 @@ public class PlayerInventory: Component {
   /// The inventory's hotbar.
   public var hotbar: [Slot] {
     return Array(slots[Self.hotbarSlotStartIndex...Self.hotbarSlotEndIndex])
+  }
+
+  /// The rows of the main 3 by 9 area of the inventory.
+  public var mainAreaRows: [[Slot]] {
+    var rows: [[Slot]] = []
+    for y in 0..<Self.mainAreaHeight {
+      var row: [Slot] = []
+      for x in 0..<Self.mainAreaWidth {
+        let index = y * Self.mainAreaWidth + x + Self.mainAreaStartIndex
+        row.append(slots[index])
+      }
+      rows.append(row)
+    }
+    return rows
   }
 
   /// Creates the player's inventory state.
