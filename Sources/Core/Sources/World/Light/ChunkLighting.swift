@@ -4,8 +4,6 @@ import Foundation
 ///
 /// It may also include lighting for the chunk sections above and below the world.
 public struct ChunkLighting {
-  // MARK: Public properties
-
   /// Sky light levels for each chunk section. Each array is indexed by block index.
   public private(set) var skyLightData: [Int: [UInt8]] = [:]
   /// Block light levels for each chunk section. Each array is indexed by block index.
@@ -14,24 +12,10 @@ public struct ChunkLighting {
   /// Whether this lighting has been populated with initial data or not.
   public private(set) var isPopulated = false
 
-  // MARK: Init
-
   /// Creates an empty chunk lighting store. ``isPopulated`` gets set to `false`.
   public init() {
     isPopulated = false
   }
-
-  /// Creates a populated chunk lighting store.
-  /// - Parameters:
-  ///   - skyLightData: Sky lighting data for each chunk section in the chunk (possibly with a section above and below the world too).
-  ///   - blockLightData: Block lighting data for each chunk section in the chunk (possibly with a section above and below the world too).
-  public init(skyLightData: [Int: [UInt8]] = [:], blockLightData: [Int: [UInt8]] = [:]) {
-    self.skyLightData = skyLightData
-    self.blockLightData = blockLightData
-    isPopulated = true
-  }
-
-  // MARK: Public methods
 
   /// Updates the lighting data with data received from the server.
   /// - Parameter data: The data received from the server.
@@ -222,12 +206,10 @@ public struct ChunkLighting {
     }
   }
 
-  // MARK: Private methods
-
-  /// Checks whether a position is within the chunk (including 1 block above and below).
+  /// Checks whether a position is within the chunk (including 1 chunk section above and below).
   /// - Parameter position: The position to check.
   /// - Returns: Whether the position is valid or not.
   private static func isValidPosition(_ position: BlockPosition) -> Bool {
-    return position.x >= 0 && position.y >= -1 && position.z >= 0 && position.x < Chunk.width && position.y < Chunk.height + 1 && position.z < Chunk.depth
+    return position.x >= 0 && position.y >= -16 && position.z >= 0 && position.x < Chunk.width && position.y < Chunk.height + 16 && position.z < Chunk.depth
   }
 }

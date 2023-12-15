@@ -89,7 +89,12 @@ public struct BlockPosition {
 
   /// The section Y of the section this position is in
   public var sectionIndex: Int {
-    return y / Chunk.Section.height
+    let index = y / Chunk.Section.height
+    if y < 0 {
+      return index - 1
+    } else {
+      return index
+    }
   }
 
   // MARK: Init
