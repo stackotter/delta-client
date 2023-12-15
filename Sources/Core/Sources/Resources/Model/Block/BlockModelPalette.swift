@@ -136,7 +136,7 @@ public struct BlockModelPalette: Equatable {
           for: [BlockModelRenderDescriptor(
             model: identifier,
             xRotationDegrees: 0,
-            yRotationDegrees: 0,
+            yRotationDegrees: 90,
             uvLock: false
           )],
           from: intermediateBlockModelPalette,

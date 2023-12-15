@@ -36,9 +36,9 @@ struct GUIInventoryItem: GUIElement {
         }
 
         transformation *= MatrixUtil.translationMatrix([-0.5, -0.5, -0.5])
-        transformation *= MatrixUtil.rotationMatrix(x: .pi)
-        transformation *= MatrixUtil.rotationMatrix(y: -.pi / 4)
-        transformation *= MatrixUtil.rotationMatrix(x: -.pi / 6)
+          * MatrixUtil.rotationMatrix(x: .pi)
+          * MatrixUtil.rotationMatrix(y: -.pi / 4)
+          * MatrixUtil.rotationMatrix(x: -.pi / 6)
 
         var geometry = Geometry()
         var translucentGeometry = SortableMeshElement()
