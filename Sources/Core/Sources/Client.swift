@@ -123,6 +123,11 @@ public final class Client: @unchecked Sendable {
     game.release(key: nil, input: input)
   }
 
+  /// Releases all inputs.
+  public func releaseAllInputs() {
+    game.releaseAllInputs()
+  }
+
   /// Moves the mouse.
   /// - Parameters:
   ///   - deltaX: The change in mouse x.

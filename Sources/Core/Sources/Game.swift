@@ -122,6 +122,13 @@ public final class Game: @unchecked Sendable {
     inputState.release(key: key, input: input)
   }
 
+  /// Releases all inputs. That includes keys.
+  public func releaseAllInputs() {
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+    inputState.releaseAll()
+  }
+
   /// Moves the mouse.
   /// - Parameters:
   ///   - deltaX: The change in mouse x.

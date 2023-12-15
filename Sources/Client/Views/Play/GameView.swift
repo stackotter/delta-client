@@ -128,6 +128,7 @@ struct GameView: View {
       switch event {
         case _ as OpenInGameMenuEvent:
           inGameMenuPresented = true
+          client.releaseAllInputs()
         case _ as ReleaseCursorEvent:
           cursorCaptured = false
         case _ as CaptureCursorEvent:

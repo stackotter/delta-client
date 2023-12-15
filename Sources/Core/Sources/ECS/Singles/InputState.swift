@@ -58,6 +58,19 @@ public final class InputState: SingleComponent {
     newlyReleased.append(KeyReleaseEvent(key: key, input: input))
   }
 
+  /// Releases all inputs.
+  public func releaseAll() {
+    for key in keys {
+      newlyReleased.append(KeyReleaseEvent(key: key, input: nil))
+    }
+
+    for input in inputs {
+      newlyReleased.append(KeyReleaseEvent(key: nil, input: input))
+    }
+
+    newlyPressed = []
+  }
+
   /// Clears ``newlyPressed`` and ``newlyReleased``.
   public func flushInputs() {
     newlyPressed = []
