@@ -143,41 +143,12 @@ struct GUI {
 
     for (y, row) in mainAreaRows.enumerated() {
       for (x, slot) in row.enumerated() {
-        if let stack = slot.stack {
-          group.add(GUIInventoryItem(itemId: stack.itemId), .top(18 * y + 84), .left(18 * x + 8))
-
-          // Item count
-          // TODO: Move count rendering into GUIInventoryItem
-          if stack.count != 1 {
-            let bottom = 18 * (mainAreaRows.count - y - 1) + 29
-            let right = 18 * (row.count - x - 1) + 8
-            group.add(
-              GUIColoredString(String(stack.count), [62, 62, 62, 255] / 255),
-              .bottom(bottom - 1),
-              .right(right - 1)
-            )
-            group.add(String(stack.count), .bottom(bottom), .right(right))
-          }
-        }
+        group.add(GUIInventorySlot(slot: slot), .top(18 * y + 84), .left(18 * x + 8))
       }
     }
 
     for (x, slot) in hotbar.enumerated() {
-      if let stack = slot.stack {
-        group.add(GUIInventoryItem(itemId: stack.itemId), .top(142), .left(18 * x + 8))
-
-        // Item count
-        if stack.count != 1 {
-          let bottom = 8
-          let right = 18 * (hotbar.count - x - 1) + 8
-          group.add(
-            GUIColoredString(String(stack.count), [62, 62, 62, 255] / 255),
-            .bottom(bottom - 1),
-            .right(right - 1)
-          )
-          group.add(String(stack.count), .bottom(bottom), .right(right))
-        }
-      }
+      group.add(GUIInventorySlot(slot: slot), .top(142), .left(18 * x + 8))
     }
 
     parentGroup.add(group, .center)
@@ -295,16 +266,7 @@ struct GUI {
     group.add(GUISprite.selectedHotbarSlot, .bottom(0), .left(20 * selectedSlot))
 
     for (i, slot) in slots.enumerated() {
-      if let stack = slot.stack {
-        group.add(GUIInventoryItem(itemId: stack.itemId), .bottom(4), .left(20 * i + 4))
-
-        // Item count
-        if stack.count != 1 {
-          let offset = 20 * (8 - i) + 4
-          group.add(GUIColoredString(String(stack.count), [62, 62, 62, 255] / 255), .bottom(2), .right(offset - 1))
-          group.add(String(stack.count), .bottom(3), .right(offset))
-        }
-      }
+      group.add(GUIInventorySlot(slot: slot), .bottom(4), .left(20 * i + 4))
     }
   }
 
