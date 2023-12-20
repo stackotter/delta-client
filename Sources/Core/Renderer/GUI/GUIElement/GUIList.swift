@@ -33,7 +33,7 @@ struct GUIList: GUIElement {
     var maxWidth = 0
     var currentY = 0
 
-    // Find the widest element while caching meshes to prevent generating them twice
+    // Cache meshes while finding widest element to prevent generating them again.
     for item in items {
       switch item {
         case .element(let element):

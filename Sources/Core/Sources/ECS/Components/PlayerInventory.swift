@@ -10,13 +10,30 @@ public class PlayerInventory: Component {
   public static let hotbarSlotStartIndex = 36
   /// The index of the last hotbar slot.
   public static let hotbarSlotEndIndex = 44
+
   /// The index of the first slot of the main inventory area (the 3 by 9 grid).
   public static let mainAreaStartIndex = 9
-
   /// The width of the main area.
   public static let mainAreaWidth = 9
   /// The height of the main area.
   public static let mainAreaHeight = 3
+
+  /// The index of the first slot of the inventory's crafting area.
+  public static let craftingAreaStartIndex = 1
+  /// The width of the inventory's crafting area.
+  public static let craftingAreaWidth = 2
+  /// The height of the inventory's crafting area.
+  public static let craftingAreaHeight = 2
+  /// The index of the crafting result slot.
+  public static let craftingResultIndex = 0
+
+  /// The index of the first armor slot.
+  public static let armorSlotsStartIndex = 5
+  /// The number of armor slots.
+  public static let armorSlotsCount = 4
+
+  /// The index of the player's off-hand slot.
+  public static let offHandIndex = 45
 
   /// The inventory's contents.
   public var slots: [Slot]
@@ -28,7 +45,7 @@ public class PlayerInventory: Component {
   }
 
   /// The rows of the main 3 by 9 area of the inventory.
-  public var mainAreaRows: [[Slot]] {
+  public var mainArea: [[Slot]] {
     var rows: [[Slot]] = []
     for y in 0..<Self.mainAreaHeight {
       var row: [Slot] = []
@@ -39,6 +56,35 @@ public class PlayerInventory: Component {
       rows.append(row)
     }
     return rows
+  }
+
+  /// The rows of the 2 by 2 crafting area of the inventory.
+  public var craftingArea: [[Slot]] {
+    var rows: [[Slot]] = []
+    for y in 0..<Self.craftingAreaHeight {
+      var row: [Slot] = []
+      for x in 0..<Self.craftingAreaWidth {
+        let index = y * Self.craftingAreaWidth + x + Self.craftingAreaStartIndex
+        row.append(slots[index])
+      }
+      rows.append(row)
+    }
+    return rows
+  }
+
+  /// The result slot of the inventory's crafting area.
+  public var craftingResult: Slot {
+    return slots[Self.craftingResultIndex]
+  }
+
+  /// The armor slots.
+  public var armorSlots: [Slot] {
+    return Array(slots[Self.armorSlotsStartIndex..<Self.armorSlotsStartIndex + Self.armorSlotsCount])
+  }
+
+  /// The off-hand slot.
+  public var offHand: Slot {
+    return slots[Self.offHandIndex]
   }
 
   /// Creates the player's inventory state.

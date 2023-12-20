@@ -137,11 +137,32 @@ struct GUI {
     var group = GUIGroupElement([GUISprite.inventory.descriptor.size.x, GUISprite.inventory.descriptor.size.y])
     group.add(GUISprite.inventory, .center)
 
-    let (mainAreaRows, hotbar) = client.game.accessPlayer { player in
-      (player.inventory.mainAreaRows, player.inventory.hotbar)
+    let (armorSlots, offHand, craftingArea, craftingResult, mainArea, hotbar) = client.game.accessPlayer { player in
+      (
+        player.inventory.armorSlots,
+        player.inventory.offHand,
+        player.inventory.craftingArea,
+        player.inventory.craftingResult,
+        player.inventory.mainArea,
+        player.inventory.hotbar
+      )
     }
 
-    for (y, row) in mainAreaRows.enumerated() {
+    for (y, slot) in armorSlots.enumerated() {
+      group.add(GUIInventorySlot(slot: slot), .top(18 * y + 8), .left(8))
+    }
+
+    group.add(GUIInventorySlot(slot: offHand), .top(62), .left(77))
+
+    for (y, row) in craftingArea.enumerated() {
+      for (x, slot) in row.enumerated() {
+        group.add(GUIInventorySlot(slot: slot), .top(18 * y + 18), .left(18 * x + 98))
+      }
+    }
+
+    group.add(GUIInventorySlot(slot: craftingResult), .top(28), .left(154))
+
+    for (y, row) in mainArea.enumerated() {
       for (x, slot) in row.enumerated() {
         group.add(GUIInventorySlot(slot: slot), .top(18 * y + 84), .left(18 * x + 8))
       }
