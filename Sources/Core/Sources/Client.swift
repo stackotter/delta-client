@@ -129,11 +129,23 @@ public final class Client: @unchecked Sendable {
   }
 
   /// Moves the mouse.
+  ///
+  /// `deltaX` and `deltaY` aren't just the difference between the current and
+  /// previous values of `x` and `y` because there are ways for the mouse to
+  /// appear at a new position without causing in-game movement (e.g. if the
+  /// user opens the in-game menu, moves the mouse, and then closes the in-game
+  /// menu).
   /// - Parameters:
+  ///   - x: The absolute mouse x (relative to the play area's top left corner).
+  ///   - y: The absolute mouse y (relative to the play area's top left corner).
   ///   - deltaX: The change in mouse x.
   ///   - deltaY: The change in mouse y.
-  public func moveMouse(_ deltaX: Float, _ deltaY: Float) {
-    game.moveMouse(deltaX, deltaY)
+  public func moveMouse(x: Float, y: Float, deltaX: Float, deltaY: Float) {
+    // TODO: Update this API (and everything else reliant on it) so that DeltaCore
+    //   is the one that decides which input events to ignore (instead of InputView
+    //   (and similar) deciding whether an event should be given to Client or not).
+    //   This will allow the deltaX and deltaY parameters to be removed.
+    game.moveMouse(x: x, y: y, deltaX: deltaX, deltaY: deltaY)
   }
 
   /// Moves the left thumbstick.

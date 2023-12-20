@@ -130,13 +130,19 @@ public final class Game: @unchecked Sendable {
   }
 
   /// Moves the mouse.
+  ///
+  /// See ``Client/moveMouse(x:y:deltaX:deltaY:)`` for the reasoning behind
+  /// having both absolute and relative parameters (it's currently necessary
+  /// but could be fixed by cleaning up the input handling architecture).
   /// - Parameters:
+  ///   - x: The absolute mouse x (relative to the play area's top left corner).
+  ///   - y: The absolute mouse y (relative to the play area's top left corner).
   ///   - deltaX: The change in mouse x.
   ///   - deltaY: The change in mouse y.
-  public func moveMouse(_ deltaX: Float, _ deltaY: Float) {
+  public func moveMouse(x: Float, y: Float, deltaX: Float, deltaY: Float) {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
-    inputState.moveMouse(deltaX, deltaY)
+    inputState.moveMouse(x: x, y: y, deltaX: deltaX, deltaY: deltaY)
   }
 
   /// Moves the left thumbstick.

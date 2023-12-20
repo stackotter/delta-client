@@ -61,11 +61,11 @@ struct GameView: View {
                     .onKeyRelease { [weak client] key in
                       client?.release(key)
                     }
-                    .onMouseMove { [weak client] deltaX, deltaY in
+                    .onMouseMove { [weak client] x, y, deltaX, deltaY in
                       // TODO: Formalise this adjustment factor somewhere
                       let sensitivityAdjustmentFactor: Float = 0.004
                       let sensitivity = sensitivityAdjustmentFactor * managedConfig.mouseSensitivity
-                      client?.moveMouse(sensitivity * deltaX, sensitivity * deltaY)
+                      client?.moveMouse(x: x, y: y, deltaX: sensitivity * deltaX, deltaY: sensitivity * deltaY)
                     }
                     .passthroughClicks(!cursorCaptured)
                   }

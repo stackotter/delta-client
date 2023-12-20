@@ -2,6 +2,9 @@ import SwiftUI
 import DeltaCore
 
 struct InputView<Content: View>: View {
+  @EnvironmentObject var modal: Modal
+  @EnvironmentObject var appState: StateWrapper<AppState>
+
   @State var monitorsAdded = false
   @State var scrollWheelDeltaY: Float = 0
 
@@ -15,7 +18,12 @@ struct InputView<Content: View>: View {
 
   private var handleKeyRelease: ((Key) -> Void)?
   private var handleKeyPress: ((Key, [Character]) -> Void)?
-  private var handleMouseMove: ((_ deltaX: Float, _ deltaY: Float) -> Void)?
+  private var handleMouseMove: ((
+    _ x: Float,
+    _ y: Float,
+    _ deltaX: Float,
+    _ deltaY: Float
+  ) -> Void)?
   private var handleScroll: ((_ deltaY: Float) -> Void)?
   private var shouldPassthroughClicks = false
 
@@ -67,7 +75,7 @@ struct InputView<Content: View>: View {
   }
 
   /// Adds an action to run when the mouse is moved.
-  func onMouseMove(_ action: @escaping (_ deltaX: Float, _ deltaY: Float) -> Void) -> Self {
+  func onMouseMove(_ action: @escaping (_ x: Float, _ y: Float, _ deltaX: Float, _ deltaY: Float) -> Void) -> Self {
     appendingAction(to: \.handleMouseMove, action)
   }
 
@@ -76,8 +84,39 @@ struct InputView<Content: View>: View {
     appendingAction(to: \.handleScroll, action)
   }
 
+  func mousePositionInView(with geometry: GeometryProxy) -> (x: Float, y: Float)? {
+    // This assumes that there's only one window and that this is only called once
+    // the view's body has been evaluated at least once.
+    guard let window = NSApplication.shared.orderedWindows.first else {
+      return nil
+    }
+
+    let viewFrame = geometry.frame(in: .global)
+    let x = (NSEvent.mouseLocation.x - window.frame.minX) - viewFrame.minX
+    let y = window.frame.maxY - NSEvent.mouseLocation.y - viewFrame.minY
+    return (Float(x), Float(y))
+  }
+
   var body: some View {
-    content()
+    GeometryReader { geometry in
+      contentWithEventListeners(geometry)
+    }
+  }
+
+  func contentWithEventListeners(_ geometry: GeometryProxy) -> some View {
+    // Make sure that the latest position is known to any observers (e.g. if
+    // listening was disabled and now isn't, observers won't have been told
+    // about any changes that occured during the period in which listening
+    // was disabled).
+    if let mousePosition = mousePositionInView(with: geometry) {
+      handleMouseMove?(mousePosition.x, mousePosition.y, 0, 0)
+    } else {
+      modal.error("Failed to get mouse position (on demand)") {
+        appState.update(to: .serverList)
+      }
+    }
+
+    return content()
       .frame(maxWidth: .infinity, maxHeight: .infinity)
       #if os(iOS)
       .gesture(TapGesture(count: 2).onEnded { _ in
@@ -104,10 +143,20 @@ struct InputView<Content: View>: View {
               return event
             }
 
+            guard let mousePosition = mousePositionInView(with: geometry) else {
+              modal.error("Failed to get mouse position") {
+                appState.update(to: .serverList)
+              }
+              return event
+            }
+
+            let x = mousePosition.x
+            let y = mousePosition.y
+
             let deltaX = Float(event.deltaX)
             let deltaY = Float(event.deltaY)
 
-            handleMouseMove?(deltaX, deltaY)
+            handleMouseMove?(x, y, deltaX, deltaY)
 
             return event
           })

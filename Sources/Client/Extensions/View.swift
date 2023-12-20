@@ -53,4 +53,19 @@ extension View {
       action(argument1, argument2, argument3)
     }
   }
+
+  /// Appends an action to an action stored property. Useful for implementing custom
+  /// view modifiers such as `onClick` etc. Allows the modifier to be called multiple
+  /// times without overwriting previous actions. If the stored action is nil, the
+  /// given action becomes the stored action, otherwise the new action is appended to
+  /// the existing action.
+  func appendingAction<T, U, V, W>(
+    to keyPath: WritableKeyPath<Self, ((T, U, V, W) -> Void)?>,
+    _ action: @escaping (T, U, V, W) -> Void
+  ) -> Self {
+    with(keyPath) { argument1, argument2, argument3, argument4 in
+      self[keyPath: keyPath]?(argument1, argument2, argument3, argument4)
+      action(argument1, argument2, argument3, argument4)
+    }
+  }
 }

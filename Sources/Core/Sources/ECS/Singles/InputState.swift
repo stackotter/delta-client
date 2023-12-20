@@ -3,14 +3,15 @@ import FirebladeMath
 
 /// The game's input state.
 public final class InputState: SingleComponent {
-  /// The maximum number of ticks between consecutive inputs to count as a double tap.
+  /// The maximum number of ticks between consecutive inputs to count as a
+  /// double tap.
   public static let maximumDoubleTapDelay = 6
 
-  /// The newly pressed keys in the order that they were pressed. Only includes presses since last
-  /// call to ``flushInputs()``.
+  /// The newly pressed keys in the order that they were pressed. Only includes
+  /// presses since last call to ``flushInputs()``.
   public private(set) var newlyPressed: [KeyPressEvent] = []
-  /// The newly released keys in the order that they were released. Only includes releases since
-  /// last call to ``flushInputs()``.
+  /// The newly released keys in the order that they were released. Only includes
+  /// releases since last call to ``flushInputs()``.
   public private(set) var newlyReleased: [KeyReleaseEvent] = []
 
   /// The currently pressed keys.
@@ -18,6 +19,8 @@ public final class InputState: SingleComponent {
   /// The currently pressed inputs.
   public private(set) var inputs: Set<Input> = []
 
+  /// The current absolute mouse position relative to the play area's top left corner.
+  public private(set) var mousePosition: Vec2f = Vec2f(0, 0)
   /// The mouse delta since the last call to ``resetMouseDelta()``.
   public private(set) var mouseDelta: Vec2f = Vec2f(0, 0)
   /// The position of the left thumbstick.
@@ -78,11 +81,18 @@ public final class InputState: SingleComponent {
   }
 
   /// Updates the current mouse delta by adding the given delta.
+  ///
+  /// See ``Client/moveMouse(x:y:deltaX:deltaY:)`` for the reasoning behind
+  /// having both absolute and relative parameters (it's currently necessary
+  /// but could be fixed by cleaning up the input handling architecture).
   /// - Parameters:
+  ///   - x: The absolute mouse x (relative to the play area's top left corner).
+  ///   - y: The absolute mouse y (relative to the play area's top left corner).
   ///   - deltaX: The change in mouse x.
   ///   - deltaY: The change in mouse y.
-  public func moveMouse(_ deltaX: Float, _ deltaY: Float) {
+  public func moveMouse(x: Float, y: Float, deltaX: Float, deltaY: Float) {
     mouseDelta += Vec2f(deltaX, deltaY)
+    mousePosition = Vec2f(x, y)
   }
 
   /// Updates the current position of the left thumbstick.
