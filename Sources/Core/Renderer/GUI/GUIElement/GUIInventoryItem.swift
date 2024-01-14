@@ -2,8 +2,10 @@ import Foundation
 import FirebladeMath
 import DeltaCore
 
-struct GUIInventoryItem: GUIElement {
+struct GUIInventoryItem: GUIElement, GUIFixedSizeElement {
   var itemId: Int
+
+  let size = Vec2i(16, 16)
 
   func meshes(context: GUIContext) throws -> [GUIElementMesh] {
     guard let model = context.itemModelPalette.model(for: itemId) else {

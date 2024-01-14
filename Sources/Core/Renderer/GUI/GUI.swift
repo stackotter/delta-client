@@ -287,7 +287,7 @@ struct GUI {
     group.add(GUISprite.selectedHotbarSlot, .bottom(0), .left(20 * selectedSlot))
 
     for (i, slot) in slots.enumerated() {
-      group.add(GUIInventorySlot(slot: slot), .bottom(4), .left(20 * i + 4))
+      group.add(GUIInventorySlot(slot: slot), .bottom(2), .left(20 * i + 4))
     }
   }
 

@@ -1,8 +1,10 @@
 import FirebladeMath
 import DeltaCore
 
-struct GUIInventorySlot: GUIElement {
+struct GUIInventorySlot: GUIElement, GUIFixedSizeElement {
   var slot: Slot
+
+  let size = Vec2i(17, 18)
 
   func meshes(context: GUIContext) throws -> [GUIElementMesh] {
     guard let stack = slot.stack else {

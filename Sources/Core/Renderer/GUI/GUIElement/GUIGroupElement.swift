@@ -1,6 +1,6 @@
 import FirebladeMath
 
-struct GUIGroupElement: GUIElement {
+struct GUIGroupElement: GUIFixedSizeElement {
   var size: Vec2i
   var children: [(GUIElement, Constraints)]
 
@@ -27,7 +27,7 @@ struct GUIGroupElement: GUIElement {
       var elementMeshes = try element.meshes(context: context)
 
       let elementSize: Vec2i
-      if let group = element as? GUIGroupElement {
+      if let group = element as? GUIFixedSizeElement {
         elementSize = group.size
       } else {
         elementSize = elementMeshes.size()
