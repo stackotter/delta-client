@@ -3,7 +3,7 @@ import MetalKit
 import FirebladeMath
 import DeltaCore
 
-/// A renderer that renders a `World`
+/// A renderer that renders a `World` along with its associated entities (from `Game.nexus`).
 public final class WorldRenderer: Renderer {
   // MARK: Private properties
 

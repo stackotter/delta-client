@@ -52,6 +52,7 @@ struct KeymapEditorView: View {
       }
     }
     .passthroughClicks()
+    .avoidGeometryReader()
     .onKeyPress { key, _ in
       guard let selectedInput = selectedInput else {
         return

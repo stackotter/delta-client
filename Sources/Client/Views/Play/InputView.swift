@@ -26,6 +26,7 @@ struct InputView<Content: View>: View {
   ) -> Void)?
   private var handleScroll: ((_ deltaY: Float) -> Void)?
   private var shouldPassthroughClicks = false
+  private var shouldAvoidGeometryReader = false
 
   init(
     listening: Binding<Bool>,
@@ -64,6 +65,13 @@ struct InputView<Content: View>: View {
     with(\.shouldPassthroughClicks, passthroughClicks)
   }
 
+  /// When `true`, `GeometryReader` won't be used, but mouse movements
+  /// won't be tracked. This can be used when mouse movements aren't
+  /// required but the `GeometryReader` is messing with layouts.
+  func avoidGeometryReader(_ avoidGeometryReader: Bool = true) -> Self {
+    with(\.shouldAvoidGeometryReader, avoidGeometryReader)
+  }
+
   /// Adds an action to run when a key is released.
   func onKeyRelease(_ action: @escaping (Key) -> Void) -> Self {
     appendingAction(to: \.handleKeyRelease, action)
@@ -98,26 +106,33 @@ struct InputView<Content: View>: View {
   }
 
   var body: some View {
-    GeometryReader { geometry in
-      contentWithEventListeners(geometry)
+    VStack {
+      if shouldAvoidGeometryReader {
+        contentWithEventListeners()
+      } else {
+        GeometryReader { geometry in
+          contentWithEventListeners(geometry)
+        }
+      }
     }
   }
 
-  func contentWithEventListeners(_ geometry: GeometryProxy) -> some View {
+  func contentWithEventListeners(_ geometry: GeometryProxy? = nil) -> some View {
     // Make sure that the latest position is known to any observers (e.g. if
     // listening was disabled and now isn't, observers won't have been told
     // about any changes that occured during the period in which listening
     // was disabled).
-    if let mousePosition = mousePositionInView(with: geometry) {
-      handleMouseMove?(mousePosition.x, mousePosition.y, 0, 0)
-    } else {
-      modal.error("Failed to get mouse position (on demand)") {
-        appState.update(to: .serverList)
+    if let geometry = geometry {
+      if let mousePosition = mousePositionInView(with: geometry) {
+        handleMouseMove?(mousePosition.x, mousePosition.y, 0, 0)
+      } else {
+        modal.error("Failed to get mouse position (on demand)") {
+          appState.update(to: .serverList)
+        }
       }
     }
 
     return content()
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
       #if os(iOS)
       .gesture(TapGesture(count: 2).onEnded { _ in
         handleKeyPress?(.escape, [])
@@ -139,7 +154,7 @@ struct InputView<Content: View>: View {
       .onAppear {
         if !monitorsAdded {
           NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged], handler: { event in
-            if !listening {
+            guard listening, let geometry = geometry else {
               return event
             }
 
