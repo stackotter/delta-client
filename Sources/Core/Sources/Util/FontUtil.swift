@@ -2,7 +2,7 @@ public enum FontUtil {}
 
 // TODO: Move to Delta Client because it's not cross-platform
 
-#if os(macOS)
+#if canImport(AppKit)
 import AppKit
 
 extension NSFont {
@@ -29,7 +29,7 @@ extension FontUtil {
     return NSFont.systemFontSize(for: size)
   }
 }
-#elseif os(iOS)
+#elseif canImport(UIKit)
 import UIKit
 
 extension UIFont {

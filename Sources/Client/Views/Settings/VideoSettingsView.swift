@@ -1,6 +1,7 @@
 import SwiftUI
 import DeltaCore
 
+#if !os(tvOS)
 struct VideoSettingsView: View {
   @EnvironmentObject var managedConfig: ManagedConfig
 
@@ -45,7 +46,7 @@ struct VideoSettingsView: View {
         }
         #if os(macOS)
           .pickerStyle(RadioGroupPickerStyle())
-        #elseif os(iOS)
+        #elseif os(iOS) || os(tvOS)
           .pickerStyle(DefaultPickerStyle())
         #endif
           .frame(width: 220)
@@ -67,3 +68,4 @@ struct VideoSettingsView: View {
     .navigationTitle("Video")
   }
 }
+#endif

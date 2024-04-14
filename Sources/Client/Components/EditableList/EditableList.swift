@@ -17,6 +17,10 @@ enum EditableListState {
 struct EditableList<Row: View, ItemEditor: EditorView>: View {
   @State var state: EditableListState = .list
 
+  #if os(tvOS)
+  @Namespace var focusNamespace
+  #endif
+
   @Binding var items: [ItemEditor.Item]
   @Binding var selected: Int?
 
@@ -120,11 +124,17 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
                 }
               }
             }
+            #if os(tvOS)
+            .focusSection()
+            #endif
 
             VStack {
               Button("Add") {
                 state = .addItem
               }
+              #if os(tvOS)
+              .prefersDefaultFocus(in: focusNamespace)
+              #endif
               .buttonStyle(SecondaryButtonStyle())
 
               if save != nil || cancel != nil {
@@ -140,8 +150,15 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
                 }
               }
             }
+            #if !os(tvOS)
             .frame(width: 200)
+            #else
+            .focusSection()
+            #endif
           }
+          #if os(tvOS)
+          .focusSection()
+          #endif
         case .addItem:
           itemEditor.init(nil, completion: { newItem in
             items.append(newItem)
@@ -159,6 +176,10 @@ struct EditableList<Row: View, ItemEditor: EditorView>: View {
           })
       }
     }
+    #if !os(tvOS)
     .frame(width: 400)
+    #else
+    .focusScope(focusNamespace)
+    #endif
   }
 }

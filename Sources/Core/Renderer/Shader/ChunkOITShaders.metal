@@ -105,7 +105,7 @@ vertex OITCompositingRasterizerData chunkOITCompositingVertexShader(uint vertexI
   return out;
 }
 
-fragment float4 chunkOITCompositingFragmentShader(RasterizerData in [[stage_in]],
+fragment float4 chunkOITCompositingFragmentShader(OITCompositingRasterizerData in [[stage_in]],
                                                   float4 accumulation [[color(1)]],
                                                   float revealage [[color(2)]]) {
   return float4(accumulation.rgb / max(min(accumulation.a, 5e4), 1e-4), 1 - revealage);

@@ -22,7 +22,7 @@ public enum RenderError: LocalizedError {
   /// Failed to create the depth stencil state for the world renderer.
   case failedToCreateWorldDepthStencilState
   /// Failed to create the render pipeline state for the entity renderer.
-  case failedToCreateEntityRenderPipelineState(Error)
+  case failedToCreateEntityRenderPipelineState(Error, label: String)
   /// Failed to create the depth stencil state for the entity renderer.
   case failedToCreateEntityDepthStencilState
   /// Failed to create the block texture array.
@@ -84,10 +84,11 @@ public enum RenderError: LocalizedError {
         """
       case .failedToCreateWorldDepthStencilState:
         return "Failed to create the depth stencil state for the entity renderer."
-      case .failedToCreateEntityRenderPipelineState(let error):
+      case .failedToCreateEntityRenderPipelineState(let error, let label):
         return """
         Failed to create the render pipeline state for the entity renderer.
         Reason: \(error.localizedDescription)
+        Label: \(label)
         """
       case .failedToCreateEntityDepthStencilState:
         return " Failed to create the depth stencil state for the entity renderer."

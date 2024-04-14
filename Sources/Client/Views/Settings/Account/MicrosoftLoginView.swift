@@ -22,12 +22,19 @@ struct MicrosoftLoginView: View {
     case authenticatingUser
   }
 
+  #if os(tvOS)
+  @Namespace var focusNamespace
+  #endif
+
   @EnvironmentObject var modal: Modal
   @EnvironmentObject var appState: StateWrapper<AppState>
 
   @State var state: MicrosoftState = .authorizingDevice
 
   @Binding var loginViewState: LoginViewState
+  #if os(tvOS)
+  @Environment(\.resetFocus) var resetFocus
+  #endif
 
   var completionHandler: (Account) -> Void
 
@@ -39,24 +46,30 @@ struct MicrosoftLoginView: View {
         case .login(let response):
           Text(response.message)
 
-          Link("Open in browser", destination: response.verificationURI)
-            .padding(10)
+          #if !os(tvOS)
+            Link("Open in browser", destination: response.verificationURI)
+              .padding(10)
 
-          Button("Copy code") {
-            Clipboard.copy(response.userCode)
-          }
-          .buttonStyle(PrimaryButtonStyle())
-          .frame(width: 200)
-          .padding(.bottom, 10)
-
-          Spacer().frame(height: 16)
+            Button("Copy code") {
+              Clipboard.copy(response.userCode)
+            }
+            .buttonStyle(PrimaryButtonStyle())
+            .frame(width: 200)
+            .padding(.bottom, 26)
+          #endif
 
           Button("Done") {
             state = .authenticatingUser
             authenticate(with: response.deviceCode)
           }
           .buttonStyle(PrimaryButtonStyle())
+          #if !os(tvOS)
           .frame(width: 200)
+          #else
+          .onAppear {
+            resetFocus(in: focusNamespace)
+          }
+          #endif
         case .authenticatingUser:
           Text("Authenticating...")
       }
@@ -65,10 +78,16 @@ struct MicrosoftLoginView: View {
         loginViewState = .chooseAccountType
       }
       .buttonStyle(SecondaryButtonStyle())
+      #if !os(tvOS)
       .frame(width: 200)
-    }.onAppear {
+      #endif
+    }
+    .onAppear {
       authorizeDevice()
     }
+    #if os(tvOS)
+    .focusScope(focusNamespace)
+    #endif
   }
 
   func authorizeDevice() {

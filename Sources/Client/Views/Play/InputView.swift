@@ -92,18 +92,20 @@ struct InputView<Content: View>: View {
     appendingAction(to: \.handleScroll, action)
   }
 
-  func mousePositionInView(with geometry: GeometryProxy) -> (x: Float, y: Float)? {
-    // This assumes that there's only one window and that this is only called once
-    // the view's body has been evaluated at least once.
-    guard let window = NSApplication.shared.orderedWindows.first else {
-      return nil
-    }
+  #if os(macOS)
+    func mousePositionInView(with geometry: GeometryProxy) -> (x: Float, y: Float)? {
+      // This assumes that there's only one window and that this is only called once
+      // the view's body has been evaluated at least once.
+      guard let window = NSApplication.shared.orderedWindows.first else {
+        return nil
+      }
 
-    let viewFrame = geometry.frame(in: .global)
-    let x = (NSEvent.mouseLocation.x - window.frame.minX) - viewFrame.minX
-    let y = window.frame.maxY - NSEvent.mouseLocation.y - viewFrame.minY
-    return (Float(x), Float(y))
-  }
+      let viewFrame = geometry.frame(in: .global)
+      let x = (NSEvent.mouseLocation.x - window.frame.minX) - viewFrame.minX
+      let y = window.frame.maxY - NSEvent.mouseLocation.y - viewFrame.minY
+      return (Float(x), Float(y))
+    }
+  #endif
 
   var body: some View {
     VStack {
@@ -122,15 +124,17 @@ struct InputView<Content: View>: View {
     // listening was disabled and now isn't, observers won't have been told
     // about any changes that occured during the period in which listening
     // was disabled).
-    if let geometry = geometry {
-      if let mousePosition = mousePositionInView(with: geometry) {
-        handleMouseMove?(mousePosition.x, mousePosition.y, 0, 0)
-      } else {
-        modal.error("Failed to get mouse position (on demand)") {
-          appState.update(to: .serverList)
+    #if os(macOS)
+      if let geometry = geometry {
+        if let mousePosition = mousePositionInView(with: geometry) {
+          handleMouseMove?(mousePosition.x, mousePosition.y, 0, 0)
+        } else {
+          modal.error("Failed to get mouse position (on demand)") {
+            appState.update(to: .serverList)
+          }
         }
       }
-    }
+    #endif
 
     return content()
       #if os(iOS)
@@ -141,7 +145,10 @@ struct InputView<Content: View>: View {
         handleKeyPress?(.f3, [])
       })
       .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global).onChanged { value in
+        // TODO: Implement absolute
         handleMouseMove?(
+          Float(value.location.x),
+          Float(value.location.y),
           Float(value.translation.width),
           Float(value.translation.height)
         )

@@ -44,6 +44,13 @@ struct DirectConnectView: View {
       }
       .padding(.top, 16)
     }
+    #if !os(tvOS)
     .frame(width: 200)
+    #endif
+    #if !os(iOS)
+    .onExitCommand {
+      appState.update(to: .serverList)
+    }
+    #endif
   }
 }

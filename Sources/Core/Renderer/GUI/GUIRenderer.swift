@@ -2,7 +2,7 @@ import MetalKit
 import FirebladeMath
 import DeltaCore
 
-#if os(iOS)
+#if canImport(UIKit)
 import UIKit
 #endif
 
@@ -207,9 +207,9 @@ public final class GUIRenderer: Renderer {
 
   static func adjustScale(_ scale: Float) -> Float {
     // Adjust scale per screen scale factor
-    #if os(macOS)
+    #if canImport(AppKit)
     let screenScaleFactor = Float(NSApp.windows.first?.screen?.backingScaleFactor ?? 1)
-    #elseif os(iOS)
+    #elseif canImport(UIKit)
     let screenScaleFactor = Float(UIScreen.main.scale)
     #else
     #error("Unsupported platform, unknown screen scale factor")

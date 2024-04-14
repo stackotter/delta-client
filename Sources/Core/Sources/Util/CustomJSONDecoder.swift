@@ -1,21 +1,19 @@
 import Foundation
-#if !os(Linux)
+#if canImport(ZippyJSON)
 import ZippyJSON
 #endif
 
 public struct CustomJSONDecoder {
-  #if !os(Linux)
+  #if canImport(ZippyJSON)
   public var keyDecodingStrategy: ZippyJSONDecoder.KeyDecodingStrategy = ZippyJSONDecoder.KeyDecodingStrategy.useDefaultKeys
   #else
   public var keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = JSONDecoder.KeyDecodingStrategy.useDefaultKeys
   #endif
 
-  public init() {
-    // Empty initialiser because we do not want the keyDecodingStrategy to be an initialiser parameter
-  }
+  public init() {}
 
   public func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
-    #if !os(Linux)
+    #if canImport(ZippyJSON)
     let decoder = ZippyJSONDecoder()
     #else
     let decoder = JSONDecoder()

@@ -12,10 +12,12 @@ public final class WorldRenderer: Renderer {
 
   /// Render pipeline used for rendering world geometry.
   private var renderPipelineState: MTLRenderPipelineState
+  #if !os(tvOS)
   /// Render pipeline used for rendering translucent world geometry.
   private var transparencyRenderPipelineState: MTLRenderPipelineState
   /// Render pipeline used for compositing translucent geometry onto the screen buffer.
   private var compositingRenderPipelineState: MTLRenderPipelineState
+  #endif
 
   /// The device used for rendering.
   private var device: MTLDevice
@@ -48,9 +50,11 @@ public final class WorldRenderer: Renderer {
   /// A buffer containing the light map (updated each frame).
   private var lightMapBuffer: MTLBuffer?
 
+  #if !os(tvOS)
   /// The depth stencil state used for order independent transparency (which requires read-only
   /// depth).
   private let readOnlyDepthState: MTLDepthStencilState
+  #endif
   /// The depth stencil state used when order independent transparency is disabled.
   private let depthState: MTLDepthStencilState
 
@@ -106,6 +110,7 @@ public final class WorldRenderer: Renderer {
       blendingEnabled: true
     )
 
+    #if !os(tvOS)
     // Create OIT pipeline
     transparencyRenderPipelineState = try MetalUtil.makeRenderPipelineState(
       device: device,
@@ -145,8 +150,10 @@ public final class WorldRenderer: Renderer {
 
     // Create the depth state used for order independent transparency
     readOnlyDepthState = try MetalUtil.createDepthState(device: device, readOnly: true)
+    #endif
 
     // Create the regular depth state.
+    // TODO: Is this meant to be read only? I would assume not
     depthState = try MetalUtil.createDepthState(device: device, readOnly: true)
 
     // Create entity renderer
@@ -163,7 +170,7 @@ public final class WorldRenderer: Renderer {
     // TODO: Improve storage mode selection
     #if os(macOS)
       let storageMode = MTLResourceOptions.storageModeManaged
-    #elseif os(iOS)
+    #elseif os(iOS) || os(tvOS)
       let storageMode = MTLResourceOptions.storageModeShared
     #else
       #error("Unsupported platform")
@@ -330,12 +337,16 @@ public final class WorldRenderer: Renderer {
     profiler.pop()
 
     // Setup render pass for encoding translucent geometry after entity rendering pass
-    if client.configuration.render.enableOrderIndependentTransparency {
-      encoder.setRenderPipelineState(transparencyRenderPipelineState)
-      encoder.setDepthStencilState(readOnlyDepthState)
-    } else {
+    #if os(tvOS)
       encoder.setRenderPipelineState(renderPipelineState)
-    }
+    #else
+      if client.configuration.render.enableOrderIndependentTransparency {
+        encoder.setRenderPipelineState(transparencyRenderPipelineState)
+        encoder.setDepthStencilState(readOnlyDepthState)
+      } else {
+        encoder.setRenderPipelineState(renderPipelineState)
+      }
+    #endif
 
     encoder.setVertexBuffer(texturePalette.textureStatesBuffer, offset: 0, index: 3)
 
@@ -357,11 +368,13 @@ public final class WorldRenderer: Renderer {
 
     // Composite translucent geometry onto the screen buffer. No vertices need to be supplied, the
     // shader has the screen's corners hardcoded for simplicity.
-    if client.configuration.render.enableOrderIndependentTransparency {
-      encoder.setRenderPipelineState(compositingRenderPipelineState)
-      encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
-      encoder.setDepthStencilState(depthState)
-    }
+    #if !os(tvOS)
+      if client.configuration.render.enableOrderIndependentTransparency {
+        encoder.setRenderPipelineState(compositingRenderPipelineState)
+        encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
+        encoder.setDepthStencilState(depthState)
+      }
+    #endif
     profiler.pop()
   }
 

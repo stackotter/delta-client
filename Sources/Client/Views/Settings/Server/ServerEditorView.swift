@@ -51,6 +51,8 @@ struct ServerEditorView: EditorView {
       }
       .padding(.top, 8)
     }
+    #if !os(tvOS)
     .frame(width: 200)
+    #endif
   }
 }

@@ -23,14 +23,18 @@ struct LegacyFormattedTextView: View {
   }
   
   var body: some View {
-    NSAttributedTextView(
-      attributedString: attributedString,
-      alignment: alignment
-    ).frame(width: attributedString.size().width)
+    #if os(tvOS)
+      Text(attributedString.string)
+    #else
+      NSAttributedTextView(
+        attributedString: attributedString,
+        alignment: alignment
+      ).frame(width: attributedString.size().width)
+    #endif
   }
 }
 
-#if os(macOS)
+#if canImport(AppKit)
 struct NSAttributedTextView: NSViewRepresentable {
   var attributedString: NSAttributedString
   var alignment: NSTextAlignment
@@ -49,7 +53,7 @@ struct NSAttributedTextView: NSViewRepresentable {
     label.alignment = .left
   }
 }
-#elseif os(iOS)
+#elseif canImport(UIKit)
 struct NSAttributedTextView: UIViewRepresentable {
   var attributedString: NSAttributedString
   var alignment: NSTextAlignment

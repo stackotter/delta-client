@@ -2,7 +2,7 @@ enum ColorUtil {}
 
 // TODO: Move ColorUtil to Client target (instead of Core) because it's not cross-platform
 
-#if os(macOS)
+#if canImport(AppKit)
 import AppKit
 
 extension NSColor {
@@ -42,7 +42,7 @@ extension ColorUtil {
     return NSColor(hexString: hexString)
   }
 }
-#elseif os(iOS)
+#elseif canImport(UIKit)
 import UIKit
 
 extension UIColor {

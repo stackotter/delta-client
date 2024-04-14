@@ -24,7 +24,9 @@ struct ServerListView: View {
           Text("no servers").italic()
         }
 
-        Divider()
+        #if !os(tvOS)
+          Divider()
+        #endif
 
         if let lanServerEnumerator = lanServerEnumerator {
           LANServerList(lanServerEnumerator: lanServerEnumerator)
@@ -32,29 +34,49 @@ struct ServerListView: View {
           Text("LAN scan failed").italic()
         }
 
-        HStack {
-          // Edit server list
-          IconButton("square.and.pencil") {
+        #if os(tvOS)
+          Divider()
+
+          Button("Edit servers") {
             appState.update(to: .editServerList)
           }
 
-          // Refresh server list (ping all servers) and discovered LAN servers
-          IconButton("arrow.clockwise") {
+          Button("Refresh servers") {
             refresh()
           }
 
-          // Direct connect
-          IconButton("personalhotspot") {
+          Button("Direct connect") {
             appState.update(to: .directConnect)
           }
 
-          #if os(iOS)
-            // Settings
-            IconButton("gear") {
-              appState.update(to: .settings(nil))
+          Button("Settings") {
+            appState.update(to: .settings(nil))
+          }
+        #else
+          HStack {
+            // Edit server list
+            IconButton("square.and.pencil") {
+              appState.update(to: .editServerList)
             }
-          #endif
-        }
+
+            // Refresh server list (ping all servers) and discovered LAN servers
+            IconButton("arrow.clockwise") {
+              refresh()
+            }
+
+            // Direct connect
+            IconButton("personalhotspot") {
+              appState.update(to: .directConnect)
+            }
+
+            #if os(iOS) || os(tvOS)
+              // Settings
+              IconButton("gear") {
+                appState.update(to: .settings(nil))
+              }
+            #endif
+          }
+        #endif
 
         if (updateAvailable) {
           Button("Update") {
@@ -62,7 +84,10 @@ struct ServerListView: View {
           }.padding(.top, 5)
         }
       }
+      #if !os(tvOS)
+      // TODO: Does this even do anything?
       .listStyle(SidebarListStyle())
+      #endif
     }
     .onAppear {
       // Check for updates

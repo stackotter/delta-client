@@ -6,6 +6,10 @@ struct InGameMenu: View {
     case settings
   }
 
+  #if os(tvOS)
+  @Namespace var focusNamespace
+  #endif
+
   @EnvironmentObject var appState: StateWrapper<AppState>
 
   @Binding var presented: Bool
@@ -25,7 +29,11 @@ struct InGameMenu: View {
                 Button("Back to game") {
                   presented = false
                 }
+                  #if !os(tvOS)
                   .keyboardShortcut(.escape, modifiers: [])
+                  #else
+                  .prefersDefaultFocus(in: focusNamespace)
+                  #endif
                   .buttonStyle(PrimaryButtonStyle())
 
                 Button("Settings") { 
@@ -38,7 +46,9 @@ struct InGameMenu: View {
                 }
                   .buttonStyle(SecondaryButtonStyle())
               }
+              #if !os(tvOS)
               .frame(width: 200)
+              #endif
             case .settings:
               SettingsView(isInGame: true) {
                 state = .menu
@@ -47,6 +57,10 @@ struct InGameMenu: View {
         }
           .frame(width: geometry.size.width, height: geometry.size.height)
           .background(Color.black.opacity(0.702), alignment: .center)
+          #if os(tvOS)
+          .focusSection()
+          .focusScope(focusNamespace)
+          #endif
       }
     }
   }

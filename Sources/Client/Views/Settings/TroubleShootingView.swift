@@ -111,7 +111,9 @@ struct TroubleshootingView: View {
           .padding(.top, 10)
       }
     }
+    #if !os(tvOS)
     .frame(width: 200)
+    #endif
   }
 
   private func perform(

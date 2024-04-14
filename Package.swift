@@ -62,7 +62,7 @@ targets.append(.executableTarget(
   name: "DeltaClient",
   dependencies: [
     "DynamicShim",
-    .product(name: "SwordRPC", package: "SwordRPC", condition: .when(platforms: [.macOS])),
+    // .product(name: "SwordRPC", package: "SwordRPC", condition: .when(platforms: [.macOS])),
     .product(name: "ArgumentParser", package: "swift-argument-parser")
   ],
   path: "Sources/Client"
@@ -71,7 +71,7 @@ targets.append(.executableTarget(
 
 let package = Package(
   name: "DeltaClient",
-  platforms: [.macOS(.v11), .iOS(.v15)],
+  platforms: [.macOS(.v11), .iOS(.v15), .tvOS(.v15)],
   products: products,
   dependencies: [
     // See Notes/PluginSystem.md for more details on the architecture of the project in regards to dependencies, targets and linking

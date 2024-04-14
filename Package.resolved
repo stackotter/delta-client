@@ -173,6 +173,24 @@
         }
       },
       {
+        "package": "Swift Grammar",
+        "repositoryURL": "https://github.com/tayloraswift/swift-grammar",
+        "state": {
+          "branch": null,
+          "revision": "163ce5d4d88db7d94f2f4ca1cabcb2ae65af8af7",
+          "version": "0.3.3"
+        }
+      },
+      {
+        "package": "swift-hash",
+        "repositoryURL": "https://github.com/tayloraswift/swift-hash",
+        "state": {
+          "branch": null,
+          "revision": "c7ba0cde5eb63042c2196b02b65a770101c1ac11",
+          "version": "0.5.0"
+        }
+      },
+      {
         "package": "SwiftImage",
         "repositoryURL": "https://github.com/stackotter/swift-image.git",
         "state": {
@@ -240,7 +258,7 @@
         "repositoryURL": "https://github.com/stackotter/swift-png",
         "state": {
           "branch": null,
-          "revision": "b11a34847192cec24fa91c23fe771e95eb2c08cc",
+          "revision": "dee856ec2cad5a91060ace4729db7e6d747572b3",
           "version": null
         }
       },

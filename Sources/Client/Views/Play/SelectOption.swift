@@ -40,24 +40,35 @@ struct SelectOption<Option: Hashable, Row: View, Content: View>: View {
         VStack {
           Divider()
           ForEach(options, id: \.self) { option in
-            HStack {
-              row(option)
+            #if !os(tvOS)
+              HStack {
+                row(option)
 
-              Spacer()
+                Spacer()
 
-              Image(systemName: "chevron.right")
-            }
-            .contentShape(Rectangle())
-            .onTapGesture {
-              guard !excludedOptions.contains(option) else {
-                return
+                Image(systemName: "chevron.right")
               }
-              selectedOption = option
-            }
-            .padding(.top, 0.3)
-            .foregroundColor(excludedOptions.contains(option) ? .gray : .primary)
+              .contentShape(Rectangle())
+              #if !os(tvOS)
+              .onTapGesture {
+                guard !excludedOptions.contains(option) else {
+                  return
+                }
+                selectedOption = option
+              }
+              #endif
+              .padding(.top, 0.3)
+              .foregroundColor(excludedOptions.contains(option) ? .gray : .primary)
 
-            Divider()
+              Divider()
+            #else
+              Button {
+                selectedOption = option
+              } label: {
+                row(option)
+              }
+              .disabled(excludedOptions.contains(option))
+            #endif
           }
 
           Button("Cancel", action: cancellationHandler)
@@ -66,7 +77,9 @@ struct SelectOption<Option: Hashable, Row: View, Content: View>: View {
         }
         .padding(.bottom, 10)
       }
+      #if !os(tvOS)
       .frame(width: 300)
+      #endif
     }
   }
 }

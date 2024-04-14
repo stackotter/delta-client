@@ -1,7 +1,7 @@
 [apps.DeltaClient]
 product = 'DeltaClient'
 version = 'v0.1.0-alpha.1'
-bundle_identifier = 'dev.stackotter.delta-client'
+bundle_identifier = 'dev.stackotter.TVHelloWorld'
 category = 'public.app-category.games'
 minimum_macos_version = '11.0'
 icon = 'AppIcon.icns'

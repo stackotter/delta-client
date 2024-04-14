@@ -15,10 +15,12 @@ struct EditServerListView: View {
         itemEditor: ServerEditorView.self,
         row: { item, selected, isFirst, isLast, handler in
           HStack {
+            #if !os(tvOS)
             VStack {
               IconButton("chevron.up", isDisabled: isFirst) { handler(.moveUp) }
               IconButton("chevron.down", isDisabled: isLast) { handler(.moveDown) }
             }
+            #endif
             
             VStack(alignment: .leading) {
               Text(item.name)
@@ -32,6 +34,9 @@ struct EditServerListView: View {
             HStack {
               IconButton("square.and.pencil") { handler(.edit) }
               IconButton("xmark") { handler(.delete) }
+                #if os(tvOS)
+                .padding(.trailing, 20)
+                #endif
             }
           }
         },

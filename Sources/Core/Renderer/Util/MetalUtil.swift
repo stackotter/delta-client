@@ -40,7 +40,8 @@ public enum MetalUtil {
     do {
       return try device.makeRenderPipelineState(descriptor: descriptor)
     } catch {
-      throw RenderError.failedToCreateEntityRenderPipelineState(error)
+      // TODO: Update error name
+      throw RenderError.failedToCreateEntityRenderPipelineState(error, label: label)
     }
   }
 
@@ -50,7 +51,7 @@ public enum MetalUtil {
   public static func loadDefaultLibrary(_ device: MTLDevice) throws -> MTLLibrary {
     #if os(macOS)
     let bundlePath = "Contents/Resources/DeltaCore_DeltaRenderer.bundle"
-    #elseif os(iOS)
+    #elseif os(iOS) || os(tvOS)
     let bundlePath = "DeltaCore_DeltaRenderer.bundle"
     #else
     #error("Unsupported platform, unknown DeltaCore bundle location")

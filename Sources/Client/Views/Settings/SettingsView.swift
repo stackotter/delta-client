@@ -36,6 +36,7 @@ struct SettingsView: View {
   var body: some View {
     NavigationView {
       List {
+        #if !os(tvOS)
         NavigationLink(
           "Video",
           destination: VideoSettingsView().padding(),
@@ -48,6 +49,7 @@ struct SettingsView: View {
           tag: SettingsState.controls,
           selection: $currentPage
         )
+        #endif
 
         if !isInGame {
           NavigationLink(
@@ -81,13 +83,18 @@ struct SettingsView: View {
         }
 
         Button("Done", action: {
-          withAnimation(nil) { done() }
+          withAnimation(nil) {
+            done()
+          }
         })
+          #if !os(tvOS)
           .buttonStyle(BorderlessButtonStyle())
-          .padding(.top, 8)
           .keyboardShortcut(.escape, modifiers: [])
+          #endif
       }
+      #if !os(tvOS)
       .listStyle(SidebarListStyle())
+      #endif
     }
     .navigationTitle("Settings")
   }

@@ -29,7 +29,6 @@ struct PlayView: View {
             controllerOnly: false,
             inGameMenuPresented: $inGameMenuPresented
           )
-
         }
       } else {
         HStack(spacing: 0) {

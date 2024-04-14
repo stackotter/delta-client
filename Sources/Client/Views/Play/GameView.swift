@@ -90,6 +90,12 @@ struct GameView: View {
                       client?.moveRightThumbstick(x, y)
                   }
                 }
+                #if os(tvOS)
+                .focusable(!inGameMenuPresented)
+                .onExitCommand {
+                  inGameMenuPresented = true
+                }
+                #endif
               }
             case .gpuFrameCaptureComplete(let file):
               frameCaptureResult(file)
@@ -207,11 +213,9 @@ struct GameView: View {
           Button("Show in finder") {
             NSWorkspace.shared.activateFileViewerSelecting([file])
           }.buttonStyle(SecondaryButtonStyle())
-        #elseif os(iOS)
-          // TODO: Add a file sharing menu for iOS
-          Text("I have no clue how to get hold of the file")
         #else
-          #error("Unsupported platform, no file opening method")
+          // TODO: Add a file sharing menu for iOS and tvOS
+          Text("I have no clue how to get hold of the file")
         #endif
 
         Button("OK") {

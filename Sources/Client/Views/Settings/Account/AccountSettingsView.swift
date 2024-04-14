@@ -56,8 +56,13 @@ struct AccountSettingsView: View {
 
       Button("Select") { handler(.select) }
         .disabled(selected)
+        #if !os(tvOS)
         .buttonStyle(BorderlessButtonStyle())
+        #endif
       IconButton("xmark") { handler(.delete) }
+        #if os(tvOS)
+        .padding(.trailing, 20)
+        #endif
     }
   }
 
