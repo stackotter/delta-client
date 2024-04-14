@@ -24,7 +24,7 @@ struct SettingsView: View {
     self.isInGame = isInGame
     self.done = done
 
-    #if os(iOS)
+    #if os(iOS) || os(tvOS)
       // On iOS, the navigation isn't a split view, so we should show the settings page selection
       // view first instead of auto-selecting the first page.
       self._currentPage = State(initialValue: landingPage)
@@ -36,13 +36,14 @@ struct SettingsView: View {
   var body: some View {
     NavigationView {
       List {
-        #if !os(tvOS)
         NavigationLink(
           "Video",
           destination: VideoSettingsView().padding(),
           tag: SettingsState.video,
           selection: $currentPage
         )
+
+        #if !os(tvOS)
         NavigationLink(
           "Controls",
           destination: ControlsSettingsView().padding(),

@@ -80,12 +80,17 @@ struct JoinServerAndThen<Content: View>: View {
             HStack {
               ProgressView(value: Double(received) / Double(total))
               Text("\(received) of \(total)")
-            }.frame(maxWidth: 200)
+            }
+            #if !os(tvOS)
+            .frame(maxWidth: 200)
+            #endif
           }
 
           Button("Cancel", action: cancel)
             .buttonStyle(SecondaryButtonStyle())
+            #if !os(tvOS)
             .frame(width: 150)
+            #endif
         case .joined:
           if let client = client {
             content(client)

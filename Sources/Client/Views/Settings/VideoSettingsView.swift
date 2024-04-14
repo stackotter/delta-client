@@ -1,7 +1,6 @@
 import SwiftUI
 import DeltaCore
 
-#if !os(tvOS)
 struct VideoSettingsView: View {
   @EnvironmentObject var managedConfig: ManagedConfig
 
@@ -9,7 +8,9 @@ struct VideoSettingsView: View {
     ScrollView {
       HStack {
         Text("Render distance: \(managedConfig.render.renderDistance)")
-        Spacer()
+        #if os(tvOS)
+        ProgressView(value: Double(managedConfig.render.renderDistance) / 32)
+        #else
         Slider(
           value: Binding {
             Float(managedConfig.render.renderDistance)
@@ -20,8 +21,23 @@ struct VideoSettingsView: View {
           step: 1
         )
           .frame(width: 220)
+        #endif
       }
+      #if os(tvOS)
+      .focusable()
+      .onMoveCommand { direction in
+        switch direction {
+          case .left:
+            managedConfig.render.renderDistance -= 1
+          case .right:
+            managedConfig.render.renderDistance += 1
+          default:
+            break
+        }
+      }
+      #endif
 
+      #if !os(tvOS)
       HStack {
         Text("FOV: \(Int(managedConfig.render.fovY.rounded()))")
         Spacer()
@@ -35,6 +51,7 @@ struct VideoSettingsView: View {
         )
           .frame(width: 220)
       }
+      #endif
 
       HStack {
         Text("Render mode")
@@ -49,23 +66,30 @@ struct VideoSettingsView: View {
         #elseif os(iOS) || os(tvOS)
           .pickerStyle(DefaultPickerStyle())
         #endif
+        #if !os(tvOS)
           .frame(width: 220)
+        #endif
       }
 
-      HStack {
-        Text("Order independent transparency")
-        Spacer()
-        Toggle(
-          "Order independent transparency",
-          isOn: $managedConfig.render.enableOrderIndependentTransparency
-        )
-          .labelsHidden()
-          .toggleStyle(.switch)
-          .frame(width: 220)
-      }
+      // Order independent transparency doesn't work on tvOS yet (our implementation uses a Metal
+      // feature which isn't supported on tvOS).
+      #if !os(tvOS)
+        HStack {
+          Text("Order independent transparency")
+          Spacer()
+          Toggle(
+            "Order independent transparency",
+            isOn: $managedConfig.render.enableOrderIndependentTransparency
+          )
+            .labelsHidden()
+            .toggleStyle(.switch)
+            .frame(width: 220)
+        }
+      #endif
     }
+    #if !os(tvOS)
     .frame(width: 450)
+    #endif
     .navigationTitle("Video")
   }
 }
-#endif
