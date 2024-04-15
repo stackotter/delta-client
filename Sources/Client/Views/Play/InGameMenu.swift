@@ -11,6 +11,7 @@ struct InGameMenu: View {
   @Binding var presented: Bool
   @State var state: InGameMenuState = .menu
 
+  #if os(tvOS)
   @FocusState var focusState: FocusElements?
 
   func moveFocus(_ direction: MoveCommandDirection) {
@@ -37,6 +38,7 @@ struct InGameMenu: View {
     case settings
     case disconnect
   }
+  #endif
 
   init(presented: Binding<Bool>) {
     _presented = presented
@@ -52,23 +54,28 @@ struct InGameMenu: View {
                 Button("Back to game") {
                   presented = false
                 }
-                  #if !os(tvOS)
-                  .keyboardShortcut(.escape, modifiers: [])
-                  #endif
+                  #if os(tvOS)
                   .focused($focusState, equals: .backToGame)
                   .buttonStyle(PrimaryButtonStyle())
+                  #else
+                  .keyboardShortcut(.escape, modifiers: [])
+                  #endif
 
                 Button("Settings") { 
                   state = .settings
                 }
+                  #if os(tvOS)
                   .focused($focusState, equals: .settings)
                   .buttonStyle(SecondaryButtonStyle())
+                  #endif
 
                 Button("Disconnect") {
                   appState.update(to: .serverList)
                 }
+                  #if os(tvOS)
                   .focused($focusState, equals: .disconnect)
                   .buttonStyle(SecondaryButtonStyle())
+                  #endif
               }
               #if !os(tvOS)
               .frame(width: 200)
@@ -81,10 +88,12 @@ struct InGameMenu: View {
         }
           .frame(width: geometry.size.width, height: geometry.size.height)
           .background(Color.black.opacity(0.702), alignment: .center)
+          #if os(tvOS)
           .onAppear {
             focusState = .backToGame
           }
           .focusSection()
+          #endif
       }
     }
   }
