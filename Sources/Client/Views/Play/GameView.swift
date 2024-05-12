@@ -44,17 +44,17 @@ struct GameView: View {
   var body: some View {
     JoinServerAndThen(serverDescriptor, with: account) { client in
       WithRenderCoordinator(for: client) { renderCoordinator in
-        if let renderCoord = renderCoordinator {
+        if let renderCoordinator = renderCoordinator {
           VStack {
             switch state {
               case .playing:
                 ZStack {
                   WithController(controller, listening: $inputCaptured) {
                     if controllerOnly {
-                      gameView(client: client, renderCoordinator: renderCoord)
+                      gameView(client: client, renderCoordinator: renderCoordinator)
                     } else {
                       InputView(listening: $inputCaptured, cursorCaptured: !inGameMenuPresented && cursorCaptured) {
-                        gameView(client: client, renderCoordinator: renderCoord)
+                        gameView(client: client, renderCoordinator: renderCoordinator)
                       }
                       .onKeyPress { [weak client] key, characters in
                         client?.press(key, characters)
@@ -107,7 +107,7 @@ struct GameView: View {
               inputCaptured = false
             }
 
-            registerEventHandler(client, renderCoord)
+            registerEventHandler(client, renderCoordinator)
           }
         }
       } cancellationHandler: {
