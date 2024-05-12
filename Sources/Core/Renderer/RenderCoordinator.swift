@@ -24,9 +24,9 @@ public struct RendererError: LocalizedError {
         return "Failed to get metal device"
       case .makeRenderCommandQueue:
         return "Failed to make render command queue"
-      case.camera:
+      case .camera:
         return "Failed to create camera: \(String(describing: error!)) - \(error!.localizedDescription)"
-      case.skyBoxRenderer:
+      case .skyBoxRenderer:
         return "Failed to create sky box renderer: \(String(describing: error!)) - \(error!.localizedDescription)"
       case .worldRenderer:
         return "Failed to create world renderer: \(String(describing: error!)) - \(error!.localizedDescription)"
