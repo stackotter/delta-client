@@ -7,16 +7,16 @@ public struct RendererError: LocalizedError {
   public enum ErrorKind {
     case getMetalDevice
     case makeRenderCommandQueue
-    case camera
-    case skyBoxRenderer
-    case worldRenderer
-    case guiRenderer
-    case screenRenderer
-    case depthState
+    case camera(Error)
+    case skyBoxRenderer(Error)
+    case worldRenderer(Error)
+    case guiRenderer(Error)
+    case screenRenderer(Error)
+    case depthState(Error)
+    case unknown(Error)
   }
   
   public let kind: ErrorKind
-  public private(set) var error: Error? = nil
   
   public var errorDescription: String? {
     switch kind {
@@ -24,24 +24,31 @@ public struct RendererError: LocalizedError {
         return "Failed to get metal device"
       case .makeRenderCommandQueue:
         return "Failed to make render command queue"
-      case .camera:
-        return "Failed to create camera: \(String(describing: error!)) - \(error!.localizedDescription)"
-      case .skyBoxRenderer:
-        return "Failed to create sky box renderer: \(String(describing: error!)) - \(error!.localizedDescription)"
-      case .worldRenderer:
-        return "Failed to create world renderer: \(String(describing: error!)) - \(error!.localizedDescription)"
-      case .guiRenderer:
-        return "Failed to create GUI renderer: \(String(describing: error!)) - \(error!.localizedDescription)"
-      case .screenRenderer:
-        return "Failed to create Screen renderer: \(String(describing: error!)) - \(error!.localizedDescription)"
-      case .depthState:
-        return "Failed to create depth state: \(String(describing: error!)) - \(error!.localizedDescription)"
+      case .camera(let cameraError):
+        return "Failed to create camera: \(cameraError.labeledLocalizedDescription)"
+      case .skyBoxRenderer(let skyBoxError):
+        return "Failed to create sky box renderer: \(skyBoxError.labeledLocalizedDescription)"
+      case .worldRenderer(let worldError):
+        return "Failed to create world renderer: \(worldError.labeledLocalizedDescription)"
+      case .guiRenderer(let guiError):
+        return "Failed to create GUI renderer: \(guiError.labeledLocalizedDescription)"
+      case .screenRenderer(let screenError):
+        return "Failed to create Screen renderer: \(screenError.labeledLocalizedDescription)"
+      case .depthState(let depthError):
+        return "Failed to create depth state: \(depthError.labeledLocalizedDescription)"
+      case .unknown(let error):
+        return "Failed with an unknown error \(error.labeledLocalizedDescription)"
     }
   }
   
-  init(kind: ErrorKind, error: Error? = nil) {
+  public init(_ kind: ErrorKind) {
     self.kind = kind
-    self.error = error
+  }
+}
+
+extension Error {
+  public var labeledLocalizedDescription: String? {
+    "\(String(describing: self)) - \(self.localizedDescription)"
   }
 }
 
@@ -102,11 +109,11 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   /// - Parameter client: The client to render for.
   public required init(_ client: Client) throws {
     guard let device = MTLCreateSystemDefaultDevice() else {
-      throw RendererError(kind: RendererError.ErrorKind.getMetalDevice)
+      throw RendererError(.getMetalDevice)
     }
 
     guard let commandQueue = device.makeCommandQueue() else {
-      throw RendererError(kind: RendererError.ErrorKind.makeRenderCommandQueue)
+      throw RendererError(.makeRenderCommandQueue)
     }
 
     self.client = client
@@ -117,7 +124,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     do {
       camera = try Camera(device)
     } catch {
-      throw RendererError(kind: RendererError.ErrorKind.camera, error: error)
+      throw RendererError(.camera(error))
     }
 
     do {
@@ -127,7 +134,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         commandQueue: commandQueue
       )
     } catch {
-      throw RendererError(kind: RendererError.ErrorKind.skyBoxRenderer, error: error)
+      throw RendererError(.skyBoxRenderer(error))
     }
 
     do {
@@ -138,7 +145,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         profiler: profiler
       )
     } catch {
-      throw RendererError(kind: RendererError.ErrorKind.worldRenderer, error: error)
+      throw RendererError(.worldRenderer(error))
     }
 
     do {
@@ -149,7 +156,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         profiler: profiler
       )
     } catch {
-      throw RendererError(kind: RendererError.ErrorKind.guiRenderer, error: error)
+      throw RendererError(.guiRenderer(error))
     }
 
     do {
@@ -159,14 +166,14 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         profiler: profiler
       )
     } catch {
-      throw RendererError(kind: RendererError.ErrorKind.screenRenderer, error: error)
+      throw RendererError(.screenRenderer(error))
     }
 
     // Create depth stencil state
     do {
       depthState = try MetalUtil.createDepthState(device: device)
     } catch {
-      throw RendererError(kind: RendererError.ErrorKind.depthState, error: error)
+      throw RendererError(.depthState(error))
     }
 
     statistics = RenderStatistics(gpuCountersEnabled: false)
