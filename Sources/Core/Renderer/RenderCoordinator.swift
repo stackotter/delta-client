@@ -3,6 +3,48 @@ import FirebladeMath
 import MetalKit
 import DeltaCore
 
+public struct RendererError: LocalizedError {
+  public enum ErrorKind {
+    case getMetalDevice
+    case makeRenderCommandQueue
+    case camera
+    case skyBoxRenderer
+    case worldRenderer
+    case guiRenderer
+    case screenRenderer
+    case depthState
+  }
+  
+  public let kind: ErrorKind
+  public private(set) var error: Error? = nil
+  
+  public var errorDescription: String? {
+    switch kind {
+      case .getMetalDevice:
+        return "Failed to get metal device"
+      case .makeRenderCommandQueue:
+        return "Failed to make render command queue"
+      case.camera:
+        return "Failed to create camera: \(String(describing: error!)) - \(error!.localizedDescription)"
+      case.skyBoxRenderer:
+        return "Failed to create sky box renderer: \(String(describing: error!)) - \(error!.localizedDescription)"
+      case .worldRenderer:
+        return "Failed to create world renderer: \(String(describing: error!)) - \(error!.localizedDescription)"
+      case .guiRenderer:
+        return "Failed to create GUI renderer: \(String(describing: error!)) - \(error!.localizedDescription)"
+      case .screenRenderer:
+        return "Failed to create Screen renderer: \(String(describing: error!)) - \(error!.localizedDescription)"
+      case .depthState:
+        return "Failed to create depth state: \(String(describing: error!)) - \(error!.localizedDescription)"
+    }
+  }
+  
+  init(kind: ErrorKind, error: Error? = nil) {
+    self.kind = kind
+    self.error = error
+  }
+}
+
 /// Coordinates the rendering of the game (e.g. blocks and entities).
 public final class RenderCoordinator: NSObject, MTKViewDelegate {
   // MARK: Public properties
@@ -53,19 +95,18 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
 
   /// The longest a frame has taken to encode so far.
   private var longestFrame: Double = 0
-
+  
   // MARK: Init
 
   /// Creates a render coordinator.
   /// - Parameter client: The client to render for.
-  public required init(_ client: Client) {
-    // TODO: get rid of fatalErrors in RenderCoordinator
+  public required init(_ client: Client) throws {
     guard let device = MTLCreateSystemDefaultDevice() else {
-      fatalError("Failed to get metal device")
+      fatalError()
     }
 
     guard let commandQueue = device.makeCommandQueue() else {
-      fatalError("Failed to make render command queue")
+      throw RendererError(kind: RendererError.ErrorKind.makeRenderCommandQueue)
     }
 
     self.client = client
@@ -76,7 +117,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     do {
       camera = try Camera(device)
     } catch {
-      fatalError("Failed to create camera: \(error)")
+      throw RendererError(kind: RendererError.ErrorKind.camera, error: error)
     }
 
     do {
@@ -86,7 +127,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         commandQueue: commandQueue
       )
     } catch {
-      fatalError("Failed to create sky box renderer: \(error)")
+      throw RendererError(kind: RendererError.ErrorKind.skyBoxRenderer, error: error)
     }
 
     do {
@@ -97,7 +138,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         profiler: profiler
       )
     } catch {
-      fatalError("Failed to create world renderer: \(error)")
+      throw RendererError(kind: RendererError.ErrorKind.worldRenderer, error: error)
     }
 
     do {
@@ -108,7 +149,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         profiler: profiler
       )
     } catch {
-      fatalError("Failed to create GUI renderer: \(error)")
+      throw RendererError(kind: RendererError.ErrorKind.guiRenderer, error: error)
     }
 
     do {
@@ -118,14 +159,14 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         profiler: profiler
       )
     } catch {
-      fatalError("Failed to create Screen renderer: \(error)")
+      throw RendererError(kind: RendererError.ErrorKind.screenRenderer, error: error)
     }
 
     // Create depth stencil state
     do {
       depthState = try MetalUtil.createDepthState(device: device)
     } catch {
-      fatalError("Failed to create depth state: \(error)")
+      throw RendererError(kind: RendererError.ErrorKind.depthState, error: error)
     }
 
     statistics = RenderStatistics(gpuCountersEnabled: false)
