@@ -102,7 +102,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   /// - Parameter client: The client to render for.
   public required init(_ client: Client) throws {
     guard let device = MTLCreateSystemDefaultDevice() else {
-      fatalError()
+      throw RendererError(kind: RendererError.ErrorKind.getMetalDevice)
     }
 
     guard let commandQueue = device.makeCommandQueue() else {
