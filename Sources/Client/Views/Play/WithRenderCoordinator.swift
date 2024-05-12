@@ -7,24 +7,40 @@ import DeltaRenderer
 struct WithRenderCoordinator<Content: View>: View {
   var client: Client
   var content: (RenderCoordinator) -> Content
+  var cancel: () -> Void
 
-  init(for client: Client, @ViewBuilder content: @escaping (RenderCoordinator) -> Content) {
+  init(for client: Client, @ViewBuilder content: @escaping (RenderCoordinator?) -> Content, cancellationHandler cancel: @escaping () -> Void) {
     self.client = client
     self.content = content
+    self.cancel = cancel
   }
 
   @State var renderCoordinator: RenderCoordinator?
+  @State var renderCoordinatorError: RendererError?
 
   var body: some View {
     VStack {
       if let renderCoordinator = renderCoordinator {
         content(renderCoordinator)
       } else {
-        Text("Creating render coordinator")
+        if let error = renderCoordinatorError {
+          Text(error.localizedDescription)
+          
+          Button("Done", action: cancel)
+            .buttonStyle(SecondaryButtonStyle())
+            .frame(width: 150)
+        } else {
+          Text("Creating render coordinator")
+        }
       }
     }
     .onAppear {
-      renderCoordinator = RenderCoordinator(client)
+      do {
+        try renderCoordinator = RenderCoordinator(client)
+      } catch let error as RendererError {
+        renderCoordinatorError = error
+      } catch {
+      }
     }
   }
 }

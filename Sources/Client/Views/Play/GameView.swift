@@ -44,70 +44,74 @@ struct GameView: View {
   var body: some View {
     JoinServerAndThen(serverDescriptor, with: account) { client in
       WithRenderCoordinator(for: client) { renderCoordinator in
-        VStack {
-          switch state {
-            case .playing:
-              ZStack {
-                WithController(controller, listening: $inputCaptured) {
-                  if controllerOnly {
-                    gameView(client: client, renderCoordinator: renderCoordinator)
-                  } else {
-                    InputView(listening: $inputCaptured, cursorCaptured: !inGameMenuPresented && cursorCaptured) {
-                      gameView(client: client, renderCoordinator: renderCoordinator)
+        if let renderCoord = renderCoordinator {
+          VStack {
+            switch state {
+              case .playing:
+                ZStack {
+                  WithController(controller, listening: $inputCaptured) {
+                    if controllerOnly {
+                      gameView(client: client, renderCoordinator: renderCoord)
+                    } else {
+                      InputView(listening: $inputCaptured, cursorCaptured: !inGameMenuPresented && cursorCaptured) {
+                        gameView(client: client, renderCoordinator: renderCoord)
+                      }
+                      .onKeyPress { [weak client] key, characters in
+                        client?.press(key, characters)
+                      }
+                      .onKeyRelease { [weak client] key in
+                        client?.release(key)
+                      }
+                      .onMouseMove { [weak client] deltaX, deltaY in
+                        // TODO: Formalise this adjustment factor somewhere
+                        let sensitivityAdjustmentFactor: Float = 0.004
+                        let sensitivity = sensitivityAdjustmentFactor * managedConfig.mouseSensitivity
+                        client?.moveMouse(sensitivity * deltaX, sensitivity * deltaY)
+                      }
+                      .passthroughClicks(!cursorCaptured)
                     }
-                    .onKeyPress { [weak client] key, characters in
-                      client?.press(key, characters)
+                  }
+                  .onButtonPress { [weak client] button in
+                    guard let input = input(for: button) else {
+                      return
                     }
-                    .onKeyRelease { [weak client] key in
-                      client?.release(key)
+                    client?.press(input)
+                  }
+                  .onButtonRelease { [weak client] button in
+                    guard let input = input(for: button) else {
+                      return
                     }
-                    .onMouseMove { [weak client] deltaX, deltaY in
-                      // TODO: Formalise this adjustment factor somewhere
-                      let sensitivityAdjustmentFactor: Float = 0.004
-                      let sensitivity = sensitivityAdjustmentFactor * managedConfig.mouseSensitivity
-                      client?.moveMouse(sensitivity * deltaX, sensitivity * deltaY)
+                    client?.release(input)
+                  }
+                  .onThumbstickMove { [weak client] thumbstick, x, y in
+                    switch thumbstick {
+                      case .left:
+                        client?.moveLeftThumbstick(x, y)
+                      case .right:
+                        client?.moveRightThumbstick(x, y)
                     }
-                    .passthroughClicks(!cursorCaptured)
                   }
                 }
-                .onButtonPress { [weak client] button in
-                  guard let input = input(for: button) else {
-                    return
+              case .gpuFrameCaptureComplete(let file):
+                frameCaptureResult(file)
+                  .onAppear {
+                    cursorCaptured = false
+                    inputCaptured = false
                   }
-                  client?.press(input)
-                }
-                .onButtonRelease { [weak client] button in
-                  guard let input = input(for: button) else {
-                    return
-                  }
-                  client?.release(input)
-                }
-                .onThumbstickMove { [weak client] thumbstick, x, y in
-                  switch thumbstick {
-                    case .left:
-                      client?.moveLeftThumbstick(x, y)
-                    case .right:
-                      client?.moveRightThumbstick(x, y)
-                  }
-                }
-              }
-            case .gpuFrameCaptureComplete(let file):
-              frameCaptureResult(file)
-                .onAppear {
-                  cursorCaptured = false
-                  inputCaptured = false
-                }
+            }
           }
-        }
-        .onAppear {
-          modal.onError { [weak client] _ in
-            client?.game.tickScheduler.cancel()
-            cursorCaptured = false
-            inputCaptured = false
-          }
+          .onAppear {
+            modal.onError { [weak client] _ in
+              client?.game.tickScheduler.cancel()
+              cursorCaptured = false
+              inputCaptured = false
+            }
 
-          registerEventHandler(client, renderCoordinator)
+            registerEventHandler(client, renderCoord)
+          }
         }
+      } cancellationHandler: {
+        appState.update(to: .serverList)
       }
     } cancellationHandler: {
       appState.update(to: .serverList)
