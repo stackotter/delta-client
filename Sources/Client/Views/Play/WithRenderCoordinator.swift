@@ -6,7 +6,7 @@ import DeltaRenderer
 /// without having to introduce additional loading states into views.
 struct WithRenderCoordinator<Content: View>: View {
   var client: Client
-  var content: (RenderCoordinator) -> Content
+  var content: (RenderCoordinator?) -> Content
   var cancel: () -> Void
 
   init(for client: Client, @ViewBuilder content: @escaping (RenderCoordinator?) -> Content, cancellationHandler cancel: @escaping () -> Void) {
