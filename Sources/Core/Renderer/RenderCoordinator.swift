@@ -3,23 +3,19 @@ import FirebladeMath
 import MetalKit
 import DeltaCore
 
-public struct RendererError: LocalizedError {
-  public enum ErrorKind {
-    case getMetalDevice
-    case makeRenderCommandQueue
-    case camera(Error)
-    case skyBoxRenderer(Error)
-    case worldRenderer(Error)
-    case guiRenderer(Error)
-    case screenRenderer(Error)
-    case depthState(Error)
-    case unknown(Error)
-  }
-  
-  public let kind: ErrorKind
+public enum RendererError: LocalizedError {
+  case getMetalDevice
+  case makeRenderCommandQueue
+  case camera(Error)
+  case skyBoxRenderer(Error)
+  case worldRenderer(Error)
+  case guiRenderer(Error)
+  case screenRenderer(Error)
+  case depthState(Error)
+  case unknown(Error)
   
   public var errorDescription: String? {
-    switch kind {
+    switch self {
       case .getMetalDevice:
         return "Failed to get metal device"
       case .makeRenderCommandQueue:
@@ -39,10 +35,6 @@ public struct RendererError: LocalizedError {
       case .unknown(let error):
         return "Failed with an unknown error \(error.labeledLocalizedDescription)"
     }
-  }
-  
-  public init(_ kind: ErrorKind) {
-    self.kind = kind
   }
 }
 
@@ -109,11 +101,11 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
   /// - Parameter client: The client to render for.
   public required init(_ client: Client) throws {
     guard let device = MTLCreateSystemDefaultDevice() else {
-      throw RendererError(.getMetalDevice)
+      throw RendererError.getMetalDevice
     }
 
     guard let commandQueue = device.makeCommandQueue() else {
-      throw RendererError(.makeRenderCommandQueue)
+      throw RendererError.makeRenderCommandQueue
     }
 
     self.client = client
@@ -124,7 +116,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     do {
       camera = try Camera(device)
     } catch {
-      throw RendererError(.camera(error))
+      throw RendererError.camera(error)
     }
 
     do {
@@ -134,7 +126,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         commandQueue: commandQueue
       )
     } catch {
-      throw RendererError(.skyBoxRenderer(error))
+      throw RendererError.skyBoxRenderer(error)
     }
 
     do {
@@ -145,7 +137,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         profiler: profiler
       )
     } catch {
-      throw RendererError(.worldRenderer(error))
+      throw RendererError.worldRenderer(error)
     }
 
     do {
@@ -156,7 +148,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         profiler: profiler
       )
     } catch {
-      throw RendererError(.guiRenderer(error))
+      throw RendererError.guiRenderer(error)
     }
 
     do {
@@ -166,14 +158,14 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
         profiler: profiler
       )
     } catch {
-      throw RendererError(.screenRenderer(error))
+      throw RendererError.screenRenderer(error)
     }
 
     // Create depth stencil state
     do {
       depthState = try MetalUtil.createDepthState(device: device)
     } catch {
-      throw RendererError(.depthState(error))
+      throw RendererError.depthState(error)
     }
 
     statistics = RenderStatistics(gpuCountersEnabled: false)
