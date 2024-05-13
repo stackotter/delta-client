@@ -94,7 +94,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
 
   /// The longest a frame has taken to encode so far.
   private var longestFrame: Double = 0
-  
+
   // MARK: Init
 
   /// Creates a render coordinator.
