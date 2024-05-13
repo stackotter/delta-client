@@ -36,7 +36,7 @@ struct WithRenderCoordinator<Content: View>: View {
     }
     .onAppear {
       do {
-        try renderCoordinator = RenderCoordinator(client)
+        renderCoordinator = try RenderCoordinator(client)
       } catch let error as RendererError {
         renderCoordinatorError = error
       } catch {
