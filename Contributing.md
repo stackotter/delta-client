@@ -34,9 +34,9 @@ If your contributions follow these guidelines, they'll be much more likely to ge
 
 ### Delta Client
 
-**Important**: Only Xcode 14 is supported, Xcode 12 builds don't work because Delta Client uses new
+**Important**: Only Xcode 14+ is supported, Xcode 12 builds don't work because Delta Client uses new
 automatic `Codable` conformance and there are some weird discrepancies between Xcode 12's swift
-compiler and Xcode 14's swift compiler. Xcode 13 isn't supported because it causes some weird memory
+compiler and Xcode 14+'s swift compiler. Xcode 13 isn't supported because it causes some weird memory
 corruption issues.
 
 [Delta Client](https://github.com/stackotter/delta-client) uses the
