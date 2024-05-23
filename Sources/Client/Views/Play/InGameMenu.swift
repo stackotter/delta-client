@@ -56,8 +56,8 @@ struct InGameMenu: View {
                 }
                   #if os(tvOS)
                   .focused($focusState, equals: .backToGame)
-                  .buttonStyle(PrimaryButtonStyle())
                   #else
+                  .buttonStyle(PrimaryButtonStyle())
                   .keyboardShortcut(.escape, modifiers: [])
                   #endif
 
@@ -66,16 +66,16 @@ struct InGameMenu: View {
                 }
                   #if os(tvOS)
                   .focused($focusState, equals: .settings)
-                  .buttonStyle(SecondaryButtonStyle())
                   #endif
+                  .buttonStyle(SecondaryButtonStyle())
 
                 Button("Disconnect") {
                   appState.update(to: .serverList)
                 }
                   #if os(tvOS)
                   .focused($focusState, equals: .disconnect)
-                  .buttonStyle(SecondaryButtonStyle())
                   #endif
+                  .buttonStyle(SecondaryButtonStyle())
               }
               #if !os(tvOS)
               .frame(width: 200)
