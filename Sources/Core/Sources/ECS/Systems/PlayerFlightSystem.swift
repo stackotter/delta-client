@@ -9,7 +9,6 @@ public struct PlayerFlightSystem: System {
       EntityVelocity.self,
       PlayerAttributes.self,
       ClientPlayerEntity.self
-    ).makeIterator()
     
     guard let (gamemode, onGround, flying, velocity, attributes, _) = family.next() else {
       log.error("PlayerFlightSystem failed to get player to tick")

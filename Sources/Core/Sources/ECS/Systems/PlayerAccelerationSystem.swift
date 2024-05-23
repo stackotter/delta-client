@@ -107,7 +107,7 @@ public struct PlayerAccelerationSystem: System {
       sprinting.isSprinting,
       onGround.onGround,
       flying.isFlying,
-      playerAttributes.flyingSpeed
+      playerAttributes.flyingSpeed // Set by server, different from entityAttributes
     )
 
     impulse *= speed
@@ -168,7 +168,7 @@ public struct PlayerAccelerationSystem: System {
       )
       let block = world.getBlock(at: blockPosition)
       let slipperiness = block.material.slipperiness
-      
+
       speed = movementSpeed * 0.216 / (slipperiness * slipperiness * slipperiness)
     } else if isFlying {
       speed = Double(flyingSpeed)
