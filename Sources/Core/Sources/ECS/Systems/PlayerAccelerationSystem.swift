@@ -105,7 +105,9 @@ public struct PlayerAccelerationSystem: System {
       world,
       entityAttributes[.movementSpeed].value,
       sprinting.isSprinting,
-      onGround.onGround
+      onGround.onGround,
+      flying.isFlying,
+      playerAttributes.flyingSpeed
     )
 
     impulse *= speed
@@ -152,7 +154,9 @@ public struct PlayerAccelerationSystem: System {
     _ world: World,
     _ movementSpeed: Double,
     _ isSprinting: Bool,
-    _ onGround: Bool
+    _ onGround: Bool,
+    _ isFlying: Bool,
+    _ flightSpeed: Float
   ) -> Double {
     var speed: Double
     if onGround {
@@ -166,6 +170,11 @@ public struct PlayerAccelerationSystem: System {
       let slipperiness = block.material.slipperiness
 
       speed = movementSpeed * 0.216 / (slipperiness * slipperiness * slipperiness)
+    } else if isFlying {
+      speed = Double(flightSpeed)
+      if isSprinting {
+        speed *= 2
+      }
     } else {
       speed = 0.02
       if isSprinting {
