@@ -36,12 +36,10 @@ public struct PlayerFlightSystem: System {
       let jumpPressed = inputState.inputs.contains(.jump)
       if sneakPressed != jumpPressed {
         if sneakPressed {
-          velocity.y = Double(-attributes.flyingSpeed * 3)
+          velocity.y -= Double(attributes.flyingSpeed * 3)
         } else {
-          velocity.y = Double(attributes.flyingSpeed * 3)
+          velocity.y += Double(attributes.flyingSpeed * 3)
         }
-      } else if !sneakPressed && !jumpPressed {
-        velocity.y = 0
       }
     }
   }
