@@ -227,6 +227,8 @@ public final class PlayerInputSystem: System {
       eventBus.dispatch(ReleaseCursorEvent())
     } else if event.key == .forwardSlash {
       guiState.messageInput = "/"
+      inputState.releaseAll()
+      eventBus.dispatch(ReleaseCursorEvent())
     }
 
     // Suppress inputs while the user is typing.

@@ -165,6 +165,12 @@ public final class Game: @unchecked Sendable {
     inputState.moveRightThumbstick(x, y)
   }
 
+  public func accessInputState<R>(acquireLock: Bool = true, action: (InputState) -> R) -> R {
+    if acquireLock { nexusLock.acquireWriteLock() }
+    defer { if acquireLock { nexusLock.unlock() } }
+    return action(inputState)
+  }
+
   /// Gets a copy of the current GUI state.
   /// - Returns: A copy of the current GUI state.
   public func guiState() -> GUIState {
@@ -176,10 +182,10 @@ public final class Game: @unchecked Sendable {
   /// Mutates the GUI state using a provided action.
   /// - acquireLock: If `false`, a nexus lock will not be acquired. Use with caution.
   /// - action: Action to run on GUI state.
-  public func mutateGUIState(acquireLock: Bool = true, action: (inout GUIState) -> Void) {
+  public func mutateGUIState<R>(acquireLock: Bool = true, action: (inout GUIState) -> R) -> R {
     if acquireLock { nexusLock.acquireWriteLock() }
     defer { if acquireLock { nexusLock.unlock() } }
-    action(&_guiState.inner)
+    return action(&_guiState.inner)
   }
 
   // MARK: Entity

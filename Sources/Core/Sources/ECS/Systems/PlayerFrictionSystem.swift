@@ -23,6 +23,7 @@ public struct PlayerFrictionSystem: System {
     }
 
     velocity.x *= multiplier
+    velocity.y *= 0.98
     velocity.z *= multiplier
   }
 }
