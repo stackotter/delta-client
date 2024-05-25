@@ -68,6 +68,7 @@ public final class InputState: SingleComponent {
     }
 
     for input in inputs {
+      print("Releasing \(input)")
       newlyReleased.append(KeyReleaseEvent(key: nil, input: input))
     }
 

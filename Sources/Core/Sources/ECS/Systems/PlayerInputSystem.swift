@@ -55,6 +55,7 @@ public final class PlayerInputSystem: System {
             guiState.showDebugScreen = !guiState.showDebugScreen
           case .toggleInventory:
             guiState.showInventory = !guiState.showInventory
+            inputState.releaseAll()
             eventBus.dispatch(ReleaseCursorEvent())
           case .slot1:
             inventory.selectedHotbarSlot = 0
@@ -219,6 +220,10 @@ public final class PlayerInputSystem: System {
       }
     } else if event.input == .openChat {
       guiState.messageInput = ""
+      // TODO: Refactor input handling to be a bit more declarative so that something like
+      //   issue #192 is less likely to happen again. Besides, this input handling code is
+      //   pretty spaghetti and could do with a makeover anyway.
+      inputState.releaseAll()
       eventBus.dispatch(ReleaseCursorEvent())
     } else if event.key == .forwardSlash {
       guiState.messageInput = "/"
