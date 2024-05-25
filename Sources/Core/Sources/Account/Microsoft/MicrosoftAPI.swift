@@ -97,7 +97,7 @@ public enum MicrosoftAPI {
     let (_, data) = try await RequestUtil.performFormRequest(
       url: authenticationURL,
       body: [
-        "tenant": "concumers",
+        "tenant": "consumers",
         "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
         "client_id": clientId,
         "device_code": deviceCode
@@ -330,7 +330,8 @@ public enum MicrosoftAPI {
   /// - Returns: The user's Minecraft access token.
   private static func getMinecraftAccessToken(_ xstsToken: String, _ xboxLiveToken: XboxLiveToken) async throws -> MinecraftAccessToken {
     let payload = MinecraftXboxAuthenticationRequest(
-      identityToken: "XBL3.0 x=\(xboxLiveToken.userHash);\(xstsToken)")
+      identityToken: "XBL3.0 x=\(xboxLiveToken.userHash);\(xstsToken)"
+    )
 
     let (_, data) = try await RequestUtil.performJSONRequest(
       url: minecraftXboxAuthenticationURL,
