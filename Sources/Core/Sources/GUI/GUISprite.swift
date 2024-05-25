@@ -1,5 +1,5 @@
 /// A sprite in the GUI texture palette.
-enum GUISprite: GUIElement {
+public enum GUISprite {
   case heartOutline
   case fullHeart
   case halfHeart
@@ -17,7 +17,7 @@ enum GUISprite: GUIElement {
   case inventory
 
   /// The descriptor for the sprite.
-  var descriptor: GUISpriteDescriptor {
+  public var descriptor: GUISpriteDescriptor {
     switch self {
       case .heartOutline:
         return .icon(0, 0)
@@ -50,9 +50,5 @@ enum GUISprite: GUIElement {
       case .inventory:
         return GUISpriteDescriptor(slice: .inventory, position: [0, 0], size: [176, 166])
     }
-  }
-
-  func meshes(context: GUIContext) throws -> [GUIElementMesh] {
-    return try descriptor.meshes(context: context)
   }
 }

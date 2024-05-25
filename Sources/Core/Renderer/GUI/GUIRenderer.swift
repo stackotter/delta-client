@@ -14,9 +14,20 @@ public final class GUIRenderer: Renderer {
   var font: Font
   var uniformsBuffer: MTLBuffer
   var pipelineState: MTLRenderPipelineState
-  var gui: GUI
   var profiler: Profiler<RenderingMeasurement>
   var previousUniforms: GUIUniforms?
+
+  var gui: InGameGUI
+
+  var fontArrayTexture: MTLTexture
+  var guiTexturePalette: GUITexturePalette
+  var guiArrayTexture: MTLTexture
+  var itemTexturePalette: TexturePalette
+  var itemArrayTexture: MTLTexture
+  var itemModelPalette: ItemModelPalette
+  var blockArrayTexture: MTLTexture
+  var blockModelPalette: BlockModelPalette
+  var blockTexturePalette: TexturePalette
 
   var cache: [GUIElementMesh] = []
 
@@ -31,6 +42,43 @@ public final class GUIRenderer: Renderer {
 
     // Create array texture
     font = client.resourcePack.vanillaResources.fontPalette.defaultFont
+
+    let resources = client.resourcePack.vanillaResources
+    let font = resources.fontPalette.defaultFont
+    fontArrayTexture = try font.createArrayTexture(
+      device: device,
+      commandQueue: commandQueue
+    )
+    fontArrayTexture.label = "fontArrayTexture"
+
+    guiTexturePalette = try GUITexturePalette(resources.guiTexturePalette)
+    guiArrayTexture = try MetalTexturePalette.createArrayTexture(
+      for: resources.guiTexturePalette,
+      device: device,
+      commandQueue: commandQueue,
+      includeAnimations: false
+    )
+    guiArrayTexture.label = "guiArrayTexture"
+
+    itemTexturePalette = resources.itemTexturePalette
+    itemArrayTexture = try MetalTexturePalette.createArrayTexture(
+      for: resources.itemTexturePalette,
+      device: device,
+      commandQueue: commandQueue,
+      includeAnimations: false
+    )
+    itemArrayTexture.label = "itemArrayTexture"
+    itemModelPalette = resources.itemModelPalette
+
+    blockTexturePalette = resources.blockTexturePalette
+    blockArrayTexture = try MetalTexturePalette.createArrayTexture(
+      for: resources.blockTexturePalette,
+      device: device,
+      commandQueue: commandQueue,
+      includeAnimations: false
+    )
+    blockArrayTexture.label = "blockArrayTexture"
+    blockModelPalette = resources.blockModelPalette
 
     // Create uniforms buffer
     uniformsBuffer = try MetalUtil.makeBuffer(
@@ -49,12 +97,7 @@ public final class GUIRenderer: Renderer {
       blendingEnabled: true
     )
 
-    gui = try GUI(
-      client: client,
-      device: device,
-      commandQueue: commandQueue,
-      profiler: profiler
-    )
+    gui = InGameGUI()
   }
 
   public func render(
@@ -80,10 +123,15 @@ public final class GUIRenderer: Renderer {
     profiler.pop()
 
     // Create meshes
-    let meshes = try gui.meshes(
-      drawableSize: Vec2i(Int(width), Int(height)),
-      scalingFactor: scalingFactor
+    let renderable = gui.body.resolveConstraints(
+      availableSize: Vec2i(
+        Int(width / scalingFactor),
+        Int(height / scalingFactor)
+      ),
+      font: font
     )
+
+    let meshes = try meshes(for: renderable)
 
     profiler.push(.encode)
     // Set vertex buffers
@@ -112,6 +160,37 @@ public final class GUIRenderer: Renderer {
       }
     }
     profiler.pop()
+  }
+
+  func meshes(for renderable: GUIElement.GUIRenderable) throws -> [GUIElementMesh] {
+    switch renderable.content {
+      case let .text(wrappedLines, hangingIndent):
+        let builder = TextMeshBuilder(font: font)
+        var meshes = try wrappedLines.compactMap { (line: String) in
+          do {
+            return try builder.build(line, fontArrayTexture: fontArrayTexture)
+          } catch let error as LocalizedError {
+            throw error
+              .with("Text", line)
+          } catch {
+            throw error
+          }
+        }
+        for i in meshes.indices where i != 0 {
+          meshes[i].position.x += hangingIndent
+        }
+        return meshes
+      case let .sprite(descriptor):
+        return try [GUIElementMesh(
+          sprite: descriptor,
+          guiTexturePalette: guiTexturePalette,
+          guiArrayTexture: guiArrayTexture
+        )]
+      case nil, .clickable:
+        var meshes = try renderable.children.map(\.0).flatMap(meshes)
+        meshes.translate(amount: renderable.relativePosition)
+        return meshes
+    }
   }
 
   static func optimizeMeshes(_ meshes: [GUIElementMesh]) throws -> [GUIElementMesh] {

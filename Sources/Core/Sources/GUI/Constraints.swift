@@ -1,21 +1,21 @@
 import FirebladeMath
 
-struct Constraints {
-  var vertical: VerticalConstraint
-  var horizontal: HorizontalConstraint
+public struct Constraints {
+  public var vertical: VerticalConstraint
+  public var horizontal: HorizontalConstraint
 
-  init(_ vertical: VerticalConstraint, _ horizontal: HorizontalConstraint) {
+  public init(_ vertical: VerticalConstraint, _ horizontal: HorizontalConstraint) {
     self.vertical = vertical
     self.horizontal = horizontal
   }
 
-  static let center = Constraints(.center, .center)
+  public static let center = Constraints(.center, .center)
 
-  static func position(_ x: Int, _ y: Int) -> Constraints {
+  public static func position(_ x: Int, _ y: Int) -> Constraints {
     return Constraints(.top(y), .left(x))
   }
 
-  func solve(innerSize: Vec2i, outerSize: Vec2i) -> Vec2i {
+  public func solve(innerSize: Vec2i, outerSize: Vec2i) -> Vec2i {
     let x: Int
     switch horizontal {
       case .left(let distance):
