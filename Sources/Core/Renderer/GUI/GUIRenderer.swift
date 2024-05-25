@@ -8,9 +8,10 @@ import UIKit
 
 /// The renderer for the GUI (chat, f3, scoreboard etc.).
 public final class GUIRenderer: Renderer {
+  static let scale: Float = 2
+
   var device: MTLDevice
   var font: Font
-  var scale: Float = 2
   var uniformsBuffer: MTLBuffer
   var pipelineState: MTLRenderPipelineState
   var gui: GUI
@@ -68,10 +69,10 @@ public final class GUIRenderer: Renderer {
     let drawableSize = view.drawableSize
     let width = Float(drawableSize.width)
     let height = Float(drawableSize.height)
-    let scale = Self.adjustScale(scale)
+    let scalingFactor = Self.scale * Self.screenScalingFactor()
 
     // Adjust scale per screen scale factor
-    var uniforms = createUniforms(width, height, scale)
+    var uniforms = createUniforms(width, height, scalingFactor)
     if uniforms != previousUniforms || true {
       uniformsBuffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<GUIUniforms>.size)
       previousUniforms = uniforms
@@ -80,7 +81,8 @@ public final class GUIRenderer: Renderer {
 
     // Create meshes
     let meshes = try gui.meshes(
-      effectiveDrawableSize: Vec2i(Int(width / scale), Int(height / scale))
+      drawableSize: Vec2i(Int(width), Int(height)),
+      scalingFactor: scalingFactor
     )
 
     profiler.push(.encode)
@@ -205,16 +207,18 @@ public final class GUIRenderer: Renderer {
     mesh.size &+= Vec2i(position)
   }
 
-  static func adjustScale(_ scale: Float) -> Float {
-    // Adjust scale per screen scale factor
+  /// Gets the scaling factor of the screen that Delta Client's currently getting rendered for.
+  public static func screenScalingFactor() -> Float {
+    // Higher density displays have higher scaling factors to keep content a similar real world
+    // size across screens.
     #if canImport(AppKit)
-    let screenScaleFactor = Float(NSApp.windows.first?.screen?.backingScaleFactor ?? 1)
+    let screenScalingFactor = Float(NSApp.windows.first?.screen?.backingScaleFactor ?? 1)
     #elseif canImport(UIKit)
-    let screenScaleFactor = Float(UIScreen.main.scale)
+    let screenScalingFactor = Float(UIScreen.main.scale)
     #else
     #error("Unsupported platform, unknown screen scale factor")
     #endif
-    return screenScaleFactor * scale
+    return screenScalingFactor
   }
 
   func createUniforms(_ width: Float, _ height: Float, _ scale: Float) -> GUIUniforms {

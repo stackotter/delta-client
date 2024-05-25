@@ -20,6 +20,7 @@ public final class InputState: SingleComponent {
   public private(set) var inputs: Set<Input> = []
 
   /// The current absolute mouse position relative to the play area's top left corner.
+  /// Measured in true pixels (not scaled down by the screen's scaling factor).
   public private(set) var mousePosition: Vec2f = Vec2f(0, 0)
   /// The mouse delta since the last call to ``resetMouseDelta()``.
   public private(set) var mouseDelta: Vec2f = Vec2f(0, 0)

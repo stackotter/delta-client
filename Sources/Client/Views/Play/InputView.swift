@@ -1,5 +1,6 @@
 import SwiftUI
 import DeltaCore
+import DeltaRenderer
 
 struct InputView<Content: View>: View {
   @EnvironmentObject var modal: Modal
@@ -103,7 +104,11 @@ struct InputView<Content: View>: View {
       let viewFrame = geometry.frame(in: .global)
       let x = (NSEvent.mouseLocation.x - window.frame.minX) - viewFrame.minX
       let y = window.frame.maxY - NSEvent.mouseLocation.y - viewFrame.minY
-      return (Float(x), Float(y))
+
+      // AppKit gives us the position scaled by the screen's scaling factor, so we
+      // adjust it back to get the position in terms of true pixels.
+      let scalingFactor = CGFloat(GUIRenderer.screenScalingFactor())
+      return (Float(x * scalingFactor), Float(y * scalingFactor))
     }
   #endif
 

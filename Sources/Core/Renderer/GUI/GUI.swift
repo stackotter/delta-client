@@ -89,9 +89,12 @@ struct GUI {
     )
   }
 
-  mutating func update(_ screenSize: Vec2i) -> GUIGroupElement {
+  mutating func update(
+    effectiveDrawableSize: Vec2i,
+    scalingFactor: Float
+  ) -> GUIGroupElement {
     let state = client.game.guiState()
-    var root = GUIGroupElement(screenSize)
+    var root = GUIGroupElement(effectiveDrawableSize)
 
     guard state.showHUD else {
       return root
@@ -112,10 +115,10 @@ struct GUI {
     }
 
     // Chat
-    chat(&root, state.chat.messages, state.messageInput, state.messageInputCursorIndex, screenSize)
+    chat(&root, state.chat.messages, state.messageInput, state.messageInputCursorIndex, effectiveDrawableSize)
 
     if state.showInventory {
-      inventory(&root, screenSize)
+      inventory(&root, effectiveDrawableSize)
     }
 
     return root
@@ -123,12 +126,12 @@ struct GUI {
 
   func inventory(
     _ parentGroup: inout GUIGroupElement,
-    _ screenSize: Vec2i
+    _ effectiveDrawableSize: Vec2i
   ) {
     // TODO: Figure out the exact overlay opacity that vanilla uses
     parentGroup.add(
       GUIRectangle(
-        size: screenSize,
+        size: effectiveDrawableSize,
         color: [0, 0, 0, 0.702]
       ),
       .center
@@ -180,7 +183,7 @@ struct GUI {
     _ messages: Deque<ChatMessage>,
     _ messageInput: String?,
     _ messageInputCursorIndex: String.Index,
-    _ screenSize: Vec2i
+    _ effectiveDrawableSize: Vec2i
   ) {
     let chatIsOpen = messageInput != nil
 
@@ -244,7 +247,7 @@ struct GUI {
     if let messageInput = messageInput {
       parentGroup.add(GUITextInput(
         content: messageInput,
-        width: screenSize.x - 4,
+        width: effectiveDrawableSize.x - 4,
         cursorIndex: messageInputCursorIndex
       ), .bottom(2), .left(2))
     }
@@ -427,10 +430,14 @@ struct GUI {
   }
 
   mutating func meshes(
-    effectiveDrawableSize: Vec2i
+    drawableSize: Vec2i,
+    scalingFactor: Float
   ) throws -> [GUIElementMesh] {
     profiler.push(.updateContent)
-    let root = update(effectiveDrawableSize)
+    let root = update(
+      effectiveDrawableSize: Vec2i(Vec2f(drawableSize) / scalingFactor),
+      scalingFactor: scalingFactor
+    )
     profiler.pop()
 
     profiler.push(.createMeshes)
