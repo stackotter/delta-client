@@ -19,6 +19,7 @@ public indirect enum GUIElement {
   /// Wraps an element with a background.
   case container(background: Vec4f, padding: Int, element: GUIElement)
   case floating(element: GUIElement)
+  case item(id: Int)
 
   public var children: [GUIElement] {
     switch self {
@@ -26,7 +27,7 @@ public indirect enum GUIElement {
         return elements
       case let .clickable(element, _), let .positioned(element, _), let .sized(element, _, _), let .container(_, _, element), let .floating(element):
         return [element]
-      case .text, .sprite, .customSprite, .spacer:
+      case .text, .sprite, .customSprite, .spacer, .item:
         return []
     }
   }
@@ -101,6 +102,15 @@ public indirect enum GUIElement {
     .clickable(self, action: action)
   }
 
+  /// Sets an element's apparent size to zero so that it doesn't partake in layout.
+  /// It will still get put exactly where it otherwise would, but for example if the
+  /// element is in a list, all following elements will be positioned as if the element
+  /// doesn't exist (except double spacing where the element would've been).
+  ///
+  /// Any constraints placed on an element after it has been floated will act as if the
+  /// element is of zero size. This probably isn't the best and could be fixed without
+  /// too much effort (by making element rendering logic understand floating instead of
+  /// just pretending the size is zero).
   public func float() -> GUIElement {
     .floating(element: self)
   }
@@ -118,6 +128,7 @@ public indirect enum GUIElement {
       /// Fills the renderable with the given background color. Goes behind
       /// any children that the renderable may have.
       case background(Vec4f)
+      case item(id: Int)
     }
 
     // Returns true if the click was handled by the renderable or any of its children.
@@ -130,7 +141,7 @@ public indirect enum GUIElement {
         case let .clickable(action):
           action()
           return true
-        case .text, .sprite, .background, nil:
+        case .text, .sprite, .background, .item, nil:
           break
       }
 
@@ -301,16 +312,18 @@ public indirect enum GUIElement {
         }
       case let .floating(element):
         let child = element.resolveConstraints(
-          availableSize: Vec2i(
-            .max,
-            .max
-          ),
+          availableSize: availableSize,
           font: font
         )
         children = [child]
         relativePosition = .zero
         size = .zero
         content = nil
+      case let .item(id):
+        children = []
+        relativePosition = .zero
+        size = Vec2i(16, 16)
+        content = .item(id: id)
     }
 
     return GUIRenderable(

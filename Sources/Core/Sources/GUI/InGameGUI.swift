@@ -21,7 +21,6 @@ public class InGameGUI {
   static let gpuInfo = GPUDetection.mainMetalGPU()?.infoString()
 
   static let xpLevelTextColor = Vec4f(126, 252, 31, 255) / 255
-  static let xpLevelTextOutlineColor = [0, 0, 0, 1]
 
   public init() {}
 
@@ -69,11 +68,44 @@ public class InGameGUI {
   }
 
   public func hotbar(slots: [Slot], selectedSlot: Int) -> GUIElement {
-    return GUIElement.stack {
+    GUIElement.stack {
       GUIElement.sprite(.hotbar)
         .padding(1)
       GUIElement.sprite(.selectedHotbarSlot)
         .positionInParent(selectedSlot * 20, 0)
+
+      GUIElement.forEach(in: slots, direction: .horizontal, spacing: 4) { slot in
+        inventorySlot(slot)
+      }
+        .positionInParent(4, 4)
+    }
+  }
+
+  public func inventorySlot(_ slot: Slot) -> GUIElement {
+    // TODO: Make if blocks layout transparent (their children should be treated as children of the parent block)
+    if let stack = slot.stack {
+      return GUIElement.stack {
+        GUIElement.item(id: stack.itemId)
+
+        textWithShadow("\(stack.count)", shadowColor: Vec4f(62, 62, 62, 255) / 255)
+          .constraints(.bottom(-2), .right(-1))
+          .float()
+      }
+        .size(16, 16)
+    } else {
+      return GUIElement.spacer(width: 16, height: 16)
+    }
+  }
+
+  public func textWithShadow(
+    _ text: String,
+    textColor: Vec4f = Vec4f(1, 1, 1, 1),
+    shadowColor: Vec4f
+  ) -> GUIElement {
+    GUIElement.stack {
+      GUIElement.text(text, color: shadowColor)
+        .positionInParent(1, 1)
+      GUIElement.text(text, color: textColor)
     }
   }
 
