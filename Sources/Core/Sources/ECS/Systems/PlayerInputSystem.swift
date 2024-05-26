@@ -10,12 +10,21 @@ public final class PlayerInputSystem: System {
   weak var game: Game?
   var eventBus: EventBus
   let configuration: ClientConfiguration
+  let font: Font
 
-  public init(_ connection: ServerConnection?, _ game: Game, _ eventBus: EventBus, _ configuration: ClientConfiguration) {
+  // TODO: Font should be internal to the GUI (which should probably be stored in the nexus)
+  public init(
+    _ connection: ServerConnection?,
+    _ game: Game,
+    _ eventBus: EventBus,
+    _ configuration: ClientConfiguration,
+    _ font: Font
+  ) {
     self.connection = connection
     self.game = game
     self.eventBus = eventBus
     self.configuration = configuration
+    self.font = font
   }
 
   public func update(_ nexus: Nexus, _ world: World) throws {
@@ -40,10 +49,19 @@ public final class PlayerInputSystem: System {
     let inputState = nexus.single(InputState.self).component
     let guiState = nexus.single(GUIStateStorage.self).component
 
+    let mousePosition = Vec2i(inputState.mousePosition) / 2
+    // Be careful not to acquire a nexus lock here (passing the guiState parameter ensures this)
+    let gui = game.compileGUI(withFont: font, guiState: guiState)
+
     // Handle non-movement inputs
     var isInputSuppressed: [Bool] = []
     for event in inputState.newlyPressed {
-      let suppressInput = try handleChat(event, inputState, guiState) || handleInventory(event, guiState)
+      var suppressInput = try handleChat(event, inputState, guiState) || handleInventory(event, guiState)
+
+      // TODO: Formalize 'mouse interactions are allowed', seems a bit hacky this way
+      if event.key == .leftMouseButton && !guiState.movementAllowed {
+        suppressInput = gui.handleClick(at: mousePosition)
+      }
 
       if !suppressInput {
         switch event.input {
@@ -192,7 +210,7 @@ public final class PlayerInputSystem: System {
           if let content = NSPasteboard.general.string(forType: .string) {
             newCharacters = Array(content)
           }
-        } else if message.utf8.count < GUIState.maximumMessageLength {
+        } else if message.utf8.count < InGameGUI.maximumMessageLength {
           newCharacters = event.characters
         }
         #else
@@ -208,7 +226,7 @@ public final class PlayerInputSystem: System {
             // TODO: Make this check less restrictive, it's currently over-cautious
             continue
           }
-          guard character.utf8.count + message.utf8.count <= GUIState.maximumMessageLength else {
+          guard character.utf8.count + message.utf8.count <= InGameGUI.maximumMessageLength else {
             break
           }
 

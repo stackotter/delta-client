@@ -17,9 +17,7 @@ public struct ChatMessageClientboundPacket: ClientboundEntityPacket {
     let locale = client.resourcePack.getDefaultLocale()
 
     let message = ChatMessage(content: content, sender: sender)
-    client.game.mutateGUIState(acquireLock: false) { guiState in
-      guiState.chat.add(message)
-    }
+    client.game.receiveChatMessage(acquireLock: false, message)
 
     client.eventBus.dispatch(ChatMessageReceivedEvent(message: message))
 

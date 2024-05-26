@@ -62,8 +62,10 @@ public final class InputState: SingleComponent {
     newlyReleased.append(KeyReleaseEvent(key: key, input: input))
   }
 
-  /// Releases all inputs.
-  public func releaseAll() {
+  /// Releases all inputs. Doesn't clear ``newlyPressed``, so if used when disabling
+  /// a certain set of (or all) inputs, wait to call this until after all relevant handlers
+  /// know to ignore said inputs.
+  public func releaseAll(clearNewlyPressed: Bool = true) {
     for key in keys {
       newlyReleased.append(KeyReleaseEvent(key: key, input: nil))
     }
@@ -71,8 +73,6 @@ public final class InputState: SingleComponent {
     for input in inputs {
       newlyReleased.append(KeyReleaseEvent(key: nil, input: input))
     }
-
-    newlyPressed = []
   }
 
   /// Clears ``newlyPressed`` and ``newlyReleased``.
@@ -120,7 +120,7 @@ public final class InputState: SingleComponent {
   /// Ticks the input state by flushing ``newlyPressed`` into ``keys`` and ``inputs``, and clearing
   /// ``newlyReleased``. Also emits events to the given ``EventBus``.
   func tick(_ isInputSuppressed: [Bool], _ eventBus: EventBus, _ configuration: ClientConfiguration) {
-    assert(isInputSuppressed.count == newlyPressed.count, "`isInputSuppressed` should be the same length as `newlyPressed`")
+    precondition(isInputSuppressed.count == newlyPressed.count, "`isInputSuppressed` should be the same length as `newlyPressed`")
 
     ticksSinceForwardsPressed += 1
     ticksSinceJumpPressed += 1

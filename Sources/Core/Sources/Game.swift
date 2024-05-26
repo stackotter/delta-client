@@ -42,8 +42,13 @@ public final class Game: @unchecked Sendable {
 
   // MARK: Private properties
 
+  #if DEBUG_LOCKS
+  /// A locked for managing safe access of ``nexus``.
+  public let nexusLock = ReadWriteLock()
+  #else
   /// A locked for managing safe access of ``nexus``.
   private let nexusLock = ReadWriteLock()
+  #endif
   /// The container for the game's entities. Strictly only contains what Minecraft counts as
   /// entities. Doesn't include block entities.
   private let nexus = Nexus()
@@ -51,13 +56,19 @@ public final class Game: @unchecked Sendable {
   private var player: Player
   /// The current input state (keyboard and mouse).
   private let inputState: InputState
+
+  /// A lock for managing safe access of ``gui``.
+  private let guiLock = ReadWriteLock()
   /// The current GUI state (f3 screen, inventory, etc).
+  private let gui: InGameGUI
+  /// Storage for the current GUI state. Protected by ``nexusLock`` since it's stored in the
+  /// nexus.
   private let _guiState: GUIStateStorage
 
   // MARK: Init
 
   /// Creates a game with default properties. Creates the player. Starts the tick loop.
-  public init(eventBus: EventBus, configuration: ClientConfiguration, connection: ServerConnection? = nil) {
+  public init(eventBus: EventBus, configuration: ClientConfiguration, connection: ServerConnection? = nil, font: Font) {
     self.eventBus = eventBus
 
     world = World(eventBus: eventBus)
@@ -65,6 +76,7 @@ public final class Game: @unchecked Sendable {
     tickScheduler = TickScheduler(nexus, nexusLock: nexusLock, world)
 
     inputState = nexus.single(InputState.self).component
+    gui = InGameGUI()
     _guiState = nexus.single(GUIStateStorage.self).component
 
     player = Player()
@@ -78,7 +90,11 @@ public final class Game: @unchecked Sendable {
     tickScheduler.addSystem(PlayerClimbSystem())
     tickScheduler.addSystem(PlayerGravitySystem())
     tickScheduler.addSystem(PlayerSmoothingSystem())
-    tickScheduler.addSystem(PlayerInputSystem(connection, self, eventBus, configuration))
+    // TODO: Make sure that font gets updated when resource pack gets updated, will likely
+    //   require significant refactoring if we wanna do it right (as in not just hacking it
+    //   together for the specific case of PlayerInputSystem); proper resource pack propagation
+    //   will probably take quite a bit of work.
+    tickScheduler.addSystem(PlayerInputSystem(connection, self, eventBus, configuration, font))
     tickScheduler.addSystem(PlayerFlightSystem())
     tickScheduler.addSystem(PlayerAccelerationSystem())
     tickScheduler.addSystem(PlayerJumpSystem())
@@ -179,13 +195,38 @@ public final class Game: @unchecked Sendable {
     return _guiState.inner
   }
 
-  /// Mutates the GUI state using a provided action.
-  /// - acquireLock: If `false`, a nexus lock will not be acquired. Use with caution.
-  /// - action: Action to run on GUI state.
-  public func mutateGUIState<R>(acquireLock: Bool = true, action: (inout GUIState) -> R) -> R {
+  /// Handles a received chat message.
+  public func receiveChatMessage(acquireLock: Bool = true, _ message: ChatMessage) {
     if acquireLock { nexusLock.acquireWriteLock() }
     defer { if acquireLock { nexusLock.unlock() } }
-    return action(&_guiState.inner)
+    _guiState.chat.add(message)
+  }
+
+  public func mutateGUIState<R>(acquireLock: Bool = true, action: (inout GUIState) throws -> R) rethrows -> R {
+    if acquireLock { nexusLock.acquireWriteLock() }
+    defer { if acquireLock { nexusLock.unlock() } }
+    return try action(&_guiState.inner)
+  }
+
+  /// Compile the in-game GUI to a renderable.
+  /// - acquireGUILock: If `false`, a GUI lock will not be acquired. Use with caution.
+  /// - acquireNexusLock: If `false`, a GUI lock will not be acquired (otherwise a nexus lock will be
+  ///   acquired if guiState isn't supplied). Use with caution.
+  /// - guiState: Avoids the need for this function to call out to the nexus redundantly if the caller already
+  ///   has a reference to the gui state.
+  public func compileGUI(acquireGUILock: Bool = true, acquireNexusLock: Bool = true, withFont font: Font, guiState: GUIStateStorage? = nil) -> GUIElement.GUIRenderable {
+    if acquireGUILock { guiLock.acquireWriteLock() }
+    defer { if acquireGUILock { guiLock.unlock() } }
+    var state: GUIStateStorage
+    if let guiState = guiState {
+      state = guiState
+    } else {
+      if acquireNexusLock { nexusLock.acquireWriteLock() }
+      state = nexus.single(GUIStateStorage.self).component
+    }
+    defer { if acquireNexusLock && guiState == nil { nexusLock.unlock() } }
+    return gui.content(game: self, state: state)
+      .resolveConstraints(availableSize: state.drawableSize, font: font)
   }
 
   // MARK: Entity
@@ -340,7 +381,7 @@ public final class Game: @unchecked Sendable {
     return nil
   }
 
-  /// Gets current gamemode of the player
+  /// Gets current gamemode of the player.
   public func currentGamemode() -> Gamemode? {
     var gamemode: Gamemode? = nil
     accessPlayer { player in
@@ -373,5 +414,10 @@ public final class Game: @unchecked Sendable {
     // TODO: Make this threadsafe
     self.world = newWorld
     tickScheduler.setWorld(to: newWorld)
+  }
+
+  /// Stops the tick scheduler.
+  public func stopTickScheduler() {
+    tickScheduler.cancel()
   }
 }

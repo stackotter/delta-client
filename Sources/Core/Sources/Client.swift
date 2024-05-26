@@ -31,7 +31,11 @@ public final class Client: @unchecked Sendable {
   public init(resourcePack: ResourcePack, configuration: ClientConfiguration) {
     self.resourcePack = resourcePack
     self.configuration = configuration
-    game = Game(eventBus: eventBus, configuration: configuration)
+    game = Game(
+      eventBus: eventBus,
+      configuration: configuration,
+      font: resourcePack.vanillaResources.fontPalette.defaultFont
+    )
   }
 
   deinit {
@@ -54,7 +58,13 @@ public final class Client: @unchecked Sendable {
       guard let self = self else { return }
       self.handlePacket(packet)
     }
-    game = Game(eventBus: eventBus, configuration: configuration, connection: connection)
+    game.stopTickScheduler()
+    game = Game(
+      eventBus: eventBus,
+      configuration: configuration,
+      connection: connection,
+      font: resourcePack.vanillaResources.fontPalette.defaultFont
+    )
     hasFinishedDownloadingTerrain = false
     try connection.login(username: account.username)
     self.connection = connection

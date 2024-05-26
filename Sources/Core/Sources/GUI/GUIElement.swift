@@ -9,7 +9,10 @@ public indirect enum GUIElement {
   /// Elements appear on top of the elements that come before them.
   case stack(elements: [GUIElement])
   case positioned(element: GUIElement, constraints: Constraints)
-  case sized(element: GUIElement, size: Vec2i)
+  case sized(element: GUIElement, width: Int?, height: Int?)
+  case spacer(width: Int, height: Int)
+  /// Wraps an element with a background.
+  case container(background: Vec4f, padding: Int, element: GUIElement)
 
   public static let textWrapIndent: Int = 4
   public static let lineSpacing: Int = 1
@@ -22,7 +25,7 @@ public indirect enum GUIElement {
     .stack(elements: elements())
   }
 
-  public func centered() -> GUIElement {
+  public func center() -> GUIElement {
     .positioned(element: self, constraints: .center)
   }
 
@@ -30,20 +33,86 @@ public indirect enum GUIElement {
     .positioned(element: self, constraints: .position(x, y))
   }
 
-  public func sized(_ x: Int, _ y: Int) -> GUIElement {
-    .sized(element: self, size: Vec2i(x, y))
+  public func constraints(
+    _ verticalConstraint: VerticalConstraint,
+    _ horizontalConstraint: HorizontalConstraint
+  ) -> GUIElement {
+    .positioned(element: self, constraints: Constraints(verticalConstraint, horizontalConstraint))
+  }
+
+  public func constraints(_ constraints: Constraints) -> GUIElement {
+    .positioned(element: self, constraints: constraints)
+  }
+
+  /// `nil` indicates to use the natural width/height (the default).
+  public func size(_ width: Int?, _ height: Int?) -> GUIElement {
+    .sized(element: self, width: width, height: height)
+  }
+
+  public func padding(_ padding: Int) -> GUIElement {
+    .container(background: .zero, padding: padding, element: self)
+  }
+
+  public func background(_ color: Vec4f) -> GUIElement {
+    // Sometimes we can just update the element instead of adding another layer.
+    switch self {
+      case let .container(background, padding, element):
+        if background == .zero {
+          return .container(background: color, padding: padding, element: element)
+        }
+      default:
+        break
+    }
+    return .container(background: color, padding: 0, element: self)
   }
 
   public struct GUIRenderable {
     public var relativePosition: Vec2i
     public var size: Vec2i
     public var content: Content?
-    public var children: [(GUIRenderable, GUIElement)]
+    public var children: [GUIRenderable]
 
     public enum Content {
       case text(wrappedLines: [String], hangingIndent: Int)
       case clickable(action: () -> Void)
       case sprite(GUISpriteDescriptor)
+      /// Fills the renderable with the given background color. Goes behind
+      /// any children that the renderable may have.
+      case background(Vec4f)
+    }
+
+    // Returns true if the click was handled by the renderable or any of its children.
+    public func handleClick(at position: Vec2i) -> Bool {
+      guard Self.isHit(position, inBoxAt: relativePosition, ofSize: size) else {
+        return false
+      }
+
+      switch content {
+        case let .clickable(action):
+          action()
+          return true
+        case .text, .sprite, .background, nil:
+          break
+      }
+
+      let relativeClickPosition = position &- relativePosition
+      for renderable in children.reversed() {
+        if renderable.handleClick(at: relativeClickPosition) {
+          return true
+        }
+      }
+
+      return false
+    }
+
+    private static func isHit(
+      _ position: Vec2i,
+      inBoxAt upperLeft: Vec2i,
+      ofSize size: Vec2i
+    ) -> Bool {
+      return
+        position.x > upperLeft.x && position.x < (upperLeft.x + size.x)
+        && position.y > upperLeft.y && position.y < (upperLeft.y + size.y)
     }
   }
 
@@ -54,7 +123,7 @@ public indirect enum GUIElement {
     let relativePosition: Vec2i
     let size: Vec2i
     let content: GUIRenderable.Content?
-    let children: [(GUIRenderable, GUIElement)]
+    let children: [GUIRenderable]
     switch self {
       case let .text(text, wrap):
         // Wrap the lines, but if wrapping is disabled wrap to a width of Int.max (so that we can
@@ -83,7 +152,7 @@ public indirect enum GUIElement {
         relativePosition = .zero
         size = child.size
         content = .clickable(action: action)
-        children = [(child, label)]
+        children = [child]
       case let .sprite(sprite):
         let descriptor = sprite.descriptor
         relativePosition = .zero
@@ -109,24 +178,27 @@ public indirect enum GUIElement {
           childPosition.y += rowHeight
           availableSize.y -= rowHeight
 
-          return (renderable, element)
+          return renderable
         }
         relativePosition = .zero
-        let width = children.map(\.0.size.x).max() ?? 0
+        let width = children.map(\.size.x).max() ?? 0
         let height = elements.isEmpty ? 0 : childPosition.y - spacing
         size = Vec2i(width, height)
         content = nil
       case let .stack(elements):
         children = elements.map { element in
-          let renderable = element.resolveConstraints(
+          element.resolveConstraints(
             availableSize: availableSize,
             font: font
           )
-          return (renderable, element)
         }
         size = Vec2i(
-          children.map(\.0.size.x).max() ?? 0,
-          children.map(\.0.size.y).max() ?? 0
+          children.map { renderable in
+            renderable.size.x + renderable.relativePosition.x
+          }.max() ?? 0,
+          children.map { renderable in
+            renderable.size.y + renderable.relativePosition.y
+          }.max() ?? 0
         )
         relativePosition = .zero
         content = nil
@@ -135,22 +207,51 @@ public indirect enum GUIElement {
           availableSize: availableSize,
           font: font
         )
-        children = [(child, element)]
+        children = [child]
         relativePosition = constraints.solve(
           innerSize: child.size,
           outerSize: availableSize
         )
         size = child.size
         content = nil
-      case let .sized(element, specifiedSize):
+      case let .sized(element, width, height):
         let child = element.resolveConstraints(
-          availableSize: specifiedSize,
+          availableSize: Vec2i(
+            width ?? availableSize.x,
+            height ?? availableSize.y
+          ),
           font: font
         )
-        children = [(child, element)]
+        children = [child]
         relativePosition = .zero
-        size = specifiedSize
+        size = Vec2i(
+          width ?? child.size.x,
+          height ?? child.size.y
+        )
         content = nil
+      case let .spacer(width, height):
+        children = []
+        relativePosition = .zero
+        size = Vec2i(width, height)
+        content = nil
+      case let .container(background, padding, element):
+        var child = element.resolveConstraints(
+          availableSize: availableSize &- Vec2i(repeating: padding * 2),
+          font: font
+        )
+        child.relativePosition &+= Vec2i(repeating: padding)
+        children = [child]
+        relativePosition = .zero
+        size = Vec2i(
+          min(availableSize.x, child.size.x + padding * 2),
+          min(availableSize.y, child.size.y + padding * 2)
+        )
+
+        if background.w != 0 {
+          content = .background(background)
+        } else {
+          content = nil
+        }
     }
 
     return GUIRenderable(
@@ -195,8 +296,9 @@ public indirect enum GUIElement {
         latestSpace = i
       }
 
-      // Break before the current character if it'd bring the text over the maximum width
-      if nextWidth > maximumWidth {
+      // Break before the current character if it'd bring the text over the maximum width.
+      // If it's the first character, never wrap because otherwise we enter an infinite loop.
+      if nextWidth > maximumWidth && i != text.startIndex {
         if let spaceIndex = latestSpace {
           wrapIndex = spaceIndex
         } else {

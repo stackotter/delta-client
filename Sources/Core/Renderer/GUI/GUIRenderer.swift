@@ -17,7 +17,7 @@ public final class GUIRenderer: Renderer {
   var profiler: Profiler<RenderingMeasurement>
   var previousUniforms: GUIUniforms?
 
-  var gui: InGameGUI
+  var client: Client
 
   var fontArrayTexture: MTLTexture
   var guiTexturePalette: GUITexturePalette
@@ -37,6 +37,7 @@ public final class GUIRenderer: Renderer {
     commandQueue: MTLCommandQueue,
     profiler: Profiler<RenderingMeasurement>
   ) throws {
+    self.client = client
     self.device = device
     self.profiler = profiler
 
@@ -96,8 +97,6 @@ public final class GUIRenderer: Renderer {
       fragmentFunction: try MetalUtil.loadFunction("guiFragment", from: library),
       blendingEnabled: true
     )
-
-    gui = InGameGUI()
   }
 
   public func render(
@@ -123,13 +122,17 @@ public final class GUIRenderer: Renderer {
     profiler.pop()
 
     // Create meshes
-    let renderable = gui.body.resolveConstraints(
-      availableSize: Vec2i(
-        Int(width / scalingFactor),
-        Int(height / scalingFactor)
-      ),
-      font: font
+    let effectiveDrawableSize = Vec2i(
+      Int(width / scalingFactor),
+      Int(height / scalingFactor)
     )
+
+    client.game.mutateGUIState { guiState in
+      guiState.drawableSize = effectiveDrawableSize
+      guiState.drawableScalingFactor = scalingFactor
+    }
+
+    let renderable = client.game.compileGUI(withFont: font)
 
     let meshes = try meshes(for: renderable)
 
@@ -163,34 +166,40 @@ public final class GUIRenderer: Renderer {
   }
 
   func meshes(for renderable: GUIElement.GUIRenderable) throws -> [GUIElementMesh] {
+    var meshes: [GUIElementMesh]
     switch renderable.content {
       case let .text(wrappedLines, hangingIndent):
         let builder = TextMeshBuilder(font: font)
-        var meshes = try wrappedLines.compactMap { (line: String) in
+        meshes = try wrappedLines.compactMap { (line: String) in
           do {
             return try builder.build(line, fontArrayTexture: fontArrayTexture)
           } catch let error as LocalizedError {
             throw error
               .with("Text", line)
-          } catch {
-            throw error
           }
         }
         for i in meshes.indices where i != 0 {
           meshes[i].position.x += hangingIndent
+          meshes[i].position.y += Font.defaultCharacterHeight + 1
         }
-        return meshes
       case let .sprite(descriptor):
-        return try [GUIElementMesh(
+        meshes = try [GUIElementMesh(
           sprite: descriptor,
           guiTexturePalette: guiTexturePalette,
           guiArrayTexture: guiArrayTexture
         )]
-      case nil, .clickable:
-        var meshes = try renderable.children.map(\.0).flatMap(meshes)
-        meshes.translate(amount: renderable.relativePosition)
-        return meshes
+      case nil, .clickable, .background:
+        if case let .background(color) = renderable.content {
+          meshes = [
+            GUIElementMesh(size: renderable.size, color: color)
+          ]
+        } else {
+          meshes = []
+        }
+        meshes += try renderable.children.flatMap(meshes(for:))
     }
+    meshes.translate(amount: renderable.relativePosition)
+    return meshes
   }
 
   static func optimizeMeshes(_ meshes: [GUIElementMesh]) throws -> [GUIElementMesh] {

@@ -90,6 +90,21 @@ struct GUIElementMesh {
     )
   }
 
+  init(
+    size: Vec2i,
+    color: Vec4f
+  ) {
+    self.init(
+      size: size,
+      arrayTexture: nil,
+      quads: [GUIQuad(
+        position: .zero,
+        size: Vec2f(size),
+        color: color
+      )]
+    )
+  }
+
   /// Renders the mesh. Expects ``GUIUniforms`` to be bound at vertex buffer index 1. Also expects
   /// pipeline state to be set to ``GUIRenderer/pipelineState``.
   mutating func render(

@@ -2,6 +2,8 @@
 
 import PackageDescription
 
+let debugLocks = false
+
 // MARK: Products
 
 var productTargets = ["DeltaCore", "DeltaLogger"]
@@ -34,7 +36,8 @@ var targets: [Target] = [
       .product(name: "SwiftImage", package: "swift-image"),
       .product(name: "PNG", package: "swift-png")
     ],
-    path: "Sources"
+    path: "Sources",
+    swiftSettings: debugLocks ? [.define("DEBUG_LOCKS")] : []
   ),
 
   .target(
