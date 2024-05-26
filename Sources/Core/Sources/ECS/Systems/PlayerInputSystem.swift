@@ -11,6 +11,7 @@ public final class PlayerInputSystem: System {
   var eventBus: EventBus
   let configuration: ClientConfiguration
   let font: Font
+  let locale: MinecraftLocale
 
   // TODO: Font should be internal to the GUI (which should probably be stored in the nexus)
   public init(
@@ -18,13 +19,15 @@ public final class PlayerInputSystem: System {
     _ game: Game,
     _ eventBus: EventBus,
     _ configuration: ClientConfiguration,
-    _ font: Font
+    _ font: Font,
+    _ locale: MinecraftLocale
   ) {
     self.connection = connection
     self.game = game
     self.eventBus = eventBus
     self.configuration = configuration
     self.font = font
+    self.locale = locale
   }
 
   public func update(_ nexus: Nexus, _ world: World) throws {
@@ -51,7 +54,7 @@ public final class PlayerInputSystem: System {
 
     let mousePosition = Vec2i(inputState.mousePosition / guiState.drawableScalingFactor)
     // Be careful not to acquire a nexus lock here (passing the guiState parameter ensures this)
-    let gui = game.compileGUI(withFont: font, guiState: guiState)
+    let gui = game.compileGUI(withFont: font, locale: locale, guiState: guiState)
 
     // Handle non-movement inputs
     var isInputSuppressed: [Bool] = []
@@ -168,6 +171,7 @@ public final class PlayerInputSystem: System {
         eventBus.dispatch(CaptureCursorEvent())
         return true
       } else if event.key == .escape {
+        guiState.messageInputCursor = 0
         guiState.messageInput = nil
         guiState.currentMessageIndex = nil
         eventBus.dispatch(CaptureCursorEvent())

@@ -68,7 +68,13 @@ public final class Game: @unchecked Sendable {
   // MARK: Init
 
   /// Creates a game with default properties. Creates the player. Starts the tick loop.
-  public init(eventBus: EventBus, configuration: ClientConfiguration, connection: ServerConnection? = nil, font: Font) {
+  public init(
+    eventBus: EventBus,
+    configuration: ClientConfiguration,
+    connection: ServerConnection? = nil,
+    font: Font,
+    locale: MinecraftLocale
+  ) {
     self.eventBus = eventBus
 
     world = World(eventBus: eventBus)
@@ -94,7 +100,7 @@ public final class Game: @unchecked Sendable {
     //   require significant refactoring if we wanna do it right (as in not just hacking it
     //   together for the specific case of PlayerInputSystem); proper resource pack propagation
     //   will probably take quite a bit of work.
-    tickScheduler.addSystem(PlayerInputSystem(connection, self, eventBus, configuration, font))
+    tickScheduler.addSystem(PlayerInputSystem(connection, self, eventBus, configuration, font, locale))
     tickScheduler.addSystem(PlayerFlightSystem())
     tickScheduler.addSystem(PlayerAccelerationSystem())
     tickScheduler.addSystem(PlayerJumpSystem())
@@ -212,9 +218,17 @@ public final class Game: @unchecked Sendable {
   /// - acquireGUILock: If `false`, a GUI lock will not be acquired. Use with caution.
   /// - acquireNexusLock: If `false`, a GUI lock will not be acquired (otherwise a nexus lock will be
   ///   acquired if guiState isn't supplied). Use with caution.
+  /// - font: Font to use when rendering, used to compute text sizing and wrapping.
+  /// - locale: Locale used to resolve chat message content.
   /// - guiState: Avoids the need for this function to call out to the nexus redundantly if the caller already
   ///   has a reference to the gui state.
-  public func compileGUI(acquireGUILock: Bool = true, acquireNexusLock: Bool = true, withFont font: Font, guiState: GUIStateStorage? = nil) -> GUIElement.GUIRenderable {
+  public func compileGUI(
+    acquireGUILock: Bool = true,
+    acquireNexusLock: Bool = true,
+    withFont font: Font,
+    locale: MinecraftLocale,
+    guiState: GUIStateStorage? = nil
+  ) -> GUIElement.GUIRenderable {
     // Acquire the nexus lock first as that's the one that threads can be sitting inside of with `Game.accessNexus`.
     // If we get the GUI lock first then the renderer can be waiting for the nexus lock while PlayerInputSystem is
     // sitting with a nexus lock and waiting for a gui lock.
@@ -231,7 +245,7 @@ public final class Game: @unchecked Sendable {
     defer { if acquireGUILock { guiLock.unlock() } }
     defer { if acquireNexusLock && guiState == nil { nexusLock.unlock() } }
     return gui.content(game: self, state: state)
-      .resolveConstraints(availableSize: state.drawableSize, font: font)
+      .resolveConstraints(availableSize: state.drawableSize, font: font, locale: locale)
   }
 
   // MARK: Entity

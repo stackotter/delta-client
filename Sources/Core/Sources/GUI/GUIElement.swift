@@ -1,10 +1,87 @@
+// TODO: Update container related modifier methods to avoid unnecessary nesting where possible,
+//   e.g. `.expand().padding(2)` should only result in a single container being added instead of
+//   two levels of nested containers.
 public indirect enum GUIElement {
   public enum Direction {
     case vertical
     case horizontal
   }
 
+  public struct DirectionSet: ExpressibleByArrayLiteral {
+    public var horizontal: Bool
+    public var vertical: Bool
+
+    public static let both: Self = [.horizontal, .vertical]
+    public static let neither: Self = []
+    public static let horizontal: Self = [.horizontal]
+    public static let vertical: Self = [.vertical]
+
+    public init(arrayLiteral elements: Direction...) {
+      vertical = elements.contains(.vertical)
+      horizontal = elements.contains(.horizontal)
+    }
+  }
+
+  public enum Edge {
+    case top
+    case bottom
+    case left
+    case right
+  }
+
+  public struct EdgeSet: ExpressibleByArrayLiteral {
+    public var edges: Set<Edge>
+
+    public static let top: Self = [.top]
+    public static let bottom: Self = [.bottom]
+    public static let left: Self = [.left]
+    public static let right: Self = [.right]
+    public static let vertical: Self = [.top, .bottom]
+    public static let horizontal: Self = [.left, .right]
+    public static let all: Self = [.top, .bottom, .left, .right]
+
+    public init(arrayLiteral elements: Edge...) {
+      edges = Set(elements)
+    }
+
+    public func contains(_ edge: Edge) -> Bool {
+      edges.contains(edge)
+    }
+  }
+
+  public struct Padding {
+    public var top: Int
+    public var bottom: Int
+    public var left: Int
+    public var right: Int
+
+    /// The total padding along each axis.
+    public var axisTotals: Vec2i {
+      Vec2i(
+        left + right,
+        top + bottom
+      )
+    }
+
+    public static let zero: Self = Padding(top: 0, bottom: 0, left: 0, right: 0)
+
+    public init(top: Int, bottom: Int, left: Int, right: Int) {
+      self.top = top
+      self.bottom = bottom
+      self.left = left
+      self.right = right
+    }
+
+    public init(edges: EdgeSet, amount: Int) {
+      self.top = edges.contains(.top) ? amount : 0
+      self.bottom = edges.contains(.bottom) ? amount : 0
+      self.left = edges.contains(.left) ? amount : 0
+      self.right = edges.contains(.right) ? amount : 0
+    }
+  }
+
   case text(_ content: String, wrap: Bool = false, color: Vec4f = Vec4f(1, 1, 1, 1))
+  case message(_ message: ChatMessage, wrap: Bool = true)
   case clickable(_ element: GUIElement, action: () -> Void)
   case sprite(GUISprite)
   case customSprite(GUISpriteDescriptor)
@@ -17,7 +94,7 @@ public indirect enum GUIElement {
   case sized(element: GUIElement, width: Int?, height: Int?)
   case spacer(width: Int, height: Int)
   /// Wraps an element with a background.
-  case container(background: Vec4f, padding: Int, element: GUIElement)
+  case container(background: Vec4f, padding: Padding, element: GUIElement, expandDirections: DirectionSet = .neither)
   case floating(element: GUIElement)
   case item(id: Int)
 
@@ -25,9 +102,11 @@ public indirect enum GUIElement {
     switch self {
       case let .list(_, _, elements), let .stack(elements):
         return elements
-      case let .clickable(element, _), let .positioned(element, _), let .sized(element, _, _), let .container(_, _, element), let .floating(element):
+      case let .clickable(element, _), let .positioned(element, _),
+          let .sized(element, _, _), let .container(_, _, element, _),
+          let .floating(element):
         return [element]
-      case .text, .sprite, .customSprite, .spacer, .item:
+      case .text, .message, .sprite, .customSprite, .spacer, .item:
         return []
     }
   }
@@ -81,21 +160,34 @@ public indirect enum GUIElement {
     .sized(element: self, width: width, height: height)
   }
 
-  public func padding(_ padding: Int) -> GUIElement {
-    .container(background: .zero, padding: padding, element: self)
+  public func padding(_ amount: Int) -> GUIElement {
+    self.padding(.all, amount)
+  }
+
+  public func padding(_ edges: EdgeSet, _ amount: Int) -> GUIElement {
+    .container(background: .zero, padding: Padding(edges: edges, amount: amount), element: self)
   }
 
   public func background(_ color: Vec4f) -> GUIElement {
     // Sometimes we can just update the element instead of adding another layer.
     switch self {
-      case let .container(background, padding, element):
+      case let .container(background, padding, element, expandDirections):
         if background == .zero {
-          return .container(background: color, padding: padding, element: element)
+          return .container(
+            background: color,
+            padding: padding,
+            element: element,
+            expandDirections: expandDirections
+          )
         }
       default:
         break
     }
-    return .container(background: color, padding: 0, element: self)
+    return .container(background: color, padding: .zero, element: self)
+  }
+
+  public func expand(_ directions: DirectionSet = .both) -> GUIElement {
+    return .container(background: .zero, padding: .zero, element: self, expandDirections: directions)
   }
 
   public func onClick(_ action: @escaping () -> Void) -> GUIElement {
@@ -168,7 +260,8 @@ public indirect enum GUIElement {
 
   public func resolveConstraints(
     availableSize: Vec2i,
-    font: Font
+    font: Font,
+    locale: MinecraftLocale
   ) -> GUIRenderable {
     let relativePosition: Vec2i
     let size: Vec2i
@@ -195,10 +288,15 @@ public indirect enum GUIElement {
           color: color
         )
         children = []
+      case let .message(message, wrap):
+        let text = message.content.toText(with: locale)
+        return GUIElement.text(text, wrap: wrap)
+          .resolveConstraints(availableSize: availableSize, font: font, locale: locale)
       case let .clickable(label, action):
         let child = label.resolveConstraints(
           availableSize: availableSize,
-          font: font
+          font: font,
+          locale: locale
         )
         relativePosition = .zero
         size = child.size
@@ -222,7 +320,8 @@ public indirect enum GUIElement {
         children = elements.map { element in
           var renderable = element.resolveConstraints(
             availableSize: availableSize,
-            font: font
+            font: font,
+            locale: locale
           )
           renderable.relativePosition[axisComponent] += childPosition[axisComponent]
 
@@ -247,7 +346,8 @@ public indirect enum GUIElement {
         children = elements.map { element in
           element.resolveConstraints(
             availableSize: availableSize,
-            font: font
+            font: font,
+            locale: locale
           )
         }
         size = Vec2i(
@@ -263,7 +363,8 @@ public indirect enum GUIElement {
       case let .positioned(element, constraints):
         let child = element.resolveConstraints(
           availableSize: availableSize,
-          font: font
+          font: font,
+          locale: locale
         )
         children = [child]
         relativePosition = constraints.solve(
@@ -278,7 +379,8 @@ public indirect enum GUIElement {
             width ?? availableSize.x,
             height ?? availableSize.y
           ),
-          font: font
+          font: font,
+          locale: locale
         )
         children = [child]
         relativePosition = .zero
@@ -292,17 +394,23 @@ public indirect enum GUIElement {
         relativePosition = .zero
         size = Vec2i(width, height)
         content = nil
-      case let .container(background, padding, element):
+      case let .container(background, padding, element, expandDirections):
+        let paddingAxisTotals = padding.axisTotals
         var child = element.resolveConstraints(
-          availableSize: availableSize &- Vec2i(repeating: padding * 2),
-          font: font
+          availableSize: availableSize &- paddingAxisTotals,
+          font: font,
+          locale: locale
         )
-        child.relativePosition &+= Vec2i(repeating: padding)
+        child.relativePosition &+= Vec2i(padding.left, padding.top)
         children = [child]
         relativePosition = .zero
         size = Vec2i(
-          min(availableSize.x, child.size.x + padding * 2),
-          min(availableSize.y, child.size.y + padding * 2)
+          expandDirections.horizontal
+            ? availableSize.x
+            : min(availableSize.x, child.size.x + paddingAxisTotals.x),
+          expandDirections.vertical
+            ? availableSize.y
+            : min(availableSize.y, child.size.y + paddingAxisTotals.y)
         )
 
         if background.w != 0 {
@@ -313,7 +421,8 @@ public indirect enum GUIElement {
       case let .floating(element):
         let child = element.resolveConstraints(
           availableSize: availableSize,
-          font: font
+          font: font,
+          locale: locale
         )
         children = [child]
         relativePosition = .zero

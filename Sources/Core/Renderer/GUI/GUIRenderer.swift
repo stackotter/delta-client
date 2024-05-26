@@ -12,6 +12,7 @@ public final class GUIRenderer: Renderer {
 
   var device: MTLDevice
   var font: Font
+  var locale: MinecraftLocale
   var uniformsBuffer: MTLBuffer
   var pipelineState: MTLRenderPipelineState
   var profiler: Profiler<RenderingMeasurement>
@@ -43,6 +44,7 @@ public final class GUIRenderer: Renderer {
 
     // Create array texture
     font = client.resourcePack.vanillaResources.fontPalette.defaultFont
+    locale = client.resourcePack.getDefaultLocale()
 
     let resources = client.resourcePack.vanillaResources
     let font = resources.fontPalette.defaultFont
@@ -132,7 +134,7 @@ public final class GUIRenderer: Renderer {
       guiState.drawableScalingFactor = scalingFactor
     }
 
-    let renderable = client.game.compileGUI(withFont: font)
+    let renderable = client.game.compileGUI(withFont: font, locale: locale)
 
     let meshes = try meshes(for: renderable)
 

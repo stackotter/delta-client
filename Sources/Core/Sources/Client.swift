@@ -34,7 +34,8 @@ public final class Client: @unchecked Sendable {
     game = Game(
       eventBus: eventBus,
       configuration: configuration,
-      font: resourcePack.vanillaResources.fontPalette.defaultFont
+      font: resourcePack.vanillaResources.fontPalette.defaultFont,
+      locale: resourcePack.getDefaultLocale()
     )
   }
 
@@ -63,7 +64,8 @@ public final class Client: @unchecked Sendable {
       eventBus: eventBus,
       configuration: configuration,
       connection: connection,
-      font: resourcePack.vanillaResources.fontPalette.defaultFont
+      font: resourcePack.vanillaResources.fontPalette.defaultFont,
+      locale: resourcePack.getDefaultLocale()
     )
     hasFinishedDownloadingTerrain = false
     try connection.login(username: account.username)

@@ -1,4 +1,6 @@
 import SwiftCPUDetect
+import CoreFoundation
+import Collections
 
 public class InGameGUI {
   // TODO: Figure out why anything greater than 252 breaks the protocol. Anything less than 256 should work afaict
@@ -29,14 +31,91 @@ public class InGameGUI {
       player.gamemode.gamemode
     }
 
-    return GUIElement.stack {
-      GUIElement.sprite(.crossHair)
-        .center()
+    if state.showHUD {
+      return GUIElement.stack {
+        GUIElement.sprite(.crossHair)
+          .center()
 
-      if gamemode != .spectator {
-        hotbarArea(game: game, gamemode: gamemode)
+        if gamemode != .spectator {
+          hotbarArea(game: game, gamemode: gamemode)
+        }
+
+        chat(state: state)
+      }
+    } else {
+      return GUIElement.spacer(width: 0, height: 0)
+    }
+  }
+
+  public func chat(state: GUIStateStorage) -> GUIElement {
+    // TODO: Implement scrollable chat history.
+
+    // Limit number of messages shown.
+    let index = max(
+      state.chat.messages.startIndex,
+      state.chat.messages.endIndex - Self.maximumDisplayedMessages
+    )
+    let latestMessages = state.chat.messages[index..<state.chat.messages.endIndex]
+
+    // If editing messages, only show messages sent/received within the last
+    // `Self.messageHideDelay` seconds.
+    let threshold = CFAbsoluteTimeGetCurrent() - Self.messageHideDelay
+    var visibleMessages: Deque<ChatMessage>.SubSequence
+    if state.showChat {
+      visibleMessages = latestMessages
+    } else {
+      let lastVisibleIndex = latestMessages.lastIndex { message in
+        message.timeReceived < threshold
+      }?.advanced(by: 1) ?? latestMessages.startIndex
+      visibleMessages = latestMessages[lastVisibleIndex..<latestMessages.endIndex]
+    }
+
+    return GUIElement.stack {
+      if !visibleMessages.isEmpty {
+        GUIElement.forEach(in: visibleMessages, spacing: 1) { message in
+          GUIElement.message(message, wrap: true)
+        }
+          .constraints(.top(0), .left(1))
+          .padding(1)
+          .size(Self.chatHistoryWidth, nil)
+          .background(Vec4f(0, 0, 0, 0.5))
+          .constraints(.bottom(40), .left(0))
+      }
+
+      if let messageInput = state.messageInput {
+        textField(content: messageInput, cursorIndex: state.messageInputCursorIndex)
+          .padding(2)
+          .constraints(.bottom(0), .left(0))
       }
     }
+  }
+
+  public func textField(content: String, cursorIndex: String.Index) -> GUIElement {
+    let messageBeforeCursor = String(content.prefix(upTo: cursorIndex))
+    let messageAfterCursor = String(content.suffix(from: cursorIndex))
+
+    return GUIElement.list(direction: .horizontal, spacing: 0) {
+      textWithShadow(messageBeforeCursor)
+
+      if Int(CFAbsoluteTimeGetCurrent() * 10/3) % 2 == 1 {
+        if messageAfterCursor.isEmpty {
+          textWithShadow("_")
+            .positionInParent(messageBeforeCursor.isEmpty ? 0 : 1, 0)
+        } else {
+          GUIElement.spacer(width: 1, height: 11)
+            .background(Vec4f(1, 1, 1, 1))
+            .positionInParent(0, -1)
+            .float()
+        }
+      }
+
+      textWithShadow(messageAfterCursor)
+    }
+      .size(nil, Font.defaultCharacterHeight + 1)
+      .expand(.horizontal)
+      .padding([.top, .left, .right], 2)
+      .padding(.bottom, 1)
+      .background(Vec4f(0, 0, 0, 0.5))
   }
 
   /// The hotbar (and nearby stats if in a gamemode with health).
@@ -87,7 +166,7 @@ public class InGameGUI {
       return GUIElement.stack {
         GUIElement.item(id: stack.itemId)
 
-        textWithShadow("\(stack.count)", shadowColor: Vec4f(62, 62, 62, 255) / 255)
+        textWithShadow("\(stack.count)")
           .constraints(.bottom(-2), .right(-1))
           .float()
       }
@@ -100,12 +179,16 @@ public class InGameGUI {
   public func textWithShadow(
     _ text: String,
     textColor: Vec4f = Vec4f(1, 1, 1, 1),
-    shadowColor: Vec4f
+    shadowColor: Vec4f = Vec4f(62, 62, 62, 255) / 255
   ) -> GUIElement {
-    GUIElement.stack {
-      GUIElement.text(text, color: shadowColor)
-        .positionInParent(1, 1)
-      GUIElement.text(text, color: textColor)
+    if !text.isEmpty {
+      return GUIElement.stack {
+        GUIElement.text(text, color: shadowColor)
+          .positionInParent(1, 1)
+        GUIElement.text(text, color: textColor)
+      }
+    } else {
+      return GUIElement.spacer(width: 0, height: 0)
     }
   }
 
