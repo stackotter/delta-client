@@ -49,7 +49,7 @@ public final class PlayerInputSystem: System {
     let inputState = nexus.single(InputState.self).component
     let guiState = nexus.single(GUIStateStorage.self).component
 
-    let mousePosition = Vec2i(inputState.mousePosition) / 2
+    let mousePosition = Vec2i(inputState.mousePosition / guiState.drawableScalingFactor)
     // Be careful not to acquire a nexus lock here (passing the guiState parameter ensures this)
     let gui = game.compileGUI(withFont: font, guiState: guiState)
 
