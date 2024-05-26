@@ -215,8 +215,11 @@ public final class Game: @unchecked Sendable {
   /// - guiState: Avoids the need for this function to call out to the nexus redundantly if the caller already
   ///   has a reference to the gui state.
   public func compileGUI(acquireGUILock: Bool = true, acquireNexusLock: Bool = true, withFont font: Font, guiState: GUIStateStorage? = nil) -> GUIElement.GUIRenderable {
-    if acquireGUILock { guiLock.acquireWriteLock() }
-    defer { if acquireGUILock { guiLock.unlock() } }
+    // Acquire the nexus lock first as that's the one that threads can be sitting inside of with `Game.accessNexus`.
+    // If we get the GUI lock first then the renderer can be waiting for the nexus lock while PlayerInputSystem is
+    // sitting with a nexus lock and waiting for a gui lock.
+    // TODO: Formalize the idea of keeping a consistent 'topological' ordering for locks throughout the project.
+    //   I think that would prevent this class of deadlocks.
     var state: GUIStateStorage
     if let guiState = guiState {
       state = guiState
@@ -224,6 +227,8 @@ public final class Game: @unchecked Sendable {
       if acquireNexusLock { nexusLock.acquireWriteLock() }
       state = nexus.single(GUIStateStorage.self).component
     }
+    if acquireGUILock { guiLock.acquireWriteLock() }
+    defer { if acquireGUILock { guiLock.unlock() } }
     defer { if acquireNexusLock && guiState == nil { nexusLock.unlock() } }
     return gui.content(game: self, state: state)
       .resolveConstraints(availableSize: state.drawableSize, font: font)

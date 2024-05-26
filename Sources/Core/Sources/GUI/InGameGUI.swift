@@ -41,18 +41,24 @@ public class InGameGUI {
         .constraints(.bottom(2), .left(2))
       }
 
-      GUIElement.list(spacing: 2) {
-        GUIElement.clickable(.text("Decrement")) {
-          self.count -= 1
-        }
+      GUIElement.list(direction: .horizontal, spacing: 2) {
+        GUIElement.text("Decrement")
+          .padding(10)
+          .background(Vec4f(1, 0, 1, 0.5))
+          .onClick {
+            self.count -= 1
+          }
 
-        GUIElement.clickable(.text("Increment")) {
-          self.count += 1
-        }
+        GUIElement.spacer(width: 10, height: 0)
+
+        GUIElement.text("Increment")
+          .padding(10)
+          .background(Vec4f(1, 0, 1, 0.5))
+          .onClick {
+            self.count += 1
+          }
       }
-        .padding(2)
-        .background(Vec4f(1, 0, 1, 0.5))
-        .center()
+        .constraints(.bottom(10), .center)
 
       GUIElement.text("Count: \(count)")
         .positionInParent(0, 0)

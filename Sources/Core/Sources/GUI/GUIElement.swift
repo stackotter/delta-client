@@ -1,10 +1,15 @@
 public indirect enum GUIElement {
+  public enum Direction {
+    case vertical
+    case horizontal
+  }
+
   case text(_ content: String, wrap: Bool = false)
   case clickable(_ element: GUIElement, action: () -> Void)
   case sprite(GUISprite)
   case customSprite(GUISpriteDescriptor)
-  /// Stacks elements in the y direction. Aligns elements to the top left by default.
-  case list(spacing: Int, elements: [GUIElement])
+  /// Stacks elements in the specified direction. Aligns elements to the top left by default.
+  case list(direction: Direction = .vertical, spacing: Int, elements: [GUIElement])
   /// Stacks elements in the z direction. Non-positioned elements default to the top-left corner.
   /// Elements appear on top of the elements that come before them.
   case stack(elements: [GUIElement])
@@ -17,8 +22,11 @@ public indirect enum GUIElement {
   public static let textWrapIndent: Int = 4
   public static let lineSpacing: Int = 1
 
-  public static func list(spacing: Int, @GUIBuilder elements: () -> [GUIElement]) -> GUIElement {
-    .list(spacing: spacing, elements: elements())
+  public static func list(
+    direction: Direction = .vertical,
+    spacing: Int, @GUIBuilder elements: () -> [GUIElement]
+  ) -> GUIElement {
+    .list(direction: direction, spacing: spacing, elements: elements())
   }
 
   public static func stack(@GUIBuilder elements: () -> [GUIElement]) -> GUIElement {
@@ -64,6 +72,10 @@ public indirect enum GUIElement {
         break
     }
     return .container(background: color, padding: 0, element: self)
+  }
+
+  public func onClick(_ action: @escaping () -> Void) -> GUIElement {
+    .clickable(self, action: action)
   }
 
   public struct GUIRenderable {
@@ -164,26 +176,33 @@ public indirect enum GUIElement {
         size = descriptor.size
         content = .sprite(descriptor)
         children = []
-      case let .list(spacing, elements):
+      case let .list(direction, spacing, elements):
         var availableSize = availableSize
         var childPosition = Vec2i(0, 0)
+        let axisComponent = direction == .vertical ? 1 : 0
         children = elements.map { element in
           var renderable = element.resolveConstraints(
             availableSize: availableSize,
             font: font
           )
-          renderable.relativePosition.y += childPosition.y
+          renderable.relativePosition[axisComponent] += childPosition[axisComponent]
 
-          let rowHeight = renderable.size.y + spacing
-          childPosition.y += rowHeight
-          availableSize.y -= rowHeight
+          let rowSize = renderable.size[axisComponent] + spacing
+          childPosition[axisComponent] += rowSize
+          availableSize[axisComponent] -= rowSize
 
           return renderable
         }
         relativePosition = .zero
-        let width = children.map(\.size.x).max() ?? 0
-        let height = elements.isEmpty ? 0 : childPosition.y - spacing
-        size = Vec2i(width, height)
+        let lengthAlongAxis = elements.isEmpty ? 0 : childPosition[axisComponent] - spacing
+        switch direction {
+          case .vertical:
+            let width = children.map(\.size.x).max() ?? 0
+            size = Vec2i(width, lengthAlongAxis)
+          case .horizontal:
+            let height = children.map(\.size.y).max() ?? 0
+            size = Vec2i(lengthAlongAxis, height)
+        }
         content = nil
       case let .stack(elements):
         children = elements.map { element in
