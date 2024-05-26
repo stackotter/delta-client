@@ -20,48 +20,162 @@ public class InGameGUI {
   /// A string containing information about the system's default GPU.
   static let gpuInfo = GPUDetection.mainMetalGPU()?.infoString()
 
-  public var count: Int = 0
+  static let xpLevelTextColor = Vec4f(126, 252, 31, 255) / 255
+  static let xpLevelTextOutlineColor = [0, 0, 0, 1]
 
   public init() {}
 
   public func content(game: Game, state: GUIStateStorage) -> GUIElement {
-    GUIElement.stack {
-      if let messageInput = state.messageInput {
-        GUIElement.list(spacing: 2) {
-          GUIElement.list(
-            spacing: 2,
-            elements: state.chat.messages.map { _ in
-              GUIElement.text("message", wrap: true)
-            }
-          )
-          .size(Self.chatHistoryWidth, nil)
+    let gamemode = game.accessPlayer(acquireLock: false) { player in
+      player.gamemode.gamemode
+    }
 
-          GUIElement.text(messageInput)
+    return GUIElement.stack {
+      GUIElement.sprite(.crossHair)
+        .center()
+
+      if gamemode != .spectator {
+        hotbarArea(game: game, gamemode: gamemode)
+      }
+    }
+  }
+
+  /// The hotbar (and nearby stats if in a gamemode with health).
+  public func hotbarArea(game: Game, gamemode: Gamemode) -> GUIElement {
+    var health: Float = 0
+    var food: Int = 0
+    var selectedSlot: Int = 0
+    var xpBarProgress: Float = 0
+    var xpLevel: Int = 0
+    var hotbarSlots: [Slot] = []
+    game.accessPlayer(acquireLock: false) { player in
+      health = player.health.health
+      food = player.nutrition.food
+      selectedSlot = player.inventory.selectedHotbarSlot
+      xpBarProgress = player.experience.experienceBarProgress
+      xpLevel = player.experience.experienceLevel
+      hotbarSlots = player.inventory.hotbar
+    }
+
+    return GUIElement.list(spacing: 0) {
+      if gamemode.hasHealth {
+        stats(health: health, food: food, xpBarProgress: xpBarProgress, xpLevel: xpLevel)
+      }
+
+      hotbar(slots: hotbarSlots, selectedSlot: selectedSlot)
+    }
+      .size(GUISprite.hotbar.descriptor.size.x + 2, nil)
+      .constraints(.bottom(-1), .center)
+  }
+
+  public func hotbar(slots: [Slot], selectedSlot: Int) -> GUIElement {
+    return GUIElement.stack {
+      GUIElement.sprite(.hotbar)
+        .padding(1)
+      GUIElement.sprite(.selectedHotbarSlot)
+        .positionInParent(selectedSlot * 20, 0)
+    }
+  }
+
+  public enum ReadingDirection {
+    case leftToRight
+    case rightToLeft
+  }
+
+  public func stats(
+    health: Float,
+    food: Int,
+    xpBarProgress: Float,
+    xpLevel: Int
+  ) -> GUIElement {
+    GUIElement.list(spacing: 0) {
+      GUIElement.stack {
+        discreteMeter(
+          Int(health.rounded()),
+          fullIcon: .fullHeart,
+          halfIcon: .halfHeart,
+          outlineIcon: .heartOutline
+        )
+
+        discreteMeter(
+          food,
+          fullIcon: .fullFood,
+          halfIcon: .halfFood,
+          outlineIcon: .foodOutline,
+          direction: .rightToLeft
+        )
+          .constraints(.top(0), .right(0))
+      }
+        .size(GUISprite.hotbar.descriptor.size.x, nil)
+        .constraints(.top(0), .center)
+
+      GUIElement.stack {
+        continuousMeter(
+          xpBarProgress,
+          background: .xpBarBackground,
+          foreground: .xpBarForeground
+        )
+          .constraints(.top(0), .center)
+
+        outlinedText("\(xpLevel)", textColor: Self.xpLevelTextColor)
+          .constraints(.top(-7), .center)
+      }
+        .padding(1)
+        .constraints(.top(0), .center)
+    }
+  }
+
+  public func outlinedText(
+    _ text: String,
+    textColor: Vec4f,
+    outlineColor: Vec4f = Vec4f(0, 0, 0, 1)
+  ) -> GUIElement {
+    let outlineText = GUIElement.text(text, color: outlineColor)
+    return GUIElement.stack {
+      outlineText.constraints(.top(0), .left(1))
+      outlineText.constraints(.top(1), .left(0))
+      outlineText.constraints(.top(1), .left(2))
+      outlineText.constraints(.top(2), .left(1))
+      GUIElement.text(text, color: textColor)
+        .constraints(.top(1), .left(1))
+    }
+  }
+
+  public func discreteMeter(
+    _ value: Int,
+    fullIcon: GUISprite,
+    halfIcon: GUISprite,
+    outlineIcon: GUISprite,
+    direction: ReadingDirection = .leftToRight
+  ) -> GUIElement {
+    let fullIconCount = value / 2
+    let hasHalfIcon = value % 2 == 0
+    var range = Array(0..<10)
+    if direction == .rightToLeft {
+      range = range.reversed()
+    }
+    return GUIElement.forEach(in: range, direction: .horizontal, spacing: -1) { i in
+      GUIElement.stack {
+        GUIElement.sprite(outlineIcon)
+        if i < fullIconCount {
+          GUIElement.sprite(fullIcon)
+        } else if hasHalfIcon && i == fullIconCount {
+          GUIElement.sprite(halfIcon)
         }
-        .constraints(.bottom(2), .left(2))
       }
+    }
+  }
 
-      GUIElement.list(direction: .horizontal, spacing: 2) {
-        GUIElement.text("Decrement")
-          .padding(10)
-          .background(Vec4f(1, 0, 1, 0.5))
-          .onClick {
-            self.count -= 1
-          }
-
-        GUIElement.spacer(width: 10, height: 0)
-
-        GUIElement.text("Increment")
-          .padding(10)
-          .background(Vec4f(1, 0, 1, 0.5))
-          .onClick {
-            self.count += 1
-          }
-      }
-        .constraints(.bottom(10), .center)
-
-      GUIElement.text("Count: \(count)")
-        .positionInParent(0, 0)
+  public func continuousMeter(
+    _ value: Float,
+    background: GUISprite,
+    foreground:GUISprite
+  ) -> GUIElement {
+    var croppedForeground = foreground.descriptor
+    croppedForeground.size.x = Int(Float(croppedForeground.size.x) * value)
+    return GUIElement.stack {
+      GUIElement.sprite(background)
+      GUIElement.customSprite(croppedForeground)
     }
   }
 }

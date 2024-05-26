@@ -168,11 +168,15 @@ public final class GUIRenderer: Renderer {
   func meshes(for renderable: GUIElement.GUIRenderable) throws -> [GUIElementMesh] {
     var meshes: [GUIElementMesh]
     switch renderable.content {
-      case let .text(wrappedLines, hangingIndent):
+      case let .text(wrappedLines, hangingIndent, color):
         let builder = TextMeshBuilder(font: font)
         meshes = try wrappedLines.compactMap { (line: String) in
           do {
-            return try builder.build(line, fontArrayTexture: fontArrayTexture)
+            return try builder.build(
+              line,
+              fontArrayTexture: fontArrayTexture,
+              color: color
+            )
           } catch let error as LocalizedError {
             throw error
               .with("Text", line)

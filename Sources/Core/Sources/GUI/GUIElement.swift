@@ -4,7 +4,7 @@ public indirect enum GUIElement {
     case horizontal
   }
 
-  case text(_ content: String, wrap: Bool = false)
+  case text(_ content: String, wrap: Bool = false, color: Vec4f = Vec4f(1, 1, 1, 1))
   case clickable(_ element: GUIElement, action: () -> Void)
   case sprite(GUISprite)
   case customSprite(GUISpriteDescriptor)
@@ -18,19 +18,42 @@ public indirect enum GUIElement {
   case spacer(width: Int, height: Int)
   /// Wraps an element with a background.
   case container(background: Vec4f, padding: Int, element: GUIElement)
+  case floating(element: GUIElement)
+
+  public var children: [GUIElement] {
+    switch self {
+      case let .list(_, _, elements), let .stack(elements):
+        return elements
+      case let .clickable(element, _), let .positioned(element, _), let .sized(element, _, _), let .container(_, _, element), let .floating(element):
+        return [element]
+      case .text, .sprite, .customSprite, .spacer:
+        return []
+    }
+  }
 
   public static let textWrapIndent: Int = 4
   public static let lineSpacing: Int = 1
 
   public static func list(
     direction: Direction = .vertical,
-    spacing: Int, @GUIBuilder elements: () -> [GUIElement]
+    spacing: Int,
+    @GUIBuilder elements: () -> GUIElement
   ) -> GUIElement {
-    .list(direction: direction, spacing: spacing, elements: elements())
+    .list(direction: direction, spacing: spacing, elements: elements().children)
   }
 
-  public static func stack(@GUIBuilder elements: () -> [GUIElement]) -> GUIElement {
-    .stack(elements: elements())
+  public static func forEach<S: Sequence>(
+    in values: S,
+    direction: Direction = .vertical,
+    spacing: Int,
+    @GUIBuilder element: (S.Element) -> GUIElement
+  ) -> GUIElement {
+    let elements = values.map(element)
+    return .list(direction: direction, spacing: spacing, elements: elements)
+  }
+
+  public static func stack(@GUIBuilder elements: () -> GUIElement) -> GUIElement {
+    .stack(elements: elements().children)
   }
 
   public func center() -> GUIElement {
@@ -78,6 +101,10 @@ public indirect enum GUIElement {
     .clickable(self, action: action)
   }
 
+  public func float() -> GUIElement {
+    .floating(element: self)
+  }
+
   public struct GUIRenderable {
     public var relativePosition: Vec2i
     public var size: Vec2i
@@ -85,7 +112,7 @@ public indirect enum GUIElement {
     public var children: [GUIRenderable]
 
     public enum Content {
-      case text(wrappedLines: [String], hangingIndent: Int)
+      case text(wrappedLines: [String], hangingIndent: Int, color: Vec4f)
       case clickable(action: () -> Void)
       case sprite(GUISpriteDescriptor)
       /// Fills the renderable with the given background color. Goes behind
@@ -137,7 +164,7 @@ public indirect enum GUIElement {
     let content: GUIRenderable.Content?
     let children: [GUIRenderable]
     switch self {
-      case let .text(text, wrap):
+      case let .text(text, wrap, color):
         // Wrap the lines, but if wrapping is disabled wrap to a width of Int.max (so that we can
         // still compute the width of the line).
         let lines = Self.wrap(
@@ -153,7 +180,8 @@ public indirect enum GUIElement {
         )
         content = .text(
           wrappedLines: lines.map(\.line),
-          hangingIndent: Self.textWrapIndent
+          hangingIndent: Self.textWrapIndent,
+          color: color
         )
         children = []
       case let .clickable(label, action):
@@ -271,6 +299,18 @@ public indirect enum GUIElement {
         } else {
           content = nil
         }
+      case let .floating(element):
+        let child = element.resolveConstraints(
+          availableSize: Vec2i(
+            .max,
+            .max
+          ),
+          font: font
+        )
+        children = [child]
+        relativePosition = .zero
+        size = .zero
+        content = nil
     }
 
     return GUIRenderable(
