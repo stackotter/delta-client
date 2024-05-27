@@ -29,7 +29,7 @@ public class InGameGUI {
   public init() {}
 
   /// Gets the GUI's content. Doesn't acquire any locks.
-  public func content(game: Game, state: GUIStateStorage) -> GUIElement {
+  public func content(game: Game, connection: ServerConnection?, state: GUIStateStorage) -> GUIElement {
     let gamemode = game.accessPlayer(acquireLock: false) { player in
       player.gamemode.gamemode
     }
@@ -52,7 +52,7 @@ public class InGameGUI {
         chat(state: state)
 
         if state.showInventory {
-          inventory(game: game, state: state)
+          inventory(game: game, connection: connection, state: state)
         }
       }
     } else {
@@ -172,7 +172,7 @@ public class InGameGUI {
     }
   }
 
-  public func inventory(game: Game, state: GUIStateStorage) -> GUIElement {
+  public func inventory(game: Game, connection: ServerConnection?, state: GUIStateStorage) -> GUIElement {
     let inventory = game.accessPlayer(acquireLock: false) { player in
       player.inventory
     }
@@ -185,22 +185,22 @@ public class InGameGUI {
       GUIElement.stack {
         GUIElement.sprite(.inventory)
 
-        inventoryGrid(inventory, state, area: .armor)
+        inventoryGrid(inventory, connection, state, area: .armor)
           .positionInParent(8, 8)
 
-        inventoryGrid(inventory, state, area: .offHand)
+        inventoryGrid(inventory, connection, state, area: .offHand)
           .positionInParent(77, 62)
 
-        inventoryGrid(inventory, state, area: .craftingInput)
+        inventoryGrid(inventory, connection, state, area: .craftingInput)
           .positionInParent(98, 18)
 
-        inventoryGrid(inventory, state, area: .craftingResult)
+        inventoryGrid(inventory, connection, state, area: .craftingResult)
           .positionInParent(154, 28)
 
-        inventoryGrid(inventory, state, area: .main)
+        inventoryGrid(inventory, connection, state, area: .main)
           .positionInParent(8, 84)
 
-        inventoryGrid(inventory, state, area: .hotbar)
+        inventoryGrid(inventory, connection, state, area: .hotbar)
           .positionInParent(8, 142)
       }
         .size(GUISprite.inventory.descriptor.size)
@@ -217,6 +217,7 @@ public class InGameGUI {
 
   public func inventoryGrid(
     _ inventory: PlayerInventory,
+    _ connection: ServerConnection?,
     _ state: GUIStateStorage,
     area: PlayerInventory.Area
   ) -> GUIElement {
@@ -226,6 +227,16 @@ public class InGameGUI {
         inventorySlot(inventory.slots[index])
           .onClick {
             swap(&inventory.slots[index].stack, &state.mouseItemStack)
+            do {
+              try connection?.sendPacket(ClickWindowPacket(
+                windowId: UInt8(PlayerInventory.windowId),
+                actionId: 0,
+                action: .leftClick(slot: Int16(index)),
+                clickedItem: Slot(state.mouseItemStack)
+              ))
+            } catch {
+              log.warning("Failed to send click window packet for inventory interaction: \(error)")
+            }
           }
       }
     }

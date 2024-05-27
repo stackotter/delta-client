@@ -54,7 +54,7 @@ public final class PlayerInputSystem: System {
 
     let mousePosition = Vec2i(inputState.mousePosition / guiState.drawableScalingFactor)
     // Be careful not to acquire a nexus lock here (passing the guiState parameter ensures this)
-    let gui = game.compileGUI(withFont: font, locale: locale, guiState: guiState)
+    let gui = game.compileGUI(withFont: font, locale: locale, connection: connection, guiState: guiState)
 
     // Handle non-movement inputs
     var isInputSuppressed: [Bool] = []
@@ -76,6 +76,13 @@ public final class PlayerInputSystem: System {
             guiState.showDebugScreen = !guiState.showDebugScreen
           case .toggleInventory:
             guiState.showInventory = !guiState.showInventory
+            if !guiState.showInventory {
+              // Weirdly enough, the vanilla client sends a close window packet when closing the player's
+              // inventory even though it never tells the server that it opened the inventory in the first
+              // place. Likely just for the server to verify the slots and chuck out anything in the crafting
+              // area.
+              try connection?.sendPacket(CloseWindowServerboundPacket(windowId: UInt8(PlayerInventory.windowId)))
+            }
             inputState.releaseAll()
             eventBus.dispatch(ReleaseCursorEvent())
           case .slot1:

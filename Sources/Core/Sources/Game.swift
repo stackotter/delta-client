@@ -226,6 +226,7 @@ public final class Game: @unchecked Sendable {
   /// - acquireGUILock: If `false`, a GUI lock will not be acquired. Use with caution.
   /// - acquireNexusLock: If `false`, a GUI lock will not be acquired (otherwise a nexus lock will be
   ///   acquired if guiState isn't supplied). Use with caution.
+  /// - connection: Used to notify the server of window interactions and related operations.
   /// - font: Font to use when rendering, used to compute text sizing and wrapping.
   /// - locale: Locale used to resolve chat message content.
   /// - guiState: Avoids the need for this function to call out to the nexus redundantly if the caller already
@@ -235,6 +236,7 @@ public final class Game: @unchecked Sendable {
     acquireNexusLock: Bool = true,
     withFont font: Font,
     locale: MinecraftLocale,
+    connection: ServerConnection?,
     guiState: GUIStateStorage? = nil
   ) -> GUIElement.GUIRenderable {
     // Acquire the nexus lock first as that's the one that threads can be sitting inside of with `Game.accessNexus`.
@@ -252,7 +254,7 @@ public final class Game: @unchecked Sendable {
     if acquireGUILock { guiLock.acquireWriteLock() }
     defer { if acquireGUILock { guiLock.unlock() } }
     defer { if acquireNexusLock && guiState == nil { nexusLock.unlock() } }
-    return gui.content(game: self, state: state)
+    return gui.content(game: self, connection: connection, state: state)
       .resolveConstraints(availableSize: state.drawableSize, font: font, locale: locale)
   }
 

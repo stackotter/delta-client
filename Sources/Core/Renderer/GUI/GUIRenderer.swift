@@ -134,7 +134,7 @@ public final class GUIRenderer: Renderer {
       guiState.drawableScalingFactor = scalingFactor
     }
 
-    let renderable = client.game.compileGUI(withFont: font, locale: locale)
+    let renderable = client.game.compileGUI(withFont: font, locale: locale, connection: nil)
 
     let meshes = try meshes(for: renderable)
 
