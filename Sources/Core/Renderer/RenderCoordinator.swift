@@ -322,7 +322,7 @@ public final class RenderCoordinator: NSObject, MTKViewDelegate {
     )
 
     // Update statistics in gui
-    // guiRenderer.gui.renderStatistics = statistics
+    client.game.updateRenderStatistics(to: statistics)
 
     commandBuffer.commit()
     profiler.pop()

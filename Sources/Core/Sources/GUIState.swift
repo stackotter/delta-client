@@ -1,4 +1,10 @@
+import CoreFoundation
+
 public struct GUIState {
+  /// The interval between render statistics updates in the GUI. Used by
+  /// ``GUIState/debouncedRenderStatistics()``.
+  public static let renderStatisticsUpdateInterval = 0.4
+
   /// Whether the HUD (health, hotbar, hunger, etc.) is visible or not.
   public var showHUD = true
   /// Whether the debug screen is visible or not.
@@ -34,6 +40,13 @@ public struct GUIState {
   /// and the maximum value is the beginning of the message.
   public var messageInputCursor: Int = 0
 
+  /// Rendering statistics to display to the user.
+  public var renderStatistics = RenderStatistics()
+  /// The render statistics last returned by `debouncedRenderStatistics`.
+  private var debouncedRenderStatisticsStorage = RenderStatistics()
+  /// The last time that the debounced render statistics were updated at.
+  private var lastDebouncedRenderStatisticsUpdate: CFAbsoluteTime = 0
+
   /// The chat input field cursor as an index into ``messageInput``.
   public var messageInputCursorIndex: String.Index {
     if let messageInput = messageInput {
@@ -52,5 +65,15 @@ public struct GUIState {
   /// menu or having chat open.
   public var movementAllowed: Bool {
     return !showChat && !showInventory
+  }
+
+  /// The render statistics but only updated every `Self.renderStatisticsUpdateInterval`.
+  public mutating func debouncedRenderStatistics() -> RenderStatistics {
+    let time = CFAbsoluteTimeGetCurrent()
+    if time > lastDebouncedRenderStatisticsUpdate + Self.renderStatisticsUpdateInterval {
+      debouncedRenderStatisticsStorage = renderStatistics
+      lastDebouncedRenderStatisticsUpdate = time
+    }
+    return debouncedRenderStatisticsStorage
   }
 }

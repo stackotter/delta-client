@@ -208,10 +208,18 @@ public final class Game: @unchecked Sendable {
     _guiState.chat.add(message)
   }
 
+  /// Mutates the GUI state with a given action.
   public func mutateGUIState<R>(acquireLock: Bool = true, action: (inout GUIState) throws -> R) rethrows -> R {
     if acquireLock { nexusLock.acquireWriteLock() }
     defer { if acquireLock { nexusLock.unlock() } }
     return try action(&_guiState.inner)
+  }
+
+  /// Updates the GUI's render statistics.
+  public func updateRenderStatistics(acquireLock: Bool = true, to statistics: RenderStatistics) {
+    mutateGUIState(acquireLock: false) { state in
+      state.renderStatistics = statistics
+    }
   }
 
   /// Compile the in-game GUI to a renderable.

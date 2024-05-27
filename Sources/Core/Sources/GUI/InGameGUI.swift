@@ -2,6 +2,7 @@ import SwiftCPUDetect
 import CoreFoundation
 import Collections
 
+/// Never acquires nexus locks.
 public class InGameGUI {
   // TODO: Figure out why anything greater than 252 breaks the protocol. Anything less than 256 should work afaict
   public static let maximumMessageLength = 252
@@ -23,9 +24,11 @@ public class InGameGUI {
   static let gpuInfo = GPUDetection.mainMetalGPU()?.infoString()
 
   static let xpLevelTextColor = Vec4f(126, 252, 31, 255) / 255
+  static let debugScreenRowBackgroundColor = Vec4f(80, 80, 80, 144) / 255
 
   public init() {}
 
+  /// Gets the GUI's content. Doesn't acquire any locks.
   public func content(game: Game, state: GUIStateStorage) -> GUIElement {
     let gamemode = game.accessPlayer(acquireLock: false) { player in
       player.gamemode.gamemode
@@ -33,11 +36,17 @@ public class InGameGUI {
 
     if state.showHUD {
       return GUIElement.stack {
-        GUIElement.sprite(.crossHair)
-          .center()
-
         if gamemode != .spectator {
-          hotbarArea(game: game, gamemode: gamemode)
+          GUIElement.stack {
+            hotbarArea(game: game, gamemode: gamemode)
+
+            GUIElement.sprite(.crossHair)
+              .center()
+          }
+        }
+
+        if state.showDebugScreen {
+          debugScreen(game: game, state: state)
         }
 
         chat(state: state)
@@ -73,6 +82,7 @@ public class InGameGUI {
     return GUIElement.stack {
       if !visibleMessages.isEmpty {
         GUIElement.forEach(in: visibleMessages, spacing: 1) { message in
+          // TODO: Chat message text shadows
           GUIElement.message(message, wrap: true)
         }
           .constraints(.top(0), .left(1))
@@ -118,7 +128,8 @@ public class InGameGUI {
       .background(Vec4f(0, 0, 0, 0.5))
   }
 
-  /// The hotbar (and nearby stats if in a gamemode with health).
+  /// Gets the contents of the hotbar (and nearby stats if in a gamemode with health).
+  /// Doesn't acquire a nexus lock.
   public func hotbarArea(game: Game, gamemode: Gamemode) -> GUIElement {
     var health: Float = 0
     var food: Int = 0
@@ -238,6 +249,118 @@ public class InGameGUI {
         .padding(1)
         .constraints(.top(0), .center)
     }
+  }
+
+  /// Gets the contents of the debug screen, doesn't acquire a nexus lock.
+  public func debugScreen(game: Game, state: GUIStateStorage) -> GUIElement {
+    var blockPosition = BlockPosition(x: 0, y: 0, z: 0)
+    var chunkSectionPosition = ChunkSectionPosition(sectionX: 0, sectionY: 0, sectionZ: 0)
+    var position: Vec3d = .zero
+    var pitch: Float = 0
+    var yaw: Float = 0
+    var heading: Direction = .north
+    var gamemode: Gamemode = .adventure
+    game.accessPlayer(acquireLock: false) { player in
+      position = player.position.vector
+      blockPosition = player.position.blockUnderneath
+      chunkSectionPosition = player.position.chunkSection
+      pitch = MathUtil.degrees(from: player.rotation.pitch)
+      yaw = MathUtil.degrees(from: player.rotation.yaw)
+      heading = player.rotation.heading
+      gamemode = player.gamemode.gamemode
+    }
+    blockPosition.y += 1
+
+    let x = String(format: "%.06f", position.x).prefix(7)
+    let y = String(format: "%.06f", position.y).prefix(7)
+    let z = String(format: "%.06f", position.z).prefix(7)
+
+    let relativePosition = blockPosition.relativeToChunkSection
+    let relativePositionString = "\(relativePosition.x) \(relativePosition.y) \(relativePosition.z)"
+    let chunkSectionString = "\(chunkSectionPosition.sectionX) \(chunkSectionPosition.sectionY) \(chunkSectionPosition.sectionZ)"
+
+    let yawString = String(format: "%.01f", yaw)
+    let pitchString = String(format: "%.01f", pitch)
+    let axisHeading = "\(heading.isPositive ? "positive" : "negative") \(heading.axis)"
+
+    var lightPosition = blockPosition
+    lightPosition.y += 1
+    let skyLightLevel = game.world.getSkyLightLevel(at: lightPosition)
+    let blockLightLevel = game.world.getBlockLightLevel(at: lightPosition)
+
+    let biome = game.world.getBiome(at: blockPosition)
+
+    let leftSections: [[String]] = [
+      [
+        "Minecraft \(Constants.versionString) (Delta Client)",
+        renderStatisticsString(state.inner.debouncedRenderStatistics()),
+        "Dimension: \(game.world.dimension.identifier)",
+      ],
+      [
+        "XYZ: \(x) / \(y) / \(z)",
+        // Block under feet
+        "Block: \(blockPosition.x) \(blockPosition.y) \(blockPosition.z)",
+        "Chunk: \(relativePositionString) in \(chunkSectionString)",
+        "Facing: \(heading) (Towards \(axisHeading)) (\(yawString) / \(pitchString))",
+        // Lighting (at foot level)
+        "Light: \(skyLightLevel) sky, \(blockLightLevel) block",
+        "Biome: \(biome?.identifier.description ?? "not loaded")",
+        "Gamemode: \(gamemode.string)"
+      ]
+    ]
+
+    let rightSections: [[String]] = [
+      [
+        "CPU: \(Self.cpuName ?? "unknown") (\(Self.cpuArch ?? "n/a"))",
+        "Total mem: \(Self.totalMem)GB",
+        "GPU: \(Self.gpuInfo ?? "unknown")"
+      ]
+    ]
+
+    return GUIElement.stack {
+      debugScreenList(leftSections, side: .left)
+      debugScreenList(rightSections, side: .right)
+    }
+  }
+
+  public enum Alignment {
+    case left
+    case right
+  }
+
+  public func debugScreenList(_ sections: [[String]], side: Alignment) -> GUIElement {
+    GUIElement.forEach(in: sections, spacing: 6) { section in
+      GUIElement.forEach(in: section, spacing: 0) { line in
+        GUIElement.text(line)
+          .padding([.left, .top], 1)
+          .padding([.right], 2)
+          .background(Self.debugScreenRowBackgroundColor)
+          .constraints(.top(0), side == .left ? .left(0) : .right(0))
+      }
+        .padding(1)
+    }
+  }
+
+  /// Converts the given render statistics into the format required by the debug screen;
+  ///
+  /// ```
+  /// XX fps (XX.XX theoretical) (XX.XXms cpu, XX.XXms gpu)
+  /// ```
+  ///
+  /// Theoretical FPS and GPU time are only included if being collected.
+  public func renderStatisticsString(_ renderStatistics: RenderStatistics) -> String {
+    let theoreticalFPSString = renderStatistics.averageTheoreticalFPS.map { theoreticalFPS in
+      "(\(theoreticalFPS) theoretical)"
+    }
+    let gpuTimeString = renderStatistics.averageGPUTime.map { gpuTime in
+      String(format: "%.02fms gpu", gpuTime * 1000)
+    }
+    let cpuTimeString = String(format: "%.02fms cpu", renderStatistics.averageCPUTime * 1000)
+    let fpsString = String(format: "%.00f fps", renderStatistics.averageFPS)
+
+    let timingsString = [cpuTimeString, gpuTimeString].compactMap(identity).joined(separator: ", ")
+    
+    return [fpsString, theoreticalFPSString, "(\(timingsString))"].compactMap(identity).joined(separator: " ")
   }
 
   public func outlinedText(

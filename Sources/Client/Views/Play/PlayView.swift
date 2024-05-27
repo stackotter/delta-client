@@ -43,6 +43,7 @@ struct PlayView: View {
 
       InGameMenu(presented: $inGameMenuPresented)
     }
+      .padding(.top, 1)
   }
 
   var allPlayersChoseControllers: Bool {
