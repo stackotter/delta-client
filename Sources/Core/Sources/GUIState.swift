@@ -47,6 +47,9 @@ public struct GUIState {
   /// The last time that the debounced render statistics were updated at.
   private var lastDebouncedRenderStatisticsUpdate: CFAbsoluteTime = 0
 
+  /// The item stack currently being moved by the mouse.
+  public var mouseItemStack: ItemStack?
+
   /// The chat input field cursor as an index into ``messageInput``.
   public var messageInputCursorIndex: String.Index {
     if let messageInput = messageInput {

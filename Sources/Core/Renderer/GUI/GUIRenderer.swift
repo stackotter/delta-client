@@ -244,13 +244,15 @@ public final class GUIRenderer: Renderer {
           * MatrixUtil.rotationMatrix(x: .pi)
           * MatrixUtil.rotationMatrix(y: -.pi / 4)
           * MatrixUtil.rotationMatrix(x: -.pi / 6)
+          * MatrixUtil.scalingMatrix(9.76)
+          * MatrixUtil.translationMatrix([8, 8, 8])
 
         var geometry = Geometry()
         var translucentGeometry = SortableMeshElement()
         BlockMeshBuilder(
           model: model,
           position: BlockPosition(x: 0, y: 0, z: 0),
-          modelToWorld: transformation * MatrixUtil.scalingMatrix(9.76),
+          modelToWorld: transformation,
           culledFaces: [],
           lightLevel: LightLevel(sky: 15, block: 15),
           neighbourLightLevels: [:],
@@ -270,13 +272,12 @@ public final class GUIRenderer: Renderer {
         }
 
         // TODO: Handle translucent block items
-
         var mesh = GUIElementMesh(
           size: [16, 16],
           arrayTexture: blockArrayTexture,
           vertices: .flatArray(vertices)
         )
-        mesh.position = [8, 8]
+        mesh.position = [0, 0]
         return [mesh]
       case .empty, .entity:
         return []

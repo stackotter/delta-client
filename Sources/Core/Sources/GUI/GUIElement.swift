@@ -144,6 +144,10 @@ public indirect enum GUIElement {
     .positioned(element: self, constraints: .position(x, y))
   }
 
+  public func positionInParent(_ position: Vec2i) -> GUIElement {
+    .positioned(element: self, constraints: .position(position.x, position.y))
+  }
+
   public func constraints(
     _ verticalConstraint: VerticalConstraint,
     _ horizontalConstraint: HorizontalConstraint
@@ -158,6 +162,10 @@ public indirect enum GUIElement {
   /// `nil` indicates to use the natural width/height (the default).
   public func size(_ width: Int?, _ height: Int?) -> GUIElement {
     .sized(element: self, width: width, height: height)
+  }
+
+  public func size(_ size: Vec2i) -> GUIElement {
+    .sized(element: self, width: size.x, height: size.y)
   }
 
   public func padding(_ amount: Int) -> GUIElement {

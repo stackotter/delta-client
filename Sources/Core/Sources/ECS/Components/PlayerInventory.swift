@@ -6,70 +6,62 @@ public class PlayerInventory: Component {
   public static let slotCount = 46
   /// The player's inventory's window id.
   public static let windowId = 0
-  /// The index of the first hotbar slot.
-  public static let hotbarSlotStartIndex = 36
-  /// The index of the last hotbar slot.
-  public static let hotbarSlotEndIndex = 44
 
-  /// The index of the first slot of the main inventory area (the 3 by 9 grid).
-  public static let mainAreaStartIndex = 9
-  /// The width of the main area.
-  public static let mainAreaWidth = 9
-  /// The height of the main area.
-  public static let mainAreaHeight = 3
-
-  /// The index of the first slot of the inventory's crafting area.
-  public static let craftingAreaStartIndex = 1
-  /// The width of the inventory's crafting area.
-  public static let craftingAreaWidth = 2
-  /// The height of the inventory's crafting area.
-  public static let craftingAreaHeight = 2
   /// The index of the crafting result slot.
-  public static let craftingResultIndex = 0
-
-  /// The index of the first armor slot.
-  public static let armorSlotsStartIndex = 5
-  /// The number of armor slots.
-  public static let armorSlotsCount = 4
-
+  public static let craftingResultIndex = Area.craftingResult.startIndex
   /// The index of the player's off-hand slot.
-  public static let offHandIndex = 45
+  public static let offHandIndex = Area.offHand.startIndex
 
   /// The inventory's contents.
   public var slots: [Slot]
   /// The player's currently selected hotbar slot.
   public var selectedHotbarSlot: Int
+
+  public struct Area {
+    public var startIndex: Int
+    public var width: Int
+    public var height: Int
+
+    public static let main = Area(
+      startIndex: 9,
+      width: 9,
+      height: 3
+    )
+
+    public static let hotbar = Area(
+      startIndex: 36,
+      width: 9,
+      height: 1
+    )
+
+    public static let craftingInput = Area(
+      startIndex: 1,
+      width: 2,
+      height: 2
+    )
+
+    public static let craftingResult = Area(
+      startIndex: 0,
+      width: 1,
+      height: 1
+    )
+
+    public static let armor = Area(
+      startIndex: 5,
+      width: 1,
+      height: 4
+    )
+
+    public static let offHand = Area(
+      startIndex: 45,
+      width: 1,
+      height: 1
+    )
+  }
+
   /// The inventory's hotbar.
   public var hotbar: [Slot] {
-    return Array(slots[Self.hotbarSlotStartIndex...Self.hotbarSlotEndIndex])
-  }
-
-  /// The rows of the main 3 by 9 area of the inventory.
-  public var mainArea: [[Slot]] {
-    var rows: [[Slot]] = []
-    for y in 0..<Self.mainAreaHeight {
-      var row: [Slot] = []
-      for x in 0..<Self.mainAreaWidth {
-        let index = y * Self.mainAreaWidth + x + Self.mainAreaStartIndex
-        row.append(slots[index])
-      }
-      rows.append(row)
-    }
-    return rows
-  }
-
-  /// The rows of the 2 by 2 crafting area of the inventory.
-  public var craftingArea: [[Slot]] {
-    var rows: [[Slot]] = []
-    for y in 0..<Self.craftingAreaHeight {
-      var row: [Slot] = []
-      for x in 0..<Self.craftingAreaWidth {
-        let index = y * Self.craftingAreaWidth + x + Self.craftingAreaStartIndex
-        row.append(slots[index])
-      }
-      rows.append(row)
-    }
-    return rows
+    return slots(for: .hotbar)[0]
   }
 
   /// The result slot of the inventory's crafting area.
@@ -79,7 +71,9 @@ public class PlayerInventory: Component {
 
   /// The armor slots.
   public var armorSlots: [Slot] {
-    return Array(slots[Self.armorSlotsStartIndex..<Self.armorSlotsStartIndex + Self.armorSlotsCount])
+    return slots(for: .armor).map { row in
+      row[0]
+    }
   }
 
   /// The off-hand slot.
@@ -97,5 +91,21 @@ public class PlayerInventory: Component {
 
     self.slots = slots ?? Array(repeating: Slot(), count: Self.slotCount)
     self.selectedHotbarSlot = selectedHotbarSlot
+  }
+
+  /// Gets the slots associated with a particular area of the inventory.
+  /// - Returns: The rows of the area, e.g. ``Area/hotbar`` results in a single row, and
+  ///   ``Area/armor`` results in 4 rows containing 1 element each.
+  public func slots(for area: Area) -> [[Slot]] {
+    var rows: [[Slot]] = []
+    for y in 0..<area.height {
+      var row: [Slot] = []
+      for x in 0..<area.width {
+        let index = y * area.width + x + area.startIndex
+        row.append(slots[index])
+      }
+      rows.append(row)
+    }
+    return rows
   }
 }

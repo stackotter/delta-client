@@ -50,6 +50,10 @@ public class InGameGUI {
         }
 
         chat(state: state)
+
+        if state.showInventory {
+          inventory(game: game, state: state)
+        }
       }
     } else {
       return GUIElement.spacer(width: 0, height: 0)
@@ -131,20 +135,17 @@ public class InGameGUI {
   /// Gets the contents of the hotbar (and nearby stats if in a gamemode with health).
   /// Doesn't acquire a nexus lock.
   public func hotbarArea(game: Game, gamemode: Gamemode) -> GUIElement {
-    var health: Float = 0
-    var food: Int = 0
-    var selectedSlot: Int = 0
-    var xpBarProgress: Float = 0
-    var xpLevel: Int = 0
-    var hotbarSlots: [Slot] = []
-    game.accessPlayer(acquireLock: false) { player in
-      health = player.health.health
-      food = player.nutrition.food
-      selectedSlot = player.inventory.selectedHotbarSlot
-      xpBarProgress = player.experience.experienceBarProgress
-      xpLevel = player.experience.experienceLevel
-      hotbarSlots = player.inventory.hotbar
-    }
+    let (health, food, selectedSlot, xpBarProgress, xpLevel, hotbarSlots) =
+      game.accessPlayer(acquireLock: false) { player in
+        (
+          player.health.health,
+          player.nutrition.food,
+          player.inventory.selectedHotbarSlot,
+          player.experience.experienceBarProgress,
+          player.experience.experienceLevel,
+          player.inventory.hotbar
+        )
+      }
 
     return GUIElement.list(spacing: 0) {
       if gamemode.hasHealth {
@@ -171,15 +172,76 @@ public class InGameGUI {
     }
   }
 
+  public func inventory(game: Game, state: GUIStateStorage) -> GUIElement {
+    let inventory = game.accessPlayer(acquireLock: false) { player in
+      player.inventory
+    }
+
+    let mousePosition = game.accessInputState(acquireLock: false) { inputState in
+      Vec2i(inputState.mousePosition / state.drawableScalingFactor)
+    }
+
+    return GUIElement.stack {
+      GUIElement.stack {
+        GUIElement.sprite(.inventory)
+
+        inventoryGrid(inventory, state, area: .armor)
+          .positionInParent(8, 8)
+
+        inventoryGrid(inventory, state, area: .offHand)
+          .positionInParent(77, 62)
+
+        inventoryGrid(inventory, state, area: .craftingInput)
+          .positionInParent(98, 18)
+
+        inventoryGrid(inventory, state, area: .craftingResult)
+          .positionInParent(154, 28)
+
+        inventoryGrid(inventory, state, area: .main)
+          .positionInParent(8, 84)
+
+        inventoryGrid(inventory, state, area: .hotbar)
+          .positionInParent(8, 142)
+      }
+        .size(GUISprite.inventory.descriptor.size)
+        .center()
+        .expand()
+        .background(Vec4f(0, 0, 0, 0.702))
+
+      if let mouseItemStack = state.mouseItemStack {
+        inventorySlot(Slot(mouseItemStack))
+          .positionInParent(mousePosition &- Vec2i(8, 8))
+      }
+    }
+  }
+
+  public func inventoryGrid(
+    _ inventory: PlayerInventory,
+    _ state: GUIStateStorage,
+    area: PlayerInventory.Area
+  ) -> GUIElement {
+    GUIElement.forEach(in: 0..<area.height, spacing: 2) { y in
+      GUIElement.forEach(in: 0..<area.width, direction: .horizontal, spacing: 2) { x in
+        let index = area.startIndex + y * area.width + x
+        inventorySlot(inventory.slots[index])
+          .onClick {
+            swap(&inventory.slots[index].stack, &state.mouseItemStack)
+          }
+      }
+    }
+  }
+
   public func inventorySlot(_ slot: Slot) -> GUIElement {
     // TODO: Make if blocks layout transparent (their children should be treated as children of the parent block)
     if let stack = slot.stack {
       return GUIElement.stack {
         GUIElement.item(id: stack.itemId)
 
-        textWithShadow("\(stack.count)")
-          .constraints(.bottom(-2), .right(-1))
-          .float()
+        if stack.count != 1 {
+          textWithShadow("\(stack.count)")
+            .constraints(.bottom(-2), .right(-1))
+            .float()
+        }
       }
         .size(16, 16)
     } else {
