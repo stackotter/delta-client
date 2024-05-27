@@ -59,11 +59,15 @@ public final class PlayerInputSystem: System {
     // Handle non-movement inputs
     var isInputSuppressed: [Bool] = []
     for event in inputState.newlyPressed {
-      var suppressInput = try handleChat(event, inputState, guiState) || handleInventory(event, guiState)
+      var suppressInput = false
 
-      // TODO: Formalize 'mouse interactions are allowed', seems a bit hacky this way
-      if event.key == .leftMouseButton && !guiState.movementAllowed {
-        suppressInput = gui.handleClick(at: mousePosition)
+      // TODO: Formalize 'mouse targeted interactions are allowed', seems a bit hacky this way
+      if !suppressInput && !guiState.movementAllowed {
+        suppressInput = gui.handleInteraction(.press(event), at: mousePosition)
+      }
+
+      if !suppressInput {
+        suppressInput = try handleChat(event, inputState, guiState) || handleInventory(event, guiState)
       }
 
       if !suppressInput {

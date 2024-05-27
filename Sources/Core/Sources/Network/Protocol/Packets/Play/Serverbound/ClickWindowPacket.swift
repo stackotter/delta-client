@@ -17,8 +17,10 @@ public struct ClickWindowPacket: ServerboundPacket {
     case shiftRightClick(slot: Int16)
     case numberKey(slot: Int16, number: Int8)
     case middleClick(slot: Int16)
-    case drop(slot: Int16)
-    case controlDrop(slot: Int16)
+    /// If slot is nil, drop item from the stack currently getting moved by the mouse.
+    case dropOne(slot: Int16?)
+    /// If slot is nil, drop the stack currently getting moved by the mouse.
+    case dropStack(slot: Int16?)
     case leftClickOutsideInventory
     case rightClickOutsideInventory
     case startLeftDrag
@@ -46,10 +48,12 @@ public struct ClickWindowPacket: ServerboundPacket {
           return (2, number, slot)
         case let .middleClick(slot):
           return (3, 2, slot)
-        case let .drop(slot):
-          return (4, 0, slot)
-        case let .controlDrop(slot):
-          return (4, 1, slot)
+        case let .dropOne(slot):
+          // -1 indicates that the slot attached to the mouse cursor is to be used
+          return (4, 0, slot ?? -1)
+        case let .dropStack(slot):
+          // -1 indicates that the slot attached to the mouse cursor is to be used
+          return (4, 1, slot ?? -1)
         case .leftClickOutsideInventory:
           return (4, 0, nil)
         case .rightClickOutsideInventory:

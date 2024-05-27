@@ -182,31 +182,46 @@ public class InGameGUI {
     }
 
     return GUIElement.stack {
-      GUIElement.stack {
-        GUIElement.sprite(.inventory)
+      GUIElement.spacer(width: 0, height: 0)
+        .expand()
+        .background(Vec4f(0, 0, 0, 0.702))
+        .onClick {
+          if let stack = state.mouseItemStack {
+            Self.dropItem(slot: nil, wholeStack: true, mouseItemStack: &state.mouseItemStack, inventory, connection)
+          }
+        }
+        .onRightClick {
+          // TODO: Figure out why the server is respecting this (pretty certain that we're sending
+          //   the ClickWindowPacket with the `dropStack(slot: nil)` action, which should be correct??)
+          if let stack = state.mouseItemStack {
+            Self.dropItem(slot: nil, wholeStack: false, mouseItemStack: &state.mouseItemStack, inventory, connection)
+          }
+        }
 
-        inventoryGrid(inventory, connection, state, area: .armor)
+      GUIElement.stack {
+        // Has a dummy click handler to block clicks within the inventory from propagating to the background
+        GUIElement.sprite(.inventory).onClick {}
+
+        inventoryGrid(inventory, game, connection, state, area: .armor)
           .positionInParent(8, 8)
 
-        inventoryGrid(inventory, connection, state, area: .offHand)
+        inventoryGrid(inventory, game, connection, state, area: .offHand)
           .positionInParent(77, 62)
 
-        inventoryGrid(inventory, connection, state, area: .craftingInput)
+        inventoryGrid(inventory, game, connection, state, area: .craftingInput)
           .positionInParent(98, 18)
 
-        inventoryGrid(inventory, connection, state, area: .craftingResult)
+        inventoryGrid(inventory, game, connection, state, area: .craftingResult)
           .positionInParent(154, 28)
 
-        inventoryGrid(inventory, connection, state, area: .main)
+        inventoryGrid(inventory, game, connection, state, area: .main)
           .positionInParent(8, 84)
 
-        inventoryGrid(inventory, connection, state, area: .hotbar)
+        inventoryGrid(inventory, game, connection, state, area: .hotbar)
           .positionInParent(8, 142)
       }
         .size(GUISprite.inventory.descriptor.size)
         .center()
-        .expand()
-        .background(Vec4f(0, 0, 0, 0.702))
 
       if let mouseItemStack = state.mouseItemStack {
         inventorySlot(Slot(mouseItemStack))
@@ -217,6 +232,7 @@ public class InGameGUI {
 
   public func inventoryGrid(
     _ inventory: PlayerInventory,
+    _ game: Game,
     _ connection: ServerConnection?,
     _ state: GUIStateStorage,
     area: PlayerInventory.Area
@@ -235,10 +251,60 @@ public class InGameGUI {
                 clickedItem: Slot(state.mouseItemStack)
               ))
             } catch {
-              log.warning("Failed to send click window packet for inventory interaction: \(error)")
+              log.warning("Failed to send click window packet for inventory left click: \(error)")
             }
           }
+          .onHoverKeyPress { event in
+            guard event.input == .dropItem else {
+              return false
+            }
+
+            guard inventory.slots[index].stack?.count ?? 0 != 0 else {
+              return true
+            }
+
+            let inputState = game.accessInputState(acquireLock: false, action: identity)
+            let wholeStack = inputState.keys.contains(where: \.isControl)
+            Self.dropItem(slot: index, wholeStack: wholeStack, mouseItemStack: &state.mouseItemStack, inventory, connection)
+
+            return true
+          }
       }
+    }
+  }
+
+  public static func dropItem(
+    slot: Int?,
+    wholeStack: Bool,
+    mouseItemStack: inout ItemStack?,
+    _ inventory: PlayerInventory,
+    _ connection: ServerConnection?
+  ) {
+    let clickedItem = slot.map { inventory.slots[$0] } ?? Slot(mouseItemStack)
+
+    let dropCount = wholeStack ? clickedItem.stack?.count ?? 0 : 1
+    if let index = slot {
+      inventory.slots[index].stack?.count -= dropCount
+      if inventory.slots[index].stack?.count == 0 {
+        inventory.slots[index].stack = nil
+      }
+    } else {
+      mouseItemStack?.count -= dropCount
+      if mouseItemStack?.count == 0 {
+        mouseItemStack = nil
+      }
+    }
+
+    let index = slot.map(Int16.init)
+    do {
+      try connection?.sendPacket(ClickWindowPacket(
+        windowId: UInt8(PlayerInventory.windowId),
+        actionId: 0,
+        action: wholeStack ? .dropStack(slot: index) : .dropOne(slot: index),
+        clickedItem: clickedItem
+      ))
+    } catch {
+      log.warning("Failed to send click window packet for item drop: \(error)")
     }
   }
 

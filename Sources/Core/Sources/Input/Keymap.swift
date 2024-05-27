@@ -17,6 +17,7 @@ public struct Keymap {
     .toggleDebugHUD: .f3,
     .toggleInventory: .e,
     .changePerspective: .f5,
+    .dropItem: .q,
     .slot1: .one,
     .slot2: .two,
     .slot3: .three,

@@ -128,6 +128,26 @@ public enum Key: CustomStringConvertible, Hashable {
 
   case otherMouseButton(Int)
 
+  /// Whether the key is a control key.
+  public var isControl: Bool {
+    self == .leftControl || self == .rightControl
+  }
+
+  /// Whether the key is a command key.
+  public var isCommand: Bool {
+    self == .leftCommand || self == .rightCommand
+  }
+
+  /// Whether the key is a shift key.
+  public var isShift: Bool {
+    self == .leftShift || self == .rightShift
+  }
+
+  /// Whether the key is an option key.
+  public var isOption: Bool {
+    self == .leftOption || self == .rightOption
+  }
+
   /// The key's display name.
   public var description: String {
     name.display

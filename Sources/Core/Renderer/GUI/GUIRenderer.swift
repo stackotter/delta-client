@@ -196,7 +196,7 @@ public final class GUIRenderer: Renderer {
         )]
       case let .item(itemId):
         meshes = try self.meshes(forItemWithId: itemId)
-      case nil, .clickable, .background:
+      case nil, .interactable, .background:
         if case let .background(color) = renderable.content {
           meshes = [
             GUIElementMesh(size: renderable.size, color: color)

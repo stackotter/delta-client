@@ -18,6 +18,7 @@ public enum Input: String, Codable, CaseIterable {
   case toggleInventory
   case changePerspective
   case performGPUFrameCapture
+  case dropItem
   case slot1
   case slot2
   case slot3
@@ -67,6 +68,8 @@ public enum Input: String, Codable, CaseIterable {
         return "Change Perspective"
       case .performGPUFrameCapture:
         return "Perform GPU trace"
+      case .dropItem:
+        return "Drop Selected Item"
       case .slot1:
         return "Slot 1"
       case .slot2:

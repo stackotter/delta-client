@@ -82,7 +82,7 @@ public indirect enum GUIElement {
 
   case text(_ content: String, wrap: Bool = false, color: Vec4f = Vec4f(1, 1, 1, 1))
   case message(_ message: ChatMessage, wrap: Bool = true)
-  case clickable(_ element: GUIElement, action: () -> Void)
+  case interactable(_ element: GUIElement, handleInteraction: (Interaction) -> Bool)
   case sprite(GUISprite)
   case customSprite(GUISpriteDescriptor)
   /// Stacks elements in the specified direction. Aligns elements to the top left by default.
@@ -102,7 +102,7 @@ public indirect enum GUIElement {
     switch self {
       case let .list(_, _, elements), let .stack(elements):
         return elements
-      case let .clickable(element, _), let .positioned(element, _),
+      case let .interactable(element, _), let .positioned(element, _),
           let .sized(element, _, _), let .container(_, _, element, _),
           let .floating(element):
         return [element]
@@ -199,7 +199,44 @@ public indirect enum GUIElement {
   }
 
   public func onClick(_ action: @escaping () -> Void) -> GUIElement {
-    .clickable(self, action: action)
+    onHoverKeyPress(matching: .leftMouseButton, action)
+  }
+
+  public func onRightClick(_ action: @escaping () -> Void) -> GUIElement {
+    onHoverKeyPress(matching: .rightMouseButton, action)
+  }
+
+  public func onHoverKeyPress(matching key: Key, _ action: @escaping () -> Void) -> GUIElement {
+    .interactable(
+      self,
+      handleInteraction: { interaction in
+        switch interaction {
+          case let .press(event):
+            if event.key == key {
+              action()
+              return true
+            } else {
+              return false
+            }
+          case .release:
+            return false
+        }
+      }
+    )
+  }
+
+  public func onHoverKeyPress(_ action: @escaping (KeyPressEvent) -> Bool) -> GUIElement {
+    .interactable(
+      self,
+      handleInteraction: { interaction in
+        switch interaction {
+          case let .press(event):
+            return action(event)
+          case .release:
+            return false
+        }
+      }
+    )
   }
 
   /// Sets an element's apparent size to zero so that it doesn't partake in layout.
@@ -215,6 +252,11 @@ public indirect enum GUIElement {
     .floating(element: self)
   }
 
+  public enum Interaction {
+    case press(KeyPressEvent)
+    case release(KeyReleaseEvent)
+  }
+
   public struct GUIRenderable {
     public var relativePosition: Vec2i
     public var size: Vec2i
@@ -223,7 +265,7 @@ public indirect enum GUIElement {
 
     public enum Content {
       case text(wrappedLines: [String], hangingIndent: Int, color: Vec4f)
-      case clickable(action: () -> Void)
+      case interactable(handleInteraction: (Interaction) -> Bool)
       case sprite(GUISpriteDescriptor)
       /// Fills the renderable with the given background color. Goes behind
       /// any children that the renderable may have.
@@ -232,22 +274,23 @@ public indirect enum GUIElement {
     }
 
     // Returns true if the click was handled by the renderable or any of its children.
-    public func handleClick(at position: Vec2i) -> Bool {
+    public func handleInteraction(_ interaction: Interaction, at position: Vec2i) -> Bool {
       guard Self.isHit(position, inBoxAt: relativePosition, ofSize: size) else {
         return false
       }
 
       switch content {
-        case let .clickable(action):
-          action()
-          return true
+        case let .interactable(handleInteraction):
+          if handleInteraction(interaction) {
+            return true
+          }
         case .text, .sprite, .background, .item, nil:
           break
       }
 
       let relativeClickPosition = position &- relativePosition
       for renderable in children.reversed() {
-        if renderable.handleClick(at: relativeClickPosition) {
+        if renderable.handleInteraction(interaction, at: relativeClickPosition) {
           return true
         }
       }
@@ -300,7 +343,7 @@ public indirect enum GUIElement {
         let text = message.content.toText(with: locale)
         return GUIElement.text(text, wrap: wrap)
           .resolveConstraints(availableSize: availableSize, font: font, locale: locale)
-      case let .clickable(label, action):
+      case let .interactable(label, handleInteraction):
         let child = label.resolveConstraints(
           availableSize: availableSize,
           font: font,
@@ -308,7 +351,7 @@ public indirect enum GUIElement {
         )
         relativePosition = .zero
         size = child.size
-        content = .clickable(action: action)
+        content = .interactable(handleInteraction: handleInteraction)
         children = [child]
       case let .sprite(sprite):
         let descriptor = sprite.descriptor

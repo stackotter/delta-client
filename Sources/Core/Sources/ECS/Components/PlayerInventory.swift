@@ -17,6 +17,10 @@ public class PlayerInventory: Component {
   /// The player's currently selected hotbar slot.
   public var selectedHotbarSlot: Int
 
+  /// The action id to use for the next action performed on the inventory (used when sending
+  /// ``ClickWindowPacket``).
+  var nextActionId = 0
+
   public struct Area {
     public var startIndex: Int
     public var width: Int
