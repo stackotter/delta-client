@@ -10,7 +10,7 @@ public struct CloseWindowClientboundPacket: ClientboundPacket {
   }
 
   public func handle(for client: Client) throws {
-    client.game.mutateGUIState { guiState in
+    try client.game.mutateGUIState { guiState in
       guard let window = guiState.window else {
         log.warning("Received CloseWindowClientboundPacket with no open window (window id: \(windowId))")
         return
@@ -21,9 +21,8 @@ public struct CloseWindowClientboundPacket: ClientboundPacket {
         return
       }
 
-      guiState.window = nil
-
-      client.eventBus.dispatch(CaptureCursorEvent())
+      // Connection is set to nil since we don't need to send a packet (we just received one)
+      try window.close(mouseStack: &guiState.mouseItemStack, eventBus: client.eventBus, connection: nil)
     }
   }
 }

@@ -53,8 +53,6 @@ public final class PlayerInputSystem: System {
     let guiState = nexus.single(GUIStateStorage.self).component
 
     let mousePosition = Vec2i(inputState.mousePosition / guiState.drawableScalingFactor)
-    // Be careful not to acquire a nexus lock here (passing the guiState parameter ensures this)
-    let gui = game.compileGUI(withFont: font, locale: locale, connection: connection, guiState: guiState)
 
     // Handle non-movement inputs
     var isInputSuppressed: [Bool] = []
@@ -63,15 +61,23 @@ public final class PlayerInputSystem: System {
 
       // TODO: Formalize 'mouse targeted interactions are allowed', seems a bit hacky this way
       if !suppressInput && !guiState.movementAllowed {
+        // Recompute the gui everytime that we get it to handle a new interaction because e.g. if previous
+        // interactions within the same tick have closed the inventory and opened the chat, then the old
+        // gui would still be handling the input for the inventory. That's a bit contrived, but I'm sure
+        // other edge cases are possible, and recomputing the GUI is relatively cheap (and multiple inputs
+        // within a single tick should be uncommon anyway).
+
+        // Be careful not to acquire a nexus lock here (passing the guiState parameter ensures this)
+        let gui = game.compileGUI(withFont: font, locale: locale, connection: connection, guiState: guiState)
         suppressInput = gui.handleInteraction(.press(event), at: mousePosition)
       }
 
       if !suppressInput {
-        suppressInput = try handleChat(event, inputState, guiState) || handleInventory(event, guiState)
+        suppressInput = try handleChat(event, inputState, guiState)
       }
 
       if !suppressInput {
-        suppressInput = try handleWindow(event, guiState, connection)
+        suppressInput = try handleWindow(event, guiState, eventBus, connection)
       }
 
       if !suppressInput {
@@ -89,10 +95,11 @@ public final class PlayerInputSystem: System {
               // inventory even though it never tells the server that it opened the inventory in the first
               // place. Likely just for the server to verify the slots and chuck out anything in the crafting
               // area.
-              try connection?.sendPacket(CloseWindowServerboundPacket(windowId: UInt8(PlayerInventory.windowId)))
+              try inventory.window.close(mouseStack: &guiState.mouseItemStack, eventBus: eventBus, connection: connection)
+            } else {
+              inputState.releaseAll()
+              eventBus.dispatch(ReleaseCursorEvent())
             }
-            inputState.releaseAll()
-            eventBus.dispatch(ReleaseCursorEvent())
           case .slot1:
             inventory.selectedHotbarSlot = 0
           case .slot2:
@@ -117,27 +124,7 @@ public final class PlayerInputSystem: System {
             inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 8) % 9
           case .dropItem:
             let slotIndex = PlayerInventory.hotbarArea.startIndex + inventory.selectedHotbarSlot
-            let clickedSlot = inventory.window.slots[slotIndex]
-            guard var stack = clickedSlot.stack else {
-              break
-            }
-            stack.count -= 1
-            if stack.count == 0 {
-              inventory.window.slots[slotIndex].stack = nil
-            } else {
-              inventory.window.slots[slotIndex].stack = stack
-            }
-
-            do {
-              try connection?.sendPacket(ClickWindowPacket(
-                windowId: UInt8(PlayerInventory.windowId),
-                actionId: 0,
-                action: .dropOne(slot: Int16(slotIndex)),
-                clickedItem: clickedSlot
-              ))
-            } catch {
-              log.warning("Failed to send packet for dropping item: \(error)")
-            }
+            inventory.window.dropItem(slotIndex, connection: connection)
           case .place, .destroy:
             if inventory.hotbar[inventory.selectedHotbarSlot].stack != nil {
               try connection?.sendPacket(UseItemPacket(hand: .mainHand))
@@ -296,38 +283,19 @@ public final class PlayerInputSystem: System {
   }
 
   /// - Returns: Whether to suppress the input associated with the event or not.
-  private func handleInventory(
-    _ event: KeyPressEvent,
-    _ guiState: GUIStateStorage
-  ) -> Bool {
-    guard guiState.showInventory else {
-      return false
-    }
-
-    if event.key == .escape || event.input == .toggleInventory {
-      eventBus.dispatch(CaptureCursorEvent())
-      guiState.showInventory = false
-    }
-
-    return true
-  }
-
-  /// - Returns: Whether to suppress the input associated with the event or not.
   private func handleWindow(
     _ event: KeyPressEvent,
     _ guiState: GUIStateStorage,
+    _ eventBus: EventBus,
     _ connection: ServerConnection?
-  ) -> Bool {
+  ) throws -> Bool {
     guard let window = guiState.window else {
       return false
     }
 
     if event.key == .escape || event.input == .toggleInventory {
-      eventBus.dispatch(CaptureCursorEvent())
+      try window.close(mouseStack: &guiState.mouseItemStack, eventBus: eventBus, connection: connection)
       guiState.window = nil
-      try? connection?.sendPacket(CloseWindowServerboundPacket(
-        windowId: UInt8(window.id)
-      ))
     }
 
     return true
