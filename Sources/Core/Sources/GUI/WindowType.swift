@@ -121,7 +121,37 @@ public struct WindowType {
   )
 
  // Generic window types
- public static let generic9x4 = WindowType(
+public static let generic9x1 = WindowType(
+    id: .vanilla(0),
+    identifier: Identifier(namespace: "minecraft", name: "generic_9x1"),
+    background: GUIElement.list(spacing: 0) {
+            GUIElement.sprite(.generic9x1)
+            GUIElement.sprite(.singleChestBottomHalf)
+        },
+    slotCount: 45,
+    areas: [
+        WindowArea(
+            startIndex: 0,
+            width: 9,
+            height: 1,
+            position: Vec2i(8, 18)
+        ),
+        WindowArea(
+            startIndex: 9,
+            width: 9,
+            height: 3,
+            position: Vec2i(8, 33)
+        ),
+        WindowArea(
+            startIndex: 36,
+            width: 9,
+            height: 1,
+            position: Vec2i(8, 91)
+        )
+    ]
+)
+
+public static let generic9x4 = WindowType(
     id: .vanilla(3),
     identifier: Identifier(namespace: "minecraft", name: "generic_9x4"),
     background: GUIElement.list(spacing: 0) {
@@ -188,6 +218,7 @@ public static let generic9x5 = WindowType(
       craftingTable,
       chest,
       doubleChest,
+      generic9x1,
       generic9x4,
       generic9x5
     ],
