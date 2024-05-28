@@ -243,7 +243,7 @@ public final class PlayerInputSystem: System {
           newCharacters = event.characters
         }
         #else
-        if message.utf8.count < GUIState.maximumMessageLength {
+        if message.utf8.count < InGameGUI.maximumMessageLength {
           newCharacters = event.characters
         }
         #endif

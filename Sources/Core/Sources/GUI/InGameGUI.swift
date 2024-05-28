@@ -14,6 +14,7 @@ public class InGameGUI {
   /// The width of the chat history.
   static let chatHistoryWidth = 330
 
+  #if os(macOS)
   /// The system's CPU display name.
   static let cpuName = HWInfo.CPU.name()
   /// The system's CPU architecture.
@@ -22,6 +23,7 @@ public class InGameGUI {
   static let totalMem = (HWInfo.ramAmount() ?? 0) / (1024 * 1024 * 1024)
   /// A string containing information about the system's default GPU.
   static let gpuInfo = GPUDetection.mainMetalGPU()?.infoString()
+  #endif
 
   static let xpLevelTextColor = Vec4f(126, 252, 31, 255) / 255
   static let debugScreenRowBackgroundColor = Vec4f(80, 80, 80, 144) / 255
@@ -402,13 +404,17 @@ public class InGameGUI {
       ]
     ]
 
-    let rightSections: [[String]] = [
-      [
-        "CPU: \(Self.cpuName ?? "unknown") (\(Self.cpuArch ?? "n/a"))",
-        "Total mem: \(Self.totalMem)GB",
-        "GPU: \(Self.gpuInfo ?? "unknown")"
+    #if os(macOS)
+      let rightSections: [[String]] = [
+        [
+          "CPU: \(Self.cpuName ?? "unknown") (\(Self.cpuArch ?? "n/a"))",
+          "Total mem: \(Self.totalMem)GB",
+          "GPU: \(Self.gpuInfo ?? "unknown")"
+        ]
       ]
-    ]
+    #else
+      let rightSections: [[String]] = []
+    #endif
 
     return GUIElement.stack {
       debugScreenList(leftSections, side: .left)
