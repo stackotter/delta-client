@@ -140,13 +140,43 @@ public static let generic9x1 = WindowType(
             startIndex: 9,
             width: 9,
             height: 3,
-            position: Vec2i(8, 33)
+            position: Vec2i(8, 50)
         ),
         WindowArea(
             startIndex: 36,
             width: 9,
             height: 1,
-            position: Vec2i(8, 91)
+            position: Vec2i(8, 108)
+        )
+    ]
+)
+
+public static let generic9x2 = WindowType(
+    id: .vanilla(1),
+    identifier: Identifier(namespace: "minecraft", name: "generic_9x2"),
+    background: GUIElement.list(spacing: 0) {
+            GUIElement.sprite(.generic9x2)
+            GUIElement.sprite(.singleChestBottomHalf)
+        },
+    slotCount: 54,
+    areas: [
+        WindowArea(
+            startIndex: 0,
+            width: 9,
+            height: 2,
+            position: Vec2i(8, 18)
+        ),
+        WindowArea(
+            startIndex: 18,
+            width: 9,
+            height: 3,
+            position: Vec2i(8, 68)
+        ),
+        WindowArea(
+            startIndex: 45,
+            width: 9,
+            height: 1,
+            position: Vec2i(8, 126)
         )
     ]
 )
@@ -219,6 +249,7 @@ public static let generic9x5 = WindowType(
       chest,
       doubleChest,
       generic9x1,
+      generic9x2,
       generic9x4,
       generic9x5
     ],
