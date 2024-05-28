@@ -186,14 +186,14 @@ public class InGameGUI {
         .expand()
         .background(Vec4f(0, 0, 0, 0.702))
         .onClick {
-          if let stack = state.mouseItemStack {
+          if state.mouseItemStack != nil {
             Self.dropItem(slot: nil, wholeStack: true, mouseItemStack: &state.mouseItemStack, inventory, connection)
           }
         }
         .onRightClick {
-          // TODO: Figure out why the server is respecting this (pretty certain that we're sending
+          // TODO: Figure out why the server isn't respecting this (pretty certain that we're sending
           //   the ClickWindowPacket with the `dropStack(slot: nil)` action, which should be correct??)
-          if let stack = state.mouseItemStack {
+          if state.mouseItemStack != nil {
             Self.dropItem(slot: nil, wholeStack: false, mouseItemStack: &state.mouseItemStack, inventory, connection)
           }
         }
@@ -242,6 +242,7 @@ public class InGameGUI {
         let index = area.startIndex + y * area.width + x
         inventorySlot(inventory.slots[index])
           .onClick {
+            let clickedItem = inventory.slots[index]
             if var slotStack = inventory.slots[index].stack,
                 var mouseStack = state.mouseItemStack,
                 slotStack.itemId == mouseStack.itemId
@@ -269,13 +270,14 @@ public class InGameGUI {
                 windowId: UInt8(PlayerInventory.windowId),
                 actionId: 0,
                 action: .leftClick(slot: Int16(index)),
-                clickedItem: Slot(state.mouseItemStack)
+                clickedItem: clickedItem
               ))
             } catch {
               log.warning("Failed to send click window packet for inventory left click: \(error)")
             }
           }
           .onRightClick {
+            let clickedItem = inventory.slots[index]
             if var stack = inventory.slots[index].stack, state.mouseItemStack == nil {
               let total = stack.count
               var takenStack = stack
@@ -313,7 +315,7 @@ public class InGameGUI {
                 windowId: UInt8(PlayerInventory.windowId),
                 actionId: 0,
                 action: .rightClick(slot: Int16(index)),
-                clickedItem: Slot(state.mouseItemStack)
+                clickedItem: clickedItem
               ))
             } catch {
               log.warning("Failed to send click window packet for inventory right click: \(error)")
@@ -331,6 +333,31 @@ public class InGameGUI {
             let inputState = game.accessInputState(acquireLock: false, action: identity)
             let wholeStack = inputState.keys.contains(where: \.isControl)
             Self.dropItem(slot: index, wholeStack: wholeStack, mouseItemStack: &state.mouseItemStack, inventory, connection)
+
+            return true
+          }
+          .onHoverKeyPress { event in
+            let slotInputs: [Input] = [.slot1, .slot2, .slot3, .slot4, .slot5, .slot6, .slot7, .slot8, .slot9]
+            guard let input = event.input, let hotBarSlot = slotInputs.firstIndex(of: input) else {
+              return false
+            }
+
+            let clickedItem = inventory.slots[index]
+            let hotBarSlotIndex = PlayerInventory.Area.hotbar.startIndex + hotBarSlot
+            if hotBarSlotIndex != index {
+              inventory.slots.swapAt(index, hotBarSlotIndex)
+            }
+
+            do {
+              try connection?.sendPacket(ClickWindowPacket(
+                windowId: UInt8(PlayerInventory.windowId),
+                actionId: 0,
+                action: .numberKey(slot: Int16(index), number: Int8(hotBarSlot)),
+                clickedItem: clickedItem
+              ))
+            } catch {
+              log.warning("Failed to send click window packet for inventory right click: \(error)")
+            }
 
             return true
           }
