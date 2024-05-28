@@ -242,7 +242,28 @@ public class InGameGUI {
         let index = area.startIndex + y * area.width + x
         inventorySlot(inventory.slots[index])
           .onClick {
-            swap(&inventory.slots[index].stack, &state.mouseItemStack)
+            if var slotStack = inventory.slots[index].stack,
+                var mouseStack = state.mouseItemStack,
+                slotStack.itemId == mouseStack.itemId
+            {
+              guard
+                let item = RegistryStore.shared.itemRegistry.item(withId: slotStack.itemId)
+              else {
+                log.warning("Failed to get maximum stack size for item with id '\(slotStack.itemId)'")
+                return
+              }
+              let total = slotStack.count + mouseStack.count
+              slotStack.count = min(total, item.maximumStackSize)
+              inventory.slots[index].stack = slotStack
+              if slotStack.count == total {
+                state.mouseItemStack = nil
+              } else {
+                mouseStack.count = total - slotStack.count
+                state.mouseItemStack = mouseStack
+              }
+            } else {
+              swap(&inventory.slots[index].stack, &state.mouseItemStack)
+            }
             do {
               try connection?.sendPacket(ClickWindowPacket(
                 windowId: UInt8(PlayerInventory.windowId),
@@ -252,6 +273,50 @@ public class InGameGUI {
               ))
             } catch {
               log.warning("Failed to send click window packet for inventory left click: \(error)")
+            }
+          }
+          .onRightClick {
+            if var stack = inventory.slots[index].stack, state.mouseItemStack == nil {
+              let total = stack.count
+              var takenStack = stack
+              stack.count = total / 2
+              takenStack.count = total - stack.count
+              state.mouseItemStack = takenStack
+              if stack.count == 0 {
+                inventory.slots[index].stack = nil
+              } else {
+                inventory.slots[index].stack = stack
+              }
+            } else if var stack = state.mouseItemStack, inventory.slots[index].stack == nil {
+              stack.count -= 1
+              inventory.slots[index].stack = ItemStack(itemId: stack.itemId, itemCount: 1)
+              if stack.count == 0 {
+                state.mouseItemStack = nil
+              } else {
+                state.mouseItemStack = stack
+              }
+            } else if let slotStack = inventory.slots[index].stack,
+                let mouseStack = state.mouseItemStack,
+                slotStack.itemId == mouseStack.itemId
+            {
+              inventory.slots[index].stack?.count += 1
+              state.mouseItemStack?.count -= 1
+              if state.mouseItemStack?.count == 0 {
+                state.mouseItemStack = nil
+              }
+            } else {
+              swap(&inventory.slots[index].stack, &state.mouseItemStack)
+            }
+
+            do {
+              try connection?.sendPacket(ClickWindowPacket(
+                windowId: UInt8(PlayerInventory.windowId),
+                actionId: 0,
+                action: .rightClick(slot: Int16(index)),
+                clickedItem: Slot(state.mouseItemStack)
+              ))
+            } catch {
+              log.warning("Failed to send click window packet for inventory right click: \(error)")
             }
           }
           .onHoverKeyPress { event in
