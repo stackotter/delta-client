@@ -21,6 +21,7 @@ public enum GUISprite {
   /// these to be separate sprites.
   case singleChestTopHalf
   case singleChestBottomHalf
+  case doubleChest // No top/bottom half since it just uses the full image
 
   /// The descriptor for the sprite.
   public var descriptor: GUISpriteDescriptor {
@@ -61,6 +62,8 @@ public enum GUISprite {
         return GUISpriteDescriptor(slice: .genericContainer, position: [0, 0], size: [176, 71])
       case .singleChestBottomHalf:
         return GUISpriteDescriptor(slice: .genericContainer, position: [0, 125], size: [176, 97])
+      case .doubleChest:
+        return GUISpriteDescriptor(slice: .genericContainer, position: [0, 0], size: [176, 222]) // Use the entire generic container image
     }
   }
 }

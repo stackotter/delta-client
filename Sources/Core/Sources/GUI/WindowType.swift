@@ -91,12 +91,42 @@ public struct WindowType {
     ]
   )
 
+  public static let doubleChest = WindowType(
+    id: .vanilla(5),
+    identifier: Identifier(namespace: "minecraft", name: "generic_9x6"),
+    background: GUIElement.list(spacing: 0) {
+      GUIElement.sprite(.doubleChest)
+    },
+    slotCount: 90,
+    areas: [
+      WindowArea(
+        startIndex: 0,
+        width: 9,
+        height: 6,
+        position: Vec2i(8, 18)
+      ),
+      WindowArea(
+        startIndex: 54,
+        width: 9,
+        height: 3,
+        position: Vec2i(8, 140)
+      ),
+      WindowArea(
+        startIndex: 81,
+        width: 9,
+        height: 1,
+        position: Vec2i(8, 198)
+      ),
+    ]
+  )
+
   /// The window types understood by vanilla.
   public static let types = [Id: Self](
     values: [
       inventory,
       craftingTable,
-      chest
+      chest,
+      doubleChest
     ],
     keyedBy: \.id
   )
