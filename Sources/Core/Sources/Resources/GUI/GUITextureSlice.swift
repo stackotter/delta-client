@@ -4,6 +4,8 @@ public enum GUITextureSlice: Int, CaseIterable {
   case icons
   case widgets
   case inventory
+  case craftingTable
+  case genericContainer
 
   /// The path of the slice's underlying texture in a resource pack's textures directory.
   public var path: String {
@@ -16,6 +18,10 @@ public enum GUITextureSlice: Int, CaseIterable {
         return "widgets.png"
       case .inventory:
         return "container/inventory.png"
+      case .craftingTable:
+        return "container/crafting_table.png"
+      case .genericContainer:
+        return "container/generic_54.png"
     }
   }
 
@@ -30,6 +36,10 @@ public enum GUITextureSlice: Int, CaseIterable {
         return Identifier(name: "gui/widgets")
       case .inventory:
         return Identifier(name: "gui/container/inventory")
+      case .craftingTable:
+        return Identifier(name: "gui/container/crafting_table")
+      case .genericContainer:
+        return Identifier(name: "gui/container/generic_54")
     }
   }
 }

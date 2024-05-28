@@ -3,13 +3,11 @@
 public struct WindowType {
   public var id: Id
   public var identifier: Identifier
-  public var texture: GUISprite
+  public var background: GUIElement
   public var slotCount: Int
   public var areas: [WindowArea]
 
   public enum Id: Hashable, Equatable {
-    /// Vanilla minecraft doesn't have the inventory window type in its registry
-    /// cause it gets special treatment, so we just give it its own category of id.
     case inventory
     case vanilla(Int)
   }
@@ -18,7 +16,7 @@ public struct WindowType {
   public static let inventory = WindowType(
     id: .inventory,
     identifier: Identifier(namespace: "minecraft", name: "inventory"),
-    texture: .inventory,
+    background: .sprite(.inventory),
     slotCount: 46,
     areas: [
       PlayerInventory.mainArea,
@@ -30,10 +28,75 @@ public struct WindowType {
     ]
   )
 
+  public static let craftingTable = WindowType(
+    id: .vanilla(11),
+    identifier: Identifier(namespace: "minecraft", name: "crafting"),
+    background: .sprite(.craftingTable),
+    slotCount: 46,
+    areas: [
+      WindowArea(
+        startIndex: 0,
+        width: 1,
+        height: 1,
+        position: Vec2i(124, 35)
+      ),
+      WindowArea(
+        startIndex: 1,
+        width: 3,
+        height: 3,
+        position: Vec2i(30, 17)
+      ),
+      WindowArea(
+        startIndex: 10,
+        width: 9,
+        height: 3,
+        position: Vec2i(8, 84)
+      ),
+      WindowArea(
+        startIndex: 37,
+        width: 9,
+        height: 1,
+        position: Vec2i(8, 142)
+      ),
+    ]
+  )
+
+  public static let chest = WindowType(
+    id: .vanilla(2),
+    identifier: Identifier(namespace: "minecraft", name: "generic_9x3"),
+    background: GUIElement.list(spacing: 0) {
+      GUIElement.sprite(.singleChestTopHalf)
+      GUIElement.sprite(.singleChestBottomHalf)
+    },
+    slotCount: 63,
+    areas: [
+      WindowArea(
+        startIndex: 0,
+        width: 9,
+        height: 3,
+        position: Vec2i(8, 18)
+      ),
+      WindowArea(
+        startIndex: 27,
+        width: 9,
+        height: 3,
+        position: Vec2i(8, 86)
+      ),
+      WindowArea(
+        startIndex: 54,
+        width: 9,
+        height: 1,
+        position: Vec2i(8, 144)
+      ),
+    ]
+  )
+
   /// The window types understood by vanilla.
   public static let types = [Id: Self](
     values: [
       inventory,
+      craftingTable,
+      chest
     ],
     keyedBy: \.id
   )

@@ -1,6 +1,7 @@
 import FirebladeECS
 
-/// A component storing the player's inventory.
+/// A component storing the player's inventory. Simply wraps a ``Window`` with some
+/// inventory-specific properties and helper methods.
 public class PlayerInventory: Component {
   /// The number of slots in a player inventory (including armor and off hand).
   public static let slotCount = 46
@@ -11,15 +12,6 @@ public class PlayerInventory: Component {
   public static let craftingResultIndex = craftingResultArea.startIndex
   /// The index of the player's off-hand slot.
   public static let offHandIndex = offHandArea.startIndex
-
-  /// The inventory's contents.
-  public var slots: [Slot]
-  /// The player's currently selected hotbar slot.
-  public var selectedHotbarSlot: Int
-
-  /// The action id to use for the next action performed on the inventory (used when sending
-  /// ``ClickWindowPacket``).
-  var nextActionId = 0
 
   public static let mainArea = WindowArea(
     startIndex: 9,
@@ -63,53 +55,54 @@ public class PlayerInventory: Component {
     position: Vec2i(77, 62)
   )
 
-  /// The inventory's hotbar.
+  /// The inventory's window; contains the underlying slots.
+  public var window: Window
+  /// The player's currently selected hotbar slot.
+  public var selectedHotbarSlot: Int
+
+  /// The inventory's main 3 row 9 column area.
+  public var mainArea: [[Slot]] {
+    window.slots(for: Self.mainArea)
+  }
+
+  /// The inventory's crafting input slots.
+  public var craftingInputs: [[Slot]] {
+    window.slots(for: Self.craftingInputArea)
+  }
+
+  // TODO: Choose a casing for hotbar and stick to it (hotbar vs hotBar)
+  /// The inventory's hotbar slots.
   public var hotbar: [Slot] {
-    return slots(for: Self.hotbarArea)[0]
+    window.slots(for: Self.hotbarArea)[0]
   }
 
   /// The result slot of the inventory's crafting area.
   public var craftingResult: Slot {
-    return slots[Self.craftingResultIndex]
+    window.slots[Self.craftingResultIndex]
   }
 
   /// The armor slots.
   public var armorSlots: [Slot] {
-    return slots(for: Self.armorArea).map { row in
+    window.slots(for: Self.armorArea).map { row in
       row[0]
     }
   }
 
   /// The off-hand slot.
   public var offHand: Slot {
-    return slots[Self.offHandIndex]
+    window.slots[Self.offHandIndex]
   }
 
   /// Creates the player's inventory state.
   /// - Parameter selectedHotbarSlot: Defaults to 0 (the first slot from the left in the main hotbar).
   /// - Precondition: The length of `slots` must match ``PlayerInventory/slotCount``.
   public init(slots: [Slot]? = nil, selectedHotbarSlot: Int = 0) {
-    if let count = slots?.count {
-      assert(count == Self.slotCount)
-    }
+    window = Window(
+      id: Self.windowId,
+      type: .inventory,
+      slots: slots
+    )
 
-    self.slots = slots ?? Array(repeating: Slot(), count: Self.slotCount)
     self.selectedHotbarSlot = selectedHotbarSlot
-  }
-
-  /// Gets the slots associated with a particular area of the inventory.
-  /// - Returns: The rows of the area, e.g. ``PlayerInventory/hotbarArea`` results in a single row, and
-  ///   ``PlayerInventory/armorArea`` results in 4 rows containing 1 element each.
-  public func slots(for area: WindowArea) -> [[Slot]] {
-    var rows: [[Slot]] = []
-    for y in 0..<area.height {
-      var row: [Slot] = []
-      for x in 0..<area.width {
-        let index = y * area.width + x + area.startIndex
-        row.append(slots[index])
-      }
-      rows.append(row)
-    }
-    return rows
   }
 }

@@ -36,7 +36,15 @@ public struct SetSlotPacket: ClientboundPacket {
     // TODO: Figure out why this fails when joining servers like Hypixel
 
     client.game.accessPlayer { player in
-      player.inventory.slots[slot] = slotData
+      if Int(windowId) == player.inventory.window.id {
+        player.inventory.window.slots[slot] = slotData
+      }
+    }
+
+    client.game.mutateGUIState { guiState in
+      if let window = guiState.window, Int(windowId) == window.id {
+        window.slots[slot] = slotData
+      }
     }
   }
 }

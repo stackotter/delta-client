@@ -47,6 +47,12 @@ public struct GUIState {
   /// The last time that the debounced render statistics were updated at.
   private var lastDebouncedRenderStatisticsUpdate: CFAbsoluteTime = 0
 
+  /// The currently active GUI window (e.g. crafting table, chest, etc). Inventory is treated
+  /// differently because it's always 'open' (in the eyes of the server, and in the sense that
+  /// the client always remembers what items are in it). If the inventory is open, this should
+  /// still be `nil`.
+  public var window: Window?
+
   /// The item stack currently being moved by the mouse.
   public var mouseItemStack: ItemStack?
 
@@ -67,7 +73,7 @@ public struct GUIState {
   /// Whether the player is allowed to move, as opposed to being in a
   /// menu or having chat open.
   public var movementAllowed: Bool {
-    return !showChat && !showInventory
+    return !showChat && !showInventory && window == nil
   }
 
   /// The render statistics but only updated every `Self.renderStatisticsUpdateInterval`.

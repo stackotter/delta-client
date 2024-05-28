@@ -1,7 +1,8 @@
 import FirebladeECS
 
 #if os(macOS)
-import AppKit // Used to access clipboard
+  // Used to access clipboard
+  import AppKit
 #endif
 
 /// Handles all player input except for input related to player movement (see ``PlayerAccelerationSystem``).
@@ -13,7 +14,6 @@ public final class PlayerInputSystem: System {
   let font: Font
   let locale: MinecraftLocale
 
-  // TODO: Font should be internal to the GUI (which should probably be stored in the nexus)
   public init(
     _ connection: ServerConnection?,
     _ game: Game,
@@ -71,6 +71,10 @@ public final class PlayerInputSystem: System {
       }
 
       if !suppressInput {
+        suppressInput = try handleWindow(event, guiState, connection)
+      }
+
+      if !suppressInput {
         switch event.input {
           case .changePerspective:
             camera.cyclePerspective()
@@ -113,15 +117,15 @@ public final class PlayerInputSystem: System {
             inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 8) % 9
           case .dropItem:
             let slotIndex = PlayerInventory.hotbarArea.startIndex + inventory.selectedHotbarSlot
-            let clickedSlot = inventory.slots[slotIndex]
+            let clickedSlot = inventory.window.slots[slotIndex]
             guard var stack = clickedSlot.stack else {
               break
             }
             stack.count -= 1
             if stack.count == 0 {
-              inventory.slots[slotIndex].stack = nil
+              inventory.window.slots[slotIndex].stack = nil
             } else {
-              inventory.slots[slotIndex].stack = stack
+              inventory.window.slots[slotIndex].stack = stack
             }
 
             do {
@@ -291,7 +295,7 @@ public final class PlayerInputSystem: System {
     return guiState.showChat
   }
 
-  /// - Returns: Whether to suppress the input associated with the event or not. `true` while user is typing.
+  /// - Returns: Whether to suppress the input associated with the event or not.
   private func handleInventory(
     _ event: KeyPressEvent,
     _ guiState: GUIStateStorage
@@ -303,6 +307,27 @@ public final class PlayerInputSystem: System {
     if event.key == .escape || event.input == .toggleInventory {
       eventBus.dispatch(CaptureCursorEvent())
       guiState.showInventory = false
+    }
+
+    return true
+  }
+
+  /// - Returns: Whether to suppress the input associated with the event or not.
+  private func handleWindow(
+    _ event: KeyPressEvent,
+    _ guiState: GUIStateStorage,
+    _ connection: ServerConnection?
+  ) -> Bool {
+    guard let window = guiState.window else {
+      return false
+    }
+
+    if event.key == .escape || event.input == .toggleInventory {
+      eventBus.dispatch(CaptureCursorEvent())
+      guiState.window = nil
+      try? connection?.sendPacket(CloseWindowServerboundPacket(
+        windowId: UInt8(window.id)
+      ))
     }
 
     return true

@@ -15,6 +15,12 @@ public enum GUISprite {
   case xpBarBackground
   case xpBarForeground
   case inventory
+  case craftingTable
+  /// If positioned directly above ``GUISprite/singleChestBottomHalf`` it forms
+  /// the background for a single chest window. The way the texture is made forces
+  /// these to be separate sprites.
+  case singleChestTopHalf
+  case singleChestBottomHalf
 
   /// The descriptor for the sprite.
   public var descriptor: GUISpriteDescriptor {
@@ -49,6 +55,12 @@ public enum GUISprite {
         return GUISpriteDescriptor(slice: .icons, position: [0, 69], size: [182, 5])
       case .inventory:
         return GUISpriteDescriptor(slice: .inventory, position: [0, 0], size: [176, 166])
+      case .craftingTable:
+        return GUISpriteDescriptor(slice: .craftingTable, position: [0, 0], size: [176, 166])
+      case .singleChestTopHalf:
+        return GUISpriteDescriptor(slice: .genericContainer, position: [0, 0], size: [176, 71])
+      case .singleChestBottomHalf:
+        return GUISpriteDescriptor(slice: .genericContainer, position: [0, 125], size: [176, 97])
     }
   }
 }

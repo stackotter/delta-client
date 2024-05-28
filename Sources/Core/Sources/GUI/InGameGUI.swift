@@ -53,16 +53,14 @@ public class InGameGUI {
 
         if state.showInventory {
           window(
-            type: .inventory,
-            windowId: PlayerInventory.windowId,
-            slots: ArrayBinding(
-              get: { index in
-                inventory.slots[index]
-              },
-              set: { index, newValue in
-                inventory.slots[index] = newValue
-              }
-            ),
+            window: inventory.window,
+            game: game,
+            connection: connection,
+            state: state
+          )
+        } else if let window = state.window {
+          self.window(
+            window: window,
             game: game,
             connection: connection,
             state: state
@@ -187,9 +185,7 @@ public class InGameGUI {
   }
 
   public func window(
-    type windowType: WindowType,
-    windowId: Int,
-    slots: ArrayBinding<Slot>,
+    window: Window,
     game: Game,
     connection: ServerConnection?,
     state: GUIStateStorage
@@ -208,8 +204,7 @@ public class InGameGUI {
               slot: nil,
               wholeStack: true,
               mouseItemStack: &state.mouseItemStack,
-              windowId: windowId,
-              slots: slots,
+              window: window,
               connection: connection
             )
           }
@@ -222,8 +217,7 @@ public class InGameGUI {
               slot: nil,
               wholeStack: false,
               mouseItemStack: &state.mouseItemStack,
-              windowId: windowId,
-              slots: slots,
+              window: window,
               connection: connection
             )
           }
@@ -231,21 +225,18 @@ public class InGameGUI {
 
       GUIElement.stack {
         // Has a dummy click handler to block clicks within the inventory from propagating to the background
-        GUIElement.sprite(windowType.texture).onClick {}
+        window.type.background.onClick {}
 
-        GUIElement.stack(elements: windowType.areas.map { area in
+        GUIElement.stack(elements: window.type.areas.map { area in
           windowArea(
             area,
-            slots,
-            windowId: windowId,
-            windowType: windowType,
+            window,
             game: game,
             connection: connection,
             state: state
           )
         })
       }
-        .size(windowType.texture.descriptor.size)
         .center()
 
       if let mouseItemStack = state.mouseItemStack {
@@ -257,9 +248,7 @@ public class InGameGUI {
 
   public func windowArea(
     _ area: WindowArea,
-    _ slots: ArrayBinding<Slot>,
-    windowId: Int,
-    windowType: WindowType,
+    _ window: Window,
     game: Game,
     connection: ServerConnection?,
     state: GUIStateStorage
@@ -267,10 +256,10 @@ public class InGameGUI {
     GUIElement.forEach(in: 0..<area.height, spacing: 2) { y in
       GUIElement.forEach(in: 0..<area.width, direction: .horizontal, spacing: 2) { x in
         let index = area.startIndex + y * area.width + x
-        inventorySlot(slots[index])
+        inventorySlot(window.slots[index])
           .onClick {
-            let clickedItem = slots[index]
-            if var slotStack = slots[index].stack,
+            let clickedItem = window.slots[index]
+            if var slotStack = window.slots[index].stack,
                 var mouseStack = state.mouseItemStack,
                 slotStack.itemId == mouseStack.itemId
             {
@@ -282,7 +271,7 @@ public class InGameGUI {
               }
               let total = slotStack.count + mouseStack.count
               slotStack.count = min(total, item.maximumStackSize)
-              slots[index].stack = slotStack
+              window.slots[index].stack = slotStack
               if slotStack.count == total {
                 state.mouseItemStack = nil
               } else {
@@ -290,12 +279,12 @@ public class InGameGUI {
                 state.mouseItemStack = mouseStack
               }
             } else {
-              swap(&slots[index].stack, &state.mouseItemStack)
+              swap(&window.slots[index].stack, &state.mouseItemStack)
             }
             do {
               try connection?.sendPacket(ClickWindowPacket(
-                windowId: UInt8(windowId),
-                actionId: 0,
+                windowId: UInt8(window.id),
+                actionId: Int16(window.generateActionId()),
                 action: .leftClick(slot: Int16(index)),
                 clickedItem: clickedItem
               ))
@@ -304,43 +293,43 @@ public class InGameGUI {
             }
           }
           .onRightClick {
-            let clickedItem = slots[index]
-            if var stack = slots[index].stack, state.mouseItemStack == nil {
+            let clickedItem = window.slots[index]
+            if var stack = window.slots[index].stack, state.mouseItemStack == nil {
               let total = stack.count
               var takenStack = stack
               stack.count = total / 2
               takenStack.count = total - stack.count
               state.mouseItemStack = takenStack
               if stack.count == 0 {
-                slots[index].stack = nil
+                window.slots[index].stack = nil
               } else {
-                slots[index].stack = stack
+                window.slots[index].stack = stack
               }
-            } else if var stack = state.mouseItemStack, slots[index].stack == nil {
+            } else if var stack = state.mouseItemStack, window.slots[index].stack == nil {
               stack.count -= 1
-              slots[index].stack = ItemStack(itemId: stack.itemId, itemCount: 1)
+              window.slots[index].stack = ItemStack(itemId: stack.itemId, itemCount: 1)
               if stack.count == 0 {
                 state.mouseItemStack = nil
               } else {
                 state.mouseItemStack = stack
               }
-            } else if let slotStack = slots[index].stack,
+            } else if let slotStack = window.slots[index].stack,
                 let mouseStack = state.mouseItemStack,
                 slotStack.itemId == mouseStack.itemId
             {
-              slots[index].stack?.count += 1
+              window.slots[index].stack?.count += 1
               state.mouseItemStack?.count -= 1
               if state.mouseItemStack?.count == 0 {
                 state.mouseItemStack = nil
               }
             } else {
-              swap(&slots[index].stack, &state.mouseItemStack)
+              swap(&window.slots[index].stack, &state.mouseItemStack)
             }
 
             do {
               try connection?.sendPacket(ClickWindowPacket(
-                windowId: UInt8(windowId),
-                actionId: 0,
+                windowId: UInt8(window.id),
+                actionId: Int16(window.generateActionId()),
                 action: .rightClick(slot: Int16(index)),
                 clickedItem: clickedItem
               ))
@@ -353,7 +342,7 @@ public class InGameGUI {
               return false
             }
 
-            guard slots[index].stack?.count ?? 0 != 0 else {
+            guard window.slots[index].stack?.count ?? 0 != 0 else {
               return true
             }
 
@@ -363,15 +352,14 @@ public class InGameGUI {
               slot: index,
               wholeStack: wholeStack,
               mouseItemStack: &state.mouseItemStack,
-              windowId: windowId,
-              slots: slots,
+              window: window,
               connection: connection
             )
 
             return true
           }
           .onHoverKeyPress { event in
-            guard windowType.id == .inventory else {
+            guard window.type.id == .inventory else {
               return false
             }
 
@@ -380,16 +368,16 @@ public class InGameGUI {
               return false
             }
 
-            let clickedItem = slots[index]
+            let clickedItem = window.slots[index]
             let hotBarSlotIndex = PlayerInventory.hotbarArea.startIndex + hotBarSlot
             if hotBarSlotIndex != index {
-              slots.swapAt(index, hotBarSlotIndex)
+              window.slots.swapAt(index, hotBarSlotIndex)
             }
 
             do {
               try connection?.sendPacket(ClickWindowPacket(
-                windowId: UInt8(windowId),
-                actionId: 0,
+                windowId: UInt8(window.id),
+                actionId: Int16(window.generateActionId()),
                 action: .numberKey(slot: Int16(index), number: Int8(hotBarSlot)),
                 clickedItem: clickedItem
               ))
@@ -408,17 +396,16 @@ public class InGameGUI {
     slot: Int?,
     wholeStack: Bool,
     mouseItemStack: inout ItemStack?,
-    windowId: Int,
-    slots: ArrayBinding<Slot>,
+    window: Window,
     connection: ServerConnection?
   ) {
-    let clickedItem = slot.map { slots[$0] } ?? Slot(mouseItemStack)
+    let clickedItem = slot.map { window.slots[$0] } ?? Slot(mouseItemStack)
 
     let dropCount = wholeStack ? clickedItem.stack?.count ?? 0 : 1
     if let index = slot {
-      slots[index].stack?.count -= dropCount
-      if slots[index].stack?.count == 0 {
-        slots[index].stack = nil
+      window.slots[index].stack?.count -= dropCount
+      if window.slots[index].stack?.count == 0 {
+        window.slots[index].stack = nil
       }
     } else {
       mouseItemStack?.count -= dropCount
@@ -430,8 +417,8 @@ public class InGameGUI {
     let index = slot.map(Int16.init)
     do {
       try connection?.sendPacket(ClickWindowPacket(
-        windowId: UInt8(windowId),
-        actionId: 0,
+        windowId: UInt8(window.id),
+        actionId: Int16(window.generateActionId()),
         action: wholeStack ? .dropStack(slot: index) : .dropOne(slot: index),
         clickedItem: clickedItem
       ))
