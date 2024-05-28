@@ -111,6 +111,29 @@ public final class PlayerInputSystem: System {
             inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 1) % 9
           case .previousSlot:
             inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 8) % 9
+          case .dropItem:
+            let slotIndex = PlayerInventory.Area.hotbar.startIndex + inventory.selectedHotbarSlot
+            guard var stack = inventory.slots[slotIndex].stack else {
+              break
+            }
+            let clickedItem = stack
+            stack.count -= 1
+            if stack.count == 0 {
+              inventory.slots[slotIndex].stack = nil
+            } else {
+              inventory.slots[slotIndex].stack = stack
+            }
+
+            do {
+              try connection?.sendPacket(ClickWindowPacket(
+                windowId: UInt8(PlayerInventory.windowId),
+                actionId: 0,
+                action: .dropOne(slot: Int16(slotIndex)),
+                clickedItem: inventory.slots[slotIndex]
+              ))
+            } catch {
+              log.warning("Failed to send packet for dropping item: \(error)")
+            }
           case .place, .destroy:
             if inventory.hotbar[inventory.selectedHotbarSlot].stack != nil {
               try connection?.sendPacket(UseItemPacket(hand: .mainHand))
