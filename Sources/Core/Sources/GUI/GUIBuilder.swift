@@ -14,9 +14,9 @@ public struct GUIBuilder {
 
   public static func buildOptional(_ component: GUIElement?) -> GUIElement {
     if let component = component {
-      component
+      return component
     } else {
-      .spacer(width: 0, height: 0)
+      return .spacer(width: 0, height: 0)
     }
   }
 }
