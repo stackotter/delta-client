@@ -187,7 +187,7 @@ public struct WindowType {
     identifier: Identifier(namespace: "minecraft", name:"generic_9x5"),
     background: GUIElement.list(spacing: 0) {
       GUIElement.sprite(.generic9x5)
-      GUIElement.sprite(.genericInventory) // Same reasoning as 9x4
+      GUIElement.sprite(.genericInventory)
     },
     slotCount: 81,
     areas: [
