@@ -70,6 +70,8 @@ public final class WorldRenderer: Renderer {
     commandQueue: MTLCommandQueue,
     profiler: Profiler<RenderingMeasurement>
   ) throws {
+    print(client.resourcePack.vanillaResources.blockTexturePalette.texture(for: Identifier(namespace: "minecraft", name: "block/destroy_stage_0")))
+
     self.client = client
     self.device = device
     self.commandQueue = commandQueue

@@ -1,7 +1,9 @@
 #include <metal_stdlib>
+#include "ChunkTypes.metal"
+
 using namespace metal;
 
-struct Vertex {
+struct EntityVertex {
   float x;
   float y;
   float z;
@@ -10,30 +12,30 @@ struct Vertex {
   float b;
 };
 
-struct RasterizerData {
+struct EntityRasterizerData {
   float4 position [[position]];
   float4 color;
 };
 
-struct Uniforms {
+struct EntityUniforms {
   float4x4 transformation;
 };
 
-vertex RasterizerData entityVertexShader(constant Vertex *vertices [[buffer(0)]],
-                                        constant Uniforms &uniforms [[buffer(1)]],
-                                        constant Uniforms *instanceUniforms [[buffer(2)]],
+vertex EntityRasterizerData entityVertexShader(constant EntityVertex *vertices [[buffer(0)]],
+                                        constant CameraUniforms &cameraUniforms [[buffer(1)]],
+                                        constant EntityUniforms *instanceUniforms [[buffer(2)]],
                                         uint vertexId [[vertex_id]],
                                         uint instanceId [[instance_id]]) {
-  Vertex in = vertices[vertexId];
-  RasterizerData out;
+  EntityVertex in = vertices[vertexId];
+  EntityRasterizerData out;
 
-  out.position = float4(in.x, in.y, in.z, 1.0) * instanceUniforms[instanceId].transformation * uniforms.transformation;
-  out.color = float4(in.r, in.g, in.b, 1);
+  out.position = float4(in.x, in.y, in.z, 1.0) * instanceUniforms[instanceId].transformation * cameraUniforms.framing * cameraUniforms.projection;
+  out.color = float4(in.r, in.g, in.b, 1.0);
 
   return out;
 }
 
-fragment float4 entityFragmentShader(RasterizerData in [[stage_in]],
+fragment float4 entityFragmentShader(EntityRasterizerData in [[stage_in]],
                                     texture2d_array<float, access::sample> textureArray [[texture(0)]]) {
   return in.color;
 }
