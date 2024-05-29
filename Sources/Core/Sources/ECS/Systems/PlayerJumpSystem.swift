@@ -30,7 +30,7 @@ public struct PlayerJumpSystem: System {
     )
     let block = world.getBlock(at: blockPosition)
 
-    let jumpPower = 0.42 * Double(block.material.jumpVelocityMultiplier)
+    let jumpPower = 0.42 * Double(block.physicalMaterial.jumpVelocityMultiplier)
     velocity.y = jumpPower
 
     // Add a bit of extra acceleration if the player is sprinting (this makes sprint jumping faster than sprinting)

@@ -66,7 +66,7 @@ extension Block {
       tint = nil
     }
 
-    let material = Block.PhysicalMaterial(
+    let physicalMaterial = Block.PhysicalMaterial(
       explosionResistance: pixlyzerBlock.explosionResistance,
       slipperiness: pixlyzerBlock.friction ?? 0.6,
       velocityMultiplier: pixlyzerBlock.velocityMultiplier ?? 1,
@@ -124,7 +124,8 @@ extension Block {
       fluidState: fluidState,
       tint: tint,
       offset: pixlyzerBlock.offsetType,
-      material: material,
+      vanillaMaterialIdentifier: pixlyzerState.material,
+      physicalMaterial: physicalMaterial,
       lightMaterial: lightMaterial,
       soundMaterial: soundMaterial,
       shape: shape,

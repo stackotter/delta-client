@@ -32,7 +32,7 @@ public struct PlayerVelocitySystem: System {
         x: Int(position.x.rounded(.down)),
         y: Int((position.y - 0.5).rounded(.down)),
         z: Int(position.z.rounded(.down)))
-      let material = world.getBlock(at: blockPosition).material
+      let material = world.getBlock(at: blockPosition).physicalMaterial
 
       velocity.x *= material.velocityMultiplier
       velocity.z *= material.velocityMultiplier

@@ -251,7 +251,7 @@ public enum PixlyzerFormatter {
     for (identifierString, pixlyzerItem) in pixlyzerItems {
       var identifier = try Identifier(identifierString)
       identifier.name = "item/\(identifier.name)"
-      let item = Item(from: pixlyzerItem, identifier: identifier)
+      let item = try Item(from: pixlyzerItem, identifier: identifier)
       items[item.id] = item
     }
 

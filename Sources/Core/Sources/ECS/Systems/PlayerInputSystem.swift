@@ -77,6 +77,10 @@ public final class PlayerInputSystem: System {
       }
 
       if !suppressInput {
+        suppressInput = try handleInventory(event, inventory, guiState, eventBus, connection)
+      }
+
+      if !suppressInput {
         suppressInput = try handleWindow(event, guiState, eventBus, connection)
       }
 
@@ -89,17 +93,10 @@ public final class PlayerInputSystem: System {
           case .toggleDebugHUD:
             guiState.showDebugScreen = !guiState.showDebugScreen
           case .toggleInventory:
-            guiState.showInventory = !guiState.showInventory
-            if !guiState.showInventory {
-              // Weirdly enough, the vanilla client sends a close window packet when closing the player's
-              // inventory even though it never tells the server that it opened the inventory in the first
-              // place. Likely just for the server to verify the slots and chuck out anything in the crafting
-              // area.
-              try inventory.window.close(mouseStack: &guiState.mouseItemStack, eventBus: eventBus, connection: connection)
-            } else {
-              inputState.releaseAll()
-              eventBus.dispatch(ReleaseCursorEvent())
-            }
+            // Closing the inventory is handled by `handleInventory`
+            guiState.showInventory = true
+            inputState.releaseAll()
+            eventBus.dispatch(ReleaseCursorEvent())
           case .slot1:
             inventory.selectedHotbarSlot = 0
           case .slot2:
@@ -281,6 +278,31 @@ public final class PlayerInputSystem: System {
     // Suppress inputs while the user is typing.
     return guiState.showChat
   }
+
+  /// - Returns: Whether to suppress the input associated with the event or not.
+  private func handleInventory(
+    _ event: KeyPressEvent,
+    _ inventory: PlayerInventory,
+    _ guiState: GUIStateStorage,
+    _ eventBus: EventBus,
+    _ connection: ServerConnection?
+  ) throws -> Bool {
+    guard guiState.showInventory else {
+      return false
+    }
+
+    if event.key == .escape || event.input == .toggleInventory {
+      // Weirdly enough, the vanilla client sends a close window packet when closing the player's
+      // inventory even though it never tells the server that it opened the inventory in the first
+      // place. Likely just for the server to verify the slots and chuck out anything in the crafting
+      // area.
+      try inventory.window.close(mouseStack: &guiState.mouseItemStack, eventBus: eventBus, connection: connection)
+      guiState.showInventory = false
+    }
+
+    return true
+  }
+  
 
   /// - Returns: Whether to suppress the input associated with the event or not.
   private func handleWindow(
