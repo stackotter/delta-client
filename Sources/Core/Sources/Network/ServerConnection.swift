@@ -144,14 +144,14 @@ public class ServerConnection {
           }
         }
       }
-      
+
       guard !isIp else {
         return (server.host, server.port ?? 25565)
       }
-      
+
       // If `host` is an ip already, no need to perform DNS lookups
       let resolver: AsyncDNSResolver
-      
+
       do {
         resolver = try AsyncDNSResolver()
       } catch {
@@ -167,10 +167,10 @@ public class ServerConnection {
       }
 
       // Check for regular records
-        let records = try await resolver.queryA(name: server.host)
-        if let record = records.first {
-          return (record.address.address, server.port ?? 25565)
-        }
+      let records = try await resolver.queryA(name: server.host)
+      if let record = records.first {
+        return (record.address.address, server.port ?? 25565)
+      }
 
       throw ServerConnectionError.failedToResolveHostname(hostname: server.host, nil)
     } catch {

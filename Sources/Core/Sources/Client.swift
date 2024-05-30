@@ -49,7 +49,7 @@ public final class Client: @unchecked Sendable {
   /// Join the specified server. Throws if the packets fail to send.
   public func joinServer(describedBy descriptor: ServerDescriptor, with account: Account) async throws {
     self.account = account
-    
+
     // Create a connection to the server
     let connection = try await ServerConnection(
       descriptor: descriptor,

@@ -28,7 +28,7 @@ public class Pinger: ObservableObject {
     switch event {
       case let event as ConnectionFailedEvent:
         ThreadUtil.runInMain {
-          self.response = .failure(PingError.connectionFailed(event.networkError))
+          self.response = Result.failure(PingError.connectionFailed(event.networkError))
         }
       default:
         break
@@ -67,7 +67,7 @@ public class Pinger: ObservableObject {
           self.isConnecting = false
           log.trace("Failed to create server connection")
           ThreadUtil.runInMain {
-            self.response = .failure(.connectionFailed(error))
+            self.response = Result.failure(.connectionFailed(error))
           }
         }
       }
