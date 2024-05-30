@@ -52,24 +52,20 @@ public class Pinger: ObservableObject {
 
   private func connect() async {
     isConnecting = true
-    await withTaskGroup(of: Void.self) { group in
-      group.addTask {
-        do {
-          let connection = try await ServerConnection(descriptor: self.descriptor)
-          connection.setPacketHandler(self.handlePacket)
-          connection.eventBus.registerHandler(self.handleNetworkEvent)
-          self.connection = connection
-          self.isConnecting = false
-          if self.shouldPing {
-            try? await self.ping()
-          }
-        } catch {
-          self.isConnecting = false
-          log.trace("Failed to create server connection")
-          ThreadUtil.runInMain {
-            self.response = Result.failure(.connectionFailed(error))
-          }
-        }
+    do {
+      let connection = try await ServerConnection(descriptor: self.descriptor)
+      connection.setPacketHandler(self.handlePacket)
+      connection.eventBus.registerHandler(self.handleNetworkEvent)
+      self.connection = connection
+      self.isConnecting = false
+      if self.shouldPing {
+        try? await self.ping()
+      }
+    } catch {
+      self.isConnecting = false
+      log.trace("Failed to create server connection")
+      ThreadUtil.runInMain {
+        self.response = Result.failure(.connectionFailed(error))
       }
     }
   }
