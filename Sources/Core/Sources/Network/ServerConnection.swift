@@ -153,7 +153,7 @@ public class ServerConnection {
       let resolver: AsyncDNSResolver
 
       do {
-        resolver = try AsyncDNSResolver()
+        resolver = try AsyncDNSResolver(try CAresDNSResolver())
       } catch {
         throw ServerConnectionError.failedToCreateDNSResolver(error)
       }
