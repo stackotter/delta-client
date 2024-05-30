@@ -51,17 +51,8 @@
         "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift",
         "state": {
           "branch": null,
-          "revision": "32f641cf24fc7abc1c591a2025e9f2f572648b0f",
-          "version": "1.7.2"
-        }
-      },
-      {
-        "package": "DNS",
-        "repositoryURL": "https://github.com/Bouke/DNS.git",
-        "state": {
-          "branch": null,
-          "revision": "78bbd1589890a90b202d11d5f9e1297050cf0eb2",
-          "version": "1.2.0"
+          "revision": "c9c3df6ab812de32bae61fc0cd1bf6d45170ebf0",
+          "version": "1.8.2"
         }
       },
       {
@@ -87,8 +78,8 @@
         "repositoryURL": "https://github.com/michaeleisel/JJLISO8601DateFormatter",
         "state": {
           "branch": null,
-          "revision": "de422afd9a47b72703c30a81423c478337191390",
-          "version": "0.1.6"
+          "revision": "ed1d996123688bade6e895aa49595f0d862900e7",
+          "version": "0.1.7"
         }
       },
       {
@@ -119,6 +110,15 @@
         }
       },
       {
+        "package": "Qlift",
+        "repositoryURL": "https://github.com/Longhanks/qlift",
+        "state": {
+          "branch": null,
+          "revision": "ddab1f1ecc113ad4f8e05d2999c2734cdf706210",
+          "version": null
+        }
+      },
+      {
         "package": "Rainbow",
         "repositoryURL": "https://github.com/onevcat/Rainbow",
         "state": {
@@ -132,8 +132,17 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
           "branch": null,
-          "revision": "fee6933f37fde9a5e12a1e4aeaa93fe60116ff2a",
-          "version": "1.2.2"
+          "revision": "0fbc8848e389af3bb55c182bc19ca9d5dc2f255b",
+          "version": "1.4.0"
+        }
+      },
+      {
+        "package": "swift-async-dns-resolver",
+        "repositoryURL": "https://github.com/apple/swift-async-dns-resolver.git",
+        "state": {
+          "branch": null,
+          "revision": "08c07ff31a745ee5e522ac10132fb4949834d925",
+          "version": "0.4.0"
         }
       },
       {
@@ -141,8 +150,8 @@
         "repositoryURL": "https://github.com/apple/swift-atomics.git",
         "state": {
           "branch": null,
-          "revision": "6c89474e62719ddcc1e9614989fff2f68208fe10",
-          "version": "1.1.0"
+          "revision": "cd142fd2f64be2100422d658e7411e39489da985",
+          "version": "1.2.0"
         }
       },
       {
@@ -150,8 +159,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
         "state": {
           "branch": null,
-          "revision": "fc45e7b2cfece9dd80b5a45e6469ffe67fe67984",
-          "version": "0.14.1"
+          "revision": "8d712376c99fc0267aa0e41fea732babe365270a",
+          "version": "1.3.3"
         }
       },
       {
@@ -168,7 +177,16 @@
         "repositoryURL": "https://github.com/stackotter/swift-cross-ui",
         "state": {
           "branch": "main",
-          "revision": "e4491a59449dec572c1d0d2c214f35825dbc34aa",
+          "revision": "6f444975e668bb4ee3610422c79dcb147be15e8e",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-cwinrt",
+        "repositoryURL": "https://github.com/thebrowsercompany/swift-cwinrt",
+        "state": {
+          "branch": "main",
+          "revision": "ad451d31fc7c1c60041c146d177cdaf5aaf1cf47",
           "version": null
         }
       },
@@ -186,8 +204,17 @@
         "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {
           "branch": null,
-          "revision": "532d8b529501fb73a2455b179e0bbb6d49b652ed",
-          "version": "1.5.3"
+          "revision": "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
+          "version": "1.5.4"
+        }
+      },
+      {
+        "package": "swift-macro-toolkit",
+        "repositoryURL": "https://github.com/stackotter/swift-macro-toolkit",
+        "state": {
+          "branch": null,
+          "revision": "687075e7bf976e121d083e922a07c7a9350ca85d",
+          "version": "0.4.0"
         }
       },
       {
@@ -231,8 +258,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-parsing",
         "state": {
           "branch": null,
-          "revision": "27c941bbd22a4bbc53005a15a0440443fd892f70",
-          "version": "0.12.1"
+          "revision": "a0e7d73f462c1c38c59dc40a3969ac40cea42950",
+          "version": "0.13.0"
         }
       },
       {
@@ -245,21 +272,48 @@
         }
       },
       {
-        "package": "Resolver",
-        "repositoryURL": "https://github.com/seznam/swift-resolver",
+        "package": "swift-syntax",
+        "repositoryURL": "https://github.com/apple/swift-syntax.git",
         "state": {
           "branch": null,
-          "revision": "cfb7d326bc4c89a48439303d758b375a8faae784",
-          "version": "0.3.0"
+          "revision": "303e5c5c36d6a558407d364878df131c3546fad8",
+          "version": "510.0.2"
         }
       },
       {
-        "package": "UniSocket",
-        "repositoryURL": "https://github.com/seznam/swift-unisocket",
+        "package": "swift-uwp",
+        "repositoryURL": "https://github.com/thebrowsercompany/swift-uwp",
         "state": {
-          "branch": null,
-          "revision": "1785e432fb8497265a38712cdb9584c429ca3f96",
-          "version": "0.14.0"
+          "branch": "main",
+          "revision": "cfad0a43469211bf7eb58ed23af3d4a176faec07",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-windowsappsdk",
+        "repositoryURL": "https://github.com/thebrowsercompany/swift-windowsappsdk",
+        "state": {
+          "branch": "main",
+          "revision": "8d094d4478d0eabcf584fef133b8ce45287ecd72",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-windowsfoundation",
+        "repositoryURL": "https://github.com/thebrowsercompany/swift-windowsfoundation",
+        "state": {
+          "branch": "main",
+          "revision": "ba7a8b5000ed3f9f077000d1a31f2a0b19907657",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-winui",
+        "repositoryURL": "https://github.com/thebrowsercompany/swift-winui",
+        "state": {
+          "branch": "main",
+          "revision": "18b3a6a16496d5848aec4587f7fb994f469186c5",
+          "version": null
         }
       },
       {
@@ -281,6 +335,15 @@
         }
       },
       {
+        "package": "SwiftTerm",
+        "repositoryURL": "https://github.com/migueldeicaza/SwiftTerm.git",
+        "state": {
+          "branch": null,
+          "revision": "e2b431dbf73f775fb4807a33e4572ffd3dc6933a",
+          "version": "1.2.5"
+        }
+      },
+      {
         "package": "SwiftyRequest",
         "repositoryURL": "https://github.com/Kitura/SwiftyRequest.git",
         "state": {
@@ -299,12 +362,30 @@
         }
       },
       {
+        "package": "TermKit",
+        "repositoryURL": "https://github.com/stackotter/TermKit",
+        "state": {
+          "branch": null,
+          "revision": "163afa64f1257a0c026cc83ed8bc47a5f8fc9704",
+          "version": null
+        }
+      },
+      {
+        "package": "TextBufferKit",
+        "repositoryURL": "https://github.com/migueldeicaza/TextBufferKit.git",
+        "state": {
+          "branch": null,
+          "revision": "7f3ed5b1d7288de34ad853544d802647be11cfcf",
+          "version": "0.3.0"
+        }
+      },
+      {
         "package": "xctest-dynamic-overlay",
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
           "branch": null,
-          "revision": "50843cbb8551db836adec2290bb4bc6bac5c1865",
-          "version": "0.9.0"
+          "revision": "6f30bdba373bbd7fbfe241dddd732651f2fbd1e2",
+          "version": "1.1.2"
         }
       },
       {
@@ -312,8 +393,8 @@
         "repositoryURL": "https://github.com/weichsel/ZIPFoundation.git",
         "state": {
           "branch": null,
-          "revision": "43ec568034b3731101dbf7670765d671c30f54f3",
-          "version": "0.9.16"
+          "revision": "02b6abe5f6eef7e3cbd5f247c5cc24e246efcfe0",
+          "version": "0.9.19"
         }
       },
       {

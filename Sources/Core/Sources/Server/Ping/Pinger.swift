@@ -13,14 +13,13 @@ public class Pinger: ObservableObject {
   public var shouldPing = false
   public var isConnecting = false
 
-  private let queue: DispatchQueue
-
   // MARK: Init
 
   public init(_ descriptor: ServerDescriptor) {
     self.descriptor = descriptor
-    queue = DispatchQueue(label: "pinger-\(descriptor.name)")
-    connect()
+    Task {
+      await connect()
+    }
   }
 
   // MARK: Interface
@@ -29,46 +28,47 @@ public class Pinger: ObservableObject {
     switch event {
       case let event as ConnectionFailedEvent:
         ThreadUtil.runInMain {
-          response = Result.failure(PingError.connectionFailed(event.networkError))
+          self.response = .failure(PingError.connectionFailed(event.networkError))
         }
       default:
         break
     }
   }
 
-  public func ping() throws {
+  public func ping() async throws {
     if let connection = connection {
       ThreadUtil.runInMain {
-        response = nil
+        self.response = nil
       }
       try connection.ping()
       shouldPing = false
     } else if !isConnecting {
       shouldPing = true
-      connect()
+      await connect()
     } else {
       shouldPing = true
     }
   }
 
-  private func connect() {
+  private func connect() async {
     isConnecting = true
-    // DNS resolution sometimes takes a while so we do that in parallel
-    queue.async {
-      do {
-        let connection = try ServerConnection(descriptor: self.descriptor)
-        connection.setPacketHandler(self.handlePacket)
-        connection.eventBus.registerHandler(self.handleNetworkEvent)
-        self.connection = connection
-        self.isConnecting = false
-        if self.shouldPing {
-          try? self.ping()
-        }
-      } catch {
-        self.isConnecting = false
-        log.trace("Failed to create server connection")
-        ThreadUtil.runInMain {
-          self.response = Result.failure(.connectionFailed(error))
+    await withTaskGroup(of: Void.self) { group in
+      group.addTask {
+        do {
+          let connection = try await ServerConnection(descriptor: self.descriptor)
+          connection.setPacketHandler(self.handlePacket)
+          connection.eventBus.registerHandler(self.handleNetworkEvent)
+          self.connection = connection
+          self.isConnecting = false
+          if self.shouldPing {
+            try? await self.ping()
+          }
+        } catch {
+          self.isConnecting = false
+          log.trace("Failed to create server connection")
+          ThreadUtil.runInMain {
+            self.response = .failure(.connectionFailed(error))
+          }
         }
       }
     }
