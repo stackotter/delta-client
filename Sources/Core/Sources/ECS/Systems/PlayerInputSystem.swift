@@ -143,16 +143,20 @@ public final class PlayerInputSystem: System {
                 cursorPositionZ: cursor.z,
                 insideBlock: distance < 0
               ))
-            } else if event.input == .destroy && attributes.canInstantBreak {
-              guard let (position, _, face, _) = game.targetedBlock(acquireLock: false) else {
-                break
-              }
+            } else if event.input == .destroy {
+              if attributes.canInstantBreak {
+                guard let (position, _, face, _) = game.targetedBlock(acquireLock: false) else {
+                  break
+                }
 
-              try connection?.sendPacket(PlayerDiggingPacket(
-                status: .startedDigging,
-                location: position,
-                face: face
-              ))
+                try connection?.sendPacket(PlayerDiggingPacket(
+                  status: .startedDigging,
+                  location: position,
+                  face: face
+                ))
+              } else {
+
+              }
             }
           default:
             break

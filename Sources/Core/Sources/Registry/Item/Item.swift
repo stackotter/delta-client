@@ -26,6 +26,20 @@ public struct Item: Codable {
   public enum Properties: Codable {
     case armor(ArmorProperties)
     case tool(ToolProperties)
+
+    public var armorProperties: ArmorProperties? {
+      guard case let .armor(properties) = self else {
+        return nil
+      }
+      return properties
+    }
+
+    public var toolProperties: ToolProperties? {
+      guard case let .tool(properties) = self else {
+        return nil
+      }
+      return properties
+    }
   }
 
   public struct ArmorProperties: Codable {
@@ -59,7 +73,7 @@ public struct Item: Codable {
 
   public struct ToolProperties: Codable {
     public var uses: Int
-    public var level: Int
+    public var level: Level
     public var speed: Double
     public var attackDamage: Double
     public var attackDamageBonus: Double
@@ -78,9 +92,21 @@ public struct Item: Codable {
     /// blocks at a time.
     public var effectiveMaterials: [Identifier]
 
+    public enum Level: Int, Codable, Equatable, Comparable {
+      case woodOrGold = 0
+      case stone = 1
+      case iron = 2
+      case diamond = 3
+      case netherite = 4
+
+      public static func < (lhs: Level, rhs: Level) -> Bool {
+        lhs.rawValue < rhs.rawValue
+      }
+    }
+
     public init(
       uses: Int,
-      level: Int,
+      level: Level,
       speed: Double,
       attackDamage: Double,
       attackDamageBonus: Double,
@@ -102,9 +128,31 @@ public struct Item: Codable {
       self.effectiveMaterials = effectiveMaterials
     }
 
-    public func isEffective(on block: Block) -> Bool {
-      effectiveMaterials.contains(block.vanillaMaterialIdentifier)
-      || mineableBlocks.contains(block.id)
+    public func destroySpeedMultiplier(for block: Block) -> Double {
+      if effectiveMaterials.contains(block.vanillaMaterialIdentifier) {
+        return speed * (1 / 30)
+      }
+
+      switch kind {
+        case .sword:
+          let swordSemiEffectiveMaterials = ["plant", "replaceable_plant"].map(Identifier.init(name:))
+          if block.className == "CobwebBlock" {
+            return 0.15
+          } else if swordSemiEffectiveMaterials.contains(block.vanillaMaterialIdentifier) {
+            return 0.015
+          } else {
+            return 0.01
+          }
+        case .pickaxe, .shovel, .hoe, .axe:
+          let isCorrectTool =
+            effectiveMaterials.contains(block.vanillaMaterialIdentifier)
+            || mineableBlocks.contains(block.id)
+          if isCorrectTool {
+            return speed * (1 / 30)
+          } else {
+            return block.physicalMaterial.requiresTool ? 0.01 : (1 / 30)
+          }
+      }
     }
 
     public enum ToolKind: String, Codable {

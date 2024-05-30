@@ -96,6 +96,7 @@ public final class Game: @unchecked Sendable {
     tickScheduler.addSystem(PlayerClimbSystem())
     tickScheduler.addSystem(PlayerGravitySystem())
     tickScheduler.addSystem(PlayerSmoothingSystem())
+    tickScheduler.addSystem(PlayerBlockBreakingSystem(connection, self))
     // TODO: Make sure that font gets updated when resource pack gets updated, will likely
     //   require significant refactoring if we wanna do it right (as in not just hacking it
     //   together for the specific case of PlayerInputSystem); proper resource pack propagation

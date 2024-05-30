@@ -71,6 +71,11 @@ public class World {
   /// Not thread safe. Use `eventBus`.
   private var _eventBus: EventBus
 
+  /// Lock for protecting access to ``breakingBlocks``.
+  private var blockBreakingLock = ReadWriteLock()
+  /// All blocks currently getting broken.
+  private var breakingBlocks: [BreakingBlock] = []
+
   // MARK: Init
 
   /// Create an empty world.
@@ -690,6 +695,65 @@ public class World {
     terrainLock.acquireReadLock()
     defer { terrainLock.unlock() }
     return unlitChunks[position] != nil
+  }
+
+  // MARK: Block breaking
+
+  public func startBreakingBlock(at position: BlockPosition, for entityId: Int) {
+    blockBreakingLock.acquireWriteLock()
+    defer { blockBreakingLock.unlock() }
+    for block in breakingBlocks {
+      if block.position == position {
+        // TODO: Figure out what to do in this situation
+        return
+      }
+    }
+    breakingBlocks.append(
+      BreakingBlock(
+        position: position,
+        perpetratorEntityId: entityId,
+        progress: 0
+      )
+    )
+  }
+
+  /// Does nothing if the specified block isn't getting broken.
+  public func addBreakingProgress(_ progress: Double, toBlockAt position: BlockPosition) {
+    blockBreakingLock.acquireWriteLock()
+    defer { blockBreakingLock.unlock() }
+    for (i, block) in breakingBlocks.enumerated() where block.position == position {
+      breakingBlocks[i].progress += progress
+    }
+  }
+
+  public func getBreakingBlocks() -> [BreakingBlock] {
+    blockBreakingLock.acquireReadLock()
+    defer { blockBreakingLock.unlock() }
+    return breakingBlocks
+  }
+
+  public func getBlockBreakingProgress(at position: BlockPosition) -> Double? {
+    blockBreakingLock.acquireReadLock()
+    defer { blockBreakingLock.unlock() }
+    return breakingBlocks.first { block in
+      block.position == position
+    }?.progress
+  }
+
+  public func endBlockBreaking(at position: BlockPosition) {
+    blockBreakingLock.acquireWriteLock()
+    defer { blockBreakingLock.unlock() }
+    breakingBlocks = breakingBlocks.filter { block in
+      block.position != position
+    }
+  }
+
+  public func endBlockBreaking(for entityId: Int) {
+    blockBreakingLock.acquireWriteLock()
+    defer { blockBreakingLock.unlock() }
+    breakingBlocks = breakingBlocks.filter { block in
+      block.perpetratorEntityId != entityId
+    }
   }
 
   // MARK: Helper

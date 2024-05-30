@@ -47,7 +47,7 @@ public struct PixlyzerItem: Decodable {
   public var speed: Double?
   public var attackDamage: Double?
   public var attackDamageBonus: Double?
-  public var level: Int?
+  public var level: Item.ToolProperties.Level?
   public var enchantmentValue: Int?
   public var diggableBlocks: [Int]?
   public var strippableBlocks: [String: Int]?

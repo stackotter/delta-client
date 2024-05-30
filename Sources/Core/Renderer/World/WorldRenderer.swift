@@ -61,6 +61,8 @@ public final class WorldRenderer: Renderer {
   /// The buffer for the uniforms used to render distance fog.
   private let fogUniformsBuffer: MTLBuffer
 
+  private let destroyOverlayRenderPipelineState: MTLRenderPipelineState
+
   // MARK: Init
 
   /// Creates a new world renderer.
@@ -70,8 +72,6 @@ public final class WorldRenderer: Renderer {
     commandQueue: MTLCommandQueue,
     profiler: Profiler<RenderingMeasurement>
   ) throws {
-    print(client.resourcePack.vanillaResources.blockTexturePalette.texture(for: Identifier(namespace: "minecraft", name: "block/destroy_stage_0")))
-
     self.client = client
     self.device = device
     self.commandQueue = commandQueue
@@ -110,6 +110,20 @@ public final class WorldRenderer: Renderer {
       vertexFunction: vertexFunction,
       fragmentFunction: fragmentFunction,
       blendingEnabled: true
+    )
+
+    destroyOverlayRenderPipelineState = try MetalUtil.makeRenderPipelineState(
+      device: device,
+      label: "WorldRenderer.destroyOverlayPipeline",
+      vertexFunction: vertexFunction,
+      fragmentFunction: fragmentFunction,
+      blendingEnabled: true,
+      editDescriptor: { descriptor in
+        descriptor.colorAttachments[0].sourceRGBBlendFactor = .destinationColor
+        descriptor.colorAttachments[0].sourceAlphaBlendFactor = .one
+        descriptor.colorAttachments[0].destinationRGBBlendFactor = .sourceColor
+        descriptor.colorAttachments[0].destinationAlphaBlendFactor = .zero
+      }
     )
 
     #if !os(tvOS)
@@ -325,6 +339,74 @@ public final class WorldRenderer: Renderer {
         }
       }
       profiler.pop()
+    }
+
+    for breakingBlock in client.game.world.getBreakingBlocks() {
+      guard let stage = breakingBlock.stage else {
+        continue
+      }
+      let block = client.game.world.getBlock(at: breakingBlock.position)
+      if var model = resources.blockModelPalette.model(for: block.id, at: breakingBlock.position) {
+        let textureId = client.resourcePack.vanillaResources.blockTexturePalette.textureIndex(for: Identifier(namespace: "minecraft", name: "block/destroy_stage_\(stage)"))!
+        for (i, part) in model.parts.enumerated() {
+          for (j, element) in part.elements.enumerated() {
+            model.parts[i].elements[j].shade = false
+            for k in 0..<element.faces.count {
+              model.parts[i].elements[j].faces[k].texture = textureId
+              model.parts[i].elements[j].faces[k].isTinted = false
+            }
+          }
+        }
+        model.textureType = .transparent
+        // No clue why light level 12 is the right one, vanilla seems to use light level 15 here but that
+        // just doesn't work for us at all (way too bright).
+        let lightLevel = LightLevel(
+          sky: 12,
+          block: 0
+        )
+        var neighbourLightLevels: [Direction: LightLevel] = [:]
+        for direction in Direction.allDirections {
+          neighbourLightLevels[direction] = LightLevel(
+            sky: 12,
+            block: 0
+          )
+        }
+        let offset = block.getModelOffset(at: breakingBlock.position)
+        let modelToWorld = MatrixUtil.translationMatrix(breakingBlock.position.floatVector + offset)
+        let builder = BlockMeshBuilder(
+          model: model,
+          position: breakingBlock.position,
+          modelToWorld: modelToWorld,
+          culledFaces: [],
+          lightLevel: lightLevel,
+          neighbourLightLevels: neighbourLightLevels,
+          tintColor: Vec3f(repeating: 0),
+          blockTexturePalette: resources.blockTexturePalette
+        )
+        var dummyGeometry = Geometry()
+        var geometry = SortableMeshElement()
+        builder.build(into: &dummyGeometry, translucentGeometry: &geometry)
+        for i in 0..<geometry.vertices.count {
+          geometry.vertices[i].isTransparent = true
+        }
+        let vertexBuffer = device.makeBuffer(bytes: &geometry.vertices, length: MemoryLayout<BlockVertex>.stride * geometry.vertices.count)
+        guard let indexBuffer = device.makeBuffer(bytes: &geometry.indices, length: MemoryLayout<UInt32>.stride * geometry.indices.count) else {
+          // No geometry to render
+          continue
+        }
+
+        encoder.setRenderPipelineState(destroyOverlayRenderPipelineState)
+        encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+        encoder.setVertexBuffer(identityUniformsBuffer, offset: 0, index: 2)
+
+        encoder.drawIndexedPrimitives(
+          type: .triangle,
+          indexCount: geometry.indices.count,
+          indexType: .uint32,
+          indexBuffer: indexBuffer,
+          indexBufferOffset: 0
+        )
+      }
     }
 
     // Entities are rendered before translucent geometry for correct alpha blending behaviour.

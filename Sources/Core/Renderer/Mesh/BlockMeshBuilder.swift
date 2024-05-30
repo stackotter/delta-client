@@ -28,7 +28,8 @@ struct BlockMeshBuilder {
     translucentGeometry = Self.mergeTranslucentGeometry(
       translucentGeometryParts,
       position: position
-    ) }
+    )
+  }
 
   func buildPart(
     _ part: BlockModelPart,
