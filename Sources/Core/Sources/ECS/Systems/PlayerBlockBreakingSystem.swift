@@ -15,21 +15,22 @@ public final class PlayerBlockBreakingSystem: System {
       return
     }
 
-    // TODO: Figure out why obsidian mining speed is so wrong
     // TODO: Cancel digging when hotbar slot changes
 
     var family = nexus.family(
-      requiresAll: EntityRotation.self,
-      PlayerInventory.self,
-      EntityCamera.self,
+      requiresAll: PlayerInventory.self,
       PlayerGamemode.self,
       PlayerAttributes.self,
       EntityId.self,
       ClientPlayerEntity.self
     ).makeIterator()
 
-    guard let (rotation, inventory, camera, gamemode, attributes, playerEntityId, _) = family.next() else {
+    guard let (inventory, gamemode, attributes, playerEntityId, _) = family.next() else {
       log.error("PlayerInputSystem failed to get player to tick")
+      return
+    }
+
+    guard gamemode.gamemode.canPlaceBlocks else {
       return
     }
 
@@ -65,6 +66,13 @@ public final class PlayerBlockBreakingSystem: System {
         location: position,
         face: face
       ))
+    }
+
+    guard !attributes.canInstantBreak else {
+      if inputState.newlyPressed.contains(where: { $0.input == .destroy }) {
+        try notifyServer(.startedDigging)
+      }
+      return
     }
 
     let newlyReleased = inputState.newlyReleased.contains(where: { $0.input == .destroy })
@@ -118,6 +126,7 @@ public final class PlayerBlockBreakingSystem: System {
       return 1
     } else {
       let hardness = block.physicalMaterial.hardness
+      print("Hardness:", hardness)
 
       // TODO: Sentinel values are gross, we could probably just make hardness an optional
       //   (don't have to copy vanilla). I would do that right now but we need cache versioning
@@ -129,6 +138,9 @@ public final class PlayerBlockBreakingSystem: System {
 
       let defaultSpeed = block.physicalMaterial.requiresTool ? 0.01 : (1 / 30)
       let toolSpeed = heldItem?.properties?.toolProperties?.destroySpeedMultiplier(for: block) ?? defaultSpeed
+      print("Default speed:", defaultSpeed)
+      print("Tool speed:", toolSpeed)
+      print("")
       return toolSpeed / hardness
     }
   }

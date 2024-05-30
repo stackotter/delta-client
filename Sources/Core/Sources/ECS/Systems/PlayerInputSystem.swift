@@ -123,13 +123,15 @@ public final class PlayerInputSystem: System {
             let slotIndex = PlayerInventory.hotbarArea.startIndex + inventory.selectedHotbarSlot
             inventory.window.dropItem(slotIndex, connection: connection)
           case .place, .destroy:
+            // Block breaking is handled by ``PlayerBlockBreakingSystem``, this just handles hand animation and
+            // other non breaking things for the `.destroy` input (e.g. attacking)
             if inventory.hotbar[inventory.selectedHotbarSlot].stack != nil {
               try connection?.sendPacket(UseItemPacket(hand: .mainHand))
             } else {
               try connection?.sendPacket(AnimationServerboundPacket(hand: .mainHand))
             }
 
-            if event.input == .place && gamemode.gamemode != .spectator {
+            if event.input == .place {
               guard let (position, cursor, face, distance) = game.targetedBlock(acquireLock: false) else {
                 break
               }
@@ -143,19 +145,10 @@ public final class PlayerInputSystem: System {
                 cursorPositionZ: cursor.z,
                 insideBlock: distance < 0
               ))
-            } else if event.input == .destroy {
-              if attributes.canInstantBreak {
-                guard let (position, _, face, _) = game.targetedBlock(acquireLock: false) else {
-                  break
-                }
 
-                try connection?.sendPacket(PlayerDiggingPacket(
-                  status: .startedDigging,
-                  location: position,
-                  face: face
-                ))
-              } else {
-
+              if gamemode.gamemode.canPlaceBlocks {
+                // TODO: Predict the result of block placement so that we're not relying on the server
+                //   (quite noticeable latency)
               }
             }
           default:

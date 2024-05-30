@@ -129,10 +129,6 @@ public struct Item: Codable {
     }
 
     public func destroySpeedMultiplier(for block: Block) -> Double {
-      if effectiveMaterials.contains(block.vanillaMaterialIdentifier) {
-        return speed * (1 / 30)
-      }
-
       switch kind {
         case .sword:
           let swordSemiEffectiveMaterials = ["plant", "replaceable_plant"].map(Identifier.init(name:))
@@ -146,7 +142,11 @@ public struct Item: Codable {
         case .pickaxe, .shovel, .hoe, .axe:
           let isCorrectTool =
             effectiveMaterials.contains(block.vanillaMaterialIdentifier)
-            || mineableBlocks.contains(block.id)
+            || mineableBlocks.contains(block.vanillaParentBlockId)
+          print("Is effective material:", effectiveMaterials.contains(block.vanillaMaterialIdentifier))
+          print("Is mineable by tool:", mineableBlocks.contains(block.id))
+          print("Requires tool:", block.physicalMaterial.requiresTool)
+          print("Speed:", speed)
           if isCorrectTool {
             return speed * (1 / 30)
           } else {
