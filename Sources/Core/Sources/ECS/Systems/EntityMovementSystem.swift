@@ -14,6 +14,9 @@ public struct EntityMovementSystem: System {
     for (position, velocity, onGround) in physicsEntities {
       if onGround.onGround {
         velocity.vector.y = 0
+      } else {
+        velocity.vector.y *= 0.98
+        velocity.vector.y -= 0.04
       }
 
       position.move(by: velocity.vector)
