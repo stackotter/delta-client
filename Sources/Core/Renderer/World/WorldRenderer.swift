@@ -300,7 +300,8 @@ public final class WorldRenderer: Renderer {
     if client.game.currentGamemode() != .spectator {
       // Render selected block outline
       profiler.push(.encodeBlockOutline)
-      if let (targetedBlockPosition, _, _, _) = client.game.targetedBlock() {
+      if let targetedBlock = client.game.targetedBlock() {
+        let targetedBlockPosition = targetedBlock.target
         var indices: [UInt32] = []
         var vertices: [BlockVertex] = []
         let block = client.game.world.getBlock(at: targetedBlockPosition)

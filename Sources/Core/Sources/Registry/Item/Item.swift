@@ -143,10 +143,6 @@ public struct Item: Codable {
           let isCorrectTool =
             effectiveMaterials.contains(block.vanillaMaterialIdentifier)
             || mineableBlocks.contains(block.vanillaParentBlockId)
-          print("Is effective material:", effectiveMaterials.contains(block.vanillaMaterialIdentifier))
-          print("Is mineable by tool:", mineableBlocks.contains(block.id))
-          print("Requires tool:", block.physicalMaterial.requiresTool)
-          print("Speed:", speed)
           if isCorrectTool {
             return speed * (1 / 30)
           } else {

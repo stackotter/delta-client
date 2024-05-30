@@ -380,9 +380,9 @@ public final class Game: @unchecked Sendable {
   /// Gets the position of the block currently targeted by the player.
   /// - Parameters:
   ///   - acquireLock: If `false`, no locks are acquired. Only use if you know what you're doing.
-  public func targetedBlock(acquireLock: Bool = true) -> (block: BlockPosition, cursor: Vec3f, face: Direction, distance: Float)? { // swiftlint:disable:this large_tuple
+  public func targetedBlockIgnoringEntities(acquireLock: Bool = true) -> Targeted<BlockPosition>? {
     if acquireLock {
-      nexusLock.acquireWriteLock()
+      nexusLock.acquireReadLock()
     }
 
     let ray = player.ray
@@ -400,15 +400,105 @@ public final class Game: @unchecked Sendable {
           break
         }
 
-        var cursor = ray.direction * distance + ray.origin
-        cursor.x = cursor.x.truncatingRemainder(dividingBy: 1)
-        cursor.y = cursor.y.truncatingRemainder(dividingBy: 1)
-        cursor.z = cursor.z.truncatingRemainder(dividingBy: 1)
-        return (position, cursor, face, distance)
+        let targetedPosition = ray.direction * distance + ray.origin
+        return Targeted<BlockPosition>(
+          target: position,
+          distance: distance,
+          face: face,
+          targetedPosition: targetedPosition
+        )
       }
     }
 
     return nil
+  }
+
+  public func targetedBlock(acquireLock: Bool = true) -> Targeted<BlockPosition>? {
+    guard let targetedThing = targetedThing(acquireLock: acquireLock) else {
+      return nil
+    }
+
+    guard case let .block(position) = targetedThing.target else {
+      return nil
+    }
+
+    return targetedThing.map(constant(position))
+  }
+
+  // TODO: Make a value type for entity ids so that this doesn't return a targeted integer (just feels confusing).
+  /// - Returns: The id of the entity targeted by the player, if any.
+  public func targetedEntityIgnoringBlocks(acquireLock: Bool = true) -> Targeted<Int>? {
+    if acquireLock { nexusLock.acquireReadLock() }
+    defer { if acquireLock { nexusLock.unlock() } }
+
+    let playerPosition = player.position.vector
+    let playerRay = player.ray
+
+    let family = nexus.family(
+      requiresAll: EntityId.self,
+      EntityPosition.self,
+      EntityHitBox.self,
+      excludesAll: ClientPlayerEntity.self
+    )
+
+    var candidate: Targeted<Int>?
+    for (id, position, hitbox) in family {
+      guard (playerPosition - position.vector).magnitude < 4 else {
+        continue
+      }
+
+      guard let (distance, face) = hitbox.aabb(at: position.vector).intersectionDistanceAndFace(with: playerRay) else {
+        continue
+      }
+
+      let newCandidate = Targeted<Int>(
+        target: id.id,
+        distance: distance,
+        face: face,
+        targetedPosition: playerRay.direction * distance + playerRay.origin
+      )
+
+      if let currentCandidate = candidate {
+        if distance < currentCandidate.distance {
+          candidate = newCandidate
+        }
+      } else {
+        candidate = newCandidate
+      }
+    }
+
+    return candidate
+  }
+
+  public func targetedEntity(acquireLock: Bool = true) -> Targeted<Int>? {
+    guard let targetedThing = targetedThing(acquireLock: acquireLock) else {
+      return nil
+    }
+
+    guard case let .entity(id) = targetedThing.target else {
+      return nil
+    }
+
+    return targetedThing.map(constant(id))
+  }
+
+  /// - Returns: The closest thing targeted by the player.
+  public func targetedThing(acquireLock: Bool = true) -> Targeted<Thing>? {
+    let targetedBlock = targetedBlockIgnoringEntities(acquireLock: acquireLock)
+    let targetedEntity = targetedEntityIgnoringBlocks(acquireLock: acquireLock)
+    if let block = targetedBlock, let entity = targetedEntity {
+      if block.distance < entity.distance {
+        return block.map(Thing.block)
+      } else {
+        return entity.map(Thing.entity)
+      }
+    } else if let block = targetedBlock {
+      return block.map(Thing.block)
+    } else if let entity = targetedEntity {
+      return entity.map(Thing.entity)
+    } else {
+      return nil
+    }
   }
 
   /// Gets current gamemode of the player.

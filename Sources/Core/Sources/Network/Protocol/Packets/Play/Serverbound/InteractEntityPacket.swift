@@ -20,7 +20,7 @@ public struct InteractEntityPacket: ServerboundPacket {
         writer.writeVarInt(hand.rawValue)
         writer.writeBool(isSneaking)
       case let .attack(isSneaking: isSneaking):
-        writer.writeVarInt(1) // interact
+        writer.writeVarInt(1) // attack
         writer.writeBool(isSneaking)
       case let .interactAt(targetX: targetX, targetY: targetY, targetZ: targetZ, hand: hand, isSneaking: isSneaking):
         writer.writeVarInt(2) // interact at

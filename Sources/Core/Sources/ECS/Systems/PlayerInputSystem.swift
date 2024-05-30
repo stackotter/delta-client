@@ -41,10 +41,12 @@ public final class PlayerInputSystem: System {
       EntityCamera.self,
       PlayerGamemode.self,
       PlayerAttributes.self,
+      EntitySneaking.self,
+      EntityId.self,
       ClientPlayerEntity.self
     ).makeIterator()
 
-    guard let (rotation, inventory, camera, gamemode, attributes, _) = family.next() else {
+    guard let (rotation, inventory, camera, gamemode, attributes, sneaking, playerEntityId, _) = family.next() else {
       log.error("PlayerInputSystem failed to get player to tick")
       return
     }
@@ -122,35 +124,62 @@ public final class PlayerInputSystem: System {
           case .dropItem:
             let slotIndex = PlayerInventory.hotbarArea.startIndex + inventory.selectedHotbarSlot
             inventory.window.dropItem(slotIndex, connection: connection)
-          case .place, .destroy:
+          case .place:
             // Block breaking is handled by ``PlayerBlockBreakingSystem``, this just handles hand animation and
             // other non breaking things for the `.destroy` input (e.g. attacking)
             if inventory.hotbar[inventory.selectedHotbarSlot].stack != nil {
               try connection?.sendPacket(UseItemPacket(hand: .mainHand))
-            } else {
-              try connection?.sendPacket(AnimationServerboundPacket(hand: .mainHand))
             }
 
-            if event.input == .place {
-              guard let (position, cursor, face, distance) = game.targetedBlock(acquireLock: false) else {
-                break
-              }
-
-              try connection?.sendPacket(PlayerBlockPlacementPacket(
-                hand: .mainHand,
-                location: position,
-                face: face,
-                cursorPositionX: cursor.x,
-                cursorPositionY: cursor.y,
-                cursorPositionZ: cursor.z,
-                insideBlock: distance < 0
-              ))
-
-              if gamemode.gamemode.canPlaceBlocks {
-                // TODO: Predict the result of block placement so that we're not relying on the server
-                //   (quite noticeable latency)
-              }
+            guard let targetedThing = game.targetedThing(acquireLock: false) else {
+              break
             }
+
+            switch targetedThing.target {
+              case let .block(blockPosition):
+                let cursor = targetedThing.cursor
+                try connection?.sendPacket(PlayerBlockPlacementPacket(
+                  hand: .mainHand,
+                  location: blockPosition,
+                  face: targetedThing.face,
+                  cursorPositionX: cursor.x,
+                  cursorPositionY: cursor.y,
+                  cursorPositionZ: cursor.z,
+                  insideBlock: targetedThing.distance < 0
+                ))
+
+                if gamemode.gamemode.canPlaceBlocks {
+                  // TODO: Predict the result of block placement so that we're not relying on the server
+                  //   (quite noticeable latency)
+                }
+              case let .entity(entityId):
+                let targetedPosition = targetedThing.targetedPosition
+                try connection?.sendPacket(InteractEntityPacket(
+                  entityId: Int32(entityId),
+                  interaction: .interactAt(
+                    targetX: targetedPosition.x,
+                    targetY: targetedPosition.y,
+                    targetZ: targetedPosition.z,
+                    hand: .mainHand,
+                    isSneaking: sneaking.isSneaking
+                  )
+                ))
+                try connection?.sendPacket(InteractEntityPacket(
+                  entityId: Int32(entityId),
+                  interaction: .interact(hand: .mainHand, isSneaking: sneaking.isSneaking)
+                ))
+            }
+          case .destroy:
+            try connection?.sendPacket(AnimationServerboundPacket(hand: .mainHand))
+
+            guard let targetedEntity = game.targetedEntity(acquireLock: false) else {
+              break
+            }
+
+            try connection?.sendPacket(InteractEntityPacket(
+              entityId: Int32(targetedEntity.target),
+              interaction: .attack(isSneaking: sneaking.isSneaking)
+            ))
           default:
             break
         }

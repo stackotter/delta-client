@@ -47,7 +47,7 @@ public final class PlayerBlockBreakingSystem: System {
 
     let inputState = nexus.single(InputState.self).component
 
-    guard let (position, cursor, face, distance) = game.targetedBlock(acquireLock: false) else {
+    guard let targetedBlock = game.targetedBlock(acquireLock: false) else {
       if let block = world.getBreakingBlocks().first(where: { $0.perpetratorEntityId == playerEntityId.id }) {
         world.endBlockBreaking(for: playerEntityId.id)
 
@@ -60,11 +60,13 @@ public final class PlayerBlockBreakingSystem: System {
       return
     }
 
+    let position = targetedBlock.target
+
     let notifyServer = { status in
       try self.connection?.sendPacket(PlayerDiggingPacket(
         status: status,
         location: position,
-        face: face
+        face: targetedBlock.face
       ))
     }
 
@@ -126,7 +128,6 @@ public final class PlayerBlockBreakingSystem: System {
       return 1
     } else {
       let hardness = block.physicalMaterial.hardness
-      print("Hardness:", hardness)
 
       // TODO: Sentinel values are gross, we could probably just make hardness an optional
       //   (don't have to copy vanilla). I would do that right now but we need cache versioning
@@ -138,9 +139,6 @@ public final class PlayerBlockBreakingSystem: System {
 
       let defaultSpeed = block.physicalMaterial.requiresTool ? 0.01 : (1 / 30)
       let toolSpeed = heldItem?.properties?.toolProperties?.destroySpeedMultiplier(for: block) ?? defaultSpeed
-      print("Default speed:", defaultSpeed)
-      print("Tool speed:", toolSpeed)
-      print("")
       return toolSpeed / hardness
     }
   }
