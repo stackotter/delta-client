@@ -110,15 +110,6 @@
         }
       },
       {
-        "package": "Qlift",
-        "repositoryURL": "https://github.com/Longhanks/qlift",
-        "state": {
-          "branch": null,
-          "revision": "ddab1f1ecc113ad4f8e05d2999c2734cdf706210",
-          "version": null
-        }
-      },
-      {
         "package": "Rainbow",
         "repositoryURL": "https://github.com/onevcat/Rainbow",
         "state": {
@@ -176,17 +167,8 @@
         "package": "swift-cross-ui",
         "repositoryURL": "https://github.com/stackotter/swift-cross-ui",
         "state": {
-          "branch": "main",
-          "revision": "6f444975e668bb4ee3610422c79dcb147be15e8e",
-          "version": null
-        }
-      },
-      {
-        "package": "swift-cwinrt",
-        "repositoryURL": "https://github.com/thebrowsercompany/swift-cwinrt",
-        "state": {
-          "branch": "main",
-          "revision": "ad451d31fc7c1c60041c146d177cdaf5aaf1cf47",
+          "branch": null,
+          "revision": "e4491a59449dec572c1d0d2c214f35825dbc34aa",
           "version": null
         }
       },
@@ -206,15 +188,6 @@
           "branch": null,
           "revision": "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
           "version": "1.5.4"
-        }
-      },
-      {
-        "package": "swift-macro-toolkit",
-        "repositoryURL": "https://github.com/stackotter/swift-macro-toolkit",
-        "state": {
-          "branch": null,
-          "revision": "687075e7bf976e121d083e922a07c7a9350ca85d",
-          "version": "0.4.0"
         }
       },
       {
@@ -281,42 +254,6 @@
         }
       },
       {
-        "package": "swift-uwp",
-        "repositoryURL": "https://github.com/thebrowsercompany/swift-uwp",
-        "state": {
-          "branch": "main",
-          "revision": "cfad0a43469211bf7eb58ed23af3d4a176faec07",
-          "version": null
-        }
-      },
-      {
-        "package": "swift-windowsappsdk",
-        "repositoryURL": "https://github.com/thebrowsercompany/swift-windowsappsdk",
-        "state": {
-          "branch": "main",
-          "revision": "8d094d4478d0eabcf584fef133b8ce45287ecd72",
-          "version": null
-        }
-      },
-      {
-        "package": "swift-windowsfoundation",
-        "repositoryURL": "https://github.com/thebrowsercompany/swift-windowsfoundation",
-        "state": {
-          "branch": "main",
-          "revision": "ba7a8b5000ed3f9f077000d1a31f2a0b19907657",
-          "version": null
-        }
-      },
-      {
-        "package": "swift-winui",
-        "repositoryURL": "https://github.com/thebrowsercompany/swift-winui",
-        "state": {
-          "branch": "main",
-          "revision": "18b3a6a16496d5848aec4587f7fb994f469186c5",
-          "version": null
-        }
-      },
-      {
         "package": "SwiftCPUDetect",
         "repositoryURL": "https://github.com/JWhitmore1/SwiftCPUDetect",
         "state": {
@@ -335,15 +272,6 @@
         }
       },
       {
-        "package": "SwiftTerm",
-        "repositoryURL": "https://github.com/migueldeicaza/SwiftTerm.git",
-        "state": {
-          "branch": null,
-          "revision": "e2b431dbf73f775fb4807a33e4572ffd3dc6933a",
-          "version": "1.2.5"
-        }
-      },
-      {
         "package": "SwiftyRequest",
         "repositoryURL": "https://github.com/Kitura/SwiftyRequest.git",
         "state": {
@@ -359,24 +287,6 @@
           "branch": null,
           "revision": "3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed",
           "version": null
-        }
-      },
-      {
-        "package": "TermKit",
-        "repositoryURL": "https://github.com/stackotter/TermKit",
-        "state": {
-          "branch": null,
-          "revision": "163afa64f1257a0c026cc83ed8bc47a5f8fc9704",
-          "version": null
-        }
-      },
-      {
-        "package": "TextBufferKit",
-        "repositoryURL": "https://github.com/migueldeicaza/TextBufferKit.git",
-        "state": {
-          "branch": null,
-          "revision": "7f3ed5b1d7288de34ad853544d802647be11cfcf",
-          "version": "0.3.0"
         }
       },
       {

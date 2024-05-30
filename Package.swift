@@ -79,7 +79,7 @@ let package = Package(
     .package(name: "DeltaCore", path: "Sources/Core"),
     .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
     .package(url: "https://github.com/stackotter/SwordRPC", .revision("3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed")),
-    .package(url: "https://github.com/stackotter/swift-cross-ui", branch: "main")
+    .package(url: "https://github.com/stackotter/swift-cross-ui", revision: "e4491a59449dec572c1d0d2c214f35825dbc34aa")
   ],
   targets: targets
 )
