@@ -106,8 +106,9 @@ Not every version will be perfectly supported but I will try and have the most p
   - [ ] GUI
     - [x] Chat
     - [x] F3-style stuff
-    - [ ] Bossbars
+    - [x] Bossbars
     - [ ] Scoreboard
+    - [ ] Tab menu
     - [x] Health, hunger and experience
     - [x] Hotbar
     - [ ] Inventory
@@ -124,9 +125,9 @@ Not every version will be perfectly supported but I will try and have the most p
   - [x] Collision system
 - [ ] Interaction
   - [x] Block placing
-  - [ ] Block breaking
+  - [x] Block breaking
   - [ ] Block entity interaction
-  - [ ] Entity interaction
+  - [x] Entity interaction
 - [ ] Particles
   - [ ] Basic particle system
   - [ ] Block break particles

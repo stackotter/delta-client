@@ -22,6 +22,27 @@ public enum GUISprite {
   case singleChestTopHalf
   case singleChestBottomHalf
 
+  case pinkBossBarBackground
+  case pinkBossBarForeground
+  case blueBossBarBackground
+  case blueBossBarForeground
+  case redBossBarBackground
+  case redBossBarForeground
+  case greenBossBarBackground
+  case greenBossBarForeground
+  case yellowBossBarBackground
+  case yellowBossBarForeground
+  case purpleBossBarBackground
+  case purpleBossBarForeground
+  case whiteBossBarBackground
+  case whiteBossBarForeground
+
+  case bossBarNoNotchOverlay
+  case bossBarSixNotchOverlay
+  case bossBarTenNotchOverlay
+  case bossBarTwelveNotchOverlay
+  case bossBarTwentyNotchOverlay
+
   /// The descriptor for the sprite.
   public var descriptor: GUISpriteDescriptor {
     switch self {
@@ -61,6 +82,44 @@ public enum GUISprite {
         return GUISpriteDescriptor(slice: .genericContainer, position: [0, 0], size: [176, 71])
       case .singleChestBottomHalf:
         return GUISpriteDescriptor(slice: .genericContainer, position: [0, 125], size: [176, 97])
+      case .pinkBossBarBackground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 0], size: [182, 5])
+      case .pinkBossBarForeground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 5], size: [182, 5])
+      case .blueBossBarBackground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 10], size: [182, 5])
+      case .blueBossBarForeground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 15], size: [182, 5])
+      case .redBossBarBackground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 20], size: [182, 5])
+      case .redBossBarForeground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 25], size: [182, 5])
+      case .greenBossBarBackground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 30], size: [182, 5])
+      case .greenBossBarForeground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 35], size: [182, 5])
+      case .yellowBossBarBackground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 40], size: [182, 5])
+      case .yellowBossBarForeground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 45], size: [182, 5])
+      case .purpleBossBarBackground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 50], size: [182, 5])
+      case .purpleBossBarForeground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 55], size: [182, 5])
+      case .whiteBossBarBackground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 60], size: [182, 5])
+      case .whiteBossBarForeground:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 65], size: [182, 5])
+      case .bossBarNoNotchOverlay:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 70], size: [182, 5])
+      case .bossBarSixNotchOverlay:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 80], size: [182, 5])
+      case .bossBarTenNotchOverlay:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 90], size: [182, 5])
+      case .bossBarTwelveNotchOverlay:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 100], size: [182, 5])
+      case .bossBarTwentyNotchOverlay:
+        return GUISpriteDescriptor(slice: .bars, position: [0, 110], size: [182, 5])
     }
   }
 }

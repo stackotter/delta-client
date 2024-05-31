@@ -81,7 +81,7 @@ public indirect enum GUIElement {
   }
 
   case text(_ content: String, wrap: Bool = false, color: Vec4f = Vec4f(1, 1, 1, 1))
-  case message(_ message: ChatMessage, wrap: Bool = true)
+  case message(_ message: ChatComponent, wrap: Bool = true)
   case interactable(_ element: GUIElement, handleInteraction: (Interaction) -> Bool)
   case sprite(GUISprite)
   case customSprite(GUISpriteDescriptor)
@@ -340,7 +340,7 @@ public indirect enum GUIElement {
         )
         children = []
       case let .message(message, wrap):
-        let text = message.content.toText(with: locale)
+        let text = message.toText(with: locale)
         return GUIElement.text(text, wrap: wrap)
           .resolveConstraints(availableSize: availableSize, font: font, locale: locale)
       case let .interactable(label, handleInteraction):

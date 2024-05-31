@@ -47,6 +47,11 @@ public class InGameGUI {
           }
         }
 
+        GUIElement.forEach(in: state.bossBars, spacing: 3) { bossBar in
+          self.bossBar(bossBar)
+        }
+          .constraints(.top(2), .center)
+
         if state.showDebugScreen {
           debugScreen(game: game, state: state)
         }
@@ -72,6 +77,22 @@ public class InGameGUI {
     } else {
       return GUIElement.spacer(width: 0, height: 0)
     }
+  }
+
+  public func bossBar(_ bossBar: BossBar) -> GUIElement {
+    let (background, foreground) = bossBar.color.sprites
+    return GUIElement.list(spacing: 1) {
+      GUIElement.message(bossBar.title, wrap: false)
+        .constraints(.top(0), .center)
+
+      GUIElement.stack {
+        continuousMeter(bossBar.health, background: background, foreground: foreground)
+        // TODO: Render both the background and foreground overlays separately (instead of assuming
+        //   that they're both the same like they are in the vanilla resource pack)
+        GUIElement.sprite(bossBar.style.overlay)
+      }
+    }
+      .size(GUISprite.xpBarBackground.descriptor.size.x, nil)
   }
 
   public func chat(state: GUIStateStorage) -> GUIElement {
@@ -101,7 +122,7 @@ public class InGameGUI {
       if !visibleMessages.isEmpty {
         GUIElement.forEach(in: visibleMessages, spacing: 1) { message in
           // TODO: Chat message text shadows
-          GUIElement.message(message, wrap: true)
+          GUIElement.message(message.content, wrap: true)
         }
           .constraints(.top(0), .left(1))
           .padding(1)
