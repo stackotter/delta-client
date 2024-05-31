@@ -11,16 +11,14 @@ public struct ClickWindowPacket: ServerboundPacket {
   public var clickedItem: Slot
 
   public enum Action {
-    case leftClick(slot: Int16)
-    case rightClick(slot: Int16)
+    case leftClick(slot: Int16?)
+    case rightClick(slot: Int16?)
     case shiftLeftClick(slot: Int16)
     case shiftRightClick(slot: Int16)
     case numberKey(slot: Int16, number: Int8)
     case middleClick(slot: Int16)
-    /// If slot is nil, drop item from the stack currently getting moved by the mouse.
-    case dropOne(slot: Int16?)
-    /// If slot is nil, drop the stack currently getting moved by the mouse.
-    case dropStack(slot: Int16?)
+    case dropOne(slot: Int16)
+    case dropStack(slot: Int16)
     case leftClickOutsideInventory
     case rightClickOutsideInventory
     case startLeftDrag
@@ -37,9 +35,9 @@ public struct ClickWindowPacket: ServerboundPacket {
     var rawValue: (mode: Int32, button: Int8, slot: Int16?) {
       switch self {
         case let .leftClick(slot):
-          return (0, 0, slot)
+          return (0, 0, slot ?? -999)
         case let .rightClick(slot):
-          return (0, 1, slot)
+          return (0, 1, slot ?? -999)
         case let .shiftLeftClick(slot):
           return (1, 0, slot)
         case let .shiftRightClick(slot):
@@ -49,11 +47,9 @@ public struct ClickWindowPacket: ServerboundPacket {
         case let .middleClick(slot):
           return (3, 2, slot)
         case let .dropOne(slot):
-          // -1 indicates that the slot attached to the mouse cursor is to be used
-          return (4, 0, slot ?? -1)
+          return (4, 0, slot)
         case let .dropStack(slot):
-          // -1 indicates that the slot attached to the mouse cursor is to be used
-          return (4, 1, slot ?? -1)
+          return (4, 1, slot)
         case .leftClickOutsideInventory:
           return (4, 0, nil)
         case .rightClickOutsideInventory:

@@ -143,19 +143,11 @@ public class Window {
     let slotInputs: [Input] = [.slot1, .slot2, .slot3, .slot4, .slot5, .slot6, .slot7, .slot8, .slot9]
 
     if input == .dropItem {
-      guard mouseStack == nil else {
-        return true
-      }
-
-      guard slots[slotIndex].stack?.count ?? 0 != 0 else {
-        return true
-      }
-
       let dropWholeStack = inputState.keys.contains(where: \.isControl)
       if dropWholeStack {
-        dropStack(slotIndex, connection: connection)
+        dropStackFromSlot(slotIndex, mouseItemStack: mouseStack, connection: connection)
       } else {
-        dropItem(slotIndex, connection: connection)
+        dropItemFromSlot(slotIndex, mouseItemStack: mouseStack, connection: connection)
       }
     } else if let hotBarSlot = slotInputs.firstIndex(of: input) {
       guard mouseStack == nil else {
@@ -191,52 +183,76 @@ public class Window {
     try connection?.sendPacket(CloseWindowServerboundPacket(windowId: UInt8(id)))
   }
 
-  public func dropItem(_ slotIndex: Int, connection: ServerConnection?) {
-    var dummy: ItemStack? = nil
-    drop(slotIndex: slotIndex, wholeStack: false, mouseItemStack: &dummy, connection: connection)
+  public func dropItemFromSlot(_ slotIndex: Int, mouseItemStack: ItemStack?, connection: ServerConnection?) {
+    dropFromSlot(slotIndex, wholeStack: false, mouseItemStack: mouseItemStack, connection: connection)
   }
 
-  public func dropStack(_ slotIndex: Int, connection: ServerConnection?) {
-    var dummy: ItemStack? = nil
-    drop(slotIndex: slotIndex, wholeStack: true, mouseItemStack: &dummy, connection: connection)
+  public func dropStackFromSlot(_ slotIndex: Int, mouseItemStack: ItemStack?, connection: ServerConnection?) {
+    dropFromSlot(slotIndex, wholeStack: true, mouseItemStack: mouseItemStack, connection: connection)
   }
 
   public func dropItemFromMouse(_ mouseStack: inout ItemStack?, connection: ServerConnection?) {
-    drop(slotIndex: nil, wholeStack: false, mouseItemStack: &mouseStack, connection: connection)
+    dropFromMouse(wholeStack: false, mouseItemStack: &mouseStack, connection: connection)
   }
 
   public func dropStackFromMouse(_ mouseStack: inout ItemStack?, connection: ServerConnection?) {
-    drop(slotIndex: nil, wholeStack: true, mouseItemStack: &mouseStack, connection: connection)
+    dropFromMouse(wholeStack: true, mouseItemStack: &mouseStack, connection: connection)
   }
 
-  private func drop(
-    slotIndex: Int?,
+  public func dropFromMouse(
     wholeStack: Bool,
-    mouseItemStack: inout ItemStack?,
+    mouseItemStack mouseStack: inout ItemStack?,
     connection: ServerConnection?
   ) {
-    let clickedItem = slotIndex.map { slots[$0] } ?? Slot(mouseItemStack)
-
-    let dropCount = wholeStack ? clickedItem.stack?.count ?? 0 : 1
-    if let index = slotIndex {
-      slots[index].stack?.count -= dropCount
-      if slots[index].stack?.count == 0 {
-        slots[index].stack = nil
-      }
-    } else {
-      mouseItemStack?.count -= dropCount
-      if mouseItemStack?.count == 0 {
-        mouseItemStack = nil
+    let slot = Slot(mouseStack)
+    if wholeStack {
+      mouseStack = nil
+    } else if var stack = mouseStack {
+      stack.count -= 1
+      if stack.count == 0 {
+        mouseStack = nil
+      } else {
+        mouseStack = stack
       }
     }
 
-    let index = slotIndex.map(Int16.init)
     do {
       try connection?.sendPacket(ClickWindowPacket(
         windowId: UInt8(id),
         actionId: generateActionId(),
-        action: wholeStack ? .dropStack(slot: index) : .dropOne(slot: index),
-        clickedItem: clickedItem
+        action: wholeStack ? .leftClick(slot: nil) : .rightClick(slot: nil),
+        clickedItem: slot
+      ))
+    } catch {
+      log.warning("Failed to send click window packet for item drop: \(error)")
+    }
+  }
+
+  private func dropFromSlot(
+    _ slotIndex: Int,
+    wholeStack: Bool,
+    mouseItemStack: ItemStack?,
+    connection: ServerConnection?
+  ) {
+    if mouseItemStack == nil {
+      if wholeStack {
+        slots[slotIndex].stack = nil
+      } else if var stack = slots[slotIndex].stack {
+        stack.count -= 1
+        if stack.count == 0 {
+          slots[slotIndex].stack = nil
+        } else {
+          slots[slotIndex].stack = stack
+        }
+      }
+    }
+
+    do {
+      try connection?.sendPacket(ClickWindowPacket(
+        windowId: UInt8(id),
+        actionId: generateActionId(),
+        action: wholeStack ? .dropStack(slot: Int16(slotIndex)) : .dropOne(slot: Int16(slotIndex)),
+        clickedItem: Slot(ItemStack(itemId: -1, itemCount: 1))
       ))
     } catch {
       log.warning("Failed to send click window packet for item drop: \(error)")

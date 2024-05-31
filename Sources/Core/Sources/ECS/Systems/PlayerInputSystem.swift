@@ -121,7 +121,7 @@ public final class PlayerInputSystem: System {
             inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 8) % 9
           case .dropItem:
             let slotIndex = PlayerInventory.hotbarArea.startIndex + inventory.selectedHotbarSlot
-            inventory.window.dropItem(slotIndex, connection: connection)
+            inventory.window.dropItemFromSlot(slotIndex, mouseItemStack: nil, connection: connection)
           case .place:
             // Block breaking is handled by ``PlayerBlockBreakingSystem``, this just handles hand animation and
             // other non breaking things for the `.destroy` input (e.g. attacking)

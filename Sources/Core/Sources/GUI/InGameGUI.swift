@@ -204,14 +204,14 @@ public class InGameGUI {
           window.dropStackFromMouse(&state.mouseItemStack, connection: connection)
         }
         .onRightClick {
-          // TODO: Figure out why the server isn't respecting this (pretty certain that we're sending
-          //   the ClickWindowPacket with the `dropStack(slot: nil)` action, which should be correct??)
           window.dropItemFromMouse(&state.mouseItemStack, connection: connection)
         }
 
       GUIElement.stack {
-        // Has a dummy click handler to block clicks within the inventory from propagating to the background
-        window.type.background.onClick {}
+        // Has a dummy click handler to prevent clicks within the inventory from propagating to the background
+        window.type.background.onHoverKeyPress { event in
+          return event.key == .leftMouseButton || event.key == .rightMouseButton
+        }
 
         GUIElement.stack(elements: window.type.areas.map { area in
           windowArea(
