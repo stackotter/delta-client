@@ -1,9 +1,10 @@
 import Foundation
-import Resolver
+import AsyncDNSResolver
 
 public enum ServerConnectionError: LocalizedError {
   case invalidPacketId(Int)
   case failedToResolveHostname(hostname: String, Error?)
+  case failedToCreateDNSResolver(Error?)
 
   public var errorDescription: String? {
     switch self {
@@ -15,6 +16,8 @@ public enum ServerConnectionError: LocalizedError {
         Hostname: \(hostname)
         Reason: \(error?.localizedDescription ?? "unknown")
         """
+      case .failedToCreateDNSResolver(let error):
+        return "Failed to create DNS Resolver: \(error?.localizedDescription ?? "unknown")"
     }
   }
 }
@@ -44,8 +47,8 @@ public class ServerConnection {
   // MARK: Init
 
   /// Create a new connection to the specified server.
-  public init(descriptor: ServerDescriptor, eventBus: EventBus? = nil) throws {
-    let (ipAddress, port) = try ServerConnection.resolve(descriptor)
+  public init(descriptor: ServerDescriptor, eventBus: EventBus? = nil) async throws {
+    let (ipAddress, port) = try await ServerConnection.resolve(descriptor)
 
     host = descriptor.host
     self.ipAddress = host
@@ -125,7 +128,7 @@ public class ServerConnection {
   }
 
   /// Resolves a server descriptor into an IP and a port.
-  public static func resolve(_ server: ServerDescriptor) throws -> (String, UInt16) {
+  public static func resolve(_ server: ServerDescriptor) async throws -> (String, UInt16) {
     do {
       // We only care about IPv4
       var isIp: Bool
@@ -147,20 +150,26 @@ public class ServerConnection {
       }
 
       // If `host` is an ip already, no need to perform DNS lookups
-      let resolver = Resolver(timeout: 10)
+      let resolver: AsyncDNSResolver
+
+      do {
+        resolver = try AsyncDNSResolver(try CAresDNSResolver())
+      } catch {
+        throw ServerConnectionError.failedToCreateDNSResolver(error)
+      }
 
       // Check for SRV records if no port is specified
       if server.port == nil {
-        let records = try? resolver.discover("_minecraft._tcp.\(server.host)")
+        let records = try? await resolver.querySRV(name: "_minecraft._tcp.\(server.host)")
         if let record = records?.first {
-          return (record.address, record.port.map(UInt16.init) ?? server.port ?? 25565)
+          return (record.host, record.port ?? server.port ?? 25565)
         }
       }
 
       // Check for regular records
-      let records = try resolver.resolve(server.host)
+      let records = try await resolver.queryA(name: server.host)
       if let record = records.first {
-        return (record.address, server.port ?? 25565)
+        return (record.address.address, server.port ?? 25565)
       }
 
       throw ServerConnectionError.failedToResolveHostname(hostname: server.host, nil)

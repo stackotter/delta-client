@@ -31,7 +31,7 @@ var targets: [Target] = [
       .product(name: "Collections", package: "swift-collections"),
       .product(name: "OrderedCollections", package: "swift-collections"),
       .product(name: "FirebladeMath", package: "fireblade-math"),
-      .product(name: "Resolver", package: "swift-resolver"),
+      .product(name: "AsyncDNSResolver", package: "swift-async-dns-resolver"),
       .product(name: "Z", package: "swift-package-zlib"),
       .product(name: "SwiftImage", package: "swift-image"),
       .product(name: "PNG", package: "swift-png")
@@ -85,7 +85,7 @@ let package = Package(
     .package(url: "https://github.com/michaeleisel/ZippyJSON", from: "1.2.4"),
     .package(url: "https://github.com/pointfreeco/swift-parsing", from: "0.12.1"),
     .package(url: "https://github.com/stackotter/fireblade-math.git", branch: "matrix2x2"),
-    .package(url: "https://github.com/seznam/swift-resolver", from: "0.3.0"),
+    .package(url: "https://github.com/apple/swift-async-dns-resolver.git", from: "0.4.0"),
     .package(url: "https://github.com/fourplusone/swift-package-zlib", from: "1.2.11"),
     .package(url: "https://github.com/stackotter/swift-image.git", branch: "master"),
     .package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.13.0"),
