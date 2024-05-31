@@ -30,16 +30,30 @@ public struct EntityPositionPacket: ClientboundEntityPacket {
     let z = Double(deltaZ) / 4096
     let relativePosition = Vec3d(x, y, z)
 
-    client.game.accessComponent(entityId: entityId, EntityPosition.self, acquireLock: false) { position in
-      position.move(by: relativePosition)
-    }
+    client.game.accessEntity(id: entityId, acquireLock: false) { entity in
+      guard
+        let position = entity.get(component: EntityPosition.self),
+        let rotation = entity.get(component: EntityRotation.self),
+        let lerpState = entity.get(component: EntityLerpState.self),
+        let velocity = entity.get(component: EntityVelocity.self),
+        let kind = entity.get(component: EntityKindId.self)?.entityKind,
+        let onGroundComponent = entity.get(component: EntityOnGround.self)
+      else {
+        return
+      }
 
-    client.game.accessComponent(entityId: entityId, EntityOnGround.self, acquireLock: false) { onGroundComponent in
-      onGroundComponent.onGround = onGround
-    }
-
-    client.game.accessComponent(entityId: entityId, EntityVelocity.self, acquireLock: false) { velocity in
       velocity.vector = .zero
+
+      // TODO: When lerping for a minecart, the velocity should get set to the relative
+      //   position too.
+      let currentTargetPosition = lerpState.currentLerp?.targetPosition ?? position.vector
+      onGroundComponent.onGround = onGround
+      lerpState.lerp(
+        to: currentTargetPosition + relativePosition,
+        pitch: rotation.pitch,
+        yaw: rotation.yaw,
+        duration: kind.defaultLerpDuration
+      )
     }
   }
 }

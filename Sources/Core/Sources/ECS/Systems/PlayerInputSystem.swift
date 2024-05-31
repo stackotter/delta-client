@@ -40,13 +40,11 @@ public final class PlayerInputSystem: System {
       PlayerInventory.self,
       EntityCamera.self,
       PlayerGamemode.self,
-      PlayerAttributes.self,
       EntitySneaking.self,
-      EntityId.self,
       ClientPlayerEntity.self
     ).makeIterator()
 
-    guard let (rotation, inventory, camera, gamemode, attributes, sneaking, playerEntityId, _) = family.next() else {
+    guard let (rotation, inventory, camera, gamemode, sneaking, _) = family.next() else {
       log.error("PlayerInputSystem failed to get player to tick")
       return
     }

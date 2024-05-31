@@ -11,25 +11,36 @@ public enum PixlyzerError: LocalizedError {
   case invalidUTF8BlockName(String)
   /// Failed to get the water fluid from the fluid registry.
   case failedToGetWaterFluid
+  /// Unknown entity attribute found in Pixlyzer entity registry.
+  case unknownEntityAttribute(String)
+  /// Expected an entity with the given name to be present in the Pixlyzer entity registry.
+  case missingEntity(String)
 
   public var errorDescription: String? {
     switch self {
-      case .missingBlockId(let id):
+      case let .missingBlockId(id):
         return "The block with id: \(id) is missing."
-      case .invalidAABBVertexLength(let length):
+      case let .invalidAABBVertexLength(length):
         return """
         An AABB's vertex is of invalid length.
         length: \(length)
         """
       case .entityRegistryMissingPlayer:
         return "The entity registry does not contain the player entity."
-      case .invalidUTF8BlockName(let blockName):
+      case let .invalidUTF8BlockName(blockName):
         return """
         The block name could not be converted to data using UTF8.
         Block name: \(blockName)
         """
       case .failedToGetWaterFluid:
         return "Failed to get the water fluid from the fluid registry."
+      case let .unknownEntityAttribute(attribute):
+        return """
+        Unknown entity attribute in Pixlyzer entity registry.
+        Attribute: \(attribute)
+        """
+      case let .missingEntity(name):
+        return "Expected entity kind '\(name)' to be present in Pixlyzer entity registry."
     }
   }
 }
@@ -154,7 +165,27 @@ public enum PixlyzerFormatter {
     var entities: [Int: EntityKind] = [:]
     for (identifier, pixlyzerEntity) in pixlyzerEntities {
       if let identifier = try? Identifier(identifier) {
-        if let entity = EntityKind(pixlyzerEntity, identifier: identifier) {
+        var isLiving = false
+        var parent = pixlyzerEntity.parent
+        while let currentParent = parent {
+          if currentParent == "LivingEntity" {
+            isLiving = true
+            break
+          } else {
+            guard
+              let parentEntity =
+                pixlyzerEntities[currentParent]
+                ?? pixlyzerEntities.values.first(where: { $0.class == currentParent })
+            else {
+              throw PixlyzerError.missingEntity(currentParent)
+            }
+            parent = parentEntity.parent
+          }
+        }
+
+        // Some entities don't correspond to Vanilla entity kinds (in which case the initializer returns nil,
+        // not an error).
+        if let entity = try EntityKind(from: pixlyzerEntity, isLiving: isLiving, identifier: identifier) {
           entities[entity.id] = entity
         }
       }

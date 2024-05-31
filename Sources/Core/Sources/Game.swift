@@ -287,9 +287,9 @@ public final class Game: @unchecked Sendable {
   /// - Parameters:
   ///   - id: The id of the entity to access.
   ///   - action: The action to perform on the entity if it exists.
-  public func accessEntity(id: Int, action: (Entity) -> Void) {
-    nexusLock.acquireWriteLock()
-    defer { nexusLock.unlock() }
+  public func accessEntity(id: Int, acquireLock: Bool = true, action: (Entity) -> Void) {
+    if acquireLock { nexusLock.acquireWriteLock() }
+    defer { if acquireLock { nexusLock.unlock() } }
 
     if let identifier = entityIdToEntityIdentifier[id] {
       action(nexus.entity(from: identifier))

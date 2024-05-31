@@ -20,19 +20,24 @@ public struct EntityRotationPacket: ClientboundEntityPacket {
 
   /// Should only be called if a nexus write lock is already acquired.
   public func handle(for client: Client) throws {
-    client.game.accessComponent(entityId: entityId, EntityRotation.self, acquireLock: false) { rotation in
-      rotation.pitch = pitch
-      rotation.yaw = yaw
-    }
-
-    client.game.accessComponent(entityId: entityId, EntityOnGround.self, acquireLock: false) { onGroundComponent in
-      onGroundComponent.onGround = onGround
-    }
-
-    if onGround {
-      client.game.accessComponent(entityId: entityId, EntityVelocity.self, acquireLock: false) { velocity in
-        velocity.y = 0
+    client.game.accessEntity(id: entityId, acquireLock: false) { entity in
+      guard
+        let position = entity.get(component: EntityPosition.self),
+        let lerpState = entity.get(component: EntityLerpState.self),
+        let kind = entity.get(component: EntityKindId.self)?.entityKind,
+        let onGroundComponent = entity.get(component: EntityOnGround.self)
+      else {
+        return
       }
+
+      let currentTargetPosition = lerpState.currentLerp?.targetPosition ?? position.vector
+      onGroundComponent.onGround = onGround
+      lerpState.lerp(
+        to: currentTargetPosition,
+        pitch: pitch,
+        yaw: yaw,
+        duration: kind.defaultLerpDuration
+      )
     }
   }
 }

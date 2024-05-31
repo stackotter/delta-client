@@ -153,7 +153,7 @@ public class ServerConnection {
       let resolver: AsyncDNSResolver
 
       do {
-        resolver = try AsyncDNSResolver(try CAresDNSResolver())
+        resolver = AsyncDNSResolver(try CAresDNSResolver())
       } catch {
         throw ServerConnectionError.failedToCreateDNSResolver(error)
       }
@@ -162,7 +162,7 @@ public class ServerConnection {
       if server.port == nil {
         let records = try? await resolver.querySRV(name: "_minecraft._tcp.\(server.host)")
         if let record = records?.first {
-          return (record.host, record.port ?? server.port ?? 25565)
+          return (record.host, record.port)
         }
       }
 
@@ -207,7 +207,12 @@ public class ServerConnection {
 
   /// Sends a handshake with the goal of transitioning to the given state (either status or login).
   public func handshake(nextState: HandshakePacket.NextState) throws {
-    let handshake = HandshakePacket(protocolVersion: Constants.protocolVersion, serverAddr: host, serverPort: Int(port), nextState: nextState)
+    let handshake = HandshakePacket(
+      protocolVersion: Constants.protocolVersion,
+      serverAddr: host,
+      serverPort: Int(port),
+      nextState: nextState
+    )
     try sendPacket(handshake)
     state = (nextState == .login) ? .login : .status
   }

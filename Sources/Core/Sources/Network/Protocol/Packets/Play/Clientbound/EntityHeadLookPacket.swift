@@ -13,6 +13,8 @@ public struct EntityHeadLookPacket: ClientboundEntityPacket {
 
   /// Should only be called if a nexus write lock is already acquired.
   public func handle(for client: Client) throws {
+    // TODO: Lerp entity head rotation (with a lerp duration of 3 ticks)
+    //   Would be best to implement by modifying EntityLerpState
     client.game.accessComponent(entityId: entityId, EntityHeadYaw.self, acquireLock: false) { component in
       component.yaw = headYaw
     }
