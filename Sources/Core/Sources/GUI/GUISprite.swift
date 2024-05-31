@@ -17,6 +17,8 @@ public enum GUISprite {
   case inventory
   case craftingTable
   case furnace
+  case blastFurnace
+  case smoker
   case anvil
   case dispenser
   /// If positioned directly above ``GUISprite/genericInventory`` it forms
@@ -66,6 +68,10 @@ public enum GUISprite {
         return GUISpriteDescriptor(slice: .craftingTable, position: [0, 0], size: [176, 166])
       case .furnace:
         return GUISpriteDescriptor(slice: .furnace, position: [0, 0], size: [176, 166])
+      case .blastFurnace:
+        return GUISpriteDescriptor(slice: .blastFurnace, position: [0, 0], size: [176, 166])
+      case .smoker:
+        return GUISpriteDescriptor(slice: .smoker, position: [0, 0], size: [176, 166])
       case .anvil:
         return GUISpriteDescriptor(slice: .anvil, position: [0, 0], size: [176, 166])
       case .dispenser:

@@ -100,6 +100,123 @@ public struct WindowType {
     ]
   )
 
+  public static let furnace = WindowType(
+    id: .vanilla(13),
+    identifier: Identifier(namespace: "minecraft", name: "furnace"),
+    background: .sprite(.furnace),
+    slotCount: 39,
+    areas: [
+      WindowArea(
+        startIndex: 0,
+        width: 1,
+        height: 1,
+        position: Vec2i(56, 17)
+      ),
+      WindowArea(
+        startIndex: 1,
+        width: 1,
+        height: 1,
+        position: Vec2i(56, 53)
+      ),
+      WindowArea(
+        startIndex: 2,
+        width: 1,
+        height: 1,
+        position: Vec2i(112, 31)
+      ),
+      WindowArea(
+        startIndex: 3,
+        width: 9,
+        height: 3,
+        position: Vec2i(8, 84)
+      ),
+      WindowArea(
+        startIndex: 30,
+        width: 9,
+        height: 1,
+        position: Vec2i(8, 142)
+      )
+    ]
+  )
+
+  public static let blastFurnace = WindowType(
+    id: .vanilla(9),
+    identifier: Identifier(namespace: "minecraft", name: "blast_furnace"),
+    background: .sprite(.blastFurnace),
+    slotCount: 39,
+    areas: [
+      WindowArea(
+        startIndex: 0,
+        width: 1,
+        height: 1,
+        position: Vec2i(56, 17)
+      ),
+      WindowArea(
+        startIndex: 1,
+        width: 1,
+        height: 1,
+        position: Vec2i(56, 53)
+      ),
+      WindowArea(
+        startIndex: 2,
+        width: 1,
+        height: 1,
+        position: Vec2i(112, 31)
+      ),
+      WindowArea(
+        startIndex: 3,
+        width: 9,
+        height: 3,
+        position: Vec2i(8, 84)
+      ),
+      WindowArea(
+        startIndex: 30,
+        width: 9,
+        height: 1,
+        position: Vec2i(8, 142)
+      )
+    ]
+  )
+
+  public static let smoker = WindowType(
+    id: .vanilla(21),
+    identifier: Identifier(namespace: "minecraft", name: "smoker"),
+    background: .sprite(.smoker),
+    slotCount: 39,
+    areas: [
+      WindowArea(
+        startIndex: 0,
+        width: 1,
+        height: 1,
+        position: Vec2i(56, 17)
+      ),
+      WindowArea(
+        startIndex: 1,
+        width: 1,
+        height: 1,
+        position: Vec2i(56, 53)
+      ),
+      WindowArea(
+        startIndex: 2,
+        width: 1,
+        height: 1,
+        position: Vec2i(112, 31)
+      ),
+      WindowArea(
+        startIndex: 3,
+        width: 9,
+        height: 3,
+        position: Vec2i(8, 84)
+      ),
+      WindowArea(
+        startIndex: 30,
+        width: 9,
+        height: 1,
+        position: Vec2i(8, 142)
+      )
+    ]
+  )
+
   // Dispenser & dropper
   public static let generic3x3 = WindowType(
     id: .vanilla(6),
@@ -314,6 +431,9 @@ public struct WindowType {
       inventory,
       craftingTable,
       anvil,
+      furnace,
+      blastFurnace,
+      smoker,
       generic9x1,
       generic9x2,
       generic9x3,
