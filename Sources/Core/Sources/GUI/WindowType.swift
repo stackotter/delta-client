@@ -61,6 +61,45 @@ public struct WindowType {
     ]
   )
 
+  public static let anvil = WindowType(
+    id: .vanilla(7),
+    identifier: Identifier(namespace: "minecraft", name: "crafting"),
+    background: .sprite(.anvil),
+    slotCount: 39,
+    areas:[
+      WindowArea(
+        startIndex: 0,
+        width: 1,
+        height: 1,
+        position: Vec2i(27, 47)
+      ),
+      WindowArea(
+        startIndex: 1,
+        width: 1,
+        height: 1,
+        position: Vec2i(76, 47)
+      ),
+      WindowArea(
+        startIndex: 2,
+        width: 1,
+        height: 1,
+        position: Vec2i(134, 47)
+      ),
+      WindowArea(
+        startIndex: 3,
+        width: 9,
+        height: 3,
+        position: Vec2i(8, 84)
+      ),
+      WindowArea(
+        startIndex: 30,
+        width: 9,
+        height: 1,
+        position: Vec2i(8, 142)
+      )
+    ]
+  )
+
   // Generic window types
   public static let generic9x1 = WindowType(
     id: .vanilla(0),
@@ -246,6 +285,7 @@ public struct WindowType {
     values: [
       inventory,
       craftingTable,
+      anvil,
       generic9x1,
       generic9x2,
       generic9x3,
