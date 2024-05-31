@@ -100,6 +100,34 @@ public struct WindowType {
     ]
   )
 
+  // Dispenser & dropper
+  public static let generic3x3 = WindowType(
+    id: .vanilla(6),
+    identifier: Identifier(namespace: "minecraft", name: "generic_3x3"),
+    background: .sprite(.dispenser),
+    slotCount: 45,
+    areas: [
+      WindowArea(
+        startIndex: 0,
+        width: 3,
+        height: 3,
+        position: Vec2i(62, 17)
+      ),
+      WindowArea(
+        startIndex: 9,
+        width: 9,
+        height: 3,
+        position: Vec2i(8, 84)
+      ),
+      WindowArea(
+        startIndex: 36,
+        width: 9,
+        height: 1,
+        position: Vec2i(8, 142)
+      )
+    ]
+  )
+
   // Generic window types
   public static let generic9x1 = WindowType(
     id: .vanilla(0),
@@ -292,6 +320,7 @@ public struct WindowType {
       generic9x4,
       generic9x5,
       generic9x6,
+      generic3x3
     ],
     keyedBy: \.id
   )

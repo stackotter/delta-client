@@ -18,6 +18,7 @@ public enum GUISprite {
   case craftingTable
   case furnace
   case anvil
+  case dispenser
   /// If positioned directly above ``GUISprite/genericInventory`` it forms
   /// the background for a single chest window. The way the texture is made forces
   /// these to be separate sprites.
@@ -67,6 +68,8 @@ public enum GUISprite {
         return GUISpriteDescriptor(slice: .furnace, position: [0, 0], size: [176, 166])
       case .anvil:
         return GUISpriteDescriptor(slice: .anvil, position: [0, 0], size: [176, 166])
+      case .dispenser:
+        return GUISpriteDescriptor(slice: .dispenser, position: [0, 0],  size: [176, 166])
       case .genericInventory:
         return GUISpriteDescriptor(slice: .genericContainer, position: [0, 125], size: [176, 97])
       case .generic9x1:
