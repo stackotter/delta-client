@@ -12,4 +12,8 @@ public struct BlockBreakAnimationPacket: ClientboundPacket {
     location = try packetReader.readBlockPosition()
     destroyStage = try packetReader.readByte()
   }
+
+  public func handle(for client: Client) throws {
+    client.game.world.setBlockBreakingStage(at: location, to: Int(destroyStage), for: entityId)
+  }
 }

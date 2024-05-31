@@ -388,6 +388,14 @@ public class World {
       chunk.setBlockId(at: position.relativeToChunk, to: state)
       lightingEngine.updateLighting(at: position, in: self)
 
+      blockBreakingLock.acquireWriteLock()
+      // Use removeAll instead of filter to minimize cost in the case that the set block
+      // wasn't associated with a breaking block (probably the most likely case?)
+      breakingBlocks.removeAll { block in
+        block.position == position
+      }
+      blockBreakingLock.unlock()
+
       eventBus.dispatch(Event.SingleBlockUpdate(
         position: position,
         newState: state
@@ -409,12 +417,13 @@ public class World {
     _ updates: [Event.SingleBlockUpdate],
     inChunkAt chunkPosition: ChunkPosition? = nil
   ) {
+    let positions = updates.map(\.position)
     if let chunkPosition = chunkPosition {
       if let chunk = chunk(at: chunkPosition) {
         for update in updates {
           chunk.setBlockId(at: update.position.relativeToChunk, to: update.newState)
         }
-        lightingEngine.updateLighting(at: updates.map(\.position), in: self)
+        lightingEngine.updateLighting(at: positions, in: self)
       } else {
         log.warning("Cannot handle multi-block change in non-existent chunk, chunkPosition=\(chunkPosition)")
         return
@@ -428,8 +437,16 @@ public class World {
           return
         }
       }
-      lightingEngine.updateLighting(at: updates.map(\.position), in: self)
+      lightingEngine.updateLighting(at: positions, in: self)
     }
+
+    blockBreakingLock.acquireWriteLock()
+    // Use removeAll instead of filter to minimize cost in the case that the set block
+    // wasn't associated with a breaking block (probably the most likely case?)
+    breakingBlocks.removeAll { block in
+      positions.contains(block.position)
+    }
+    blockBreakingLock.unlock()
 
     eventBus.dispatch(Event.MultiBlockUpdate(updates: updates))
   }
@@ -713,6 +730,32 @@ public class World {
         position: position,
         perpetratorEntityId: entityId,
         progress: 0
+      )
+    )
+  }
+
+  /// Sets the block breaking progress of a given block to a value corresponding to a specific
+  /// stage of the block breaking animation. If the block is not already getting broken, it gets
+  /// added to the list of breaking blocks.
+  public func setBlockBreakingStage(at position: BlockPosition, to stage: Int, for entityId: Int) {
+    blockBreakingLock.acquireWriteLock()
+    defer { blockBreakingLock.unlock() }
+
+    let progress = Double(clamp(stage + 1, min: 0, max: 10)) / 10
+
+    for (i, block) in breakingBlocks.enumerated() {
+      if block.position == position {
+        breakingBlocks[i].progress = progress
+        breakingBlocks[i].perpetratorEntityId = entityId
+        return
+      }
+    }
+
+    breakingBlocks.append(
+      BreakingBlock(
+        position: position,
+        perpetratorEntityId: entityId,
+        progress: progress
       )
     )
   }

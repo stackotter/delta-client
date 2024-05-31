@@ -359,16 +359,14 @@ public final class WorldRenderer: Renderer {
           }
         }
         model.textureType = .transparent
-        // No clue why light level 12 is the right one, vanilla seems to use light level 15 here but that
-        // just doesn't work for us at all (way too bright).
         let lightLevel = LightLevel(
-          sky: 12,
+          sky: 15,
           block: 0
         )
         var neighbourLightLevels: [Direction: LightLevel] = [:]
         for direction in Direction.allDirections {
           neighbourLightLevels[direction] = LightLevel(
-            sky: 12,
+            sky: 15,
             block: 0
           )
         }
