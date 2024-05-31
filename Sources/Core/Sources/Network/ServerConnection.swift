@@ -160,8 +160,8 @@ public class ServerConnection {
 
       // Check for SRV records if no port is specified
       if server.port == nil {
-        let records = try await resolver.querySRV(name: "_minecraft._tcp.\(server.host)")
-        if let record = records.first {
+        let records = try? await resolver.querySRV(name: "_minecraft._tcp.\(server.host)")
+        if let record = records?.first {
           return (record.host, record.port ?? server.port ?? 25565)
         }
       }
