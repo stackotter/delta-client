@@ -217,6 +217,33 @@ public struct WindowType {
     ]
   )
 
+  public static let beacon = WindowType(
+      id: .vanilla(8),
+      identifier: Identifier(namespace: "minecraft", name: "beacon"),
+      background: .sprite(.beacon),
+      slotCount: 37,
+      areas: [
+            WindowArea(
+                startIndex: 0,
+                width: 1,
+                height: 1,
+                position: Vec2i(136, 110)
+            ),
+            WindowArea(
+                startIndex: 1,
+                width: 9,
+                height: 3,
+                position: Vec2i(36, 137)
+            ),
+            WindowArea(
+                startIndex: 28,
+                width: 9,
+                height: 1,
+                position: Vec2i(36, 196)
+            )
+        ]
+    )
+
   // Dispenser & dropper
   public static let generic3x3 = WindowType(
     id: .vanilla(6),
@@ -434,6 +461,7 @@ public struct WindowType {
       furnace,
       blastFurnace,
       smoker,
+      beacon,
       generic9x1,
       generic9x2,
       generic9x3,
