@@ -1,12 +1,14 @@
+format_version = 2
+
 [apps.DeltaClient]
 product = 'DeltaClient'
 version = 'v0.1.0-alpha.1'
-bundle_identifier = 'dev.stackotter.delta-client'
+identifier = 'dev.stackotter.delta-client'
 category = 'public.app-category.games'
-minimum_macos_version = '11.0'
 icon = 'AppIcon.icns'
 
-[apps.DeltaClient.extra_plist_entries]
+[apps.DeltaClient.plist]
 # Append the current commit hash to the user-facing version string
 CFBundleShortVersionString = "{VERSION}, commit: {COMMIT_HASH}"
 GCSupportsControllerUserInteraction = "True"
+MetalCaptureEnabled = true
