@@ -9,6 +9,6 @@ icon = 'AppIcon.icns'
 
 [apps.DeltaClient.plist]
 # Append the current commit hash to the user-facing version string
-CFBundleShortVersionString = "{VERSION}, commit: {COMMIT_HASH}"
+CFBundleShortVersionString = "$(VERSION), commit: $(COMMIT_HASH)"
 GCSupportsControllerUserInteraction = "True"
 MetalCaptureEnabled = true
