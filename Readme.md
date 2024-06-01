@@ -108,7 +108,7 @@ Not every version will be perfectly supported but I will try and have the most p
     - [x] F3-style stuff
     - [x] Bossbars
     - [ ] Scoreboard
-    - [ ] Tab menu
+    - [x] Tab list
     - [x] Health, hunger and experience
     - [x] Hotbar
     - [ ] Inventory
@@ -123,10 +123,10 @@ Not every version will be perfectly supported but I will try and have the most p
   - [x] Physics loop
   - [x] Input system
   - [x] Collision system
-- [ ] Interaction
+- [x] Interaction
   - [x] Block placing
   - [x] Block breaking
-  - [ ] Block entity interaction
+  - [x] Block entity interaction
   - [x] Entity interaction
 - [ ] Particles
   - [ ] Basic particle system

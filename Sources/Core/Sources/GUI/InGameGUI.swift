@@ -36,6 +36,8 @@ public class InGameGUI {
       (player.gamemode.gamemode, player.inventory)
     }
 
+    let inputState = game.accessInputState(acquireLock: false, action: identity)
+
     if state.showHUD {
       return GUIElement.stack {
         if gamemode != .spectator {
@@ -51,6 +53,11 @@ public class InGameGUI {
           self.bossBar(bossBar)
         }
           .constraints(.top(2), .center)
+
+        if state.movementAllowed && inputState.keys.contains(.tab) {
+          tabList(game.tabList)
+            .constraints(.top(8), .center)
+        }
 
         if state.showDebugScreen {
           debugScreen(game: game, state: state)
@@ -93,6 +100,47 @@ public class InGameGUI {
       }
     }
       .size(GUISprite.xpBarBackground.descriptor.size.x, nil)
+  }
+
+  public func tabList(_ tabList: TabList) -> GUIElement {
+    // TODO: Resolve chat component content when building ui instead of when resolving it
+    //   (just too tricky to do stuff without knowing the chat component's content)
+    // TODO: Handle teams (changes sorting I think)
+    // TODO: Spectator players should go first, then sort by display name (with no-display-name players
+    //   coming first?) then sort by player name
+    let sortedPlayers = tabList.players.values.sorted { left, right in
+      // TODO: Sort by the name that's gonna be displayed (displayName ?? name),
+      //   requires the above TODO to be resolved first
+      left.name < right.name
+    }
+
+    let borderColor = Vec4f(0, 0, 0, 0.8)
+
+    // TODO: Render borders between rows (harder than it sounds lol, will require more advanced layout
+    //   controls in GUIElement).
+    return GUIElement.list(direction: .horizontal, spacing: 0) {
+      GUIElement.forEach(in: sortedPlayers, spacing: 0) { player in
+        // TODO: Add text shadow when that's supported for chat components
+        // TODO: Render spectator mode player names italic
+        GUIElement.list(direction: .horizontal, spacing: 2) {
+          if let displayName = player.displayName {
+            GUIElement.message(displayName)
+          } else {
+            textWithShadow(player.name)
+          }
+        }
+      }
+        .padding(.bottom, -1)
+        .background(Vec4f(0, 0, 0, 0.5))
+
+      GUIElement.forEach(in: sortedPlayers, spacing: 1) { player in
+        GUIElement.sprite(.playerConnectionStrength(player.connectionStrength))
+          .padding([.top, .right], 1)
+          .padding(.left, 2)
+      }
+        .background(Vec4f(0, 0, 0, 0.5))
+    }
+      .border([.top, .left, .bottom], 1, borderColor)
   }
 
   public func chat(state: GUIStateStorage) -> GUIElement {

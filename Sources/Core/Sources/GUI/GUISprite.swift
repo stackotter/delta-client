@@ -43,6 +43,9 @@ public enum GUISprite {
   case bossBarTwelveNotchOverlay
   case bossBarTwentyNotchOverlay
 
+  /// The sprite for a connection strength in the range `0...5`.
+  case playerConnectionStrength(PlayerInfo.ConnectionStrength)
+
   /// The descriptor for the sprite.
   public var descriptor: GUISpriteDescriptor {
     switch self {
@@ -120,6 +123,9 @@ public enum GUISprite {
         return GUISpriteDescriptor(slice: .bars, position: [0, 100], size: [182, 5])
       case .bossBarTwentyNotchOverlay:
         return GUISpriteDescriptor(slice: .bars, position: [0, 110], size: [182, 5])
+      case let .playerConnectionStrength(strength):
+        let y = 16 + (5 - strength.rawValue) * 8
+        return GUISpriteDescriptor(slice: .icons, position: [0, y], size: [10, 7])
     }
   }
 }
