@@ -245,15 +245,6 @@
         }
       },
       {
-        "package": "swift-syntax",
-        "repositoryURL": "https://github.com/apple/swift-syntax.git",
-        "state": {
-          "branch": null,
-          "revision": "303e5c5c36d6a558407d364878df131c3546fad8",
-          "version": "510.0.2"
-        }
-      },
-      {
         "package": "SwiftCPUDetect",
         "repositoryURL": "https://github.com/JWhitmore1/SwiftCPUDetect",
         "state": {

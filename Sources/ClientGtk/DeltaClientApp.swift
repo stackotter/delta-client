@@ -36,16 +36,17 @@ struct DeltaClientApp: App {
         // Download vanilla assets if they haven't already been downloaded
         if !StorageManager.directoryExists(at: assetsDirectory) {
           loading("Downloading assets")
-          try ResourcePack.downloadVanillaAssets(forVersion: Constants.versionString, to: assetsDirectory) { progress, message in
-            loading(message)
-          }
+          try ResourcePack.downloadVanillaAssets(
+            forVersion: Constants.versionString,
+            to: assetsDirectory,
+            progress: nil
+          )
         }
+
 
         // Load registries
         loading("Loading registries")
-        try RegistryStore.populateShared(registryDirectory) { progress, message in
-          loading(message)
-        }
+        try RegistryStore.populateShared(registryDirectory, progress: nil)
 
         // Load resource pack and cache it if necessary
         loading("Loading resource pack")

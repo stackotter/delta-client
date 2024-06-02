@@ -22,16 +22,19 @@ class GameViewState: Observable {
       self.handleClientEvent(event)
     }
 
-    do {
-      // TODO: Use structured concurrency to get join server to wait until login is finished so that
-      // errors can be handled inline
-      if let account = ConfigManager.default.config.selectedAccount {
-        try client.joinServer(describedBy: server, with: account)
-      } else {
-        state = .error("Please select an account")
+    // TODO: Use structured concurrency to get join server to wait until login is finished so that
+    // errors can be handled inline
+    if let account = ConfigManager.default.config.selectedAccount {
+      Task
+      {
+        do {
+          try await client.joinServer(describedBy: server, with: account)
+        } catch {
+          state = .error("Failed to join server: \(error.localizedDescription)")
+        }
       }
-    } catch {
-      state = .error("Failed to join server: \(error.localizedDescription)")
+    } else {
+      state = .error("Please select an account")
     }
   }
 
