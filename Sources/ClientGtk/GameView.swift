@@ -25,8 +25,7 @@ class GameViewState: Observable {
     // TODO: Use structured concurrency to get join server to wait until login is finished so that
     // errors can be handled inline
     if let account = ConfigManager.default.config.selectedAccount {
-      Task
-      {
+      Task {
         do {
           try await client.joinServer(describedBy: server, with: account)
         } catch {

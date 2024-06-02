@@ -60,11 +60,11 @@ struct MicrosoftLoginView: View {
         let accessToken = try await MicrosoftAPI.getMicrosoftAccessToken(response.deviceCode)
         account = try await MicrosoftAPI.getMinecraftAccount(accessToken)
       } catch {
-        guard case let error = (error as? MicrosoftAPIError)?.errorDescription else {
+        guard let msoftError = (error as? MicrosoftAPIError)?.errorDescription else {
           state.state = .error("Failed to authenticate Microsoft account: \(error)")
           return
         }
-        state.state = .error("Failed to authenticate Microsoft account: \(error)")
+        state.state = .error("Failed to authenticate Microsoft account: \(msoftError)")
         return
       }
 
