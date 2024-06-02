@@ -43,7 +43,6 @@ struct DeltaClientApp: App {
           )
         }
 
-
         // Load registries
         loading("Loading registries")
         try RegistryStore.populateShared(registryDirectory, progress: nil)

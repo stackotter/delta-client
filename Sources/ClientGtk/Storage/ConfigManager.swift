@@ -108,6 +108,8 @@ public final class ConfigManager {
     try? commitConfig()
   }
   
+  // TODO: This is not used anywhere, do we need to add support
+  // for refreshing accounts?
   /// Refreshes the currently selected account and returns it.
   /// - Returns: The currently selected account after refreshing it.
   // public func getRefreshedAccount() async throws -> Account {
