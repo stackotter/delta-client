@@ -1,5 +1,5 @@
-import FirebladeMath
 import DeltaCore
+import FirebladeMath
 
 /// Builds the mesh for a single block.
 struct BlockMeshBuilder {
@@ -8,15 +8,15 @@ struct BlockMeshBuilder {
   let modelToWorld: Mat4x4f
   let culledFaces: DirectionSet
   let lightLevel: LightLevel
-  let neighbourLightLevels: [Direction: LightLevel] // TODO: Convert to array for faster access
+  let neighbourLightLevels: [Direction: LightLevel]  // TODO: Convert to array for faster access
   let tintColor: Vec3f
-  let blockTexturePalette: TexturePalette // TODO: Remove when texture type is baked into block models
+  let blockTexturePalette: TexturePalette  // TODO: Remove when texture type is baked into block models
 
   func build(
-    into geometry: inout Geometry,
+    into geometry: inout Geometry<BlockVertex>,
     translucentGeometry: inout SortableMeshElement
   ) {
-    var translucentGeometryParts: [(size: Float, geometry: Geometry)] = []
+    var translucentGeometryParts: [(size: Float, geometry: Geometry<BlockVertex>)] = []
     for part in model.parts {
       buildPart(
         part,
@@ -33,11 +33,11 @@ struct BlockMeshBuilder {
 
   func buildPart(
     _ part: BlockModelPart,
-    into geometry: inout Geometry,
-    translucentGeometry: inout [(size: Float, geometry: Geometry)]
+    into geometry: inout Geometry<BlockVertex>,
+    translucentGeometry: inout [(size: Float, geometry: Geometry<BlockVertex>)]
   ) {
     for element in part.elements {
-      var elementTranslucentGeometry = Geometry()
+      var elementTranslucentGeometry = Geometry<BlockVertex>()
       buildElement(
         element,
         into: &geometry,
@@ -57,8 +57,8 @@ struct BlockMeshBuilder {
 
   func buildElement(
     _ element: BlockModelElement,
-    into geometry: inout Geometry,
-    translucentGeometry: inout Geometry
+    into geometry: inout Geometry<BlockVertex>,
+    translucentGeometry: inout Geometry<BlockVertex>
   ) {
     let vertexToWorld = element.transformation * modelToWorld
     for face in element.faces {
@@ -85,8 +85,8 @@ struct BlockMeshBuilder {
   func buildFace(
     _ face: BlockModelFace,
     transformedBy vertexToWorld: Mat4x4f,
-    into geometry: inout Geometry,
-    translucentGeometry: inout Geometry,
+    into geometry: inout Geometry<BlockVertex>,
+    translucentGeometry: inout Geometry<BlockVertex>,
     faceLightLevel: LightLevel,
     shouldShade: Bool
   ) {
@@ -116,13 +116,13 @@ struct BlockMeshBuilder {
   func buildFace(
     _ face: BlockModelFace,
     transformedBy vertexToWorld: Mat4x4f,
-    into geometry: inout Geometry,
+    into geometry: inout Geometry<BlockVertex>,
     faceLightLevel: LightLevel,
     shouldShade: Bool,
     textureType: TextureType
   ) {
     // Add face winding
-    let offset = UInt32(geometry.vertices.count) // The index of the first vertex of this face
+    let offset = UInt32(geometry.vertices.count)  // The index of the first vertex of this face
     for index in CubeGeometry.faceWinding {
       geometry.indices.append(index &+ offset)
     }
@@ -172,10 +172,10 @@ struct BlockMeshBuilder {
   /// into a single element to add to the final mesh to reduce sorting calculations while
   /// rendering.
   private static func mergeTranslucentGeometry(
-    _ geometries: [(size: Float, geometry: Geometry)],
+    _ geometries: [(size: Float, geometry: Geometry<BlockVertex>)],
     position: BlockPosition
   ) -> SortableMeshElement {
-    var geometries = geometries // TODO: This may cause an unnecessary copy
+    var geometries = geometries  // TODO: This may cause an unnecessary copy
     geometries.sort { first, second in
       return second.size > first.size
     }
@@ -196,9 +196,10 @@ struct BlockMeshBuilder {
     for (_, geometry) in geometries {
       let startingIndex = UInt32(vertices.count)
       vertices.append(contentsOf: geometry.vertices)
-      indices.append(contentsOf: geometry.indices.map { index in
-        return index + startingIndex
-      })
+      indices.append(
+        contentsOf: geometry.indices.map { index in
+          return index + startingIndex
+        })
     }
 
     let geometry = Geometry(vertices: vertices, indices: indices)

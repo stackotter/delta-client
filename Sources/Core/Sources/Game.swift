@@ -1,5 +1,5 @@
-import Foundation
 import FirebladeECS
+import Foundation
 
 /// Stores all of the game data such as entities, chunks and chat messages.
 public final class Game: @unchecked Sendable {
@@ -43,11 +43,11 @@ public final class Game: @unchecked Sendable {
   // MARK: Private properties
 
   #if DEBUG_LOCKS
-  /// A locked for managing safe access of ``nexus``.
-  public let nexusLock = ReadWriteLock()
+    /// A locked for managing safe access of ``nexus``.
+    public let nexusLock = ReadWriteLock()
   #else
-  /// A locked for managing safe access of ``nexus``.
-  private let nexusLock = ReadWriteLock()
+    /// A locked for managing safe access of ``nexus``.
+    private let nexusLock = ReadWriteLock()
   #endif
   /// The container for the game's entities. Strictly only contains what Minecraft counts as
   /// entities. Doesn't include block entities.
@@ -101,7 +101,8 @@ public final class Game: @unchecked Sendable {
     //   require significant refactoring if we wanna do it right (as in not just hacking it
     //   together for the specific case of PlayerInputSystem); proper resource pack propagation
     //   will probably take quite a bit of work.
-    tickScheduler.addSystem(PlayerInputSystem(connection, self, eventBus, configuration, font, locale))
+    tickScheduler.addSystem(
+      PlayerInputSystem(connection, self, eventBus, configuration, font, locale))
     tickScheduler.addSystem(PlayerFlightSystem())
     tickScheduler.addSystem(PlayerAccelerationSystem())
     tickScheduler.addSystem(PlayerJumpSystem())
@@ -129,7 +130,7 @@ public final class Game: @unchecked Sendable {
   ///   - key: The pressed key if any.
   ///   - input: The pressed input if any.
   ///   - characters: The characters typed by the pressed key.
-  public func press(key: Key?, input: Input?, characters: [Character] = []) { // swiftlint:disable:this cyclomatic_complexity
+  public func press(key: Key?, input: Input?, characters: [Character] = []) {  // swiftlint:disable:this cyclomatic_complexity
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
     inputState.press(key: key, input: input, characters: characters)
@@ -210,7 +211,9 @@ public final class Game: @unchecked Sendable {
   }
 
   /// Mutates the GUI state with a given action.
-  public func mutateGUIState<R>(acquireLock: Bool = true, action: (inout GUIState) throws -> R) rethrows -> R {
+  public func mutateGUIState<R>(acquireLock: Bool = true, action: (inout GUIState) throws -> R)
+    rethrows -> R
+  {
     if acquireLock { nexusLock.acquireWriteLock() }
     defer { if acquireLock { nexusLock.unlock() } }
     return try action(&_guiState.inner)
@@ -302,7 +305,9 @@ public final class Game: @unchecked Sendable {
   ///   - componentType: The type of component to access.
   ///   - acquireLock: If `false`, no lock is acquired. Only use if you know what you're doing.
   ///   - action: The action to perform on the component if the entity exists and contains that component.
-  public func accessComponent<T: Component>(entityId: Int, _ componentType: T.Type, acquireLock: Bool = true, action: (T) -> Void) {
+  public func accessComponent<T: Component>(
+    entityId: Int, _ componentType: T.Type, acquireLock: Bool = true, action: (T) -> Void
+  ) {
     if acquireLock { nexusLock.acquireWriteLock() }
     defer { if acquireLock { nexusLock.unlock() } }
 
@@ -318,9 +323,9 @@ public final class Game: @unchecked Sendable {
 
   /// Removes the entity with the given vanilla id from the game if it exists.
   /// - Parameter id: The id of the entity to remove.
-  public func removeEntity(id: Int) {
-    nexusLock.acquireWriteLock()
-    defer { nexusLock.unlock() }
+  public func removeEntity(acquireLock: Bool = true, id: Int) {
+    if acquireLock { nexusLock.acquireWriteLock() }
+    defer { if acquireLock { nexusLock.unlock() } }
 
     if let identifier = entityIdToEntityIdentifier[id] {
       nexus.destroy(entityId: identifier)
@@ -356,7 +361,8 @@ public final class Game: @unchecked Sendable {
   /// - Parameters:
   ///   - acquireLock: If `false`, no lock is acquired. Only use if you know what you're doing.
   ///   - action: The action to perform on the player.
-  public func accessPlayer<T>(acquireLock: Bool = true, action: (Player) throws -> T) rethrows -> T {
+  public func accessPlayer<T>(acquireLock: Bool = true, action: (Player) throws -> T) rethrows -> T
+  {
     if acquireLock { nexusLock.acquireWriteLock() }
     defer { if acquireLock { nexusLock.unlock() } }
 
@@ -447,7 +453,10 @@ public final class Game: @unchecked Sendable {
         continue
       }
 
-      guard let (distance, face) = hitbox.aabb(at: position.vector).intersectionDistanceAndFace(with: playerRay) else {
+      guard
+        let (distance, face) = hitbox.aabb(at: position.vector).intersectionDistanceAndFace(
+          with: playerRay)
+      else {
         continue
       }
 

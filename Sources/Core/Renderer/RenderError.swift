@@ -1,6 +1,5 @@
+import DeltaCore
 import Foundation
-
-// TODO: Move to Renderer target once possible
 
 public enum RenderError: LocalizedError {
   /// Failed to create a metal array texture.
@@ -21,8 +20,8 @@ public enum RenderError: LocalizedError {
   case failedToCreateWorldRenderPipelineState(Error)
   /// Failed to create the depth stencil state for the world renderer.
   case failedToCreateWorldDepthStencilState
-  /// Failed to create the render pipeline state for the entity renderer.
-  case failedToCreateEntityRenderPipelineState(Error, label: String)
+  /// Failed to create the render pipeline state for a renderer.
+  case failedToCreateRenderPipelineState(Error, label: String)
   /// Failed to create the depth stencil state for the entity renderer.
   case failedToCreateEntityDepthStencilState
   /// Failed to create the block texture array.
@@ -70,33 +69,33 @@ public enum RenderError: LocalizedError {
         return "Failed to find default.metallib in the bundle."
       case .failedToCreateMetallib(let error):
         return """
-        Failed to create a metal library from `default.metallib`.
-        Reason: \(error.localizedDescription)
-        """
+          Failed to create a metal library from `default.metallib`.
+          Reason: \(error.localizedDescription)
+          """
       case .failedToLoadShaders:
         return "Failed to load the shaders from the metallib."
       case .failedtoCreateWorldUniformBuffers:
         return "Failed to create the buffers that hold the world uniforms."
       case .failedToCreateWorldRenderPipelineState(let error):
         return """
-        Failed to create the render pipeline state for the world renderer.
-        Reason: \(error.localizedDescription)
-        """
+          Failed to create the render pipeline state for the world renderer.
+          Reason: \(error.localizedDescription)
+          """
       case .failedToCreateWorldDepthStencilState:
         return "Failed to create the depth stencil state for the entity renderer."
-      case .failedToCreateEntityRenderPipelineState(let error, let label):
+      case .failedToCreateRenderPipelineState(let error, let label):
         return """
-        Failed to create the render pipeline state for the entity renderer.
-        Reason: \(error.localizedDescription)
-        Label: \(label)
-        """
+          Failed to create render pipeline state.
+          Reason: \(error.localizedDescription)
+          Label: \(label)
+          """
       case .failedToCreateEntityDepthStencilState:
         return " Failed to create the depth stencil state for the entity renderer."
       case .failedToCreateBlockTextureArray(let error):
         return """
-        Failed to create the block texture array.
-        Reason: \(error.localizedDescription)
-        """
+          Failed to create the block texture array.
+          Reason: \(error.localizedDescription)
+          """
       case .failedToCreateRenderEncoder:
         return "Failed to create the render encoder."
       case .failedToCreateCommandBuffer:
@@ -108,26 +107,27 @@ public enum RenderError: LocalizedError {
       case .failedToGetCurrentRenderPassDescriptor:
         return "Failed to get the current render pass descriptor for a frame."
       case .failedToCreateTimerEvent:
-        return "Failed to get the specified counter set (it is likely not supported by the selected device)."
+        return
+          "Failed to get the specified counter set (it is likely not supported by the selected device)."
       case .failedToGetCounterSet(let rawValue):
         return """
-        Failed to get the specified counter set (it is likely not supported by the selected device).
-        Raw value: \(rawValue)
-        """
+          Failed to get the specified counter set (it is likely not supported by the selected device).
+          Raw value: \(rawValue)
+          """
       case .failedToMakeCounterSampleBuffer(let error):
         return """
-        Failed to create the buffer used for sampling GPU counters.
-        Reason: \(error.localizedDescription)
-        """
+          Failed to create the buffer used for sampling GPU counters.
+          Reason: \(error.localizedDescription)
+          """
       case .failedToSampleCounters:
         return "Failed to sample the GPU counters used to calculate FPS."
       case .gpuTraceNotSupported:
         return "The current device does not support capturing a gpu trace and outputting to a file."
       case .failedToStartCapture(let error):
         return """
-        Failed to start GPU frame capture.
-        Reason: \(error.localizedDescription)
-        """
+          Failed to start GPU frame capture.
+          Reason: \(error.localizedDescription)
+          """
       case .failedToCreateBlitCommandEncoder:
         return "Failed to create blit command encoder."
       case .missingTexture(let identifier):

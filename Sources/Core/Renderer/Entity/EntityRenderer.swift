@@ -1,8 +1,8 @@
-import Foundation
+import DeltaCore
 import FirebladeECS
 import FirebladeMath
+import Foundation
 import MetalKit
-import DeltaCore
 
 /// Renders all entities in the world the client is currently connected to.
 public struct EntityRenderer: Renderer {
@@ -90,19 +90,22 @@ public struct EntityRenderer: Renderer {
     }
 
     // Get all renderable entities
-    var entityUniforms: [EntityUniforms] = []
+    var geometry = Geometry<EntityVertex>()
     client.game.accessNexus { nexus in
       // If the player is in first person view we don't render them
       profiler.push(.getEntities)
-      let entities: Family<Requires2<EntityPosition, EntityHitBox>>
+      let entities: Family<Requires2<EntityPosition, EntityKindId>>
       if isFirstPerson {
         entities = nexus.family(
           requiresAll: EntityPosition.self,
-          EntityHitBox.self,
+          EntityKindId.self,
           excludesAll: ClientPlayerEntity.self
         )
       } else {
-        entities = nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self)
+        entities = nexus.family(
+          requiresAll: EntityPosition.self,
+          EntityKindId.self
+        )
       }
       profiler.pop()
 
@@ -111,87 +114,49 @@ public struct EntityRenderer: Renderer {
 
       // Create uniforms for each entity
       profiler.push(.createUniforms)
-      for (position, hitBox) in entities {
-        let aabb = hitBox.aabb(at: position.smoothVector)
-        let position = aabb.position
-        let size = aabb.size
-
+      for (position, kindId) in entities {
         // Don't render entities that are outside of the render distance
-        let chunkPosition = EntityPosition(position).chunk
+        let chunkPosition = position.chunk
         if !chunkPosition.isWithinRenderDistance(renderDistance, of: cameraChunk) {
           continue
         }
 
-        let scale: Mat4x4f = MatrixUtil.scalingMatrix(Vec3f(size))
-        let translation: Mat4x4f = MatrixUtil.translationMatrix(Vec3f(position))
-        let uniforms = EntityUniforms(transformation: scale * translation)
-        entityUniforms.append(uniforms)
+        guard var kindIdentifier = kindId.entityKind?.identifier else {
+          log.warning("Unknown entity kind '\(kindId.id)'")
+          continue
+        }
+
+        if kindIdentifier == Identifier(name: "ender_dragon") {
+          kindIdentifier = Identifier(name: "dragon")
+        }
+
+        guard
+          let model = client.resourcePack.vanillaResources.entityModelPalette.models[kindIdentifier]
+        else {
+          // TODO: Re-enable missing model warning once item model rendering is implemented
+          log.warning("Missing model for entity kind with identifier '\(kindIdentifier)'")
+          continue
+        }
+
+        let builder = EntityMeshBuilder(model: model, position: Vec3f(position.smoothVector))
+        builder.build(into: &geometry)
       }
       profiler.pop()
     }
 
-    guard !entityUniforms.isEmpty else {
+    guard !geometry.isEmpty else {
       return
     }
 
-    // Create buffer for instance uniforms. If the current buffer is big enough, use it unless it is
-    // more than 64 entities too big. The maximum size limit is imposed so that the buffer isn't too
-    // much bigger than necessary. New buffers are always created with room for 32 more entities so
-    // that a new buffer isn't created each time an entity is added.
-    let minimumBufferSize = entityUniforms.count * MemoryLayout<EntityUniforms>.stride
-    let maximumBufferSize = minimumBufferSize + 64 * MemoryLayout<EntityUniforms>.stride
-    var instanceUniformsBuffer: MTLBuffer
-
-    profiler.push(.getBuffer)
-    if let buffer = self.instanceUniformsBuffer, buffer.length >= minimumBufferSize, buffer.length <= maximumBufferSize {
-      buffer.contents().copyMemory(from: &entityUniforms, byteCount: minimumBufferSize)
-      instanceUniformsBuffer = buffer
-    } else {
-      log.trace("Creating new instance uniforms buffer")
-      instanceUniformsBuffer = try MetalUtil.makeBuffer(
-        device,
-        length: minimumBufferSize + MemoryLayout<EntityUniforms>.stride * 32,
-        options: .storageModeShared,
-        label: "entityInstanceUniforms"
-      )
-      instanceUniformsBuffer.contents().copyMemory(
-        from: &entityUniforms,
-        byteCount: minimumBufferSize
-      )
-    }
-    profiler.pop()
-
-    self.instanceUniformsBuffer = instanceUniformsBuffer
-
-    // Render all the hitboxes using instancing
-    profiler.push(.encode)
     encoder.setRenderPipelineState(renderPipelineState)
-    encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-    encoder.setVertexBuffer(instanceUniformsBuffer, offset: 0, index: 2)
 
-    encoder.drawIndexedPrimitives(
-      type: .triangle,
-      indexCount: indexCount,
-      indexType: .uint32,
-      indexBuffer: indexBuffer,
-      indexBufferOffset: 0,
-      instanceCount: entityUniforms.count
-    )
-    profiler.pop()
-
-    // A hack to solve https://bugs.swift.org/browse/SR-15613
-    // If this isn't done, `entityUniforms` gets freed somewhere around the line with `var
-    // instanceUniformsBuffer: MTLBuffer` in release builds
-    use(entityUniforms)
+    // TODO: Update profiler measurements
+    var mesh = Mesh<EntityVertex, Void>(geometry, uniforms: ())
+    try mesh.render(into: encoder, with: device, commandQueue: commandQueue)
   }
 
-  /// A hack used to solve https://bugs.swift.org/browse/SR-15613
-  @inline(never)
-  @_optimize(none)
-  private func use(_ thing: Any) {}
-
   /// Creates a coloured and shaded cube to be rendered using instancing as entities' hitboxes.
-  private static func createHitBoxGeometry(color: DeltaCore.RGBColor) -> (vertices: [EntityVertex], indices: [UInt32]) {
+  private static func createHitBoxGeometry(color: DeltaCore.RGBColor) -> Geometry<EntityVertex> {
     var vertices: [EntityVertex] = []
     var indices: [UInt32] = []
 
@@ -199,14 +164,16 @@ public struct EntityRenderer: Renderer {
       let faceVertices = CubeGeometry.faceVertices[direction.rawValue]
       for position in faceVertices {
         let color = color.floatVector * CubeGeometry.shades[direction.rawValue]
-        vertices.append(EntityVertex(
-          x: position.x,
-          y: position.y,
-          z: position.z,
-          r: color.x,
-          g: color.y,
-          b: color.z
-        ))
+        vertices.append(
+          EntityVertex(
+            x: position.x,
+            y: position.y,
+            z: position.z,
+            r: color.x,
+            g: color.y,
+            b: color.z
+          )
+        )
       }
 
       let offset = UInt32(indices.count / 6 * 4)
@@ -215,6 +182,6 @@ public struct EntityRenderer: Renderer {
       }
     }
 
-    return (vertices: vertices, indices: indices)
+    return Geometry(vertices: vertices, indices: indices)
   }
 }

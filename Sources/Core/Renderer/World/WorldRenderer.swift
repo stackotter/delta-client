@@ -1,7 +1,7 @@
+import DeltaCore
+import FirebladeMath
 import Foundation
 import MetalKit
-import FirebladeMath
-import DeltaCore
 
 /// A renderer that renders a `World` along with its associated entities (from `Game.nexus`).
 public final class WorldRenderer: Renderer {
@@ -13,10 +13,10 @@ public final class WorldRenderer: Renderer {
   /// Render pipeline used for rendering world geometry.
   private var renderPipelineState: MTLRenderPipelineState
   #if !os(tvOS)
-  /// Render pipeline used for rendering translucent world geometry.
-  private var transparencyRenderPipelineState: MTLRenderPipelineState
-  /// Render pipeline used for compositing translucent geometry onto the screen buffer.
-  private var compositingRenderPipelineState: MTLRenderPipelineState
+    /// Render pipeline used for rendering translucent world geometry.
+    private var transparencyRenderPipelineState: MTLRenderPipelineState
+    /// Render pipeline used for compositing translucent geometry onto the screen buffer.
+    private var compositingRenderPipelineState: MTLRenderPipelineState
   #endif
 
   /// The device used for rendering.
@@ -51,9 +51,9 @@ public final class WorldRenderer: Renderer {
   private var lightMapBuffer: MTLBuffer?
 
   #if !os(tvOS)
-  /// The depth stencil state used for order independent transparency (which requires read-only
-  /// depth).
-  private let readOnlyDepthState: MTLDepthStencilState
+    /// The depth stencil state used for order independent transparency (which requires read-only
+    /// depth).
+    private let readOnlyDepthState: MTLDepthStencilState
   #endif
   /// The depth stencil state used when order independent transparency is disabled.
   private let depthState: MTLDepthStencilState
@@ -81,7 +81,8 @@ public final class WorldRenderer: Renderer {
     let library = try MetalUtil.loadDefaultLibrary(device)
     let vertexFunction = try MetalUtil.loadFunction("chunkVertexShader", from: library)
     let fragmentFunction = try MetalUtil.loadFunction("chunkFragmentShader", from: library)
-    let transparentFragmentFunction = try MetalUtil.loadFunction("chunkOITFragmentShader", from: library)
+    let transparentFragmentFunction = try MetalUtil.loadFunction(
+      "chunkOITFragmentShader", from: library)
     let transparentCompositingVertexFunction = try MetalUtil.loadFunction(
       "chunkOITCompositingVertexShader",
       from: library
@@ -127,45 +128,45 @@ public final class WorldRenderer: Renderer {
     )
 
     #if !os(tvOS)
-    // Create OIT pipeline
-    transparencyRenderPipelineState = try MetalUtil.makeRenderPipelineState(
-      device: device,
-      label: "WorldRenderer.oit",
-      vertexFunction: vertexFunction,
-      fragmentFunction: transparentFragmentFunction,
-      blendingEnabled: true,
-      editDescriptor: { (descriptor: MTLRenderPipelineDescriptor) in
-        // Accumulation texture
-        descriptor.colorAttachments[1].isBlendingEnabled = true
-        descriptor.colorAttachments[1].rgbBlendOperation = .add
-        descriptor.colorAttachments[1].alphaBlendOperation = .add
-        descriptor.colorAttachments[1].sourceRGBBlendFactor = .one
-        descriptor.colorAttachments[1].sourceAlphaBlendFactor = .one
-        descriptor.colorAttachments[1].destinationRGBBlendFactor = .one
-        descriptor.colorAttachments[1].destinationAlphaBlendFactor = .one
+      // Create OIT pipeline
+      transparencyRenderPipelineState = try MetalUtil.makeRenderPipelineState(
+        device: device,
+        label: "WorldRenderer.oit",
+        vertexFunction: vertexFunction,
+        fragmentFunction: transparentFragmentFunction,
+        blendingEnabled: true,
+        editDescriptor: { (descriptor: MTLRenderPipelineDescriptor) in
+          // Accumulation texture
+          descriptor.colorAttachments[1].isBlendingEnabled = true
+          descriptor.colorAttachments[1].rgbBlendOperation = .add
+          descriptor.colorAttachments[1].alphaBlendOperation = .add
+          descriptor.colorAttachments[1].sourceRGBBlendFactor = .one
+          descriptor.colorAttachments[1].sourceAlphaBlendFactor = .one
+          descriptor.colorAttachments[1].destinationRGBBlendFactor = .one
+          descriptor.colorAttachments[1].destinationAlphaBlendFactor = .one
 
-        // Revealage texture
-        descriptor.colorAttachments[2].isBlendingEnabled = true
-        descriptor.colorAttachments[2].rgbBlendOperation = .add
-        descriptor.colorAttachments[2].alphaBlendOperation = .add
-        descriptor.colorAttachments[2].sourceRGBBlendFactor = .zero
-        descriptor.colorAttachments[2].sourceAlphaBlendFactor = .zero
-        descriptor.colorAttachments[2].destinationRGBBlendFactor = .oneMinusSourceColor
-        descriptor.colorAttachments[2].destinationAlphaBlendFactor = .oneMinusSourceAlpha
-      }
-    )
+          // Revealage texture
+          descriptor.colorAttachments[2].isBlendingEnabled = true
+          descriptor.colorAttachments[2].rgbBlendOperation = .add
+          descriptor.colorAttachments[2].alphaBlendOperation = .add
+          descriptor.colorAttachments[2].sourceRGBBlendFactor = .zero
+          descriptor.colorAttachments[2].sourceAlphaBlendFactor = .zero
+          descriptor.colorAttachments[2].destinationRGBBlendFactor = .oneMinusSourceColor
+          descriptor.colorAttachments[2].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+        }
+      )
 
-    // Create OIT compositing pipeline
-    compositingRenderPipelineState = try MetalUtil.makeRenderPipelineState(
-      device: device,
-      label: "WorldRenderer.compositing",
-      vertexFunction: transparentCompositingVertexFunction,
-      fragmentFunction: transparentCompositingFragmentFunction,
-      blendingEnabled: true
-    )
+      // Create OIT compositing pipeline
+      compositingRenderPipelineState = try MetalUtil.makeRenderPipelineState(
+        device: device,
+        label: "WorldRenderer.compositing",
+        vertexFunction: transparentCompositingVertexFunction,
+        fragmentFunction: transparentCompositingFragmentFunction,
+        blendingEnabled: true
+      )
 
-    // Create the depth state used for order independent transparency
-    readOnlyDepthState = try MetalUtil.createDepthState(device: device, readOnly: true)
+      // Create the depth state used for order independent transparency
+      readOnlyDepthState = try MetalUtil.createDepthState(device: device, readOnly: true)
     #endif
 
     // Create the regular depth state.
@@ -200,9 +201,10 @@ public final class WorldRenderer: Renderer {
       options: storageMode
     )
 
-    let maxOutlinePartCount = RegistryStore.shared.blockRegistry.blocks.map { block in
-      return block.shape.outlineShape.aabbs.count
-    }.max() ?? 1
+    let maxOutlinePartCount =
+      RegistryStore.shared.blockRegistry.blocks.map { block in
+        return block.shape.outlineShape.aabbs.count
+      }.max() ?? 1
 
     let geometry = Self.generateOutlineGeometry(position: .zero, size: [1, 1, 1], baseIndex: 0)
 
@@ -348,7 +350,8 @@ public final class WorldRenderer: Renderer {
       }
       let block = client.game.world.getBlock(at: breakingBlock.position)
       if var model = resources.blockModelPalette.model(for: block.id, at: breakingBlock.position) {
-        let textureId = client.resourcePack.vanillaResources.blockTexturePalette.textureIndex(for: Identifier(namespace: "minecraft", name: "block/destroy_stage_\(stage)"))!
+        let textureId = client.resourcePack.vanillaResources.blockTexturePalette.textureIndex(
+          for: Identifier(namespace: "minecraft", name: "block/destroy_stage_\(stage)"))!
         for (i, part) in model.parts.enumerated() {
           for (j, element) in part.elements.enumerated() {
             model.parts[i].elements[j].shade = false
@@ -382,14 +385,19 @@ public final class WorldRenderer: Renderer {
           tintColor: Vec3f(repeating: 0),
           blockTexturePalette: resources.blockTexturePalette
         )
-        var dummyGeometry = Geometry()
+        var dummyGeometry = Geometry<BlockVertex>()
         var geometry = SortableMeshElement()
         builder.build(into: &dummyGeometry, translucentGeometry: &geometry)
         for i in 0..<geometry.vertices.count {
           geometry.vertices[i].isTransparent = true
         }
-        let vertexBuffer = device.makeBuffer(bytes: &geometry.vertices, length: MemoryLayout<BlockVertex>.stride * geometry.vertices.count)
-        guard let indexBuffer = device.makeBuffer(bytes: &geometry.indices, length: MemoryLayout<UInt32>.stride * geometry.indices.count) else {
+        let vertexBuffer = device.makeBuffer(
+          bytes: &geometry.vertices,
+          length: MemoryLayout<BlockVertex>.stride * geometry.vertices.count)
+        guard
+          let indexBuffer = device.makeBuffer(
+            bytes: &geometry.indices, length: MemoryLayout<UInt32>.stride * geometry.indices.count)
+        else {
           // No geometry to render
           continue
         }
@@ -449,9 +457,9 @@ public final class WorldRenderer: Renderer {
       )
     }
 
-    // Composite translucent geometry onto the screen buffer. No vertices need to be supplied, the
-    // shader has the screen's corners hardcoded for simplicity.
     #if !os(tvOS)
+      // Composite translucent geometry onto the screen buffer. No vertices need to be supplied, the
+      // shader has the screen's corners hardcoded for simplicity.
       if client.configuration.render.enableOrderIndependentTransparency {
         encoder.setRenderPipelineState(compositingRenderPipelineState)
         encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
@@ -483,13 +491,15 @@ public final class WorldRenderer: Renderer {
         worldMesh.updateSections(at: Array(affectedSections))
 
       case let event as World.Event.SingleBlockUpdate:
-        let affectedSections = worldMesh.sectionsAffectedBySectionUpdate(at: event.position.chunkSection)
+        let affectedSections = worldMesh.sectionsAffectedBySectionUpdate(
+          at: event.position.chunkSection)
         worldMesh.updateSections(at: Array(affectedSections))
 
       case let event as World.Event.MultiBlockUpdate:
         var affectedSections: Set<ChunkSectionPosition> = []
         for update in event.updates {
-          affectedSections.formUnion(worldMesh.sectionsAffectedBySectionUpdate(at: update.position.chunkSection))
+          affectedSections.formUnion(
+            worldMesh.sectionsAffectedBySectionUpdate(at: update.position.chunkSection))
         }
         worldMesh.updateSections(at: Array(affectedSections))
 
@@ -552,7 +562,7 @@ public final class WorldRenderer: Renderer {
     position: Vec3f,
     size: Vec3f,
     baseIndex: UInt32
-  ) -> Geometry {
+  ) -> Geometry<BlockVertex> {
     let thickness: Float = 0.004
     let padding: Float = -thickness + 0.001
 
@@ -566,12 +576,13 @@ public final class WorldRenderer: Renderer {
       position *= size / 2 + Vec3f(padding + thickness / 2, 0, padding + thickness / 2)
       position += Vec3f(size.x - thickness, 0, size.z - thickness) / 2
       position.y -= padding
-      boxes.append((
-        position: position,
-        size: [thickness, size.component(along: .y) + padding * 2, thickness],
-        axis: .y,
-        faces: [side, adjacentSide]
-      ))
+      boxes.append(
+        (
+          position: position,
+          size: [thickness, size.component(along: .y) + padding * 2, thickness],
+          axis: .y,
+          faces: [side, adjacentSide]
+        ))
 
       // Create the edges above and below this side
       for direction: Direction in [.up, .down] {
@@ -601,12 +612,13 @@ public final class WorldRenderer: Renderer {
         if adjacentSide.axis != .x {
           faces.append(contentsOf: [adjacentSide, adjacentSide.opposite])
         }
-        boxes.append((
-          position: position,
-          size: (Vec3f(1, 1, 1) - edgeDirection) * thickness + edge,
-          axis: adjacentSide.axis,
-          faces: faces
-        ))
+        boxes.append(
+          (
+            position: position,
+            size: (Vec3f(1, 1, 1) - edgeDirection) * thickness + edge,
+            axis: adjacentSide.axis,
+            faces: faces
+          ))
       }
     }
 
@@ -625,24 +637,27 @@ public final class WorldRenderer: Renderer {
         blockOutlineIndices.append(contentsOf: winding)
         blockOutlineIndices.append(contentsOf: winding.reversed())
 
-        let transformation = MatrixUtil.scalingMatrix(box.size) * MatrixUtil.translationMatrix(box.position) * translation
+        let transformation =
+          MatrixUtil.scalingMatrix(box.size) * MatrixUtil.translationMatrix(box.position)
+          * translation
         for vertex in CubeGeometry.faceVertices[face.rawValue] {
           let vertexPosition = (Vec4f(vertex, 1) * transformation).xyz
-          blockOutlineVertices.append(BlockVertex(
-            x: vertexPosition.x,
-            y: vertexPosition.y,
-            z: vertexPosition.z,
-            u: 0,
-            v: 0,
-            r: 0,
-            g: 0,
-            b: 0,
-            a: 0.6,
-            skyLightLevel: UInt8(LightLevel.maximumLightLevel),
-            blockLightLevel: 0,
-            textureIndex: UInt16.max,
-            isTransparent: false
-          ))
+          blockOutlineVertices.append(
+            BlockVertex(
+              x: vertexPosition.x,
+              y: vertexPosition.y,
+              z: vertexPosition.z,
+              u: 0,
+              v: 0,
+              r: 0,
+              g: 0,
+              b: 0,
+              a: 0.6,
+              skyLightLevel: UInt8(LightLevel.maximumLightLevel),
+              blockLightLevel: 0,
+              textureIndex: UInt16.max,
+              isTransparent: false
+            ))
         }
       }
     }

@@ -68,7 +68,12 @@ public final class PlayerInputSystem: System {
         // within a single tick should be uncommon anyway).
 
         // Be careful not to acquire a nexus lock here (passing the guiState parameter ensures this)
-        let gui = game.compileGUI(withFont: font, locale: locale, connection: connection, guiState: guiState)
+        let gui = game.compileGUI(
+          withFont: font,
+          locale: locale,
+          connection: connection,
+          guiState: guiState
+        )
         suppressInput = gui.handleInteraction(.press(event), at: mousePosition)
       }
 
@@ -121,7 +126,11 @@ public final class PlayerInputSystem: System {
             inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 8) % 9
           case .dropItem:
             let slotIndex = PlayerInventory.hotbarArea.startIndex + inventory.selectedHotbarSlot
-            inventory.window.dropItemFromSlot(slotIndex, mouseItemStack: nil, connection: connection)
+            inventory.window.dropItemFromSlot(
+              slotIndex,
+              mouseItemStack: nil,
+              connection: connection
+            )
           case .place:
             // Block breaking is handled by ``PlayerBlockBreakingSystem``, this just handles hand animation and
             // other non breaking things for the `.destroy` input (e.g. attacking)
@@ -136,15 +145,17 @@ public final class PlayerInputSystem: System {
             switch targetedThing.target {
               case let .block(blockPosition):
                 let cursor = targetedThing.cursor
-                try connection?.sendPacket(PlayerBlockPlacementPacket(
-                  hand: .mainHand,
-                  location: blockPosition,
-                  face: targetedThing.face,
-                  cursorPositionX: cursor.x,
-                  cursorPositionY: cursor.y,
-                  cursorPositionZ: cursor.z,
-                  insideBlock: targetedThing.distance < 0
-                ))
+                try connection?.sendPacket(
+                  PlayerBlockPlacementPacket(
+                    hand: .mainHand,
+                    location: blockPosition,
+                    face: targetedThing.face,
+                    cursorPositionX: cursor.x,
+                    cursorPositionY: cursor.y,
+                    cursorPositionZ: cursor.z,
+                    insideBlock: targetedThing.distance < 0
+                  )
+                )
 
                 if gamemode.gamemode.canPlaceBlocks {
                   // TODO: Predict the result of block placement so that we're not relying on the server
@@ -152,32 +163,37 @@ public final class PlayerInputSystem: System {
                 }
               case let .entity(entityId):
                 let targetedPosition = targetedThing.targetedPosition
-                try connection?.sendPacket(InteractEntityPacket(
-                  entityId: Int32(entityId),
-                  interaction: .interactAt(
-                    targetX: targetedPosition.x,
-                    targetY: targetedPosition.y,
-                    targetZ: targetedPosition.z,
-                    hand: .mainHand,
-                    isSneaking: sneaking.isSneaking
+                try connection?.sendPacket(
+                  InteractEntityPacket(
+                    entityId: Int32(entityId),
+                    interaction: .interactAt(
+                      targetX: targetedPosition.x,
+                      targetY: targetedPosition.y,
+                      targetZ: targetedPosition.z,
+                      hand: .mainHand,
+                      isSneaking: sneaking.isSneaking
+                    )
                   )
-                ))
-                try connection?.sendPacket(InteractEntityPacket(
-                  entityId: Int32(entityId),
-                  interaction: .interact(hand: .mainHand, isSneaking: sneaking.isSneaking)
-                ))
+                )
+                try connection?.sendPacket(
+                  InteractEntityPacket(
+                    entityId: Int32(entityId),
+                    interaction: .interact(hand: .mainHand, isSneaking: sneaking.isSneaking)
+                  )
+                )
             }
           case .destroy:
-            try connection?.sendPacket(AnimationServerboundPacket(hand: .mainHand))
-
             guard let targetedEntity = game.targetedEntity(acquireLock: false) else {
+              try connection?.sendPacket(AnimationServerboundPacket(hand: .mainHand))
               break
             }
 
-            try connection?.sendPacket(InteractEntityPacket(
-              entityId: Int32(targetedEntity.target),
-              interaction: .attack(isSneaking: sneaking.isSneaking)
-            ))
+            try connection?.sendPacket(
+              InteractEntityPacket(
+                entityId: Int32(targetedEntity.target),
+                interaction: .attack(isSneaking: sneaking.isSneaking)
+              )
+            )
           default:
             break
         }
@@ -249,24 +265,28 @@ public final class PlayerInputSystem: System {
             guiState.messageInput = guiState.stashedMessageInput ?? ""
           }
         }
-      } else if event.key == .leftArrow && guiState.messageInput?.count ?? 0 > guiState.messageInputCursor {
+      } else if event.key == .leftArrow
+        && guiState.messageInput?.count ?? 0 > guiState.messageInputCursor
+      {
         guiState.messageInputCursor += 1
       } else if event.key == .rightArrow && guiState.messageInputCursor > 0 {
         guiState.messageInputCursor -= 1
       } else {
         #if os(macOS)
-        if event.key == .v && !inputState.keys.intersection([.leftCommand, .rightCommand]).isEmpty {
-          // Handle paste keyboard shortcut
-          if let content = NSPasteboard.general.string(forType: .string) {
-            newCharacters = Array(content)
+          if event.key == .v
+            && !inputState.keys.intersection([.leftCommand, .rightCommand]).isEmpty
+          {
+            // Handle paste keyboard shortcut
+            if let content = NSPasteboard.general.string(forType: .string) {
+              newCharacters = Array(content)
+            }
+          } else if message.utf8.count < InGameGUI.maximumMessageLength {
+            newCharacters = event.characters
           }
-        } else if message.utf8.count < InGameGUI.maximumMessageLength {
-          newCharacters = event.characters
-        }
         #else
-        if message.utf8.count < InGameGUI.maximumMessageLength {
-          newCharacters = event.characters
-        }
+          if message.utf8.count < InGameGUI.maximumMessageLength {
+            newCharacters = event.characters
+          }
         #endif
 
         // Ensure that the message doesn't exceed 256 bytes (including if multi-byte characters are entered).
@@ -320,13 +340,16 @@ public final class PlayerInputSystem: System {
       // inventory even though it never tells the server that it opened the inventory in the first
       // place. Likely just for the server to verify the slots and chuck out anything in the crafting
       // area.
-      try inventory.window.close(mouseStack: &guiState.mouseItemStack, eventBus: eventBus, connection: connection)
+      try inventory.window.close(
+        mouseStack: &guiState.mouseItemStack,
+        eventBus: eventBus,
+        connection: connection
+      )
       guiState.showInventory = false
     }
 
     return true
   }
-  
 
   /// - Returns: Whether to suppress the input associated with the event or not.
   private func handleWindow(
@@ -340,7 +363,11 @@ public final class PlayerInputSystem: System {
     }
 
     if event.key == .escape || event.input == .toggleInventory {
-      try window.close(mouseStack: &guiState.mouseItemStack, eventBus: eventBus, connection: connection)
+      try window.close(
+        mouseStack: &guiState.mouseItemStack,
+        eventBus: eventBus,
+        connection: connection
+      )
       guiState.window = nil
     }
 

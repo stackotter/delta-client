@@ -1,17 +1,18 @@
+import DeltaCore
+import FirebladeMath
 import Foundation
 import MetalKit
-import SwiftUI // TODO: why???
-import FirebladeMath
-import DeltaCore
 
 /// Builds renderable meshes from chunk sections.
 ///
 /// Assumes that all relevant chunks have already been locked.
-public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
+public struct ChunkSectionMeshBuilder {  // TODO: Bring docs up to date
   /// A lookup to quickly convert block index to block position.
   private static let indexToPosition = generateIndexLookup()
   /// A lookup tp quickly get the block indices for blocks' neighbours.
-  private static let blockNeighboursLookup = (0..<Chunk.numSections).map { generateNeighbours(sectionIndex: $0) }
+  private static let blockNeighboursLookup = (0..<Chunk.numSections).map {
+    generateNeighbours(sectionIndex: $0)
+  }
 
   /// The world containing the chunk section to prepare.
   public var world: World
@@ -75,7 +76,7 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
     let zOffset = sectionPosition.sectionZ * Chunk.Section.depth
 
     if section.blockCount != 0 {
-      var transparentAndOpaqueGeometry = Geometry()
+      var transparentAndOpaqueGeometry = Geometry<BlockVertex>()
       for blockIndex in 0..<Chunk.Section.numBlocks {
         let blockId = section.getBlockId(at: blockIndex)
         if blockId != 0 {
@@ -112,7 +113,7 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
     at position: BlockPosition,
     atBlockIndex blockIndex: Int,
     with blockId: Int,
-    transparentAndOpaqueGeometry: inout Geometry,
+    transparentAndOpaqueGeometry: inout Geometry<BlockVertex>,
     translucentMesh: inout SortableMesh,
     indexToNeighbours: [[BlockNeighbour]],
     containsFluids: inout Bool
@@ -125,7 +126,9 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
 
     // Get block
     guard let block = RegistryStore.shared.blockRegistry.block(withId: blockId) else {
-      log.warning("Skipping block with non-existent state id \(blockId), failed to get block information")
+      log.warning(
+        "Skipping block with non-existent state id \(blockId), failed to get block information"
+      )
       return
     }
 
@@ -157,7 +160,10 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
     let culledFaces = getCullingNeighbours(at: position, blockId: blockId, neighbours: neighbours)
 
     // Return early if there can't possibly be any visible faces
-    if blockModel.cullableFaces == DirectionSet.all && culledFaces == DirectionSet.all && blockModel.nonCullableFaces.isEmpty {
+    if blockModel.cullableFaces == DirectionSet.all
+      && culledFaces == DirectionSet.all
+      && blockModel.nonCullableFaces.isEmpty
+    {
       return
     }
 
@@ -185,7 +191,10 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
       at: positionRelativeToChunkSection,
       inSectionAt: sectionPosition.sectionY
     )
-    let neighbourLightLevels = getNeighbouringLightLevels(neighbours: neighbours, visibleFaces: visibleFaces)
+    let neighbourLightLevels = getNeighbouringLightLevels(
+      neighbours: neighbours,
+      visibleFaces: visibleFaces
+    )
 
     // Get tint color
     guard let biome = chunk.biome(at: position.relativeToChunk, acquireLock: false) else {
@@ -198,7 +207,9 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
 
     // Create model to world transformation matrix
     let offset = block.getModelOffset(at: position)
-    let modelToWorld = MatrixUtil.translationMatrix(positionRelativeToChunkSection.floatVector + offset)
+    let modelToWorld = MatrixUtil.translationMatrix(
+      positionRelativeToChunkSection.floatVector + offset
+    )
 
     // Add block model to mesh
     addBlockModel(
@@ -216,7 +227,7 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
 
   private func addBlockModel(
     _ model: BlockModel,
-    to transparentAndOpaqueGeometry: inout Geometry,
+    to transparentAndOpaqueGeometry: inout Geometry<BlockVertex>,
     translucentMesh: inout SortableMesh,
     position: BlockPosition,
     modelToWorld: Mat4x4f,
@@ -280,7 +291,8 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
       neighbouringBlocks[direction] = neighbourBlock
     }
 
-    let lightLevel = chunk
+    let lightLevel =
+      chunk
       .getLighting(acquireLock: false)
       .getLightLevel(atIndex: blockIndex, inSectionAt: sectionPosition.sectionY)
     let neighbouringLightLevels = getNeighbouringLightLevels(
@@ -399,7 +411,9 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
     for (direction, neighbourBlockId) in neighbouringBlocks where neighbourBlockId != 0 {
       // We assume that block model variants always have the same culling faces as eachother, so
       // no position is passed to getModel.
-      guard let blockModel = resources.blockModelPalette.model(for: neighbourBlockId, at: nil) else {
+      guard
+        let blockModel = resources.blockModelPalette.model(for: neighbourBlockId, at: nil)
+      else {
         log.debug("Skipping neighbour with no block models.")
         continue
       }
@@ -408,7 +422,9 @@ public struct ChunkSectionMeshBuilder { // TODO: Bring docs up to date
       if blockModel.cullingFaces.contains(direction.opposite) || culledByOwnKind {
         cullingNeighbours.insert(direction)
       } else if let fluid = fluid {
-        guard let neighbourBlock = RegistryStore.shared.blockRegistry.block(withId: neighbourBlockId) else {
+        guard
+          let neighbourBlock = RegistryStore.shared.blockRegistry.block(withId: neighbourBlockId)
+        else {
           continue
         }
 
