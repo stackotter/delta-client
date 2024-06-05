@@ -199,7 +199,8 @@ struct BlockMeshBuilder {
       indices.append(
         contentsOf: geometry.indices.map { index in
           return index + startingIndex
-        })
+        }
+      )
     }
 
     let geometry = Geometry(vertices: vertices, indices: indices)

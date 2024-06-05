@@ -24,24 +24,40 @@ public struct EntityMeshBuilder {
   func buildSubmodel(
     _ submodel: JSONEntityModel.Submodel,
     index: Int,
+    transformation: Mat4x4f = MatrixUtil.identity,
     into geometry: inout Geometry<EntityVertex>
   ) {
+    var transformation = transformation
+    if let rotation = submodel.rotate {
+      let translation = submodel.translate ?? .zero
+      transformation =
+        MatrixUtil.rotationMatrix(-MathUtil.radians(from: rotation))
+        * MatrixUtil.translationMatrix(translation)
+    }
+
     for box in submodel.boxes ?? [] {
       buildBox(
         box,
         color: index < Self.colors.count ? Self.colors[index] : [0.5, 0.5, 0.5],
+        transformation: transformation,
         into: &geometry
       )
     }
 
     for (nestedIndex, nestedSubmodel) in (submodel.submodels ?? []).enumerated() {
-      buildSubmodel(nestedSubmodel, index: nestedIndex, into: &geometry)
+      buildSubmodel(
+        nestedSubmodel,
+        index: nestedIndex,
+        transformation: transformation,
+        into: &geometry
+      )
     }
   }
 
   func buildBox(
     _ box: JSONEntityModel.Box,
     color: Vec3f,
+    transformation: Mat4x4f,
     into geometry: inout Geometry<EntityVertex>
   ) {
     var boxPosition = Vec3f(
@@ -61,8 +77,6 @@ public struct EntityMeshBuilder {
       boxSize += 2 * growth
     }
 
-    boxPosition = boxPosition / 16 + position
-    boxSize /= 16
     for direction in Direction.allDirections {
       // The index of the first vertex of this face
       let offset = UInt32(geometry.vertices.count)
@@ -72,7 +86,10 @@ public struct EntityMeshBuilder {
 
       let faceVertexPositions = CubeGeometry.faceVertices[direction.rawValue]
       for vertexPosition in faceVertexPositions {
-        let position = vertexPosition * boxSize + boxPosition
+        var position = vertexPosition * boxSize + boxPosition
+        position = (Vec4f(position, 1) * transformation).xyz
+        position /= 16
+        position += self.position
         let vertex = EntityVertex(
           x: position.x,
           y: position.y,

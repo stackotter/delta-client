@@ -10,7 +10,9 @@ public struct JSONEntityModel: Codable {
     public var id: String?
     public var invertAxis: String?
     public var mirrorTexture: String?
+    /// Translation to apply post-rotation (ignored if ``rotate`` is `nil`).
     public var translate: Vec3f?
+    /// Rotation in degrees.
     public var rotate: Vec3f?
     public var boxes: [Box]?
     public var submodels: [Submodel]?
@@ -42,7 +44,7 @@ public struct JSONEntityModel: Codable {
 
     var models: [Identifier: JSONEntityModel] = [:]
     for file in files where file.pathExtension == "jem" {
-      var identifier = Identifier(
+      let identifier = Identifier(
         namespace: namespace,
         name: file.deletingPathExtension().lastPathComponent
       )
