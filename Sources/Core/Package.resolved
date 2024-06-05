@@ -46,15 +46,6 @@
       }
     },
     {
-      "identity" : "dns",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Bouke/DNS.git",
-      "state" : {
-        "revision" : "78bbd1589890a90b202d11d5f9e1297050cf0eb2",
-        "version" : "1.2.0"
-      }
-    },
-    {
       "identity" : "ecs",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stackotter/ecs.git",
@@ -115,6 +106,15 @@
       "state" : {
         "revision" : "e0dada9cd44e3fa7ec3b867e49a8ddbf543e3df3",
         "version" : "4.0.1"
+      }
+    },
+    {
+      "identity" : "swift-async-dns-resolver",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-async-dns-resolver.git",
+      "state" : {
+        "revision" : "08c07ff31a745ee5e522ac10132fb4949834d925",
+        "version" : "0.4.0"
       }
     },
     {
@@ -210,28 +210,9 @@
     {
       "identity" : "swift-png",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kelvin13/swift-png",
+      "location" : "https://github.com/stackotter/swift-png",
       "state" : {
-        "revision" : "075dfb248ae327822635370e9d4f94a5d3fe93b2",
-        "version" : "4.0.2"
-      }
-    },
-    {
-      "identity" : "swift-resolver",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/seznam/swift-resolver",
-      "state" : {
-        "revision" : "cfb7d326bc4c89a48439303d758b375a8faae784",
-        "version" : "0.3.0"
-      }
-    },
-    {
-      "identity" : "swift-unisocket",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/seznam/swift-unisocket",
-      "state" : {
-        "revision" : "1785e432fb8497265a38712cdb9584c429ca3f96",
-        "version" : "0.14.0"
+        "revision" : "b68a5662ef9887c8f375854720b3621f772bf8c5"
       }
     },
     {

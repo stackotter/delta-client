@@ -31,7 +31,7 @@ final class StorageManager {
         try? FileManager.default.removeItem(at: storageDirectory)
         try Self.createDirectory(at: storageDirectory)
       } catch {
-        DeltaClientApp.fatal("Failed to create storage directory")
+        // DeltaClientApp.fatal("Failed to create storage directory")
       }
     }
   }

@@ -108,22 +108,24 @@ public final class ConfigManager {
     try? commitConfig()
   }
   
+  // TODO: This is not used anywhere, do we need to add support
+  // for refreshing accounts?
   /// Refreshes the currently selected account and returns it.
   /// - Returns: The currently selected account after refreshing it.
-  public func getRefreshedAccount() async throws -> Account {
-    guard let account = config.selectedAccount else {
-      throw ConfigError.noAccountSelected
-    }
+  // public func getRefreshedAccount() async throws -> Account {
+  //   guard let account = config.selectedAccount else {
+  //     throw ConfigError.noAccountSelected
+  //   }
     
-    do {
-      try await config.accounts[account.id]?.refreshIfExpired(withClientToken: config.clientToken)
-    } catch {
-      throw ConfigError.accountRefreshFailed(error)
-    }
+  //   do {
+  //     try await config.accounts[account.id]?.refreshIfExpired(withClientToken: config.clientToken)
+  //   } catch {
+  //     throw ConfigError.accountRefreshFailed(error)
+  //   }
     
-    try commitConfig()
-    return account
-  }
+  //   try commitConfig()
+  //   return account
+  // }
 
   /// Updates the config and writes it to the config file.
   /// - Parameter config: The config to write.
