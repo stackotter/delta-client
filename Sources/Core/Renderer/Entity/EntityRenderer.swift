@@ -105,16 +105,18 @@ public struct EntityRenderer: Renderer {
     client.game.accessNexus { nexus in
       // If the player is in first person view we don't render them
       profiler.push(.getEntities)
-      let entities: Family<Requires2<EntityPosition, EntityKindId>>
+      let entities: Family<Requires3<EntityPosition, EntityRotation, EntityKindId>>
       if isFirstPerson {
         entities = nexus.family(
           requiresAll: EntityPosition.self,
+          EntityRotation.self,
           EntityKindId.self,
           excludesAll: ClientPlayerEntity.self
         )
       } else {
         entities = nexus.family(
           requiresAll: EntityPosition.self,
+          EntityRotation.self,
           EntityKindId.self
         )
       }
@@ -125,7 +127,7 @@ public struct EntityRenderer: Renderer {
 
       // Create uniforms for each entity
       profiler.push(.createUniforms)
-      for (position, kindId) in entities {
+      for (position, rotation, kindId) in entities {
         // Don't render entities that are outside of the render distance
         let chunkPosition = position.chunk
         if !chunkPosition.isWithinRenderDistance(renderDistance, of: cameraChunk) {
@@ -155,6 +157,8 @@ public struct EntityRenderer: Renderer {
           entityKind: kindIdentifier,
           model: model,
           position: Vec3f(position.smoothVector),
+          pitch: rotation.smoothPitch,
+          yaw: rotation.smoothYaw,
           texturePalette: entityTexturePalette
         )
         builder.build(into: &geometry)

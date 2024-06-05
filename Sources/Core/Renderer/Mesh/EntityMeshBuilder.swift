@@ -2,9 +2,19 @@ import CoreFoundation
 import DeltaCore
 
 public struct EntityMeshBuilder {
+  /// Associates entity kinds with hardcoded entity texture identifiers. Used to manually
+  /// instruct Delta Client where to find certain textures that aren't in the standard
+  /// locations.
+  static let hardcodedTextureIdentifiers: [Identifier: Identifier] = [
+    Identifier(name: "player"): Identifier(name: "entity/steve"),
+    Identifier(name: "dragon"): Identifier(name: "entity/enderdragon/dragon"),
+  ]
+
   let entityKind: Identifier
   let model: JSONEntityModel
   let position: Vec3f
+  let pitch: Float
+  let yaw: Float
   let texturePalette: MetalTexturePalette
 
   static let colors: [Vec3f] = [
@@ -19,15 +29,12 @@ public struct EntityMeshBuilder {
   ]
 
   func build(into geometry: inout Geometry<EntityVertex>) {
-    let hardcodedTextureIdentifiers: [Identifier: Identifier] = [
-      Identifier(name: "player"): Identifier(name: "entity/steve"),
-      Identifier(name: "dragon"): Identifier(name: "entity/enderdragon/dragon"),
-    ]
-
     let texture: Int?
-    if let identifier = hardcodedTextureIdentifiers[entityKind] {
+    if let identifier = Self.hardcodedTextureIdentifiers[entityKind] {
       texture = texturePalette.textureIndex(for: identifier)
     } else {
+      // Entity textures can be in all sorts of structures so we just have a few
+      // educated guesses for now.
       let textureIdentifier = Identifier(
         namespace: entityKind.namespace,
         name: "entity/\(entityKind.name)"
@@ -181,7 +188,9 @@ public struct EntityMeshBuilder {
       let faceVertexPositions = CubeGeometry.faceVertices[direction.rawValue]
       for (uv, vertexPosition) in zip(uvs, faceVertexPositions) {
         var position = vertexPosition * boxSize + boxPosition
-        position = (Vec4f(position, 1) * transformation).xyz
+        position =
+          (Vec4f(position, 1) * transformation * MatrixUtil.rotationMatrix(yaw + .pi, around: .y))
+          .xyz
         position /= 16
         position += self.position
         let vertex = EntityVertex(
