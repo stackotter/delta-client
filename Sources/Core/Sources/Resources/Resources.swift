@@ -164,14 +164,16 @@ extension ResourcePack {
         }
 
         /// Load entity textures
-        // let entityTextureDirectory = textureDirectory.appendingPathComponent("entity")
-        // if FileManager.default.directoryExists(at: entityTextureDirectory) {
-        //   resources.entityTexturePalette = try TexturePalette.load(
-        //     from: entityTextureDirectory,
-        //     inNamespace: namespace,
-        //     withType: "entity"
-        //   )
-        // }
+        let entityTextureDirectory = textureDirectory.appendingPathComponent("entity")
+        if FileManager.default.directoryExists(at: entityTextureDirectory) {
+          resources.entityTexturePalette = try TexturePalette.load(
+            from: entityTextureDirectory,
+            inNamespace: namespace,
+            withType: "entity",
+            recursive: true,
+            isAnimated: false
+          )
+        }
 
         // Load GUI textures
         let guiTextureDirectory = textureDirectory.appendingPathComponent("gui")

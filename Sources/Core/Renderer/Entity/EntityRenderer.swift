@@ -20,6 +20,8 @@ public struct EntityRenderer: Renderer {
   /// The number of indices in ``indexBuffer``.
   private var indexCount: Int
 
+  private var entityTexturePalette: MetalTexturePalette
+
   /// The client that entities will be renderer for.
   private var client: Client
   /// The device that will be used to render.
@@ -76,6 +78,12 @@ public struct EntityRenderer: Renderer {
       length: geometry.indices.count * MemoryLayout<UInt32>.stride,
       options: .storageModeShared,
       label: "entityHitBoxIndices"
+    )
+
+    entityTexturePalette = try MetalTexturePalette(
+      palette: client.resourcePack.vanillaResources.entityTexturePalette,
+      device: device,
+      commandQueue: commandQueue
     )
   }
 
@@ -143,7 +151,12 @@ public struct EntityRenderer: Renderer {
           continue
         }
 
-        let builder = EntityMeshBuilder(model: model, position: Vec3f(position.smoothVector))
+        let builder = EntityMeshBuilder(
+          entityKind: kindIdentifier,
+          model: model,
+          position: Vec3f(position.smoothVector),
+          texturePalette: entityTexturePalette
+        )
         builder.build(into: &geometry)
       }
       profiler.pop()
@@ -154,6 +167,7 @@ public struct EntityRenderer: Renderer {
     }
 
     encoder.setRenderPipelineState(renderPipelineState)
+    encoder.setFragmentTexture(entityTexturePalette.arrayTexture, index: 0)
 
     // TODO: Update profiler measurements
     var mesh = Mesh<EntityVertex, Void>(geometry, uniforms: ())
@@ -176,7 +190,10 @@ public struct EntityRenderer: Renderer {
             z: position.z,
             r: color.x,
             g: color.y,
-            b: color.z
+            b: color.z,
+            u: 0,
+            v: 0,
+            textureIndex: nil
           )
         )
       }

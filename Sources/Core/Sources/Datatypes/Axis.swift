@@ -29,4 +29,16 @@ public enum Axis: CaseIterable {
         return .north
     }
   }
+
+  /// The conventional indices assigned to the axis, i.e. x -> 0, y -> 1, z -> 2
+  public var index: Int {
+    switch self {
+      case .x:
+        return 0
+      case .y:
+        return 1
+      case .z:
+        return 2
+    }
+  }
 }
