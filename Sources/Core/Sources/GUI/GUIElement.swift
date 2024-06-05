@@ -7,7 +7,7 @@ public indirect enum GUIElement {
     case horizontal
   }
 
-  public struct DirectionSet: ExpressibleByArrayLiteral {
+  public struct DirectionSet: ExpressibleByArrayLiteral, Equatable {
     public var horizontal: Bool
     public var vertical: Bool
 
@@ -81,7 +81,7 @@ public indirect enum GUIElement {
   }
 
   case text(_ content: String, wrap: Bool = false, color: Vec4f = Vec4f(1, 1, 1, 1))
-  case message(_ message: ChatMessage, wrap: Bool = true)
+  case message(_ message: ChatComponent, wrap: Bool = true)
   case interactable(_ element: GUIElement, handleInteraction: (Interaction) -> Bool)
   case sprite(GUISprite)
   case customSprite(GUISpriteDescriptor)
@@ -94,7 +94,13 @@ public indirect enum GUIElement {
   case sized(element: GUIElement, width: Int?, height: Int?)
   case spacer(width: Int, height: Int)
   /// Wraps an element with a background.
-  case container(background: Vec4f, padding: Padding, element: GUIElement, expandDirections: DirectionSet = .neither)
+  case container(
+    element: GUIElement,
+    background: Vec4f?,
+    padding: Padding,
+    paddingColor: Vec4f?,
+    expandDirections: DirectionSet = .neither
+  )
   case floating(element: GUIElement)
   case item(id: Int)
 
@@ -103,7 +109,7 @@ public indirect enum GUIElement {
       case let .list(_, _, elements), let .stack(elements):
         return elements
       case let .interactable(element, _), let .positioned(element, _),
-          let .sized(element, _, _), let .container(_, _, element, _),
+          let .sized(element, _, _), let .container(element, _, _, _, _),
           let .floating(element):
         return [element]
       case .text, .message, .sprite, .customSprite, .spacer, .item:
@@ -173,29 +179,47 @@ public indirect enum GUIElement {
   }
 
   public func padding(_ edges: EdgeSet, _ amount: Int) -> GUIElement {
-    .container(background: .zero, padding: Padding(edges: edges, amount: amount), element: self)
+    .container(element: self, background: nil, padding: Padding(edges: edges, amount: amount), paddingColor: nil)
+  }
+
+  public func border(_ amount: Int, _ color: Vec4f) -> GUIElement {
+    self.border(.all, amount, color)
+  }
+
+  public func border(_ edges: EdgeSet, _ amount: Int, _ color: Vec4f) -> GUIElement {
+    .container(element: self, background: nil, padding: Padding(edges: edges, amount: amount), paddingColor: color)
   }
 
   public func background(_ color: Vec4f) -> GUIElement {
     // Sometimes we can just update the element instead of adding another layer.
     switch self {
-      case let .container(background, padding, element, expandDirections):
-        if background == .zero {
+      case let .container(element, background, padding, paddingColor, expandDirections):
+        if background == nil {
           return .container(
+            element: element,
             background: color,
             padding: padding,
-            element: element,
+            paddingColor: paddingColor,
             expandDirections: expandDirections
           )
         }
       default:
         break
     }
-    return .container(background: color, padding: .zero, element: self)
+    return .container(element: self, background: color, padding: .zero, paddingColor: nil)
   }
 
   public func expand(_ directions: DirectionSet = .both) -> GUIElement {
-    return .container(background: .zero, padding: .zero, element: self, expandDirections: directions)
+    if case let .container(element, background, padding, paddingColor, .neither) = self {
+      return .container(
+        element: element,
+        background: background,
+        padding: padding,
+        paddingColor: paddingColor,
+        expandDirections: directions
+      )
+    }
+    return .container(element: self, background: .zero, padding: .zero, paddingColor: nil, expandDirections: directions)
   }
 
   public func onClick(_ action: @escaping () -> Void) -> GUIElement {
@@ -340,7 +364,7 @@ public indirect enum GUIElement {
         )
         children = []
       case let .message(message, wrap):
-        let text = message.content.toText(with: locale)
+        let text = message.toText(with: locale)
         return GUIElement.text(text, wrap: wrap)
           .resolveConstraints(availableSize: availableSize, font: font, locale: locale)
       case let .interactable(label, handleInteraction):
@@ -368,6 +392,7 @@ public indirect enum GUIElement {
         var availableSize = availableSize
         var childPosition = Vec2i(0, 0)
         let axisComponent = direction == .vertical ? 1 : 0
+
         children = elements.map { element in
           var renderable = element.resolveConstraints(
             availableSize: availableSize,
@@ -382,7 +407,9 @@ public indirect enum GUIElement {
 
           return renderable
         }
+
         relativePosition = .zero
+
         let lengthAlongAxis = elements.isEmpty ? 0 : childPosition[axisComponent] - spacing
         switch direction {
           case .vertical:
@@ -392,6 +419,7 @@ public indirect enum GUIElement {
             let height = children.map(\.size.y).max() ?? 0
             size = Vec2i(lengthAlongAxis, height)
         }
+
         content = nil
       case let .stack(elements):
         children = elements.map { element in
@@ -445,7 +473,7 @@ public indirect enum GUIElement {
         relativePosition = .zero
         size = Vec2i(width, height)
         content = nil
-      case let .container(background, padding, element, expandDirections):
+      case let .container(element, background, padding, paddingColor, expandDirections):
         let paddingAxisTotals = padding.axisTotals
         var child = element.resolveConstraints(
           availableSize: availableSize &- paddingAxisTotals,
@@ -453,7 +481,6 @@ public indirect enum GUIElement {
           locale: locale
         )
         child.relativePosition &+= Vec2i(padding.left, padding.top)
-        children = [child]
         relativePosition = .zero
         size = Vec2i(
           expandDirections.horizontal
@@ -464,10 +491,67 @@ public indirect enum GUIElement {
             : min(availableSize.y, child.size.y + paddingAxisTotals.y)
         )
 
-        if background.w != 0 {
-          content = .background(background)
-        } else {
+        let expandedChildSize = size &- paddingAxisTotals
+
+        if let paddingColor = paddingColor {
+          // Something feels kinda dark about this variable name...
+          var borderChildren: [GUIRenderable] = []
+
+          // https://open.spotify.com/track/5hM5arv9KDbCHS0k9uqwjr?si=58df9b2231e848b8
+          func addBorderLine(position: Vec2i, size: Vec2i) {
+            borderChildren.append(GUIRenderable(
+              relativePosition: position,
+              size: size,
+              content: .background(paddingColor),
+              children: []
+            ))
+          }
+
+          if padding.left != 0 {
+            addBorderLine(
+              position: [0, 0],
+              size: [padding.left, expandedChildSize.y + paddingAxisTotals.y]
+            )
+          }
+          if padding.right != 0 {
+            addBorderLine(
+              position: [padding.left + expandedChildSize.x, 0],
+              size: [padding.right, expandedChildSize.y + paddingAxisTotals.y]
+            )
+          }
+          if padding.top != 0 {
+            addBorderLine(
+              position: [padding.left, 0],
+              size: [expandedChildSize.x, padding.top]
+            )
+          }
+          if padding.bottom != 0 {
+            addBorderLine(
+              position: [padding.left, padding.top + expandedChildSize.y],
+              size: [expandedChildSize.x, padding.bottom]
+            )
+          }
+
+          let backgroundChild: GUIRenderable?
+          if let background = background {
+            backgroundChild = GUIRenderable(
+              relativePosition: Vec2i(padding.left, padding.top),
+              size: child.size,
+              content: .background(background),
+              children: []
+            )
+          } else {
+            backgroundChild = nil
+          }
+
+          children = borderChildren + [
+            backgroundChild,
+            child
+          ].compactMap(identity)
           content = nil
+        } else {
+          children = [child]
+          content = background.map(GUIRenderable.Content.background)
         }
       case let .floating(element):
         let child = element.resolveConstraints(

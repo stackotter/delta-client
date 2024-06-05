@@ -1,5 +1,5 @@
-import SwiftCrossUI
 import DeltaCore
+import SwiftCrossUI
 
 enum MicrosoftState {
   case authorizingDevice
@@ -22,8 +22,8 @@ struct MicrosoftLoginView: View {
     self.completionHandler = completionHandler
     authorizeDevice()
   }
-  
-  var body: some ViewContent {
+
+  var body: some View {
     VStack {
       switch state.state {
         case .authorizingDevice:
@@ -38,7 +38,7 @@ struct MicrosoftLoginView: View {
           Text("Authenticating...")
         case .error(let message):
           Text(message)
-      } 
+      }
     }
   }
 
@@ -60,21 +60,9 @@ struct MicrosoftLoginView: View {
         let accessToken = try await MicrosoftAPI.getMicrosoftAccessToken(response.deviceCode)
         account = try await MicrosoftAPI.getMinecraftAccount(accessToken)
       } catch {
-        guard case let .failedToGetXSTSToken(MicrosoftAPIError.xstsAuthenticationFailed(xstsError)) = error as? MicrosoftAPIError else {
-          state.state = .error("Failed to authenticate Microsoft account: \(error)")
-          return
-        }
-
-        // TODO: Add localized descriptions to all authentication related errors
-        // XSTS errors are the most common so they get nice user-friendly errors
-        switch xstsError.code {
-          case 2148916233: // No Xbox Live account
-            state.state = .error("This Microsoft account does not have an attached Xbox Live account (\(xstsError.redirect))")
-          case 2148916238: // Child account
-            state.state = .error("Child accounts must first be added to a family (\(xstsError.redirect))")
-          default:
-            state.state = .error("Failed to get XSTS token: \(error)")
-        }
+        state.state = .error(
+          "Failed to authenticate Microsoft account: \(error.localizedDescription)"
+        )
         return
       }
 

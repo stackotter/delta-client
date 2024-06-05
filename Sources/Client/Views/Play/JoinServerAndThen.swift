@@ -223,7 +223,7 @@ struct JoinServerAndThen<Content: View>: View {
     }
 
     do {
-      try client.joinServer(
+      try await client.joinServer(
         describedBy: descriptor,
         with: refreshedAccount
       )

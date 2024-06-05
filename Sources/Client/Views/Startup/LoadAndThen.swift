@@ -1,6 +1,6 @@
-import SwiftUI
 import Combine
 import DeltaCore
+import SwiftUI
 
 struct LoadResult {
   var managedConfig: ManagedConfig
@@ -108,7 +108,12 @@ struct LoadAndThen<Content: View>: View {
       modal.error("Error occurred during plugin loading, no plugins will be available: \(error)")
     }
 
-    try startup.perform(.downloadAssets, if: !FileSystem.directoryExists(storage.assetDirectory)) { progress in
+    // This check encompasses both missing entity models and missing assets.
+    let invalidateAssets = !FileSystem.directoryExists(
+      storage.assetDirectory.appendingPathComponent("minecraft/models/entity")
+    )
+    try startup.perform(.downloadAssets, if: invalidateAssets) { progress in
+      try? FileManager.default.removeItem(at: storage.assetDirectory)
       try ResourcePack.downloadVanillaAssets(
         forVersion: Constants.versionString,
         to: storage.assetDirectory,
@@ -124,8 +129,11 @@ struct LoadAndThen<Content: View>: View {
     // Load resource pack and cache it if necessary
     let resourcePack = try startup.perform(.loadResourcePacks) {
       let packCache = storage.cache(forResourcePackNamed: "vanilla")
-      let resourcePack = try ResourcePack.load(from: storage.assetDirectory, cacheDirectory: packCache)
-      if !FileSystem.directoryExists(packCache) {
+      let resourcePack = try ResourcePack.load(
+        from: storage.assetDirectory,
+        cacheDirectory: invalidateAssets ? nil : packCache
+      )
+      if !FileSystem.directoryExists(packCache) || invalidateAssets {
         do {
           try resourcePack.cache(to: packCache)
         } catch {

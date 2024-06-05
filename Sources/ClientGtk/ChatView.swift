@@ -1,5 +1,5 @@
-import SwiftCrossUI
 import DeltaCore
+import SwiftCrossUI
 
 class ChatViewState: Observable {
   @Observed var error: String?
@@ -28,7 +28,7 @@ struct ChatView: View {
     }
   }
 
-  var body: some ViewContent {
+  var body: some View {
     if let error = state.error {
       Text(error)
     }

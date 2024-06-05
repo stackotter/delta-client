@@ -1,7 +1,8 @@
-#if canImport(WinSDK)
-import WinSDK.WinSock2
-#endif
 import Foundation
+
+#if canImport(WinSDK)
+  import WinSDK.WinSock2
+#endif
 
 /// A socket that can connect to internet and Unix sockets.
 ///
@@ -114,7 +115,8 @@ public struct Socket: Sendable, Hashable {
   ///   - type: The type of socket to create.
   /// - Throws: An error is thrown if the socket could not be created.
   public init(_ addressFamily: AddressFamily, _ type: SocketType) throws {
-    let descriptor = FileDescriptor(rawValue: Socket.socket(addressFamily.rawValue, type.rawValue, 0))
+    let descriptor = FileDescriptor(
+      rawValue: Socket.socket(addressFamily.rawValue, type.rawValue, 0))
     guard descriptor != .invalid else {
       throw SocketError.actionFailed("create")
     }
@@ -147,8 +149,18 @@ public struct Socket: Sendable, Hashable {
   public func setValue<O: SettableSocketOption>(_ value: O.Value, for option: O) throws {
     var value = option.makeSocketValue(from: value)
     let length = socklen_t(MemoryLayout<O.SocketValue>.size)
-    guard Socket.setsockopt(file.rawValue, option.level, option.name, &value, length) >= 0 else {
-      throw SocketError.actionFailed("set option")
+    try withUnsafePointer(to: &value) { valuePointer in
+      guard
+        Socket.setsockopt(
+          file.rawValue,
+          option.level,
+          option.name,
+          UnsafeRawPointer(valuePointer),
+          length
+        ) >= 0
+      else {
+        throw SocketError.actionFailed("set option")
+      }
     }
   }
 
@@ -242,7 +254,8 @@ public struct Socket: Sendable, Hashable {
   static func makeInAddr(fromIP4 address: String) throws -> in_addr {
     var addr = in_addr()
     guard address.withCString({ Socket.inet_pton(AF_INET, $0, &addr) }) == 1 else {
-      throw SocketError.actionFailed("convert ipv4 address to in_addr (pton, address: '\(address)')")
+      throw SocketError.actionFailed(
+        "convert ipv4 address to in_addr (pton, address: '\(address)')")
     }
     return addr
   }

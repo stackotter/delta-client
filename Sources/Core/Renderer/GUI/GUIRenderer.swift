@@ -1,9 +1,9 @@
-import MetalKit
-import FirebladeMath
 import DeltaCore
+import FirebladeMath
+import MetalKit
 
 #if canImport(UIKit)
-import UIKit
+  import UIKit
 #endif
 
 /// The renderer for the GUI (chat, f3, scoreboard etc.).
@@ -118,7 +118,10 @@ public final class GUIRenderer: Renderer {
     // Adjust scale per screen scale factor
     var uniforms = createUniforms(width, height, scalingFactor)
     if uniforms != previousUniforms || true {
-      uniformsBuffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<GUIUniforms>.size)
+      uniformsBuffer.contents().copyMemory(
+        from: &uniforms,
+        byteCount: MemoryLayout<GUIUniforms>.size
+      )
       previousUniforms = uniforms
     }
     profiler.pop()
@@ -180,8 +183,7 @@ public final class GUIRenderer: Renderer {
               color: color
             )
           } catch let error as LocalizedError {
-            throw error
-              .with("Text", line)
+            throw error.with("Text", line)
           }
         }
         for i in meshes.indices where i != 0 {
@@ -189,11 +191,13 @@ public final class GUIRenderer: Renderer {
           meshes[i].position.y += Font.defaultCharacterHeight + 1
         }
       case let .sprite(descriptor):
-        meshes = try [GUIElementMesh(
-          sprite: descriptor,
-          guiTexturePalette: guiTexturePalette,
-          guiArrayTexture: guiArrayTexture
-        )]
+        meshes = try [
+          GUIElementMesh(
+            sprite: descriptor,
+            guiTexturePalette: guiTexturePalette,
+            guiArrayTexture: guiArrayTexture
+          )
+        ]
       case let .item(itemId):
         meshes = try self.meshes(forItemWithId: itemId)
       case nil, .interactable, .background:
@@ -240,14 +244,15 @@ public final class GUIRenderer: Renderer {
           transformation = MatrixUtil.identity
         }
 
-        transformation *= MatrixUtil.translationMatrix([-0.5, -0.5, -0.5])
+        transformation *=
+          MatrixUtil.translationMatrix([-0.5, -0.5, -0.5])
           * MatrixUtil.rotationMatrix(x: .pi)
           * MatrixUtil.rotationMatrix(y: -.pi / 4)
           * MatrixUtil.rotationMatrix(x: -.pi / 6)
           * MatrixUtil.scalingMatrix(9.76)
           * MatrixUtil.translationMatrix([8, 8, 8])
 
-        var geometry = Geometry()
+        var geometry = Geometry<BlockVertex>()
         var translucentGeometry = SortableMeshElement()
         BlockMeshBuilder(
           model: model,
@@ -263,12 +268,14 @@ public final class GUIRenderer: Renderer {
         var vertices: [GUIVertex] = []
         vertices.reserveCapacity(geometry.vertices.count)
         for vertex in geometry.vertices {
-          vertices.append(GUIVertex(
-            position: [vertex.x, vertex.y],
-            uv: [vertex.u, vertex.v],
-            tint: [vertex.r, vertex.g, vertex.b, 1],
-            textureIndex: vertex.textureIndex
-          ))
+          vertices.append(
+            GUIVertex(
+              position: [vertex.x, vertex.y],
+              uv: [vertex.u, vertex.v],
+              tint: [vertex.r, vertex.g, vertex.b, 1],
+              textureIndex: vertex.textureIndex
+            )
+          )
         }
 
         // TODO: Handle translucent block items
@@ -334,7 +341,10 @@ public final class GUIRenderer: Renderer {
   }
 
   static func doIntersect(_ mesh: GUIElementMesh, _ other: GUIElementMesh) -> Bool {
-    doIntersect((position: mesh.position, size: mesh.size), (position: other.position, size: other.size))
+    doIntersect(
+      (position: mesh.position, size: mesh.size),
+      (position: other.position, size: other.size)
+    )
   }
 
   static func doIntersect(
@@ -346,8 +356,8 @@ public final class GUIRenderer: Renderer {
     let pos2 = other.position
     let size2 = other.size
 
-    let overlapsX = abs((pos1.x + size1.x/2) - (pos2.x + size2.x/2)) * 2 < (size1.x + size2.x)
-    let overlapsY = abs((pos1.y + size1.y/2) - (pos2.y + size2.y/2)) * 2 < (size1.y + size2.y)
+    let overlapsX = abs((pos1.x + size1.x / 2) - (pos2.x + size2.x / 2)) * 2 < (size1.x + size2.x)
+    let overlapsY = abs((pos1.y + size1.y / 2) - (pos2.y + size2.y / 2)) * 2 < (size1.y + size2.y)
     return overlapsX && overlapsY
   }
 
@@ -382,11 +392,11 @@ public final class GUIRenderer: Renderer {
     // Higher density displays have higher scaling factors to keep content a similar real world
     // size across screens.
     #if canImport(AppKit)
-    let screenScalingFactor = Float(NSApp.windows.first?.screen?.backingScaleFactor ?? 1)
+      let screenScalingFactor = Float(NSApp.windows.first?.screen?.backingScaleFactor ?? 1)
     #elseif canImport(UIKit)
-    let screenScalingFactor = Float(UIScreen.main.scale)
+      let screenScalingFactor = Float(UIScreen.main.scale)
     #else
-    #error("Unsupported platform, unknown screen scale factor")
+      #error("Unsupported platform, unknown screen scale factor")
     #endif
     return screenScalingFactor
   }
@@ -395,7 +405,7 @@ public final class GUIRenderer: Renderer {
     let transformation = Mat3x3f([
       [2 / width, 0, -1],
       [0, -2 / height, 1],
-      [0, 0, 1]
+      [0, 0, 1],
     ])
     return GUIUniforms(screenSpaceToNormalized: transformation, scale: scale)
   }

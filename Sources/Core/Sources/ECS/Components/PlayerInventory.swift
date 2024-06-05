@@ -93,6 +93,21 @@ public class PlayerInventory: Component {
     window.slots[Self.offHandIndex]
   }
 
+  /// The item in the currently selected hotbar slot, `nil` if the slot is empty
+  /// or the item stack is invalid.
+  public var mainHandItem: Item? {
+    guard let stack = hotbar[selectedHotbarSlot].stack else {
+      return nil
+    }
+
+    guard let item = RegistryStore.shared.itemRegistry.item(withId: stack.itemId) else {
+      log.warning("Non-existent item with id \(stack.itemId) selected in hotbar")
+      return nil
+    }
+
+    return item
+  }
+
   /// Creates the player's inventory state.
   /// - Parameter selectedHotbarSlot: Defaults to 0 (the first slot from the left in the main hotbar).
   /// - Precondition: The length of `slots` must match ``PlayerInventory/slotCount``.

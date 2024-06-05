@@ -1,5 +1,5 @@
-import Foundation
 import FirebladeMath
+import Foundation
 
 /// An element of a ``SortableMesh``.
 public struct SortableMeshElement {
@@ -34,7 +34,7 @@ public struct SortableMeshElement {
   /// - Parameters:
   ///   - geometry: The element's geometry
   ///   - centerPosition: The position of the center of the element.
-  public init(id: Int = 0, geometry: Geometry, centerPosition: Vec3f) {
+  public init(id: Int = 0, geometry: Geometry<BlockVertex>, centerPosition: Vec3f) {
     self.init(
       id: id,
       vertices: geometry.vertices,

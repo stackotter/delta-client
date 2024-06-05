@@ -8,3 +8,9 @@ func swap<T>(_ left: inout T, _ right: inout T) {
   left = right
   right = temp
 }
+
+func constant<A, B>(_ value: B) -> (A) -> B {
+  { _ in
+    value
+  }
+}

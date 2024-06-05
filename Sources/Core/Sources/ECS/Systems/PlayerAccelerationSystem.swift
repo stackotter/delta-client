@@ -171,7 +171,7 @@ public struct PlayerAccelerationSystem: System {
         z: Int(Foundation.floor(position.z))
       )
       let block = world.getBlock(at: blockPosition)
-      let slipperiness = block.material.slipperiness
+      let slipperiness = block.physicalMaterial.slipperiness
 
       speed = movementSpeed * 0.216 / (slipperiness * slipperiness * slipperiness)
     } else if isFlying {

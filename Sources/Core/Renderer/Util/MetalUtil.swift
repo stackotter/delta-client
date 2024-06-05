@@ -1,5 +1,4 @@
 import Metal
-import DeltaCore // TODO: remove this import once RenderError is in the Renderer target
 
 public enum MetalUtil {
   /// Makes a render pipeline state with the given properties.
@@ -40,8 +39,7 @@ public enum MetalUtil {
     do {
       return try device.makeRenderPipelineState(descriptor: descriptor)
     } catch {
-      // TODO: Update error name
-      throw RenderError.failedToCreateEntityRenderPipelineState(error, label: label)
+      throw RenderError.failedToCreateRenderPipelineState(error, label: label)
     }
   }
 
@@ -50,11 +48,11 @@ public enum MetalUtil {
   /// The default library is at `DeltaClient.app/Contents/Resources/DeltaCore_DeltaCore.bundle/Resources/default.metallib`.
   public static func loadDefaultLibrary(_ device: MTLDevice) throws -> MTLLibrary {
     #if os(macOS)
-    let bundlePath = "Contents/Resources/DeltaCore_DeltaRenderer.bundle"
+      let bundlePath = "Contents/Resources/DeltaCore_DeltaRenderer.bundle"
     #elseif os(iOS) || os(tvOS)
-    let bundlePath = "DeltaCore_DeltaRenderer.bundle"
+      let bundlePath = "DeltaCore_DeltaRenderer.bundle"
     #else
-    #error("Unsupported platform, unknown DeltaCore bundle location")
+      #error("Unsupported platform, unknown DeltaCore bundle location")
     #endif
 
     guard let bundle = Bundle(url: Bundle.main.bundleURL.appendingPathComponent(bundlePath)) else {
@@ -170,7 +168,10 @@ public enum MetalUtil {
   ///   - device: Device to create the state with.
   ///   - readOnly: If `true`, the depth texture will not be written to.
   /// - Returns: A depth stencil state.
-  public static func createDepthState(device: MTLDevice, readOnly: Bool = false) throws -> MTLDepthStencilState {
+  public static func createDepthState(
+    device: MTLDevice,
+    readOnly: Bool = false
+  ) throws -> MTLDepthStencilState {
     let depthDescriptor = MTLDepthStencilDescriptor()
     depthDescriptor.depthCompareFunction = .lessEqual
     depthDescriptor.isDepthWriteEnabled = !readOnly
@@ -235,22 +236,31 @@ public enum MetalUtil {
     device: MTLDevice,
     commandQueue: MTLCommandQueue
   ) throws -> MTLBuffer {
-    precondition(existingBuffer?.storageMode == .private || existingBuffer == nil, "existingBuffer must have a storageMode of private")
+    precondition(
+      existingBuffer?.storageMode == .private || existingBuffer == nil,
+      "existingBuffer must have a storageMode of private"
+    )
 
     // First copy the array to a scratch buffer (accessible from both CPU and GPU)
     let bufferSize = MemoryLayout<T>.stride * items.count
-    guard let sharedBuffer = device.makeBuffer(bytes: items, length: bufferSize, options: [.storageModeShared]) else {
+    guard
+      let sharedBuffer = device.makeBuffer(
+        bytes: items,
+        length: bufferSize,
+        options: [.storageModeShared]
+      )
+    else {
       throw RenderError.failedToCreateBuffer(label: label)
     }
 
     // Create a private buffer (only accessible from GPU) or reuse the existing buffer if possible
     let privateBuffer: MTLBuffer
     if let existingBuffer = existingBuffer, existingBuffer.length >= bufferSize {
-//      log.trace("Reusing existing metal \(label)")
       privateBuffer = existingBuffer
     } else {
-//      log.trace("Creating new metal \(label)")
-      guard let buffer = device.makeBuffer(length: bufferSize, options: [.storageModePrivate]) else {
+      guard
+        let buffer = device.makeBuffer(length: bufferSize, options: [.storageModePrivate])
+      else {
         throw RenderError.failedToCreateBuffer(label: label)
       }
       privateBuffer = buffer

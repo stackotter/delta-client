@@ -56,6 +56,9 @@ public struct GUIState {
   /// The item stack currently being moved by the mouse.
   public var mouseItemStack: ItemStack?
 
+  /// Boss bars currently visible to the player.
+  public var bossBars: [BossBar] = []
+
   /// The chat input field cursor as an index into ``messageInput``.
   public var messageInputCursorIndex: String.Index {
     if let messageInput = messageInput {
