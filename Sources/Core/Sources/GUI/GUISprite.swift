@@ -16,11 +16,23 @@ public enum GUISprite {
   case xpBarForeground
   case inventory
   case craftingTable
-  /// If positioned directly above ``GUISprite/singleChestBottomHalf`` it forms
+  case furnace
+  case blastFurnace
+  case smoker
+  case anvil
+  case dispenser
+  case beacon
+
+  /// If positioned directly above ``GUISprite/genericInventory`` it forms
   /// the background for a single chest window. The way the texture is made forces
   /// these to be separate sprites.
-  case singleChestTopHalf
-  case singleChestBottomHalf
+  case genericInventory // Inventory for most interfaces, its a part of the sprite
+  case generic9x1
+  case generic9x2
+  case generic9x3
+  case generic9x4
+  case generic9x5
+  case generic9x6
 
   case pinkBossBarBackground
   case pinkBossBarForeground
@@ -81,10 +93,32 @@ public enum GUISprite {
         return GUISpriteDescriptor(slice: .inventory, position: [0, 0], size: [176, 166])
       case .craftingTable:
         return GUISpriteDescriptor(slice: .craftingTable, position: [0, 0], size: [176, 166])
-      case .singleChestTopHalf:
-        return GUISpriteDescriptor(slice: .genericContainer, position: [0, 0], size: [176, 71])
-      case .singleChestBottomHalf:
+      case .furnace:
+        return GUISpriteDescriptor(slice: .furnace, position: [0, 0], size: [176, 166])
+      case .blastFurnace:
+        return GUISpriteDescriptor(slice: .blastFurnace, position: [0, 0], size: [176, 166])
+      case .smoker:
+        return GUISpriteDescriptor(slice: .smoker, position: [0, 0], size: [176, 166])
+      case .anvil:
+        return GUISpriteDescriptor(slice: .anvil, position: [0, 0], size: [176, 166])
+      case .dispenser:
+        return GUISpriteDescriptor(slice: .dispenser, position: [0, 0],  size: [176, 166])
+      case .beacon:
+        return GUISpriteDescriptor(slice: .beacon, position: [0,0], size: [229, 218])
+      case .genericInventory:
         return GUISpriteDescriptor(slice: .genericContainer, position: [0, 125], size: [176, 97])
+      case .generic9x1:
+        return GUISpriteDescriptor(slice: .genericContainer, position: [0, 0], size: [176, 35])
+      case .generic9x2:
+        return GUISpriteDescriptor(slice: .genericContainer, position: [0, 0], size: [176, 53])
+      case .generic9x3:
+        return GUISpriteDescriptor(slice: .genericContainer, position: [0, 0], size: [176, 71])
+      case .generic9x4:
+        return GUISpriteDescriptor(slice: .genericContainer, position: [0, 0], size: [176, 89])
+      case .generic9x5:
+        return GUISpriteDescriptor(slice: .genericContainer, position: [0, 0], size: [176, 107])
+      case .generic9x6:
+        return GUISpriteDescriptor(slice: .genericContainer, position: [0, 0], size: [176, 222])
       case .pinkBossBarBackground:
         return GUISpriteDescriptor(slice: .bars, position: [0, 0], size: [182, 5])
       case .pinkBossBarForeground:

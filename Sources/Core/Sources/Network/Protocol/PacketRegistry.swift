@@ -126,7 +126,8 @@ public struct PacketRegistry {
       EntityAttributesPacket.self,
       EntityEffectPacket.self,
       DeclareRecipesPacket.self,
-      TagsPacket.self
+      TagsPacket.self,
+      WindowPropertyPacket.self
     ], toState: .play)
     return registry
   }

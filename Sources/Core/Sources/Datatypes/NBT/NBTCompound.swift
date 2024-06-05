@@ -138,7 +138,7 @@ extension NBT {
         case .end:
           break
         case .byte:
-          value = try buffer.readByte()
+          value = try buffer.readSignedByte()
         case .short:
           value = try buffer.readSignedShort(endianness: .big)
         case .int:
