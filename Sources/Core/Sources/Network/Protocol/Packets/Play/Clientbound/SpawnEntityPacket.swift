@@ -1,6 +1,6 @@
-import Foundation
 import FirebladeECS
 import FirebladeMath
+import Foundation
 
 public struct SpawnEntityPacket: ClientboundPacket {
   public static let id: Int = 0x00

@@ -1,5 +1,5 @@
-import Foundation
 import FirebladeMath
+import Foundation
 
 public struct SpawnPlayerPacket: ClientboundPacket {
   public static let id: Int = 0x04

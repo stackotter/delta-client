@@ -102,7 +102,8 @@ public final class Game: @unchecked Sendable {
     //   together for the specific case of PlayerInputSystem); proper resource pack propagation
     //   will probably take quite a bit of work.
     tickScheduler.addSystem(
-      PlayerInputSystem(connection, self, eventBus, configuration, font, locale))
+      PlayerInputSystem(connection, self, eventBus, configuration, font, locale)
+    )
     tickScheduler.addSystem(PlayerFlightSystem())
     tickScheduler.addSystem(PlayerAccelerationSystem())
     tickScheduler.addSystem(PlayerJumpSystem())

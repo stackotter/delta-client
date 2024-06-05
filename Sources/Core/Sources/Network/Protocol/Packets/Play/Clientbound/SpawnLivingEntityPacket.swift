@@ -1,5 +1,5 @@
-import Foundation
 import FirebladeMath
+import Foundation
 
 public struct SpawnLivingEntityPacket: ClientboundPacket {
   public static let id: Int = 0x02
@@ -30,7 +30,7 @@ public struct SpawnLivingEntityPacket: ClientboundPacket {
     }
 
     client.game.createEntity(id: entityId) {
-      LivingEntity() // Mark it as a living entity
+      LivingEntity()  // Mark it as a living entity
       EntityKindId(type)
       EntityId(entityId)
       EntityUUID(entityUUID)

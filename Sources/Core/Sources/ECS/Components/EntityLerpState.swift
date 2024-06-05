@@ -1,7 +1,7 @@
-import Foundation
 import CoreFoundation
 import FirebladeECS
 import FirebladeMath
+import Foundation
 
 /// A component storing the lerp (if any) that an entity is currently undergoing; lerp is short
 /// for linear interpolation.
@@ -46,8 +46,17 @@ public class EntityLerpState: Component {
 
   /// Ticks an entities current lerp returning the entity's new position, pitch, and yaw. If there's no current
   /// lerp, then `nil` is returned.
-  public func tick(position: Vec3d, pitch: Float, yaw: Float) -> (position: Vec3d, pitch: Float, yaw: Float)? {
-    guard var lerp = currentLerp else {
+  public func tick(
+    position: Vec3d,
+    pitch: Float,
+    yaw: Float
+  ) -> (
+    position: Vec3d,
+    pitch: Float,
+    yaw: Float
+  )? {
+    guard var lerp = currentLerp, lerp.ticksRemaining > 0 else {
+      currentLerp = nil
       return nil
     }
 
@@ -60,10 +69,19 @@ public class EntityLerpState: Component {
       currentLerp = lerp
     }
 
+    let targetYaw: Float
+    if yaw - lerp.targetYaw > .pi {
+      targetYaw = lerp.targetYaw + 2 * .pi
+    } else if yaw - lerp.targetYaw < -.pi {
+      targetYaw = lerp.targetYaw - 2 * .pi
+    } else {
+      targetYaw = lerp.targetYaw
+    }
+
     return (
       MathUtil.lerp(from: position, to: lerp.targetPosition, progress: progress),
       MathUtil.lerp(from: pitch, to: lerp.targetPitch, progress: Float(progress)),
-      MathUtil.lerp(from: yaw, to: lerp.targetYaw, progress: Float(progress))
+      MathUtil.lerp(from: yaw, to: targetYaw, progress: Float(progress))
     )
   }
 }

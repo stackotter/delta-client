@@ -1,7 +1,8 @@
 import FirebladeECS
 
 /// Updates the position of each entity according to its velocity (excluding the player,
-/// because velocity for the player is handled by the ``PlayerVelocitySystem-30ewl``).
+/// because velocity for the player is handled by the ``PlayerVelocitySystem``). Also handles
+/// position/rotation lerping.
 public struct EntityMovementSystem: System {
   public func update(_ nexus: Nexus, _ world: World) {
     let physicsEntities = nexus.family(
@@ -20,11 +21,13 @@ public struct EntityMovementSystem: System {
         continue
       }
 
-      if let (newPosition, newPitch, newYaw) = lerpState.tick(position: position.vector, pitch: rotation.pitch, yaw: rotation.yaw) {
+      if let (newPosition, newPitch, newYaw) = lerpState.tick(
+        position: position.vector, pitch: rotation.pitch, yaw: rotation.yaw)
+      {
         position.vector = newPosition
         rotation.pitch = newPitch
         rotation.yaw = newYaw
-        return
+        continue
       }
 
       velocity.vector *= 0.98

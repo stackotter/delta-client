@@ -1,5 +1,5 @@
-import Foundation
 import FirebladeMath
+import Foundation
 
 public struct EntityPositionPacket: ClientboundEntityPacket {
   public static let id: Int = 0x28
@@ -39,6 +39,9 @@ public struct EntityPositionPacket: ClientboundEntityPacket {
         let kind = entity.get(component: EntityKindId.self)?.entityKind,
         let onGroundComponent = entity.get(component: EntityOnGround.self)
       else {
+        log.warning(
+          "Entity '\(entityId)' is missing required components to handle EntityPositionPacket"
+        )
         return
       }
 
@@ -50,8 +53,8 @@ public struct EntityPositionPacket: ClientboundEntityPacket {
       onGroundComponent.onGround = onGround
       lerpState.lerp(
         to: currentTargetPosition + relativePosition,
-        pitch: rotation.pitch,
-        yaw: rotation.yaw,
+        pitch: lerpState.currentLerp?.targetPitch ?? rotation.pitch,
+        yaw: lerpState.currentLerp?.targetYaw ?? rotation.yaw,
         duration: kind.defaultLerpDuration
       )
     }

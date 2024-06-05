@@ -23,7 +23,7 @@ public struct EntityVelocityPacket: ClientboundEntityPacket {
     ) { velocityComponent in
       // TODO: Figure out why handling velocity is causing entities to drift (observe spiders for a while
       //   to reproduce issue). Works best if spider is trying to climb a wall but it stuck under a roof.
-      // velocityComponent.vector = velocity
+      velocityComponent.vector = velocity
     }
   }
 }
