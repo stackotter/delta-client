@@ -1,5 +1,5 @@
-import SwiftCrossUI
 import DeltaCore
+import SwiftCrossUI
 
 enum MicrosoftState {
   case authorizingDevice
@@ -22,8 +22,8 @@ struct MicrosoftLoginView: View {
     self.completionHandler = completionHandler
     authorizeDevice()
   }
-  
-  var body: some ViewContent {
+
+  var body: some View {
     VStack {
       switch state.state {
         case .authorizingDevice:
@@ -38,7 +38,7 @@ struct MicrosoftLoginView: View {
           Text("Authenticating...")
         case .error(let message):
           Text(message)
-      } 
+      }
     }
   }
 
@@ -60,11 +60,9 @@ struct MicrosoftLoginView: View {
         let accessToken = try await MicrosoftAPI.getMicrosoftAccessToken(response.deviceCode)
         account = try await MicrosoftAPI.getMinecraftAccount(accessToken)
       } catch {
-        guard let msoftError = (error as? MicrosoftAPIError)?.errorDescription else {
-          state.state = .error("Failed to authenticate Microsoft account: \(error)")
-          return
-        }
-        state.state = .error("Failed to authenticate Microsoft account: \(msoftError)")
+        state.state = .error(
+          "Failed to authenticate Microsoft account: \(error.localizedDescription)"
+        )
         return
       }
 

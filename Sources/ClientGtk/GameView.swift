@@ -1,6 +1,6 @@
+import DeltaCore
 import Dispatch
 import SwiftCrossUI
-import DeltaCore
 
 class GameViewState: Observable {
   enum State {
@@ -16,7 +16,8 @@ class GameViewState: Observable {
 
   init(_ server: ServerDescriptor, _ resourcePack: ResourcePack) {
     self.server = server
-    client = Client(resourcePack: resourcePack, configuration: ConfigManager.default.coreConfiguration)
+    client = Client(
+      resourcePack: resourcePack, configuration: ConfigManager.default.coreConfiguration)
     client.eventBus.registerHandler { [weak self] event in
       guard let self = self else { return }
       self.handleClientEvent(event)
@@ -72,12 +73,15 @@ struct GameView: View {
 
   var completionHandler: () -> Void
 
-  init(_ server: ServerDescriptor, _ resourcePack: ResourcePack, _ completionHandler: @escaping () -> Void) {
+  init(
+    _ server: ServerDescriptor, _ resourcePack: ResourcePack,
+    _ completionHandler: @escaping () -> Void
+  ) {
     state = GameViewState(server, resourcePack)
     self.completionHandler = completionHandler
   }
 
-  var body: some ViewContent {
+  var body: some View {
     switch state.state {
       case .error(let message):
         Text(message)

@@ -1,5 +1,5 @@
-import SwiftCrossUI
 import DeltaCore
+import SwiftCrossUI
 
 enum SettingsPage {
   case accountList
@@ -16,8 +16,8 @@ struct SettingsView: View {
   var returnToServerList: () -> Void
 
   var state = SettingsViewState()
-  
-  var body: some ViewContent {
+
+  var body: some View {
     NavigationSplitView {
       VStack {
         Button("Accounts") {
@@ -32,7 +32,7 @@ struct SettingsView: View {
       VStack {
         switch state.page {
           case .accountList:
-            AccountListView() { account in
+            AccountListView { account in
               state.page = .inspectAccount(account)
             } offlineLogin: {
               state.page = .offlineLogin
@@ -49,7 +49,8 @@ struct SettingsView: View {
               if ConfigManager.default.config.selectedAccountId == account.id {
                 ConfigManager.default.setAccounts(Array(accounts.values), selected: nil)
               } else {
-                ConfigManager.default.setAccounts(Array(accounts.values), selected: ConfigManager.default.config.selectedAccountId)
+                ConfigManager.default.setAccounts(
+                  Array(accounts.values), selected: ConfigManager.default.config.selectedAccountId)
               }
               state.page = .accountList
             }

@@ -1,7 +1,8 @@
+import DeltaCore
 import Dispatch
 import Foundation
+import GtkBackend
 import SwiftCrossUI
-import DeltaCore
 
 @main
 struct DeltaClientApp: App {
@@ -18,7 +19,6 @@ struct DeltaClientApp: App {
   }
 
   var identifier = "dev.stackotter.DeltaClientApp"
-  var windowProperties = WindowProperties(title: "Delta Client", defaultSize: .init(400, 200))
 
   var state = StateStorage()
 
@@ -27,7 +27,7 @@ struct DeltaClientApp: App {
   }
 
   func load() {
-    DispatchQueue(label: "loading").async {
+    DispatchQueue(label: "loading").asyncAfter(deadline: .now().advanced(by: .milliseconds(100))) {
       let assetsDirectory = URL(fileURLWithPath: "assets")
       let registryDirectory = URL(fileURLWithPath: "registry")
       let cacheDirectory = URL(fileURLWithPath: "cache")
@@ -77,28 +77,32 @@ struct DeltaClientApp: App {
     self.state.state = .loading(message: message)
   }
 
-  var body: some ViewContent {
-    VStack {
-      switch state.state {
-        case .loading(let message):
-          Text(message)
-        case .selectServer:
-          ServerListView { server in
-            if let resourcePack = state.resourcePack {
-              state.state = .play(server, resourcePack)
+  var body: some Scene {
+    WindowGroup("Delta Client") {
+      VStack {
+        switch state.state {
+          case .loading(let message):
+            Text(message)
+          case .selectServer:
+            ServerListView { server in
+              if let resourcePack = state.resourcePack {
+                state.state = .play(server, resourcePack)
+              }
+            } openSettings: {
+              state.state = .settings
             }
-          } openSettings: {
-            state.state = .settings
-          }
-        case .settings:
-          SettingsView {
-            state.state = .selectServer
-          }
-        case .play(let server, let resourcePack):
-          GameView(server, resourcePack) {
-            state.state = .selectServer
-          }
+          case .settings:
+            SettingsView {
+              state.state = .selectServer
+            }
+          case .play(let server, let resourcePack):
+            GameView(server, resourcePack) {
+              state.state = .selectServer
+            }
+        }
       }
-    }.padding(10)
+      .padding(10)
+    }
+    .defaultSize(width: 400, height: 200)
   }
 }
