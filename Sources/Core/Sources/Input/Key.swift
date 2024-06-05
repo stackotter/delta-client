@@ -1,6 +1,6 @@
 import Foundation
 
-public enum Key: CustomStringConvertible, Hashable {  
+public enum Key: CustomStringConvertible, Hashable {
   case leftShift
   case rightShift
   case leftControl
@@ -394,7 +394,7 @@ public enum Key: CustomStringConvertible, Hashable {
     0x7B: .leftArrow,
     0x7C: .rightArrow,
     0x7D: .downArrow,
-    0x7E: .upArrow
+    0x7E: .upArrow,
   ]
 }
 
@@ -539,7 +539,7 @@ extension Key: RawRepresentable {
     "leftMouseButton": .leftMouseButton,
     "rightMouseButton": .rightMouseButton,
     "scrollUp": .scrollUp,
-    "scrollDown": .scrollDown
+    "scrollDown": .scrollDown,
   ]
 }
 

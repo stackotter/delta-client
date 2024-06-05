@@ -27,6 +27,9 @@ public struct EntityRenderer: Renderer {
   /// The command queue used to perform operations outside of the main render loop.
   private var commandQueue: MTLCommandQueue
 
+  /// Missing entity models that have already had warnings printed (used to avoid spamming warnings every frame).
+  private var missingModels: Set<Identifier> = []
+
   private var profiler: Profiler<RenderingMeasurement>
 
   /// Creates a new entity renderer.
@@ -133,8 +136,10 @@ public struct EntityRenderer: Renderer {
         guard
           let model = client.resourcePack.vanillaResources.entityModelPalette.models[kindIdentifier]
         else {
-          // TODO: Re-enable missing model warning once item model rendering is implemented
-          log.warning("Missing model for entity kind with identifier '\(kindIdentifier)'")
+          if !missingModels.contains(kindIdentifier) {
+            log.warning("Missing model for entity kind with identifier '\(kindIdentifier)'")
+            missingModels.insert(kindIdentifier)
+          }
           continue
         }
 

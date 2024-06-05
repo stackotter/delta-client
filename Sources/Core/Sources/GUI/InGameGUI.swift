@@ -464,6 +464,8 @@ public class InGameGUI {
 
     let biome = game.world.getBiome(at: blockPosition)
 
+    let targetedEntity = game.targetedEntity()
+
     let leftSections: [[String]] = [
       [
         "Minecraft \(Constants.versionString) (Delta Client)",
@@ -481,6 +483,10 @@ public class InGameGUI {
         "Biome: \(biome?.identifier.description ?? "not loaded")",
         "Gamemode: \(gamemode.string)",
       ],
+      // Custom Delta Client info
+      [
+        targetedEntity.map { "Targeted entity: \($0.target)" }
+      ].compactMap(identity),
     ]
 
     #if os(macOS)

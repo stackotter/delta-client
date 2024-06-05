@@ -125,6 +125,17 @@ public final class PlayerInputSystem: System {
           case .previousSlot:
             inventory.selectedHotbarSlot = (inventory.selectedHotbarSlot + 8) % 9
           case .dropItem:
+            // TODO: Implement a similar check on other desktop platforms (Linux, Windows)
+            #if os(macOS)
+              let isQuitKeyboardShortcut =
+                event.key == .q
+                && (inputState.keys.contains(where: \.isCommand)
+                  || inputState.newlyPressed.contains { $0.key?.isCommand == true })
+              guard !isQuitKeyboardShortcut else {
+                break
+              }
+            #endif
+
             let slotIndex = PlayerInventory.hotbarArea.startIndex + inventory.selectedHotbarSlot
             inventory.window.dropItemFromSlot(
               slotIndex,
