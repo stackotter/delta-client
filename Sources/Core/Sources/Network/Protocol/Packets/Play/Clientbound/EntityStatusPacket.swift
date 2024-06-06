@@ -19,8 +19,10 @@ public struct EntityStatusPacket: ClientboundEntityPacket {
   /// Should only be called if a nexus lock has already been acquired.
   public func handle(for client: Client) throws {
     if status == .death {
-      // TODO: Play a death animation instead of instantly removing entities on death
-      client.game.removeEntity(acquireLock: false, id: entityId)
+      if entityId != client.game.accessPlayer(acquireLock: false, action: \.entityId.id) {
+        // TODO: Play a death animation instead of instantly removing entities on death
+        client.game.removeEntity(acquireLock: false, id: entityId)
+      }
     }
   }
 }

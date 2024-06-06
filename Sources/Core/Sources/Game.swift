@@ -544,6 +544,17 @@ public final class Game: @unchecked Sendable {
     // TODO: Make this threadsafe
     self.world = newWorld
     tickScheduler.setWorld(to: newWorld)
+
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+
+    entityIdToEntityIdentifier = entityIdToEntityIdentifier.filter { (id, identifier) in
+      let isClientPlayer = id == player.entityId.id
+      if !isClientPlayer {
+        nexus.destroy(entityId: identifier)
+      }
+      return isClientPlayer
+    }
   }
 
   /// Stops the tick scheduler.
