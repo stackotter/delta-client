@@ -11,11 +11,12 @@ public struct EntityMeshBuilder {
   ]
 
   let entityKind: Identifier
-  let model: JSONEntityModel
   let position: Vec3f
   let pitch: Float
   let yaw: Float
+  let entityModelPalette: EntityModelPalette
   let texturePalette: MetalTexturePalette
+  let hitbox: AxisAlignedBoundingBox
 
   static let colors: [Vec3f] = [
     [1, 0, 0],
@@ -29,6 +30,44 @@ public struct EntityMeshBuilder {
   ]
 
   func build(into geometry: inout Geometry<EntityVertex>) {
+    if let model = entityModelPalette.models[entityKind] {
+      buildModel(model, into: &geometry)
+    } else {
+      buildAABB(hitbox, into: &geometry)
+    }
+  }
+
+  func buildAABB(_ aabb: AxisAlignedBoundingBox, into geometry: inout Geometry<EntityVertex>) {
+    let transformation =
+      MatrixUtil.scalingMatrix(Vec3f(aabb.size))
+      * MatrixUtil.translationMatrix(Vec3f(aabb.position))
+    for direction in Direction.allDirections {
+      let offset = UInt32(geometry.vertices.count)
+      for index in CubeGeometry.faceWinding {
+        geometry.indices.append(index &+ offset)
+      }
+
+      let faceVertexPositions = CubeGeometry.faceVertices[direction.rawValue]
+      for vertexPosition in faceVertexPositions {
+        let position = (Vec4f(vertexPosition, 1) * transformation).xyz
+        let color = EntityRenderer.hitBoxColor.floatVector
+        let vertex = EntityVertex(
+          x: position.x,
+          y: position.y,
+          z: position.z,
+          r: color.x,
+          g: color.y,
+          b: color.z,
+          u: 0,
+          v: 0,
+          textureIndex: nil
+        )
+        geometry.vertices.append(vertex)
+      }
+    }
+  }
+
+  func buildModel(_ model: JSONEntityModel, into geometry: inout Geometry<EntityVertex>) {
     let texture: Int?
     if let identifier = Self.hardcodedTextureIdentifiers[entityKind] {
       texture = texturePalette.textureIndex(for: identifier)

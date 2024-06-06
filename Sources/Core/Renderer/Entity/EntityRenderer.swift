@@ -7,7 +7,7 @@ import MetalKit
 /// Renders all entities in the world the client is currently connected to.
 public struct EntityRenderer: Renderer {
   /// The color to render hit boxes as. Defaults to 0xe3c28d (light cream colour).
-  public var hitBoxColor = DeltaCore.RGBColor(hexCode: 0xe3c28d)
+  public static let hitBoxColor = DeltaCore.RGBColor(hexCode: 0xe3c28d)
 
   /// The render pipeline state for rendering entities. Does not have blending enabled.
   private var renderPipelineState: MTLRenderPipelineState
@@ -28,9 +28,6 @@ public struct EntityRenderer: Renderer {
   private var device: MTLDevice
   /// The command queue used to perform operations outside of the main render loop.
   private var commandQueue: MTLCommandQueue
-
-  /// Missing entity models that have already had warnings printed (used to avoid spamming warnings every frame).
-  private var missingModels: Set<Identifier> = []
 
   private var profiler: Profiler<RenderingMeasurement>
 
@@ -61,7 +58,7 @@ public struct EntityRenderer: Renderer {
     )
 
     // Create hitbox geometry (hitboxes are rendered using instancing)
-    var geometry = Self.createHitBoxGeometry(color: hitBoxColor)
+    var geometry = Self.createHitBoxGeometry(color: Self.hitBoxColor)
     indexCount = geometry.indices.count
 
     vertexBuffer = try MetalUtil.makeBuffer(
@@ -105,11 +102,12 @@ public struct EntityRenderer: Renderer {
     client.game.accessNexus { nexus in
       // If the player is in first person view we don't render them
       profiler.push(.getEntities)
-      let entities: Family<Requires3<EntityPosition, EntityRotation, EntityKindId>>
+      let entities: Family<Requires4<EntityPosition, EntityRotation, EntityHitBox, EntityKindId>>
       if isFirstPerson {
         entities = nexus.family(
           requiresAll: EntityPosition.self,
           EntityRotation.self,
+          EntityHitBox.self,
           EntityKindId.self,
           excludesAll: ClientPlayerEntity.self
         )
@@ -117,6 +115,7 @@ public struct EntityRenderer: Renderer {
         entities = nexus.family(
           requiresAll: EntityPosition.self,
           EntityRotation.self,
+          EntityHitBox.self,
           EntityKindId.self
         )
       }
@@ -127,7 +126,7 @@ public struct EntityRenderer: Renderer {
 
       // Create uniforms for each entity
       profiler.push(.createUniforms)
-      for (position, rotation, kindId) in entities {
+      for (position, rotation, hitbox, kindId) in entities {
         // Don't render entities that are outside of the render distance
         let chunkPosition = position.chunk
         if !chunkPosition.isWithinRenderDistance(renderDistance, of: cameraChunk) {
@@ -143,23 +142,14 @@ public struct EntityRenderer: Renderer {
           kindIdentifier = Identifier(name: "dragon")
         }
 
-        guard
-          let model = client.resourcePack.vanillaResources.entityModelPalette.models[kindIdentifier]
-        else {
-          if !missingModels.contains(kindIdentifier) {
-            log.warning("Missing model for entity kind with identifier '\(kindIdentifier)'")
-            missingModels.insert(kindIdentifier)
-          }
-          continue
-        }
-
         let builder = EntityMeshBuilder(
           entityKind: kindIdentifier,
-          model: model,
           position: Vec3f(position.smoothVector),
           pitch: rotation.smoothPitch,
           yaw: rotation.smoothYaw,
-          texturePalette: entityTexturePalette
+          entityModelPalette: client.resourcePack.vanillaResources.entityModelPalette,
+          texturePalette: entityTexturePalette,
+          hitbox: hitbox.aabb(at: position.smoothVector)
         )
         builder.build(into: &geometry)
       }

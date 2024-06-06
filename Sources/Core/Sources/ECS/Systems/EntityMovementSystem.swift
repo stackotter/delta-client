@@ -22,8 +22,10 @@ public struct EntityMovementSystem: System {
       }
 
       if let (newPosition, newPitch, newYaw) = lerpState.tick(
-        position: position.vector, pitch: rotation.pitch, yaw: rotation.yaw)
-      {
+        position: position.vector,
+        pitch: rotation.pitch,
+        yaw: rotation.yaw
+      ) {
         position.vector = newPosition
         rotation.pitch = newPitch
         rotation.yaw = newYaw
