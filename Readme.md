@@ -99,10 +99,10 @@ Not every version will be perfectly supported but I will try and have the most p
     - [x] [Sky box](https://github.com/stackotter/delta-client/pull/188)
   - [ ] Entities
     - [x] Basic entity rendering (just coloured cubes)
-    - [ ] Render entity models
-    - [ ] Entity animations
+    - [x] Render entity models
     - [ ] Block entities (e.g. chests)
     - [ ] Item entities
+    - [ ] Entity animations
   - [ ] GUI
     - [x] Chat
     - [x] F3-style stuff

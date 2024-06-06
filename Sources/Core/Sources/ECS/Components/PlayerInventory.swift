@@ -31,21 +31,24 @@ public class PlayerInventory: Component {
     startIndex: 1,
     width: 2,
     height: 2,
-    position: Vec2i(98, 18)
+    position: Vec2i(98, 18),
+    kind: .smallCraftingRecipeInput
   )
 
   public static let craftingResultArea = WindowArea(
     startIndex: 0,
     width: 1,
     height: 1,
-    position: Vec2i(154, 28)
+    position: Vec2i(154, 28),
+    kind: .recipeResult
   )
 
   public static let armorArea = WindowArea(
     startIndex: 5,
     width: 1,
     height: 4,
-    position: Vec2i(8, 8)
+    position: Vec2i(8, 8),
+    kind: .armor
   )
 
   public static let offHandArea = WindowArea(

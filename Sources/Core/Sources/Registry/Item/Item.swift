@@ -68,6 +68,20 @@ public struct Item: Codable {
       case chest
       case legs
       case feet
+
+      /// The index of the slot corresponding
+      public var index: Int {
+        switch self {
+          case .head:
+            return 0
+          case .chest:
+            return 1
+          case .legs:
+            return 2
+          case .feet:
+            return 3
+        }
+      }
     }
   }
 
@@ -112,7 +126,7 @@ public struct Item: Codable {
       attackDamageBonus: Double,
       enchantmentValue: Int,
       mineableBlocks: [Int],
-      blockInteractions: [Int : Int],
+      blockInteractions: [Int: Int],
       kind: Item.ToolProperties.ToolKind,
       effectiveMaterials: [Identifier]
     ) {
@@ -131,7 +145,8 @@ public struct Item: Codable {
     public func destroySpeedMultiplier(for block: Block) -> Double {
       switch kind {
         case .sword:
-          let swordSemiEffectiveMaterials = ["plant", "replaceable_plant"].map(Identifier.init(name:))
+          let swordSemiEffectiveMaterials = ["plant", "replaceable_plant"].map(
+            Identifier.init(name:))
           if block.className == "CobwebBlock" {
             return 0.15
           } else if swordSemiEffectiveMaterials.contains(block.vanillaMaterialIdentifier) {
