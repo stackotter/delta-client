@@ -22,23 +22,23 @@ public enum PixlyzerError: LocalizedError {
         return "The block with id: \(id) is missing."
       case let .invalidAABBVertexLength(length):
         return """
-        An AABB's vertex is of invalid length.
-        length: \(length)
-        """
+          An AABB's vertex is of invalid length.
+          length: \(length)
+          """
       case .entityRegistryMissingPlayer:
         return "The entity registry does not contain the player entity."
       case let .invalidUTF8BlockName(blockName):
         return """
-        The block name could not be converted to data using UTF8.
-        Block name: \(blockName)
-        """
+          The block name could not be converted to data using UTF8.
+          Block name: \(blockName)
+          """
       case .failedToGetWaterFluid:
         return "Failed to get the water fluid from the fluid registry."
       case let .unknownEntityAttribute(attribute):
         return """
-        Unknown entity attribute in Pixlyzer entity registry.
-        Attribute: \(attribute)
-        """
+          Unknown entity attribute in Pixlyzer entity registry.
+          Attribute: \(attribute)
+          """
       case let .missingEntity(name):
         return "Expected entity kind '\(name)' to be present in Pixlyzer entity registry."
     }
@@ -52,7 +52,8 @@ public enum PixlyzerFormatter {
   public static func downloadAndFormatRegistries(_ version: String) throws -> RegistryStore {
     let pixlyzerCommit = "7cceb5481e6f035d274204494030a76f47af9bb5"
     let pixlyzerItemCommit = "c623c21be12aa1f9be3f36f0e32fbc61f8f16bd1"
-    let baseURL = "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/\(pixlyzerCommit)/version/\(version)"
+    let baseURL =
+      "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/\(pixlyzerCommit)/version/\(version)"
 
     // swiftlint:disable force_unwrapping
     let fluidsDownloadURL = URL(string: "\(baseURL)/fluids.min.json")!
@@ -60,26 +61,36 @@ public enum PixlyzerFormatter {
     let biomesDownloadURL = URL(string: "\(baseURL)/biomes.min.json")!
     let entitiesDownloadURL = URL(string: "\(baseURL)/entities.min.json")!
     let shapeRegistryDownloadURL = URL(string: "\(baseURL)/shapes.min.json")!
-    let itemsDownloadURL = URL(string: "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/\(pixlyzerItemCommit)/version/\(version)/items.min.json")!
+    let itemsDownloadURL = URL(
+      string:
+        "https://gitlab.bixilon.de/bixilon/pixlyzer-data/-/raw/\(pixlyzerItemCommit)/version/\(version)/items.min.json"
+    )!
     // swiftlint:enable force_unwrapping
 
     // Load and decode pixlyzer data
     log.info("Downloading and decoding pixlyzer items")
-    let pixlyzerItems: [String: PixlyzerItem] = try downloadJSON(itemsDownloadURL, convertSnakeCase: false)
+    let pixlyzerItems: [String: PixlyzerItem] = try downloadJSON(
+      itemsDownloadURL, convertSnakeCase: false)
     log.info("Downloading and decoding pixlyzer fluids")
-    let pixlyzerFluids: [String: PixlyzerFluid] = try downloadJSON(fluidsDownloadURL, convertSnakeCase: true)
+    let pixlyzerFluids: [String: PixlyzerFluid] = try downloadJSON(
+      fluidsDownloadURL, convertSnakeCase: true)
     log.info("Downloading and decoding pixlyzer biomes")
-    let pixlyzerBiomes: [String: PixlyzerBiome] = try downloadJSON(biomesDownloadURL, convertSnakeCase: true)
+    let pixlyzerBiomes: [String: PixlyzerBiome] = try downloadJSON(
+      biomesDownloadURL, convertSnakeCase: true)
     log.info("Downloading and decoding pixlyzer blocks")
-    let pixlyzerBlocks: [String: PixlyzerBlock] = try downloadJSON(blocksDownloadURL, convertSnakeCase: false, useZippyJSON: false)
+    let pixlyzerBlocks: [String: PixlyzerBlock] = try downloadJSON(
+      blocksDownloadURL, convertSnakeCase: false, useZippyJSON: false)
     log.info("Downloading and decoding pixlyzer entities")
-    let pixlyzerEntities: [String: PixlyzerEntity] = try downloadJSON(entitiesDownloadURL, convertSnakeCase: true)
+    let pixlyzerEntities: [String: PixlyzerEntity] = try downloadJSON(
+      entitiesDownloadURL, convertSnakeCase: true)
     log.info("Downloading and decoding pixlyzer shapes")
-    let pixlyzerShapeRegistry: PixlyzerShapeRegistry = try downloadJSON(shapeRegistryDownloadURL, convertSnakeCase: false)
+    let pixlyzerShapeRegistry: PixlyzerShapeRegistry = try downloadJSON(
+      shapeRegistryDownloadURL, convertSnakeCase: false)
 
     // Process fluids
     log.info("Processing pixlyzer fluid registry")
-    let (fluidRegistry, pixlyzerFluidIdToFluidId) = try Self.createFluidRegistry(from: pixlyzerFluids)
+    let (fluidRegistry, pixlyzerFluidIdToFluidId) = try Self.createFluidRegistry(
+      from: pixlyzerFluids)
 
     // Process biomes
     log.info("Processing pixlyzer biome registry")
@@ -147,10 +158,15 @@ public enum PixlyzerFormatter {
       }
     }
 
-    return (fluidRegistry: FluidRegistry(fluids: fluids), pixlyzerFluidIdToFluidId: pixlyzerFluidIdToFluidId)
+    return (
+      fluidRegistry: FluidRegistry(fluids: fluids),
+      pixlyzerFluidIdToFluidId: pixlyzerFluidIdToFluidId
+    )
   }
 
-  private static func createBiomeRegistry(from pixlyzerBiomes: [String: PixlyzerBiome]) throws -> BiomeRegistry {
+  private static func createBiomeRegistry(from pixlyzerBiomes: [String: PixlyzerBiome]) throws
+    -> BiomeRegistry
+  {
     var biomes: [Int: Biome] = [:]
     for (identifier, pixlyzerBiome) in pixlyzerBiomes {
       let identifier = try Identifier(identifier)
@@ -161,31 +177,35 @@ public enum PixlyzerFormatter {
     return BiomeRegistry(biomes: biomes)
   }
 
-  private static func createEntityRegistry(from pixlyzerEntities: [String: PixlyzerEntity]) throws -> EntityRegistry {
+  private static func createEntityRegistry(from pixlyzerEntities: [String: PixlyzerEntity]) throws
+    -> EntityRegistry
+  {
     var entities: [Int: EntityKind] = [:]
     for (identifier, pixlyzerEntity) in pixlyzerEntities {
       if let identifier = try? Identifier(identifier) {
-        var isLiving = false
         var parent = pixlyzerEntity.parent
+        var inheritanceChain: [String] = []
         while let currentParent = parent {
-          if currentParent == "LivingEntity" {
-            isLiving = true
-            break
-          } else {
-            guard
-              let parentEntity =
-                pixlyzerEntities[currentParent]
-                ?? pixlyzerEntities.values.first(where: { $0.class == currentParent })
-            else {
-              throw PixlyzerError.missingEntity(currentParent)
-            }
-            parent = parentEntity.parent
+          inheritanceChain.append(currentParent)
+
+          guard
+            let parentEntity =
+              pixlyzerEntities[currentParent]
+              ?? pixlyzerEntities.values.first(where: { $0.class == currentParent })
+          else {
+            throw PixlyzerError.missingEntity(currentParent)
           }
+
+          parent = parentEntity.parent
         }
 
         // Some entities don't correspond to Vanilla entity kinds (in which case the initializer returns nil,
         // not an error).
-        if let entity = try EntityKind(from: pixlyzerEntity, isLiving: isLiving, identifier: identifier) {
+        if let entity = try EntityKind(
+          from: pixlyzerEntity,
+          inheritanceChain: inheritanceChain,
+          identifier: identifier
+        ) {
           entities[entity.id] = entity
         }
       }
@@ -239,7 +259,9 @@ public enum PixlyzerFormatter {
       }
 
       for (stateId, pixlyzerState) in pixlyzerBlock.states {
-        let isWaterlogged = pixlyzerState.properties?.waterlogged == true || BlockRegistry.waterloggedBlockClasses.contains(pixlyzerBlock.className)
+        let isWaterlogged =
+          pixlyzerState.properties?.waterlogged == true
+          || BlockRegistry.waterloggedBlockClasses.contains(pixlyzerBlock.className)
         let isBubbleColumn = identifier == Identifier(name: "block/bubble_column")
         let fluid = isWaterlogged || isBubbleColumn ? water : fluid
         let block = Block(
@@ -277,7 +299,9 @@ public enum PixlyzerFormatter {
     return BlockRegistry(blocks: blockArray, renderDescriptors: renderDescriptors)
   }
 
-  private static func createItemRegistry(from pixlyzerItems: [String: PixlyzerItem]) throws -> ItemRegistry {
+  private static func createItemRegistry(from pixlyzerItems: [String: PixlyzerItem]) throws
+    -> ItemRegistry
+  {
     var items: [Int: Item] = [:]
     for (identifierString, pixlyzerItem) in pixlyzerItems {
       var identifier = try Identifier(identifierString)

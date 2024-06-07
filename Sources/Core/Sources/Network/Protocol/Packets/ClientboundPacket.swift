@@ -14,6 +14,13 @@ public enum ClientboundPacketError: LocalizedError {
   case invalidBossBarStyleId(Int)
   case duplicateBossBar(UUID)
   case noSuchBossBar(UUID)
+  case invalidPoseId(Int)
+  case invalidEntityMetadataDatatypeId(Int)
+  case incorrectEntityMetadataDatatype(
+    property: String,
+    expectedType: String,
+    value: EntityMetadataPacket.Value
+  )
 
   public var errorDescription: String? {
     switch self {
@@ -21,59 +28,76 @@ public enum ClientboundPacketError: LocalizedError {
         return "Invalid difficulty."
       case let .invalidGamemode(rawValue):
         return """
-        Invalid gamemode.
-        Raw value: \(rawValue)
-        """
+          Invalid gamemode.
+          Raw value: \(rawValue)
+          """
       case .invalidServerId:
         return "Invalid server Id."
       case .invalidJSONString:
         return "Invalid JSON string."
       case let .invalidInventorySlotCount(slotCount):
         return """
-        Invalid inventory slot count.
-        Slot count: \(slotCount)
-        """
+          Invalid inventory slot count.
+          Slot count: \(slotCount)
+          """
       case let .invalidInventorySlotIndex(slotIndex, windowId):
         return """
-        Invalid inventory slot index.
-        Slot index: \(slotIndex)
-        Window Id: \(windowId)
-        """
+          Invalid inventory slot index.
+          Slot index: \(slotIndex)
+          Window Id: \(windowId)
+          """
       case let .invalidChangeGameStateReasonRawValue(rawValue):
         return """
-        Invalid change game state reason.
-        Raw value: \(rawValue)
-        """
+          Invalid change game state reason.
+          Raw value: \(rawValue)
+          """
       case let .invalidDimension(identifier):
         return """
-        Invalid dimension.
-        Identifier: \(identifier)
-        """
+          Invalid dimension.
+          Identifier: \(identifier)
+          """
       case let .invalidBossBarActionId(actionId):
         return """
-        Invalid boss bar action id.
-        Id: \(actionId)
-        """
+          Invalid boss bar action id.
+          Id: \(actionId)
+          """
       case let .invalidBossBarColorId(colorId):
         return """
-        Invalid boss bar color id.
-        Id: \(colorId)
-        """
+          Invalid boss bar color id.
+          Id: \(colorId)
+          """
       case let .invalidBossBarStyleId(styleId):
         return """
-        Invalid boss bar style id.
-        Id: \(styleId)
-        """
+          Invalid boss bar style id.
+          Id: \(styleId)
+          """
       case let .duplicateBossBar(uuid):
         return """
-        Received duplicate boss bar.
-        UUID: \(uuid.uuidString)
-        """
+          Received duplicate boss bar.
+          UUID: \(uuid.uuidString)
+          """
       case let .noSuchBossBar(uuid):
         return """
-        Received update for non-existent boss bar.
-        UUID: \(uuid)
-        """
+          Received update for non-existent boss bar.
+          UUID: \(uuid)
+          """
+      case let .invalidPoseId(poseId):
+        return """
+          Received invalid pose id.
+          Id: \(poseId)
+          """
+      case let .invalidEntityMetadataDatatypeId(datatypeId):
+        return """
+          Received invalid entity metadata datatype id.
+          Id: \(datatypeId)
+          """
+      case let .incorrectEntityMetadataDatatype(property, expectedType, value):
+        return """
+          Received entity metadata property with invalid data type.
+          Property name: \(property)
+          Expected type: \(expectedType)
+          Value: \(value)
+          """
     }
   }
 }

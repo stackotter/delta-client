@@ -42,6 +42,7 @@ public struct SpawnLivingEntityPacket: ClientboundPacket {
       EntityHeadYaw(headYaw)
       EntityLerpState()
       EntityAttributes()
+      EntityMetadata()
     }
   }
 }

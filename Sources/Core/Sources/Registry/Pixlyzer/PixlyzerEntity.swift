@@ -16,21 +16,24 @@ public struct PixlyzerEntity: Decodable {
   public var parent: String?
 }
 
-public extension EntityKind {
+extension EntityKind {
   /// Returns nil if the pixlyzer entity doesn't correspond to a Vanilla minecraft entity kind.
   /// Throws on unknown entity attributes.
-  init?(from pixlyzerEntity: PixlyzerEntity, isLiving: Bool, identifier: Identifier) throws {
+  public init?(
+    from pixlyzerEntity: PixlyzerEntity, inheritanceChain: [String], identifier: Identifier
+  ) throws {
     guard let id = pixlyzerEntity.id else {
       return nil
     }
-    
+
     self.id = id
     self.identifier = identifier
-    self.isLiving = isLiving
-    
+    self.isLiving = inheritanceChain.contains("LivingEntity")
+    self.inheritanceChain = inheritanceChain
+
     width = pixlyzerEntity.width ?? 0
     height = pixlyzerEntity.height ?? 0
-    
+
     attributes = [:]
     for (attribute, value) in pixlyzerEntity.attributes ?? [:] {
       guard let attribute = EntityAttributeKey(rawValue: attribute) else {

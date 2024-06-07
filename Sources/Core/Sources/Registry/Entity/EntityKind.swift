@@ -10,8 +10,13 @@ public struct EntityKind: Codable {
   public var height: Float
   /// Attributes that are the same for every entity of this kind (e.g. maximum health).
   public var attributes: [EntityAttributeKey: Float]
-  /// Whether the entity is living or not.
+  /// Whether the entity is living or not. Corresponds to ``inheritanceChain`` containing
+  /// `"LivingEntity"`, but precomputed to avoid an array search every time it's accessed.
   public var isLiving: Bool
+  // TODO: Parse into an array of enum values (strings are slow, and there are only a limited number
+  //   of entity classes).
+  /// The chain of class inheritance for this entity kind in vanilla.
+  public var inheritanceChain: [String]
 
   /// The default duration of position/rotation linear interpolation (measured in ticks)
   /// to use for this kind of entity.
@@ -30,7 +35,8 @@ public struct EntityKind: Codable {
     width: Float,
     height: Float,
     attributes: [EntityAttributeKey: Float],
-    isLiving: Bool
+    isLiving: Bool,
+    inheritanceChain: [String]
   ) {
     self.identifier = identifier
     self.id = id
@@ -38,5 +44,6 @@ public struct EntityKind: Codable {
     self.height = height
     self.attributes = attributes
     self.isLiving = isLiving
+    self.inheritanceChain = inheritanceChain
   }
 }

@@ -37,6 +37,7 @@ public struct SpawnPlayerPacket: ClientboundPacket {
       EntityRotation(pitch: pitch, yaw: yaw)
       EntityLerpState()
       EntityAttributes()
+      EntityMetadata()
     }
   }
 }

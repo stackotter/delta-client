@@ -27,6 +27,9 @@ public struct EntityRotationPacket: ClientboundEntityPacket {
         let kind = entity.get(component: EntityKindId.self)?.entityKind,
         let onGroundComponent = entity.get(component: EntityOnGround.self)
       else {
+        log.warning(
+          "Entity '\(entityId)' is missing required components to handle \(Self.self)"
+        )
         return
       }
 

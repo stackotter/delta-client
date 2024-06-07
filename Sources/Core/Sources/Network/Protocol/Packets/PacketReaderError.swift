@@ -5,4 +5,5 @@ public enum PacketReaderError: Error {
   case stringTooLong(length: Int)
   case invalidNBT(Error)
   case invalidIdentifier(String)
+  case invalidDirection(Int)
 }

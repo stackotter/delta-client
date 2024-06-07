@@ -1,5 +1,5 @@
-import Foundation
 import FirebladeMath
+import Foundation
 
 public struct EntityPositionAndRotationPacket: ClientboundEntityPacket {
   public static let id: Int = 0x29
@@ -43,6 +43,9 @@ public struct EntityPositionAndRotationPacket: ClientboundEntityPacket {
         let kind = entity.get(component: EntityKindId.self)?.entityKind,
         let onGroundComponent = entity.get(component: EntityOnGround.self)
       else {
+        log.warning(
+          "Entity '\(entityId)' is missing required components to handle \(Self.self)"
+        )
         return
       }
 

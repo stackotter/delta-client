@@ -1,6 +1,6 @@
-import Foundation
 import FirebladeECS
 import FirebladeMath
+import Foundation
 
 /// Allows easy access to the player's components.
 ///
@@ -38,6 +38,8 @@ public struct Player {
   public private(set) var playerAttributes: PlayerAttributes
   /// The component storing the player's entity attributes.
   public private(set) var entityAttributes: EntityAttributes
+  /// The component storing the player's entity metadata
+  public private(set) var entityMetadata: EntityMetadata
   /// The component storing the player's gamemode related information.
   public private(set) var gamemode: PlayerGamemode
   /// The component storing the player's inventory.
@@ -56,7 +58,7 @@ public struct Player {
   /// Creates a player.
   public init() {
     let playerEntity = RegistryStore.shared.entityRegistry.playerEntityKind
-    entityId = EntityId(-1) // Temporary value until the actual id is received from the server.
+    entityId = EntityId(-1)  // Temporary value until the actual id is received from the server.
     onGround = EntityOnGround(true)
     // Having smoothing set to slightly more than a tick smooths out any hick ups caused by late ticks
     position = EntityPosition(0, 0, 0, smoothingAmount: 1 / 18)
@@ -72,6 +74,7 @@ public struct Player {
     nutrition = EntityNutrition()
     playerAttributes = PlayerAttributes()
     entityAttributes = EntityAttributes()
+    entityMetadata = EntityMetadata()
     camera = EntityCamera()
     gamemode = PlayerGamemode()
     inventory = PlayerInventory()
@@ -83,10 +86,10 @@ public struct Player {
   /// - Parameter nexus: The game to create the player's entity in.
   public mutating func add(to game: Game) {
     game.createEntity(id: -1) {
-      LivingEntity() // Mark it as a living entity
-      PlayerEntity() // Mark it as a player
-      ClientPlayerEntity() // Mark it as the current player
-      EntityKindId(RegistryStore.shared.entityRegistry.playerEntityKindId) // Give it the entity kind id for player
+      LivingEntity()  // Mark it as a living entity
+      PlayerEntity()  // Mark it as a player
+      ClientPlayerEntity()  // Mark it as the current player
+      EntityKindId(RegistryStore.shared.entityRegistry.playerEntityKindId)  // Give it the entity kind id for player
       entityId
       onGround
       position
@@ -102,6 +105,7 @@ public struct Player {
       nutrition
       playerAttributes
       entityAttributes
+      entityMetadata
       camera
       gamemode
       inventory

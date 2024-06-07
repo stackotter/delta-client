@@ -40,7 +40,7 @@ public struct EntityPositionPacket: ClientboundEntityPacket {
         let onGroundComponent = entity.get(component: EntityOnGround.self)
       else {
         log.warning(
-          "Entity '\(entityId)' is missing required components to handle EntityPositionPacket"
+          "Entity '\(entityId)' is missing required components to handle \(Self.self)"
         )
         return
       }

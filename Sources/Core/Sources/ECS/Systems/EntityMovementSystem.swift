@@ -10,12 +10,13 @@ public struct EntityMovementSystem: System {
       EntityVelocity.self,
       EntityRotation.self,
       EntityLerpState.self,
+      EntityMetadata.self,
       EntityKindId.self,
       EntityOnGround.self,
       excludesAll: ClientPlayerEntity.self
     )
 
-    for (position, velocity, rotation, lerpState, kind, onGround) in physicsEntities {
+    for (position, velocity, rotation, lerpState, metadata, kind, onGround) in physicsEntities {
       guard let kind = RegistryStore.shared.entityRegistry.entity(withId: kind.id) else {
         log.warning("Unknown entity kind '\(kind.id)'")
         continue
@@ -53,7 +54,9 @@ public struct EntityMovementSystem: System {
         velocity.vector.z = 0
       }
 
-      position.move(by: velocity.vector)
+      if !metadata.noAI {
+        position.move(by: velocity.vector)
+      }
     }
   }
 }

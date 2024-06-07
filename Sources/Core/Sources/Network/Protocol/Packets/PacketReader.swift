@@ -1,5 +1,5 @@
-import Foundation
 import FirebladeMath
+import Foundation
 
 /// A wrapper around ``Buffer`` that is specialized for reading Minecraft packets.
 public struct PacketReader {
@@ -44,6 +44,25 @@ public struct PacketReader {
     let byte = try buffer.readByte()
     let bool = byte == 1
     return bool
+  }
+
+  /// Optionally reads a value (assuming that the value's presence is indicated by a boolean
+  /// field directly preceding it).
+  public mutating func readOptional<T>(_ inner: (inout Self) throws -> T) throws -> T? {
+    if try readBool() {
+      return try inner(&self)
+    } else {
+      return nil
+    }
+  }
+
+  /// Reads a direction (represented as a VarInt).
+  public mutating func readDirection() throws -> Direction {
+    let rawValue = try readVarInt()
+    guard let direction = Direction(rawValue: rawValue) else {
+      throw PacketReaderError.invalidDirection(rawValue)
+    }
+    return direction
   }
 
   /// Reads a signed byte.
@@ -224,9 +243,9 @@ public struct PacketReader {
     let val = try buffer.readLong(endianness: .big)
 
     // Extract the bit patterns (in the order x, then z, then y)
-    var x = UInt32(val >> 38) // x is 26 bit
-    var z = UInt32((val << 26) >> 38) // z is 26 bit
-    var y = UInt32(val & 0xfff) // y is 12 bit
+    var x = UInt32(val >> 38)  // x is 26 bit
+    var z = UInt32((val << 26) >> 38)  // z is 26 bit
+    var y = UInt32(val & 0xfff)  // y is 12 bit
 
     // x and z are 26-bit signed integers, y is a 12-bit signed integer
     let xSignBit = (x & (1 << 25)) >> 25
@@ -238,7 +257,7 @@ public struct PacketReader {
       x |= 0b111111 << 26
     }
     if ySignBit == 1 {
-      y |= 0b11111111111111111111 << 12
+      y |= 0b1111_11111111_11111111 << 12
     }
     if zSignBit == 1 {
       z |= 0b111111 << 26
@@ -257,7 +276,9 @@ public struct PacketReader {
   /// - Parameter pitchFirst: If `true`, pitch is read before yaw.
   /// - Returns: An entity rotation in radians.
   /// - Throws: A ``BufferError`` if any reads go out of bounds.
-  public mutating func readEntityRotation(pitchFirst: Bool = false) throws -> (pitch: Float, yaw: Float) {
+  public mutating func readEntityRotation(pitchFirst: Bool = false) throws -> (
+    pitch: Float, yaw: Float
+  ) {
     var pitch: Float = 0
     if pitchFirst {
       pitch = try readAngle()
