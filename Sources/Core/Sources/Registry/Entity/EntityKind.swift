@@ -28,6 +28,12 @@ public struct EntityKind: Codable {
     }
   }
 
+  /// Whether this entity kind is the ender dragon or not (purely a convenience property,
+  /// just checks the identifier).
+  public var isEnderDragon: Bool {
+    identifier == Identifier(name: "ender_dragon")
+  }
+
   /// Creates a new entity kind with the given properties.
   public init(
     identifier: Identifier,

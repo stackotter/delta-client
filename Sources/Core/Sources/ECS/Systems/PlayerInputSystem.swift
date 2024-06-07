@@ -199,9 +199,42 @@ public final class PlayerInputSystem: System {
               break
             }
 
+            var entityId = targetedEntity.target
+            if let dragonParts = game.accessComponent(
+              entityId: targetedEntity.target,
+              EnderDragonParts.self,
+              acquireLock: false,
+              action: identity
+            ) {
+              guard
+                let dragonPosition = game.accessComponent(
+                  entityId: targetedEntity.target,
+                  EntityPosition.self,
+                  acquireLock: false,
+                  action: identity
+                )
+              else {
+                log.warning("Ender dragon missing position")
+                break
+              }
+
+              let ray = game.accessPlayer(acquireLock: false, action: \.ray)
+              // TODO: Don't hardcode reach
+              var currentDistance: Float = 4
+              for part in dragonParts.parts {
+                let aabb = part.aabb(withParentPosition: dragonPosition.vector)
+                if let (distance, _) = aabb.intersectionDistanceAndFace(with: ray),
+                  distance < currentDistance
+                {
+                  entityId = targetedEntity.target + part.entityIdOffset
+                  currentDistance = distance
+                }
+              }
+            }
+
             try connection?.sendPacket(
               InteractEntityPacket(
-                entityId: Int32(targetedEntity.target),
+                entityId: Int32(entityId),
                 interaction: .attack(isSneaking: sneaking.isSneaking)
               )
             )

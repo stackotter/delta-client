@@ -126,7 +126,7 @@ public struct EntityRenderer: Renderer {
 
       // Create uniforms for each entity
       profiler.push(.createUniforms)
-      for (position, rotation, hitbox, kindId) in entities {
+      for (entity, position, rotation, hitbox, kindId) in entities.entityAndComponents {
         // Don't render entities that are outside of the render distance
         let chunkPosition = position.chunk
         if !chunkPosition.isWithinRenderDistance(renderDistance, of: cameraChunk) {
@@ -143,6 +143,7 @@ public struct EntityRenderer: Renderer {
         }
 
         let builder = EntityMeshBuilder(
+          entity: entity,
           entityKind: kindIdentifier,
           position: Vec3f(position.smoothVector),
           pitch: rotation.smoothPitch,

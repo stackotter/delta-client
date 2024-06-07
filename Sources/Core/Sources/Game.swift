@@ -291,16 +291,18 @@ public final class Game: @unchecked Sendable {
   /// - Parameters:
   ///   - id: The id of the entity to access.
   ///   - action: The action to perform on the entity if it exists.
-  public func accessEntity(
+  public func accessEntity<R>(
     id: Int,
     acquireLock: Bool = true,
-    action: (Entity) throws -> Void
-  ) rethrows {
+    action: (Entity) throws -> R
+  ) rethrows -> R? {
     if acquireLock { nexusLock.acquireWriteLock() }
     defer { if acquireLock { nexusLock.unlock() } }
 
     if let identifier = entityIdToEntityIdentifier[id] {
-      try action(nexus.entity(from: identifier))
+      return try action(nexus.entity(from: identifier))
+    } else {
+      return nil
     }
   }
 
@@ -310,9 +312,12 @@ public final class Game: @unchecked Sendable {
   ///   - componentType: The type of component to access.
   ///   - acquireLock: If `false`, no lock is acquired. Only use if you know what you're doing.
   ///   - action: The action to perform on the component if the entity exists and contains that component.
-  public func accessComponent<T: Component>(
-    entityId: Int, _ componentType: T.Type, acquireLock: Bool = true, action: (T) -> Void
-  ) {
+  public func accessComponent<T: Component, R>(
+    entityId: Int,
+    _ componentType: T.Type,
+    acquireLock: Bool = true,
+    action: (T) throws -> R
+  ) rethrows -> R? {
     if acquireLock { nexusLock.acquireWriteLock() }
     defer { if acquireLock { nexusLock.unlock() } }
 
@@ -320,10 +325,10 @@ public final class Game: @unchecked Sendable {
       let identifier = entityIdToEntityIdentifier[entityId],
       let component = nexus.entity(from: identifier).get(component: T.self)
     else {
-      return
+      return nil
     }
 
-    action(component)
+    return try action(component)
   }
 
   /// Removes the entity with the given vanilla id from the game if it exists.
@@ -459,8 +464,8 @@ public final class Game: @unchecked Sendable {
       }
 
       guard
-        let (distance, face) = hitbox.aabb(at: position.vector).intersectionDistanceAndFace(
-          with: playerRay)
+        let (distance, face) = hitbox.aabb(at: position.vector)
+          .intersectionDistanceAndFace(with: playerRay)
       else {
         continue
       }

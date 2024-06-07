@@ -1,22 +1,24 @@
 import CoreFoundation
 import DeltaCore
+import FirebladeECS
 
 public struct EntityMeshBuilder {
   /// Associates entity kinds with hardcoded entity texture identifiers. Used to manually
   /// instruct Delta Client where to find certain textures that aren't in the standard
   /// locations.
-  static let hardcodedTextureIdentifiers: [Identifier: Identifier] = [
+  public static let hardcodedTextureIdentifiers: [Identifier: Identifier] = [
     Identifier(name: "player"): Identifier(name: "entity/steve"),
     Identifier(name: "dragon"): Identifier(name: "entity/enderdragon/dragon"),
   ]
 
-  let entityKind: Identifier
-  let position: Vec3f
-  let pitch: Float
-  let yaw: Float
-  let entityModelPalette: EntityModelPalette
-  let texturePalette: MetalTexturePalette
-  let hitbox: AxisAlignedBoundingBox
+  public let entity: Entity
+  public let entityKind: Identifier
+  public let position: Vec3f
+  public let pitch: Float
+  public let yaw: Float
+  public let entityModelPalette: EntityModelPalette
+  public let texturePalette: MetalTexturePalette
+  public let hitbox: AxisAlignedBoundingBox
 
   static let colors: [Vec3f] = [
     [1, 0, 0],
@@ -34,6 +36,13 @@ public struct EntityMeshBuilder {
       buildModel(model, into: &geometry)
     } else {
       buildAABB(hitbox, into: &geometry)
+    }
+
+    if let dragonParts = entity.get(component: EnderDragonParts.self) {
+      for part in dragonParts.parts {
+        let aabb = part.aabb(withParentPosition: Vec3d(position))
+        buildAABB(aabb, into: &geometry)
+      }
     }
   }
 
