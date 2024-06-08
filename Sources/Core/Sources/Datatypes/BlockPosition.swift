@@ -1,9 +1,10 @@
-import Foundation
 import FirebladeMath
+import Foundation
 
 /// A block position.
 public struct BlockPosition {
-  // MARK: Public properties
+  /// The origin.
+  public static let zero = BlockPosition(x: 0, y: 0, z: 0)
 
   /// The x component.
   public var x: Int
@@ -14,14 +15,14 @@ public struct BlockPosition {
 
   /// The position of the ``Chunk`` this position is in
   public var chunk: ChunkPosition {
-    let chunkX = x >> 4 // divides by 16 and rounds down
+    let chunkX = x >> 4  // divides by 16 and rounds down
     let chunkZ = z >> 4
     return ChunkPosition(chunkX: chunkX, chunkZ: chunkZ)
   }
 
   /// The position of the ``Chunk/Section`` this position is in
   public var chunkSection: ChunkSectionPosition {
-    let sectionX = x >> 4 // divides by 16 and rounds down
+    let sectionX = x >> 4  // divides by 16 and rounds down
     let sectionY = y >> 4
     let sectionZ = z >> 4
     return ChunkSectionPosition(sectionX: sectionX, sectionY: sectionY, sectionZ: sectionZ)
@@ -97,8 +98,6 @@ public struct BlockPosition {
     }
   }
 
-  // MARK: Init
-
   /// Create a new block position.
   ///
   /// Coordinates are not validated.
@@ -111,8 +110,6 @@ public struct BlockPosition {
     self.y = y
     self.z = z
   }
-
-  // MARK: Public methods
 
   /// Component-wise addition of two block positions.
   public static func + (lhs: BlockPosition, rhs: Vec3i) -> BlockPosition {

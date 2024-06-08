@@ -21,7 +21,8 @@ public struct EntityMeshBuilder {
   public let entityModelPalette: EntityModelPalette
   public let itemModelPalette: ItemModelPalette
   public let blockModelPalette: BlockModelPalette
-  public let texturePalette: MetalTexturePalette
+  public let entityTexturePalette: MetalTexturePalette
+  public let blockTexturePalette: MetalTexturePalette
   public let hitbox: AxisAlignedBoundingBox
 
   static let colors: [Vec3f] = [
@@ -35,13 +36,30 @@ public struct EntityMeshBuilder {
     [1, 1, 1],
   ]
 
-  func build(into geometry: inout Geometry<EntityVertex>) {
+  // TODO: Propagate all warnings as errors and then handle them and emit them as warnings in EntityRenderer instead
+  /// `blockGeometry` and `translucentBlockGeometry` are used to render block entities and block item entities.
+  func build(
+    into geometry: inout Geometry<EntityVertex>,
+    blockGeometry: inout Geometry<BlockVertex>,
+    translucentBlockGeometry: inout SortableMesh
+  ) {
     if let model = entityModelPalette.models[entityKind] {
       buildModel(model, into: &geometry)
     } else if let itemMetadata = entity.get(component: EntityMetadata.self)?.itemMetadata,
       let itemStack = itemMetadata.slot.stack,
       let itemModel = itemModelPalette.model(for: itemStack.itemId)
     {
+      // TODO: Figure out why these bobbing constants and hardcoded translations are so weird
+      //   (they're even still slightly off vanilla, there must be a different order of transformations
+      //   that makes these numbers nice or something).
+      let time = CFAbsoluteTimeGetCurrent() * TickScheduler.defaultTicksPerSecond
+      let phaseOffset = Double(itemMetadata.bobbingPhaseOffset)
+      let verticalOffset = Float(Foundation.sin(time / 10 + phaseOffset)) / 8 * 3
+      let spinAngle = -Float((time / 20 + phaseOffset).remainder(dividingBy: 2 * .pi))
+      let bob =
+        MatrixUtil.translationMatrix(Vec3f(0, verticalOffset, 0))
+        * MatrixUtil.rotationMatrix(y: spinAngle)
+
       switch itemModel {
         case let .entity(identifier, transforms):
           // Remove identifier prefix (entity model palette doesn't have any `item/` or `entity/` prefixes).
@@ -53,26 +71,51 @@ public struct EntityMeshBuilder {
             return
           }
 
-          var transformation = transforms.ground
-          let time = CFAbsoluteTimeGetCurrent() * TickScheduler.defaultTicksPerSecond
-          let phaseOffset = Double(itemMetadata.bobbingPhaseOffset)
-          let bob = Float(Foundation.sin(time / 10 + phaseOffset))
-          let scaleY = (transformation * Vec4f(0, 1, 0, 0)).magnitude
-          let verticalOffset = bob + 0.25 * scaleY
-          transformation *= MatrixUtil.translationMatrix(Vec3f(0, verticalOffset, 0))
-          transformation *= MatrixUtil.rotationMatrix(
-            y: -Float((time / 20 + phaseOffset).remainder(dividingBy: 2 * .pi))
-          )
-
+          let transformation =
+            bob * transforms.ground * MatrixUtil.translationMatrix(Vec3f(0, 11.0 / 64, 0))
           buildModel(
             entityModel,
             textureIdentifier: entityIdentifier,
             transformation: transformation,
             into: &geometry
           )
-        case .blockModel, .layered:
+        case let .blockModel(id):
+          guard let blockModel = blockModelPalette.model(for: id, at: nil) else {
+            log.warning(
+              "Missing block model for item entity (block id: \(id), item id: \(itemStack.itemId))"
+            )
+            return
+          }
+
+          // TODO: Don't just use dummy lighting
+          var neighbourLightLevels: [Direction: LightLevel] = [:]
+          for direction in Direction.allDirections {
+            neighbourLightLevels[direction] = LightLevel(sky: 15, block: 0)
+          }
+
+          let transformation =
+            MatrixUtil.translationMatrix(Vec3f(-0.5, 0, -0.5))
+            * bob
+            * MatrixUtil.scalingMatrix(0.25)
+            * MatrixUtil.translationMatrix(Vec3f(0, 7.0 / 32.0, 0))
+            * MatrixUtil.rotationMatrix(y: yaw + .pi)
+            * MatrixUtil.translationMatrix(position)
+          let builder = BlockMeshBuilder(
+            model: blockModel,
+            position: .zero,
+            modelToWorld: transformation,
+            culledFaces: [],
+            lightLevel: LightLevel(sky: 15, block: 0),
+            neighbourLightLevels: [:],
+            tintColor: Vec3f(1, 1, 1),
+            blockTexturePalette: blockTexturePalette.palette
+          )
+          var translucentElement = SortableMeshElement()
+          builder.build(into: &blockGeometry, translucentGeometry: &translucentElement)
+          translucentBlockGeometry.add(translucentElement)
+        case .layered:
           buildAABB(hitbox, into: &geometry)
-        case .empty, .blockModel, .layered:
+        case .empty:
           break
       }
     } else {
@@ -117,6 +160,7 @@ public struct EntityMeshBuilder {
     }
   }
 
+  /// The unit of `transformation` is blocks.
   func buildModel(
     _ model: JSONEntityModel,
     textureIdentifier: Identifier? = nil,
@@ -126,7 +170,7 @@ public struct EntityMeshBuilder {
     let baseTextureIdentifier = textureIdentifier ?? entityKind
     let texture: Int?
     if let identifier = Self.hardcodedTextureIdentifiers[baseTextureIdentifier] {
-      texture = texturePalette.textureIndex(for: identifier)
+      texture = entityTexturePalette.textureIndex(for: identifier)
     } else {
       // Entity textures can be in all sorts of structures so we just have a few
       // educated guesses for now.
@@ -139,8 +183,8 @@ public struct EntityMeshBuilder {
         name: "entity/\(baseTextureIdentifier.name)/\(baseTextureIdentifier.name)"
       )
       texture =
-        texturePalette.textureIndex(for: textureIdentifier)
-        ?? texturePalette.textureIndex(for: nestedTextureIdentifier)
+        entityTexturePalette.textureIndex(for: textureIdentifier)
+        ?? entityTexturePalette.textureIndex(for: nestedTextureIdentifier)
     }
 
     for (index, submodel) in model.models.enumerated() {
@@ -154,6 +198,7 @@ public struct EntityMeshBuilder {
     }
   }
 
+  /// The unit of `transformation` is blocks.
   func buildSubmodel(
     _ submodel: JSONEntityModel.Submodel,
     index: Int,
@@ -166,7 +211,7 @@ public struct EntityMeshBuilder {
       let translation = submodel.translate ?? .zero
       transformation =
         MatrixUtil.rotationMatrix(-MathUtil.radians(from: rotation))
-        * MatrixUtil.translationMatrix(translation)
+        * MatrixUtil.translationMatrix(translation / 16)
         * transformation
     }
 
@@ -197,6 +242,7 @@ public struct EntityMeshBuilder {
     }
   }
 
+  /// The unit of `transformation` is 16 units per block.
   func buildBox(
     _ box: JSONEntityModel.Box,
     color: Vec3f,
@@ -278,22 +324,26 @@ public struct EntityMeshBuilder {
         uvSize.y *= -1
       }
 
+      let textureSize = Vec2f(
+        Float(entityTexturePalette.palette.width),
+        Float(entityTexturePalette.palette.height)
+      )
       let uvs = [
         uvOrigin,
         uvOrigin + Vec2f(0, uvSize.y),
         uvOrigin + Vec2f(uvSize.x, uvSize.y),
         uvOrigin + Vec2f(uvSize.x, 0),
-      ].map {
-        $0 / Vec2f(Float(texturePalette.palette.width), Float(texturePalette.palette.height))
+      ].map { pixelUV in
+        pixelUV / textureSize
       }
 
       let faceVertexPositions = CubeGeometry.faceVertices[direction.rawValue]
       for (uv, vertexPosition) in zip(uvs, faceVertexPositions) {
         var position = vertexPosition * boxSize + boxPosition
-        position =
-          (Vec4f(position, 1) * transformation * MatrixUtil.rotationMatrix(yaw + .pi, around: .y))
-          .xyz
         position /= 16
+        position =
+          (Vec4f(position, 1) * transformation * MatrixUtil.rotationMatrix(y: yaw + .pi))
+          .xyz
         position += self.position
         let vertex = EntityVertex(
           x: position.x,

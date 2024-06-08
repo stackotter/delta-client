@@ -11,6 +11,8 @@ public struct EntityRenderer: Renderer {
 
   /// The render pipeline state for rendering entities. Does not have blending enabled.
   private var renderPipelineState: MTLRenderPipelineState
+  /// The render pipeline state for rendering block entities and block item entities.
+  private var blockRenderPipelineState: MTLRenderPipelineState
   /// The buffer containing the uniforms for all rendered entities.
   private var instanceUniformsBuffer: MTLBuffer?
   /// The buffer containing the hit box vertices. They form a basic cube and instanced rendering is used to render the cube once for each entity.
@@ -21,6 +23,7 @@ public struct EntityRenderer: Renderer {
   private var indexCount: Int
 
   private var entityTexturePalette: MetalTexturePalette
+  private var blockTexturePalette: MetalTexturePalette
 
   private var entityModelPalette: EntityModelPalette
   private var itemModelPalette: ItemModelPalette
@@ -40,25 +43,41 @@ public struct EntityRenderer: Renderer {
     client: Client,
     device: MTLDevice,
     commandQueue: MTLCommandQueue,
-    profiler: Profiler<RenderingMeasurement>
+    profiler: Profiler<RenderingMeasurement>,
+    blockTexturePalette: MetalTexturePalette
   ) throws {
     self.client = client
     self.device = device
     self.commandQueue = commandQueue
     self.profiler = profiler
+    self.blockTexturePalette = blockTexturePalette
 
     // Load library
+    // TODO: Avoid loading library again and again
     let library = try MetalUtil.loadDefaultLibrary(device)
     let vertexFunction = try MetalUtil.loadFunction("entityVertexShader", from: library)
     let fragmentFunction = try MetalUtil.loadFunction("entityFragmentShader", from: library)
+    let blockVertexFunction = try MetalUtil.loadFunction("chunkVertexShader", from: library)
+    let blockFragmentFunction = try MetalUtil.loadFunction("chunkFragmentShader", from: library)
 
     // Create render pipeline state
     renderPipelineState = try MetalUtil.makeRenderPipelineState(
       device: device,
-      label: "dev.stackotter.delta-client.EntityRenderer",
+      label: "EntityRenderer.renderPipelineState",
       vertexFunction: vertexFunction,
       fragmentFunction: fragmentFunction,
       blendingEnabled: false
+    )
+
+    // TODO: Consider supporting OIT here too? Probably not of much use cause most block item
+    //   entities aren't translucent, and there should never be many instances of them since
+    //   item entities merge.
+    blockRenderPipelineState = try MetalUtil.makeRenderPipelineState(
+      device: device,
+      label: "EntityRenderer.blockRenderPipelineState",
+      vertexFunction: blockVertexFunction,
+      fragmentFunction: blockFragmentFunction,
+      blendingEnabled: true
     )
 
     // Create hitbox geometry (hitboxes are rendered using instancing)
@@ -107,6 +126,8 @@ public struct EntityRenderer: Renderer {
 
     // Get all renderable entities
     var geometry = Geometry<EntityVertex>()
+    var blockGeometry = Geometry<BlockVertex>()
+    var translucentBlockGeometry = SortableMesh(uniforms: ChunkUniforms())
     client.game.accessNexus { nexus in
       // If the player is in first person view we don't render them
       profiler.push(.getEntities)
@@ -159,24 +180,48 @@ public struct EntityRenderer: Renderer {
           entityModelPalette: entityModelPalette,
           itemModelPalette: itemModelPalette,
           blockModelPalette: blockModelPalette,
-          texturePalette: entityTexturePalette,
+          entityTexturePalette: entityTexturePalette,
+          blockTexturePalette: blockTexturePalette,
           hitbox: hitbox.aabb(at: position.smoothVector)
         )
-        builder.build(into: &geometry)
+        builder.build(
+          into: &geometry,
+          blockGeometry: &blockGeometry,
+          translucentBlockGeometry: &translucentBlockGeometry
+        )
       }
       profiler.pop()
     }
 
-    guard !geometry.isEmpty else {
-      return
+    if !geometry.isEmpty {
+      encoder.setRenderPipelineState(renderPipelineState)
+      encoder.setFragmentTexture(entityTexturePalette.arrayTexture, index: 0)
+
+      // TODO: Update profiler measurements
+      var mesh = Mesh<EntityVertex, Void>(geometry, uniforms: ())
+      try mesh.render(into: encoder, with: device, commandQueue: commandQueue)
     }
 
-    encoder.setRenderPipelineState(renderPipelineState)
-    encoder.setFragmentTexture(entityTexturePalette.arrayTexture, index: 0)
+    if !blockGeometry.isEmpty || !translucentBlockGeometry.isEmpty {
+      encoder.setRenderPipelineState(blockRenderPipelineState)
+      encoder.setVertexBuffer(blockTexturePalette.textureStatesBuffer, offset: 0, index: 3)
+      encoder.setFragmentTexture(blockTexturePalette.arrayTexture, index: 0)
 
-    // TODO: Update profiler measurements
-    var mesh = Mesh<EntityVertex, Void>(geometry, uniforms: ())
-    try mesh.render(into: encoder, with: device, commandQueue: commandQueue)
+      if !blockGeometry.isEmpty {
+        var blockMesh = Mesh<BlockVertex, ChunkUniforms>(blockGeometry, uniforms: ChunkUniforms())
+        try blockMesh.render(into: encoder, with: device, commandQueue: commandQueue)
+      }
+
+      if !translucentBlockGeometry.isEmpty {
+        try translucentBlockGeometry.render(
+          viewedFrom: camera.position,
+          sort: true,
+          encoder: encoder,
+          device: device,
+          commandQueue: commandQueue
+        )
+      }
+    }
   }
 
   /// Creates a coloured and shaded cube to be rendered using instancing as entities' hitboxes.

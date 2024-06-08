@@ -82,7 +82,9 @@ public final class WorldRenderer: Renderer {
     let vertexFunction = try MetalUtil.loadFunction("chunkVertexShader", from: library)
     let fragmentFunction = try MetalUtil.loadFunction("chunkFragmentShader", from: library)
     let transparentFragmentFunction = try MetalUtil.loadFunction(
-      "chunkOITFragmentShader", from: library)
+      "chunkOITFragmentShader",
+      from: library
+    )
     let transparentCompositingVertexFunction = try MetalUtil.loadFunction(
       "chunkOITCompositingVertexShader",
       from: library
@@ -107,7 +109,7 @@ public final class WorldRenderer: Renderer {
     // Create opaque pipeline (which also handles translucent geometry when OIT is disabled)
     renderPipelineState = try MetalUtil.makeRenderPipelineState(
       device: device,
-      label: "WorldRenderer.mainPipeline",
+      label: "WorldRenderer.renderPipelineState",
       vertexFunction: vertexFunction,
       fragmentFunction: fragmentFunction,
       blendingEnabled: true
@@ -115,7 +117,7 @@ public final class WorldRenderer: Renderer {
 
     destroyOverlayRenderPipelineState = try MetalUtil.makeRenderPipelineState(
       device: device,
-      label: "WorldRenderer.destroyOverlayPipeline",
+      label: "WorldRenderer.destroyOverlayRenderPipelineState",
       vertexFunction: vertexFunction,
       fragmentFunction: fragmentFunction,
       blendingEnabled: true,
@@ -178,7 +180,8 @@ public final class WorldRenderer: Renderer {
       client: client,
       device: device,
       commandQueue: commandQueue,
-      profiler: profiler
+      profiler: profiler,
+      blockTexturePalette: texturePalette
     )
 
     // Create world mesh

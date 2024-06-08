@@ -1,3 +1,4 @@
+import DeltaCore
 import FirebladeMath
 
 public struct ChunkUniforms {
@@ -10,6 +11,6 @@ public struct ChunkUniforms {
   }
 
   public init() {
-    transformation = Mat4x4f(diagonal: 1)
+    transformation = MatrixUtil.identity
   }
 }

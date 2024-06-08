@@ -1,12 +1,12 @@
-import Foundation
 import FirebladeMath
+import Foundation
 
 /// Transformation that can be applied to a model, as read from JSON files in resource packs.
 /// Translation is applied before rotation.
 struct JSONModelTransform: Codable {
   /// The rotation (should be `[x, y, z]`).
   var rotation: [Double]?
-  /// The translation (should be `[x, y, z]`). Clamp to between -80 and 80.
+  /// The translation (should be `[x, y, z]`). Clamp to between -80 and 80. Measured in 16ths of a block.
   var translation: [Double]?
   /// The scale (should be `[x, y, z]`). Maximum 4.
   var scale: [Double]?
@@ -17,7 +17,7 @@ struct JSONModelTransform: Codable {
 
     if let translation = self.translation {
       var translationVector = try MathUtil.vectorFloat3(from: translation)
-      translationVector = MathUtil.clamp(translationVector, min: -80, max: 80)
+      translationVector = MathUtil.clamp(translationVector, min: -80, max: 80) / 16
       matrix *= MatrixUtil.translationMatrix(translationVector)
     }
 
