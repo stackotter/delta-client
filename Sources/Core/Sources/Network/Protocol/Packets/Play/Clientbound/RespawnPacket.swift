@@ -56,8 +56,6 @@ public struct RespawnPacket: ClientboundPacket {
   }
 
   public func handle(for client: Client) throws {
-    print("Received RespawnPacket")
-
     guard
       let currentDimension = client.game.dimensions.first(where: { dimension in
         return dimension.identifier == currentDimensionIdentifier

@@ -191,30 +191,41 @@ public struct EntityMetadataPacket: ClientboundPacket {
 
   public func handle(for client: Client) throws {
     try client.game.accessEntity(id: entityId) { entity in
-      guard
-        let metadataComponent = entity.get(component: EntityMetadata.self),
-        let kindId = entity.get(component: EntityKindId.self)
-      else {
+      guard let metadataComponent = entity.get(component: EntityMetadata.self) else {
         log.warning("Entity '\(entityId)' is missing components required to handle \(Self.self)")
         return
       }
 
-      guard let kind = kindId.entityKind else {
-        log.warning("Invalid entity kind id '\(kindId.id)'")
-        return
-      }
-
       for entry in metadata {
-        if kind.inheritanceChain.contains("MobEntity"), entry.index == 14 {
-          guard case let .byte(flags) = entry.value else {
-            throw ClientboundPacketError.incorrectEntityMetadataDatatype(
-              property: "Mob.noAI",
-              expectedType: "byte",
-              value: entry.value
-            )
-          }
+        switch metadataComponent.specializedMetadata {
+          case var .mob(mobMetadata):
+            if entry.index == 14 {
+              guard case let .byte(flags) = entry.value else {
+                throw ClientboundPacketError.incorrectEntityMetadataDatatype(
+                  property: "Mob.noAI",
+                  expectedType: "byte",
+                  value: entry.value
+                )
+              }
 
-          metadataComponent.noAI = flags & 0x01 == 0x01
+              mobMetadata.noAI = flags & 0x01 == 0x01
+              metadataComponent.specializedMetadata = .mob(mobMetadata)
+            }
+          case var .item(itemMetadata):
+            if entry.index == 7 {
+              guard case let .slot(slot) = entry.value else {
+                throw ClientboundPacketError.incorrectEntityMetadataDatatype(
+                  property: "Item.slot",
+                  expectedType: "slot",
+                  value: entry.value
+                )
+              }
+
+              itemMetadata.slot = slot
+              metadataComponent.specializedMetadata = .item(itemMetadata)
+            }
+          case nil:
+            break
         }
       }
     }

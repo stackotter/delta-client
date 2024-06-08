@@ -22,6 +22,10 @@ public struct EntityRenderer: Renderer {
 
   private var entityTexturePalette: MetalTexturePalette
 
+  private var entityModelPalette: EntityModelPalette
+  private var itemModelPalette: ItemModelPalette
+  private var blockModelPalette: BlockModelPalette
+
   /// The client that entities will be renderer for.
   private var client: Client
   /// The device that will be used to render.
@@ -82,6 +86,10 @@ public struct EntityRenderer: Renderer {
       device: device,
       commandQueue: commandQueue
     )
+
+    entityModelPalette = client.resourcePack.vanillaResources.entityModelPalette
+    itemModelPalette = client.resourcePack.vanillaResources.itemModelPalette
+    blockModelPalette = client.resourcePack.vanillaResources.blockModelPalette
   }
 
   /// Renders all entity hit boxes using instancing.
@@ -148,7 +156,9 @@ public struct EntityRenderer: Renderer {
           position: Vec3f(position.smoothVector),
           pitch: rotation.smoothPitch,
           yaw: rotation.smoothYaw,
-          entityModelPalette: client.resourcePack.vanillaResources.entityModelPalette,
+          entityModelPalette: entityModelPalette,
+          itemModelPalette: itemModelPalette,
+          blockModelPalette: blockModelPalette,
           texturePalette: entityTexturePalette,
           hitbox: hitbox.aabb(at: position.smoothVector)
         )

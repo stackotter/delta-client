@@ -164,9 +164,9 @@ public enum PixlyzerFormatter {
     )
   }
 
-  private static func createBiomeRegistry(from pixlyzerBiomes: [String: PixlyzerBiome]) throws
-    -> BiomeRegistry
-  {
+  private static func createBiomeRegistry(
+    from pixlyzerBiomes: [String: PixlyzerBiome]
+  ) throws -> BiomeRegistry {
     var biomes: [Int: Biome] = [:]
     for (identifier, pixlyzerBiome) in pixlyzerBiomes {
       let identifier = try Identifier(identifier)
@@ -184,7 +184,7 @@ public enum PixlyzerFormatter {
     for (identifier, pixlyzerEntity) in pixlyzerEntities {
       if let identifier = try? Identifier(identifier) {
         var parent = pixlyzerEntity.parent
-        var inheritanceChain: [String] = []
+        var inheritanceChain: [String] = [pixlyzerEntity.class].compactMap(identity)
         while let currentParent = parent {
           inheritanceChain.append(currentParent)
 
@@ -299,9 +299,9 @@ public enum PixlyzerFormatter {
     return BlockRegistry(blocks: blockArray, renderDescriptors: renderDescriptors)
   }
 
-  private static func createItemRegistry(from pixlyzerItems: [String: PixlyzerItem]) throws
-    -> ItemRegistry
-  {
+  private static func createItemRegistry(
+    from pixlyzerItems: [String: PixlyzerItem]
+  ) throws -> ItemRegistry {
     var items: [Int: Item] = [:]
     for (identifierString, pixlyzerItem) in pixlyzerItems {
       var identifier = try Identifier(identifierString)

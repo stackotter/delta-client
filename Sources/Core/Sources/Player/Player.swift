@@ -77,7 +77,7 @@ public struct Player {
     nutrition = EntityNutrition()
     playerAttributes = PlayerAttributes()
     entityAttributes = EntityAttributes()
-    entityMetadata = EntityMetadata()
+    entityMetadata = EntityMetadata(inheritanceChain: playerEntity.inheritanceChain)
     camera = EntityCamera()
     gamemode = PlayerGamemode()
     inventory = PlayerInventory()

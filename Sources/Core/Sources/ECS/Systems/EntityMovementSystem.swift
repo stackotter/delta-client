@@ -54,7 +54,7 @@ public struct EntityMovementSystem: System {
         velocity.vector.z = 0
       }
 
-      if !metadata.noAI {
+      if metadata.mobMetadata?.noAI != true {
         position.move(by: velocity.vector)
       }
     }

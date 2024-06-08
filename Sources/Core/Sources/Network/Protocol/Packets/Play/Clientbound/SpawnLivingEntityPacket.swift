@@ -43,7 +43,7 @@ public struct SpawnLivingEntityPacket: ClientboundPacket {
         EntityHeadYaw(headYaw)
         EntityLerpState()
         EntityAttributes()
-        EntityMetadata()
+        EntityMetadata(inheritanceChain: entityKind.inheritanceChain)
         EnderDragonParts()
       }
     } else {
@@ -60,7 +60,7 @@ public struct SpawnLivingEntityPacket: ClientboundPacket {
         EntityHeadYaw(headYaw)
         EntityLerpState()
         EntityAttributes()
-        EntityMetadata()
+        EntityMetadata(inheritanceChain: entityKind.inheritanceChain)
       }
     }
   }

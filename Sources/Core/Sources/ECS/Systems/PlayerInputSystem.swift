@@ -229,9 +229,6 @@ public final class PlayerInputSystem: System {
                   currentDistance = distance
                 }
               }
-
-              print(entityId, targetedEntity.target)
-              print(currentDistance)
             }
 
             try connection?.sendPacket(

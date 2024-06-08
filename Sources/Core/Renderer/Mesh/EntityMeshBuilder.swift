@@ -1,6 +1,7 @@
 import CoreFoundation
 import DeltaCore
 import FirebladeECS
+import Foundation
 
 public struct EntityMeshBuilder {
   /// Associates entity kinds with hardcoded entity texture identifiers. Used to manually
@@ -9,6 +10,7 @@ public struct EntityMeshBuilder {
   public static let hardcodedTextureIdentifiers: [Identifier: Identifier] = [
     Identifier(name: "player"): Identifier(name: "entity/steve"),
     Identifier(name: "dragon"): Identifier(name: "entity/enderdragon/dragon"),
+    Identifier(name: "chest"): Identifier(name: "entity/chest/normal"),
   ]
 
   public let entity: Entity
@@ -17,6 +19,8 @@ public struct EntityMeshBuilder {
   public let pitch: Float
   public let yaw: Float
   public let entityModelPalette: EntityModelPalette
+  public let itemModelPalette: ItemModelPalette
+  public let blockModelPalette: BlockModelPalette
   public let texturePalette: MetalTexturePalette
   public let hitbox: AxisAlignedBoundingBox
 
@@ -34,6 +38,43 @@ public struct EntityMeshBuilder {
   func build(into geometry: inout Geometry<EntityVertex>) {
     if let model = entityModelPalette.models[entityKind] {
       buildModel(model, into: &geometry)
+    } else if let itemMetadata = entity.get(component: EntityMetadata.self)?.itemMetadata,
+      let itemStack = itemMetadata.slot.stack,
+      let itemModel = itemModelPalette.model(for: itemStack.itemId)
+    {
+      switch itemModel {
+        case let .entity(identifier, transforms):
+          // Remove identifier prefix (entity model palette doesn't have any `item/` or `entity/` prefixes).
+          var entityIdentifier = identifier
+          entityIdentifier.name = entityIdentifier.name.replacingOccurrences(of: "item/", with: "")
+
+          guard let entityModel = entityModelPalette.models[entityIdentifier] else {
+            log.warning("Missing entity model for entity with '\(entityIdentifier)' (as item)")
+            return
+          }
+
+          var transformation = transforms.ground
+          let time = CFAbsoluteTimeGetCurrent() * TickScheduler.defaultTicksPerSecond
+          let phaseOffset = Double(itemMetadata.bobbingPhaseOffset)
+          let bob = Float(Foundation.sin(time / 10 + phaseOffset))
+          let scaleY = (transformation * Vec4f(0, 1, 0, 0)).magnitude
+          let verticalOffset = bob + 0.25 * scaleY
+          transformation *= MatrixUtil.translationMatrix(Vec3f(0, verticalOffset, 0))
+          transformation *= MatrixUtil.rotationMatrix(
+            y: -Float((time / 20 + phaseOffset).remainder(dividingBy: 2 * .pi))
+          )
+
+          buildModel(
+            entityModel,
+            textureIdentifier: entityIdentifier,
+            transformation: transformation,
+            into: &geometry
+          )
+        case .blockModel, .layered:
+          buildAABB(hitbox, into: &geometry)
+        case .empty, .blockModel, .layered:
+          break
+      }
     } else {
       buildAABB(hitbox, into: &geometry)
     }
@@ -76,20 +117,26 @@ public struct EntityMeshBuilder {
     }
   }
 
-  func buildModel(_ model: JSONEntityModel, into geometry: inout Geometry<EntityVertex>) {
+  func buildModel(
+    _ model: JSONEntityModel,
+    textureIdentifier: Identifier? = nil,
+    transformation: Mat4x4f = MatrixUtil.identity,
+    into geometry: inout Geometry<EntityVertex>
+  ) {
+    let baseTextureIdentifier = textureIdentifier ?? entityKind
     let texture: Int?
-    if let identifier = Self.hardcodedTextureIdentifiers[entityKind] {
+    if let identifier = Self.hardcodedTextureIdentifiers[baseTextureIdentifier] {
       texture = texturePalette.textureIndex(for: identifier)
     } else {
       // Entity textures can be in all sorts of structures so we just have a few
       // educated guesses for now.
       let textureIdentifier = Identifier(
-        namespace: entityKind.namespace,
-        name: "entity/\(entityKind.name)"
+        namespace: baseTextureIdentifier.namespace,
+        name: "entity/\(baseTextureIdentifier.name)"
       )
       let nestedTextureIdentifier = Identifier(
-        namespace: entityKind.namespace,
-        name: "entity/\(entityKind.name)/\(entityKind.name)"
+        namespace: baseTextureIdentifier.namespace,
+        name: "entity/\(baseTextureIdentifier.name)/\(baseTextureIdentifier.name)"
       )
       texture =
         texturePalette.textureIndex(for: textureIdentifier)
@@ -97,7 +144,13 @@ public struct EntityMeshBuilder {
     }
 
     for (index, submodel) in model.models.enumerated() {
-      buildSubmodel(submodel, index: index, textureIndex: texture, into: &geometry)
+      buildSubmodel(
+        submodel,
+        index: index,
+        textureIndex: texture,
+        transformation: transformation,
+        into: &geometry
+      )
     }
   }
 
@@ -114,6 +167,7 @@ public struct EntityMeshBuilder {
       transformation =
         MatrixUtil.rotationMatrix(-MathUtil.radians(from: rotation))
         * MatrixUtil.translationMatrix(translation)
+        * transformation
     }
 
     for box in submodel.boxes ?? [] {

@@ -31,7 +31,6 @@ public struct ChangeGameStatePacket: ClientboundPacket {
   }
 
   public func handle(for client: Client) throws {
-    print("Received ChangeGameStatePacket with reason \(reason)")
     switch reason {
       case .changeGamemode:
         let rawValue = Int8(value)

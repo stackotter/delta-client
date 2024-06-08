@@ -409,10 +409,8 @@ public final class Game: @unchecked Sendable {
 
     for position in VoxelRay(along: ray, count: 7) {
       let block = world.getBlock(at: position, acquireLock: acquireLock)
-      print(position, block.identifier)
       let boundingBox = block.shape.outlineShape.offset(by: position.doubleVector)
       if let (distance, face) = boundingBox.intersectionDistanceAndFace(with: ray) {
-        print(distance)
         guard distance <= Player.buildingReach else {
           break
         }
@@ -489,8 +487,6 @@ public final class Game: @unchecked Sendable {
         candidate = newCandidate
       }
     }
-
-    print(candidate)
 
     return candidate
   }
