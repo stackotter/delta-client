@@ -267,7 +267,7 @@ public final class GUIRenderer: Renderer {
 
         var vertices: [GUIVertex] = []
         vertices.reserveCapacity(geometry.vertices.count)
-        for vertex in geometry.vertices {
+        for vertex in geometry.vertices + translucentGeometry.vertices {
           vertices.append(
             GUIVertex(
               position: [vertex.x, vertex.y],
@@ -278,7 +278,6 @@ public final class GUIRenderer: Renderer {
           )
         }
 
-        // TODO: Handle translucent block items
         var mesh = GUIElementMesh(
           size: [16, 16],
           arrayTexture: blockArrayTexture,
