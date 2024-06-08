@@ -409,10 +409,11 @@ public final class Game: @unchecked Sendable {
 
     for position in VoxelRay(along: ray, count: 7) {
       let block = world.getBlock(at: position, acquireLock: acquireLock)
+      print(position, block.identifier)
       let boundingBox = block.shape.outlineShape.offset(by: position.doubleVector)
       if let (distance, face) = boundingBox.intersectionDistanceAndFace(with: ray) {
-        // TODO: Don't hardcode reach here
-        guard distance <= 6 else {
+        print(distance)
+        guard distance <= Player.buildingReach else {
           break
         }
 
@@ -459,13 +460,16 @@ public final class Game: @unchecked Sendable {
 
     var candidate: Targeted<Int>?
     for (id, position, hitbox) in family {
-      guard (playerPosition - position.vector).magnitude < 4 else {
+      // Should be big enough radius not to accidentally exclude big entities such as the Ender Dragon?
+      guard (playerPosition - position.vector).magnitude < 12 else {
         continue
       }
 
+      let aabb = hitbox.aabb(at: position.vector)
       guard
-        let (distance, face) = hitbox.aabb(at: position.vector)
-          .intersectionDistanceAndFace(with: playerRay)
+        let (distance, face) = aabb.intersectionDistanceAndFace(with: playerRay),
+        distance >= 0 || aabb.contains(Vec3d(playerRay.origin)),
+        distance <= Player.attackReach
       else {
         continue
       }
@@ -485,6 +489,8 @@ public final class Game: @unchecked Sendable {
         candidate = newCandidate
       }
     }
+
+    print(candidate)
 
     return candidate
   }

@@ -1,5 +1,5 @@
-import Foundation
 import FirebladeMath
+import Foundation
 
 /// An axis aligned bounding box used for efficient collisions and visibility checks.
 public struct AxisAlignedBoundingBox: Codable {
@@ -184,10 +184,15 @@ public struct AxisAlignedBoundingBox: Codable {
     let otherMinimum = other.minimum
     let otherMaximum = other.maximum
 
-    return (
-      minimum.x <= otherMaximum.x && maximum.x >= otherMinimum.x &&
-      minimum.y <= otherMaximum.y && maximum.y >= otherMinimum.y &&
-      minimum.z <= otherMaximum.z && maximum.z >= otherMinimum.z)
+    return
+      (minimum.x <= otherMaximum.x && maximum.x >= otherMinimum.x && minimum.y <= otherMaximum.y
+      && maximum.y >= otherMinimum.y && minimum.z <= otherMaximum.z && maximum.z >= otherMinimum.z)
+  }
+
+  /// Checks whether the AABB contains a given point.
+  public func contains(_ point: Vec3d) -> Bool {
+    return minimum.x <= point.x && minimum.y <= point.y && minimum.z <= point.z
+      && point.x <= maximum.x && point.y <= maximum.y && point.z <= maximum.z
   }
 
   /// Checks whether the AABB intersects with the given AABB.

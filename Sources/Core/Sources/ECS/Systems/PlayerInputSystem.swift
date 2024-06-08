@@ -219,8 +219,7 @@ public final class PlayerInputSystem: System {
               }
 
               let ray = game.accessPlayer(acquireLock: false, action: \.ray)
-              // TODO: Don't hardcode reach
-              var currentDistance: Float = 4
+              var currentDistance: Float = Player.attackReach
               for part in dragonParts.parts {
                 let aabb = part.aabb(withParentPosition: dragonPosition.vector)
                 if let (distance, _) = aabb.intersectionDistanceAndFace(with: ray),
@@ -230,6 +229,9 @@ public final class PlayerInputSystem: System {
                   currentDistance = distance
                 }
               }
+
+              print(entityId, targetedEntity.target)
+              print(currentDistance)
             }
 
             try connection?.sendPacket(

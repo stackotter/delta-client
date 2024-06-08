@@ -6,6 +6,9 @@ import Foundation
 ///
 /// Please note that all components are classes.
 public struct Player {
+  public static let attackReach: Float = 3
+  public static let buildingReach: Float = 4.5
+
   /// The component storing the player's entity id.
   public private(set) var entityId: EntityId
   /// The component storing whether the player is on the ground/swimming or not.
