@@ -38,7 +38,7 @@ fragment float4 guiFragment(FragmentInput in [[stage_in]],
     color = in.tint;
   } else {
     color = textureArray.sample(textureSampler, in.uv, in.textureIndex);
-    if (color.w < 0.33) {
+    if (color.a < 0.33) {
       discard_fragment();
     }
     color *= in.tint;
