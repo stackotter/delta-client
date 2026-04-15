@@ -1,12 +1,12 @@
-import SwiftCrossUI
 import DeltaCore
+import SwiftCrossUI
 
 struct AccountListView: View {
   var inspectAccount: (Account) -> Void
   var offlineLogin: () -> Void
   var microsoftLogin: () -> Void
 
-  var body: some ViewContent {
+  var body: some View {
     VStack {
       Button("Add offline account") {
         offlineLogin()

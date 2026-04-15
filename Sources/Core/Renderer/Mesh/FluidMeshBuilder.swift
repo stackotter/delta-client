@@ -1,14 +1,14 @@
-import FirebladeMath
 import DeltaCore
+import FirebladeMath
 
 /// Builds the fluid mesh for a block.
-struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in vanilla
+struct FluidMeshBuilder {  // TODO: Make fluid meshes look more like they do in vanilla
   /// The UVs for the top of a fluid when flowing.
   static let flowingUVs: [Vec2f] = [
     [0.75, 0.25],
     [0.25, 0.25],
     [0.25, 0.75],
-    [0.75, 0.75]
+    [0.75, 0.75],
   ]
 
   /// The UVs for the top of a fluid when still.
@@ -16,7 +16,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
     [1, 0],
     [0, 0],
     [0, 1],
-    [1, 1]
+    [1, 1],
   ]
 
   /// The component directions of the direction to each corner. The index of each is used as the
@@ -25,7 +25,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
     [.north, .east],
     [.north, .west],
     [.south, .west],
-    [.south, .east]
+    [.south, .east],
   ]
 
   /// Maps directions to the indices of the corners connected to that edge.
@@ -33,11 +33,12 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
     .north: [0, 1],
     .west: [1, 2],
     .south: [2, 3],
-    .east: [3, 0]
+    .east: [3, 0],
   ]
 
   let position: BlockPosition
-  let blockIndex: Int // Gets index as well as position to avoid duplicate calculation
+  // Take index as well as position to avoid duplicate calculation
+  let blockIndex: Int
   let block: Block
   let fluid: Fluid
   let chunk: Chunk
@@ -59,10 +60,12 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
 
     var tint = Vec3f(1, 1, 1)
     if block.fluidState?.fluid.identifier.name == "water" {
-      guard let tintColor = chunk.biome(
-        at: position.relativeToChunk,
-        acquireLock: false
-      )?.waterColor.floatVector else {
+      guard
+        let tintColor = chunk.biome(
+          at: position.relativeToChunk,
+          acquireLock: false
+        )?.waterColor.floatVector
+      else {
         // TODO: use a fallback color instead
         log.warning("Failed to get water tint")
         return
@@ -71,7 +74,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
     }
 
     let heights = calculateHeights()
-    let isFlowing = Set(heights).count > 1 // If the corners aren't all the same height, it's flowing
+    let isFlowing = Set(heights).count > 1  // If the corners aren't all the same height, it's flowing
     let topCornerPositions = calculatePositions(heights)
 
     // Get textures
@@ -119,7 +122,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
       let shade = CubeGeometry.shades[direction.rawValue]
       let tint = tint * shade
 
-      var geometry = Geometry()
+      var geometry = Geometry<BlockVertex>()
       switch direction {
         case .up:
           buildTopFace(
@@ -153,15 +156,17 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
 
       geometry.indices.append(contentsOf: CubeGeometry.faceWinding)
 
-      translucentMesh.add(SortableMeshElement(
-        geometry: geometry,
-        centerPosition: position.floatVector + Vec3f(0.5, 0.5, 0.5)
-      ))
+      translucentMesh.add(
+        SortableMeshElement(
+          geometry: geometry,
+          centerPosition: position.floatVector + Vec3f(0.5, 0.5, 0.5)
+        )
+      )
     }
   }
 
   private func buildTopFace(
-    into geometry: inout Geometry,
+    into geometry: inout Geometry<BlockVertex>,
     isFlowing: Bool,
     heights: [Float],
     topCornerPositions: [Vec3f],
@@ -181,7 +186,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
       // Rotate corner positions so that the lowest and the opposite from the lowest are on both triangles
       positions = []
       for i in 0..<4 {
-        positions.append(topCornerPositions[(i + lowestCornerIndex) & 0x3]) // & 0x3 performs mod 4
+        positions.append(topCornerPositions[(i + lowestCornerIndex) & 0x3])  // & 0x3 performs mod 4
       }
     } else {
       positions = topCornerPositions
@@ -194,7 +199,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
 
   private func buildSideFace(
     _ direction: Direction,
-    into geometry: inout Geometry,
+    into geometry: inout Geometry<BlockVertex>,
     heights: [Float],
     topCornerPositions: [Vec3f],
     basePosition: Vec3f,
@@ -212,14 +217,14 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
     var positions = cornerIndices.map { topCornerPositions[$0] }
     let offsets = cornerIndices.map { Self.cornerToDirections[$0] }.reversed()
     for offset in offsets {
-      positions.append(basePosition + offset[0].vector/2 + offset[1].vector/2)
+      positions.append(basePosition + offset[0].vector / 2 + offset[1].vector / 2)
     }
 
     addVertices(to: &geometry, at: positions, uvs: uvs, texture: flowingTexture, tint: tint)
   }
 
   private func buildBottomFace(
-    into geometry: inout Geometry,
+    into geometry: inout Geometry<BlockVertex>,
     basePosition: Vec3f,
     topCornerPositions: [Vec3f],
     stillTexture: UInt16,
@@ -229,7 +234,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
     var positions: [Vec3f] = []
     positions.reserveCapacity(4)
     for i in 0..<4 {
-      var position = topCornerPositions[(i - 1) & 0x3] // & 0x3 is mod 4
+      var position = topCornerPositions[(i - 1) & 0x3]  // & 0x3 is mod 4
       position.y = basePosition.y
       positions.append(position)
     }
@@ -276,7 +281,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
       let positions: [BlockPosition] = [
         position + xOffset,
         position + zOffset,
-        position + xOffset + zOffset
+        position + xOffset + zOffset,
       ]
 
       // Get the highest fluid level around the corner
@@ -321,7 +326,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
   private func countLowestCorners(_ heights: [Float]) -> (count: Int, index: Int) {
     var lowestCornerHeight: Float = 1
     var lowestCornerIndex = 0
-    var lowestCornersCount = 0 // The number of corners at the lowest height
+    var lowestCornersCount = 0  // The number of corners at the lowest height
     for (index, height) in heights.enumerated() {
       if height < lowestCornerHeight {
         lowestCornersCount = 1
@@ -341,7 +346,9 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
     } else if lowestCornersCount == 3 {
       // If there are three lowest corners, take the last (when going anticlockwise)
       let nextCornerIndex = (lowestCornerIndex + 1) & 0x3
-      if heights[previousCornerIndex] == lowestCornerHeight && heights[nextCornerIndex] == lowestCornerHeight {
+      if heights[previousCornerIndex] == lowestCornerHeight
+        && heights[nextCornerIndex] == lowestCornerHeight
+      {
         lowestCornerIndex = nextCornerIndex
       } else if heights[nextCornerIndex] == lowestCornerHeight {
         lowestCornerIndex = (lowestCornerIndex + 2) & 0x3
@@ -356,7 +363,8 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
 
     // Rotate UVs 45 degrees if flowing diagonally
     if lowestCornersCount == 1 || lowestCornersCount == 3 {
-      let uvRotation = MatrixUtil.rotationMatrix2d(lowestCornersCount == 1 ? Float.pi / 4 : 3 * Float.pi / 4)
+      let uvRotation = MatrixUtil.rotationMatrix2d(
+        lowestCornersCount == 1 ? Float.pi / 4 : 3 * Float.pi / 4)
       let center = Vec2f(repeating: 0.5)
       for (index, uv) in uvs.enumerated() {
         uvs[index] = (uv - center) * uvRotation + center
@@ -367,7 +375,7 @@ struct FluidMeshBuilder { // TODO: Make fluid meshes look more like they do in v
   }
 
   private func addVertices<Positions: Collection>(
-    to geometry: inout Geometry,
+    to geometry: inout Geometry<BlockVertex>,
     at positions: Positions,
     uvs: [Vec2f],
     texture: UInt16,

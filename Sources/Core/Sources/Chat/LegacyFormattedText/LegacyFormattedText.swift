@@ -1,8 +1,8 @@
 import Foundation
 
-#if os(macOS)
+#if canImport(AppKit)
 import AppKit
-#elseif os(iOS)
+#elseif canImport(UIKit)
 import CoreGraphics
 import UIKit
 #endif

@@ -46,7 +46,7 @@ To view application logs, click `View > Logs` in the menu bar while Delta Client
 
 ### Building from source
 
-To build Delta Client you'll first need to install Xcode 14 and the latest version of [Swift Bundler](https://github.com/stackotter/swift-bundler). Please note that using Xcode 13 is ok but you may run into some weird memory corruption issues, so test with Xcode 14 before assuming that it's a Delta Client bug. Once you've installed the requirements, run the following commands in terminal;
+To build Delta Client you'll first need to install Xcode 14+ and the latest version of [Swift Bundler](https://github.com/stackotter/swift-bundler). Please note that using Xcode 13 is ok but you may run into some weird memory corruption issues, so test with Xcode 14+ before assuming that it's a Delta Client bug. Once you've installed the requirements, run the following commands in terminal;
 
 ```sh
 # Clone Delta Client
@@ -99,21 +99,22 @@ Not every version will be perfectly supported but I will try and have the most p
     - [x] [Sky box](https://github.com/stackotter/delta-client/pull/188)
   - [ ] Entities
     - [x] Basic entity rendering (just coloured cubes)
-    - [ ] Render entity models
-    - [ ] Entity animations
+    - [x] Render entity models
     - [ ] Block entities (e.g. chests)
     - [ ] Item entities
+    - [ ] Entity animations
   - [ ] GUI
     - [x] Chat
     - [x] F3-style stuff
-    - [ ] Bossbars
+    - [x] Bossbars
     - [ ] Scoreboard
+    - [x] Tab list
     - [x] Health, hunger and experience
     - [x] Hotbar
     - [ ] Inventory
-      - [ ] Basic inventory
-      - [ ] Basic crafting
-      - [ ] Inventory actions
+      - [x] Basic inventory
+      - [x] Basic crafting
+      - [x] Inventory actions
       - [ ] Using recipe blocks (like crafting tables and stuff)
       - [ ] Creative inventory
 - [ ] Sound
@@ -122,11 +123,11 @@ Not every version will be perfectly supported but I will try and have the most p
   - [x] Physics loop
   - [x] Input system
   - [x] Collision system
-- [ ] Interaction
+- [x] Interaction
   - [x] Block placing
-  - [ ] Block breaking
-  - [ ] Block entity interaction
-  - [ ] Entity interaction
+  - [x] Block breaking
+  - [x] Block entity interaction
+  - [x] Entity interaction
 - [ ] Particles
   - [ ] Basic particle system
   - [ ] Block break particles

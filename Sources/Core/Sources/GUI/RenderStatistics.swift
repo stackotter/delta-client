@@ -49,7 +49,7 @@ public struct RenderStatistics {
   // MARK: Init
 
   /// Creates a new group of render statistics.
-  public init(gpuCountersEnabled: Bool) {
+  public init(gpuCountersEnabled: Bool = false) {
     self.gpuCountersEnabled = gpuCountersEnabled
   }
 

@@ -28,7 +28,6 @@ fragment float4 screenFragmentFunction(QuadVertex vert [[stage_in]],
                                        depth2d<float> offscreenResultDepth [[texture(1)]],
                                        constant struct FogUniforms &fogUniforms [[buffer(0)]]) {
   constexpr sampler smplr(coord::normalized);
-  float z = offscreenResultDepth.sample(smplr, vert.uv);
   float4 color = offscreenResult.sample(smplr, vert.uv);
   return color;
 };

@@ -52,12 +52,24 @@ public struct Identifier: Hashable, Equatable, Codable, CustomStringConvertible 
 
   // MARK: Init
 
-  /// Creates an identifier with the given name (and namespace if specified). The namespace defaults to 'minecraft'.
+  /// Creates an identifier with the given name and namespace.
   /// - Parameters:
-  ///   - namespace: The namespace for the identifier. Defaults to `"minecraft"`.
+  ///   - namespace: The namespace for the identifier.
   ///   - name: The name for the identifier.
-  public init(namespace: String = "minecraft", name: String) {
+  public init(namespace: String, name: String) {
     self.namespace = namespace
+    self.name = name
+  }
+
+  /// Creates an identifier with the given name and the `"minecraft"` namespace.
+  ///
+  /// This is separate from ``Identifier/init(namespace:name:)`` so that it can be used it expressions
+  /// such as `["dirt", "wood"].map(Identifier.init(name:))` (which a single init with a default argument
+  /// wouldn't enable).
+  /// - Parameters:
+  ///   - name: The name for the identifier.
+  public init(name: String) {
+    self.namespace = "minecraft"
     self.name = name
   }
 

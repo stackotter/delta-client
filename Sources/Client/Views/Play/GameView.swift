@@ -61,11 +61,11 @@ struct GameView: View {
                     .onKeyRelease { [weak client] key in
                       client?.release(key)
                     }
-                    .onMouseMove { [weak client] deltaX, deltaY in
+                    .onMouseMove { [weak client] x, y, deltaX, deltaY in
                       // TODO: Formalise this adjustment factor somewhere
                       let sensitivityAdjustmentFactor: Float = 0.004
                       let sensitivity = sensitivityAdjustmentFactor * managedConfig.mouseSensitivity
-                      client?.moveMouse(sensitivity * deltaX, sensitivity * deltaY)
+                      client?.moveMouse(x: x, y: y, deltaX: sensitivity * deltaX, deltaY: sensitivity * deltaY)
                     }
                     .passthroughClicks(!cursorCaptured)
                   }
@@ -90,6 +90,12 @@ struct GameView: View {
                       client?.moveRightThumbstick(x, y)
                   }
                 }
+                #if os(tvOS)
+                .focusable(!inGameMenuPresented)
+                .onExitCommand {
+                  inGameMenuPresented = true
+                }
+                #endif
               }
             case .gpuFrameCaptureComplete(let file):
               frameCaptureResult(file)
@@ -209,11 +215,9 @@ struct GameView: View {
           Button("Show in finder") {
             NSWorkspace.shared.activateFileViewerSelecting([file])
           }.buttonStyle(SecondaryButtonStyle())
-        #elseif os(iOS)
-          // TODO: Add a file sharing menu for iOS
-          Text("I have no clue how to get hold of the file")
         #else
-          #error("Unsupported platform, no file opening method")
+          // TODO: Add a file sharing menu for iOS and tvOS
+          Text("I have no clue how to get hold of the file")
         #endif
 
         Button("OK") {

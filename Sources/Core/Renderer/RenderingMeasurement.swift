@@ -16,8 +16,9 @@ public enum RenderingMeasurement: String, Hashable {
 
   case entities
   case getEntities
-  case createUniforms
-  case getBuffer
+  case createRegularEntityMeshes
+  case createBlockEntityMeshes
+  case encodeEntities
 
   case gui
   case updateUniforms

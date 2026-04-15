@@ -38,7 +38,8 @@ extension Block: BinarySerializable {
     fluidState.serialize(into: &buffer)
     tint.serialize(into: &buffer)
     offset.serialize(into: &buffer)
-    material.serialize(into: &buffer)
+    vanillaMaterialIdentifier.serialize(into: &buffer)
+    physicalMaterial.serialize(into: &buffer)
     lightMaterial.serialize(into: &buffer)
     soundMaterial.serialize(into: &buffer)
     shape.serialize(into: &buffer)
@@ -54,7 +55,8 @@ extension Block: BinarySerializable {
       fluidState: try .deserialize(from: &buffer),
       tint: try .deserialize(from: &buffer),
       offset: try .deserialize(from: &buffer),
-      material: try .deserialize(from: &buffer),
+      vanillaMaterialIdentifier: try .deserialize(from: &buffer),
+      physicalMaterial: try .deserialize(from: &buffer),
       lightMaterial: try .deserialize(from: &buffer),
       soundMaterial: try .deserialize(from: &buffer),
       shape: try .deserialize(from: &buffer),

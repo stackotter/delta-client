@@ -1,5 +1,5 @@
-import SwiftUI
 import DeltaCore
+import SwiftUI
 
 class Modal: ObservableObject {
   enum Content {

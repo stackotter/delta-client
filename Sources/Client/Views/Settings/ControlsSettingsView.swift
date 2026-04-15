@@ -1,5 +1,6 @@
 import SwiftUI
 
+#if !os(tvOS)
 struct ControlsSettingsView: View {
   @EnvironmentObject var managedConfig: ManagedConfig
 
@@ -78,3 +79,4 @@ struct ControlsSettingsView: View {
     return "\(Int(roundSensitivity(sensitivity) * 100))%"
   }
 }
+#endif

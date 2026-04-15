@@ -31,7 +31,12 @@ public final class Client: @unchecked Sendable {
   public init(resourcePack: ResourcePack, configuration: ClientConfiguration) {
     self.resourcePack = resourcePack
     self.configuration = configuration
-    game = Game(eventBus: eventBus, configuration: configuration)
+    game = Game(
+      eventBus: eventBus,
+      configuration: configuration,
+      font: resourcePack.vanillaResources.fontPalette.defaultFont,
+      locale: resourcePack.getDefaultLocale()
+    )
   }
 
   deinit {
@@ -42,11 +47,14 @@ public final class Client: @unchecked Sendable {
   // MARK: Connection lifecycle
 
   /// Join the specified server. Throws if the packets fail to send.
-  public func joinServer(describedBy descriptor: ServerDescriptor, with account: Account) throws {
+  public func joinServer(
+    describedBy descriptor: ServerDescriptor,
+    with account: Account
+  ) async throws {
     self.account = account
 
     // Create a connection to the server
-    let connection = try ServerConnection(
+    let connection = try await ServerConnection(
       descriptor: descriptor,
       eventBus: eventBus
     )
@@ -54,7 +62,14 @@ public final class Client: @unchecked Sendable {
       guard let self = self else { return }
       self.handlePacket(packet)
     }
-    game = Game(eventBus: eventBus, configuration: configuration, connection: connection)
+    game.stopTickScheduler()
+    game = Game(
+      eventBus: eventBus,
+      configuration: configuration,
+      connection: connection,
+      font: resourcePack.vanillaResources.fontPalette.defaultFont,
+      locale: resourcePack.getDefaultLocale()
+    )
     hasFinishedDownloadingTerrain = false
     try connection.login(username: account.username)
     self.connection = connection
@@ -129,11 +144,23 @@ public final class Client: @unchecked Sendable {
   }
 
   /// Moves the mouse.
+  ///
+  /// `deltaX` and `deltaY` aren't just the difference between the current and
+  /// previous values of `x` and `y` because there are ways for the mouse to
+  /// appear at a new position without causing in-game movement (e.g. if the
+  /// user opens the in-game menu, moves the mouse, and then closes the in-game
+  /// menu).
   /// - Parameters:
+  ///   - x: The absolute mouse x (relative to the play area's top left corner).
+  ///   - y: The absolute mouse y (relative to the play area's top left corner).
   ///   - deltaX: The change in mouse x.
   ///   - deltaY: The change in mouse y.
-  public func moveMouse(_ deltaX: Float, _ deltaY: Float) {
-    game.moveMouse(deltaX, deltaY)
+  public func moveMouse(x: Float, y: Float, deltaX: Float, deltaY: Float) {
+    // TODO: Update this API (and everything else reliant on it) so that DeltaCore
+    //   is the one that decides which input events to ignore (instead of InputView
+    //   (and similar) deciding whether an event should be given to Client or not).
+    //   This will allow the deltaX and deltaY parameters to be removed.
+    game.moveMouse(x: x, y: y, deltaX: deltaX, deltaY: deltaY)
   }
 
   /// Moves the left thumbstick.

@@ -1,11 +1,11 @@
+import FirebladeMath
 import Foundation
 import MetalKit
-import FirebladeMath
 
 /// A renderable mesh of a chunk section.
 public struct ChunkSectionMesh {
   /// The mesh containing transparent and opaque blocks only. Doesn't need sorting.
-  public var transparentAndOpaqueMesh: Mesh
+  public var transparentAndOpaqueMesh: Mesh<BlockVertex, ChunkUniforms>
   /// The mesh containing translucent blocks. Requires sorting when the player moves (clever stuff is done to minimise sorts in ``WorldRenderer``).
   public var translucentMesh: SortableMesh
   /// Whether the mesh contains fluids or not.
@@ -17,8 +17,7 @@ public struct ChunkSectionMesh {
 
   /// Create a new chunk section mesh.
   public init(_ uniforms: ChunkUniforms) {
-    transparentAndOpaqueMesh = Mesh()
-    transparentAndOpaqueMesh.uniforms = uniforms
+    transparentAndOpaqueMesh = Mesh<BlockVertex, ChunkUniforms>(uniforms: uniforms)
     translucentMesh = SortableMesh(uniforms: uniforms)
   }
 
@@ -38,7 +37,8 @@ public struct ChunkSectionMesh {
     device: MTLDevice,
     commandQueue: MTLCommandQueue
   ) throws {
-    try transparentAndOpaqueMesh.render(into: renderEncoder, with: device, commandQueue: commandQueue)
+    try transparentAndOpaqueMesh.render(
+      into: renderEncoder, with: device, commandQueue: commandQueue)
   }
 
   /// Encode the render commands for translucent mesh of this chunk section.

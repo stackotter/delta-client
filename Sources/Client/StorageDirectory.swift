@@ -36,6 +36,10 @@ struct StorageDirectory {
       let options = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
       let base = options.first?.appendingPathComponent("dev.stackotter.delta-client")
       return base.map(StorageDirectory.init)
+    #elseif os(tvOS)
+      let base = FileManager.default.temporaryDirectory.appendingPathComponent("dev.stackotter.delta-client")
+      try? FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
+      return StorageDirectory(base)
     #elseif os(Linux)
       #error("Linux storage directory not implemented")
     #endif

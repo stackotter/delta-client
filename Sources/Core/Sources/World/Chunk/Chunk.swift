@@ -75,7 +75,10 @@ public final class Chunk {
   ///   - biomeIds: The biomes of the chunk in 4x4x4 blocks. Indexed in the same order as blocks. (Index is block index divided by 4).
   ///   - lighting: Lighting data for the chunk
   ///   - heightMap: Information about the highest blocks in each column of the chunk.
-  public init(sections: [Chunk.Section], blockEntities: [BlockEntity], biomeIds: [UInt8], lighting: ChunkLighting? = nil, heightMap: HeightMap) {
+  public init(
+    sections: [Chunk.Section], blockEntities: [BlockEntity], biomeIds: [UInt8],
+    lighting: ChunkLighting? = nil, heightMap: HeightMap
+  ) {
     self.sections = sections
     self.blockEntities = blockEntities
     self.biomeIds = biomeIds
@@ -120,7 +123,9 @@ public final class Chunk {
   /// - Returns: Block id of block. Returns 0 (air) if `index` is invalid (outside chunk).
   public func getBlockId(at index: Int, acquireLock: Bool = true) -> Int {
     if !Self.isValidBlockIndex(index) {
-      log.warning("Invalid block index passed to Chunk.getBlockStateId(at:), index=\(index), returning block id 0 (air)")
+      log.warning(
+        "Invalid block index passed to Chunk.getBlockStateId(at:), index=\(index), returning block id 0 (air)"
+      )
       return 0
     }
 
@@ -327,7 +332,9 @@ public final class Chunk {
   ///   - position: Position of block.
   ///   - level: The new block light level.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
-  public func setBlockLightLevel(at position: BlockPosition, to level: Int, acquireLock: Bool = true) {
+  public func setBlockLightLevel(
+    at position: BlockPosition, to level: Int, acquireLock: Bool = true
+  ) {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
 
@@ -351,11 +358,25 @@ public final class Chunk {
   ///   - position: Position of block.
   ///   - level: The new sky light level.
   ///   - acquireLock: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
-  public func setSkyLightLevel(at position: BlockPosition, to level: Int, acquireLock: Bool = true) {
+  public func setSkyLightLevel(at position: BlockPosition, to level: Int, acquireLock: Bool = true)
+  {
     if acquireLock { lock.acquireWriteLock() }
     defer { if acquireLock { lock.unlock() } }
 
     lighting.setSkyLightLevel(at: position, to: level)
+  }
+
+  // TODO: Make method naming consistent (chunk lighting uses `getLightLevel` but chunk uses `lightLevel`).
+  /// Returns the block and sky light levels for the given block.
+  /// - Parameters:
+  ///   - position: Position of block.
+  ///   - acquireLock: Position of block.
+  /// - Returns: Whether to acquire a lock or not. Only set to false if you know what you're doing. See ``Chunk``.
+  public func lightLevel(at position: BlockPosition, acquireLock: Bool = true) -> LightLevel {
+    if acquireLock { lock.acquireReadLock() }
+    defer { if acquireLock { lock.unlock() } }
+
+    return lighting.getLightLevel(at: position)
   }
 
   /// Updates the chunk's lighting with data received from the server.
@@ -464,9 +485,8 @@ public final class Chunk {
 
   /// - Returns: `true` if the block position is contained within the a chunk.
   private static func isValidBlockPosition(_ position: BlockPosition) -> Bool {
-    return (
-      position.x < Chunk.width && position.x >= 0 &&
-      position.z < Chunk.depth && position.z >= 0 &&
-      position.y < Chunk.height && position.y >= 0)
+    return
+      (position.x < Chunk.width && position.x >= 0 && position.z < Chunk.depth && position.z >= 0
+      && position.y < Chunk.height && position.y >= 0)
   }
 }

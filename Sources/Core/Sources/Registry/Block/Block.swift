@@ -17,8 +17,10 @@ public struct Block: Codable {
   public var tint: Tint?
   /// A type of random position offset to apply to the block.
   public var offset: Offset?
+  /// The material identifier that vanilla gives to this block.
+  public var vanillaMaterialIdentifier: Identifier
   /// Information about the physical properties of the block.
-  public var material: PhysicalMaterial
+  public var physicalMaterial: PhysicalMaterial
   /// Information about the way the block interacts with light.
   public var lightMaterial: LightMaterial
   /// Information about the sound properties of the block.
@@ -48,7 +50,8 @@ public struct Block: Codable {
     fluidState: FluidState? = nil,
     tint: Tint? = nil,
     offset: Offset? = nil,
-    material: PhysicalMaterial,
+    vanillaMaterialIdentifier: Identifier,
+    physicalMaterial: PhysicalMaterial,
     lightMaterial: LightMaterial,
     soundMaterial: SoundMaterial,
     shape: Shape,
@@ -61,7 +64,8 @@ public struct Block: Codable {
     self.fluidState = fluidState
     self.tint = tint
     self.offset = offset
-    self.material = material
+    self.vanillaMaterialIdentifier = vanillaMaterialIdentifier
+    self.physicalMaterial = physicalMaterial
     self.lightMaterial = lightMaterial
     self.soundMaterial = soundMaterial
     self.shape = shape
@@ -104,7 +108,8 @@ public struct Block: Codable {
     fluidState: nil,
     tint: nil,
     offset: nil,
-    material: PhysicalMaterial.default,
+    vanillaMaterialIdentifier: Identifier(name: "missing"),
+    physicalMaterial: PhysicalMaterial.default,
     lightMaterial: LightMaterial.default,
     soundMaterial: SoundMaterial.default,
     shape: Shape.default,

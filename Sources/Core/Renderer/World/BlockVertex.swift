@@ -2,17 +2,17 @@ import Foundation
 
 /// The vertex format used by the chunk block shader.
 public struct BlockVertex {
-  let x: Float
-  let y: Float
-  let z: Float
-  let u: Float
-  let v: Float
-  let r: Float
-  let g: Float
-  let b: Float
-  let a: Float
-  let skyLightLevel: UInt8
-  let blockLightLevel: UInt8
-  let textureIndex: UInt16
-  let isTransparent: Bool
+  var x: Float
+  var y: Float
+  var z: Float
+  var u: Float
+  var v: Float
+  var r: Float
+  var g: Float
+  var b: Float
+  var a: Float
+  var skyLightLevel: UInt8
+  var blockLightLevel: UInt8
+  var textureIndex: UInt16
+  var isTransparent: Bool
 }

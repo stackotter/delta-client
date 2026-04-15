@@ -3,14 +3,15 @@ import FirebladeMath
 
 /// The game's input state.
 public final class InputState: SingleComponent {
-  /// The maximum number of ticks between consecutive inputs to count as a double tap.
+  /// The maximum number of ticks between consecutive inputs to count as a
+  /// double tap.
   public static let maximumDoubleTapDelay = 6
 
-  /// The newly pressed keys in the order that they were pressed. Only includes presses since last
-  /// call to ``flushInputs()``.
+  /// The newly pressed keys in the order that they were pressed. Only includes
+  /// presses since last call to ``flushInputs()``.
   public private(set) var newlyPressed: [KeyPressEvent] = []
-  /// The newly released keys in the order that they were released. Only includes releases since
-  /// last call to ``flushInputs()``.
+  /// The newly released keys in the order that they were released. Only includes
+  /// releases since last call to ``flushInputs()``.
   public private(set) var newlyReleased: [KeyReleaseEvent] = []
 
   /// The currently pressed keys.
@@ -18,6 +19,9 @@ public final class InputState: SingleComponent {
   /// The currently pressed inputs.
   public private(set) var inputs: Set<Input> = []
 
+  /// The current absolute mouse position relative to the play area's top left corner.
+  /// Measured in true pixels (not scaled down by the screen's scaling factor).
+  public private(set) var mousePosition: Vec2f = Vec2f(0, 0)
   /// The mouse delta since the last call to ``resetMouseDelta()``.
   public private(set) var mouseDelta: Vec2f = Vec2f(0, 0)
   /// The position of the left thumbstick.
@@ -58,8 +62,10 @@ public final class InputState: SingleComponent {
     newlyReleased.append(KeyReleaseEvent(key: key, input: input))
   }
 
-  /// Releases all inputs.
-  public func releaseAll() {
+  /// Releases all inputs. Doesn't clear ``newlyPressed``, so if used when disabling
+  /// a certain set of (or all) inputs, wait to call this until after all relevant handlers
+  /// know to ignore said inputs.
+  public func releaseAll(clearNewlyPressed: Bool = true) {
     for key in keys {
       newlyReleased.append(KeyReleaseEvent(key: key, input: nil))
     }
@@ -67,8 +73,6 @@ public final class InputState: SingleComponent {
     for input in inputs {
       newlyReleased.append(KeyReleaseEvent(key: nil, input: input))
     }
-
-    newlyPressed = []
   }
 
   /// Clears ``newlyPressed`` and ``newlyReleased``.
@@ -78,11 +82,18 @@ public final class InputState: SingleComponent {
   }
 
   /// Updates the current mouse delta by adding the given delta.
+  ///
+  /// See ``Client/moveMouse(x:y:deltaX:deltaY:)`` for the reasoning behind
+  /// having both absolute and relative parameters (it's currently necessary
+  /// but could be fixed by cleaning up the input handling architecture).
   /// - Parameters:
+  ///   - x: The absolute mouse x (relative to the play area's top left corner).
+  ///   - y: The absolute mouse y (relative to the play area's top left corner).
   ///   - deltaX: The change in mouse x.
   ///   - deltaY: The change in mouse y.
-  public func moveMouse(_ deltaX: Float, _ deltaY: Float) {
+  public func moveMouse(x: Float, y: Float, deltaX: Float, deltaY: Float) {
     mouseDelta += Vec2f(deltaX, deltaY)
+    mousePosition = Vec2f(x, y)
   }
 
   /// Updates the current position of the left thumbstick.
@@ -109,7 +120,7 @@ public final class InputState: SingleComponent {
   /// Ticks the input state by flushing ``newlyPressed`` into ``keys`` and ``inputs``, and clearing
   /// ``newlyReleased``. Also emits events to the given ``EventBus``.
   func tick(_ isInputSuppressed: [Bool], _ eventBus: EventBus, _ configuration: ClientConfiguration) {
-    assert(isInputSuppressed.count == newlyPressed.count, "`isInputSuppressed` should be the same length as `newlyPressed`")
+    precondition(isInputSuppressed.count == newlyPressed.count, "`isInputSuppressed` should be the same length as `newlyPressed`")
 
     ticksSinceForwardsPressed += 1
     ticksSinceJumpPressed += 1

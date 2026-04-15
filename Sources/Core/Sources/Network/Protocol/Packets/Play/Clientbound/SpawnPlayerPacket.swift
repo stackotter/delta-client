@@ -1,5 +1,5 @@
-import Foundation
 import FirebladeMath
+import Foundation
 
 public struct SpawnPlayerPacket: ClientboundPacket {
   public static let id: Int = 0x04
@@ -35,7 +35,9 @@ public struct SpawnPlayerPacket: ClientboundPacket {
       EntityPosition(position)
       EntityVelocity(0, 0, 0)
       EntityRotation(pitch: pitch, yaw: yaw)
+      EntityLerpState()
       EntityAttributes()
+      EntityMetadata(inheritanceChain: playerEntity.inheritanceChain)
     }
   }
 }

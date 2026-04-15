@@ -10,7 +10,7 @@ jobs:
     runs-on: macOS-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v6
       - name: Lint
         run: |
           URL="https://github.com/realm/SwiftLint/releases/download/0.50.3/portable_swiftlint.zip"

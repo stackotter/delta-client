@@ -1,5 +1,5 @@
-import Foundation
 import FirebladeECS
+import Foundation
 
 /// Stores all of the game data such as entities, chunks and chat messages.
 public final class Game: @unchecked Sendable {
@@ -42,8 +42,13 @@ public final class Game: @unchecked Sendable {
 
   // MARK: Private properties
 
-  /// A locked for managing safe access of ``nexus``.
-  private let nexusLock = ReadWriteLock()
+  #if DEBUG_LOCKS
+    /// A locked for managing safe access of ``nexus``.
+    public let nexusLock = ReadWriteLock()
+  #else
+    /// A locked for managing safe access of ``nexus``.
+    private let nexusLock = ReadWriteLock()
+  #endif
   /// The container for the game's entities. Strictly only contains what Minecraft counts as
   /// entities. Doesn't include block entities.
   private let nexus = Nexus()
@@ -51,13 +56,25 @@ public final class Game: @unchecked Sendable {
   private var player: Player
   /// The current input state (keyboard and mouse).
   private let inputState: InputState
+
+  /// A lock for managing safe access of ``gui``.
+  private let guiLock = ReadWriteLock()
   /// The current GUI state (f3 screen, inventory, etc).
+  private let gui: InGameGUI
+  /// Storage for the current GUI state. Protected by ``nexusLock`` since it's stored in the
+  /// nexus.
   private let _guiState: GUIStateStorage
 
   // MARK: Init
 
   /// Creates a game with default properties. Creates the player. Starts the tick loop.
-  public init(eventBus: EventBus, configuration: ClientConfiguration, connection: ServerConnection? = nil) {
+  public init(
+    eventBus: EventBus,
+    configuration: ClientConfiguration,
+    connection: ServerConnection? = nil,
+    font: Font,
+    locale: MinecraftLocale
+  ) {
     self.eventBus = eventBus
 
     world = World(eventBus: eventBus)
@@ -65,6 +82,7 @@ public final class Game: @unchecked Sendable {
     tickScheduler = TickScheduler(nexus, nexusLock: nexusLock, world)
 
     inputState = nexus.single(InputState.self).component
+    gui = InGameGUI()
     _guiState = nexus.single(GUIStateStorage.self).component
 
     player = Player()
@@ -78,7 +96,14 @@ public final class Game: @unchecked Sendable {
     tickScheduler.addSystem(PlayerClimbSystem())
     tickScheduler.addSystem(PlayerGravitySystem())
     tickScheduler.addSystem(PlayerSmoothingSystem())
-    tickScheduler.addSystem(PlayerInputSystem(connection, self, eventBus, configuration))
+    tickScheduler.addSystem(PlayerBlockBreakingSystem(connection, self))
+    // TODO: Make sure that font gets updated when resource pack gets updated, will likely
+    //   require significant refactoring if we wanna do it right (as in not just hacking it
+    //   together for the specific case of PlayerInputSystem); proper resource pack propagation
+    //   will probably take quite a bit of work.
+    tickScheduler.addSystem(
+      PlayerInputSystem(connection, self, eventBus, configuration, font, locale)
+    )
     tickScheduler.addSystem(PlayerFlightSystem())
     tickScheduler.addSystem(PlayerAccelerationSystem())
     tickScheduler.addSystem(PlayerJumpSystem())
@@ -106,7 +131,7 @@ public final class Game: @unchecked Sendable {
   ///   - key: The pressed key if any.
   ///   - input: The pressed input if any.
   ///   - characters: The characters typed by the pressed key.
-  public func press(key: Key?, input: Input?, characters: [Character] = []) { // swiftlint:disable:this cyclomatic_complexity
+  public func press(key: Key?, input: Input?, characters: [Character] = []) {  // swiftlint:disable:this cyclomatic_complexity
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
     inputState.press(key: key, input: input, characters: characters)
@@ -130,13 +155,19 @@ public final class Game: @unchecked Sendable {
   }
 
   /// Moves the mouse.
+  ///
+  /// See ``Client/moveMouse(x:y:deltaX:deltaY:)`` for the reasoning behind
+  /// having both absolute and relative parameters (it's currently necessary
+  /// but could be fixed by cleaning up the input handling architecture).
   /// - Parameters:
+  ///   - x: The absolute mouse x (relative to the play area's top left corner).
+  ///   - y: The absolute mouse y (relative to the play area's top left corner).
   ///   - deltaX: The change in mouse x.
   ///   - deltaY: The change in mouse y.
-  public func moveMouse(_ deltaX: Float, _ deltaY: Float) {
+  public func moveMouse(x: Float, y: Float, deltaX: Float, deltaY: Float) {
     nexusLock.acquireWriteLock()
     defer { nexusLock.unlock() }
-    inputState.moveMouse(deltaX, deltaY)
+    inputState.moveMouse(x: x, y: y, deltaX: deltaX, deltaY: deltaY)
   }
 
   /// Moves the left thumbstick.
@@ -159,6 +190,12 @@ public final class Game: @unchecked Sendable {
     inputState.moveRightThumbstick(x, y)
   }
 
+  public func accessInputState<R>(acquireLock: Bool = true, action: (InputState) -> R) -> R {
+    if acquireLock { nexusLock.acquireWriteLock() }
+    defer { if acquireLock { nexusLock.unlock() } }
+    return action(inputState)
+  }
+
   /// Gets a copy of the current GUI state.
   /// - Returns: A copy of the current GUI state.
   public func guiState() -> GUIState {
@@ -167,13 +204,63 @@ public final class Game: @unchecked Sendable {
     return _guiState.inner
   }
 
-  /// Mutates the GUI state using a provided action.
-  /// - acquireLock: If `false`, a nexus lock will not be acquired. Use with caution.
-  /// - action: Action to run on GUI state.
-  public func mutateGUIState(acquireLock: Bool = true, action: (inout GUIState) -> Void) {
+  /// Handles a received chat message.
+  public func receiveChatMessage(acquireLock: Bool = true, _ message: ChatMessage) {
     if acquireLock { nexusLock.acquireWriteLock() }
     defer { if acquireLock { nexusLock.unlock() } }
-    action(&_guiState.inner)
+    _guiState.chat.add(message)
+  }
+
+  /// Mutates the GUI state with a given action.
+  public func mutateGUIState<R>(acquireLock: Bool = true, action: (inout GUIState) throws -> R)
+    rethrows -> R
+  {
+    if acquireLock { nexusLock.acquireWriteLock() }
+    defer { if acquireLock { nexusLock.unlock() } }
+    return try action(&_guiState.inner)
+  }
+
+  /// Updates the GUI's render statistics.
+  public func updateRenderStatistics(acquireLock: Bool = true, to statistics: RenderStatistics) {
+    mutateGUIState(acquireLock: false) { state in
+      state.renderStatistics = statistics
+    }
+  }
+
+  /// Compile the in-game GUI to a renderable.
+  /// - acquireGUILock: If `false`, a GUI lock will not be acquired. Use with caution.
+  /// - acquireNexusLock: If `false`, a GUI lock will not be acquired (otherwise a nexus lock will be
+  ///   acquired if guiState isn't supplied). Use with caution.
+  /// - connection: Used to notify the server of window interactions and related operations.
+  /// - font: Font to use when rendering, used to compute text sizing and wrapping.
+  /// - locale: Locale used to resolve chat message content.
+  /// - guiState: Avoids the need for this function to call out to the nexus redundantly if the caller already
+  ///   has a reference to the gui state.
+  public func compileGUI(
+    acquireGUILock: Bool = true,
+    acquireNexusLock: Bool = true,
+    withFont font: Font,
+    locale: MinecraftLocale,
+    connection: ServerConnection?,
+    guiState: GUIStateStorage? = nil
+  ) -> GUIElement.GUIRenderable {
+    // Acquire the nexus lock first as that's the one that threads can be sitting inside of with `Game.accessNexus`.
+    // If we get the GUI lock first then the renderer can be waiting for the nexus lock while PlayerInputSystem is
+    // sitting with a nexus lock and waiting for a gui lock.
+    // TODO: Formalize the idea of keeping a consistent 'topological' ordering for locks throughout the project.
+    //   I think that would prevent this class of deadlocks.
+    var state: GUIStateStorage
+    if let guiState = guiState {
+      state = guiState
+    } else {
+      if acquireNexusLock { nexusLock.acquireWriteLock() }
+      state = nexus.single(GUIStateStorage.self).component
+    }
+    if acquireGUILock { guiLock.acquireWriteLock() }
+    defer { if acquireGUILock { guiLock.unlock() } }
+    defer { if acquireNexusLock && guiState == nil { nexusLock.unlock() } }
+    return gui.content(game: self, connection: connection, state: state)
+      .resolveConstraints(availableSize: state.drawableSize, font: font, locale: locale)
   }
 
   // MARK: Entity
@@ -204,12 +291,18 @@ public final class Game: @unchecked Sendable {
   /// - Parameters:
   ///   - id: The id of the entity to access.
   ///   - action: The action to perform on the entity if it exists.
-  public func accessEntity(id: Int, action: (Entity) -> Void) {
-    nexusLock.acquireWriteLock()
-    defer { nexusLock.unlock() }
+  public func accessEntity<R>(
+    id: Int,
+    acquireLock: Bool = true,
+    action: (Entity) throws -> R
+  ) rethrows -> R? {
+    if acquireLock { nexusLock.acquireWriteLock() }
+    defer { if acquireLock { nexusLock.unlock() } }
 
     if let identifier = entityIdToEntityIdentifier[id] {
-      action(nexus.entity(from: identifier))
+      return try action(nexus.entity(from: identifier))
+    } else {
+      return nil
     }
   }
 
@@ -219,7 +312,12 @@ public final class Game: @unchecked Sendable {
   ///   - componentType: The type of component to access.
   ///   - acquireLock: If `false`, no lock is acquired. Only use if you know what you're doing.
   ///   - action: The action to perform on the component if the entity exists and contains that component.
-  public func accessComponent<T: Component>(entityId: Int, _ componentType: T.Type, acquireLock: Bool = true, action: (T) -> Void) {
+  public func accessComponent<T: Component, R>(
+    entityId: Int,
+    _ componentType: T.Type,
+    acquireLock: Bool = true,
+    action: (T) throws -> R
+  ) rethrows -> R? {
     if acquireLock { nexusLock.acquireWriteLock() }
     defer { if acquireLock { nexusLock.unlock() } }
 
@@ -227,17 +325,17 @@ public final class Game: @unchecked Sendable {
       let identifier = entityIdToEntityIdentifier[entityId],
       let component = nexus.entity(from: identifier).get(component: T.self)
     else {
-      return
+      return nil
     }
 
-    action(component)
+    return try action(component)
   }
 
   /// Removes the entity with the given vanilla id from the game if it exists.
   /// - Parameter id: The id of the entity to remove.
-  public func removeEntity(id: Int) {
-    nexusLock.acquireWriteLock()
-    defer { nexusLock.unlock() }
+  public func removeEntity(acquireLock: Bool = true, id: Int) {
+    if acquireLock { nexusLock.acquireWriteLock() }
+    defer { if acquireLock { nexusLock.unlock() } }
 
     if let identifier = entityIdToEntityIdentifier[id] {
       nexus.destroy(entityId: identifier)
@@ -273,7 +371,8 @@ public final class Game: @unchecked Sendable {
   /// - Parameters:
   ///   - acquireLock: If `false`, no lock is acquired. Only use if you know what you're doing.
   ///   - action: The action to perform on the player.
-  public func accessPlayer<T>(acquireLock: Bool = true, action: (Player) throws -> T) rethrows -> T {
+  public func accessPlayer<T>(acquireLock: Bool = true, action: (Player) throws -> T) rethrows -> T
+  {
     if acquireLock { nexusLock.acquireWriteLock() }
     defer { if acquireLock { nexusLock.unlock() } }
 
@@ -297,9 +396,9 @@ public final class Game: @unchecked Sendable {
   /// Gets the position of the block currently targeted by the player.
   /// - Parameters:
   ///   - acquireLock: If `false`, no locks are acquired. Only use if you know what you're doing.
-  public func targetedBlock(acquireLock: Bool = true) -> (block: BlockPosition, cursor: Vec3f, face: Direction, distance: Float)? { // swiftlint:disable:this large_tuple
+  public func targetedBlockIgnoringEntities(acquireLock: Bool = true) -> Targeted<BlockPosition>? {
     if acquireLock {
-      nexusLock.acquireWriteLock()
+      nexusLock.acquireReadLock()
     }
 
     let ray = player.ray
@@ -312,23 +411,118 @@ public final class Game: @unchecked Sendable {
       let block = world.getBlock(at: position, acquireLock: acquireLock)
       let boundingBox = block.shape.outlineShape.offset(by: position.doubleVector)
       if let (distance, face) = boundingBox.intersectionDistanceAndFace(with: ray) {
-        // TODO: Don't hardcode reach here
-        guard distance <= 6 else {
+        guard distance <= Player.buildingReach else {
           break
         }
 
-        var cursor = ray.direction * distance + ray.origin
-        cursor.x = cursor.x.truncatingRemainder(dividingBy: 1)
-        cursor.y = cursor.y.truncatingRemainder(dividingBy: 1)
-        cursor.z = cursor.z.truncatingRemainder(dividingBy: 1)
-        return (position, cursor, face, distance)
+        let targetedPosition = ray.direction * distance + ray.origin
+        return Targeted<BlockPosition>(
+          target: position,
+          distance: distance,
+          face: face,
+          targetedPosition: targetedPosition
+        )
       }
     }
 
     return nil
   }
 
-  /// Gets current gamemode of the player
+  public func targetedBlock(acquireLock: Bool = true) -> Targeted<BlockPosition>? {
+    guard let targetedThing = targetedThing(acquireLock: acquireLock) else {
+      return nil
+    }
+
+    guard case let .block(position) = targetedThing.target else {
+      return nil
+    }
+
+    return targetedThing.map(constant(position))
+  }
+
+  // TODO: Make a value type for entity ids so that this doesn't return a targeted integer (just feels confusing).
+  /// - Returns: The id of the entity targeted by the player, if any.
+  public func targetedEntityIgnoringBlocks(acquireLock: Bool = true) -> Targeted<Int>? {
+    if acquireLock { nexusLock.acquireReadLock() }
+    defer { if acquireLock { nexusLock.unlock() } }
+
+    let playerPosition = player.position.vector
+    let playerRay = player.ray
+
+    let family = nexus.family(
+      requiresAll: EntityId.self,
+      EntityPosition.self,
+      EntityHitBox.self,
+      excludesAll: ClientPlayerEntity.self
+    )
+
+    var candidate: Targeted<Int>?
+    for (id, position, hitbox) in family {
+      // Should be big enough radius not to accidentally exclude big entities such as the Ender Dragon?
+      guard (playerPosition - position.vector).magnitude < 12 else {
+        continue
+      }
+
+      let aabb = hitbox.aabb(at: position.vector)
+      guard
+        let (distance, face) = aabb.intersectionDistanceAndFace(with: playerRay),
+        distance >= 0 || aabb.contains(Vec3d(playerRay.origin)),
+        distance <= Player.attackReach
+      else {
+        continue
+      }
+
+      let newCandidate = Targeted<Int>(
+        target: id.id,
+        distance: distance,
+        face: face,
+        targetedPosition: playerRay.direction * distance + playerRay.origin
+      )
+
+      if let currentCandidate = candidate {
+        if distance < currentCandidate.distance {
+          candidate = newCandidate
+        }
+      } else {
+        candidate = newCandidate
+      }
+    }
+
+    return candidate
+  }
+
+  public func targetedEntity(acquireLock: Bool = true) -> Targeted<Int>? {
+    guard let targetedThing = targetedThing(acquireLock: acquireLock) else {
+      return nil
+    }
+
+    guard case let .entity(id) = targetedThing.target else {
+      return nil
+    }
+
+    return targetedThing.map(constant(id))
+  }
+
+  /// - Returns: The closest thing targeted by the player.
+  public func targetedThing(acquireLock: Bool = true) -> Targeted<Thing>? {
+    let targetedBlock = targetedBlockIgnoringEntities(acquireLock: acquireLock)
+    let targetedEntity = targetedEntityIgnoringBlocks(acquireLock: acquireLock)
+    if let block = targetedBlock, let entity = targetedEntity {
+      if block.distance < entity.distance {
+        return block.map(Thing.block)
+      } else {
+        return entity.map(Thing.entity)
+      }
+    } else if let block = targetedBlock {
+      return block.map(Thing.block)
+    } else if let entity = targetedEntity {
+      return entity.map(Thing.entity)
+    } else {
+      return nil
+    }
+  }
+
+  /// Gets current gamemode of the player.
   public func currentGamemode() -> Gamemode? {
     var gamemode: Gamemode? = nil
     accessPlayer { player in
@@ -361,5 +555,21 @@ public final class Game: @unchecked Sendable {
     // TODO: Make this threadsafe
     self.world = newWorld
     tickScheduler.setWorld(to: newWorld)
+
+    nexusLock.acquireWriteLock()
+    defer { nexusLock.unlock() }
+
+    entityIdToEntityIdentifier = entityIdToEntityIdentifier.filter { (id, identifier) in
+      let isClientPlayer = id == player.entityId.id
+      if !isClientPlayer {
+        nexus.destroy(entityId: identifier)
+      }
+      return isClientPlayer
+    }
+  }
+
+  /// Stops the tick scheduler.
+  public func stopTickScheduler() {
+    tickScheduler.cancel()
   }
 }

@@ -190,7 +190,9 @@ public class LANServerEnumerator: ObservableObject {
 
     // Ping the server
     let pinger = Pinger(server)
-    try? pinger.ping()
+    Task {
+      try? await pinger.ping()
+    }
     servers.append(server)
 
     ThreadUtil.runInMain {

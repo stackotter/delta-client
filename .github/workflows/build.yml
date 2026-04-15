@@ -7,41 +7,63 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macOS-12
+    runs-on: macOS-15
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: List Xcodes
         run: ls /Applications
-      - name: Force Xcode 14.2
-        run: sudo xcode-select -switch /Applications/Xcode_14.2.app
+      - name: Force Xcode 16.4
+        run: sudo xcode-select -switch /Applications/Xcode_16.4.app
       - name: Version
         run: swift --version
-      - name: Download swift-bundler
-        run: |
-          curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v2.0.4/swift-bundler
-          chmod +x ./swift-bundler
-          cp ./swift-bundler /usr/local/bin
-      - name: Build
-        run: |
-          ./swift-bundler bundle -c release -o . -u
-          plutil -insert MetalCaptureEnabled -bool YES DeltaClient.app/Contents/Info.plist
-      - name: Zip .app
-        run: zip -r DeltaClient.zip DeltaClient.app
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
+
+      - name: Cache swift-bundler
+        id: cache-swift-bundler
+        uses: actions/cache@v5
         with:
-          name: DeltaClient
-          path: ./DeltaClient.zip
+          path: sbun
+          key: ${{ runner.os }}-swift-bundler
+      - name: Build swift-bundler
+        if: steps.cache-swift-bundler.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/moreSwift/swift-bundler
+          cd swift-bundler
+          git checkout 6d72c4f442cc2c57c2559f3df21b3777b1d0a917
+          swift build --product swift-bundler
+          cp .build/debug/swift-bundler ../sbun
+
+      - name: Build arm64
+        run: |
+          ./sbun bundle -c release --arch arm64
+          mv "$(./sbun bundle --show-bundle-path)" DeltaClient-arm64.app
+      - name: Build x86
+        run: |
+          ./sbun bundle -c release --arch x86_64
+          mv "$(./sbun bundle --show-bundle-path)" DeltaClient-x86_64.app
+      - name: Zip .app (arm64)
+        run: zip -r DeltaClient-arm64.zip DeltaClient-arm64.app
+      - name: Zip .app (x86_64)
+        run: zip -r DeltaClient-x86_64.zip DeltaClient-x86_64.app
+      - name: Upload artifact (arm64)
+        uses: actions/upload-artifact@v7
+        with:
+          name: DeltaClient-arm64
+          path: ./DeltaClient-arm64.zip
+      - name: Upload artifact (x86_64)
+        uses: actions/upload-artifact@v7
+        with:
+          name: DeltaClient-x86_64
+          path: ./DeltaClient-x86_64.zip
   build-linux:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Swift
-        uses: swift-actions/setup-swift@v1
+        uses: SwiftyLab/setup-swift@latest
         with:
-          swift-version: 5.7
+          swift-version: "5.9"
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: Build
         run: |
           cd Sources/Core

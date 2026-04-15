@@ -24,7 +24,7 @@ struct SettingsView: View {
     self.isInGame = isInGame
     self.done = done
 
-    #if os(iOS)
+    #if os(iOS) || os(tvOS)
       // On iOS, the navigation isn't a split view, so we should show the settings page selection
       // view first instead of auto-selecting the first page.
       self._currentPage = State(initialValue: landingPage)
@@ -42,12 +42,15 @@ struct SettingsView: View {
           tag: SettingsState.video,
           selection: $currentPage
         )
+
+        #if !os(tvOS)
         NavigationLink(
           "Controls",
           destination: ControlsSettingsView().padding(),
           tag: SettingsState.controls,
           selection: $currentPage
         )
+        #endif
 
         if !isInGame {
           NavigationLink(
@@ -81,13 +84,18 @@ struct SettingsView: View {
         }
 
         Button("Done", action: {
-          withAnimation(nil) { done() }
+          withAnimation(nil) {
+            done()
+          }
         })
+          #if !os(tvOS)
           .buttonStyle(BorderlessButtonStyle())
-          .padding(.top, 8)
           .keyboardShortcut(.escape, modifiers: [])
+          #endif
       }
+      #if !os(tvOS)
       .listStyle(SidebarListStyle())
+      #endif
     }
     .navigationTitle("Settings")
   }

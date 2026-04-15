@@ -38,7 +38,9 @@ struct MojangLoginView: View {
         }
       }
     }
+    #if !os(tvOS)
     .frame(width: 200)
+    #endif
   }
   
   func login() {

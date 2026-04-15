@@ -7,12 +7,12 @@ on:
 
 jobs:
   test-macos:
-    runs-on: macOS-12
+    runs-on: macOS-15
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: Force Xcode 14.2
-        run: sudo xcode-select -switch /Applications/Xcode_14.2.app
+        uses: actions/checkout@v6
+      - name: Force Xcode 16.4
+        run: sudo xcode-select -switch /Applications/Xcode_16.4.app
       - name: Version
         run: swift --version
       - name: Test
@@ -23,11 +23,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Swift
-        uses: swift-actions/setup-swift@v1
+        uses: SwiftyLab/setup-swift@latest
         with:
-          swift-version: 5.7
+          swift-version: "5.9"
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: Test
         run: |
           cd Sources/Core

@@ -29,7 +29,6 @@ struct PlayView: View {
             controllerOnly: false,
             inGameMenuPresented: $inGameMenuPresented
           )
-
         }
       } else {
         HStack(spacing: 0) {
@@ -44,6 +43,7 @@ struct PlayView: View {
 
       InGameMenu(presented: $inGameMenuPresented)
     }
+      .padding(.top, 1)
   }
 
   var allPlayersChoseControllers: Bool {

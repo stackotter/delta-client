@@ -1,5 +1,5 @@
-import Foundation
 import FirebladeMath
+import Foundation
 
 public struct EntityPositionAndRotationPacket: ClientboundEntityPacket {
   public static let id: Int = 0x29
@@ -33,24 +33,32 @@ public struct EntityPositionAndRotationPacket: ClientboundEntityPacket {
     let x = Double(deltaX) / 4096
     let y = Double(deltaY) / 4096
     let z = Double(deltaZ) / 4096
+    let relativePosition = Vec3d(x, y, z)
 
-    client.game.accessComponent(entityId: entityId, EntityPosition.self, acquireLock: false) { position in
-      position.move(by: Vec3d(x, y, z))
-    }
-
-    client.game.accessComponent(entityId: entityId, EntityRotation.self, acquireLock: false) { rotation in
-      rotation.pitch = pitch
-      rotation.yaw = yaw
-    }
-
-    client.game.accessComponent(entityId: entityId, EntityOnGround.self, acquireLock: false) { onGroundComponent in
-      onGroundComponent.onGround = onGround
-    }
-
-    if onGround {
-      client.game.accessComponent(entityId: entityId, EntityVelocity.self, acquireLock: false) { velocity in
-        velocity.y = 0
+    client.game.accessEntity(id: entityId, acquireLock: false) { entity in
+      guard
+        let position = entity.get(component: EntityPosition.self),
+        let lerpState = entity.get(component: EntityLerpState.self),
+        let velocity = entity.get(component: EntityVelocity.self),
+        let kind = entity.get(component: EntityKindId.self)?.entityKind,
+        let onGroundComponent = entity.get(component: EntityOnGround.self)
+      else {
+        log.warning(
+          "Entity '\(entityId)' is missing required components to handle \(Self.self)"
+        )
+        return
       }
+
+      velocity.vector = .zero
+
+      let currentTargetPosition = lerpState.currentLerp?.targetPosition ?? position.vector
+      onGroundComponent.onGround = onGround
+      lerpState.lerp(
+        to: currentTargetPosition + relativePosition,
+        pitch: pitch,
+        yaw: yaw,
+        duration: kind.defaultLerpDuration
+      )
     }
   }
 }

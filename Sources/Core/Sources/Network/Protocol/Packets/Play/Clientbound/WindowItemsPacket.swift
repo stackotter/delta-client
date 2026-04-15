@@ -18,19 +18,32 @@ public struct WindowItemsPacket: ClientboundPacket {
   }
 
   public func handle(for client: Client) throws {
-    guard windowId == PlayerInventory.windowId else {
-      return
-    }
-
-    guard slots.count == PlayerInventory.slotCount else {
-      log.warning("Invalid player inventory slot count: \(slots.count)")
-      // Silently ignore for now because Hypixel sends packets that violate this
-      // TODO: Don't ignore invalid slot counts
-      return
-    }
-
     client.game.accessPlayer { player in
-      player.inventory.slots = slots
+      guard windowId == player.inventory.window.id else {
+        return
+      }
+
+      guard slots.count == player.inventory.window.type.slotCount else {
+        log.warning("Invalid player inventory slot count: \(slots.count)")
+        // Silently ignore for now because Hypixel sends packets that violate this
+        // TODO: Don't ignore invalid slot counts
+        return
+      }
+
+      player.inventory.window.slots = slots
+    }
+
+    client.game.mutateGUIState { guiState in
+      guard let window = guiState.window, windowId == window.id else {
+        return
+      }
+
+      guard slots.count == window.type.slotCount else {
+        log.warning("Invalid window slot count: \(slots.count)")
+        return
+      }
+
+      window.slots = slots
     }
   }
 }

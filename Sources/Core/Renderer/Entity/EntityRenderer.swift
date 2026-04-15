@@ -1,24 +1,27 @@
-import Foundation
+import DeltaCore
 import FirebladeECS
 import FirebladeMath
+import Foundation
 import MetalKit
-import DeltaCore
 
 /// Renders all entities in the world the client is currently connected to.
 public struct EntityRenderer: Renderer {
   /// The color to render hit boxes as. Defaults to 0xe3c28d (light cream colour).
-  public var hitBoxColor = DeltaCore.RGBColor(hexCode: 0xe3c28d)
+  public static let hitBoxColor = DeltaCore.RGBColor(hexCode: 0xe3c28d)
 
   /// The render pipeline state for rendering entities. Does not have blending enabled.
   private var renderPipelineState: MTLRenderPipelineState
+  /// The render pipeline state for rendering block entities and block item entities.
+  private var blockRenderPipelineState: MTLRenderPipelineState
   /// The buffer containing the uniforms for all rendered entities.
   private var instanceUniformsBuffer: MTLBuffer?
-  /// The buffer containing the hit box vertices. They form a basic cube and instanced rendering is used to render the cube once for each entity.
-  private var vertexBuffer: MTLBuffer
-  /// The buffer containing the index windings for the template hit box (see ``vertexBuffer``.
-  private var indexBuffer: MTLBuffer
-  /// The number of indices in ``indexBuffer``.
-  private var indexCount: Int
+
+  private var entityTexturePalette: MetalTexturePalette
+  private var blockTexturePalette: MetalTexturePalette
+
+  private var entityModelPalette: EntityModelPalette
+  private var itemModelPalette: ItemModelPalette
+  private var blockModelPalette: BlockModelPalette
 
   /// The client that entities will be renderer for.
   private var client: Client
@@ -29,51 +32,60 @@ public struct EntityRenderer: Renderer {
 
   private var profiler: Profiler<RenderingMeasurement>
 
+  /// Should get updated each frame via `setVisibleChunks`.
+  private var visibleChunks: Set<ChunkPosition> = []
+
   /// Creates a new entity renderer.
   public init(
     client: Client,
     device: MTLDevice,
     commandQueue: MTLCommandQueue,
-    profiler: Profiler<RenderingMeasurement>
+    profiler: Profiler<RenderingMeasurement>,
+    blockTexturePalette: MetalTexturePalette
   ) throws {
     self.client = client
     self.device = device
     self.commandQueue = commandQueue
     self.profiler = profiler
+    self.blockTexturePalette = blockTexturePalette
 
     // Load library
+    // TODO: Avoid loading library again and again
     let library = try MetalUtil.loadDefaultLibrary(device)
     let vertexFunction = try MetalUtil.loadFunction("entityVertexShader", from: library)
     let fragmentFunction = try MetalUtil.loadFunction("entityFragmentShader", from: library)
+    let blockVertexFunction = try MetalUtil.loadFunction("chunkVertexShader", from: library)
+    let blockFragmentFunction = try MetalUtil.loadFunction("chunkFragmentShader", from: library)
 
     // Create render pipeline state
     renderPipelineState = try MetalUtil.makeRenderPipelineState(
       device: device,
-      label: "dev.stackotter.delta-client.EntityRenderer",
+      label: "EntityRenderer.renderPipelineState",
       vertexFunction: vertexFunction,
       fragmentFunction: fragmentFunction,
       blendingEnabled: false
     )
 
-    // Create hitbox geometry (hitboxes are rendered using instancing)
-    var geometry = Self.createHitBoxGeometry(color: hitBoxColor)
-    indexCount = geometry.indices.count
-
-    vertexBuffer = try MetalUtil.makeBuffer(
-      device,
-      bytes: &geometry.vertices,
-      length: geometry.vertices.count * MemoryLayout<EntityVertex>.stride,
-      options: .storageModeShared,
-      label: "entityHitBoxVertices"
+    // TODO: Consider supporting OIT here too? Probably not of much use cause most block item
+    //   entities aren't translucent, and there should never be many instances of them since
+    //   item entities merge.
+    blockRenderPipelineState = try MetalUtil.makeRenderPipelineState(
+      device: device,
+      label: "EntityRenderer.blockRenderPipelineState",
+      vertexFunction: blockVertexFunction,
+      fragmentFunction: blockFragmentFunction,
+      blendingEnabled: true
     )
 
-    indexBuffer = try MetalUtil.makeBuffer(
-      device,
-      bytes: &geometry.indices,
-      length: geometry.indices.count * MemoryLayout<UInt32>.stride,
-      options: .storageModeShared,
-      label: "entityHitBoxIndices"
+    entityTexturePalette = try MetalTexturePalette(
+      palette: client.resourcePack.vanillaResources.entityTexturePalette,
+      device: device,
+      commandQueue: commandQueue
     )
+
+    entityModelPalette = client.resourcePack.vanillaResources.entityModelPalette
+    itemModelPalette = client.resourcePack.vanillaResources.itemModelPalette
+    blockModelPalette = client.resourcePack.vanillaResources.blockModelPalette
   }
 
   /// Renders all entity hit boxes using instancing.
@@ -90,19 +102,28 @@ public struct EntityRenderer: Renderer {
     }
 
     // Get all renderable entities
-    var entityUniforms: [EntityUniforms] = []
+    var geometry = Geometry<EntityVertex>()
+    var blockGeometry = Geometry<BlockVertex>()
+    var translucentBlockGeometry = SortableMesh(uniforms: ChunkUniforms())
     client.game.accessNexus { nexus in
       // If the player is in first person view we don't render them
       profiler.push(.getEntities)
-      let entities: Family<Requires2<EntityPosition, EntityHitBox>>
+      let entities: Family<Requires4<EntityPosition, EntityRotation, EntityHitBox, EntityKindId>>
       if isFirstPerson {
         entities = nexus.family(
           requiresAll: EntityPosition.self,
+          EntityRotation.self,
           EntityHitBox.self,
+          EntityKindId.self,
           excludesAll: ClientPlayerEntity.self
         )
       } else {
-        entities = nexus.family(requiresAll: EntityPosition.self, EntityHitBox.self)
+        entities = nexus.family(
+          requiresAll: EntityPosition.self,
+          EntityRotation.self,
+          EntityHitBox.self,
+          EntityKindId.self
+        )
       }
       profiler.pop()
 
@@ -110,111 +131,151 @@ public struct EntityRenderer: Renderer {
       let cameraChunk = camera.entityPosition.chunk
 
       // Create uniforms for each entity
-      profiler.push(.createUniforms)
-      for (position, hitBox) in entities {
-        let aabb = hitBox.aabb(at: position.smoothVector)
-        let position = aabb.position
-        let size = aabb.size
-
+      profiler.push(.createRegularEntityMeshes)
+      for (entity, position, rotation, hitbox, kindId) in entities.entityAndComponents {
         // Don't render entities that are outside of the render distance
-        let chunkPosition = EntityPosition(position).chunk
+        let chunkPosition = position.chunk
         if !chunkPosition.isWithinRenderDistance(renderDistance, of: cameraChunk) {
           continue
         }
 
-        let scale: Mat4x4f = MatrixUtil.scalingMatrix(Vec3f(size))
-        let translation: Mat4x4f = MatrixUtil.translationMatrix(Vec3f(position))
-        let uniforms = EntityUniforms(transformation: scale * translation)
-        entityUniforms.append(uniforms)
+        guard var kindIdentifier = kindId.entityKind?.identifier else {
+          log.warning("Unknown entity kind '\(kindId.id)'")
+          continue
+        }
+
+        if kindIdentifier == Identifier(name: "ender_dragon") {
+          kindIdentifier = Identifier(name: "dragon")
+        }
+
+        let lightLevel = client.game.world.getLightLevel(at: position.block)
+        buildEntityMesh(
+          entity: entity,
+          entityKindIdentifier: kindIdentifier,
+          position: Vec3f(position.smoothVector),
+          pitch: rotation.smoothPitch,
+          yaw: rotation.smoothYaw,
+          hitbox: hitbox.aabb(at: position.smoothVector),
+          lightLevel: lightLevel,
+          into: &geometry,
+          blockGeometry: &blockGeometry,
+          translucentBlockGeometry: &translucentBlockGeometry
+        )
+      }
+      profiler.pop()
+
+      profiler.push(.createBlockEntityMeshes)
+      for chunkPosition in visibleChunks {
+        guard let chunk = client.game.world.chunk(at: chunkPosition) else {
+          continue
+        }
+
+        for blockEntity in chunk.getBlockEntities() {
+          let position = blockEntity.position.floatVector + Vec3f(0.5, 0, 0.5)
+
+          let block = chunk.getBlock(at: blockEntity.position.relativeToChunk)
+          let direction = block.stateProperties.facing ?? .south
+
+          let lightLevel = client.game.world.getLightLevel(at: blockEntity.position)
+          buildEntityMesh(
+            entity: nil,
+            entityKindIdentifier: blockEntity.identifier,
+            position: position,
+            pitch: 0,
+            yaw: Self.blockEntityYaw(toFace: direction),
+            hitbox: AxisAlignedBoundingBox(position: .zero, size: Vec3d(1, 1, 1)),
+            lightLevel: lightLevel,
+            into: &geometry,
+            blockGeometry: &blockGeometry,
+            translucentBlockGeometry: &translucentBlockGeometry
+          )
+        }
       }
       profiler.pop()
     }
 
-    guard !entityUniforms.isEmpty else {
-      return
+    profiler.push(.encodeEntities)
+    if !geometry.isEmpty {
+      encoder.setRenderPipelineState(renderPipelineState)
+      encoder.setFragmentTexture(entityTexturePalette.arrayTexture, index: 0)
+
+      var mesh = Mesh<EntityVertex, Void>(geometry, uniforms: ())
+      try mesh.render(into: encoder, with: device, commandQueue: commandQueue)
     }
 
-    // Create buffer for instance uniforms. If the current buffer is big enough, use it unless it is
-    // more than 64 entities too big. The maximum size limit is imposed so that the buffer isn't too
-    // much bigger than necessary. New buffers are always created with room for 32 more entities so
-    // that a new buffer isn't created each time an entity is added.
-    let minimumBufferSize = entityUniforms.count * MemoryLayout<EntityUniforms>.stride
-    let maximumBufferSize = minimumBufferSize + 64 * MemoryLayout<EntityUniforms>.stride
-    var instanceUniformsBuffer: MTLBuffer
+    if !blockGeometry.isEmpty || !translucentBlockGeometry.isEmpty {
+      encoder.setRenderPipelineState(blockRenderPipelineState)
+      encoder.setVertexBuffer(blockTexturePalette.textureStatesBuffer, offset: 0, index: 3)
+      encoder.setFragmentTexture(blockTexturePalette.arrayTexture, index: 0)
 
-    profiler.push(.getBuffer)
-    if let buffer = self.instanceUniformsBuffer, buffer.length >= minimumBufferSize, buffer.length <= maximumBufferSize {
-      buffer.contents().copyMemory(from: &entityUniforms, byteCount: minimumBufferSize)
-      instanceUniformsBuffer = buffer
-    } else {
-      log.trace("Creating new instance uniforms buffer")
-      instanceUniformsBuffer = try MetalUtil.makeBuffer(
-        device,
-        length: minimumBufferSize + MemoryLayout<EntityUniforms>.stride * 32,
-        options: .storageModeShared,
-        label: "entityInstanceUniforms"
-      )
-      instanceUniformsBuffer.contents().copyMemory(
-        from: &entityUniforms,
-        byteCount: minimumBufferSize
-      )
+      if !blockGeometry.isEmpty {
+        var blockMesh = Mesh<BlockVertex, ChunkUniforms>(blockGeometry, uniforms: ChunkUniforms())
+        try blockMesh.render(into: encoder, with: device, commandQueue: commandQueue)
+      }
+
+      if !translucentBlockGeometry.isEmpty {
+        try translucentBlockGeometry.render(
+          viewedFrom: camera.position,
+          sort: true,
+          encoder: encoder,
+          device: device,
+          commandQueue: commandQueue
+        )
+      }
     }
     profiler.pop()
-
-    self.instanceUniformsBuffer = instanceUniformsBuffer
-
-    // Render all the hitboxes using instancing
-    profiler.push(.encode)
-    encoder.setRenderPipelineState(renderPipelineState)
-    encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-    encoder.setVertexBuffer(instanceUniformsBuffer, offset: 0, index: 2)
-
-    encoder.drawIndexedPrimitives(
-      type: .triangle,
-      indexCount: indexCount,
-      indexType: .uint32,
-      indexBuffer: indexBuffer,
-      indexBufferOffset: 0,
-      instanceCount: entityUniforms.count
-    )
-    profiler.pop()
-
-    // A hack to solve https://bugs.swift.org/browse/SR-15613
-    // If this isn't done, `entityUniforms` gets freed somewhere around the line with `var
-    // instanceUniformsBuffer: MTLBuffer` in release builds
-    use(entityUniforms)
   }
 
-  /// A hack used to solve https://bugs.swift.org/browse/SR-15613
-  @inline(never)
-  @_optimize(none)
-  private func use(_ thing: Any) {}
+  private func buildEntityMesh(
+    entity: Entity? = nil,
+    entityKindIdentifier: Identifier,
+    position: Vec3f,
+    pitch: Float,
+    yaw: Float,
+    hitbox: AxisAlignedBoundingBox,
+    lightLevel: LightLevel,
+    into geometry: inout Geometry<EntityVertex>,
+    blockGeometry: inout Geometry<BlockVertex>,
+    translucentBlockGeometry: inout SortableMesh
+  ) {
+    var translucentBlockElement = SortableMeshElement()
+    EntityMeshBuilder(
+      entity: entity,
+      entityKind: entityKindIdentifier,
+      position: position,
+      pitch: pitch,
+      yaw: yaw,
+      entityModelPalette: entityModelPalette,
+      itemModelPalette: itemModelPalette,
+      blockModelPalette: blockModelPalette,
+      entityTexturePalette: entityTexturePalette.palette,
+      blockTexturePalette: blockTexturePalette.palette,
+      hitbox: hitbox,
+      lightLevel: lightLevel
+    ).build(
+      into: &geometry,
+      blockGeometry: &blockGeometry,
+      translucentBlockGeometry: &translucentBlockElement
+    )
+    translucentBlockGeometry.add(translucentBlockElement)
+  }
 
-  /// Creates a coloured and shaded cube to be rendered using instancing as entities' hitboxes.
-  private static func createHitBoxGeometry(color: DeltaCore.RGBColor) -> (vertices: [EntityVertex], indices: [UInt32]) {
-    var vertices: [EntityVertex] = []
-    var indices: [UInt32] = []
-
-    for direction in Direction.allDirections {
-      let faceVertices = CubeGeometry.faceVertices[direction.rawValue]
-      for position in faceVertices {
-        let color = color.floatVector * CubeGeometry.shades[direction.rawValue]
-        vertices.append(EntityVertex(
-          x: position.x,
-          y: position.y,
-          z: position.z,
-          r: color.x,
-          g: color.y,
-          b: color.z
-        ))
-      }
-
-      let offset = UInt32(indices.count / 6 * 4)
-      for value in CubeGeometry.faceWinding {
-        indices.append(value + offset)
-      }
+  /// Computes the yaw required for a block entity to face a given direction.
+  private static func blockEntityYaw(toFace direction: Direction) -> Float {
+    switch direction {
+      case .south, .up, .down:
+        return 0
+      case .west:
+        return .pi / 2
+      case .north:
+        return .pi
+      case .east:
+        return -.pi / 2
     }
+  }
 
-    return (vertices: vertices, indices: indices)
+  /// Sets the chunks that block entities should be rendered from.
+  public mutating func setVisibleChunks(_ visibleChunks: Set<ChunkPosition>) {
+    self.visibleChunks = visibleChunks
   }
 }

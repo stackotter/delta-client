@@ -1,5 +1,5 @@
-import SwiftCrossUI
 import DeltaCore
+import SwiftCrossUI
 
 class OfflineLoginViewState: Observable {
   @Observed var username = ""
@@ -10,8 +10,8 @@ struct OfflineLoginView: View {
   var completionHandler: (Account) -> Void
 
   var state = OfflineLoginViewState()
-  
-  var body: some ViewContent {
+
+  var body: some View {
     VStack {
       TextField("Username", state.$username)
 

@@ -13,13 +13,13 @@ public enum MeshError: LocalizedError {
 }
 
 /// Holds and renders geometry data.
-public struct Mesh {
+public struct Mesh<Vertex, Uniforms> {
   /// The vertices in the mesh.
-  public var vertices: [BlockVertex] = []
+  public var vertices: [Vertex]
   /// The vertex windings.
-  public var indices: [UInt32] = []
-  /// The mesh's model to world transformation matrix.
-  public var uniforms = ChunkUniforms()
+  public var indices: [UInt32]
+  /// The mesh's uniforms.
+  public var uniforms: Uniforms
 
   /// A GPU buffer containing the vertices.
   public var vertexBuffer: MTLBuffer?
@@ -40,19 +40,20 @@ public struct Mesh {
     return vertices.isEmpty || indices.isEmpty
   }
 
-  /// Create a new empty mesh.
-  public init() {}
-
   /// Create a new populated mesh.
-  public init(vertices: [BlockVertex], indices: [UInt32], uniforms: ChunkUniforms) {
+  public init(vertices: [Vertex], indices: [UInt32], uniforms: Uniforms) {
     self.vertices = vertices
     self.indices = indices
     self.uniforms = uniforms
   }
 
   /// Create a new mesh with geometry.
-  public init(_ geometry: Geometry, uniforms: ChunkUniforms) {
-    self.init(vertices: geometry.vertices, indices: geometry.indices, uniforms: uniforms)
+  public init(_ geometry: Geometry<Vertex>? = nil, uniforms: Uniforms) {
+    self.init(
+      vertices: geometry?.vertices ?? [],
+      indices: geometry?.indices ?? [],
+      uniforms: uniforms
+    )
   }
 
   /// Encodes the draw commands to render this mesh into a render encoder. Creates buffers if necessary.
@@ -71,29 +72,38 @@ public struct Mesh {
     // Get buffers. If the buffer is valid and not nil, it is used. If the buffer is invalid and not nil,
     // it is repopulated with the new data (if big enough, otherwise a new buffer is created). If the
     // buffer is nil, a new one is created.
-    let vertexBuffer = try ((vertexBufferIsValid ? vertexBuffer : nil) ?? MetalUtil.createPrivateBuffer(
-      labelled: "vertexBuffer",
-      containing: vertices,
-      reusing: vertexBuffer,
-      device: device,
-      commandQueue: commandQueue
-    ))
+    let vertexBuffer =
+      try
+      ((vertexBufferIsValid ? vertexBuffer : nil)
+      ?? MetalUtil.createPrivateBuffer(
+        labelled: "vertexBuffer",
+        containing: vertices,
+        reusing: vertexBuffer,
+        device: device,
+        commandQueue: commandQueue
+      ))
 
-    let indexBuffer = try ((indexBufferIsValid ? indexBuffer : nil) ?? MetalUtil.createPrivateBuffer(
-      labelled: "indexBuffer",
-      containing: indices,
-      reusing: indexBuffer,
-      device: device,
-      commandQueue: commandQueue
-    ))
+    let indexBuffer =
+      try
+      ((indexBufferIsValid ? indexBuffer : nil)
+      ?? MetalUtil.createPrivateBuffer(
+        labelled: "indexBuffer",
+        containing: indices,
+        reusing: indexBuffer,
+        device: device,
+        commandQueue: commandQueue
+      ))
 
-    let uniformsBuffer = try ((uniformsBufferIsValid ? uniformsBuffer : nil) ?? MetalUtil.createPrivateBuffer(
-      labelled: "uniformsBuffer",
-      containing: [uniforms],
-      reusing: uniformsBuffer,
-      device: device,
-      commandQueue: commandQueue
-    ))
+    let uniformsBuffer =
+      try
+      ((uniformsBufferIsValid ? uniformsBuffer : nil)
+      ?? MetalUtil.createPrivateBuffer(
+        labelled: "uniformsBuffer",
+        containing: [uniforms],
+        reusing: uniformsBuffer,
+        device: device,
+        commandQueue: commandQueue
+      ))
 
     // Update cached buffers. Unnecessary assignments won't affect performance because `MTLBuffer`s
     // are just descriptors, not the actual data
@@ -127,7 +137,9 @@ public struct Mesh {
   ///   - keepVertexBuffer: If `true`, the vertex buffer is not invalidated.
   ///   - keepIndexBuffer: If `true`, the index buffer is not invalidated.
   ///   - keepUniformsBuffer: If `true`, the uniforms buffer is not invalidated.
-  public mutating func invalidateBuffers(keepVertexBuffer: Bool = false, keepIndexBuffer: Bool = false, keepUniformsBuffer: Bool = false) {
+  public mutating func invalidateBuffers(
+    keepVertexBuffer: Bool = false, keepIndexBuffer: Bool = false, keepUniformsBuffer: Bool = false
+  ) {
     vertexBufferIsValid = keepVertexBuffer
     indexBufferIsValid = keepIndexBuffer
     uniformsBufferIsValid = keepUniformsBuffer

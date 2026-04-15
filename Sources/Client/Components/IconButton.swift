@@ -15,7 +15,9 @@ struct IconButton: View {
     Button(action: action, label: {
       Image(systemName: icon)
     })
+    #if !os(tvOS)
     .buttonStyle(BorderlessButtonStyle())
+    #endif
     .disabled(isDisabled)
   }
 }

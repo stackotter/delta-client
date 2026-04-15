@@ -1,6 +1,6 @@
 import Foundation
 
-public enum Key: CustomStringConvertible, Hashable {  
+public enum Key: CustomStringConvertible, Hashable {
   case leftShift
   case rightShift
   case leftControl
@@ -127,6 +127,26 @@ public enum Key: CustomStringConvertible, Hashable {
   case scrollDown
 
   case otherMouseButton(Int)
+
+  /// Whether the key is a control key.
+  public var isControl: Bool {
+    self == .leftControl || self == .rightControl
+  }
+
+  /// Whether the key is a command key.
+  public var isCommand: Bool {
+    self == .leftCommand || self == .rightCommand
+  }
+
+  /// Whether the key is a shift key.
+  public var isShift: Bool {
+    self == .leftShift || self == .rightShift
+  }
+
+  /// Whether the key is an option key.
+  public var isOption: Bool {
+    self == .leftOption || self == .rightOption
+  }
 
   /// The key's display name.
   public var description: String {
@@ -374,7 +394,7 @@ public enum Key: CustomStringConvertible, Hashable {
     0x7B: .leftArrow,
     0x7C: .rightArrow,
     0x7D: .downArrow,
-    0x7E: .upArrow
+    0x7E: .upArrow,
   ]
 }
 
@@ -519,7 +539,7 @@ extension Key: RawRepresentable {
     "leftMouseButton": .leftMouseButton,
     "rightMouseButton": .rightMouseButton,
     "scrollUp": .scrollUp,
-    "scrollDown": .scrollDown
+    "scrollDown": .scrollDown,
   ]
 }
 

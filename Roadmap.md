@@ -148,6 +148,6 @@ The demo versions were just proof-of-concepts. The alpha versions will still be 
   - [x] hunger
   - [x] xp
   - [ ] bubbles
-- [ ] item rendering
+- [x] item rendering
 - [x] hotbar
-- [ ] basic inventory (just for viewing)
+- [x] basic inventory (just for viewing)

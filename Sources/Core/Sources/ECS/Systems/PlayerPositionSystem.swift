@@ -5,10 +5,11 @@ public struct PlayerPositionSystem: System {
     var family = nexus.family(
       requiresAll: EntityPosition.self,
       EntityVelocity.self,
+      EntityFlying.self,
       ClientPlayerEntity.self
     ).makeIterator()
     
-    guard let (position, velocity, _) = family.next() else {
+    guard let (position, velocity, flying, _) = family.next() else {
       log.error("PlayerPositionSystem failed to get player to tick")
       return
     }
@@ -17,5 +18,9 @@ public struct PlayerPositionSystem: System {
     
     position.x = MathUtil.clamp(position.x, -29_999_999, 29_999_999)
     position.z = MathUtil.clamp(position.z, -29_999_999, 29_999_999)
+
+    if flying.isFlying {
+      velocity.y *= 0.6
+    }
   }
 }

@@ -47,7 +47,14 @@ struct AccountLoginView: EditorView {
           }.buttonStyle(SecondaryButtonStyle())
         }
         .navigationTitle("Account Login")
+        #if !os(iOS)
+        .onExitCommand {
+          cancelationHandler?()
+        }
+        #endif
+        #if !os(tvOS)
         .frame(width: 200)
+        #endif
       case .loginMicrosoft:
         MicrosoftLoginView(loginViewState: $state, completionHandler: completionHandler)
       case .loginMojang:

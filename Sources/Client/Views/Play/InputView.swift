@@ -1,7 +1,11 @@
 import SwiftUI
 import DeltaCore
+import DeltaRenderer
 
 struct InputView<Content: View>: View {
+  @EnvironmentObject var modal: Modal
+  @EnvironmentObject var appState: StateWrapper<AppState>
+
   @State var monitorsAdded = false
   @State var scrollWheelDeltaY: Float = 0
 
@@ -15,9 +19,15 @@ struct InputView<Content: View>: View {
 
   private var handleKeyRelease: ((Key) -> Void)?
   private var handleKeyPress: ((Key, [Character]) -> Void)?
-  private var handleMouseMove: ((_ deltaX: Float, _ deltaY: Float) -> Void)?
+  private var handleMouseMove: ((
+    _ x: Float,
+    _ y: Float,
+    _ deltaX: Float,
+    _ deltaY: Float
+  ) -> Void)?
   private var handleScroll: ((_ deltaY: Float) -> Void)?
   private var shouldPassthroughClicks = false
+  private var shouldAvoidGeometryReader = false
 
   init(
     listening: Binding<Bool>,
@@ -56,6 +66,13 @@ struct InputView<Content: View>: View {
     with(\.shouldPassthroughClicks, passthroughClicks)
   }
 
+  /// When `true`, `GeometryReader` won't be used, but mouse movements
+  /// won't be tracked. This can be used when mouse movements aren't
+  /// required but the `GeometryReader` is messing with layouts.
+  func avoidGeometryReader(_ avoidGeometryReader: Bool = true) -> Self {
+    with(\.shouldAvoidGeometryReader, avoidGeometryReader)
+  }
+
   /// Adds an action to run when a key is released.
   func onKeyRelease(_ action: @escaping (Key) -> Void) -> Self {
     appendingAction(to: \.handleKeyRelease, action)
@@ -67,7 +84,7 @@ struct InputView<Content: View>: View {
   }
 
   /// Adds an action to run when the mouse is moved.
-  func onMouseMove(_ action: @escaping (_ deltaX: Float, _ deltaY: Float) -> Void) -> Self {
+  func onMouseMove(_ action: @escaping (_ x: Float, _ y: Float, _ deltaX: Float, _ deltaY: Float) -> Void) -> Self {
     appendingAction(to: \.handleMouseMove, action)
   }
 
@@ -76,9 +93,55 @@ struct InputView<Content: View>: View {
     appendingAction(to: \.handleScroll, action)
   }
 
+  #if os(macOS)
+    func mousePositionInView(with geometry: GeometryProxy) -> (x: Float, y: Float)? {
+      // This assumes that there's only one window and that this is only called once
+      // the view's body has been evaluated at least once.
+      guard let window = NSApplication.shared.orderedWindows.first else {
+        return nil
+      }
+
+      let viewFrame = geometry.frame(in: .global)
+      let x = (NSEvent.mouseLocation.x - window.frame.minX) - viewFrame.minX
+      let y = window.frame.maxY - NSEvent.mouseLocation.y - viewFrame.minY
+
+      // AppKit gives us the position scaled by the screen's scaling factor, so we
+      // adjust it back to get the position in terms of true pixels.
+      let scalingFactor = CGFloat(GUIRenderer.screenScalingFactor())
+      return (Float(x * scalingFactor), Float(y * scalingFactor))
+    }
+  #endif
+
   var body: some View {
-    content()
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
+    VStack {
+      if shouldAvoidGeometryReader {
+        contentWithEventListeners()
+      } else {
+        GeometryReader { geometry in
+          contentWithEventListeners(geometry)
+        }
+      }
+    }
+  }
+
+  func contentWithEventListeners(_ geometry: GeometryProxy? = nil) -> some View {
+    // Make sure that the latest position is known to any observers (e.g. if
+    // listening was disabled and now isn't, observers won't have been told
+    // about any changes that occured during the period in which listening
+    // was disabled).
+    #if os(macOS)
+      if let geometry = geometry {
+        if let mousePosition = mousePositionInView(with: geometry) {
+          handleMouseMove?(mousePosition.x, mousePosition.y, 0, 0)
+        } else {
+          modal.error("Failed to get mouse position (on demand)") {
+            appState.update(to: .serverList)
+          }
+        }
+      }
+    #endif
+
+    return content()
       #if os(iOS)
       .gesture(TapGesture(count: 2).onEnded { _ in
         handleKeyPress?(.escape, [])
@@ -87,7 +150,10 @@ struct InputView<Content: View>: View {
         handleKeyPress?(.f3, [])
       })
       .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global).onChanged { value in
+        // TODO: Implement absolute
         handleMouseMove?(
+          Float(value.location.x),
+          Float(value.location.y),
           Float(value.translation.width),
           Float(value.translation.height)
         )
@@ -100,14 +166,24 @@ struct InputView<Content: View>: View {
       .onAppear {
         if !monitorsAdded {
           NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged], handler: { event in
-            if !listening {
+            guard listening, let geometry = geometry else {
               return event
             }
+
+            guard let mousePosition = mousePositionInView(with: geometry) else {
+              modal.error("Failed to get mouse position") {
+                appState.update(to: .serverList)
+              }
+              return event
+            }
+
+            let x = mousePosition.x
+            let y = mousePosition.y
 
             let deltaX = Float(event.deltaX)
             let deltaY = Float(event.deltaY)
 
-            handleMouseMove?(deltaX, deltaY)
+            handleMouseMove?(x, y, deltaX, deltaY)
 
             return event
           })

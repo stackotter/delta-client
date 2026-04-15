@@ -14,6 +14,7 @@ public struct WindowConfirmationClientboundPacket: ClientboundPacket {
   }
 
   public func handle(for client: Client) throws {
+    // TODO: Should this return false when the `accepted` (from the server) is false?
     try client.sendPacket(WindowConfirmationServerboundPacket(
       windowId: windowId,
       actionNumber: actionNumber,

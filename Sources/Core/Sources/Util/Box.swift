@@ -1,3 +1,5 @@
+import FirebladeECS
+
 public class Box<T> {
   public var value: T
 

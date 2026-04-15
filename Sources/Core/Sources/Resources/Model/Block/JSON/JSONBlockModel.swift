@@ -46,7 +46,8 @@ extension JSONBlockModel {
     let files = try FileManager.default.contentsOfDirectory(
       at: directory,
       includingPropertiesForKeys: nil,
-      options: .skipsSubdirectoryDescendants)
+      options: .skipsSubdirectoryDescendants
+    )
 
     // All file reading operations are performed at once which is best for performance apparently
     // The models are combined into one big JSON object which should also minimise losses from
@@ -83,7 +84,8 @@ extension JSONBlockModel {
     // swiftlint:enable force_unwrapping
 
     // Load JSON
-    let models: [String: JSONBlockModel] = try CustomJSONDecoder().decode([String: JSONBlockModel].self, from: json)
+    let models: [String: JSONBlockModel] = try CustomJSONDecoder()
+      .decode([String: JSONBlockModel].self, from: json)
 
     // Convert from [String: JSONBlockModel] to [Identifier: JSONBlockModel]
     var identifiedModels: [Identifier: JSONBlockModel] = [:]

@@ -7,9 +7,9 @@ public enum RespawnPacketError: LocalizedError {
     switch self {
       case .invalidPreviousGamemodeRawValue(let rawValue):
         return """
-        Invalid previous gamemode raw value.
-        Raw value: \(rawValue)
-        """
+          Invalid previous gamemode raw value.
+          Raw value: \(rawValue)
+          """
     }
   }
 }
@@ -52,13 +52,15 @@ public struct RespawnPacket: ClientboundPacket {
 
     isDebug = try packetReader.readBool()
     isFlat = try packetReader.readBool()
-    copyMetadata = try packetReader.readBool() // TODO: not used yet
+    copyMetadata = try packetReader.readBool()  // TODO: not used yet
   }
 
   public func handle(for client: Client) throws {
-    guard let currentDimension = client.game.dimensions.first(where: { dimension in
-      return dimension.identifier == currentDimensionIdentifier
-    }) else {
+    guard
+      let currentDimension = client.game.dimensions.first(where: { dimension in
+        return dimension.identifier == currentDimensionIdentifier
+      })
+    else {
       throw ClientboundPacketError.invalidDimension(currentDimensionIdentifier)
     }
 
@@ -81,6 +83,10 @@ public struct RespawnPacket: ClientboundPacket {
     client.game.accessPlayer { player in
       player.gamemode.gamemode = gamemode
       player.playerAttributes.previousGamemode = previousGamemode
+
+      // Reset player physics
+      player.acceleration.vector = .zero
+      player.velocity.vector = .zero
     }
 
     // TODO: get auto respawn working

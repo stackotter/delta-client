@@ -30,6 +30,7 @@ struct JSONModelDisplayTransforms: Codable {
     case fixed
   }
 
+  /// Child takes precedence.
   func merge(withChild child: JSONModelDisplayTransforms) -> JSONModelDisplayTransforms {
     let thirdPersonRightHand = child.thirdPersonRightHand ?? thirdPersonRightHand
     let thirdPersonLeftHand = child.thirdPersonLeftHand ?? thirdPersonLeftHand

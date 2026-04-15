@@ -34,13 +34,17 @@ struct ServerDetail: View {
               appState.update(to: .playServer(descriptor, paneCount: 1))
             }
               .buttonStyle(PrimaryButtonStyle())
+              #if !os(tvOS)
               .frame(width: 150)
+              #endif
 
             Button("Play splitscreen") {
               appState.update(to: .playServer(descriptor, paneCount: 2))
             }
               .buttonStyle(SecondaryButtonStyle())
+              #if !os(tvOS)
               .frame(width: 150)
+              #endif
           case let .failure(error):
             Text(error.localizedDescription)
               .padding(.bottom, 8)

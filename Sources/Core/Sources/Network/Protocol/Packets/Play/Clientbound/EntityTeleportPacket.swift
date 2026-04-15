@@ -24,21 +24,25 @@ public struct EntityTeleportPacket: ClientboundEntityPacket {
 
   /// Should only be called if a nexus write lock is already acquired.
   public func handle(for client: Client) throws {
-    client.game.accessComponent(entityId: entityId, EntityPosition.self, acquireLock: false) { positionComponent in
-      positionComponent.move(to: position)
-    }
+    client.game.accessEntity(id: entityId, acquireLock: false) { entity in
+      guard
+        let lerpState = entity.get(component: EntityLerpState.self),
+        let velocity = entity.get(component: EntityVelocity.self),
+        let kind = entity.get(component: EntityKindId.self)?.entityKind,
+        let onGroundComponent = entity.get(component: EntityOnGround.self)
+      else {
+        return
+      }
 
-    client.game.accessComponent(entityId: entityId, EntityRotation.self, acquireLock: false) { rotation in
-      rotation.pitch = pitch
-      rotation.yaw = yaw
-    }
+      velocity.vector = .zero
 
-    client.game.accessComponent(entityId: entityId, EntityOnGround.self, acquireLock: false) { onGroundComponent in
       onGroundComponent.onGround = onGround
-    }
-
-    client.game.accessComponent(entityId: entityId, EntityVelocity.self, acquireLock: false) { velocity in
-      velocity.vector = Vec3d.zero
+      lerpState.lerp(
+        to: position,
+        pitch: pitch,
+        yaw: yaw,
+        duration: kind.defaultLerpDuration
+      )
     }
   }
 }

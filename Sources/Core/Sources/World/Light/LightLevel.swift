@@ -3,19 +3,21 @@ import Foundation
 /// A light level. Includes both the block light and sky light level.
 public struct LightLevel {
   /// The sky light level used for unloaded chunks.
-  public static var defaultSkyLightLevel = 0
+  public static let defaultSkyLightLevel = 0
   /// The block light level used for unloaded chunks.
-  public static var defaultBlockLightLevel = 0
+  public static let defaultBlockLightLevel = 0
   /// The maximum light level.
-  public static var maximumLightLevel = 15
+  public static let maximumLightLevel = 15
   /// The number of light levels.
-  public static var levelCount = maximumLightLevel + 1
-  
+  public static let levelCount = maximumLightLevel + 1
+  /// The default light level used for uninitialized chunks etc.
+  public static let `default` = Self(sky: defaultSkyLightLevel, block: defaultBlockLightLevel)
+
   /// The sky light level.
   public var sky: Int
   /// The block light level.
   public var block: Int
-  
+
   /// Creates a new light level value.
   /// - Parameters:
   ///   - sky: The sky light level.
@@ -24,13 +26,7 @@ public struct LightLevel {
     self.sky = sky
     self.block = block
   }
-  
-  /// Creates the default light level.
-  public init() {
-    sky = Self.defaultSkyLightLevel
-    block = Self.defaultBlockLightLevel
-  }
-  
+
   /// Gets the highest sky light level and block light level from two light levels.
   /// - Parameters:
   ///   - a: The first light level.

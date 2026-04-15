@@ -72,7 +72,7 @@ final class MetalViewClass {
 }
 
 
-#if os(macOS)
+#if canImport(AppKit)
   @available(macOS 13, *)
   extension MetalView: NSViewRepresentable {
     func makeNSView(context: Context) -> some NSView {
@@ -89,7 +89,7 @@ final class MetalViewClass {
 
     func updateNSView(_ view: NSViewType, context: Context) {}
   }
-#elseif os(iOS)
+#elseif canImport(UIKit)
   @available(iOS 16, *)
   extension MetalView: UIViewRepresentable {
     func makeUIView(context: Context) -> some UIView {

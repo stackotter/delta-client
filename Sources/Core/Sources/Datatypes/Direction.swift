@@ -1,5 +1,5 @@
-import Foundation
 import FirebladeMath
+import Foundation
 
 /// A direction enum where the raw value is the same as in some of the Minecraft packets.
 public enum Direction: Int, CustomStringConvertible {
@@ -17,7 +17,7 @@ public enum Direction: Int, CustomStringConvertible {
     .east,
     .west,
     .up,
-    .down
+    .down,
   ]
 
   /// All directions excluding up and down.
@@ -25,7 +25,7 @@ public enum Direction: Int, CustomStringConvertible {
     .north,
     .east,
     .south,
-    .west
+    .west,
   ]
 
   public var description: String {
@@ -151,7 +151,8 @@ public enum Direction: Int, CustomStringConvertible {
     let loops: [Axis: [Direction]] = [
       .x: [.up, .north, .down, .south],
       .y: [.north, .east, .south, .west],
-      .z: [.up, .east, .down, .west]]
+      .z: [.up, .east, .down, .west],
+    ]
     switch self {
       case referenceDirection, referenceDirection.opposite:
         return self

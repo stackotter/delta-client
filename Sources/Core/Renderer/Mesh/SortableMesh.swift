@@ -1,6 +1,6 @@
+import FirebladeMath
 import Foundation
 import MetalKit
-import FirebladeMath
 
 /// A mesh that can be sorted after the initial preparation.
 ///
@@ -15,7 +15,7 @@ public struct SortableMesh {
   }
 
   /// The mesh that is updated each time this mesh is sorted.
-  public var underlyingMesh: Mesh
+  public var underlyingMesh: Mesh<BlockVertex, ChunkUniforms>
 
   /// Creates a new sortable mesh.
   /// - Parameters:
@@ -23,8 +23,7 @@ public struct SortableMesh {
   ///   - uniforms: The mesh's uniforms.
   public init(_ elements: [SortableMeshElement] = [], uniforms: ChunkUniforms) {
     self.elements = elements
-    underlyingMesh = Mesh()
-    underlyingMesh.uniforms = uniforms
+    underlyingMesh = Mesh<BlockVertex, ChunkUniforms>(uniforms: uniforms)
   }
 
   /// Removes all elements from the mesh.

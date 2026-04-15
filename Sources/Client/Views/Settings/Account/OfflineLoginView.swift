@@ -27,7 +27,9 @@ struct OfflineLoginView: View {
         }.buttonStyle(PrimaryButtonStyle())
       }
     }
+    #if !os(tvOS)
     .frame(width: 200)
+    #endif
   }
   
   func login() {

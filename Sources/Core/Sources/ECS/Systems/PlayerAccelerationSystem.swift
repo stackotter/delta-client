@@ -15,10 +15,6 @@ public struct PlayerAccelerationSystem: System {
   public func update(_ nexus: Nexus, _ world: World) {
     let guiState = nexus.single(GUIStateStorage.self).component
 
-    guard guiState.movementAllowed else {
-      return
-    }
-
     var family = nexus.family(
       requiresAll: EntityNutrition.self,
       EntityFlying.self,
@@ -49,6 +45,14 @@ public struct PlayerAccelerationSystem: System {
       _
     ) = family.next() else {
       log.error("PlayerAccelerationSystem failed to get player to tick")
+      return
+    }
+
+    // This should just act as an optimization, movement inputs shouldn't get here
+    // in the first place when movement isn't allowed so this function would just
+    // zero the acceleration anyway.
+    guard guiState.movementAllowed else {
+      acceleration.vector = .zero
       return
     }
 
@@ -105,7 +109,9 @@ public struct PlayerAccelerationSystem: System {
       world,
       entityAttributes[.movementSpeed].value,
       sprinting.isSprinting,
-      onGround.onGround
+      onGround.onGround,
+      flying.isFlying,
+      playerAttributes.flyingSpeed
     )
 
     impulse *= speed
@@ -152,7 +158,9 @@ public struct PlayerAccelerationSystem: System {
     _ world: World,
     _ movementSpeed: Double,
     _ isSprinting: Bool,
-    _ onGround: Bool
+    _ onGround: Bool,
+    _ isFlying: Bool,
+    _ flightSpeed: Float
   ) -> Double {
     var speed: Double
     if onGround {
@@ -163,9 +171,14 @@ public struct PlayerAccelerationSystem: System {
         z: Int(Foundation.floor(position.z))
       )
       let block = world.getBlock(at: blockPosition)
-      let slipperiness = block.material.slipperiness
+      let slipperiness = block.physicalMaterial.slipperiness
 
       speed = movementSpeed * 0.216 / (slipperiness * slipperiness * slipperiness)
+    } else if isFlying {
+      speed = Double(flightSpeed)
+      if isSprinting {
+        speed *= 2
+      }
     } else {
       speed = 0.02
       if isSprinting {

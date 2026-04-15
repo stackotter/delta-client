@@ -37,7 +37,7 @@ extension Font {
     textureDescriptor.textureType = .type2DArray
     #if os(macOS)
     textureDescriptor.storageMode = .managed
-    #elseif os(iOS)
+    #elseif os(iOS) || os(tvOS)
     textureDescriptor.storageMode = .shared
     #else
     #error("Unsupported platform, can't determine storageMode for texture")

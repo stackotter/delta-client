@@ -1,6 +1,7 @@
 import FirebladeECS
 
-/// A component storing an entity's attributes.
+/// A component storing an entity's attributes. See ``EntityMetadata`` for a
+/// discussion on the difference between metadata and attributes.
 public class EntityAttributes: Component {
   /// The attributes as key-value pairs.
   private var attributes: [EntityAttributeKey: EntityAttributeValue] = [:]

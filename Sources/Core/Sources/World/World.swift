@@ -1,5 +1,5 @@
-import Foundation
 import FirebladeMath
+import Foundation
 import Logging
 
 /// Represents a Minecraft world. Completely thread-safe.
@@ -70,6 +70,11 @@ public class World {
   private var eventBusLock = ReadWriteLock()
   /// Not thread safe. Use `eventBus`.
   private var _eventBus: EventBus
+
+  /// Lock for protecting access to ``breakingBlocks``.
+  private var blockBreakingLock = ReadWriteLock()
+  /// All blocks currently getting broken.
+  private var breakingBlocks: [BreakingBlock] = []
 
   // MARK: Init
 
@@ -147,8 +152,9 @@ public class World {
     // TODO: Avoid the force unwrap. Possibly by updating the BiomeRegistry to ensure that
     //   a plains biome is always present to use as a default (perhaps as a defaultBiome
     //   property).
-    let biome = getBiome(at: position) ??
-      RegistryStore.shared.biomeRegistry.biome(for: Identifier(name: "plains"))!
+    let biome =
+      getBiome(at: position) ?? RegistryStore.shared.biomeRegistry.biome(
+        for: Identifier(name: "plains"))!
 
     let skyColor = biome.skyColor.floatVector
     let skyBrightness = getSkyBrightness()
@@ -203,7 +209,8 @@ public class World {
     let position = ray.origin
     let blockPosition = BlockPosition(x: Int(position.x), y: Int(position.y), z: Int(position.z))
 
-    let biome = getBiome(at: blockPosition)
+    let biome =
+      getBiome(at: blockPosition)
       ?? RegistryStore.shared.biomeRegistry.biome(for: Identifier(name: "plains"))!
 
     let fluidOnEyes = getFluidState(at: position, acquireLock: acquireLock)
@@ -259,11 +266,11 @@ public class World {
       }
     }
 
-    // As the player nears the 
+    // As the player nears the
     let voidFadeStart: Float = isFlat ? 1 : 32
     if position.y < voidFadeStart {
       let amount = max(0, position.y / voidFadeStart)
-      fogColor *= amount * amount 
+      fogColor *= amount * amount
     }
 
     return fogColor
@@ -297,7 +304,7 @@ public class World {
       // TODO: Calculate density as per reverse engineering document
       return Fog(color: fogColor, style: .exponential(density: 0.05))
     }
-    
+
     // TODO: If player has blindness, the fog starts at 5/4 and ends at 5, lerping up to
     //   starting at renderDistance/4 and ending at renderDistance over the last second of blindness
 
@@ -383,10 +390,19 @@ public class World {
       chunk.setBlockId(at: position.relativeToChunk, to: state)
       lightingEngine.updateLighting(at: position, in: self)
 
-      eventBus.dispatch(Event.SingleBlockUpdate(
-        position: position,
-        newState: state
-      ))
+      blockBreakingLock.acquireWriteLock()
+      // Use removeAll instead of filter to minimize cost in the case that the set block
+      // wasn't associated with a breaking block (probably the most likely case?)
+      breakingBlocks.removeAll { block in
+        block.position == position
+      }
+      blockBreakingLock.unlock()
+
+      eventBus.dispatch(
+        Event.SingleBlockUpdate(
+          position: position,
+          newState: state
+        ))
     } else {
       log.warning("Cannot set block in non-existent chunk, chunkPosition=\(position.chunk)")
     }
@@ -404,14 +420,16 @@ public class World {
     _ updates: [Event.SingleBlockUpdate],
     inChunkAt chunkPosition: ChunkPosition? = nil
   ) {
+    let positions = updates.map(\.position)
     if let chunkPosition = chunkPosition {
       if let chunk = chunk(at: chunkPosition) {
         for update in updates {
           chunk.setBlockId(at: update.position.relativeToChunk, to: update.newState)
         }
-        lightingEngine.updateLighting(at: updates.map(\.position), in: self)
+        lightingEngine.updateLighting(at: positions, in: self)
       } else {
-        log.warning("Cannot handle multi-block change in non-existent chunk, chunkPosition=\(chunkPosition)")
+        log.warning(
+          "Cannot handle multi-block change in non-existent chunk, chunkPosition=\(chunkPosition)")
         return
       }
     } else {
@@ -419,12 +437,22 @@ public class World {
         if let chunk = chunk(at: update.position.chunk) {
           chunk.setBlockId(at: update.position.relativeToChunk, to: update.newState)
         } else {
-          log.warning("Cannot handle multi-block change in non-existent chunk, chunkPosition=\(update.position.chunk)")
+          log.warning(
+            "Cannot handle multi-block change in non-existent chunk, chunkPosition=\(update.position.chunk)"
+          )
           return
         }
       }
-      lightingEngine.updateLighting(at: updates.map(\.position), in: self)
+      lightingEngine.updateLighting(at: positions, in: self)
     }
+
+    blockBreakingLock.acquireWriteLock()
+    // Use removeAll instead of filter to minimize cost in the case that the set block
+    // wasn't associated with a breaking block (probably the most likely case?)
+    breakingBlocks.removeAll { block in
+      positions.contains(block.position)
+    }
+    blockBreakingLock.unlock()
 
     eventBus.dispatch(Event.MultiBlockUpdate(updates: updates))
   }
@@ -493,7 +521,6 @@ public class World {
   /// Sets the block light level of a block. Does not propagate the change and does not verify the level is valid.
   ///
   /// If `position` is in a chunk that isn't loaded or is above y=255 or below y=0, nothing happens.
-  ///
   /// - Parameters:
   ///   - position: A block position relative to the world.
   ///   - level: The new block light level. Should be from 0 to 15 inclusive. Not validated.
@@ -504,7 +531,6 @@ public class World {
   }
 
   /// Gets the block light level for the given block.
-  ///
   /// - Parameter position: Position of block.
   /// - Returns: The block light level of the block. If the given position isn't loaded, ``LightLevel/defaultBlockLightLevel`` is returned.
   public func getBlockLightLevel(at position: BlockPosition) -> Int {
@@ -518,7 +544,6 @@ public class World {
   /// Sets the sky light level of a block. Does not propagate the change and does not verify the level is valid.
   ///
   /// If `position` is in a chunk that isn't loaded or is above y=255 or below y=0, nothing happens.
-  ///
   /// - Parameters:
   ///   - position: A block position relative to the world.
   ///   - level: The new sky light level. Should be from 0 to 15 inclusive. Not validated.
@@ -529,7 +554,6 @@ public class World {
   }
 
   /// Gets the sky light level for the given block.
-  ///
   /// - Parameter position: Position of block.
   /// - Returns: The sky light level of the block. If the given position isn't loaded, ``LightLevel/defaultSkyLightLevel`` is returned.
   public func getSkyLightLevel(at position: BlockPosition) -> Int {
@@ -537,6 +561,17 @@ public class World {
       return chunk.skyLightLevel(at: position.relativeToChunk)
     } else {
       return LightLevel.defaultSkyLightLevel
+    }
+  }
+
+  /// Gets the block and sky light levels for the given block.
+  /// - Parameter position: Position of block.
+  /// - Returns: The light levels of the block. If the given position isn't loaded, ``LightLevel/default`` is returned.
+  public func getLightLevel(at position: BlockPosition) -> LightLevel {
+    if let chunk = chunk(at: position.chunk) {
+      return chunk.lightLevel(at: position.relativeToChunk)
+    } else {
+      return .default
     }
   }
 
@@ -568,10 +603,11 @@ public class World {
       terrainLock.unlock()
     }
 
-    eventBus.dispatch(Event.UpdateChunkLighting(
-      position: position,
-      data: data
-    ))
+    eventBus.dispatch(
+      Event.UpdateChunkLighting(
+        position: position,
+        data: data
+      ))
   }
 
   // MARK: Biomes
@@ -690,6 +726,91 @@ public class World {
     terrainLock.acquireReadLock()
     defer { terrainLock.unlock() }
     return unlitChunks[position] != nil
+  }
+
+  // MARK: Block breaking
+
+  public func startBreakingBlock(at position: BlockPosition, for entityId: Int) {
+    blockBreakingLock.acquireWriteLock()
+    defer { blockBreakingLock.unlock() }
+    for block in breakingBlocks {
+      if block.position == position {
+        // TODO: Figure out what to do in this situation
+        return
+      }
+    }
+    breakingBlocks.append(
+      BreakingBlock(
+        position: position,
+        perpetratorEntityId: entityId,
+        progress: 0
+      )
+    )
+  }
+
+  /// Sets the block breaking progress of a given block to a value corresponding to a specific
+  /// stage of the block breaking animation. If the block is not already getting broken, it gets
+  /// added to the list of breaking blocks.
+  public func setBlockBreakingStage(at position: BlockPosition, to stage: Int, for entityId: Int) {
+    blockBreakingLock.acquireWriteLock()
+    defer { blockBreakingLock.unlock() }
+
+    let progress = Double(clamp(stage + 1, min: 0, max: 10)) / 10
+
+    for (i, block) in breakingBlocks.enumerated() {
+      if block.position == position {
+        breakingBlocks[i].progress = progress
+        breakingBlocks[i].perpetratorEntityId = entityId
+        return
+      }
+    }
+
+    breakingBlocks.append(
+      BreakingBlock(
+        position: position,
+        perpetratorEntityId: entityId,
+        progress: progress
+      )
+    )
+  }
+
+  /// Does nothing if the specified block isn't getting broken.
+  public func addBreakingProgress(_ progress: Double, toBlockAt position: BlockPosition) {
+    blockBreakingLock.acquireWriteLock()
+    defer { blockBreakingLock.unlock() }
+    for (i, block) in breakingBlocks.enumerated() where block.position == position {
+      breakingBlocks[i].progress += progress
+    }
+  }
+
+  public func getBreakingBlocks() -> [BreakingBlock] {
+    blockBreakingLock.acquireReadLock()
+    defer { blockBreakingLock.unlock() }
+    return breakingBlocks
+  }
+
+  public func getBlockBreakingProgress(at position: BlockPosition) -> Double? {
+    blockBreakingLock.acquireReadLock()
+    defer { blockBreakingLock.unlock() }
+    return breakingBlocks.first { block in
+      block.position == position
+    }?.progress
+  }
+
+  public func endBlockBreaking(at position: BlockPosition) {
+    blockBreakingLock.acquireWriteLock()
+    defer { blockBreakingLock.unlock() }
+    breakingBlocks = breakingBlocks.filter { block in
+      block.position != position
+    }
+  }
+
+  public func endBlockBreaking(for entityId: Int) {
+    blockBreakingLock.acquireWriteLock()
+    defer { blockBreakingLock.unlock() }
+    breakingBlocks = breakingBlocks.filter { block in
+      block.perpetratorEntityId != entityId
+    }
   }
 
   // MARK: Helper

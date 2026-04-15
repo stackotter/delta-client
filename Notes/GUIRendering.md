@@ -25,7 +25,7 @@ relatively consistent.
 
 This improvement gave a 2.36x reduction in encode time which is pretty great.
 
-This improvement isn't foolproof, it should be conservative to always retain ordering when required,
+This improvement isn't foolproof, it should be conservative enough to always retain ordering when required,
 but it doesn't seem to always combine meshes when they can be combined. This can be worked around by
 refactoring mesh generation to group by array texture when possible. I had to do this with
 `GUIList`'s row background generation (by putting all the backgrounds first) and it worked a charm.

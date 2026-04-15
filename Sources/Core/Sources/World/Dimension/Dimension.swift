@@ -89,23 +89,23 @@ public struct Dimension {
     let fixedTime: Int64? = try? compound.get("fixed_time")
     self.fixedTime = fixedTime.map(Int.init)
 
-    let isNatural: UInt8 = try compound.get("natural")
+    let isNatural: Int8 = try compound.get("natural")
     self.isNatural = isNatural == 1
-    let hasCeiling: UInt8 = try compound.get("has_ceiling")
+    let hasCeiling: Int8 = try compound.get("has_ceiling")
     self.hasCeiling = hasCeiling == 1
-    let hasSkyLight: UInt8 = try compound.get("has_skylight")
+    let hasSkyLight: Int8 = try compound.get("has_skylight")
     self.hasSkyLight = hasSkyLight == 1
-    let shrunk: UInt8 = try compound.get("shrunk")
+    let shrunk: Int8 = try compound.get("shrunk")
     self.shrunk = shrunk == 1
-    let ultrawarm: UInt8 = try compound.get("ultrawarm")
+    let ultrawarm: Int8 = try compound.get("ultrawarm")
     self.ultrawarm = ultrawarm == 1
-    let hasRaids: UInt8 = try compound.get("has_raids")
+    let hasRaids: Int8 = try compound.get("has_raids")
     self.hasRaids = hasRaids == 1
-    let respawnAnchorWorks: UInt8 = try compound.get("respawn_anchor_works")
+    let respawnAnchorWorks: Int8 = try compound.get("respawn_anchor_works")
     self.respawnAnchorWorks = respawnAnchorWorks == 1
-    let bedWorks: UInt8 = try compound.get("bed_works")
+    let bedWorks: Int8 = try compound.get("bed_works")
     self.bedWorks = bedWorks == 1
-    let piglinSafe: UInt8 = try compound.get("piglin_safe")
+    let piglinSafe: Int8 = try compound.get("piglin_safe")
     self.piglinSafe = piglinSafe == 1
     let logicalHeight: Int32 = try compound.get("logical_height")
     self.logicalHeight = Int(logicalHeight)

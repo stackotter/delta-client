@@ -26,7 +26,25 @@ public enum Gamemode: Int8 {
         return false
     }
   }
-  
+
+  public var canBreakBlocks: Bool {
+    switch self {
+      case .survival, .creative:
+        return true
+      case .adventure, .spectator:
+        return false
+    }
+  }
+
+  public var canPlaceBlocks: Bool {
+    switch self {
+      case .survival, .creative:
+        return true
+      case .adventure, .spectator:
+        return false
+    }
+  }
+
   /// The lowercase string representation of the gamemode.
   public var string: String {
     switch self {

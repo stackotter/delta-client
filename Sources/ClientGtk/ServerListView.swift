@@ -1,5 +1,5 @@
-import SwiftCrossUI
 import DeltaCore
+import SwiftCrossUI
 
 indirect enum DetailState {
   case server(_ index: Int)
@@ -23,7 +23,7 @@ struct ServerListView: View {
 
   var state = ServerListViewState()
 
-  var body: some ViewContent {
+  var body: some View {
     NavigationSplitView {
       VStack {
         Button("Add server") {
@@ -56,7 +56,7 @@ struct ServerListView: View {
             editingView(index)
           case .error(let message, let returnState):
             Text("Error: \(message)")
-            Button ("Back") {
+            Button("Back") {
               state.detailState = returnState
             }
         }
@@ -89,7 +89,7 @@ struct ServerListView: View {
       Text("Add server")
       TextField("Name", state.$name)
       TextField("Address", state.$address)
-      
+
       Button("Add") {
         do {
           let (host, port) = try Self.parseAddress(state.address)
@@ -136,7 +136,7 @@ struct ServerListView: View {
 
         state.name = ""
         state.address = ""
-        if (state.servers.count > 0) {
+        if state.servers.count > 0 {
           state.detailState = .server(0)
         } else {
           state.detailState = .adding

@@ -11,11 +11,14 @@ final class StorageManager {
   public var cacheDirectory: URL
 
   private init() {
-    if let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+    if let applicationSupport = FileManager.default.urls(
+      for: .applicationSupportDirectory, in: .userDomainMask
+    ).first {
       storageDirectory = applicationSupport.appendingPathComponent("delta-client")
     } else {
       log.warning("Failed to get application support directory, using temporary directory instead")
-      let fallback = FileManager.default.temporaryDirectory.appendingPathComponent("delta-client.fallback")
+      let fallback = FileManager.default.temporaryDirectory.appendingPathComponent(
+        "delta-client.fallback")
       storageDirectory = fallback
     }
 
@@ -25,13 +28,13 @@ final class StorageManager {
 
     log.trace("Using \(storageDirectory.path) as storage directory")
 
-    if (!Self.directoryExists(at: storageDirectory)) {
+    if !Self.directoryExists(at: storageDirectory) {
       do {
         log.info("Creating storage directory")
         try? FileManager.default.removeItem(at: storageDirectory)
         try Self.createDirectory(at: storageDirectory)
       } catch {
-        DeltaClientApp.fatal("Failed to create storage directory")
+        fatalError("Failed to create storage directory")
       }
     }
   }

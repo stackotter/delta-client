@@ -153,7 +153,6 @@ public final class TickScheduler: @unchecked Sendable {
     // The nexus lock must be held for the duration of the tick because it is used elsewhere as a
     // lock to prevent thread safety issue related to modifying dependencies of the tick method.
     nexusLock.acquireWriteLock()
-    defer { nexusLock.unlock() }
 
     worldLock.acquireReadLock()
     let world = world
@@ -169,6 +168,7 @@ public final class TickScheduler: @unchecked Sendable {
     }
 
     tickNumber += 1
+    nexusLock.unlock()
   }
 
   #if canImport(Darwin)

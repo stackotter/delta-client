@@ -1,21 +1,37 @@
-import MetalKit
-import FirebladeMath
 import DeltaCore
+import FirebladeMath
+import MetalKit
 
-#if os(iOS)
-import UIKit
+#if canImport(UIKit)
+  import UIKit
 #endif
 
 /// The renderer for the GUI (chat, f3, scoreboard etc.).
 public final class GUIRenderer: Renderer {
+  static let scale: Float = 2
+
   var device: MTLDevice
   var font: Font
-  var scale: Float = 2
+  var locale: MinecraftLocale
   var uniformsBuffer: MTLBuffer
   var pipelineState: MTLRenderPipelineState
-  var gui: GUI
   var profiler: Profiler<RenderingMeasurement>
   var previousUniforms: GUIUniforms?
+
+  var client: Client
+
+  var fontArrayTexture: MTLTexture
+  var guiTexturePalette: GUITexturePalette
+  var guiArrayTexture: MTLTexture
+  var itemTexturePalette: TexturePalette
+  var itemArrayTexture: MTLTexture
+  var itemModelPalette: ItemModelPalette
+  var blockArrayTexture: MTLTexture
+  var blockModelPalette: BlockModelPalette
+  var blockTexturePalette: TexturePalette
+  var entityArrayTexture: MTLTexture
+  var entityTexturePalette: TexturePalette
+  var entityModelPalette: EntityModelPalette
 
   var cache: [GUIElementMesh] = []
 
@@ -25,11 +41,60 @@ public final class GUIRenderer: Renderer {
     commandQueue: MTLCommandQueue,
     profiler: Profiler<RenderingMeasurement>
   ) throws {
+    self.client = client
     self.device = device
     self.profiler = profiler
 
     // Create array texture
     font = client.resourcePack.vanillaResources.fontPalette.defaultFont
+    locale = client.resourcePack.getDefaultLocale()
+
+    let resources = client.resourcePack.vanillaResources
+    let font = resources.fontPalette.defaultFont
+    fontArrayTexture = try font.createArrayTexture(
+      device: device,
+      commandQueue: commandQueue
+    )
+    fontArrayTexture.label = "fontArrayTexture"
+
+    guiTexturePalette = try GUITexturePalette(resources.guiTexturePalette)
+    guiArrayTexture = try MetalTexturePalette.createArrayTexture(
+      for: resources.guiTexturePalette,
+      device: device,
+      commandQueue: commandQueue,
+      includeAnimations: false
+    )
+    guiArrayTexture.label = "guiArrayTexture"
+
+    itemTexturePalette = resources.itemTexturePalette
+    itemArrayTexture = try MetalTexturePalette.createArrayTexture(
+      for: resources.itemTexturePalette,
+      device: device,
+      commandQueue: commandQueue,
+      includeAnimations: false
+    )
+    itemArrayTexture.label = "itemArrayTexture"
+    itemModelPalette = resources.itemModelPalette
+
+    blockTexturePalette = resources.blockTexturePalette
+    blockArrayTexture = try MetalTexturePalette.createArrayTexture(
+      for: resources.blockTexturePalette,
+      device: device,
+      commandQueue: commandQueue,
+      includeAnimations: false
+    )
+    blockArrayTexture.label = "blockArrayTexture"
+    blockModelPalette = resources.blockModelPalette
+
+    entityTexturePalette = resources.entityTexturePalette
+    entityArrayTexture = try MetalTexturePalette.createArrayTexture(
+      for: resources.entityTexturePalette,
+      device: device,
+      commandQueue: commandQueue,
+      includeAnimations: false
+    )
+    entityArrayTexture.label = "entityArrayTexture"
+    entityModelPalette = resources.entityModelPalette
 
     // Create uniforms buffer
     uniformsBuffer = try MetalUtil.makeBuffer(
@@ -47,13 +112,6 @@ public final class GUIRenderer: Renderer {
       fragmentFunction: try MetalUtil.loadFunction("guiFragment", from: library),
       blendingEnabled: true
     )
-
-    gui = try GUI(
-      client: client,
-      device: device,
-      commandQueue: commandQueue,
-      profiler: profiler
-    )
   }
 
   public func render(
@@ -68,20 +126,33 @@ public final class GUIRenderer: Renderer {
     let drawableSize = view.drawableSize
     let width = Float(drawableSize.width)
     let height = Float(drawableSize.height)
-    let scale = Self.adjustScale(scale)
+    let scalingFactor = Self.scale * Self.screenScalingFactor()
 
     // Adjust scale per screen scale factor
-    var uniforms = createUniforms(width, height, scale)
+    var uniforms = createUniforms(width, height, scalingFactor)
     if uniforms != previousUniforms || true {
-      uniformsBuffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<GUIUniforms>.size)
+      uniformsBuffer.contents().copyMemory(
+        from: &uniforms,
+        byteCount: MemoryLayout<GUIUniforms>.size
+      )
       previousUniforms = uniforms
     }
     profiler.pop()
 
     // Create meshes
-    let meshes = try gui.meshes(
-      effectiveDrawableSize: Vec2i(Int(width / scale), Int(height / scale))
+    let effectiveDrawableSize = Vec2i(
+      Int(width / scalingFactor),
+      Int(height / scalingFactor)
     )
+
+    client.game.mutateGUIState { guiState in
+      guiState.drawableSize = effectiveDrawableSize
+      guiState.drawableScalingFactor = scalingFactor
+    }
+
+    let renderable = client.game.compileGUI(withFont: font, locale: locale, connection: nil)
+
+    let meshes = try meshes(for: renderable)
 
     profiler.push(.encode)
     // Set vertex buffers
@@ -110,6 +181,186 @@ public final class GUIRenderer: Renderer {
       }
     }
     profiler.pop()
+  }
+
+  func meshes(for renderable: GUIElement.GUIRenderable) throws -> [GUIElementMesh] {
+    var meshes: [GUIElementMesh]
+    switch renderable.content {
+      case let .text(wrappedLines, hangingIndent, color):
+        let builder = TextMeshBuilder(font: font)
+        meshes = try wrappedLines.compactMap { (line: String) in
+          do {
+            return try builder.build(
+              line,
+              fontArrayTexture: fontArrayTexture,
+              color: color
+            )
+          } catch let error as LocalizedError {
+            throw error.with("Text", line)
+          }
+        }
+        for i in meshes.indices where i != 0 {
+          meshes[i].position.x += hangingIndent
+          meshes[i].position.y += Font.defaultCharacterHeight + 1
+        }
+      case let .sprite(descriptor):
+        meshes = try [
+          GUIElementMesh(
+            sprite: descriptor,
+            guiTexturePalette: guiTexturePalette,
+            guiArrayTexture: guiArrayTexture
+          )
+        ]
+      case let .item(itemId):
+        meshes = try self.meshes(forItemWithId: itemId)
+      case nil, .interactable, .background:
+        if case let .background(color) = renderable.content {
+          meshes = [
+            GUIElementMesh(size: renderable.size, color: color)
+          ]
+        } else {
+          meshes = []
+        }
+        meshes += try renderable.children.flatMap(meshes(for:))
+    }
+    meshes.translate(amount: renderable.relativePosition)
+    return meshes
+  }
+
+  func meshes(forItemWithId itemId: Int) throws -> [GUIElementMesh] {
+    guard let model = itemModelPalette.model(for: itemId) else {
+      throw GUIRendererError.invalidItemId(itemId)
+    }
+
+    switch model {
+      case let .layered(textures, _):
+        return textures.map { texture in
+          switch texture {
+            case let .block(index):
+              return GUIElementMesh(slice: index, texture: blockArrayTexture)
+            case let .item(index):
+              return GUIElementMesh(slice: index, texture: itemArrayTexture)
+          }
+        }
+      case let .blockModel(modelId):
+        guard let model = blockModelPalette.model(for: modelId, at: nil) else {
+          log.warning("Missing block model of id \(modelId) (for item)")
+          return []
+        }
+
+        // TODO: Use this assumption to just lift all the display transforms when loading the
+        //   block model palette.
+        // Get the block's transformation assuming that each block model part has the same
+        // associated gui transformation (I don't see why this wouldn't always be true).
+        var transformation: Mat4x4f
+        if let transformsIndex = model.parts.first?.displayTransformsIndex {
+          transformation = blockModelPalette.displayTransforms[transformsIndex].gui
+        } else {
+          transformation = MatrixUtil.identity
+        }
+
+        transformation *=
+          MatrixUtil.translationMatrix([-0.5, -0.5, -0.5])
+          * MatrixUtil.rotationMatrix(x: .pi)
+          * MatrixUtil.rotationMatrix(y: -.pi / 4)
+          * MatrixUtil.rotationMatrix(x: -.pi / 6)
+          * MatrixUtil.scalingMatrix(9.76)
+          * MatrixUtil.translationMatrix([8, 8, 8])
+
+        var geometry = Geometry<BlockVertex>()
+        var translucentGeometry = SortableMeshElement()
+        BlockMeshBuilder(
+          model: model,
+          position: BlockPosition(x: 0, y: 0, z: 0),
+          modelToWorld: transformation,
+          culledFaces: [],
+          lightLevel: LightLevel(sky: 15, block: 15),
+          neighbourLightLevels: [:],
+          tintColor: [1, 1, 1],
+          blockTexturePalette: blockTexturePalette
+        ).build(into: &geometry, translucentGeometry: &translucentGeometry)
+
+        var vertices: [GUIVertex] = []
+        vertices.reserveCapacity(geometry.vertices.count)
+        for vertex in geometry.vertices + translucentGeometry.vertices {
+          vertices.append(
+            GUIVertex(
+              position: [vertex.x, vertex.y],
+              uv: [vertex.u, vertex.v],
+              tint: [vertex.r, vertex.g, vertex.b, 1],
+              textureIndex: vertex.textureIndex
+            )
+          )
+        }
+
+        var mesh = GUIElementMesh(
+          size: [16, 16],
+          arrayTexture: blockArrayTexture,
+          vertices: .flatArray(vertices)
+        )
+        mesh.position = [0, 0]
+        return [mesh]
+      case let .entity(identifier, transforms):
+        var entityIdentifier = identifier
+        entityIdentifier.name = entityIdentifier.name.replacingOccurrences(of: "item/", with: "")
+
+        // Dummy meshes, we don't handle rendering inventory entities which themselves
+        // contain block item entities cause that doesn't happen (famous last words...)
+        var blockGeometry = Geometry<BlockVertex>()
+        var translucentBlockGeometry = SortableMeshElement()
+
+        var geometry = Geometry<EntityVertex>()
+        EntityMeshBuilder(
+          entity: nil,
+          entityKind: entityIdentifier,
+          position: .zero,
+          pitch: 0,
+          yaw: 0,
+          entityModelPalette: entityModelPalette,
+          itemModelPalette: itemModelPalette,
+          blockModelPalette: blockModelPalette,
+          entityTexturePalette: entityTexturePalette,
+          blockTexturePalette: blockTexturePalette,
+          hitbox: AxisAlignedBoundingBox(position: .zero, size: Vec3d(1, 1, 1)),
+          lightLevel: .default  // Doesn't matter cause the GUI doesn't use light levels
+        ).build(
+          into: &geometry,
+          blockGeometry: &blockGeometry,
+          translucentBlockGeometry: &translucentBlockGeometry
+        )
+
+        let transformation: Mat4x4f =
+          MatrixUtil.translationMatrix(Vec3f(0, -0.5, 0))
+          * MatrixUtil.rotationMatrix(y: .pi / 2)
+          * transforms.gui
+          * MatrixUtil.scalingMatrix(Vec3f(-1, -1, 1))
+          * MatrixUtil.scalingMatrix(16)
+          * MatrixUtil.translationMatrix([8, 8, 0])
+
+        var vertices: [GUIVertex] = []
+        vertices.reserveCapacity(geometry.vertices.count)
+        for vertex in geometry.vertices {
+          let position = (Vec4f(vertex.x, vertex.y, vertex.z, 1) * transformation).xyz
+          vertices.append(
+            GUIVertex(
+              position: [position.x, position.y],
+              uv: [vertex.u, vertex.v],
+              tint: [vertex.r, vertex.g, vertex.b, 1],
+              textureIndex: vertex.textureIndex
+            )
+          )
+        }
+
+        var mesh = GUIElementMesh(
+          size: [16, 16],
+          arrayTexture: entityArrayTexture,
+          vertices: .flatArray(vertices)
+        )
+        mesh.position = [0, 0]
+        return [mesh]
+      case .empty:
+        return []
+    }
   }
 
   static func optimizeMeshes(_ meshes: [GUIElementMesh]) throws -> [GUIElementMesh] {
@@ -162,7 +413,10 @@ public final class GUIRenderer: Renderer {
   }
 
   static func doIntersect(_ mesh: GUIElementMesh, _ other: GUIElementMesh) -> Bool {
-    doIntersect((position: mesh.position, size: mesh.size), (position: other.position, size: other.size))
+    doIntersect(
+      (position: mesh.position, size: mesh.size),
+      (position: other.position, size: other.size)
+    )
   }
 
   static func doIntersect(
@@ -174,8 +428,8 @@ public final class GUIRenderer: Renderer {
     let pos2 = other.position
     let size2 = other.size
 
-    let overlapsX = abs((pos1.x + size1.x/2) - (pos2.x + size2.x/2)) * 2 < (size1.x + size2.x)
-    let overlapsY = abs((pos1.y + size1.y/2) - (pos2.y + size2.y/2)) * 2 < (size1.y + size2.y)
+    let overlapsX = abs((pos1.x + size1.x / 2) - (pos2.x + size2.x / 2)) * 2 < (size1.x + size2.x)
+    let overlapsY = abs((pos1.y + size1.y / 2) - (pos2.y + size2.y / 2)) * 2 < (size1.y + size2.y)
     return overlapsX && overlapsY
   }
 
@@ -205,23 +459,25 @@ public final class GUIRenderer: Renderer {
     mesh.size &+= Vec2i(position)
   }
 
-  static func adjustScale(_ scale: Float) -> Float {
-    // Adjust scale per screen scale factor
-    #if os(macOS)
-    let screenScaleFactor = Float(NSApp.windows.first?.screen?.backingScaleFactor ?? 1)
-    #elseif os(iOS)
-    let screenScaleFactor = Float(UIScreen.main.scale)
+  /// Gets the scaling factor of the screen that Delta Client's currently getting rendered for.
+  public static func screenScalingFactor() -> Float {
+    // Higher density displays have higher scaling factors to keep content a similar real world
+    // size across screens.
+    #if canImport(AppKit)
+      let screenScalingFactor = Float(NSApp.windows.first?.screen?.backingScaleFactor ?? 1)
+    #elseif canImport(UIKit)
+      let screenScalingFactor = Float(UIScreen.main.scale)
     #else
-    #error("Unsupported platform, unknown screen scale factor")
+      #error("Unsupported platform, unknown screen scale factor")
     #endif
-    return screenScaleFactor * scale
+    return screenScalingFactor
   }
 
   func createUniforms(_ width: Float, _ height: Float, _ scale: Float) -> GUIUniforms {
     let transformation = Mat3x3f([
       [2 / width, 0, -1],
       [0, -2 / height, 1],
-      [0, 0, 1]
+      [0, 0, 1],
     ])
     return GUIUniforms(screenSpaceToNormalized: transformation, scale: scale)
   }

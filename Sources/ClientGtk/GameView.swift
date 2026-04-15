@@ -1,6 +1,6 @@
+import DeltaCore
 import Dispatch
 import SwiftCrossUI
-import DeltaCore
 
 class GameViewState: Observable {
   enum State {
@@ -16,22 +16,25 @@ class GameViewState: Observable {
 
   init(_ server: ServerDescriptor, _ resourcePack: ResourcePack) {
     self.server = server
-    client = Client(resourcePack: resourcePack, configuration: ConfigManager.default.coreConfiguration)
+    client = Client(
+      resourcePack: resourcePack, configuration: ConfigManager.default.coreConfiguration)
     client.eventBus.registerHandler { [weak self] event in
       guard let self = self else { return }
       self.handleClientEvent(event)
     }
 
-    do {
-      // TODO: Use structured concurrency to get join server to wait until login is finished so that
-      // errors can be handled inline
-      if let account = ConfigManager.default.config.selectedAccount {
-        try client.joinServer(describedBy: server, with: account)
-      } else {
-        state = .error("Please select an account")
+    // TODO: Use structured concurrency to get join server to wait until login is finished so that
+    // errors can be handled inline
+    if let account = ConfigManager.default.config.selectedAccount {
+      Task {
+        do {
+          try await client.joinServer(describedBy: server, with: account)
+        } catch {
+          state = .error("Failed to join server: \(error.localizedDescription)")
+        }
       }
-    } catch {
-      state = .error("Failed to join server: \(error.localizedDescription)")
+    } else {
+      state = .error("Please select an account")
     }
   }
 
@@ -70,12 +73,15 @@ struct GameView: View {
 
   var completionHandler: () -> Void
 
-  init(_ server: ServerDescriptor, _ resourcePack: ResourcePack, _ completionHandler: @escaping () -> Void) {
+  init(
+    _ server: ServerDescriptor, _ resourcePack: ResourcePack,
+    _ completionHandler: @escaping () -> Void
+  ) {
     state = GameViewState(server, resourcePack)
     self.completionHandler = completionHandler
   }
 
-  var body: some ViewContent {
+  var body: some View {
     switch state.state {
       case .error(let message):
         Text(message)

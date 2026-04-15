@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.9
 
 import PackageDescription
 
@@ -20,14 +20,16 @@ var products: [Product] = [
   .library(
     name: "StaticShim",
     targets: ["StaticShim"]
-  )
+  ),
 ]
 
 #if canImport(Darwin)
-products.append(.executable(
-  name: "DeltaClient",
-  targets: ["DeltaClient"]
-))
+  products.append(
+    .executable(
+      name: "DeltaClient",
+      targets: ["DeltaClient"]
+    )
+  )
 #endif
 
 var targets: [Target] = [
@@ -35,7 +37,8 @@ var targets: [Target] = [
     name: "DeltaClientGtk",
     dependencies: [
       .product(name: "DeltaCore", package: "DeltaCore"),
-      .product(name: "SwiftCrossUI", package: "swift-cross-ui")
+      .product(name: "SwiftCrossUI", package: "swift-cross-ui"),
+      .product(name: "GtkBackend", package: "swift-cross-ui"),
     ],
     path: "Sources/ClientGtk"
   ),
@@ -43,7 +46,7 @@ var targets: [Target] = [
   .target(
     name: "DynamicShim",
     dependencies: [
-      .product(name: "DeltaCore", package: "DeltaCore"),
+      .product(name: "DeltaCore", package: "DeltaCore")
     ],
     path: "Sources/Exporters/DynamicShim"
   ),
@@ -51,35 +54,43 @@ var targets: [Target] = [
   .target(
     name: "StaticShim",
     dependencies: [
-      .product(name: "StaticDeltaCore", package: "DeltaCore"),
+      .product(name: "StaticDeltaCore", package: "DeltaCore")
     ],
     path: "Sources/Exporters/StaticShim"
-  )
+  ),
 ]
 
 #if canImport(Darwin)
-targets.append(.executableTarget(
-  name: "DeltaClient",
-  dependencies: [
-    "DynamicShim",
-    .product(name: "SwordRPC", package: "SwordRPC", condition: .when(platforms: [.macOS])),
-    .product(name: "ArgumentParser", package: "swift-argument-parser")
-  ],
-  path: "Sources/Client"
-))
+  targets.append(
+    .executableTarget(
+      name: "DeltaClient",
+      dependencies: [
+        "DynamicShim",
+        .product(name: "SwordRPC", package: "SwordRPC", condition: .when(platforms: [.macOS])),
+        .product(name: "ArgumentParser", package: "swift-argument-parser"),
+      ],
+      path: "Sources/Client"
+    )
+  )
 #endif
 
 let package = Package(
   name: "DeltaClient",
-  platforms: [.macOS(.v11), .iOS(.v15)],
+  platforms: [.macOS(.v11), .iOS(.v15), .tvOS(.v15)],
   products: products,
   dependencies: [
     // See Notes/PluginSystem.md for more details on the architecture of the project in regards to dependencies, targets and linking
     // In short, the dependencies for DeltaCore can be found in Sources/Core/Package.swift
-    .package(name: "DeltaCore", path: "Sources/Core"),
+    .package(name: "DeltaCore", path: "./Sources/Core"),
     .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
-    .package(url: "https://github.com/stackotter/SwordRPC", .revision("3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed")),
-    .package(url: "https://github.com/stackotter/swift-cross-ui", branch: "main")
+    .package(
+      url: "https://github.com/stackotter/SwordRPC",
+      revision: "3ddf125eeb3d83cb17a6e4cda685f9c80e0d4bed"
+    ),
+    .package(
+      url: "https://github.com/stackotter/swift-cross-ui",
+      .upToNextMinor(from: "0.4.0")
+    ),
   ],
   targets: targets
 )
